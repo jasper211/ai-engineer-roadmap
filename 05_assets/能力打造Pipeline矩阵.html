@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI工程能力打造Pipeline矩阵</title>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --card-bg: #13131a;
+    --card-border: #222230;
+    --text-primary: #e8e8f0;
+    --text-secondary: #8888a0;
+    --accent-yellow: #f0c040;
+    --accent-green: #2dd4a7;
+    --accent-red: #f0506e;
+    --accent-blue: #4d8df0;
+    --accent-orange: #f08840;
+    --accent-purple: #a060f0;
+    --gap-high: #f0506e;
+    --gap-mid: #f0c040;
+    --gap-low: #2dd4a7;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text-primary);
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+    line-height: 1.6;
+    padding: 40px 20px;
+    min-height: 100vh;
+  }
+
+  .container { max-width: 1400px; margin: 0 auto; }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 50px;
+    padding-bottom: 30px;
+    border-bottom: 1px solid var(--card-border);
+  }
+  .header h1 {
+    font-size: 2.2rem;
+    color: var(--accent-yellow);
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+  }
+  .header p {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+  }
+  .header .tags {
+    margin-top: 16px;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .header .tag {
+    background: rgba(240,192,64,0.1);
+    border: 1px solid rgba(240,192,64,0.3);
+    color: var(--accent-yellow);
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+  }
+
+  /* Section */
+  .section {
+    margin-bottom: 50px;
+  }
+  .section-title {
+    font-size: 1.4rem;
+    color: var(--accent-green);
+    margin-bottom: 24px;
+    padding-left: 14px;
+    border-left: 4px solid var(--accent-green);
+  }
+  .section-title.bonus { color: var(--accent-purple); border-color: var(--accent-purple); }
+  .section-title.summary { color: var(--accent-yellow); border-color: var(--accent-yellow); }
+
+  /* Matrix Table */
+  .matrix-wrapper {
+    overflow-x: auto;
+    border-radius: 12px;
+    border: 1px solid var(--card-border);
+  }
+  .matrix-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 1100px;
+  }
+  .matrix-table th {
+    background: #181820;
+    color: var(--accent-yellow);
+    padding: 14px 16px;
+    text-align: left;
+    font-size: 0.85rem;
+    font-weight: 600;
+    white-space: nowrap;
+    border-bottom: 2px solid var(--card-border);
+    position: sticky;
+    top: 0;
+  }
+  .matrix-table td {
+    padding: 16px;
+    border-bottom: 1px solid var(--card-border);
+    vertical-align: top;
+    font-size: 0.85rem;
+  }
+  .matrix-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .matrix-table tr:last-child td { border-bottom: none; }
+
+  .dim-name {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+  }
+  .dim-icon { font-size: 1.1rem; margin-right: 6px; }
+
+  .standard-cell { color: var(--text-secondary); }
+  .current-cell { color: #c8c8d8; }
+  .gap-cell { color: var(--text-secondary); }
+  .route-cell { color: var(--accent-blue); }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    margin-top: 4px;
+  }
+  .badge-strong { background: rgba(45,212,167,0.15); color: var(--accent-green); border: 1px solid rgba(45,212,167,0.3); }
+  .badge-mid { background: rgba(240,192,64,0.15); color: var(--accent-yellow); border: 1px solid rgba(240,192,64,0.3); }
+  .badge-weak { background: rgba(240,80,110,0.15); color: var(--accent-red); border: 1px solid rgba(240,80,110,0.3); }
+  .badge-blank { background: rgba(240,80,110,0.25); color: #ff7090; border: 1px solid rgba(240,80,110,0.4); }
+
+  ul.mini-list {
+    list-style: none;
+    padding: 0;
+    margin: 4px 0 0 0;
+  }
+  ul.mini-list li {
+    padding: 3px 0;
+    padding-left: 16px;
+    position: relative;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+  }
+  ul.mini-list li::before {
+    content: "▸";
+    position: absolute;
+    left: 0;
+    color: var(--accent-yellow);
+  }
+  ul.mini-list.route li::before { color: var(--accent-blue); }
+  ul.mini-list.gap li::before { color: var(--accent-red); }
+  ul.mini-list.current li::before { color: var(--accent-green); }
+
+  /* Radar Summary */
+  .radar-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+  }
+  .radar-item {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .radar-item:hover { transform: translateY(-2px); border-color: var(--accent-yellow); }
+  .radar-item .dim-num {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+  }
+  .radar-item .dim-label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+  }
+  .radar-bar {
+    height: 8px;
+    border-radius: 4px;
+    background: #222230;
+    overflow: hidden;
+    margin-bottom: 6px;
+  }
+  .radar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.5s;
+  }
+  .radar-status {
+    font-size: 0.72rem;
+    font-weight: 600;
+  }
+
+  /* Priority Table */
+  .priority-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--card-border);
+  }
+  .priority-table th {
+    background: #181820;
+    color: var(--accent-orange);
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 0.82rem;
+    font-weight: 600;
+  }
+  .priority-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--card-border);
+    font-size: 0.83rem;
+    color: var(--text-secondary);
+  }
+  .priority-table tr:last-child td { border-bottom: none; }
+  .priority-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .p-badge {
+    display: inline-block;
+    padding: 3px 12px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+  .p0 { background: rgba(240,80,110,0.2); color: #ff6080; }
+  .p1 { background: rgba(240,136,64,0.2); color: var(--accent-orange); }
+  .p2 { background: rgba(240,192,64,0.2); color: var(--accent-yellow); }
+  .p3 { background: rgba(77,141,240,0.15); color: var(--accent-blue); }
+
+  /* Advantage Cards */
+  .advantage-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+  }
+  .advantage-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 20px;
+    transition: border-color 0.2s;
+  }
+  .advantage-card:hover { border-color: var(--accent-green); }
+  .advantage-card h4 {
+    color: var(--accent-green);
+    font-size: 0.95rem;
+    margin-bottom: 8px;
+  }
+  .advantage-card p {
+    color: var(--text-secondary);
+    font-size: 0.82rem;
+  }
+
+  /* Core Logic */
+  .core-logic {
+    background: linear-gradient(135deg, rgba(240,192,64,0.08), rgba(45,212,167,0.08));
+    border: 1px solid rgba(240,192,64,0.2);
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin-top: 30px;
+  }
+  .core-logic h3 {
+    color: var(--accent-yellow);
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+  }
+  .core-logic p {
+    color: var(--text-secondary);
+    font-size: 0.88rem;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .header h1 { font-size: 1.6rem; }
+    .matrix-table { min-width: 800px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <h1>AI工程能力打造 Pipeline 矩阵</h1>
+    <p>对照新智元AI算法与工程岗位标准 · 基于实际工作产出评估</p>
+    <div class="tags">
+      <span class="tag">7个核心维度</span>
+      <span class="tag">4个加分项</span>
+      <span class="tag">4列矩阵：标准 / 现状 / 差距 / 整改路线</span>
+      <span class="tag">数据来源：3个工作目录实际文件</span>
+    </div>
+  </div>
+
+  <!-- 一、核心能力维度 -->
+  <div class="section">
+    <h2 class="section-title">一、核心能力维度（7项）</h2>
+    <div class="matrix-wrapper">
+      <table class="matrix-table">
+        <thead>
+          <tr>
+            <th style="width:120px">能力维度</th>
+            <th style="width:220px">标准（招聘要求）</th>
+            <th style="width:300px">现状（基于文件产出评估）</th>
+            <th style="width:260px">差距</th>
+            <th style="width:300px">整改路线</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <!-- 维度1 -->
+          <tr>
+            <td>
+              <span class="dim-icon">🔧</span>
+              <span class="dim-name">AI Coding<br>工具链</span>
+              <div><span class="badge badge-mid">部分覆盖</span></div>
+            </td>
+            <td class="standard-cell">
+              熟练使用 Claude Code、Codex、Hermes 等工具，有丰富 AI Coding 经验
+            </td>
+            <td class="current-cell">
+              已熟练使用 Claude Code（主力规划）、Qoder（L5文件执行）、Kimi Code CLI（L4扫描）、Codex CLI、DeepSeek CLI。建立多终端协作体系（R1-R9规则 + 能力等级L4-L6评级 + 任务包授权机制）
+              <ul class="mini-list current">
+                <li>5个终端 × 角色分工 × 能力评级</li>
+                <li>教训库24补丁记录模型边界</li>
+              </ul>
+              <span class="badge badge-blank">Hermes 零经验</span>
+            </td>
+            <td class="gap-cell">
+              <ul class="mini-list gap">
+                <li>Hermes 零经验</li>
+                <li>工具链偏向"协作调度"而非"工程编码"</li>
+                <li>缺少 IDE 内 pair programming 高频编码场景</li>
+              </ul>
+            </td>
+            <td class="route-cell">
+              <ul class="mini-list route">
+                <li>2周试用 Hermes，完成一个真实编码任务</li>
+                <li>将 Claude Code 升级为日常 pair programming 工具</li>
+                <li>补充一个非 EA 领域编码项目</li>
+              </ul>
+            </td>
+          </tr>
+
+          <!-- 维度2 -->
+          <tr>
+            <td>
+              <span class="dim-icon">🤖</span>
+              <span class="dim-name">Agent/Skills<br>设计方法论</span>
+              <div><span class="badge badge-strong">强项</span></div>
+            </td>
+            <td class="standard-cell">
+              精通 Agent、Skills 的设计方法论，并有真实落地经验
+            </td>
+            <td class="current-cell">
+              <strong>核心强项。</strong>7个A1 Skills封装完成；report_generator Skill（Python 8模块33KB）；process-db-skill（MCP 7工具+CLI+错误处理）；vn-standardize（Qoder Skill）；Agent架构V0.4（A0-A4+B系列）；D1-D6六维评分体系；L0-L16共17层方法论
+              <ul class="mini-list current">
+                <li>7+3个真实封装的 Skills/工具</li>
+                <li>D1-D6 六维 Agent 评估体系</li>
+                <li>L0-L16 方法论体系（17层）</li>
+              </ul>
+            </td>
+            <td class="gap-cell">
+              <ul class="mini-list gap">
+                <li>Skills 集中在 EA 领域，缺跨领域通用型</li>
+                <li>Agent 架构设计多、实际部署少</li>
+                <li>缺 Multi-Agent 编排实战</li>
+                <li>Skills 以 CLI/脚本为主，未封装为标准 API</li>
+              </ul>
+            </td>
+            <td class="route-cell">
+              <ul class="mini-list route">
+                <li>将 process-db-skill 发布为公开 MCP Server</li>
+                <li>选一个 B 系列 Agent 实际部署上线</li>
+                <li>设计 Multi-Agent 协作场景并验证</li>
+                <li>补充1-2个非 EA 领域 Skill</li>
+              </ul>
+            </td>
+          </tr>
+
+          <!-- 维度3 -->
+          <tr>
+            <td>
+              <span class="dim-icon">🧠</span>
+              <span class="dim-name">主流大模型<br>使用与边界</span>
+              <div><span class="badge badge-mid">部分覆盖</span></div>
+            </td>
+            <td class="standard-cell">
+              熟练使用 Claude、GPT、Gemini 等主流大模型，理解模型能力边界与工程约束
+            </td>
+            <td class="current-cell">
+              Claude（主力L6）、Kimi（L4）、DeepSeek（CLI级）、GPT（提及）。通过F2协作规范v0.5建立角色分工。教训库v0.1记录模型失误边界
+              <span class="badge badge-blank">Gemini 未使用</span>
+            </td>
+            <td class="gap-cell">
+              <ul class="mini-list gap">
+                <li>Gemini 零经验</li>
+                <li>能力边界理解偏"协作纪律"，缺"工程约束"</li>
+                <li>缺模型选型量化决策框架</li>
+                <li>未做过模型间 A/B 对比测试</li>
+              </ul>
+            </td>
+            <td class="route-cell">
+              <ul class="mini-list route">
+                <li>1周深度使用 Gemini，完成 Claude 对比</li>
+                <li>建立模型选型矩阵：场景×模型×成本×延迟×质量</li>
+                <li>研究 token 成本优化策略</li>
+                <li>教训库扩展到"工程约束"维度</li>
+              </ul>
+            </td>
+          </tr>
+
+          <!-- 维度4 -->
+          <tr>
+            <td>
+              <span class="dim-icon">📦</span>
+              <span class="dim-name">全流程<br>独立交付</span>
+              <div><span class="badge badge-strong">较强</span></div>
+            </td>
+            <td class="standard-cell">
+              能独立完成从需求拆解、智能体架构设计到上线交付的全流程
+            </td>
+            <td class="current-cell">
+              <strong>端到端交付能力强。</strong>数据底座（SQLite 4表+82 L3+396 L4映射+235 KPI穿透）；T1-T17数据表（17张CSV+同步脚本）；React/Vite/Tailwind前端（10+组件/10+页面）；MCP Server（Node.js+PostgreSQL）；规则识别操作系统（6阶段里程碑67节点×8域）
+              <ul class="mini-list current">
+                <li>17张数据表 + 同步脚本</li>
+                <li>React 前端应用</li>
+                <li>MCP Server + Python 50+脚本</li>
+              </ul>
+            </td>
+            <td class="gap-cell">
+              <ul class="mini-list gap">
+                <li>交付物集中在"设计/数据/文档"层</li>
+                <li>前端 app 仍在本地开发，未部署上线</li>
+                <li>MCP Server 未公开部署</li>
+                <li>缺 CI/CD、监控、日志等生产级实践</li>
+              </ul>
+            </td>
+            <td class="route-cell">
+              <ul class="mini-list route">
+                <li>将前端 app 部署到 Vercel</li>
+                <li>将 process-db-mcp 部署为公开服务</li>
+                <li>补充 CI/CD（GitHub Actions）</li>
+                <li>加监控/日志/用量统计</li>
+              </ul>
+            </td>
+          </tr>
+
+          <!-- 维度5 -->
+          <tr>
+            <td>
+              <span class="dim-icon">📡</span>
+              <span class="dim-name">技术嗅觉</span>
+              <div><span class="badge badge-mid">有一定基础</span></div>
+            </td>
+            <td class="standard-cell">
+              全球 AI 工程领域每天都有新模型、新框架、新协议，要能在第一时间判断哪个值得接入工作流
+            </td>
+            <td class="current-cell">
+              已主动接入 MCP 协议、多终端 CLI 工具链、Obsidian 知识库。有 watcher.py+daily_reporter.py 自动化信息流
+              <span class="badge badge-weak">信息源集中在 Mark 的 experience-engine</span>
+            </td>
+            <td class="gap-cell">
+              <ul class="mini-list gap">
+                <li>缺系统性 AI 技术雷达</li>
+                <li>对前沿协议（A2A / OpenAI Agents SDK / LangGraph）缺跟踪</li>
+                <li>接入新工具决策偏"Mark 驱动"而非自主判断</li>
+                <li>缺技术博客/笔记对外输出</li>
+              </ul>
+            </td>
+            <td class="route-cell">
+              <ul class="mini-list route">
+                <li>建立 AI 技术雷达（每周扫描 HF/GitHub/arXiv）</li>
+                <li>深度研究2-3个前沿框架，各做 demo</li>
+                <li>将多终端协作体系写成技术博客发布</li>
+                <li>建立独立于 Mark 的技术信息源</li>
+              </ul>
+            </td>
+          </tr>
+
+          <!-- 维度6 -->
+          <tr>
+            <td>
+              <span class="dim-icon">⚡</span>
+              <span class="dim-name">工程落地<br>效率</span>
+              <div><span class="badge badge-mid">部分覆盖</span></div>
+            </td>
+            <td class="standard-cell">
+              把前沿模型能力封装成 Agent/Skills/工具，真正落到生产场景，把工程交付效率拉到极致
+            </td>
+            <td class="current-cell">
+              有封装能力（10+ Skills/工具）。有生产场景（EA 67节点×8域，104条规则）。有自动化管道（Python同步脚本）。有沟通版HTML/MD报告生成标准
+              <span class="badge badge-weak">"生产场景"是企业内部流程分析，非外部产品</span>
+            </td>
+            <td class="gap-cell">
+              <ul class="mini-list gap">
+                <li>Skills/Agent 缺少"被他人使用"验证</li>
+                <li>工程效率偏"分析效率"非"交付效率"</li>
+                <li>缺版本管理/包发布/文档自动化</li>
+                <li>无量化"效率提升"数据</li>
+              </ul>
+            </td>
+            <td class="route-cell">
+              <ul class="mini-list route">
+                <li>选1-2个 Skill 发布到 npm/PyPI</li>
+                <li>建立量化效率指标（使用前后时间对比）</li>
+                <li>用 GitHub+CI/CD+文档自动化补齐基建</li>
+                <li>设计"Skill市场"概念原型</li>
+              </ul>
+            </td>
+          </tr>
+
+          <!-- 维度7 -->
+          <tr>
+            <td>
+              <span class="dim-icon">📰</span>
+              <span class="dim-name">内容行业<br>经验</span>
+              <div><span class="badge badge-weak">弱项</span></div>
+            </td>
+            <td class="standard-cell">
+              有内容行业经验或深度媒体消费习惯，知道什么是好的内容
+            </td>
+            <td class="current-cell">
+              背景是保险 MGA 平台运营，非内容/媒体行业。但有深度文档写作能力（L0-L16方法论+教训库+工作流总纲），有沟通版HTML/MD报告生成标准，说明有"内容质量标准"意识
+            </td>
+            <td class="gap-cell">
+              <ul class="mini-list gap">
+                <li>无直接内容行业经验</li>
+                <li>缺面向 C 端的内容产品</li>
+                <li>"好内容"判断偏企业内部文档</li>
+                <li>无社交媒体内容创作经验</li>
+              </ul>
+            </td>
+            <td class="route-cell">
+              <ul class="mini-list route">
+                <li>将方法论体系提炼为系列技术文章发布</li>
+                <li>建立每日 AI 技术内容消费习惯</li>
+                <li>用 AI 辅助生成1-2篇深度内容</li>
+                <li>若目标公司是内容方向需重点补齐</li>
+              </ul>
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 二、加分项维度 -->
+  <div class="section">
+    <h2 class="section-title bonus">二、加分项维度（4项）</h2>
+    <div class="matrix-wrapper">
+      <table class="matrix-table">
+        <thead>
+          <tr>
+            <th style="width:120px">能力维度</th>
+            <th style="width:220px">标准（加分项）</th>
+            <th style="width:300px">现状</th>
+            <th style="width:260px">差距</th>
+            <th style="width:300px">整改路线</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <!-- 维度8 -->
+          <tr>
+            <td>
+              <span class="dim-icon">🏢</span>
+              <span class="dim-name">企业协作<br>平台集成</span>
+              <div><span class="badge badge-mid">部分覆盖</span></div>
+            </td>
+            <td class="standard-cell">有飞书 CLI、自动化流程、Agent 开发经验，理解企业级协作平台集成机制</td>
+            <td class="current-cell">
+              有自动化流程（watcher.py + daily_reporter.py 推送企业微信）。有 Syncthing 多设备同步。有 MCP Server 集成
+              <span class="badge badge-blank">未使用飞书 CLI</span>
+            </td>
+            <td class="gap-cell">
+              <ul class="mini-list gap">
+                <li>飞书 CLI 零经验</li>
+                <li>自动化偏文件同步/通知</li>
+                <li>缺"Agent→协作平台→人"闭环集成</li>
+              </ul>
+            </td>
+            <td class="route-cell">
+              <ul class="mini-list route">
+                <li>用飞书开放平台 API 开发最小集成</li>
+                <li>研究飞书 CLI，用真实场景验证</li>
+                <li>将 watcher.py 从企业微信迁移到飞书</li>
+              </ul>
+            </td>
+          </tr>
+
+          <!-- 维度9 -->
+          <tr>
+            <td>
+              <span class="dim-icon">🖥️</span>
+              <span class="dim-name">Computer Use<br>Browser Use</span>
+              <div><span class="badge badge-blank">完全空白</span></div>
+            </td>
+            <td class="standard-cell">有 Computer Use、Browser Use 等前沿 Agent 能力的实操经验</td>
+            <td class="current-cell">
+              <strong>完全空白。</strong>未发现任何 Computer Use / Browser Use 实操记录。Agent 架构（V0.4）聚焦数据处理/报告生成，无 UI 自动化能力
+            </td>
+            <td class="gap-cell">
+              <ul class="mini-list gap">
+                <li>完全空白——最显著的硬缺口</li>
+                <li>前沿 Agent 能力是"AI工程天花板"核心指标</li>
+                <li>Computer Use + Browser Use 是2024-2025最热方向</li>
+              </ul>
+            </td>
+            <td class="route-cell">
+              <ul class="mini-list route">
+                <li>用 Claude Computer Use API 完成真实任务</li>
+                <li>用 browser-use / Playwright+AI 做浏览器自动化</li>
+                <li>将 Computer Use 集成到 Agent 架构 V0.5</li>
+                <li>投入优先级最高</li>
+              </ul>
+            </td>
+          </tr>
+
+          <!-- 维度10 -->
+          <tr>
+            <td>
+              <span class="dim-icon">💰</span>
+              <span class="dim-name">大模型<br>成本优化</span>
+              <div><span class="badge badge-mid">间接覆盖</span></div>
+            </td>
+            <td class="standard-cell">有大模型成本优化经验</td>
+            <td class="current-cell">
+              有多终端分工（Kimi 做扫描隐含成本优化）。有 L4 批量审核模式。有 Context Window SOP（T1-T5触发条件控制上下文长度）
+              <span class="badge badge-weak">无显式成本优化实践</span>
+            </td>
+            <td class="gap-cell">
+              <ul class="mini-list gap">
+                <li>无显式 token 成本追踪/预算管理</li>
+                <li>缺 prompt 压缩/缓存/分级路由</li>
+                <li>未用过低成本模型替代方案</li>
+                <li>无成本优化量化数据</li>
+              </ul>
+            </td>
+            <td class="route-cell">
+              <ul class="mini-list route">
+                <li>建立 token 用量追踪</li>
+                <li>实施模型分级路由（Haiku/Sonnet/Opus）</li>
+                <li>实践 prompt caching</li>
+                <li>输出"成本优化实践报告"</li>
+              </ul>
+            </td>
+          </tr>
+
+          <!-- 维度11 -->
+          <tr>
+            <td>
+              <span class="dim-icon">🎓</span>
+              <span class="dim-name">计算机/AI<br>专业背景</span>
+              <div><span class="badge badge-weak">弱项</span></div>
+            </td>
+            <td class="standard-cell">计算机 / AI 相关专业背景</td>
+            <td class="current-cell">
+              核心能力偏运营/流程架构/方法论设计。但有大量实战编码经验（Python 50+/Node.js MCP/React 前端/SQL 数据库），工程能力不亚于 CS 背景者
+            </td>
+            <td class="gap-cell">
+              <ul class="mini-list gap">
+                <li>缺 CS/AI 学历背书</li>
+                <li>缺算法/数据结构/ML 理论科班基础</li>
+                <li>但实战经验丰富，"经验>学历"在 AI 工程领域成立</li>
+              </ul>
+            </td>
+            <td class="route-cell">
+              <ul class="mini-list route">
+                <li>不需要补学历——用作品集弥补</li>
+                <li>补充1-2个 ML/AI 理论实践</li>
+                <li>整合方法论+工程实践为作品集网站</li>
+                <li>准备"业务→技术"转化路径叙事</li>
+              </ul>
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 三、能力覆盖总览 -->
+  <div class="section">
+    <h2 class="section-title summary">三、能力覆盖总览</h2>
+    <div class="radar-grid">
+
+      <div class="radar-item">
+        <div class="dim-num">维度1</div>
+        <div class="dim-label">AI Coding工具链</div>
+        <div class="radar-bar"><div class="radar-fill" style="width:60%;background:var(--accent-yellow)"></div></div>
+        <div class="radar-status" style="color:var(--accent-yellow)">部分覆盖</div>
+      </div>
+      <div class="radar-item">
+        <div class="dim-num">维度2</div>
+        <div class="dim-label">Agent/Skills设计</div>
+        <div class="radar-bar"><div class="radar-fill" style="width:85%;background:var(--accent-green)"></div></div>
+        <div class="radar-status" style="color:var(--accent-green)">强项 ✓</div>
+      </div>
+      <div class="radar-item">
+        <div class="dim-num">维度3</div>
+        <div class="dim-label">大模型使用与边界</div>
+        <div class="radar-bar"><div class="radar-fill" style="width:55%;background:var(--accent-yellow)"></div></div>
+        <div class="radar-status" style="color:var(--accent-yellow)">部分覆盖</div>
+      </div>
+      <div class="radar-item">
+        <div class="dim-num">维度4</div>
+        <div class="dim-label">全流程独立交付</div>
+        <div class="radar-bar"><div class="radar-fill" style="width:75%;background:var(--accent-green)"></div></div>
+        <div class="radar-status" style="color:var(--accent-green)">较强 ✓</div>
+      </div>
+      <div class="radar-item">
+        <div class="dim-num">维度5</div>
+        <div class="dim-label">技术嗅觉</div>
+        <div class="radar-bar"><div class="radar-fill" style="width:45%;background:var(--accent-orange)"></div></div>
+        <div class="radar-status" style="color:var(--accent-orange)">有一定基础</div>
+      </div>
+      <div class="radar-item">
+        <div class="dim-num">维度6</div>
+        <div class="dim-label">工程落地效率</div>
+        <div class="radar-bar"><div class="radar-fill" style="width:55%;background:var(--accent-yellow)"></div></div>
+        <div class="radar-status" style="color:var(--accent-yellow)">部分覆盖</div>
+      </div>
+      <div class="radar-item">
+        <div class="dim-num">维度7</div>
+        <div class="dim-label">内容行业经验</div>
+        <div class="radar-bar"><div class="radar-fill" style="width:25%;background:var(--accent-red)"></div></div>
+        <div class="radar-status" style="color:var(--accent-red)">弱项</div>
+      </div>
+      <div class="radar-item">
+        <div class="dim-num">维度8</div>
+        <div class="dim-label">企业协作平台集成</div>
+        <div class="radar-bar"><div class="radar-fill" style="width:40%;background:var(--accent-yellow)"></div></div>
+        <div class="radar-status" style="color:var(--accent-yellow)">部分覆盖</div>
+      </div>
+      <div class="radar-item">
+        <div class="dim-num">维度9</div>
+        <div class="dim-label">Computer Use</div>
+        <div class="radar-bar"><div class="radar-fill" style="width:5%;background:var(--accent-red)"></div></div>
+        <div class="radar-status" style="color:var(--accent-red)">完全空白</div>
+      </div>
+      <div class="radar-item">
+        <div class="dim-num">维度10</div>
+        <div class="dim-label">大模型成本优化</div>
+        <div class="radar-bar"><div class="radar-fill" style="width:30%;background:var(--accent-orange)"></div></div>
+        <div class="radar-status" style="color:var(--accent-orange)">间接覆盖</div>
+      </div>
+      <div class="radar-item">
+        <div class="dim-num">维度11</div>
+        <div class="dim-label">CS/AI专业背景</div>
+        <div class="radar-bar"><div class="radar-fill" style="width:20%;background:var(--accent-red)"></div></div>
+        <div class="radar-status" style="color:var(--accent-red)">弱项</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 四、优先级排序 -->
+  <div class="section">
+    <h2 class="section-title summary">四、整改优先级排序</h2>
+    <table class="priority-table">
+      <thead>
+        <tr>
+          <th style="width:80px">优先级</th>
+          <th style="width:200px">维度</th>
+          <th>理由</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="p-badge p0">P0</span></td>
+          <td>维度9 · Computer Use / Browser Use</td>
+          <td>完全空白且是招聘明确加分项，投入产出比最高</td>
+        </tr>
+        <tr>
+          <td><span class="p-badge p0">P0</span></td>
+          <td>维度4 · 全流程交付（部署上线）</td>
+          <td>已有能力但未"上线"，只需最后一步即可从"项目"变"产品"</td>
+        </tr>
+        <tr>
+          <td><span class="p-badge p1">P1</span></td>
+          <td>维度2 · Agent 实际部署（B系列上线）</td>
+          <td>设计多执行少，需要一个真实跑通的 Agent</td>
+        </tr>
+        <tr>
+          <td><span class="p-badge p1">P1</span></td>
+          <td>维度3 · Gemini + 模型选型矩阵</td>
+          <td>快速补齐，1-2周可完成</td>
+        </tr>
+        <tr>
+          <td><span class="p-badge p1">P1</span></td>
+          <td>维度6 · Skill 发布到公开包管理器</td>
+          <td>从自用→公开，验证可复用性</td>
+        </tr>
+        <tr>
+          <td><span class="p-badge p2">P2</span></td>
+          <td>维度5 · AI技术雷达 + 前沿框架 demo</td>
+          <td>需要持续投入，但短期可见效</td>
+        </tr>
+        <tr>
+          <td><span class="p-badge p2">P2</span></td>
+          <td>维度8 · 飞书 CLI 集成</td>
+          <td>若目标公司用飞书则优先级提升</td>
+        </tr>
+        <tr>
+          <td><span class="p-badge p2">P2</span></td>
+          <td>维度10 · Token 成本优化</td>
+          <td>实践报告可快速产出</td>
+        </tr>
+        <tr>
+          <td><span class="p-badge p3">P3</span></td>
+          <td>维度1 · Hermes 试用</td>
+          <td>工具替换成本低，但非核心</td>
+        </tr>
+        <tr>
+          <td><span class="p-badge p3">P3</span></td>
+          <td>维度7 · 内容行业切入</td>
+          <td>长期方向，需判断目标公司是否内容方向</td>
+        </tr>
+        <tr>
+          <td><span class="p-badge p3">P3</span></td>
+          <td>维度11 · CS 背景补齐</td>
+          <td>用作品集弥补，不需要学历</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 五、独特优势 -->
+  <div class="section">
+    <h2 class="section-title summary">五、独特优势（招聘标准中未提及但你有）</h2>
+    <div class="advantage-grid">
+      <div class="advantage-card">
+        <h4>① 方法论体系深度</h4>
+        <p>L0-L16共17层AI人协同方法论，从0到1自建体系。多数AI工程师只有工具使用经验，缺少方法论构建能力</p>
+      </div>
+      <div class="advantage-card">
+        <h4>② 教训库自进化机制</h4>
+        <p>24个补丁的真实失误记录 + 自进化闭环（教训→任务包注意事项→规范补充），证明"把错误变资产"的工程纪律</p>
+      </div>
+      <div class="advantage-card">
+        <h4>③ 多终端协作调度</h4>
+        <p>5个终端 × 角色分工 × 能力评级 × 任务包授权——这本身就是 Agent 编排的实战经验</p>
+      </div>
+      <div class="advantage-card">
+        <h4>④ 企业架构纵深</h4>
+        <p>从L1战略到L5活动、从价值流到KPI穿透、从规则提取到SOP闭环——有真实的企业级复杂系统建模经验</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Core Logic -->
+  <div class="core-logic">
+    <h3>整改核心逻辑</h3>
+    <p>把"内部验证"变成"外部可见"，把"设计文档"变成"运行服务"。</p>
+    <p style="margin-top:6px; font-size:0.8rem; color: var(--text-secondary);">你大部分能力已经到位，差的是最后一步"推上线"。</p>
+  </div>
+
+  <!-- Footer -->
+  <div style="text-align:center; margin-top:40px; padding-top:20px; border-top:1px solid var(--card-border); color:var(--text-secondary); font-size:0.78rem;">
+    <p>生成日期：2026-06-30 · 数据来源：规则前端设计 / Jasper AI协同经验引擎 / 规则分析（Jasper）三大目录实际文件</p>
+  </div>
+
+</div>
+</body>
+</html>

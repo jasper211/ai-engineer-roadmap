@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI工程能力整改执行路线图</title>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --card-bg: #13131a;
+    --card-border: #222230;
+    --text-primary: #e8e8f0;
+    --text-secondary: #8888a0;
+    --accent-yellow: #f0c040;
+    --accent-green: #2dd4a7;
+    --accent-red: #f0506e;
+    --accent-blue: #4d8df0;
+    --accent-orange: #f08840;
+    --accent-purple: #a060f0;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text-primary);
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+    line-height: 1.65;
+    padding: 40px 20px;
+    min-height: 100vh;
+  }
+
+  .container { max-width: 1200px; margin: 0 auto; }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 48px;
+    padding-bottom: 30px;
+    border-bottom: 1px solid var(--card-border);
+  }
+  .header h1 {
+    font-size: 2rem;
+    color: var(--accent-yellow);
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+  }
+  .header p {
+    color: var(--text-secondary);
+    font-size: 0.92rem;
+  }
+
+  /* Section */
+  .section {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    padding: 28px;
+    margin-bottom: 32px;
+  }
+  .section-title {
+    font-size: 1.25rem;
+    color: var(--accent-green);
+    margin-bottom: 20px;
+    padding-left: 12px;
+    border-left: 4px solid var(--accent-green);
+  }
+  .section-title.p0 { color: var(--accent-red); border-color: var(--accent-red); }
+  .section-title.p1 { color: var(--accent-orange); border-color: var(--accent-orange); }
+  .section-title.p2 { color: var(--accent-yellow); border-color: var(--accent-yellow); }
+  .section-title.p3 { color: var(--accent-blue); border-color: var(--accent-blue); }
+  .section-title.method { color: var(--accent-purple); border-color: var(--accent-purple); }
+
+  /* Intro box */
+  .intro-box {
+    background: linear-gradient(135deg, rgba(240,192,64,0.08), rgba(45,212,167,0.08));
+    border: 1px solid rgba(240,192,64,0.2);
+    border-radius: 12px;
+    padding: 22px;
+    margin-bottom: 32px;
+  }
+  .intro-box h3 {
+    color: var(--accent-yellow);
+    font-size: 1.05rem;
+    margin-bottom: 10px;
+  }
+  .intro-box p {
+    color: var(--text-secondary);
+    font-size: 0.86rem;
+  }
+
+  /* Task card */
+  .task {
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 18px;
+    background: rgba(255,255,255,0.01);
+  }
+  .task:last-child { margin-bottom: 0; }
+  .task:hover { border-color: rgba(255,255,255,0.12); }
+  .task-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .task-id {
+    background: rgba(240,192,64,0.15);
+    color: var(--accent-yellow);
+    padding: 3px 12px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .task-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  .task-desc {
+    color: var(--text-secondary);
+    font-size: 0.84rem;
+    margin-bottom: 14px;
+  }
+
+  /* Cycle grid */
+  .cycle-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+  .cycle-card {
+    background: rgba(0,0,0,0.25);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    padding: 14px;
+  }
+  .cycle-card h4 {
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .cycle-card.plan h4 { color: var(--accent-blue); }
+  .cycle-card.comm h4 { color: var(--accent-purple); }
+  .cycle-card.exec h4 { color: var(--accent-green); }
+  .cycle-card.review h4 { color: var(--accent-orange); }
+  .cycle-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .cycle-card li {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    padding: 3px 0;
+    padding-left: 14px;
+    position: relative;
+  }
+  .cycle-card li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: var(--text-secondary);
+  }
+
+  /* Deliverables & Criteria */
+  .deliver-box {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 16px;
+  }
+  .deliver-card {
+    background: rgba(0,0,0,0.25);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    padding: 14px;
+  }
+  .deliver-card h4 {
+    font-size: 0.8rem;
+    color: var(--accent-green);
+    margin-bottom: 8px;
+  }
+  .deliver-card ul {
+    list-style: none;
+    padding: 0;
+  }
+  .deliver-card li {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    padding: 3px 0;
+    padding-left: 14px;
+    position: relative;
+  }
+  .deliver-card li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: var(--accent-green);
+    font-size: 0.7rem;
+  }
+
+  /* Tables */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--card-border);
+    margin-top: 14px;
+  }
+  .data-table th {
+    background: #181820;
+    color: var(--accent-yellow);
+    padding: 12px 14px;
+    text-align: left;
+    font-size: 0.78rem;
+    font-weight: 600;
+  }
+  .data-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--card-border);
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+  }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+  /* Badges */
+  .badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+  }
+  .badge-p0 { background: rgba(240,80,110,0.15); color: var(--accent-red); }
+  .badge-p1 { background: rgba(240,136,64,0.15); color: var(--accent-orange); }
+  .badge-p2 { background: rgba(240,192,64,0.15); color: var(--accent-yellow); }
+  .badge-p3 { background: rgba(77,141,240,0.15); color: var(--accent-blue); }
+  .badge-done { background: rgba(45,212,167,0.15); color: var(--accent-green); }
+
+  /* Timeline */
+  .timeline {
+    position: relative;
+    padding-left: 24px;
+  }
+  .timeline::before {
+    content: "";
+    position: absolute;
+    left: 6px;
+    top: 8px;
+    bottom: 8px;
+    width: 2px;
+    background: var(--card-border);
+  }
+  .timeline-item {
+    position: relative;
+    margin-bottom: 22px;
+  }
+  .timeline-item::before {
+    content: "";
+    position: absolute;
+    left: -22px;
+    top: 4px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--accent-yellow);
+    border: 2px solid var(--card-bg);
+  }
+  .timeline-item.p0::before { background: var(--accent-red); }
+  .timeline-item.p1::before { background: var(--accent-orange); }
+  .timeline-item.p2::before { background: var(--accent-yellow); }
+  .timeline-item.p3::before { background: var(--accent-blue); }
+  .timeline-week {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+  }
+  .timeline-content {
+    font-size: 0.86rem;
+    color: var(--text-primary);
+  }
+
+  /* Checklist */
+  .checklist {
+    list-style: none;
+    padding: 0;
+  }
+  .checklist li {
+    padding: 8px 0;
+    border-bottom: 1px dashed var(--card-border);
+    font-size: 0.84rem;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .checkbox {
+    width: 16px;
+    height: 16px;
+    border: 1.5px solid var(--text-secondary);
+    border-radius: 4px;
+    flex-shrink: 0;
+    margin-top: 3px;
+  }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid var(--card-border);
+    color: var(--text-secondary);
+    font-size: 0.78rem;
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .cycle-grid { grid-template-columns: repeat(2, 1fr); }
+    .deliver-box { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    .cycle-grid { grid-template-columns: 1fr; }
+    .task-header { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <h1>AI工程能力整改执行路线图</h1>
+    <p>从规划 → 沟通 → 执行 → 复盘，全流程跟踪直到满足维度工作要求</p>
+  </div>
+
+  <!-- Intro -->
+  <div class="intro-box">
+    <h3>🎯 整改核心逻辑</h3>
+    <p>把"内部验证"变成"外部可见"，把"设计文档"变成"运行服务"。你大部分能力已经到位，差的是最后一步"推上线"。本路线图按 P0/P1/P2/P3 优先级排期，每个任务都包含完整的「规划→沟通→执行→复盘」闭环。</p>
+  </div>
+
+  <!-- Phase 0 -->
+  <div class="section">
+    <h2 class="section-title method">Phase 0 · 启动准备（第0周）</h2>
+    <p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:18px;">在动手整改前，先建立基线、决策机制和跟踪系统。这一周的投入会让后续所有执行事半功倍。</p>
+
+    <div class="cycle-grid">
+      <div class="cycle-card plan">
+        <h4>📋 规划</h4>
+        <ul>
+          <li>确认目标岗位的城市/职级/业务方向</li>
+          <li>复用本路线图，删除不相关维度</li>
+          <li>为每个维度定义"满足标准"的验收清单</li>
+          <li>建立个人项目看板（Notion/飞书/Excel）</li>
+        </ul>
+      </div>
+      <div class="cycle-card comm">
+        <h4>💬 沟通</h4>
+        <ul>
+          <li>向 Mark 同步整改计划，确认可用工作时间</li>
+          <li>与 AI 协作终端约定每周 checkpoint 节奏</li>
+          <li>如需要，找1位 CS/AI 背景朋友做 mentor</li>
+        </ul>
+      </div>
+      <div class="cycle-card exec">
+        <h4>🔨 执行</h4>
+        <ul>
+          <li>创建 GitHub repo：ai-engineer-roadmap</li>
+          <li>建立目录：/plan /execution /review /artifacts</li>
+          <li>初始化决策日志和周报模板</li>
+        </ul>
+      </div>
+      <div class="cycle-card review">
+        <h4>🔍 复盘</h4>
+        <ul>
+          <li>检查基线文档是否完整</li>
+          <li>确认P0任务是否具备启动条件</li>
+          <li>输出 Phase 0 完成确认书</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="deliver-box">
+      <div class="deliver-card">
+        <h4>交付物</h4>
+        <ul>
+          <li>个人整改项目看板</li>
+          <li>GitHub repo 初始化</li>
+          <li>决策日志模板</li>
+          <li>周报模板</li>
+        </ul>
+      </div>
+      <div class="deliver-card">
+        <h4>验收标准</h4>
+        <ul>
+          <li>看板包含全部11个维度+优先级</li>
+          <li>每个维度有可量化的 Done Criteria</li>
+          <li>每周至少1次 checkpoint</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Phase 1 -->
+  <div class="section">
+    <h2 class="section-title p0">Phase 1 · P0 级整改（第1-4周）</h2>
+    <p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:18px;">P0 是最关键的硬缺口。Computer Use / Browser Use 完全空白，必须优先补齐；同时把已有能力"推上线"，让外部可见。</p>
+
+    <!-- Task 1.1 -->
+    <div class="task">
+      <div class="task-header">
+        <span class="task-id">P0-01</span>
+        <span class="task-title">Computer Use / Browser Use 实操</span>
+        <span class="badge badge-p0">维度9</span>
+      </div>
+      <p class="task-desc">用 Claude Computer Use API 和 browser-use / Playwright+AI 完成真实浏览器自动化任务，并整理成可复用的 Skill。</p>
+      <div class="cycle-grid">
+        <div class="cycle-card plan">
+          <h4>规划</h4>
+          <ul>
+            <li>选定3个真实场景（如：自动化填表、网页信息提取、批量下载）</li>
+            <li>对比 Claude Computer Use vs browser-use vs Playwright+AI</li>
+            <li>制定技术选型决策卡</li>
+          </ul>
+        </div>
+        <div class="cycle-card comm">
+          <h4>沟通</h4>
+          <ul>
+            <li>向 Mark 说明这是补齐"前沿 Agent 能力"的必要投入</li>
+            <li>找 Claude/Qoder 确认环境配置（API key / Python 环境）</li>
+            <li>记录技术选型理由到决策日志</li>
+          </ul>
+        </div>
+        <div class="cycle-card exec">
+          <h4>执行</h4>
+          <ul>
+            <li>Day 1-2：申请 Claude Computer Use API，跑官方 demo</li>
+            <li>Day 3-5：完成1个真实业务场景（建议：EA 流程图网页自动化抓取）</li>
+            <li>Day 6-7：用 browser-use 实现同一任务，对比成本和稳定性</li>
+            <li>Week 2-3：封装为可复用 Skill（browser_agent_skill）</li>
+          </ul>
+        </div>
+        <div class="cycle-card review">
+          <h4>复盘</h4>
+          <ul>
+            <li>输出"Computer Use 实践报告"</li>
+            <li>量化：成功率、耗时、成本、失败 case</li>
+            <li>将 Skill 纳入 Agent 架构 V0.5 设计</li>
+          </ul>
+        </div>
+      </div>
+      <div class="deliver-box">
+        <div class="deliver-card">
+          <h4>交付物</h4>
+          <ul>
+            <li>3个场景 demo 录屏或截图</li>
+            <li>browser_agent_skill 封装文件</li>
+            <li>Computer Use 实践报告</li>
+          </ul>
+        </div>
+        <div class="deliver-card">
+          <h4>满足标准</h4>
+          <ul>
+            <li>能独立完成网页自动化任务</li>
+            <li>能解释 Computer Use 与传统自动化的差异</li>
+            <li>有可复用的 Skill/代码资产</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Task 1.2 -->
+    <div class="task">
+      <div class="task-header">
+        <span class="task-id">P0-02</span>
+        <span class="task-title">前端 App 部署上线（Vercel）</span>
+        <span class="badge badge-p0">维度4</span>
+      </div>
+      <p class="task-desc">将 Agent_价值节点-规则分析前端 从本地开发状态部署到 Vercel，获得可对外访问的 URL。</p>
+      <div class="cycle-grid">
+        <div class="cycle-card plan">
+          <h4>规划</h4>
+          <ul>
+            <li>检查 app/package.json 和 build 脚本</li>
+            <li>确认是否需要后端 API 支持</li>
+            <li>准备 Vercel 部署配置</li>
+          </ul>
+        </div>
+        <div class="cycle-card comm">
+          <h4>沟通</h4>
+          <ul>
+            <li>确认是否使用个人 Vercel 账号</li>
+            <li>向 Qoder/Claude 请求使用 vercel-deploy Skill</li>
+            <li>确认数据隐私：是否可用脱敏数据</li>
+          </ul>
+        </div>
+        <div class="cycle-card exec">
+          <h4>执行</h4>
+          <ul>
+            <li>Day 1：初始化 Vercel 项目并连接 GitHub</li>
+            <li>Day 2：配置环境变量，处理构建错误</li>
+            <li>Day 3：部署成功，生成公开 URL</li>
+            <li>Day 4：做移动端适配和基础性能检查</li>
+          </ul>
+        </div>
+        <div class="cycle-card review">
+          <h4>复盘</h4>
+          <ul>
+            <li>记录部署踩坑清单</li>
+            <li>更新项目 README，添加线上地址</li>
+            <li>截图保存部署成功证据</li>
+          </ul>
+        </div>
+      </div>
+      <div class="deliver-box">
+        <div class="deliver-card">
+          <h4>交付物</h4>
+          <ul>
+            <li>Vercel 线上 URL</li>
+            <li>部署踩坑记录</li>
+            <li>更新后的 README</li>
+          </ul>
+        </div>
+        <div class="deliver-card">
+          <h4>满足标准</h4>
+          <ul>
+            <li>任何外部用户可通过 URL 访问</li>
+            <li>页面核心功能在线可用</li>
+            <li>有 GitHub → Vercel 自动部署流程</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Task 1.3 -->
+    <div class="task">
+      <div class="task-header">
+        <span class="task-id">P0-03</span>
+        <span class="task-title">process-db-mcp 公开部署</span>
+        <span class="badge badge-p0">维度4</span>
+      </div>
+      <p class="task-desc">将 process-db-mcp 从本地服务部署到 Railway/Render 等平台，让其他 AI 工具可以调用。</p>
+      <div class="cycle-grid">
+        <div class="cycle-card plan">
+          <h4>规划</h4>
+          <ul>
+            <li>评估 Railway / Render / Fly.io 成本与便利性</li>
+            <li>确认 PostgreSQL/Metabase 连接方式</li>
+            <li>准备 Dockerfile 或平台配置文件</li>
+          </ul>
+        </div>
+        <div class="cycle-card comm">
+          <h4>沟通</h4>
+          <ul>
+            <li>确认数据库访问权限（是否可用测试库）</li>
+            <li>向 Mark 说明公开部署的必要性和风险</li>
+            <li>记录部署平台选择理由</li>
+          </ul>
+        </div>
+        <div class="cycle-card exec">
+          <h4>执行</h4>
+          <ul>
+            <li>Day 1：选择平台，配置环境变量</li>
+            <li>Day 2：部署并测试 MCP 工具调用</li>
+            <li>Day 3：提供公开 endpoint 和使用说明</li>
+            <li>Day 4：用 Cursor/Claude Desktop 验证连接</li>
+          </ul>
+        </div>
+        <div class="cycle-card review">
+          <h4>复盘</h4>
+          <ul>
+            <li>输出 MCP Server 部署指南</li>
+            <li>记录延迟、稳定性、成本数据</li>
+            <li>更新 skill.md 为公开版</li>
+          </ul>
+        </div>
+      </div>
+      <div class="deliver-box">
+        <div class="deliver-card">
+          <h4>交付物</h4>
+          <ul>
+            <li>公开 MCP Server endpoint</li>
+            <li>部署指南文档</li>
+            <li>Cursor/Claude Desktop 配置示例</li>
+          </ul>
+        </div>
+        <div class="deliver-card">
+          <h4>满足标准</h4>
+          <ul>
+            <li>外部 AI 客户端可成功连接</li>
+            <li>7个工具均可正常调用</li>
+            <li>有错误处理和限流机制</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:24px;padding:16px;background:rgba(240,80,110,0.08);border:1px solid rgba(240,80,110,0.2);border-radius:8px;">
+      <h4 style="color:var(--accent-red);font-size:0.85rem;margin-bottom:6px;">Phase 1 完成标志</h4>
+      <p style="color:var(--text-secondary);font-size:0.8rem;">Computer Use 实操报告产出 + 前端 App 上线 + MCP Server 公开可用。此时你的"外部可见资产"从0提升到3个。</p>
+    </div>
+  </div>
+
+  <!-- Phase 2 -->
+  <div class="section">
+    <h2 class="section-title p1">Phase 2 · P1 级整改（第5-8周）</h2>
+    <p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:18px;">P1 任务是"从设计到运行"和"补齐短板"。让 Agent 真正跑起来，让模型选型科学化，让 Skill 可被他人使用。</p>
+
+    <!-- Task 2.1 -->
+    <div class="task">
+      <div class="task-header">
+        <span class="task-id">P1-01</span>
+        <span class="task-title">B系列 Agent 实际部署（B-RPT 报告生成）</span>
+        <span class="badge badge-p1">维度2</span>
+      </div>
+      <p class="task-desc">选一个 B 系列恒常 Agent（推荐 B-RPT 岗位报告生成），实际部署并跑通"输入岗位名称→自动输出报告"的全流程。</p>
+      <div class="cycle-grid">
+        <div class="cycle-card plan">
+          <h4>规划</h4>
+          <ul>
+            <li>明确 B-RPT 的输入、输出、触发条件</li>
+            <li>设计最小可行版本（MVP）</li>
+            <li>确定部署形态：CLI / Web API / MCP Tool</li>
+          </ul>
+        </div>
+        <div class="cycle-card comm">
+          <h4>沟通</h4>
+          <ul>
+            <li>与 Mark 确认报告生成需求是否仍然有效</li>
+            <li>确认数据源：SQLite db / CSV / PostgreSQL</li>
+            <li>约定报告质量验收标准</li>
+          </ul>
+        </div>
+        <div class="cycle-card exec">
+          <h4>执行</h4>
+          <ul>
+            <li>Week 1：完成 B-RPT 架构设计和数据读取模块</li>
+            <li>Week 2：实现报告渲染逻辑（HTML/MD）</li>
+            <li>Week 3：部署为 API 或 MCP Tool</li>
+            <li>Week 4：用3个真实岗位测试并迭代</li>
+          </ul>
+        </div>
+        <div class="cycle-card review">
+          <h4>复盘</h4>
+          <ul>
+            <li>对比人工生成 vs Agent 生成的质量和耗时</li>
+            <li>记录失败 case 和边界条件</li>
+            <li>将 Agent 纳入 Agent 架构 V0.5</li>
+          </ul>
+        </div>
+      </div>
+      <div class="deliver-box">
+        <div class="deliver-card">
+          <h4>交付物</h4>
+          <ul>
+            <li>B-RPT Agent 代码</li>
+            <li>3份测试岗位报告</li>
+            <li>质量对比数据</li>
+          </ul>
+        </div>
+        <div class="deliver-card">
+          <h4>满足标准</h4>
+          <ul>
+            <li>输入岗位名称可自动产出报告</li>
+            <li>报告可用性达80%以上</li>
+            <li>Agent 可独立运行，无需人工逐句引导</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Task 2.2 -->
+    <div class="task">
+      <div class="task-header">
+        <span class="task-id">P1-02</span>
+        <span class="task-title">Gemini 深度试用 + 模型选型矩阵</span>
+        <span class="badge badge-p1">维度3</span>
+      </div>
+      <p class="task-desc">深度使用 Gemini，建立场景×模型×成本×延迟×质量的五维选型矩阵，让模型调用从"习惯驱动"变成"数据驱动"。</p>
+      <div class="cycle-grid">
+        <div class="cycle-card plan">
+          <h4>规划</h4>
+          <ul>
+            <li>列出常用任务类型（扫描/分析/编码/报告）</li>
+            <li>设计对比实验：相同 prompt × 不同模型</li>
+            <li>制定评分维度（质量/速度/成本/稳定性）</li>
+          </ul>
+        </div>
+        <div class="cycle-card comm">
+          <h4>沟通</h4>
+          <ul>
+            <li>申请 Gemini API key</li>
+            <li>与 Kimi/Claude 终端对齐实验方法</li>
+            <li>确认评估标准（避免主观偏好）</li>
+          </ul>
+        </div>
+        <div class="cycle-card exec">
+          <h4>执行</h4>
+          <ul>
+            <li>Day 1-3：用 Gemini 复现3个现有任务</li>
+            <li>Day 4-5：设计并运行对比实验</li>
+            <li>Day 6-7：整理模型选型矩阵</li>
+            <li>Week 2：将选型矩阵写入 F2 协作规范</li>
+          </ul>
+        </div>
+        <div class="cycle-card review">
+          <h4>复盘</h4>
+          <ul>
+            <li>输出"模型选型矩阵 v1.0"</li>
+            <li>更新多终端协作规范</li>
+            <li>记录 Gemini 优缺点和适用场景</li>
+          </ul>
+        </div>
+      </div>
+      <div class="deliver-box">
+        <div class="deliver-card">
+          <h4>交付物</h4>
+          <ul>
+            <li>模型选型矩阵（表格/可视化）</li>
+            <li>Gemini 试用报告</li>
+            <li>更新后的 F2 协作规范</li>
+          </ul>
+        </div>
+        <div class="deliver-card">
+          <h4>满足标准</h4>
+          <ul>
+            <li>能明确说出5个主流模型在你场景下的优劣</li>
+            <li>有量化对比数据支撑</li>
+            <li>多终端协作规范已更新</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Task 2.3 -->
+    <div class="task">
+      <div class="task-header">
+        <span class="task-id">P1-03</span>
+        <span class="task-title">发布1个 Skill 到公开包管理器</span>
+        <span class="badge badge-p1">维度6</span>
+      </div>
+      <p class="task-desc">从现有 Skills 中选一个通用性强的（如 report_generator 或 vn-standardize），发布到 npm 或 PyPI，获取真实用户反馈。</p>
+      <div class="cycle-grid">
+        <div class="cycle-card plan">
+          <h4>规划</h4>
+          <ul>
+            <li>评估哪个 Skill 最有通用性</li>
+            <li>设计公开版 API（简化参数、增强文档）</li>
+            <li>制定版本号策略</li>
+          </ul>
+        </div>
+        <div class="cycle-card comm">
+          <h4>沟通</h4>
+          <ul>
+            <li>确认是否包含公司敏感逻辑</li>
+            <li>找1位朋友试用 Beta 版</li>
+            <li>准备发布说明和示例</li>
+          </ul>
+        </div>
+        <div class="cycle-card exec">
+          <h4>执行</h4>
+          <ul>
+            <li>Week 1：重构 Skill 为公开包结构</li>
+            <li>Week 2：写 README、示例、测试用例</li>
+            <li>Week 3：发布到 npm/PyPI</li>
+            <li>Week 4：收集反馈并发布 patch 版本</li>
+          </ul>
+        </div>
+        <div class="cycle-card review">
+          <h4>复盘</h4>
+          <ul>
+            <li>记录下载量、issue、用户反馈</li>
+            <li>量化"他人使用"的证明</li>
+            <li>将发布经验沉淀为 Skill 发布规范</li>
+          </ul>
+        </div>
+      </div>
+      <div class="deliver-box">
+        <div class="deliver-card">
+          <h4>交付物</h4>
+          <ul>
+            <li>npm/PyPI 公开包</li>
+            <li>README + 使用示例</li>
+            <li>测试用例和 CI 配置</li>
+          </ul>
+        </div>
+        <div class="deliver-card">
+          <h4>满足标准</h4>
+          <ul>
+            <li>包可被 pip/npm install 安装</li>
+            <li>至少1个外部用户成功使用</li>
+            <li>有版本更新记录</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:24px;padding:16px;background:rgba(240,136,64,0.08);border:1px solid rgba(240,136,64,0.2);border-radius:8px;">
+      <h4 style="color:var(--accent-orange);font-size:0.85rem;margin-bottom:6px;">Phase 2 完成标志</h4>
+      <p style="color:var(--text-secondary);font-size:0.8rem;">1个 B 系列 Agent 上线运行 + 模型选型矩阵建立 + 1个 Skill 发布到公开包管理器。此时你具备"设计→封装→发布"的完整产品化能力。</p>
+    </div>
+  </div>
+
+  <!-- Phase 3 -->
+  <div class="section">
+    <h2 class="section-title p2">Phase 3 · P2 级整改（第9-12周）</h2>
+    <p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:18px;">P2 是系统性和扩展性任务。建立持续的技术雷达，补齐企业协作平台集成，形成成本优化方法论。</p>
+
+    <!-- Task 3.1 -->
+    <div class="task">
+      <div class="task-header">
+        <span class="task-id">P2-01</span>
+        <span class="task-title">建立 AI 技术雷达机制</span>
+        <span class="badge badge-p2">维度5</span>
+      </div>
+      <p class="task-desc">每周扫描 HuggingFace/GitHub/arXiv/AI newsletter，输出1页技术雷达 brief，并选出值得接入工作流的新工具做 demo。</p>
+      <div class="cycle-grid">
+        <div class="cycle-card plan">
+          <h4>规划</h4>
+          <ul>
+            <li>确定信息源列表（5-10个）</li>
+            <li>设计雷达 brief 模板</li>
+            <li>确定扫描频率（每周1次）</li>
+          </ul>
+        </div>
+        <div class="cycle-card comm">
+          <h4>沟通</h4>
+          <ul>
+            <li>与 Mark 同步技术雷达输出形式</li>
+            <li>找 Kimi 做扫描辅助</li>
+            <li>确认哪些新工具值得投入 demo</li>
+          </ul>
+        </div>
+        <div class="cycle-card exec">
+          <h4>执行</h4>
+          <ul>
+            <li>Week 1：搭建信息源和 brief 模板</li>
+            <li>Week 2-4：每周输出1份雷达 brief</li>
+            <li>每月选1个新工具做最小 demo</li>
+            <li>将 demo 和判断写入技术博客</li>
+          </ul>
+        </div>
+        <div class="cycle-card review">
+          <h4>复盘</h4>
+          <ul>
+            <li>每月回顾：哪些判断准确，哪些错过</li>
+            <li>优化信息源权重</li>
+            <li>将技术嗅觉变成可量化习惯</li>
+          </ul>
+        </div>
+      </div>
+      <div class="deliver-box">
+        <div class="deliver-card">
+          <h4>交付物</h4>
+          <ul>
+            <li>AI 技术雷达模板</li>
+            <li>4份月度雷达 brief</li>
+            <li>1-2个新工具 demo</li>
+          </ul>
+        </div>
+        <div class="deliver-card">
+          <h4>满足标准</h4>
+          <ul>
+            <li>每周固定时间输出雷达 brief</li>
+            <li>至少1个新工具被评估为"值得接入"并验证</li>
+            <li>有公开技术博客记录判断过程</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Task 3.2 -->
+    <div class="task">
+      <div class="task-header">
+        <span class="task-id">P2-02</span>
+        <span class="task-title">飞书 CLI / 开放平台集成</span>
+        <span class="badge badge-p2">维度8</span>
+      </div>
+      <p class="task-desc">用飞书开放平台 API 或飞书 CLI 完成一个真实集成场景（如 Agent 自动创建飞书文档/发送消息/更新多维表格）。</p>
+      <div class="cycle-grid">
+        <div class="cycle-card plan">
+          <h4>规划</h4>
+          <ul>
+            <li>选择集成场景（建议：每日报告自动推送到飞书文档）</li>
+            <li>注册飞书开放平台应用</li>
+            <li>设计权限最小化方案</li>
+          </ul>
+        </div>
+        <div class="cycle-card comm">
+          <h4>沟通</h4>
+          <ul>
+            <li>确认是否有飞书企业版账号</li>
+            <li>向 IT/管理员申请应用权限</li>
+            <li>确认数据安全边界</li>
+          </ul>
+        </div>
+        <div class="cycle-card exec">
+          <h4>执行</h4>
+          <ul>
+            <li>Week 1：完成飞书应用配置和基础 API 调用</li>
+            <li>Week 2：实现选定场景</li>
+            <li>Week 3：将飞书集成封装为 Skill</li>
+            <li>Week 4：测试稳定性和错误处理</li>
+          </ul>
+        </div>
+        <div class="cycle-card review">
+          <h4>复盘</h4>
+          <ul>
+            <li>输出飞书集成实践指南</li>
+            <li>对比飞书 vs 企业微信集成差异</li>
+            <li>记录权限申请和审批流程</li>
+          </ul>
+        </div>
+      </div>
+      <div class="deliver-box">
+        <div class="deliver-card">
+          <h4>交付物</h4>
+          <ul>
+            <li>飞书集成 Skill</li>
+            <li>飞书应用配置文档</li>
+            <li>实践指南</li>
+          </ul>
+        </div>
+        <div class="deliver-card">
+          <h4>满足标准</h4>
+          <ul>
+            <li>能通过 API/CLI 操作飞书文档/消息/表格</li>
+            <li>有稳定的运行实例</li>
+            <li>能解释飞书开放平台集成机制</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Task 3.3 -->
+    <div class="task">
+      <div class="task-header">
+        <span class="task-id">P2-03</span>
+        <span class="task-title">大模型成本优化实践</span>
+        <span class="badge badge-p2">维度10</span>
+      </div>
+      <p class="task-desc">建立 token 用量追踪，实施模型分级路由和 prompt 缓存，输出一份成本优化实践报告。</p>
+      <div class="cycle-grid">
+        <div class="cycle-card plan">
+          <h4>规划</h4>
+          <ul>
+            <li>选择追踪工具（LangSmith/Promptlayer/自建）</li>
+            <li>定义任务分级规则（简单/中等/复杂）</li>
+            <li>设计成本对比实验</li>
+          </ul>
+        </div>
+        <div class="cycle-card comm">
+          <h4>沟通</h4>
+          <ul>
+            <li>确认预算范围</li>
+            <li>与各终端约定模型路由规则</li>
+            <li>明确优化目标（如成本降低30%）</li>
+          </ul>
+        </div>
+        <div class="cycle-card exec">
+          <h4>执行</h4>
+          <ul>
+            <li>Week 1：接入 token 追踪</li>
+            <li>Week 2：实施模型分级路由</li>
+            <li>Week 3：实践 prompt caching/压缩</li>
+            <li>Week 4：对比优化前后成本</li>
+          </ul>
+        </div>
+        <div class="cycle-card review">
+          <h4>复盘</h4>
+          <ul>
+            <li>输出"大模型成本优化实践报告"</li>
+            <li>更新 F2 协作规范的成本章节</li>
+            <li>将经验沉淀为成本优化 Skill</li>
+          </ul>
+        </div>
+      </div>
+      <div class="deliver-box">
+        <div class="deliver-card">
+          <h4>交付物</h4>
+          <ul>
+            <li>token 用量追踪看板</li>
+            <li>模型分级路由配置</li>
+            <li>成本优化实践报告</li>
+          </ul>
+        </div>
+        <div class="deliver-card">
+          <h4>满足标准</h4>
+          <ul>
+            <li>有量化的成本优化数据</li>
+            <li>能解释不同优化策略的 tradeoff</li>
+            <li>优化后质量不显著下降</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:24px;padding:16px;background:rgba(240,192,64,0.08);border:1px solid rgba(240,192,64,0.2);border-radius:8px;">
+      <h4 style="color:var(--accent-yellow);font-size:0.85rem;margin-bottom:6px;">Phase 3 完成标志</h4>
+      <p style="color:var(--text-secondary);font-size:0.8rem;">AI 技术雷达机制建立 + 飞书集成跑通 + 成本优化有量化报告。此时你具备持续跟踪技术和优化成本的能力。</p>
+    </div>
+  </div>
+
+  <!-- Phase 4 -->
+  <div class="section">
+    <h2 class="section-title p3">Phase 4 · P3 级整改（第13-16周）</h2>
+    <p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:18px;">P3 是长期补足项。根据目标公司和岗位方向，有选择地补齐 Hermes、内容行业经验、CS 背景展示。</p>
+
+    <div class="task">
+      <div class="task-header">
+        <span class="task-id">P3-01</span>
+        <span class="task-title">Hermes 试用 + 工具链补充</span>
+        <span class="badge badge-p3">维度1</span>
+      </div>
+      <p class="task-desc">用 Hermes 完成一个真实编码任务，评估其在你工作流中的定位。</p>
+    </div>
+
+    <div class="task">
+      <div class="task-header">
+        <span class="task-id">P3-02</span>
+        <span class="task-title">内容行业切入（如目标方向需要）</span>
+        <span class="badge badge-p3">维度7</span>
+      </div>
+      <p class="task-desc">将方法论体系输出为系列技术文章，建立公开内容资产。</p>
+    </div>
+
+    <div class="task">
+      <div class="task-header">
+        <span class="task-id">P3-03</span>
+        <span class="task-title">作品集网站：非 CS 背景的工程天花板路径</span>
+        <span class="badge badge-p3">维度11</span>
+      </div>
+      <p class="task-desc">整合所有整改产出为一个个人作品集网站，展示从业务运营到 AI 工程师的能力跃迁。</p>
+    </div>
+
+    <div style="margin-top:24px;padding:16px;background:rgba(77,141,240,0.08);border:1px solid rgba(77,141,240,0.2);border-radius:8px;">
+      <h4 style="color:var(--accent-blue);font-size:0.85rem;margin-bottom:6px;">Phase 4 完成标志</h4>
+      <p style="color:var(--text-secondary);font-size:0.8rem;">个人作品集网站上线 + 至少3篇公开技术文章 + 工具链覆盖 Hermes。此时你拥有完整的"外部可见"AI 工程能力证明。</p>
+    </div>
+  </div>
+
+  <!-- Timeline -->
+  <div class="section">
+    <h2 class="section-title summary">16周总体时间线</h2>
+    <div class="timeline">
+      <div class="timeline-item p0">
+        <div class="timeline-week">第0周</div>
+        <div class="timeline-content">Phase 0 · 启动准备：看板、GitHub repo、决策日志模板</div>
+      </div>
+      <div class="timeline-item p0">
+        <div class="timeline-week">第1-2周</div>
+        <div class="timeline-content">P0-01 · Computer Use / Browser Use 实操</div>
+      </div>
+      <div class="timeline-item p0">
+        <div class="timeline-week">第3周</div>
+        <div class="timeline-content">P0-02 · 前端 App 部署到 Vercel</div>
+      </div>
+      <div class="timeline-item p0">
+        <div class="timeline-week">第4周</div>
+        <div class="timeline-content">P0-03 · process-db-mcp 公开部署 + Phase 1 复盘</div>
+      </div>
+      <div class="timeline-item p1">
+        <div class="timeline-week">第5-8周</div>
+        <div class="timeline-content">Phase 2 · P1：B-RPT Agent 上线、Gemini 选型矩阵、Skill 公开发布</div>
+      </div>
+      <div class="timeline-item p2">
+        <div class="timeline-week">第9-12周</div>
+        <div class="timeline-content">Phase 3 · P2：AI 技术雷达、飞书集成、成本优化实践</div>
+      </div>
+      <div class="timeline-item p3">
+        <div class="timeline-week">第13-16周</div>
+        <div class="timeline-content">Phase 4 · P3：Hermes、内容文章、作品集网站</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Weekly Cadence -->
+  <div class="section">
+    <h2 class="section-title method">每周运行节奏</h2>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>时间</th>
+          <th>动作</th>
+          <th>产出</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>周一 09:30</td>
+          <td>周计划会（与 AI 终端对齐本周任务）</td>
+          <td>本周任务清单 + 风险点</td>
+        </tr>
+        <tr>
+          <td>每日</td>
+          <td>任务执行 + 实时记录决策和卡点</td>
+          <td>决策日志增量</td>
+        </tr>
+        <tr>
+          <td>周三</td>
+          <td>中期检查：任务进度 + 是否需要调整</td>
+          <td>进度更新 + 调整记录</td>
+        </tr>
+        <tr>
+          <td>周五 17:00</td>
+          <td>周复盘会</td>
+          <td>周报复盘文档</td>
+        </tr>
+        <tr>
+          <td>每月最后一周</td>
+          <td>月度里程碑评估 + 路线图更新</td>
+          <td>月度评估报告</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Review Template -->
+  <div class="section">
+    <h2 class="section-title method">复盘模板（每个任务结束后填写）</h2>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th style="width:120px">复盘项</th>
+          <th>内容</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>目标</td>
+          <td>这个任务要满足的维度标准是什么？</td>
+        </tr>
+        <tr>
+          <td>结果</td>
+          <td>实际交付了什么？是否达到 Done Criteria？</td>
+        </tr>
+        <tr>
+          <td>差距</td>
+          <td>距离"满足工作要求"还有多远？</td>
+        </tr>
+        <tr>
+          <td>意外</td>
+          <td>执行中遇到了哪些未预料的问题？</td>
+        </tr>
+        <tr>
+          <td>教训</td>
+          <td>哪些经验应该写入教训库或方法论？</td>
+        </tr>
+        <tr>
+          <td>下一步</td>
+          <td>是进入下一个任务，还是需要返工？</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Tracking Checklist -->
+  <div class="section">
+    <h2 class="section-title summary">维度满足度跟踪检查表</h2>
+    <ul class="checklist">
+      <li><div class="checkbox"></div><strong>维度2 Agent/Skills：</strong>有至少1个 B 系列 Agent 上线运行，有至少2个可复用 Skill 对外可用</li>
+      <li><div class="checkbox"></div><strong>维度4 全流程交付：</strong>前端 App 上线 + MCP Server 公开 + 至少1个 Agent 可独立运行</li>
+      <li><div class="checkbox"></div><strong>维度3 大模型使用：</strong>熟练使用 Claude/GPT/Gemini 中至少3个，有模型选型矩阵</li>
+      <li><div class="checkbox"></div><strong>维度1 AI Coding：</strong>熟练使用 Claude Code/Codex 等至少3个工具</li>
+      <li><div class="checkbox"></div><strong>维度6 工程落地：</strong>有公开可安装的 Skill/工具，有量化效率提升数据</li>
+      <li><div class="checkbox"></div><strong>维度5 技术嗅觉：</strong>有持续运行的技术雷达机制，有前沿框架 demo</li>
+      <li><div class="checkbox"></div><strong>维度9 Computer Use：</strong>有真实浏览器/UI 自动化实操案例和 Skill</li>
+      <li><div class="checkbox"></div><strong>维度8 企业协作平台：</strong>有飞书/企业级平台 API 集成实例</li>
+      <li><div class="checkbox"></div><strong>维度10 成本优化：</strong>有 token 追踪和模型分级路由，有量化优化报告</li>
+      <li><div class="checkbox"></div><strong>维度7 内容行业：</strong>有至少3篇公开技术文章或内容产品</li>
+      <li><div class="checkbox"></div><strong>维度11 CS背景：</strong>有个人作品集网站展示工程能力</li>
+    </ul>
+  </div>
+
+  <!-- Final Note -->
+  <div class="intro-box">
+    <h3>🚀 下一步行动</h3>
+    <p>先完成 Phase 0 的准备工作（看板 + GitHub repo + 决策日志），然后立即启动 P0-01 Computer Use 实操。我会根据你的进度，在每个阶段结束时陪你做复盘，并动态调整路线。</p>
+  </div>
+
+  <div class="footer">
+    <p>生成日期：2026-06-30 · 配套文件：能力打造Pipeline矩阵.html</p>
+  </div>
+
+</div>
+</body>
+</html>

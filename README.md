@@ -13,13 +13,13 @@
 | **使用场景** | ① GitHub repo 首页展示 ② 面试前发给面试官预习 ③ mentor 快速了解项目全貌 ④ 自己每周复盘时确认方向 |
 | **维护责任** | Jasper 主责，每周五更新「最新进展」板块 |
 | **迭代规则** | 以下任一情况触发更新：① 每周五固定更新进展 ② 完成一个里程碑（Phase 1/2/3/4） ③ 新增可对外展示的产出物 ④ 目标岗位方向调整 |
-| **关联文件** | [能力打造Pipeline矩阵](../能力打造Pipeline矩阵.html) · [整改执行路线图](../AI工程能力整改执行路线图.html) · [能力整改看板](./能力整改看板.md) · [Phase 0 启动清单](./00_planning/Phase%200%20启动清单.md) |
+| **关联文件** | [能力打造Pipeline矩阵](./05_assets/能力打造Pipeline矩阵.html) · [整改执行路线图](./05_assets/AI工程能力整改执行路线图.html) · [能力整改看板](./能力整改看板.md) · [Phase 0 启动清单](./00_planning/Phase%200%20启动清单.md) |
 
 ---
 
 [![Status](https://img.shields.io/badge/status-in%20progress-yellow)](./能力整改看板.md)
 [![Phase](https://img.shields.io/badge/phase-Phase%201%20%C2%B7%20Execution-green)](./00_planning/Phase%200%20启动清单.md)
-[![Weeks](https://img.shields.io/badge/timeline-16%20weeks-orange)](./AI工程能力整改执行路线图.html)
+[![Weeks](https://img.shields.io/badge/timeline-16%20weeks-orange)](./05_assets/AI工程能力整改执行路线图.html)
 
 ---
 
@@ -67,7 +67,7 @@
 | 大模型成本优化 | 成本优化经验 | 间接覆盖 | token 追踪 + 分级路由 + 报告 | P3 | 30% |
 | CS/AI 专业背景 | 计算机/AI 相关专业 | 弱项 | 个人作品集网站 | P4 | 20% |
 
-> 详细差距分析见 [能力打造Pipeline矩阵](../能力打造Pipeline矩阵.html)
+> 详细差距分析见 [能力打造Pipeline矩阵](./05_assets/能力打造Pipeline矩阵.html)
 
 ---
 
@@ -88,9 +88,11 @@ AI工程能力整改项目/
 │   ├── 决策日志模板.md
 │   ├── 周报复盘模板.md
 │   └── 任务执行模板.md
+├── 05_assets/            # 静态 HTML 产出与可视化资产
+│   ├── 能力打造Pipeline矩阵.html
+│   └── AI工程能力整改执行路线图.html
 ├── 能力整改看板.md
-├── README.md
-└── （配套 HTML 文件在父目录）
+└── README.md
 ```
 
 ---
@@ -99,8 +101,8 @@ AI工程能力整改项目/
 
 | 产出物 | 类型 | 状态 | 链接 |
 |--------|------|------|------|
-| 能力 Pipeline 矩阵 | 分析文档 | ✅ 已完成 | [HTML](../能力打造Pipeline矩阵.html) |
-| 整改执行路线图 | 规划文档 | ✅ 已完成 | [HTML](../AI工程能力整改执行路线图.html) |
+| 能力 Pipeline 矩阵 | 分析文档 | ✅ 已完成 | [HTML](./05_assets/能力打造Pipeline矩阵.html) |
+| 整改执行路线图 | 规划文档 | ✅ 已完成 | [HTML](./05_assets/AI工程能力整改执行路线图.html) |
 | 价值节点规则分析前端 | Web App | 🔄 Phase 1 | 待部署 |
 | process-db MCP Server | MCP Service | 🔄 Phase 1 | 待公开 |
 | B-RPT 岗位报告 Agent | Agent | 🔄 Phase 2 | 待上线 |
@@ -131,7 +133,7 @@ AI工程能力整改项目/
 
 ## 🤝 如何使用这个仓库
 
-1. **如果你是招聘方/面试官**：直接查看 [能力打造Pipeline矩阵](../能力打造Pipeline矩阵.html) 和 [整改执行路线图](../AI工程能力整改执行路线图.html) 了解全貌
+1. **如果你是招聘方/面试官**：直接查看 [能力打造Pipeline矩阵](./05_assets/能力打造Pipeline矩阵.html) 和 [整改执行路线图](./05_assets/AI工程能力整改执行路线图.html) 了解全貌
 2. **如果你是 mentor**：可以从 [能力整改看板](./能力整改看板.md) 看到实时进度，并在 issue 中提出挑战
 3. **如果你在学习转型路径**：参考 `04_templates/` 中的模板和 `01_execution/` 中的执行记录
 
