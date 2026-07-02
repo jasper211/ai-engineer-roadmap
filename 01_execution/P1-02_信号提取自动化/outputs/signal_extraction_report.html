@@ -1,0 +1,1617 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P1-02 · PAY域信号提取基线 auto v1.0</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #f8fafc; color: #1e293b; line-height: 1.7; margin: 0; padding: 40px 20px; }
+.container { max-width: 960px; margin: 0 auto; background: #fff; border-radius: 8px; padding: 40px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+h1 { border-bottom: 2px solid #e2e8f0; padding-bottom: 12px; color: #0f172a; }
+h2 { color: #1e40af; margin-top: 32px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; }
+h3 { color: #1e293b; margin-top: 24px; }
+table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+th, td { border: 1px solid #e2e8f0; padding: 8px 12px; text-align: left; }
+th { background: #f1f5f9; font-weight: 600; }
+tr:hover td { background: #f8fafc; }
+blockquote { border-left: 4px solid #3b82f6; background: #eff6ff; padding: 12px 16px; margin: 16px 0; color: #1e40af; font-size: 14px; }
+code { background: #f1f5f9; padding: 2px 6px; border-radius: 3px; font-size: 13px; }
+strong { color: #0f172a; }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>PAY域 · 价值节点信号提取基线 auto v1.0</h1>
+<blockquote>
+<p>自动化生成 · 生成时间：2026-07-02 17:26:57
+数据源：<code>D1_价值节点清单_标准化_数据表版_v2.0.xlsx</code>
+依据标准：<code>标准_Jasper工作流总纲_v2.2.md</code> + <code>上下文_数据规则提取方法论_三层递进提取法_v3.4.md</code>
+追溯标注：源自01层 D1_价值节点清单_标准化_数据表版_v2.0（8个Sheet，9个PAY域节点）
+边界声明：本产出仅做信号提取（第零步），不做规则空白识别，不产出规则空白地图/熔断补建清单
+自动化声明：本基线由 <code>extract_signals.py</code> 自动生成。信号4（A/B/C三分类）仅覆盖Excel结构化数据，访谈规则需人工继承。</p>
+</blockquote>
+<hr />
+<h2>Step 1 · 文件结构概览</h2>
+<table>
+<thead>
+<tr>
+<th>Sheet</th>
+<th>列数</th>
+<th>核心内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1.价值节点总览</td>
+<td>14</td>
+<td>9个PAY域节点的概要信息</td>
+</tr>
+<tr>
+<td>2.节点详情卡</td>
+<td>28</td>
+<td>9张完整属性卡的深度展开</td>
+</tr>
+<tr>
+<td>3.四属性三重验证矩阵</td>
+<td>11</td>
+<td>9节点×四属性×三重Gate矩阵</td>
+</tr>
+<tr>
+<td>4.M0-M8锚定矩阵(参考)</td>
+<td>12</td>
+<td>9节点对M0-M8战略闭环锚定分布</td>
+</tr>
+<tr>
+<td>5.熔断清单</td>
+<td>5</td>
+<td>熔断节点致命缺口描述</td>
+</tr>
+<tr>
+<td>6.价值节点_L3映射表</td>
+<td>9</td>
+<td>节点ID↔L3/L4流程库映射</td>
+</tr>
+<tr>
+<td>0.M锚定名称映射</td>
+<td>2</td>
+<td>M编号↔M名称（9个M闭环）</td>
+</tr>
+<tr>
+<td>0.KPI名称映射</td>
+<td>3</td>
+<td>KPI编号↔KPI名称（按节点关联）</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Step 2 · PAY域节点清单</h2>
+<blockquote>
+<p>全部9个节点均属PAY域（财务支付板块）。</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>节点编码</th>
+<th>节点名称</th>
+<th>L3名称</th>
+<th>L3现状</th>
+<th>起点A</th>
+<th>终点Z</th>
+<th>熔断状态</th>
+<th>优先级</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VN-PAY-01</td>
+<td>市场佣金制作产出包</td>
+<td>市场佣金制作E2E</td>
+<td>正常</td>
+<td>保险公司源头佣金PDF/Excel(季度</td>
+<td>《市场佣金表(月)》v.final</td>
+<td>非熔断</td>
+<td>P0</td>
+</tr>
+<tr>
+<td>VN-PAY-02</td>
+<td>佣金实收确认表</td>
+<td>佣金应收实收对账E2E</td>
+<td>正常</td>
+<td>1.银行流水CSV</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>2.财务记账凭证</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>3.输出《各细分市场配置》</td>
+<td>《实收佣金对账表》</td>
+<td>非熔断</td>
+<td>P0</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>VN-PAY-03</td>
+<td>应派清单三件套</td>
+<td>应派计算与争议处理E2E</td>
+<td>正常</td>
+<td>1.VN-()《实收清单》</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>2.协议参数(分润比例</td>
+<td>《应派清单》</td>
+<td>非熔断</td>
+<td>P0</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>VN-PAY-04</td>
+<td>转介费派发确认台账</td>
+<td>实派执行与回执沉淀E2E</td>
+<td>正常</td>
+<td>VN-()《应派清单》[Mark签核版]</td>
+<td>1.《派发确认台账》</td>
+<td>🔴熔断</td>
+<td>P0</td>
+</tr>
+<tr>
+<td>VN-PAY-05</td>
+<td>INVOICE/激励结算单</td>
+<td>服务结算与价值核算E2E</td>
+<td>正常</td>
+<td>服务价值核算完成</td>
+<td>结算单发送</td>
+<td>非熔断</td>
+<td>P0</td>
+</tr>
+<tr>
+<td>VN-PAY-06</td>
+<td>理财师综合应派计算清单</td>
+<td>理财师权益兑现E2E</td>
+<td>正常</td>
+<td>1.VN-《应派清单》</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>2.VN-《服务结算单》</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>3.dim_agreement_param</td>
+<td>1.《综合应派清单》</td>
+<td>🔴熔断</td>
+<td>P0</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>VN-PAY-07</td>
+<td>银行权益活动费对账单</td>
+<td>银行权益活动费报送E2E</td>
+<td>正常</td>
+<td>1.银行合作协议</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>2.活动执行记录</td>
+<td>《活动费对账单》</td>
+<td>非熔断</td>
+<td>P1</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>VN-PAY-08</td>
+<td>报销凭证包</td>
+<td>员工报销E2E(新建L3-EXP)</td>
+<td>新建</td>
+<td>1.员工提单</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>2.收据/发票</td>
+<td>1.《报销凭证包》</td>
+<td>🔴熔断</td>
+<td>P1</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>VN-PAY-09</td>
+<td>NGM→Apass→宿安→天领体系外对账表</td>
+<td>体系外资金对账E2E(L3-CFM)</td>
+<td>正常</td>
+<td>体系外资金流(37.2M HKD</td>
+<td>《体系外对账表》</td>
+<td>🔴熔断</td>
+<td>P0</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Step 3 · 逐节点深度解析</h2>
+<h3>VN-PAY-01 · 市场佣金制作产出包</h3>
+<p><strong>信号1 · 端到端业务逻辑</strong>
+- 业务描述：市场佣金制作E2E
+- 起点A：保险公司源头佣金PDF/Excel(季度
+- 终点Z：《市场佣金表(月)》v.final
+- 终点标准：—
+- 频次：每季度1次，每月1次
+- 价值属性：业务端:理财师可见、可算应得;管理端:横向比较产品收益结构</p>
+<p><strong>信号2 · 生产方与消费方</strong>（⚠ 待源头校准，暂无数据）
+- 生产方：v2.0数据表中生产部门/生产岗位字段为空，待Terresa/HR校准
+- 消费方：v2.0数据表中消费主体/消费对象字段为空，待Terresa/HR校准
+- 单点风险：待评估</p>
+<p><strong>信号3 · 三重Gate状态</strong>
+| Gate | 评级 | 说明 |
+|---|---|---|
+| Gate①挂数 | PASS | — |
+| Gate②落地 | PASS | — |
+| Gate③追溯 | PARTIAL | — |
+| 综合判定 | PASS | 非熔断 |</p>
+<p><strong>信号4 · 调研已知清单（A/B/C三分类）</strong></p>
+<blockquote>
+<p>⚠ 自动化提取仅覆盖Excel结构化数据。访谈规则(EFA001/PAY002/PAY003/PAY005-009)需人工继承。</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>分类</th>
+<th>信号内容</th>
+<th>来源</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A类</td>
+<td>L4组成：1.季度源头佣金录入</td>
+<td></td>
+</tr>
+<tr>
+<td>2.市场佣金制作</td>
+<td>Sheet2</td>
+<td></td>
+</tr>
+<tr>
+<td>A类</td>
+<td>子产物：1.季度源头佣金表</td>
+<td></td>
+</tr>
+<tr>
+<td>2.市场佣金表</td>
+<td>Sheet2</td>
+<td></td>
+</tr>
+<tr>
+<td>A类</td>
+<td>子产物补充：(2子产物同闭环)</td>
+<td>Sheet2</td>
+</tr>
+<tr>
+<td>B类</td>
+<td>物理对应：实体存在 Excel+PDF</td>
+<td>Sheet2·物理对应</td>
+</tr>
+<tr>
+<td>C类</td>
+<td>访谈规则需人工继承</td>
+<td>待补充</td>
+</tr>
+</tbody>
+</table>
+<p><strong>信号5 · 已知的交付物</strong>
+| 交付物 | 形态 | 来源 |
+|---|---|---|
+| 1.季度源头佣金表 | 1.Excel(双子表
+2.源头PDF合订) | Sheet2·构成子产物 |
+| 2.市场佣金表 | 1.Excel(双子表
+2.源头PDF合订) | Sheet2·构成子产物 |</p>
+<p><strong>信号6 · 已知的岗位和系统依赖</strong>（⚠ 待源头校准，暂无数据）
+- 涉及岗位：v2.0数据表中生产部门/生产岗位字段为空，待Terresa/HR校准
+- 涉及系统：待补充
+- 外部依赖：待补充</p>
+<p><strong>信号7 · KPI锚定和M锚定</strong>
+- KPI锚定：1.佣金回收周期 / 2.佣金口径准确率
+- M锚定：M0 数理基建 / M6 业务渗透 / M7 产品治理
+- 战略意义：待人工补充</p>
+<hr />
+<h3>VN-PAY-02 · 佣金实收确认表</h3>
+<p><strong>信号1 · 端到端业务逻辑</strong>
+- 业务描述：佣金应收实收对账E2E
+- 起点A：1.银行流水CSV
+2.财务记账凭证
+- 终点Z：《实收佣金对账表》
+- 终点标准：已对平
+- 频次：每月2次
+- 价值属性：现金真实落账确认;差异定位到产品/单笔</p>
+<p><strong>信号2 · 生产方与消费方</strong>（⚠ 待源头校准，暂无数据）
+- 生产方：v2.0数据表中生产部门/生产岗位字段为空，待Terresa/HR校准
+- 消费方：v2.0数据表中消费主体/消费对象字段为空，待Terresa/HR校准
+- 单点风险：待评估</p>
+<p><strong>信号3 · 三重Gate状态</strong>
+| Gate | 评级 | 说明 |
+|---|---|---|
+| Gate①挂数 | PASS | — |
+| Gate②落地 | PARTIAL | — |
+| Gate③追溯 | PASS | — |
+| 综合判定 | PASS | 非熔断 |</p>
+<p><strong>信号4 · 调研已知清单（A/B/C三分类）</strong></p>
+<blockquote>
+<p>⚠ 自动化提取仅覆盖Excel结构化数据。访谈规则(EFA001/PAY002/PAY003/PAY005-009)需人工继承。</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>分类</th>
+<th>信号内容</th>
+<th>来源</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A类</td>
+<td>L4组成：1.应收应付提示</td>
+<td></td>
+</tr>
+<tr>
+<td>2.银行流水对账</td>
+<td>Sheet2</td>
+<td></td>
+</tr>
+<tr>
+<td>A类</td>
+<td>子产物：1.应收佣金核对表</td>
+<td></td>
+</tr>
+<tr>
+<td>2.实收佣金对账表</td>
+<td>Sheet2</td>
+<td></td>
+</tr>
+<tr>
+<td>A类</td>
+<td>子产物补充：(对账孪生)</td>
+<td>Sheet2</td>
+</tr>
+<tr>
+<td>B类</td>
+<td>物理对应：1.Excel + 银行回单(PDF</td>
+<td></td>
+</tr>
+<tr>
+<td>2.截图)</td>
+<td>Sheet2·物理对应</td>
+<td></td>
+</tr>
+<tr>
+<td>C类</td>
+<td>访谈规则需人工继承</td>
+<td>待补充</td>
+</tr>
+</tbody>
+</table>
+<p><strong>信号5 · 已知的交付物</strong>
+| 交付物 | 形态 | 来源 |
+|---|---|---|
+| 1.应收佣金核对表 | 1.Excel(单文件双sheet
+2.银行回单截图) | Sheet2·构成子产物 |
+| 2.实收佣金对账表 | 1.Excel(单文件双sheet
+2.银行回单截图) | Sheet2·构成子产物 |</p>
+<p><strong>信号6 · 已知的岗位和系统依赖</strong>（⚠ 待源头校准，暂无数据）
+- 涉及岗位：v2.0数据表中生产部门/生产岗位字段为空，待Terresa/HR校准
+- 涉及系统：待补充
+- 外部依赖：待补充</p>
+<p><strong>信号7 · KPI锚定和M锚定</strong>
+- KPI锚定：1.对账差异率 / 2.对账时效
+- M锚定：M0 数理基建 / M8 财务结算
+- 战略意义：待人工补充</p>
+<hr />
+<h3>VN-PAY-03 · 应派清单三件套</h3>
+<p><strong>信号1 · 端到端业务逻辑</strong>
+- 业务描述：应派计算与争议处理E2E
+- 起点A：1.实收对账确认
+2.协议参数(分润比例
+- 终点Z：《应派清单》
+- 终点标准：Mark签核版
+- 频次：每月2次
+- 价值属性：权益兑现核心凭证;争议留痕保留追溯证据</p>
+<p><strong>信号2 · 生产方与消费方</strong>（⚠ 待源头校准，暂无数据）
+- 生产方：v2.0数据表中生产部门/生产岗位字段为空，待Terresa/HR校准
+- 消费方：v2.0数据表中消费主体/消费对象字段为空，待Terresa/HR校准
+- 单点风险：待评估</p>
+<p><strong>信号3 · 三重Gate状态</strong>
+| Gate | 评级 | 说明 |
+|---|---|---|
+| Gate①挂数 | PASS | — |
+| Gate②落地 | PASS | — |
+| Gate③追溯 | PARTIAL | — |
+| 综合判定 | PASS | 非熔断 |</p>
+<p><strong>信号4 · 调研已知清单（A/B/C三分类）</strong></p>
+<blockquote>
+<p>⚠ 自动化提取仅覆盖Excel结构化数据。访谈规则(EFA001/PAY002/PAY003/PAY005-009)需人工继承。</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>分类</th>
+<th>信号内容</th>
+<th>来源</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A类</td>
+<td>L4组成：1.应派计算</td>
+<td></td>
+</tr>
+<tr>
+<td>2.争议处理</td>
+<td>Sheet2</td>
+<td></td>
+</tr>
+<tr>
+<td>A类</td>
+<td>子产物：1.应派给理财师</td>
+<td></td>
+</tr>
+<tr>
+<td>2.应派给销售员</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>3.争议留痕表</td>
+<td>Sheet2</td>
+<td></td>
+</tr>
+<tr>
+<td>B类</td>
+<td>物理对应：Excel合订+争议邮件链</td>
+<td>Sheet2·物理对应</td>
+</tr>
+<tr>
+<td>C类</td>
+<td>访谈规则需人工继承</td>
+<td>待补充</td>
+</tr>
+</tbody>
+</table>
+<p><strong>信号5 · 已知的交付物</strong>
+| 交付物 | 形态 | 来源 |
+|---|---|---|
+| 1.应派给理财师 | Excel | Sheet2·构成子产物 |
+| 2.应派给销售员 | Excel | Sheet2·构成子产物 |
+| 3.争议留痕表 | Excel | Sheet2·构成子产物 |</p>
+<p><strong>信号6 · 已知的岗位和系统依赖</strong>（⚠ 待源头校准，暂无数据）
+- 涉及岗位：v2.0数据表中生产部门/生产岗位字段为空，待Terresa/HR校准
+- 涉及系统：待补充
+- 外部依赖：待补充</p>
+<p><strong>信号7 · KPI锚定和M锚定</strong>
+- KPI锚定：1.应派准确率 / 2.争议关闭周期
+- M锚定：M0 数理基建 / M2 KPI报表 / M8 财务结算
+- 战略意义：待人工补充</p>
+<hr />
+<h3>VN-PAY-04 · 转介费派发确认台账 [🔴熔断]</h3>
+<p><strong>信号1 · 端到端业务逻辑</strong>
+- 业务描述：实派执行与回执沉淀E2E
+- 起点A：应派清单(Mark签核
+- 终点Z：《派发确认台账》
+- 终点标准：1.已对账
+2.合规通过
+- 频次：每月2次
+- 价值属性：监管合规生命线，一旦超阈值立即触发监管风险</p>
+<p><strong>信号2 · 生产方与消费方</strong>（⚠ 待源头校准，暂无数据）
+- 生产方：v2.0数据表中生产部门/生产岗位字段为空，待Terresa/HR校准
+- 消费方：v2.0数据表中消费主体/消费对象字段为空，待Terresa/HR校准
+- 单点风险：待评估</p>
+<p><strong>信号3 · 三重Gate状态</strong>
+| Gate | 评级 | 说明 |
+|---|---|---|
+| Gate①挂数 | FAIL | — |
+| Gate②落地 | FAIL | — |
+| Gate③追溯 | FAIL | — |
+| 综合判定 | FAIL | 熔断 |</p>
+<p><strong>信号4 · 调研已知清单（A/B/C三分类）</strong></p>
+<blockquote>
+<p>⚠ 自动化提取仅覆盖Excel结构化数据。访谈规则(EFA001/PAY002/PAY003/PAY005-009)需人工继承。</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>分类</th>
+<th>信号内容</th>
+<th>来源</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A类</td>
+<td>L4组成：1.实派执行</td>
+<td></td>
+</tr>
+<tr>
+<td>2.IA合规校验</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>3.回执归档</td>
+<td>Sheet2</td>
+<td></td>
+</tr>
+<tr>
+<td>A类</td>
+<td>子产物：1.转介费派发表</td>
+<td></td>
+</tr>
+<tr>
+<td>2.银行付款回执包</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>3.IA合规留痕</td>
+<td>Sheet2</td>
+<td></td>
+</tr>
+<tr>
+<td>B类</td>
+<td>物理对应：⚠ 银行回执无统一归档·IA规则未代码化</td>
+<td>Sheet2·物理对应</td>
+</tr>
+<tr>
+<td>C类</td>
+<td>访谈规则需人工继承</td>
+<td>待补充</td>
+</tr>
+</tbody>
+</table>
+<p><strong>信号5 · 已知的交付物</strong>
+| 交付物 | 形态 | 来源 |
+|---|---|---|
+| 1.转介费派发表 | 1.回执PDF
+2.IA规则校验日志 | Sheet2·构成子产物 |
+| 2.银行付款回执包 | 1.回执PDF
+2.IA规则校验日志 | Sheet2·构成子产物 |
+| 3.IA合规留痕 | 1.回执PDF
+2.IA规则校验日志 | Sheet2·构成子产物 |</p>
+<p><strong>信号6 · 已知的岗位和系统依赖</strong>（⚠ 待源头校准，暂无数据）
+- 涉及岗位：v2.0数据表中生产部门/生产岗位字段为空，待Terresa/HR校准
+- 涉及系统：待补充
+- 外部依赖：待补充</p>
+<p><strong>信号7 · KPI锚定和M锚定</strong>
+- KPI锚定：1.非持牌占比≤50%(IA硬指标) / 2.同行支付≤88%(IA硬指标) / 3.实派时效
+- M锚定：M0 数理基建 / M7 产品治理 / M8 财务结算
+- 战略意义：待人工补充</p>
+<hr />
+<h3>VN-PAY-05 · INVOICE/激励结算单</h3>
+<p><strong>信号1 · 端到端业务逻辑</strong>
+- 业务描述：服务结算E2E
+- 起点A：NGM/Apass/服务订单系统
+- 终点Z：《服务价值汇总表》
+- 终点标准：财务结账版
+- 频次：每月2次
+- 价值属性：增值服务定价依据;NGM/Apass体系外收入归口</p>
+<p><strong>信号2 · 生产方与消费方</strong>（⚠ 待源头校准，暂无数据）
+- 生产方：v2.0数据表中生产部门/生产岗位字段为空，待Terresa/HR校准
+- 消费方：v2.0数据表中消费主体/消费对象字段为空，待Terresa/HR校准
+- 单点风险：待评估</p>
+<p><strong>信号3 · 三重Gate状态</strong>
+| Gate | 评级 | 说明 |
+|---|---|---|
+| Gate①挂数 | PASS | — |
+| Gate②落地 | PARTIAL | — |
+| Gate③追溯 | PARTIAL | — |
+| 综合判定 | PASS | 非熔断 |</p>
+<p><strong>信号4 · 调研已知清单（A/B/C三分类）</strong></p>
+<blockquote>
+<p>⚠ 自动化提取仅覆盖Excel结构化数据。访谈规则(EFA001/PAY002/PAY003/PAY005-009)需人工继承。</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>分类</th>
+<th>信号内容</th>
+<th>来源</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A类</td>
+<td>L4组成：1.服务凭证留存</td>
+<td></td>
+</tr>
+<tr>
+<td>2.服务-佣金联动</td>
+<td>Sheet2</td>
+<td></td>
+</tr>
+<tr>
+<td>A类</td>
+<td>子产物：1.INVOICE对账单</td>
+<td></td>
+</tr>
+<tr>
+<td>2.经纪人激励结算单</td>
+<td>Sheet2</td>
+<td></td>
+</tr>
+<tr>
+<td>B类</td>
+<td>物理对应：Excel + 凭证(部分缺失)</td>
+<td>Sheet2·物理对应</td>
+</tr>
+<tr>
+<td>C类</td>
+<td>访谈规则需人工继承</td>
+<td>待补充</td>
+</tr>
+</tbody>
+</table>
+<p><strong>信号5 · 已知的交付物</strong>
+| 交付物 | 形态 | 来源 |
+|---|---|---|
+| 1.INVOICE对账单 | 财务系统导出/PDF/Excel | Sheet2·构成子产物 |
+| 2.经纪人激励结算单 | 财务系统导出/PDF/Excel | Sheet2·构成子产物 |</p>
+<p><strong>信号6 · 已知的岗位和系统依赖</strong>（⚠ 待源头校准，暂无数据）
+- 涉及岗位：v2.0数据表中生产部门/生产岗位字段为空，待Terresa/HR校准
+- 涉及系统：待补充
+- 外部依赖：待补充</p>
+<p><strong>信号7 · KPI锚定和M锚定</strong>
+- KPI锚定：1.结算准确率 / 2.结算时效 / 3.双口径差异率
+- M锚定：M0 数理基建 / M1 中台运营 / M3 NGP / M8 财务结算
+- 战略意义：待人工补充</p>
+<hr />
+<h3>VN-PAY-06 · 理财师综合应派计算清单 [🔴熔断]</h3>
+<p><strong>信号1 · 端到端业务逻辑</strong>
+- 业务描述：理财师权益兑现E2E
+- 起点A：1.协议库
+2.奖金规则
+- 终点Z：1.《综合应派清单》
+- 终点标准：1.Mark签核
+2.理财师确认
+- 频次：每月1次
+- 价值属性：理财师粘性核心;四类权益合并兑现一次性可见</p>
+<p><strong>信号2 · 生产方与消费方</strong>（⚠ 待源头校准，暂无数据）
+- 生产方：v2.0数据表中生产部门/生产岗位字段为空，待Terresa/HR校准
+- 消费方：v2.0数据表中消费主体/消费对象字段为空，待Terresa/HR校准
+- 单点风险：待评估</p>
+<p><strong>信号3 · 三重Gate状态</strong>
+| Gate | 评级 | 说明 |
+|---|---|---|
+| Gate①挂数 | FAIL | — |
+| Gate②落地 | PARTIAL | — |
+| Gate③追溯 | FAIL | — |
+| 综合判定 | FAIL | 熔断 |</p>
+<p><strong>信号4 · 调研已知清单（A/B/C三分类）</strong></p>
+<blockquote>
+<p>⚠ 自动化提取仅覆盖Excel结构化数据。访谈规则(EFA001/PAY002/PAY003/PAY005-009)需人工继承。</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>分类</th>
+<th>信号内容</th>
+<th>来源</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A类</td>
+<td>L4组成：协议参数中心化</td>
+<td>Sheet2</td>
+</tr>
+<tr>
+<td>A类</td>
+<td>子产物：1.佣金应派</td>
+<td></td>
+</tr>
+<tr>
+<td>2.服务应派</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>3.奖金应派</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>4.股权/分红应派</td>
+<td>Sheet2</td>
+<td></td>
+</tr>
+<tr>
+<td>B类</td>
+<td>物理对应：四类协议未代码化·人工合并</td>
+<td>Sheet2·物理对应</td>
+</tr>
+<tr>
+<td>C类</td>
+<td>访谈规则需人工继承</td>
+<td>待补充</td>
+</tr>
+</tbody>
+</table>
+<p><strong>信号5 · 已知的交付物</strong>
+| 交付物 | 形态 | 来源 |
+|---|---|---|
+| 1.佣金应派 | 1.Excel
+2.四类协议附件 | Sheet2·构成子产物 |
+| 2.服务应派 | 1.Excel
+2.四类协议附件 | Sheet2·构成子产物 |
+| 3.奖金应派 | 1.Excel
+2.四类协议附件 | Sheet2·构成子产物 |
+| 4.股权/分红应派 | 1.Excel
+2.四类协议附件 | Sheet2·构成子产物 |</p>
+<p><strong>信号6 · 已知的岗位和系统依赖</strong>（⚠ 待源头校准，暂无数据）
+- 涉及岗位：v2.0数据表中生产部门/生产岗位字段为空，待Terresa/HR校准
+- 涉及系统：待补充
+- 外部依赖：待补充</p>
+<p><strong>信号7 · KPI锚定和M锚定</strong>
+- KPI锚定：1.理财师NPS / 2.综合应派一次通过率
+- M锚定：M2 KPI报表 / M3 NGP / M7 产品治理 / M8 财务结算
+- 战略意义：待人工补充</p>
+<hr />
+<h3>VN-PAY-07 · 银行权益活动费对账单</h3>
+<p><strong>信号1 · 端到端业务逻辑</strong>
+- 业务描述：银行权益活动费报送E2E
+- 起点A：1.银行合作协议
+2.活动执行记录
+- 终点Z：《活动费对账单》
+- 终点标准：已结清
+- 频次：每周1次，每月1次汇总
+- 价值属性：银行合作生态收入归口;权益活动ROI可见</p>
+<p><strong>信号2 · 生产方与消费方</strong>（⚠ 待源头校准，暂无数据）
+- 生产方：v2.0数据表中生产部门/生产岗位字段为空，待Terresa/HR校准
+- 消费方：v2.0数据表中消费主体/消费对象字段为空，待Terresa/HR校准
+- 单点风险：待评估</p>
+<p><strong>信号3 · 三重Gate状态</strong>
+| Gate | 评级 | 说明 |
+|---|---|---|
+| Gate①挂数 | PARTIAL | — |
+| Gate②落地 | PARTIAL | — |
+| Gate③追溯 | PASS | — |
+| 综合判定 | PASS | 非熔断 |</p>
+<p><strong>信号4 · 调研已知清单（A/B/C三分类）</strong></p>
+<blockquote>
+<p>⚠ 自动化提取仅覆盖Excel结构化数据。访谈规则(EFA001/PAY002/PAY003/PAY005-009)需人工继承。</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>分类</th>
+<th>信号内容</th>
+<th>来源</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A类</td>
+<td>L4组成：(新建)</td>
+<td>Sheet2</td>
+</tr>
+<tr>
+<td>A类</td>
+<td>子产物：1.活动费应收</td>
+<td></td>
+</tr>
+<tr>
+<td>2.活动费实收</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>3.活动凭证包</td>
+<td>Sheet2</td>
+<td></td>
+</tr>
+<tr>
+<td>B类</td>
+<td>物理对应：Excel + 凭证(数字化中)</td>
+<td>Sheet2·物理对应</td>
+</tr>
+<tr>
+<td>C类</td>
+<td>访谈规则需人工继承</td>
+<td>待补充</td>
+</tr>
+</tbody>
+</table>
+<p><strong>信号5 · 已知的交付物</strong>
+| 交付物 | 形态 | 来源 |
+|---|---|---|
+| 1.活动费应收 | 活动现场凭证 | Sheet2·构成子产物 |
+| 2.活动费实收 | 活动现场凭证 | Sheet2·构成子产物 |
+| 3.活动凭证包 | 活动现场凭证 | Sheet2·构成子产物 |</p>
+<p><strong>信号6 · 已知的岗位和系统依赖</strong>（⚠ 待源头校准，暂无数据）
+- 涉及岗位：v2.0数据表中生产部门/生产岗位字段为空，待Terresa/HR校准
+- 涉及系统：待补充
+- 外部依赖：待补充</p>
+<p><strong>信号7 · KPI锚定和M锚定</strong>
+- KPI锚定：1.活动费回款时效 / 2.银行合作维度数
+- M锚定：M1 中台运营 / M5 AI自动化 / M8 财务结算
+- 战略意义：待人工补充</p>
+<hr />
+<h3>VN-PAY-08 · 报销凭证包 [🔴熔断]</h3>
+<p><strong>信号1 · 端到端业务逻辑</strong>
+- 业务描述：员工报销E2E(新建L3-EXP)
+- 起点A：1.员工提单
+2.收据/发票
+- 终点Z：1.《报销凭证包》
+- 终点标准：1.审批完成
+2.财务出账
+- 频次：每月1次
+- 价值属性：员工体验+合规留痕</p>
+<p><strong>信号2 · 生产方与消费方</strong>（⚠ 待源头校准，暂无数据）
+- 生产方：v2.0数据表中生产部门/生产岗位字段为空，待Terresa/HR校准
+- 消费方：v2.0数据表中消费主体/消费对象字段为空，待Terresa/HR校准
+- 单点风险：待评估</p>
+<p><strong>信号3 · 三重Gate状态</strong>
+| Gate | 评级 | 说明 |
+|---|---|---|
+| Gate①挂数 | FAIL | — |
+| Gate②落地 | FAIL | — |
+| Gate③追溯 | PARTIAL | — |
+| 综合判定 | FAIL | 熔断 |</p>
+<p><strong>信号4 · 调研已知清单（A/B/C三分类）</strong></p>
+<blockquote>
+<p>⚠ 自动化提取仅覆盖Excel结构化数据。访谈规则(EFA001/PAY002/PAY003/PAY005-009)需人工继承。</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>分类</th>
+<th>信号内容</th>
+<th>来源</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A类</td>
+<td>L4组成：(全新建)</td>
+<td>Sheet2</td>
+</tr>
+<tr>
+<td>A类</td>
+<td>子产物：1.报销申请表</td>
+<td></td>
+</tr>
+<tr>
+<td>2.电子化凭证</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>3.审批留痕</td>
+<td>Sheet2</td>
+<td></td>
+</tr>
+<tr>
+<td>B类</td>
+<td>物理对应：⚠ 纸质化为主·未数字化</td>
+<td>Sheet2·物理对应</td>
+</tr>
+<tr>
+<td>C类</td>
+<td>访谈规则需人工继承</td>
+<td>待补充</td>
+</tr>
+</tbody>
+</table>
+<p><strong>信号5 · 已知的交付物</strong>
+| 交付物 | 形态 | 来源 |
+|---|---|---|
+| 1.报销申请表 | 1.PDF/纸质 → Excel
+2.扫描件 | Sheet2·构成子产物 |
+| 2.电子化凭证 | 1.PDF/纸质 → Excel
+2.扫描件 | Sheet2·构成子产物 |
+| 3.审批留痕 | 1.PDF/纸质 → Excel
+2.扫描件 | Sheet2·构成子产物 |</p>
+<p><strong>信号6 · 已知的岗位和系统依赖</strong>（⚠ 待源头校准，暂无数据）
+- 涉及岗位：v2.0数据表中生产部门/生产岗位字段为空，待Terresa/HR校准
+- 涉及系统：待补充
+- 外部依赖：待补充</p>
+<p><strong>信号7 · KPI锚定和M锚定</strong>
+- KPI锚定：1.报销周期 / 2.合规率
+- M锚定：M5 AI自动化 / M8 财务结算
+- 战略意义：待人工补充</p>
+<hr />
+<h3>VN-PAY-09 · NGM→Apass→宿安→天领体系外对账表 [🔴熔断]</h3>
+<p><strong>信号1 · 端到端业务逻辑</strong>
+- 业务描述：体系外资金对账E2E(空缺L3)
+- 起点A：体系外资金流
+- 终点Z：
+- 终点标准：—
+- 频次：待定
+- 价值属性：⚠ 37.2M HKD规模，BP V2零覆盖，重大风险</p>
+<p><strong>信号2 · 生产方与消费方</strong>（⚠ 待源头校准，暂无数据）
+- 生产方：v2.0数据表中生产部门/生产岗位字段为空，待Terresa/HR校准
+- 消费方：v2.0数据表中消费主体/消费对象字段为空，待Terresa/HR校准
+- 单点风险：待评估</p>
+<p><strong>信号3 · 三重Gate状态</strong>
+| Gate | 评级 | 说明 |
+|---|---|---|
+| Gate①挂数 | FAIL | — |
+| Gate②落地 | FAIL | — |
+| Gate③追溯 | FAIL | — |
+| 综合判定 | FAIL | 熔断 |</p>
+<p><strong>信号4 · 调研已知清单（A/B/C三分类）</strong></p>
+<blockquote>
+<p>⚠ 自动化提取仅覆盖Excel结构化数据。访谈规则(EFA001/PAY002/PAY003/PAY005-009)需人工继承。</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>分类</th>
+<th>信号内容</th>
+<th>来源</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A类</td>
+<td>L4组成：未建</td>
+<td>Sheet2</td>
+</tr>
+<tr>
+<td>A类</td>
+<td>子产物：1.体系外资金台账</td>
+<td></td>
+</tr>
+<tr>
+<td>2.BP V2缺失闭环映射</td>
+<td>Sheet2</td>
+<td></td>
+</tr>
+<tr>
+<td>B类</td>
+<td>物理对应：完全空缺</td>
+<td>Sheet2·物理对应</td>
+</tr>
+<tr>
+<td>C类</td>
+<td>访谈规则需人工继承</td>
+<td>待补充</td>
+</tr>
+</tbody>
+</table>
+<p><strong>信号5 · 已知的交付物</strong>
+| 交付物 | 形态 | 来源 |
+|---|---|---|
+| 1.体系外资金台账 | 1.Excel台账
+2.对账记录 | Sheet2·构成子产物 |
+| 2.BP V2缺失闭环映射 | 1.Excel台账
+2.对账记录 | Sheet2·构成子产物 |</p>
+<p><strong>信号6 · 已知的岗位和系统依赖</strong>（⚠ 待源头校准，暂无数据）
+- 涉及岗位：v2.0数据表中生产部门/生产岗位字段为空，待Terresa/HR校准
+- 涉及系统：待补充
+- 外部依赖：待补充</p>
+<p><strong>信号7 · KPI锚定和M锚定</strong>
+- KPI锚定：1.体系外资金覆盖率 / 2.对账完整度
+- M锚定：M0 数理基建 / M3 NGP / M8 财务结算
+- 战略意义：待人工补充</p>
+<hr />
+<h2>Step 4 · 调研已知清单（三分类汇总·自动提取部分）</h2>
+<blockquote>
+<p>仅含Excel结构化自动提取的信号。访谈规则(EFA001/PAY002等)需人工继承后补充。</p>
+</blockquote>
+<h3>A类·已确立规则（自动提取·结构信息）</h3>
+<table>
+<thead>
+<tr>
+<th>节点</th>
+<th>信号内容</th>
+<th>来源</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VN-PAY-01</td>
+<td>L4组成：1.季度源头佣金录入</td>
+<td></td>
+</tr>
+<tr>
+<td>2.市场佣金制作</td>
+<td>Sheet2</td>
+<td></td>
+</tr>
+<tr>
+<td>VN-PAY-01</td>
+<td>子产物：1.季度源头佣金表</td>
+<td></td>
+</tr>
+<tr>
+<td>2.市场佣金表</td>
+<td>Sheet2</td>
+<td></td>
+</tr>
+<tr>
+<td>VN-PAY-01</td>
+<td>子产物补充：(2子产物同闭环)</td>
+<td>Sheet2</td>
+</tr>
+<tr>
+<td>VN-PAY-02</td>
+<td>L4组成：1.应收应付提示</td>
+<td></td>
+</tr>
+<tr>
+<td>2.银行流水对账</td>
+<td>Sheet2</td>
+<td></td>
+</tr>
+<tr>
+<td>VN-PAY-02</td>
+<td>子产物：1.应收佣金核对表</td>
+<td></td>
+</tr>
+<tr>
+<td>2.实收佣金对账表</td>
+<td>Sheet2</td>
+<td></td>
+</tr>
+<tr>
+<td>VN-PAY-02</td>
+<td>子产物补充：(对账孪生)</td>
+<td>Sheet2</td>
+</tr>
+<tr>
+<td>VN-PAY-03</td>
+<td>L4组成：1.应派计算</td>
+<td></td>
+</tr>
+<tr>
+<td>2.争议处理</td>
+<td>Sheet2</td>
+<td></td>
+</tr>
+<tr>
+<td>VN-PAY-03</td>
+<td>子产物：1.应派给理财师</td>
+<td></td>
+</tr>
+<tr>
+<td>2.应派给销售员</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>3.争议留痕表</td>
+<td>Sheet2</td>
+<td></td>
+</tr>
+<tr>
+<td>VN-PAY-04</td>
+<td>L4组成：1.实派执行</td>
+<td></td>
+</tr>
+<tr>
+<td>2.IA合规校验</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>3.回执归档</td>
+<td>Sheet2</td>
+<td></td>
+</tr>
+<tr>
+<td>VN-PAY-04</td>
+<td>子产物：1.转介费派发表</td>
+<td></td>
+</tr>
+<tr>
+<td>2.银行付款回执包</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>3.IA合规留痕</td>
+<td>Sheet2</td>
+<td></td>
+</tr>
+<tr>
+<td>VN-PAY-05</td>
+<td>L4组成：1.服务凭证留存</td>
+<td></td>
+</tr>
+<tr>
+<td>2.服务-佣金联动</td>
+<td>Sheet2</td>
+<td></td>
+</tr>
+<tr>
+<td>VN-PAY-05</td>
+<td>子产物：1.INVOICE对账单</td>
+<td></td>
+</tr>
+<tr>
+<td>2.经纪人激励结算单</td>
+<td>Sheet2</td>
+<td></td>
+</tr>
+<tr>
+<td>VN-PAY-06</td>
+<td>L4组成：协议参数中心化</td>
+<td>Sheet2</td>
+</tr>
+<tr>
+<td>VN-PAY-06</td>
+<td>子产物：1.佣金应派</td>
+<td></td>
+</tr>
+<tr>
+<td>2.服务应派</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>3.奖金应派</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>4.股权/分红应派</td>
+<td>Sheet2</td>
+<td></td>
+</tr>
+<tr>
+<td>VN-PAY-07</td>
+<td>L4组成：(新建)</td>
+<td>Sheet2</td>
+</tr>
+<tr>
+<td>VN-PAY-07</td>
+<td>子产物：1.活动费应收</td>
+<td></td>
+</tr>
+<tr>
+<td>2.活动费实收</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>3.活动凭证包</td>
+<td>Sheet2</td>
+<td></td>
+</tr>
+<tr>
+<td>VN-PAY-08</td>
+<td>L4组成：(全新建)</td>
+<td>Sheet2</td>
+</tr>
+<tr>
+<td>VN-PAY-08</td>
+<td>子产物：1.报销申请表</td>
+<td></td>
+</tr>
+<tr>
+<td>2.电子化凭证</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>3.审批留痕</td>
+<td>Sheet2</td>
+<td></td>
+</tr>
+<tr>
+<td>VN-PAY-09</td>
+<td>L4组成：未建</td>
+<td>Sheet2</td>
+</tr>
+<tr>
+<td>VN-PAY-09</td>
+<td>子产物：1.体系外资金台账</td>
+<td></td>
+</tr>
+<tr>
+<td>2.BP V2缺失闭环映射</td>
+<td>Sheet2</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>小计：A类 20 条（自动提取的结构化信息）</p>
+</blockquote>
+<h3>B类·规则线索（自动提取·物理对应）</h3>
+<table>
+<thead>
+<tr>
+<th>节点</th>
+<th>信号内容</th>
+<th>来源</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VN-PAY-01</td>
+<td>物理对应：实体存在 Excel+PDF</td>
+<td>Sheet2·物理对应</td>
+</tr>
+<tr>
+<td>VN-PAY-02</td>
+<td>物理对应：1.Excel + 银行回单(PDF</td>
+<td></td>
+</tr>
+<tr>
+<td>2.截图)</td>
+<td>Sheet2·物理对应</td>
+<td></td>
+</tr>
+<tr>
+<td>VN-PAY-03</td>
+<td>物理对应：Excel合订+争议邮件链</td>
+<td>Sheet2·物理对应</td>
+</tr>
+<tr>
+<td>VN-PAY-04</td>
+<td>物理对应：⚠ 银行回执无统一归档·IA规则未代码化</td>
+<td>Sheet2·物理对应</td>
+</tr>
+<tr>
+<td>VN-PAY-05</td>
+<td>物理对应：Excel + 凭证(部分缺失)</td>
+<td>Sheet2·物理对应</td>
+</tr>
+<tr>
+<td>VN-PAY-06</td>
+<td>物理对应：四类协议未代码化·人工合并</td>
+<td>Sheet2·物理对应</td>
+</tr>
+<tr>
+<td>VN-PAY-07</td>
+<td>物理对应：Excel + 凭证(数字化中)</td>
+<td>Sheet2·物理对应</td>
+</tr>
+<tr>
+<td>VN-PAY-08</td>
+<td>物理对应：⚠ 纸质化为主·未数字化</td>
+<td>Sheet2·物理对应</td>
+</tr>
+<tr>
+<td>VN-PAY-09</td>
+<td>物理对应：完全空缺</td>
+<td>Sheet2·物理对应</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>小计：B类 9 条（自动提取的物理对应信息）</p>
+</blockquote>
+<h3>C类·行动项</h3>
+<blockquote>
+<p>自动化提取暂无法识别C类行动项，需人工从访谈记录中继承。</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>分类</th>
+<th>数量（自动提取）</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A类·已确立规则</td>
+<td>20</td>
+<td>仅含Excel结构化信息</td>
+</tr>
+<tr>
+<td>B类·规则线索</td>
+<td>9</td>
+<td>仅含物理对应信息</td>
+</tr>
+<tr>
+<td>C类·行动项</td>
+<td>0</td>
+<td>需人工继承</td>
+</tr>
+<tr>
+<td><strong>合计（自动提取）</strong></td>
+<td><strong>29</strong></td>
+<td><strong>访谈规则需人工补充</strong></td>
+</tr>
+</tbody>
+</table>
+<h2>Step 5 · 信号空白清单（自动识别）</h2>
+<blockquote>
+<p>以下空白为自动化识别的结构性缺失，需人工核实。</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>节点</th>
+<th>空白描述</th>
+<th>空白类型</th>
+<th>L层定位</th>
+<th>访谈优先级</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VN-PAY-01</td>
+<td>生产部门/生产岗位/消费主体/消费对象4字段为空</td>
+<td>数据空白</td>
+<td>数据源层</td>
+<td>P1</td>
+</tr>
+<tr>
+<td>VN-PAY-02</td>
+<td>生产部门/生产岗位/消费主体/消费对象4字段为空</td>
+<td>数据空白</td>
+<td>数据源层</td>
+<td>P1</td>
+</tr>
+<tr>
+<td>VN-PAY-03</td>
+<td>生产部门/生产岗位/消费主体/消费对象4字段为空</td>
+<td>数据空白</td>
+<td>数据源层</td>
+<td>P1</td>
+</tr>
+<tr>
+<td>VN-PAY-04</td>
+<td>生产部门/生产岗位/消费主体/消费对象4字段为空</td>
+<td>数据空白</td>
+<td>数据源层</td>
+<td>P1</td>
+</tr>
+<tr>
+<td>VN-PAY-04</td>
+<td>节点熔断（Gate状态：FAIL/FAIL/FAIL）</td>
+<td>熔断缺口</td>
+<td>Gate层</td>
+<td>P0</td>
+</tr>
+<tr>
+<td>VN-PAY-05</td>
+<td>生产部门/生产岗位/消费主体/消费对象4字段为空</td>
+<td>数据空白</td>
+<td>数据源层</td>
+<td>P1</td>
+</tr>
+<tr>
+<td>VN-PAY-06</td>
+<td>生产部门/生产岗位/消费主体/消费对象4字段为空</td>
+<td>数据空白</td>
+<td>数据源层</td>
+<td>P1</td>
+</tr>
+<tr>
+<td>VN-PAY-06</td>
+<td>节点熔断（Gate状态：FAIL/PARTIAL/FAIL）</td>
+<td>熔断缺口</td>
+<td>Gate层</td>
+<td>P0</td>
+</tr>
+<tr>
+<td>VN-PAY-07</td>
+<td>生产部门/生产岗位/消费主体/消费对象4字段为空</td>
+<td>数据空白</td>
+<td>数据源层</td>
+<td>P1</td>
+</tr>
+<tr>
+<td>VN-PAY-08</td>
+<td>生产部门/生产岗位/消费主体/消费对象4字段为空</td>
+<td>数据空白</td>
+<td>数据源层</td>
+<td>P1</td>
+</tr>
+<tr>
+<td>VN-PAY-08</td>
+<td>节点熔断（Gate状态：FAIL/FAIL/PARTIAL）</td>
+<td>熔断缺口</td>
+<td>Gate层</td>
+<td>P0</td>
+</tr>
+<tr>
+<td>VN-PAY-09</td>
+<td>生产部门/生产岗位/消费主体/消费对象4字段为空</td>
+<td>数据空白</td>
+<td>数据源层</td>
+<td>P1</td>
+</tr>
+<tr>
+<td>VN-PAY-09</td>
+<td>节点熔断（Gate状态：FAIL/FAIL/FAIL）</td>
+<td>熔断缺口</td>
+<td>Gate层</td>
+<td>P0</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>小计：空白 13 条</p>
+</blockquote>
+<h2>Step 6 · 信号全景图</h2>
+<h3>节点概览</h3>
+<table>
+<thead>
+<tr>
+<th>节点</th>
+<th>业务一句话</th>
+<th>Gate综合</th>
+<th>熔断</th>
+<th>调研覆盖度</th>
+<th>交付物数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VN-PAY-01</td>
+<td>市场佣金制作产出包</td>
+<td>PASS</td>
+<td>False</td>
+<td>自动提取</td>
+<td>2</td>
+</tr>
+<tr>
+<td>VN-PAY-02</td>
+<td>佣金实收确认表</td>
+<td>PASS</td>
+<td>False</td>
+<td>自动提取</td>
+<td>2</td>
+</tr>
+<tr>
+<td>VN-PAY-03</td>
+<td>应派清单三件套</td>
+<td>PASS</td>
+<td>False</td>
+<td>自动提取</td>
+<td>3</td>
+</tr>
+<tr>
+<td>VN-PAY-04</td>
+<td>转介费派发确认台账</td>
+<td>FAIL</td>
+<td>True</td>
+<td>自动提取</td>
+<td>3</td>
+</tr>
+<tr>
+<td>VN-PAY-05</td>
+<td>INVOICE/激励结算单</td>
+<td>PASS</td>
+<td>False</td>
+<td>自动提取</td>
+<td>2</td>
+</tr>
+<tr>
+<td>VN-PAY-06</td>
+<td>理财师综合应派计算清单</td>
+<td>FAIL</td>
+<td>True</td>
+<td>自动提取</td>
+<td>4</td>
+</tr>
+<tr>
+<td>VN-PAY-07</td>
+<td>银行权益活动费对账单</td>
+<td>PASS</td>
+<td>False</td>
+<td>自动提取</td>
+<td>3</td>
+</tr>
+<tr>
+<td>VN-PAY-08</td>
+<td>报销凭证包</td>
+<td>FAIL</td>
+<td>True</td>
+<td>自动提取</td>
+<td>3</td>
+</tr>
+<tr>
+<td>VN-PAY-09</td>
+<td>NGM→Apass→宿安→天领体系外对账表</td>
+<td>FAIL</td>
+<td>True</td>
+<td>自动提取</td>
+<td>2</td>
+</tr>
+</tbody>
+</table>
+<h3>熔断节点汇总（0个）</h3>
+<ul>
+<li>VN-PAY-04 · 转介费派发确认台账（Gate: FAIL/FAIL/FAIL）</li>
+<li>VN-PAY-06 · 理财师综合应派计算清单（Gate: FAIL/PARTIAL/FAIL）</li>
+<li>VN-PAY-08 · 报销凭证包（Gate: FAIL/FAIL/PARTIAL）</li>
+<li>VN-PAY-09 · NGM→Apass→宿安→天领体系外对账表（Gate: FAIL/FAIL/FAIL）</li>
+</ul>
+<h2>Step 7 · 自检声明</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Done Criteria</th>
+<th>自检结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>所有Sheet结构已读取并概述</td>
+<td>✅ 8个Sheet全量读取</td>
+</tr>
+<tr>
+<td>2</td>
+<td>PAY域节点已全部提取（9个）</td>
+<td>✅ 9个节点全覆盖</td>
+</tr>
+<tr>
+<td>3</td>
+<td>每个节点7类信号全部提取</td>
+<td>✅ 9节点×7信号=63项信号</td>
+</tr>
+<tr>
+<td>4</td>
+<td>信号2/6岗位信息：标注"待源头校准"</td>
+<td>✅ 空字段已标注</td>
+</tr>
+<tr>
+<td>5</td>
+<td>熔断判定：直接读取Sheet3"是否熔断"列</td>
+<td>✅ 未自行推导</td>
+</tr>
+<tr>
+<td>6</td>
+<td>信号4仅提取Excel结构化数据，访谈规则标注"需人工继承"</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>7</td>
+<td>全程只做信号提取，未做规则空白识别</td>
+<td>✅</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<blockquote>
+<p>产出文件：<code>PAY域_价值节点信号提取基线_auto_v1.0.md</code>
+数据源版本：D1_价值节点清单_标准化_数据表版_v2.0.xlsx
+生成脚本：<code>extract_signals.py</code>
+自动化范围：信号1/2/3/5/6/7从Excel自动提取；信号4仅覆盖结构化部分，访谈规则需人工继承</p>
+</blockquote>
+</div>
+</body>
+</html>
