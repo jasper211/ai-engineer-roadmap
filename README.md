@@ -63,7 +63,7 @@
 | 工程落地效率 | 封装 Agent/Skills 到生产场景 | 部分覆盖 | 公开包 + 量化效率数据 | P2 | 55% |
 | 内容行业经验 | 知道什么是好内容 | 弱项 | 3篇公开技术文章 | P4 | 25% |
 | 企业协作平台集成 | 飞书 CLI / 自动化流程 | 部分覆盖 | 飞书 API/CLI 集成实例 | P3 | 40% |
-| **Computer Use / Browser Use** | 前沿 Agent 实操经验 | 已有 PoC | 真实自动化案例 + Skill | **P1** | 35% |
+| **Computer Use / Browser Use** | 前沿 Agent 实操经验 | 2个 PoC 完成 | 真实自动化案例 + Skill | **P1** | 45% |
 | 大模型成本优化 | 成本优化经验 | 间接覆盖 | token 追踪 + 分级路由 + 报告 | P3 | 30% |
 | CS/AI 专业背景 | 计算机/AI 相关专业 | 弱项 | 个人作品集网站 | P4 | 20% |
 
@@ -79,9 +79,13 @@ AI工程能力整改项目/
 │   ├── Phase 0 启动清单.md
 │   └── 目标岗位方向确认.md
 ├── 01_execution/         # 按任务存放的执行记录
-│   └── P1-01_PAY-COM价值节点一致性校验/
+│   ├── P1-01_PAY-COM价值节点一致性校验/
+│   │   ├── 任务执行记录.md
+│   │   ├── validate_vn_consistency.py
+│   │   └── outputs/
+│   └── P1-02_信号提取自动化/
 │       ├── 任务执行记录.md
-│       ├── validate_vn_consistency.py
+│       ├── extract_signals.py
 │       └── outputs/
 ├── 02_decisions/         # 决策日志
 │   ├── D-20260702-001_GitHub推送协议选择.md
@@ -108,6 +112,7 @@ AI工程能力整改项目/
 | 能力 Pipeline 矩阵 | 分析文档 | ✅ 已完成 | [HTML](./05_assets/能力打造Pipeline矩阵.html) |
 | 整改执行路线图 | 规划文档 | ✅ 已完成 | [HTML](./05_assets/AI工程能力整改执行路线图.html) |
 | PAY-COM 价值节点一致性校验 | 自动化脚本 + 报告 | ✅ 已完成 | [执行记录](./01_execution/P1-01_PAY-COM价值节点一致性校验/任务执行记录.md) |
+| PAY域信号提取自动化 | 自动化脚本 + 基线 | ✅ 已完成 | [执行记录](./01_execution/P1-02_信号提取自动化/任务执行记录.md) |
 | 价值节点规则分析前端 | Web App | 🔄 Phase 1 | 待部署 |
 | process-db MCP Server | MCP Service | 🔄 Phase 1 | 待公开 |
 | B-RPT 岗位报告 Agent | Agent | 🔄 Phase 2 | 待上线 |
@@ -129,10 +134,11 @@ AI工程能力整改项目/
 ## 📈 最新进展
 
 <!-- 每周更新 -->
-- **当前阶段**：Phase 1 执行中
-- **本周重点**：完成 P1-01 价值节点一致性自动校验 PoC（Python + browser-use MCP 混合方案）、输出 HTML 报告与截图证据
-- **风险点**：Desktop 级误初始化 git repo 已修复；后续需注意 AI 工具工作目录隔离
-- **下次检查点**：P1-02 价值节点清单标准化脚本 或 前端应用部署
+- **当前阶段**：Phase 1 执行中（第1周）
+- **已完成**：P1-01 价值节点一致性校验 PoC + P1-02 信号提取自动化（7类信号×9节点，706行脚本，<1秒生成）
+- **本周重点**：Computer Use 维度从 5%→45%，两个 Python+browser-use 混合 PoC 已交付
+- **风险点**：信号4（A/B/C三分类）访谈规则需人工继承，自动化覆盖率 70%
+- **下次检查点**：前端应用部署 或 扩展到其他域（CFM/BAM/SSVA）
 
 ---
 
