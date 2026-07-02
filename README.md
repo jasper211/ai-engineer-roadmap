@@ -18,7 +18,7 @@
 ---
 
 [![Status](https://img.shields.io/badge/status-in%20progress-yellow)](./能力整改看板.md)
-[![Phase](https://img.shields.io/badge/phase-Phase%200%20%C2%B7%20Setup-blue)](./00_planning/Phase%200%20启动清单.md)
+[![Phase](https://img.shields.io/badge/phase-Phase%201%20%C2%B7%20Execution-green)](./00_planning/Phase%200%20启动清单.md)
 [![Weeks](https://img.shields.io/badge/timeline-16%20weeks-orange)](./AI工程能力整改执行路线图.html)
 
 ---
@@ -76,13 +76,14 @@
 ```
 AI工程能力整改项目/
 ├── 00_planning/          # 规划文档
-│   └── Phase 0 启动清单.md
+│   ├── Phase 0 启动清单.md
+│   └── 目标岗位方向确认.md
 ├── 01_execution/         # 按任务存放的执行记录
-│   └── （待创建）
-├── 02_review/            # 周报复盘与月度评估
-│   └── （待创建）
-├── 03_artifacts/         # 最终产出物：URL、发布包、作品集
-│   └── （待创建）
+│   └── （按任务编号创建）
+├── 02_decisions/         # 决策日志
+│   └── D-20260702-001_GitHub推送协议选择.md
+├── 03_reviews/           # 周报复盘与月度评估
+│   └── 第1周_Phase0启动_周报复盘.md
 ├── 04_templates/         # 可复用模板
 │   ├── 决策日志模板.md
 │   ├── 周报复盘模板.md
@@ -121,10 +122,10 @@ AI工程能力整改项目/
 ## 📈 最新进展
 
 <!-- 每周更新 -->
-- **当前阶段**：Phase 0 · 启动准备
-- **本周重点**：建立 GitHub repo、项目看板、决策日志、周报模板
-- **风险点**：暂无
-- **下次检查点**：Phase 0 完成后启动 P0-01 Computer Use 实操
+- **当前阶段**：Phase 0 已完成 · Phase 1 待启动
+- **本周重点**：完成 GitHub repo 初始化、项目看板、第一份决策日志、第一份周报复盘、目标岗位方向确认
+- **风险点**：GitHub 访问偶发不稳定，已配置 SSH 443 fallback
+- **下次检查点**：启动 Phase 1 第一个任务 · Computer Use / Browser Use 实操
 
 ---
 
