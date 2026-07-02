@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>P1-01 · PAY-COM 价值节点一致性校验报告</title>
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+            --muted: #64748b;
+            --success: #16a34a;
+            --warning: #ca8a04;
+            --danger: #dc2626;
+            --border: #e2e8f0;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            margin: 0;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+        }
+        h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+        .subtitle {
+            color: var(--muted);
+            margin-bottom: 24px;
+        }
+        .meta {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            font-size: 14px;
+            color: var(--muted);
+        }
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        .summary-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+        .summary-card .number {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .summary-card .label {
+            font-size: 13px;
+            color: var(--muted);
+        }
+        .success { color: var(--success); }
+        .warning { color: var(--warning); }
+        .danger { color: var(--danger); }
+        .section {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        .section h2 {
+            margin-top: 0;
+            font-size: 20px;
+            margin-bottom: 16px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        th, td {
+            text-align: left;
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        th {
+            background: #f1f5f9;
+            font-weight: 600;
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .badge-success { background: #dcfce7; color: var(--success); }
+        .badge-warning { background: #fef9c3; color: var(--warning); }
+        .badge-danger { background: #fee2e2; color: var(--danger); }
+        .empty {
+            color: var(--muted);
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>P1-01 · PAY-COM 价值节点一致性校验报告</h1>
+        <div class="subtitle">流程蓝图 vs D1 价值节点清单 · 自动化比对</div>
+
+        <div class="meta">
+            <div>生成时间：2026-07-02 15:02:37</div>
+            <div>流程蓝图：流程蓝图_L3-COM_佣金全链路管理_V1的副本.0.md</div>
+            <div>价值节点清单：D1_价值节点清单_标准化_数据表版_v2的副本.0.xlsx</div>
+        </div>
+
+        <div class="summary">
+            <div class="summary-card">
+                <div class="number success">5</div>
+                <div class="label">完全一致</div>
+            </div>
+            <div class="summary-card">
+                <div class="number warning">1</div>
+                <div class="label">名称不一致</div>
+            </div>
+            <div class="summary-card">
+                <div class="number danger">3</div>
+                <div class="label">仅在清单中</div>
+            </div>
+            <div class="summary-card">
+                <div class="number danger">0</div>
+                <div class="label">仅在蓝图中</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🟢 完全一致</h2>
+            <table><tr><th>VN编码</th><th>VN名称</th><th>状态</th></tr><tr><td>VN-PAY-01</td><td>市场佣金制作产出包</td><td><span class="badge badge-success">一致</span></td></tr><tr><td>VN-PAY-02</td><td>佣金实收确认表</td><td><span class="badge badge-success">一致</span></td></tr><tr><td>VN-PAY-03</td><td>应派清单三件套</td><td><span class="badge badge-success">一致</span></td></tr><tr><td>VN-PAY-04</td><td>转介费派发确认台账</td><td><span class="badge badge-success">一致</span></td></tr><tr><td>VN-PAY-06</td><td>理财师综合应派计算清单</td><td><span class="badge badge-success">一致</span></td></tr></table>
+        </div>
+
+        <div class="section">
+            <h2>🟡 名称不一致</h2>
+            <table><tr><th>VN编码</th><th>流程蓝图名称</th><th>清单名称</th><th>状态</th></tr><tr><td>VN-PAY-05</td><td>增值服务台账+服务价值汇总表</td><td>INVOICE/激励结算单</td><td><span class="badge badge-warning">名称不一致</span></td></tr></table>
+        </div>
+
+        <div class="section">
+            <h2>🔴 仅在 D1 价值节点清单中</h2>
+            <p>这些节点出现在 Excel 清单中，但不在 L3-COM 流程蓝图里。可能归属于其他 L3 流程。</p>
+            <table><tr><th>VN编码</th><th>清单名称</th><th>L3名称</th><th>状态</th></tr><tr><td>VN-PAY-07</td><td>银行权益活动费对账单</td><td>银行权益活动费报送E2E</td><td><span class="badge badge-danger">归属待确认</span></td></tr><tr><td>VN-PAY-08</td><td>报销凭证包</td><td>员工报销E2E(新建L3-EXP)</td><td><span class="badge badge-danger">归属待确认</span></td></tr><tr><td>VN-PAY-09</td><td>NGM→Apass→宿安→天领体系外对账表</td><td>体系外资金对账E2E(L3-CFM)</td><td><span class="badge badge-danger">归属待确认</span></td></tr></table>
+        </div>
+
+        <div class="section">
+            <h2>🔴 仅在流程蓝图中</h2>
+            <p class="empty">无</p>
+        </div>
+
+        <div class="section">
+            <h2>📋 结论与建议</h2>
+            <ul>
+                <li>流程蓝图与清单共有 <strong>5</strong> 个价值节点完全一致。</li>
+                <li><strong>VN-PAY-05</strong> 名称存在差异，需要人工确认哪个名称是标准命名。</li>
+                <li><strong>VN-PAY-07/08/09</strong> 仅在清单中，可能不属于 L3-COM，建议核对归属域。</li>
+                <li>建议在下一次迭代中统一价值节点命名规范，并在流程蓝图中明确标注跨 L3 引用关系。</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
