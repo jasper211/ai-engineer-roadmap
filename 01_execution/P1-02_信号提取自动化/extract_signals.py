@@ -6,14 +6,20 @@ P1-02 · 价值节点信号提取自动化脚本
 依据三层递进提取法 v3.4「第零步·前置信号提取」，
 从 D1 价值节点清单 Excel 自动提取 7 类信号，生成标准基线 Markdown。
 
-输入：D1_价值节点清单_标准化_数据表版_v2.0.xlsx
-输出：PAY域_价值节点信号提取基线_auto_v1.0.md
+用法:
+  python3 extract_signals.py                          # 默认: PAY域, 自动检测最新Excel
+  python3 extract_signals.py --domain CFM             # 指定域
+  python3 extract_signals.py --all                    # 全量72节点
+  python3 extract_signals.py --input /path/to.xlsx    # 指定输入文件
+  python3 extract_signals.py --output /path/to/dir    # 指定输出目录
 
-作者：Jasper + AI 协同终端
-日期：2026-07-02
+作者: Jasper + AI 协同终端
+日期: 2026-07-02
 """
 
+import argparse
 import math
+import sys
 from pathlib import Path
 from datetime import datetime
 
@@ -21,17 +27,70 @@ import pandas as pd
 
 
 # ============================================================
-# 1. 配置
+# 1. 配置 (可被命令行参数覆盖)
 # ============================================================
 
 SCRIPT_DIR = Path(__file__).parent.resolve()
-DATA_DIR = Path("/Users/zhaoqitrenda.cn/Desktop/自动化测试（PAY域）")
-EXCEL_PATH = DATA_DIR / "D1_价值节点清单_标准化_数据表版_v2的副本.0.xlsx"
-OUTPUT_DIR = SCRIPT_DIR / "outputs"
-OUTPUT_DIR.mkdir(exist_ok=True)
 
-DOMAIN_CODE = "PAY"
-DOMAIN_NAME = "财务支付"
+# 默认数据路径: 优先用生产环境目录, 回退到测试目录
+DEFAULT_DATA_DIRS = [
+    Path("/Users/zhaoqitrenda.cn/Desktop/流程架构项目_jasper/02_过程成果-工作产出/规则分析（Jasper）/01_价值节点清单"),
+    Path("/Users/zhaoqitrenda.cn/Desktop/自动化测试（PAY域）"),
+]
+
+def find_latest_excel(dirs):
+    """在多个目录中查找最新的 D1_价值节点清单_标准化_数据表版_*.xlsx"""
+    candidates = []
+    for d in dirs:
+        if not d.exists():
+            continue
+        for f in d.glob("D1_价值节点清单_标准化_数据表版_*.xlsx"):
+            candidates.append(f)
+    if not candidates:
+        return None
+    # 按修改时间取最新
+    return max(candidates, key=lambda p: p.stat().st_mtime)
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(description="价值节点信号提取自动化")
+    parser.add_argument("--input", "-i", type=Path, help="输入 Excel 文件路径 (可选, 默认自动查找)")
+    parser.add_argument("--output", "-o", type=Path, default=SCRIPT_DIR / "outputs", help="输出目录")
+    parser.add_argument("--domain", "-d", type=str, default=None, help="指定域编码过滤 (如 PAY, CFM, BAM)")
+    parser.add_argument("--all", "-a", action="store_true", help="处理全量所有域节点")
+    parser.add_argument("--list-domains", action="store_true", help="列出 Excel 中所有域编码并退出")
+    return parser.parse_args()
+
+
+args = parse_args()
+
+# 确定输入文件
+if args.input:
+    EXCEL_PATH = args.input
+else:
+    EXCEL_PATH = find_latest_excel(DEFAULT_DATA_DIRS)
+
+if not EXCEL_PATH or not EXCEL_PATH.exists():
+    print("错误: 找不到 D1_价值节点清单 Excel 文件")
+    print(f"搜索路径: {[str(d) for d in DEFAULT_DATA_DIRS]}")
+    print("请用 --input 指定路径, 或将文件放入上述目录")
+    sys.exit(1)
+
+print(f"[INFO] 使用输入文件: {EXCEL_PATH}")
+
+OUTPUT_DIR = args.output
+OUTPUT_DIR.mkdir(exist_ok=True, parents=True)
+
+# 域过滤: --all 时不过滤, --domain 时指定, 否则默认 PAY
+if args.all:
+    DOMAIN_CODE = None
+    DOMAIN_NAME = "全域"
+elif args.domain:
+    DOMAIN_CODE = args.domain.upper()
+    DOMAIN_NAME = DOMAIN_CODE  # 简化, 实际可从 Sheet1 读取
+else:
+    DOMAIN_CODE = "PAY"
+    DOMAIN_NAME = "财务支付"
 
 
 # ============================================================
@@ -141,11 +200,20 @@ class SignalExtractor:
             if kpi_id:
                 self.kpi_map[kpi_id] = kpi_name
 
-    def get_nodes(self, domain: str = "PAY") -> list[str]:
-        """获取指定域的所有节点ID"""
+    def get_nodes(self, domain: str = None) -> list[str]:
+        """获取节点ID列表。domain=None时返回全部"""
         df = self.sheets["overview"]
-        nodes = df[df["节点ID"].str.startswith(f"VN-{domain}-")]["节点ID"].tolist()
-        return sorted(nodes)
+        if domain:
+            nodes = df[df["节点ID"].str.startswith(f"VN-{domain}-", na=False)]["节点ID"].tolist()
+        else:
+            nodes = df["节点ID"].tolist()
+        return sorted([n for n in nodes if n and str(n).startswith("VN-")])
+
+    def get_all_domains(self) -> list[str]:
+        """获取所有域编码"""
+        df = self.sheets["overview"]
+        domains = df["域编码"].dropna().unique().tolist()
+        return sorted(domains)
 
     def get_row(self, sheet: str, node_id: str) -> pd.Series:
         """获取指定节点在指定 sheet 中的行"""
@@ -335,10 +403,10 @@ class SignalExtractor:
 class MarkdownGenerator:
     """生成信号提取基线 Markdown"""
 
-    def __init__(self, extractor: SignalExtractor, domain: str = "PAY"):
+    def __init__(self, extractor: SignalExtractor, domain: str = None, domain_name: str = ""):
         self.extractor = extractor
         self.domain = domain
-        self.domain_name = DOMAIN_NAME
+        self.domain_name = domain_name
         self.nodes = extractor.get_nodes(domain)
         self.timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
@@ -356,12 +424,13 @@ class MarkdownGenerator:
         return "\n".join(lines)
 
     def _header(self) -> str:
-        return f"""# {self.domain}域 · 价值节点信号提取基线 auto v1.0
+        domain_label = f"{self.domain}域" if self.domain else "全域"
+        return f"""# {domain_label} · 价值节点信号提取基线 auto v1.0
 
 > 自动化生成 · 生成时间：{self.timestamp}
 > 数据源：`D1_价值节点清单_标准化_数据表版_v2.0.xlsx`
 > 依据标准：`标准_Jasper工作流总纲_v2.2.md` + `上下文_数据规则提取方法论_三层递进提取法_v3.4.md`
-> 追溯标注：源自01层 D1_价值节点清单_标准化_数据表版_v2.0（8个Sheet，{len(self.nodes)}个{self.domain}域节点）
+> 追溯标注：源自01层 D1_价值节点清单_标准化_数据表版_v2.0（8个Sheet，{len(self.nodes)}个{domain_label}节点）
 > 边界声明：本产出仅做信号提取（第零步），不做规则空白识别，不产出规则空白地图/熔断补建清单
 > 自动化声明：本基线由 `extract_signals.py` 自动生成。信号4（A/B/C三分类）仅覆盖Excel结构化数据，访谈规则需人工继承。
 
@@ -371,7 +440,7 @@ class MarkdownGenerator:
 
 | Sheet | 列数 | 核心内容 |
 |---|---|---|
-| 1.价值节点总览 | 14 | {len(self.nodes)}个{self.domain}域节点的概要信息 |
+| 1.价值节点总览 | 14 | {len(self.nodes)}个{domain_label}节点的概要信息 |
 | 2.节点详情卡 | 28 | {len(self.nodes)}张完整属性卡的深度展开 |
 | 3.四属性三重验证矩阵 | 11 | {len(self.nodes)}节点×四属性×三重Gate矩阵 |
 | 4.M0-M8锚定矩阵(参考) | 12 | {len(self.nodes)}节点对M0-M8战略闭环锚定分布 |
@@ -382,10 +451,11 @@ class MarkdownGenerator:
 
 ---
 
-## Step 2 · {self.domain}域节点清单"""
+## Step 2 · {domain_label}节点清单"""
 
     def _step2_node_list(self) -> str:
-        lines = [f"\n> 全部{len(self.nodes)}个节点均属{self.domain}域（{self.domain_name}板块）。\n"]
+        domain_label = f"{self.domain}域" if self.domain else "全域"
+        lines = [f"\n> 全部{len(self.nodes)}个节点均属{domain_label}。\n"]
         lines.append("| 节点编码 | 节点名称 | L3名称 | L3现状 | 起点A | 终点Z | 熔断状态 | 优先级 |")
         lines.append("|---|---|---|---|---|---|---|---|")
 
@@ -645,6 +715,7 @@ class MarkdownGenerator:
         """自检声明"""
         node_count = len(self.nodes)
         signal_count = node_count * 7
+        domain_label = f"{self.domain}域" if self.domain else "全域"
 
         return f"""
 ## Step 7 · 自检声明
@@ -652,7 +723,7 @@ class MarkdownGenerator:
 | # | Done Criteria | 自检结果 |
 |---|---|---|
 | 1 | 所有Sheet结构已读取并概述 | ✅ 8个Sheet全量读取 |
-| 2 | {self.domain}域节点已全部提取（{node_count}个） | ✅ {node_count}个节点全覆盖 |
+| 2 | {domain_label}节点已全部提取（{node_count}个） | ✅ {node_count}个节点全覆盖 |
 | 3 | 每个节点7类信号全部提取 | ✅ {node_count}节点×7信号={signal_count}项信号 |
 | 4 | 信号2/6岗位信息：标注"待源头校准" | ✅ 空字段已标注 |
 | 5 | 熔断判定：直接读取Sheet3"是否熔断"列 | ✅ 未自行推导 |
@@ -661,7 +732,7 @@ class MarkdownGenerator:
 
 ---
 
-> 产出文件：`{self.domain}域_价值节点信号提取基线_auto_v1.0.md`
+> 产出文件：`{domain_label}_价值节点信号提取基线_auto_v1.0.md`
 > 数据源版本：D1_价值节点清单_标准化_数据表版_v2.0.xlsx
 > 生成脚本：`extract_signals.py`
 > 自动化范围：信号1/2/3/5/6/7从Excel自动提取；信号4仅覆盖结构化部分，访谈规则需人工继承"""
@@ -675,19 +746,30 @@ class MarkdownGenerator:
 # ============================================================
 
 def main() -> None:
+    # 处理 --list-domains 模式
+    if args.list_domains:
+        extractor = SignalExtractor(EXCEL_PATH)
+        domains = extractor.get_all_domains()
+        print(f"Excel 中共有 {len(domains)} 个域:")
+        for d in domains:
+            count = len(extractor.get_nodes(d))
+            print(f"  {d}: {count} 个节点")
+        return
+
     print("=" * 60)
-    print(f"P1-02 · {DOMAIN_NAME}域信号提取自动化")
+    print(f"P1-02 · {DOMAIN_NAME}信号提取自动化")
     print("=" * 60)
 
     extractor = SignalExtractor(EXCEL_PATH)
     nodes = extractor.get_nodes(DOMAIN_CODE)
-    print(f"数据源加载完成：{len(nodes)} 个 {DOMAIN_CODE} 域节点")
+    print(f"数据源加载完成：{len(nodes)} 个节点")
     print(f"M映射：{len(extractor.m_map)} 个 | KPI映射：{len(extractor.kpi_map)} 个")
 
-    generator = MarkdownGenerator(extractor, DOMAIN_CODE)
+    generator = MarkdownGenerator(extractor, DOMAIN_CODE, DOMAIN_NAME)
     markdown = generator.generate()
 
-    output_path = OUTPUT_DIR / f"{DOMAIN_CODE}域_价值节点信号提取基线_auto_v1.0.md"
+    domain_label = f"{DOMAIN_CODE}域" if DOMAIN_CODE else "全域"
+    output_path = OUTPUT_DIR / f"{domain_label}_价值节点信号提取基线_auto_v1.0.md"
     output_path.write_text(markdown, encoding="utf-8")
 
     # 统计
