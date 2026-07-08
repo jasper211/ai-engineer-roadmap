@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><title>P1-01 全量验证 · 86份蓝图 × 72节点一致性校验</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 1200px; margin: 0 auto; padding: 40px 20px; background: #f5f5f5; }
+.card { background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+h1 { color: #1a1a1a; margin-bottom: 8px; }
+h2 { color: #333; border-bottom: 2px solid #e0e0e0; padding-bottom: 8px; margin-top: 32px; }
+.summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 24px 0; }
+.stat { text-align: center; padding: 20px; border-radius: 8px; }
+.stat.matched { background: #e8f5e9; color: #2e7d32; }
+.stat.mismatch { background: #fff3e0; color: #ef6c00; }
+.stat.only-bp { background: #fce4ec; color: #c2185b; }
+.stat.only-ex { background: #e3f2fd; color: #1565c0; }
+.stat-number { font-size: 36px; font-weight: 700; }
+.stat-label { font-size: 14px; margin-top: 4px; }
+.bp-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 16px 0; }
+.bp-stat { text-align: center; padding: 16px; background: #fafafa; border-radius: 8px; }
+table { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 13px; }
+th, td { padding: 10px; text-align: left; border-bottom: 1px solid #e0e0e0; }
+th { background: #fafafa; font-weight: 600; color: #555; }
+.badge { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 11px; margin-right: 3px; background: #e3f2fd; color: #1565c0; }
+.warning { background: #fff3e0; border-left: 4px solid #ff9800; padding: 12px 16px; margin: 16px 0; }
+.success { background: #e8f5e9; border-left: 4px solid #4caf50; padding: 12px 16px; margin: 16px 0; }
+.domain-tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; background: #f5f5f5; color: #666; }
+</style></head>
+<body>
+<div class="card">
+<h1>P1-01 全量验证 · 86份蓝图 × 72节点一致性校验</h1>
+<p>生成时间：2026-07-03 15:50:51</p>
+<p>输入：86份流程蓝图（去重后 77 份）+ D1价值节点清单（72节点全量）</p>
+<div class="success">
+<strong>✅ 全量覆盖：</strong>读取了全部 77 份流程蓝图，其中 1 份包含价值节点映射，76 份无映射。
+</div>
+</div>
+
+<div class="card">
+<div class="summary">
+<div class="stat matched"><div class="stat-number">5</div><div class="stat-label">完全匹配</div></div>
+<div class="stat mismatch"><div class="stat-number">1</div><div class="stat-label">名称不一致</div></div>
+<div class="stat only-bp"><div class="stat-number">0</div><div class="stat-label">仅蓝图有</div></div>
+<div class="stat only-ex"><div class="stat-number">66</div><div class="stat-label">仅Excel有</div></div>
+</div>
+</div>
+
+<div class="card">
+<h2>蓝图统计</h2>
+<div class="bp-stats">
+<div class="bp-stat"><div class="stat-number">77</div><div class="stat-label">总蓝图数</div></div>
+<div class="bp-stat"><div class="stat-number">1</div><div class="stat-label">含VN映射</div></div>
+<div class="bp-stat"><div class="stat-number">76</div><div class="stat-label">无VN映射</div></div>
+</div>
+</div>
+<div class="card"><h2>✅ 完全匹配</h2><table><tr><th>节点编码</th><th>节点名称</th><th>域</th><th>来源蓝图</th></tr><tr><td>VN-PAY-02</td><td>佣金实收确认表</td><td><span class="domain-tag">PAY</span></td><td><span class="badge">COM</span></td></tr><tr><td>VN-PAY-03</td><td>应派清单三件套</td><td><span class="domain-tag">PAY</span></td><td><span class="badge">COM</span></td></tr><tr><td>VN-PAY-04</td><td>转介费派发确认台账</td><td><span class="domain-tag">PAY</span></td><td><span class="badge">COM</span></td></tr><tr><td>VN-PAY-01</td><td>市场佣金制作产出包</td><td><span class="domain-tag">PAY</span></td><td><span class="badge">COM</span></td></tr><tr><td>VN-PAY-06</td><td>理财师综合应派计算清单</td><td><span class="domain-tag">PAY</span></td><td><span class="badge">COM</span></td></tr></table></div><div class="card"><h2>⚠ 名称不一致</h2><table><tr><th>节点编码</th><th>域</th><th>蓝图名称</th><th>Excel名称</th><th>来源</th></tr><tr><td>VN-PAY-05</td><td><span class="domain-tag">PAY</span></td><td>增值服务台账+服务价值汇总表</td><td>INVOICE/激励结算单</td><td><span class="badge">COM</span></td></tr></table></div><div class="card"><h2>🔵 仅Excel有（蓝图未引用）</h2><table><tr><th>节点编码</th><th>域</th><th>节点名称</th></tr><tr><td>VN-HR-08</td><td><span class="domain-tag">HR</span></td><td>员工成长路径方案</td></tr><tr><td>VN-HR-04</td><td><span class="domain-tag">HR</span></td><td>人效分析报告</td></tr><tr><td>VN-INS-01</td><td><span class="domain-tag">INS</span></td><td>可行性报告</td></tr><tr><td>VN-HR-07</td><td><span class="domain-tag">HR</span></td><td>员工劳动合同</td></tr><tr><td>VN-FBA-01</td><td><span class="domain-tag">FBA</span></td><td>月度/季度经营分析报告</td></tr><tr><td>VN-MGA-01</td><td><span class="domain-tag">MGA</span></td><td>联合运营需求诊断包</td></tr><tr><td>VN-HR-14</td><td><span class="domain-tag">HR</span></td><td>工资发放凭证</td></tr><tr><td>VN-EQ-03</td><td><span class="domain-tag">EQ</span></td><td>权益推广素材包</td></tr><tr><td>VN-KAEM-01</td><td><span class="domain-tag">KAEM</span></td><td>KA培训完成记录</td></tr><tr><td>VN-PAY-09</td><td><span class="domain-tag">PAY</span></td><td>NGM→Apass→宿安→天领体系外对账表</td></tr><tr><td>VN-IBRD-01</td><td><span class="domain-tag">IBRD</span></td><td>合作伙伴尽调记录</td></tr><tr><td>VN-HRD-01</td><td><span class="domain-tag">HRD</span></td><td>TR招聘入职确认</td></tr><tr><td>VN-EQ-06</td><td><span class="domain-tag">EQ</span></td><td>权益内训素材包</td></tr><tr><td>VN-HRD-02</td><td><span class="domain-tag">HRD</span></td><td>TR培训完成声明</td></tr><tr><td>VN-MGA-02</td><td><span class="domain-tag">MGA</span></td><td>联合运营框架方案</td></tr><tr><td>VN-HR-06</td><td><span class="domain-tag">HR</span></td><td>岗位编制方案</td></tr><tr><td>VN-INS-02</td><td><span class="domain-tag">INS</span></td><td>已签合同+备案号</td></tr><tr><td>VN-FLM-01</td><td><span class="domain-tag">FLM</span></td><td>招募计划与执行记录</td></tr><tr><td>VN-URD-01</td><td><span class="domain-tag">URD</span></td><td>联合运营需求诊断报告</td></tr><tr><td>VN-EQ-05</td><td><span class="domain-tag">EQ</span></td><td>已签权益商务合同</td></tr><tr><td>VN-FOR-01</td><td><span class="domain-tag">FOR</span></td><td>首单陪跑记录</td></tr><tr><td>VN-EQ-08</td><td><span class="domain-tag">EQ</span></td><td>已签服务协议</td></tr><tr><td>VN-FPG-01</td><td><span class="domain-tag">FPG</span></td><td>月度/季度考核指标表</td></tr><tr><td>VN-RSJD-02</td><td><span class="domain-tag">RSJD</span></td><td>保单合同</td></tr><tr><td>VN-INS-07</td><td><span class="domain-tag">INS</span></td><td>调整建议书</td></tr><tr><td>VN-CFM-01</td><td><span class="domain-tag">CFM</span></td><td>现金流管理报告包</td></tr><tr><td>VN-EQ-10</td><td><span class="domain-tag">EQ</span></td><td>理财师分级清单</td></tr><tr><td>VN-PAY-08</td><td><span class="domain-tag">PAY</span></td><td>报销凭证包</td></tr><tr><td>VN-HR-09</td><td><span class="domain-tag">HR</span></td><td>绩效考核结果</td></tr><tr><td>VN-EQ-02</td><td><span class="domain-tag">EQ</span></td><td>初版权益规划方案</td></tr><tr><td>VN-FOR-02</td><td><span class="domain-tag">FOR</span></td><td>月度营销启发案</td></tr><tr><td>VN-INS-09</td><td><span class="domain-tag">INS</span></td><td>联合评估结论</td></tr><tr><td>VN-KAEM-02</td><td><span class="domain-tag">KAEM</span></td><td>KA资讯发放核销记录</td></tr><tr><td>VN-EQ-04</td><td><span class="domain-tag">EQ</span></td><td>终版权益规划方案</td></tr><tr><td>VN-ASD-01</td><td><span class="domain-tag">ASD</span></td><td>投诉处理报告</td></tr><tr><td>VN-FTR-01</td><td><span class="domain-tag">FTR</span></td><td>培训课程体系（含配套工具）</td></tr><tr><td>VN-HR-10</td><td><span class="domain-tag">HR</span></td><td>员工档案</td></tr><tr><td>VN-HR-11</td><td><span class="domain-tag">HR</span></td><td>人工成本报表</td></tr><tr><td>VN-FOB-01</td><td><span class="domain-tag">FOB</span></td><td>转介协议及附属协议签署版</td></tr><tr><td>VN-KAET-01</td><td><span class="domain-tag">KAET</span></td><td>KA评估定级记录</td></tr><tr><td>VN-EQ-01</td><td><span class="domain-tag">EQ</span></td><td>同行经代服务方案</td></tr><tr><td>VN-BAM-01</td><td><span class="domain-tag">BAM</span></td><td>银行账户全生命周期管理资产包</td></tr><tr><td>VN-KAGA-01</td><td><span class="domain-tag">KAGA</span></td><td>KA业绩汇总</td></tr><tr><td>VN-INS-08</td><td><span class="domain-tag">INS</span></td><td>新合同/终止协议</td></tr><tr><td>VN-HR-03</td><td><span class="domain-tag">HR</span></td><td>绩效方案</td></tr><tr><td>VN-FOB-02</td><td><span class="domain-tag">FOB</span></td><td>新人90天培养计划</td></tr><tr><td>VN-INS-06</td><td><span class="domain-tag">INS</span></td><td>保司报告</td></tr><tr><td>VN-PAY-07</td><td><span class="domain-tag">PAY</span></td><td>银行权益活动费对账单</td></tr><tr><td>VN-MGA-03</td><td><span class="domain-tag">MGA</span></td><td>联合运营合约包</td></tr><tr><td>VN-EQ-09</td><td><span class="domain-tag">EQ</span></td><td>权益上市推广素材</td></tr><tr><td>VN-INS-10</td><td><span class="domain-tag">INS</span></td><td>周期总结报告</td></tr><tr><td>VN-BAM-02</td><td><span class="domain-tag">BAM</span></td><td>银行准入评估与支付工具管理记录</td></tr><tr><td>VN-RSJD-03</td><td><span class="domain-tag">RSJD</span></td><td>审计报告</td></tr><tr><td>VN-RSJD-01</td><td><span class="domain-tag">RSJD</span></td><td>保单销售报告</td></tr><tr><td>VN-ASD-02</td><td><span class="domain-tag">ASD</span></td><td>售后服务质量监控报告</td></tr><tr><td>VN-INS-03</td><td><span class="domain-tag">INS</span></td><td>整合就绪确认书</td></tr><tr><td>VN-KASC-01</td><td><span class="domain-tag">KASC</span></td><td>KA合同/协议签署版</td></tr><tr><td>VN-KAOP-01</td><td><span class="domain-tag">KAOP</span></td><td>KA上架就绪确认</td></tr><tr><td>VN-HR-05</td><td><span class="domain-tag">HR</span></td><td>人力资源诊断与改善建议报告</td></tr><tr><td>VN-HR-12</td><td><span class="domain-tag">HR</span></td><td>人员归属表</td></tr><tr><td>VN-EQ-07</td><td><span class="domain-tag">EQ</span></td><td>客户权益赋能包</td></tr><tr><td>VN-INS-05</td><td><span class="domain-tag">INS</span></td><td>Portfolio分析报告</td></tr><tr><td>VN-HR-13</td><td><span class="domain-tag">HR</span></td><td>人员预算表</td></tr><tr><td>VN-CFM-02</td><td><span class="domain-tag">CFM</span></td><td>资金付款审批单</td></tr><tr><td>VN-FPG-02</td><td><span class="domain-tag">FPG</span></td><td>季度激励方案</td></tr><tr><td>VN-INS-04</td><td><span class="domain-tag">INS</span></td><td>认证名单</td></tr></table></div><div class="card"><h2>蓝图价值节点映射详情</h2><table><tr><th>蓝图</th><th>节点数</th></tr><tr><td>L3-COM</td><td>6</td></tr></table></div></body></html>
