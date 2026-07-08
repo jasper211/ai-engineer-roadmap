@@ -150,7 +150,8 @@ class DocumentSyncer:
         
         # 查找任务行并更新状态
         # 匹配格式: - [ ] P1-01 · 任务名称 或 - [x] P1-01 · 任务名称
-        pattern = rf"(- \[([ x])\]) ({re.escape(task_id)})"
+        # 也支持: - [ ] P2-01 · 任务名称
+        pattern = rf"(- \[([ x])\]) ({re.escape(task_id)} · .*?)$"
         
         def replace_status(match):
             checkbox = match.group(1)
