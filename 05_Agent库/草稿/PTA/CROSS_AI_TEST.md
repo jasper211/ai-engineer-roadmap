@@ -99,12 +99,34 @@ PTA 运行出错，请帮我排查：
 
 ---
 
-## 预期结果
+## 指令 8：项目仪表盘（以人为中心）
 
-如果 PTA 正常工作，你应该看到：
-- ✅ 所有测试通过
-- ✅ 生成 task.json, execution_plan.json, progress.json 等文件
-- ✅ 外部项目分析报告包含文件类型分布和目录结构
+```
+请帮我生成 Rw 权益项目的仪表盘：
+
+项目路径：/Users/zhaoqitrenda.cn/Desktop/Rw权益项目/07_项目立项启动
+
+执行：
+cd /Users/zhaoqitrenda.cn/Desktop/Jasper工作文档（不含EA项目）/Jasper AI协同经验引擎/AI工程能力整改项目/05_Agent库/草稿/PTA
+
+# 生成 Roy 的个人仪表盘
+python3 PTA-DASH_项目仪表盘.py --project "/Users/zhaoqitrenda.cn/Desktop/Rw权益项目/07_项目立项启动" --person "Roy"
+
+# 生成 MARK 的个人仪表盘
+python3 PTA-DASH_项目仪表盘.py --project "/Users/zhaoqitrenda.cn/Desktop/Rw权益项目/07_项目立项启动" --person "MARK"
+
+# 生成项目整体仪表盘
+python3 PTA-DASH_项目仪表盘.py --project "/Users/zhaoqitrenda.cn/Desktop/Rw权益项目/07_项目立项启动" --person "all"
+
+这个仪表盘会显示：
+1. 项目目标（一句话）
+2. 当前阶段和进度
+3. 个人任务（阻塞中/进行中/已完成）
+4. 关键风险
+5. 下一步行动
+
+请展示结果。
+```
 
 ---
 
