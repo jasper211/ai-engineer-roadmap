@@ -108,12 +108,55 @@ PTA 运行出错，请帮我排查：
 
 ---
 
-## 如果失败
+## 指令 6：Rw 项目智能分析（高质量输出）
 
-请记录：
-1. AI 平台名称（Kimi/Codex/Claude/其他）
-2. Python 版本
-3. 错误信息
-4. 失败的组件
+```
+请帮我分析 Rw 权益项目的进度：
 
-反馈给我，我修复。
+项目路径：/Users/zhaoqitrenda.cn/Desktop/Rw权益项目/07_项目立项启动
+
+执行：
+cd /Users/zhaoqitrenda.cn/Desktop/Jasper工作文档（不含EA项目）/Jasper AI协同经验引擎/AI工程能力整改项目/05_Agent库/草稿/PTA
+
+python3 PTA-INTEL-RW_智能项目分析器_v3.py \
+    --project "/Users/zhaoqitrenda.cn/Desktop/Rw权益项目/07_项目立项启动" \
+    --mode analyze
+
+然后回答以下问题：
+1. 项目总体进度如何？
+2. 有哪些阻塞项？
+3. Roy 的任务有哪些？
+4. 下一步行动是什么？
+
+注意：这个分析器专门解析 Rw 项目的 CSV 台账格式，产出质量更高。
+```
+
+---
+
+## 指令 7：自然语言查询 Rw 项目
+
+```
+请帮我查询 Rw 权益项目：
+
+项目路径：/Users/zhaoqitrenda.cn/Desktop/Rw权益项目/07_项目立项启动
+
+执行以下查询：
+cd /Users/zhaoqitrenda.cn/Desktop/Jasper工作文档（不含EA项目）/Jasper AI协同经验引擎/AI工程能力整改项目/05_Agent库/草稿/PTA
+
+# 查询 1：项目进度
+python3 PTA-INTEL-RW_智能项目分析器_v3.py --project "/Users/zhaoqitrenda.cn/Desktop/Rw权益项目/07_项目立项启动" --mode query --query "项目进度如何"
+
+# 查询 2：阻塞项
+python3 PTA-INTEL-RW_智能项目分析器_v3.py --project "/Users/zhaoqitrenda.cn/Desktop/Rw权益项目/07_项目立项启动" --mode query --query "有哪些阻塞需要 MARK 介入"
+
+# 查询 3：Roy 的任务
+python3 PTA-INTEL-RW_智能项目分析器_v3.py --project "/Users/zhaoqitrenda.cn/Desktop/Rw权益项目/07_项目立项启动" --mode query --query "Roy 的任务有哪些"
+
+# 查询 4：TOB 工作流
+python3 PTA-INTEL-RW_智能项目分析器_v3.py --project "/Users/zhaoqitrenda.cn/Desktop/Rw权益项目/07_项目立项启动" --mode query --query "TOB 工作流状态"
+
+# 查询 5：下一步行动
+python3 PTA-INTEL-RW_智能项目分析器_v3.py --project "/Users/zhaoqitrenda.cn/Desktop/Rw权益项目/07_项目立项启动" --mode query --query "下一步行动"
+
+请展示每个查询的结果。
+```
