@@ -1,9 +1,9 @@
 # PTA Agent · 项目任务协同 Agent
 
 > Agent ID: PTA
-> 版本: v1.2.0
-> 状态: 已上线（5/5 子 Agent + 主编排器 + 4 个扩展工具）
-> 日期: 2026-07-03（v1.1.0 编排器更新: 2026-07-13）
+> 版本: v1.3.0
+> 状态: 已上线（5/5 子 Agent + 主编排器 + 5 个扩展工具）
+> 日期: 2026-07-03（v1.1.0 编排器更新: 2026-07-13 · v1.3.0 文档任务发现器: 2026-07-13）
 
 ---
 
@@ -239,6 +239,42 @@ python3 PTA-S05_归档复盘器.py --plan execution_plan.json --task-id P2-01 --
 
 ---
 
+### 3.6 PTA-DISCOVER 文档任务发现器（扩展工具，v1.3.0）
+
+**功能**：调用 DeepSeek API 阅读外部项目的自由行文文档（合同/会议纪要/审计报告等），
+提取隐含的任务，产出人工可审阅的"发现报告"。
+
+**为什么需要它**：S01 的意图解析是纯正则规则，只能处理一句已经说清楚的指令；
+PTA-SCAN 也是纯规则扫描，只能读懂已结构化的 markdown checklist 和带列名的 CSV。
+两者都读不懂合同、会议纪要里"藏在一段话里的任务"——这一步是阅读理解，只有模型能做。
+
+**⚠️ 安全边界（刻意设计）**：输出只是发现报告，**不会**自动写入 `pta_tasks.json`
+的 `steps`/`command` 字段——那些字段驱动 S02 的真实 shell/python 执行。任意文档
+的内容直接进执行步骤等于一个命令注入面。把发现的任务变成可执行步骤，永远需要
+人工手写 `pta_tasks.json`。
+
+**环境要求**：`export DEEPSEEK_API_KEY=sk-xxx`（不要把 key 写进代码或文件）
+
+**常用命令**：
+
+```bash
+# 显式指定候选文件
+python3 PTA-DISCOVER_文档任务发现器.py --project /path/to/project \
+    --files 合同.md 会议纪要.md --output discovered_tasks.json
+
+# 自动扫描项目内最近 N 天变更的 .md/.txt/.csv 文件
+python3 PTA-DISCOVER_文档任务发现器.py --project /path/to/project --scan --days 7
+
+# 只看会发给模型的候选文件和字符数，不实际调用 API（免费预览）
+python3 PTA-DISCOVER_文档任务发现器.py --project /path/to/project --scan --dry-run
+```
+
+**输出**：每个发现的任务包含 `name`/`owner`/`status`/`due_date`/`evidence`（原文
+证据片段）/`confidence`/`source_file`，供人工判断是否可信、是否需要转化为
+`pta_tasks.json` 里的真实执行步骤。
+
+---
+
 ## 四、故障排查
 
 ### 4.1 常见问题
@@ -325,6 +361,7 @@ def _exec_my_tool(self, step: ExecutionStep) -> Tuple[bool, str]:
 | 文件 | 说明 | 大小 |
 |------|------|------|
 | [PTA-RUN_主编排器.py](PTA-RUN_主编排器.py) | 统一入口：串联 S01→S02→S03→S05 + 状态记忆 | 约 220 行 |
+| [PTA-DISCOVER_文档任务发现器.py](PTA-DISCOVER_文档任务发现器.py) | 调用 DeepSeek 从自由行文文档中发现任务（仅报告，不驱动执行） | 约 220 行 |
 | [pta_common.py](pta_common.py) | 任务知识库加载逻辑（S01/S02 共用） | 约 40 行 |
 | [pta_tasks_default.json](pta_tasks_default.json) | 本项目内置的 9 个任务知识库（兜底） | 约 60 行 |
 | [PTA-S01_意图解析器.py](PTA-S01_意图解析器.py) | 自然语言 → 任务包 | 356 行 |
@@ -348,6 +385,7 @@ def _exec_my_tool(self, step: ExecutionStep) -> Tuple[bool, str]:
 | v1.0.0 | 2026-07-03 | 初始版本，5 个子 Agent 全部完成 |
 | v1.1.0 | 2026-07-13 | 新增 PTA-RUN 主编排器（自动串联 + `.pta_state.json` 状态记忆）；修复 S02 脚本路径递归查找 bug（集成测试 82%→100%）；修复 S01 task_id 同日碰撞 bug；S02 新增 `--no-sync` 把 git push 从自动计划中摘出，改为显式确认阶段；.gitignore 修正（此前把三个 Agent 的 config.json 全部误伞盖忽略，从未进过版本库） |
 | v1.2.0 | 2026-07-13 | 任务知识库外置为 JSON（`pta_common.py` + `pta_tasks_default.json`），S01/S02 支持 `--project-root`/`--task-map` 加载任意项目自己的 `pta_tasks.json`，不再局限于本项目硬编码的 9 个任务；S01 任务 ID 识别正则从只认 `P#-##` 泛化为任意大写字母前缀编号（如 `TRK-001`、`RW-01`）；已用一个真实的假外部项目验证：自定义任务被正确识别并执行，而非落到通用占位步骤 |
+| v1.3.0 | 2026-07-13 | 新增 PTA-DISCOVER 文档任务发现器：调用 DeepSeek API（纯 `urllib` 实现，无需额外 pip 依赖）从合同/会议纪要等自由行文文档中提取任务；刻意只产出人工可审阅的发现报告，不自动写入 `pta_tasks.json` 的可执行步骤，避免文档内容变成命令注入面 |
 
 ---
 
