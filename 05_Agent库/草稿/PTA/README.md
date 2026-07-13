@@ -1,9 +1,9 @@
 # PTA Agent · 项目任务协同 Agent
 
 > Agent ID: PTA
-> 版本: v1.3.0
+> 版本: v1.4.0
 > 状态: 已上线（5/5 子 Agent + 主编排器 + 5 个扩展工具）
-> 日期: 2026-07-03（v1.1.0 编排器更新: 2026-07-13 · v1.3.0 文档任务发现器: 2026-07-13）
+> 日期: 2026-07-03（v1.1.0 编排器更新: 2026-07-13 · v1.3.0 文档任务发现器: 2026-07-13 · v1.4.0 增量扫描: 2026-07-13）
 
 ---
 
@@ -239,7 +239,7 @@ python3 PTA-S05_归档复盘器.py --plan execution_plan.json --task-id P2-01 --
 
 ---
 
-### 3.6 PTA-DISCOVER 文档任务发现器（扩展工具，v1.3.0）
+### 3.6 PTA-DISCOVER 文档任务发现器（扩展工具，v1.4.0）
 
 **功能**：调用 DeepSeek API 阅读外部项目的自由行文文档（合同/会议纪要/审计报告等），
 提取隐含的任务，产出人工可审阅的"发现报告"。
@@ -255,17 +255,26 @@ PTA-SCAN 也是纯规则扫描，只能读懂已结构化的 markdown checklist 
 
 **环境要求**：`export DEEPSEEK_API_KEY=sk-xxx`（不要把 key 写进代码或文件）
 
+**增量扫描（v1.4.0 起）**：`--scan` 现在按内容 sha256 跟"上一次 PTA-DISCOVER 自己
+的处理记录"比对，只处理新增/变更过的文件，而不是每次全量重扫。记录存在
+`<project>/.pta_discover_state.json`——这是一份独立文件，不是 PTA-SCAN 的
+`.pta_snapshot.json`：PTA-SCAN 每次运行会整体覆盖写自己的快照，共用一份文件会让
+两边互相冲掉对方的记录，所以两边各自维护状态，但用的是同一套"内容哈希比对"思路。
+
 **常用命令**：
 
 ```bash
-# 显式指定候选文件
+# 显式指定候选文件（总是处理，不受增量状态影响）
 python3 PTA-DISCOVER_文档任务发现器.py --project /path/to/project \
     --files 合同.md 会议纪要.md --output discovered_tasks.json
 
-# 自动扫描项目内最近 N 天变更的 .md/.txt/.csv 文件
-python3 PTA-DISCOVER_文档任务发现器.py --project /path/to/project --scan --days 7
+# 增量扫描：只处理自上次 PTA-DISCOVER 运行以来新增/变更的 .md/.txt/.csv
+python3 PTA-DISCOVER_文档任务发现器.py --project /path/to/project --scan --output discovered_tasks.json
 
-# 只看会发给模型的候选文件和字符数，不实际调用 API（免费预览）
+# 忽略增量记录，强制全部重新处理
+python3 PTA-DISCOVER_文档任务发现器.py --project /path/to/project --scan --force
+
+# 只看这次会发给模型的候选文件和字符数，不实际调用 API（免费预览，也不更新增量状态）
 python3 PTA-DISCOVER_文档任务发现器.py --project /path/to/project --scan --dry-run
 ```
 
@@ -385,7 +394,8 @@ def _exec_my_tool(self, step: ExecutionStep) -> Tuple[bool, str]:
 | v1.0.0 | 2026-07-03 | 初始版本，5 个子 Agent 全部完成 |
 | v1.1.0 | 2026-07-13 | 新增 PTA-RUN 主编排器（自动串联 + `.pta_state.json` 状态记忆）；修复 S02 脚本路径递归查找 bug（集成测试 82%→100%）；修复 S01 task_id 同日碰撞 bug；S02 新增 `--no-sync` 把 git push 从自动计划中摘出，改为显式确认阶段；.gitignore 修正（此前把三个 Agent 的 config.json 全部误伞盖忽略，从未进过版本库） |
 | v1.2.0 | 2026-07-13 | 任务知识库外置为 JSON（`pta_common.py` + `pta_tasks_default.json`），S01/S02 支持 `--project-root`/`--task-map` 加载任意项目自己的 `pta_tasks.json`，不再局限于本项目硬编码的 9 个任务；S01 任务 ID 识别正则从只认 `P#-##` 泛化为任意大写字母前缀编号（如 `TRK-001`、`RW-01`）；已用一个真实的假外部项目验证：自定义任务被正确识别并执行，而非落到通用占位步骤 |
-| v1.3.0 | 2026-07-13 | 新增 PTA-DISCOVER 文档任务发现器：调用 DeepSeek API（纯 `urllib` 实现，无需额外 pip 依赖）从合同/会议纪要等自由行文文档中提取任务；刻意只产出人工可审阅的发现报告，不自动写入 `pta_tasks.json` 的可执行步骤，避免文档内容变成命令注入面 |
+| v1.3.0 | 2026-07-13 | 新增 PTA-DISCOVER 文档任务发现器：调用 DeepSeek API（纯 `urllib` 实现，无需额外 pip 依赖）从合同/会议纪要等自由行文文档中提取任务；刻意只产出人工可审阅的发现报告，不自动写入 `pta_tasks.json` 的可执行步骤，避免文档内容变成命令注入面；修复 SSL 证书验证 bug（Homebrew Python 默认证书路径缺失）、内容去重（同一文档在项目里存在多份拷贝时跳过重复调用）、GBK 编码检测 bug（无脑假设 UTF-8 曾把一份 GBK CSV 读成乱码喂给模型）；已在真实的 Rw 权益项目上跑通全量扫描：563 个文件、4568 条任务、0 失败 |
+| v1.4.0 | 2026-07-13 | PTA-DISCOVER `--scan` 从"按最近 N 天"改为按内容 sha256 跟自己的历史处理记录比对的真正增量扫描（记录存 `.pta_discover_state.json`，跟 PTA-SCAN 的快照文件分开维护，避免互相覆盖写）；新增 `--force` 强制全量重扫；已用三个场景验证：新文件→处理、内容不变→0 次调用直接跳过、内容变了→正确识别新增任务 |
 
 ---
 

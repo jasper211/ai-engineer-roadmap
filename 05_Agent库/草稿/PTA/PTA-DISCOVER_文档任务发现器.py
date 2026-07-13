@@ -16,22 +16,31 @@ PTA-DISCOVER · 文档任务发现器
   直接进执行步骤，等于把"文档里写了什么"变成"命令行会跑什么"，是一个
   命令注入面。要不要把某个发现的任务变成可执行步骤，永远是人工决定。
 
+增量扫描（v1.4.0 起）：
+  --scan 现在按内容哈希跟"上一次 PTA-DISCOVER 自己的处理记录"比对，只处理新增/变更
+  过的文件——而不是像 v1.3.0 那样每次全量重扫、靠"最近 N 天"这种粗糙的时间窗口。
+  记录存在 <project_root>/.pta_discover_state.json（跟 PTA-SCAN 的 .pta_snapshot.json
+  是两个独立文件——PTA-SCAN 每次运行会整体覆盖写自己的快照，如果共用一个文件会把
+  彼此的记录冲掉，所以两边各自维护，但用的是同一套"内容哈希比对"思路）。
+
 运行：
   export DEEPSEEK_API_KEY=sk-xxx
 
-  # 显式指定候选文件
+  # 显式指定候选文件（总是处理，忽略增量状态）
   python3 PTA-DISCOVER_文档任务发现器.py --project /path/to/project \\
       --files 合同.md 会议纪要.md --output discovered_tasks.json
 
-  # 自动扫描项目内最近变更的候选文档（.md/.txt/.csv，按 mtime）
-  python3 PTA-DISCOVER_文档任务发现器.py --project /path/to/project --scan --days 7
+  # 增量扫描：只处理自上次 PTA-DISCOVER 运行以来新增/变更的 .md/.txt/.csv
+  python3 PTA-DISCOVER_文档任务发现器.py --project /path/to/project --scan
 
-  # 只看会发给模型的候选文件和字符数，不实际调用 API
+  # 忽略增量记录，强制全量重扫一遍
+  python3 PTA-DISCOVER_文档任务发现器.py --project /path/to/project --scan --force
+
+  # 只看这次会发给模型的候选文件和字符数，不实际调用 API
   python3 PTA-DISCOVER_文档任务发现器.py --project /path/to/project --scan --dry-run
 """
 
 import argparse
-import fnmatch
 import hashlib
 import json
 import os
@@ -41,7 +50,7 @@ import time
 import urllib.error
 import urllib.request
 from dataclasses import asdict, dataclass, field
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -50,6 +59,7 @@ DEFAULT_MODEL = "deepseek-chat"
 MAX_CHARS_PER_FILE = 6000
 SCAN_EXTENSIONS = {".md", ".txt", ".csv"}
 SCAN_EXCLUDE_DIRS = {".git", "node_modules", "__pycache__", ".pta_runs"}
+STATE_FILENAME = ".pta_discover_state.json"
 
 SYSTEM_PROMPT = """你是一个项目任务提取助手。阅读用户提供的项目文档片段，找出其中隐含的
 任务/待办事项。任务可能是明确的清单项，也可能藏在合同条款、会议纪要、审计意见的
@@ -160,23 +170,45 @@ def _call_deepseek(api_key: str, model: str, user_content: str, max_retries: int
     raise RuntimeError(f"DeepSeek API 请求失败（已重试 {max_retries} 次）: {last_err}")
 
 
-def _scan_candidate_files(project_root: Path, days: int) -> List[Path]:
-    """按扩展名 + 最近修改时间做粗筛，找出可能含任务信息的文档"""
-    cutoff = datetime.now() - timedelta(days=days)
+def _scan_candidate_files(project_root: Path) -> List[Path]:
+    """按扩展名找出项目里所有可能含任务信息的文档。不再按"最近 N 天"这种粗糙的
+    时间窗口过滤——真正的增量判断交给下面的内容哈希比对（_load_state/_save_state），
+    这里只负责把"扩展名匹配的文件都有哪些"这件事做全、做对。"""
     candidates = []
     for root, dirs, files in os.walk(project_root):
         dirs[:] = [d for d in dirs if d not in SCAN_EXCLUDE_DIRS and not d.startswith(".")]
         for name in files:
             path = Path(root) / name
-            if path.suffix.lower() not in SCAN_EXTENSIONS:
-                continue
-            try:
-                mtime = datetime.fromtimestamp(path.stat().st_mtime)
-            except OSError:
-                continue
-            if mtime >= cutoff:
+            if path.suffix.lower() in SCAN_EXTENSIONS:
                 candidates.append(path)
     return sorted(candidates)
+
+
+def _hash_file(path: Path) -> Optional[str]:
+    try:
+        return hashlib.sha256(path.read_bytes()).hexdigest()
+    except OSError:
+        return None
+
+
+def _load_state(state_path: Path) -> Dict[str, str]:
+    """加载 PTA-DISCOVER 自己的增量处理记录：{相对路径: 上次处理时的内容 sha256}。
+    这是一份独立文件，不是 PTA-SCAN 的 .pta_snapshot.json——PTA-SCAN 每次运行会
+    整体覆盖写自己的快照文件，共用一份文件会让两边互相冲掉对方的记录。"""
+    if state_path.exists():
+        try:
+            return json.loads(state_path.read_text(encoding="utf-8")).get("processed", {})
+        except json.JSONDecodeError:
+            print(f"[警告] 增量状态文件损坏，当作没有历史记录处理: {state_path}")
+    return {}
+
+
+def _save_state(state_path: Path, state: Dict[str, str]) -> None:
+    state_path.write_text(
+        json.dumps({"updated_at": datetime.now().isoformat(), "processed": state},
+                   ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
 
 
 def _dedupe_by_content(files: List[Path]) -> "tuple[List[Path], List[Dict]]":
@@ -227,7 +259,10 @@ def _read_truncated(path: Path, max_chars: int) -> str:
 
 
 def discover(project_root: Path, files: List[Path], model: str, max_chars: int,
-             dry_run: bool) -> DiscoveryReport:
+             dry_run: bool) -> "tuple[DiscoveryReport, Dict[str, str]]":
+    """返回 (发现报告, 本次成功处理的文件 {相对路径: 内容sha256})。
+    processed 只记录成功处理的文件（含"未发现任务"），失败的文件不记录，
+    这样下次运行会重试它们，而不是被增量状态记成"已处理过"。"""
     report = DiscoveryReport(
         generated_at=datetime.now().isoformat(),
         project_root=str(project_root),
@@ -235,13 +270,14 @@ def discover(project_root: Path, files: List[Path], model: str, max_chars: int,
         files_scanned=len(files),
         files_with_tasks=0,
     )
+    processed: Dict[str, str] = {}
 
     if dry_run:
         print(f"\n[DRY-RUN] 将发送给 {model} 的候选文件（共 {len(files)} 个）:")
         for f in files:
             size = len(_read_truncated(f, max_chars))
             print(f"  - {f}  (~{size} 字符)")
-        return report
+        return report, processed
 
     api_key = os.environ.get("DEEPSEEK_API_KEY")
     if not api_key:
@@ -255,6 +291,9 @@ def discover(project_root: Path, files: List[Path], model: str, max_chars: int,
             content = _read_truncated(f, max_chars)
             if not content.strip():
                 print("  (空文件，跳过)")
+                digest = _hash_file(f)
+                if digest:
+                    processed[rel] = digest
                 continue
             raw = _call_deepseek(api_key, model, f"文件路径: {rel}\n\n{content}")
             parsed = json.loads(raw)
@@ -275,24 +314,29 @@ def discover(project_root: Path, files: List[Path], model: str, max_chars: int,
                 print(f"  ✓ [{dt.status}] {dt.name} (owner: {dt.owner}, 置信度: {dt.confidence:.2f})")
             if not tasks:
                 print("  (未发现任务)")
+            digest = _hash_file(f)
+            if digest:
+                processed[rel] = digest
         except (RuntimeError, json.JSONDecodeError, KeyError) as e:
             print(f"  ❌ 失败: {e}")
             report.errors.append({"file": rel, "error": str(e)})
+            # 失败的文件不记进 processed，下次运行会重试，而不是被当成"已处理过"
 
-    return report
+    return report, processed
 
 
 def main():
     parser = argparse.ArgumentParser(description="PTA-DISCOVER · 文档任务发现器（DeepSeek）")
     parser.add_argument("--project", required=True, help="目标项目根目录")
-    parser.add_argument("--files", nargs="*", help="显式指定候选文件（相对或绝对路径）")
-    parser.add_argument("--scan", action="store_true", help="自动扫描项目内最近变更的 .md/.txt/.csv 文件")
-    parser.add_argument("--days", type=int, default=7, help="--scan 时的最近变更天数窗口（默认 7）")
+    parser.add_argument("--files", nargs="*", help="显式指定候选文件（相对或绝对路径），总是处理，不受增量状态影响")
+    parser.add_argument("--scan", action="store_true", help="自动扫描项目内所有 .md/.txt/.csv 文件，按增量状态过滤")
+    parser.add_argument("--state", help="增量状态文件路径（默认: <project>/.pta_discover_state.json）")
+    parser.add_argument("--force", action="store_true", help="忽略增量状态，--scan 找到的文件全部重新处理")
     parser.add_argument("--model", default=DEFAULT_MODEL, help="DeepSeek 模型（默认 deepseek-chat）")
     parser.add_argument("--max-chars-per-file", type=int, default=MAX_CHARS_PER_FILE,
                          help="每个文件截断的最大字符数（控制成本）")
     parser.add_argument("--output", "-o", help="发现报告输出路径（JSON）")
-    parser.add_argument("--dry-run", action="store_true", help="只列出候选文件和大小，不调用 API")
+    parser.add_argument("--dry-run", action="store_true", help="只列出候选文件和大小，不调用 API，也不更新增量状态")
     args = parser.parse_args()
 
     project_root = Path(args.project).resolve()
@@ -300,15 +344,35 @@ def main():
         print(f"[错误] 项目路径不存在: {project_root}")
         sys.exit(1)
 
-    files: List[Path] = []
-    if args.files:
-        files.extend(Path(f).resolve() for f in args.files)
-    if args.scan:
-        found = _scan_candidate_files(project_root, args.days)
-        print(f"[PTA-DISCOVER] 扫描到 {len(found)} 个最近 {args.days} 天内变更的候选文档")
-        files.extend(found)
+    state_path = Path(args.state).resolve() if args.state else project_root / STATE_FILENAME
+    state = _load_state(state_path)
 
+    explicit_files: List[Path] = [Path(f).resolve() for f in (args.files or [])]
+
+    scanned_files: List[Path] = []
+    if args.scan:
+        scanned_files = _scan_candidate_files(project_root)
+        print(f"[PTA-DISCOVER] 扫描到 {len(scanned_files)} 个 .md/.txt/.csv 候选文档")
+
+        if not args.force and state:
+            kept, skipped = [], []
+            for f in scanned_files:
+                rel = str(f.relative_to(project_root)) if f.is_relative_to(project_root) else str(f)
+                digest = _hash_file(f)
+                if digest is not None and state.get(rel) == digest:
+                    skipped.append(f)
+                else:
+                    kept.append(f)
+            scanned_files = kept
+            if skipped:
+                print(f"[PTA-DISCOVER] 增量跳过: {len(skipped)} 个文件自上次 PTA-DISCOVER 处理以来内容未变化"
+                      f"（用 --force 可强制全部重新处理）")
+
+    files = explicit_files + scanned_files
     if not files:
+        if args.scan:
+            print("[PTA-DISCOVER] 没有需要处理的文件——都已经在增量状态里，内容没有变化。")
+            return
         print("[错误] 没有候选文件。使用 --files 指定，或加 --scan 自动扫描。")
         sys.exit(1)
 
@@ -323,7 +387,7 @@ def main():
         if len(dupes) > 10:
             print(f"  ... 还有 {len(dupes) - 10} 个")
 
-    report = discover(project_root, files, args.model, args.max_chars_per_file, args.dry_run)
+    report, processed = discover(project_root, files, args.model, args.max_chars_per_file, args.dry_run)
 
     print(f"\n{'='*60}")
     print(f"[PTA-DISCOVER] 发现报告")
@@ -344,6 +408,11 @@ def main():
             json.dumps(asdict(report), ensure_ascii=False, indent=2), encoding="utf-8"
         )
         print(f"\n报告已保存: {output_path}")
+
+    if processed and not args.dry_run:
+        state.update(processed)
+        _save_state(state_path, state)
+        print(f"增量状态已更新: {state_path}（{len(processed)} 个文件）")
 
 
 if __name__ == "__main__":
