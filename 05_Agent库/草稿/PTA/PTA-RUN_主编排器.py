@@ -24,6 +24,12 @@ PTA-RUN · 主编排器（Orchestrator）
 
   python3 PTA-RUN_主编排器.py "按顺序完成 P1-03, P1-04" --execute --sync -m "commit msg"
       真实执行 + 执行后追加真实文档同步（git add/commit/push）
+
+  python3 PTA-RUN_主编排器.py --discover --project-root /path/to/other/project
+      对该项目跑一次 PTA-DISCOVER 增量文档任务发现（v1.5.0 起），结果计入
+      .pta_state.json——下次 --status 会看到"文档里发现了几条新任务"，而不需要
+      单独去读 PTA-DISCOVER 的报告文件。这一步仍然只产出人工可审阅的发现摘要，
+      不会自动写入任何项目的 pta_tasks.json。
 """
 
 import argparse
@@ -42,6 +48,7 @@ S02 = PTA_DIR / "PTA-S02_执行调度器.py"
 S03 = PTA_DIR / "PTA-S03_进度追踪器.py"
 S04 = PTA_DIR / "PTA-S04_文档同步器.py"
 S05 = PTA_DIR / "PTA-S05_归档复盘器.py"
+DISCOVER = PTA_DIR / "PTA-DISCOVER_文档任务发现器.py"
 
 EMPTY_STATE = {"version": 1, "current_task": None, "task_history": [], "context": {}}
 
@@ -92,11 +99,72 @@ def cmd_status() -> None:
         print(f"  - [{h.get('timestamp', '')[:19]}] {h.get('task_id')}: "
               f"{h.get('summary', '')} → {h.get('status')} ({h.get('success_rate', '?')})")
 
+    discoveries = state.get("discoveries", {})
+    if discoveries:
+        print(f"\n文档任务发现（PTA-DISCOVER，共 {len(discoveries)} 个项目有记录）:")
+        for project, d in discoveries.items():
+            print(f"  - {project}")
+            print(f"    最近一次: [{d.get('last_run', '')[:19]}] 处理了 {d.get('files_scanned', 0)} 个新增/变更文件，"
+                  f"发现 {d.get('tasks_found', 0)} 条任务（低置信度 {d.get('low_confidence', 0)} 条）")
+            for t in d.get("preview", []):
+                print(f"      · [{t.get('status')}] {t.get('name')} (owner: {t.get('owner')})")
+            print(f"    完整报告: {d.get('report_path', '')}")
+        print("  ⚠️ 以上仅供人工审阅，未经确认不会写入任何项目的 pta_tasks.json")
+
     ctx = state.get("context", {})
     if ctx:
         print(f"\n上下文: {json.dumps(ctx, ensure_ascii=False)}")
 
     print("=" * 60)
+
+
+def run_discover(project_root: str, force: bool) -> None:
+    resolved_root = str(Path(project_root).resolve())
+    run_id = datetime.now().strftime("%Y%m%d-%H%M%S")
+    run_dir = RUNS_DIR / f"discover-{run_id}"
+    run_dir.mkdir(parents=True, exist_ok=True)
+    report_path = run_dir / "report.json"
+
+    cmd = ["python3", str(DISCOVER), "--project", resolved_root, "--scan",
+           "--output", str(report_path)]
+    if force:
+        cmd.append("--force")
+    r = _run(cmd)
+
+    if r.returncode != 0:
+        print("[错误] PTA-DISCOVER 运行失败，状态未更新。")
+        sys.exit(1)
+
+    if not report_path.exists():
+        print("[PTA-RUN] 本次没有新增/变更的文件需要处理，状态保持不变。")
+        return
+
+    report = json.loads(report_path.read_text(encoding="utf-8"))
+    tasks = report.get("tasks", [])
+    low_confidence = sum(1 for t in tasks if t.get("confidence", 1.0) < 0.7)
+    preview = sorted(tasks, key=lambda t: -t.get("confidence", 0))[:5]
+
+    state = _load_state()
+    discoveries = state.setdefault("discoveries", {})
+    discoveries[resolved_root] = {
+        "last_run": datetime.now().isoformat(),
+        "files_scanned": report.get("files_scanned", 0),  # PTA-DISCOVER 自身已做增量过滤，
+        # 这里的数字就是"本次新增/变更"，不是项目全量文件数
+        "tasks_found": len(tasks),
+        "low_confidence": low_confidence,
+        "preview": [
+            {"name": t.get("name"), "owner": t.get("owner"), "status": t.get("status")}
+            for t in preview
+        ],
+        "report_path": str(report_path),
+    }
+    _save_state(state)
+
+    print(f"\n[PTA-RUN] 文档任务发现完成: {resolved_root}")
+    print(f"  本次处理 {report.get('files_scanned', 0)} 个新增/变更文件，"
+          f"发现 {len(tasks)} 条任务（低置信度 {low_confidence} 条）")
+    print(f"  完整报告: {report_path}")
+    print(f"  状态已记入 .pta_state.json，下次 --status 会显示")
 
 
 def run_instruction(instruction: str, execute: bool, sync: bool, message: str,
@@ -207,7 +275,18 @@ def main():
     parser.add_argument("--project-root",
                          help="目标项目根目录（不传则默认本项目；传了会去该目录下找 pta_tasks.json）")
     parser.add_argument("--task-map", help="显式指定任务知识库 JSON 文件路径（优先级高于 --project-root）")
+    parser.add_argument("--discover", action="store_true",
+                         help="对 --project-root 指定的项目跑一次 PTA-DISCOVER 增量文档任务发现，"
+                              "结果计入 .pta_state.json，供 --status 查看")
+    parser.add_argument("--force", action="store_true", help="--discover 时忽略增量记录，全部重新处理")
     args = parser.parse_args()
+
+    if args.discover:
+        if not args.project_root:
+            print("[错误] --discover 需要搭配 --project-root 指定要扫描的项目目录")
+            sys.exit(1)
+        run_discover(args.project_root, args.force)
+        return
 
     if args.status or not args.instruction:
         cmd_status()
