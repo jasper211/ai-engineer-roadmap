@@ -154,13 +154,15 @@ class ExecutionScheduler:
             return task_info["steps"]
         return None
     
-    def create_plan(self, task_package: Dict) -> ExecutionPlan:
+    def create_plan(self, task_package: Dict, include_sync: bool = True) -> ExecutionPlan:
         """
         根据任务包创建执行计划
-        
+
         Args:
             task_package: PTA-S01 输出的结构化任务包（JSON/dict）
-        
+            include_sync: 是否自动追加文档同步步骤（会触发 PTA-S04 的真实 git push，
+                          无人值守/编排器场景应传 False，同步改为显式的独立确认步骤）
+
         Returns:
             ExecutionPlan: 执行计划
         """
@@ -201,8 +203,8 @@ class ExecutionScheduler:
                     description=f"手动执行: {item_name}",
                 ))
         
-        # 如果约束包含 sync，添加文档同步步骤
-        if "sync" in constraints or task_type in ["execute", "sequential"]:
+        # 如果约束包含 sync，添加文档同步步骤（会触发真实 git push，需 include_sync=True 且经人工确认）
+        if include_sync and ("sync" in constraints or task_type in ["execute", "sequential"]):
             self.step_counter += 1
             steps.append(ExecutionStep(
                 seq=self.step_counter,
@@ -397,22 +399,23 @@ def main():
     parser.add_argument("--input", "-i", required=True, help="输入任务包 JSON 文件路径")
     parser.add_argument("--output", "-o", help="输出执行计划 JSON 文件路径")
     parser.add_argument("--dry-run", action="store_true", help="试运行模式")
+    parser.add_argument("--no-sync", action="store_true", help="不自动追加文档同步（git push）步骤")
     parser.add_argument("--project-root", default=str(PROJECT_ROOT), help="项目根目录")
     args = parser.parse_args()
-    
+
     # 读取任务包
     input_path = Path(args.input)
     if not input_path.exists():
         print(f"[错误] 输入文件不存在: {input_path}")
         sys.exit(1)
-    
+
     task_package = json.loads(input_path.read_text(encoding="utf-8"))
-    
+
     # 创建调度器
     scheduler = ExecutionScheduler(Path(args.project_root), dry_run=args.dry_run)
-    
+
     # 创建执行计划
-    plan = scheduler.create_plan(task_package)
+    plan = scheduler.create_plan(task_package, include_sync=not args.no_sync)
     
     print(f"\n{'='*60}")
     print(f"[PTA-S02] 执行计划已生成")

@@ -48,8 +48,12 @@ build/
 temp/
 *.tmp
 
-# Secrets and config
-config.json
+# Secrets
 secrets.json
 *.key
 *.pem
+
+# PTA runtime state（编排器每次运行的临时产物 + 记忆文件，不入库）
+05_Agent库/*/PTA/.pta_runs/
+05_Agent库/*/PTA/.pta_state.json
+05_Agent库/*/PTA/.pta_state.json.bak

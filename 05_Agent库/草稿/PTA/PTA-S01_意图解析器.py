@@ -85,7 +85,9 @@ class IntentParser:
         """生成任务 ID"""
         self.task_counter += 1
         now = datetime.now()
-        return f"T-{now.strftime('%Y%m%d')}-{self.task_counter:03d}"
+        # 含时分秒：每次 CLI 调用都是独立进程，task_counter 从 0 重新计数，
+        # 仅按日期区分会导致同一天内所有任务包都叫 T-xxx-001（真实碰撞过）。
+        return f"T-{now.strftime('%Y%m%d%H%M%S')}-{self.task_counter:03d}"
     
     def _detect_task_type(self, text: str) -> str:
         """检测任务类型"""

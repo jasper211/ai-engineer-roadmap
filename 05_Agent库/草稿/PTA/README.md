@@ -1,9 +1,9 @@
 # PTA Agent · 项目任务协同 Agent
 
 > Agent ID: PTA
-> 版本: v1.0.0
-> 状态: 已上线（5/5 子 Agent 完成）
-> 日期: 2026-07-03
+> 版本: v1.1.0
+> 状态: 已上线（5/5 子 Agent + 主编排器 + 4 个扩展工具）
+> 日期: 2026-07-03（v1.1.0 编排器更新: 2026-07-13）
 
 ---
 
@@ -35,7 +35,33 @@ PTA 是你的「AI 项目经理」，它能：
 
 ## 二、快速开始
 
-### 2.1 完整流程示例
+### 2.0 统一入口：PTA-RUN 主编排器（推荐）
+
+v1.0.0 的 5 个子 Agent 需要人工依次调用、手动接力传文件，本质是"脚本"而非
+[Agent 搭建 SOP](../Agent搭建SOP_v1.0.md) §1.2 定义的"Agent"（缺自动串联 + 状态记忆）。
+v1.1.0 起用 `PTA-RUN_主编排器.py` 统一串联 S01→S02→S03→S05，并把 `.pta_state.json`
+落到磁盘，实现跨会话的进度记忆。
+
+```bash
+# 查看当前/历史任务状态（"回顾下进度，继续推进"）
+python3 PTA-RUN_主编排器.py --status
+
+# 一句话指令 → 自动解析 + 出执行计划 + 出进度报告（默认 dry-run，不产生真实副作用）
+python3 PTA-RUN_主编排器.py "按顺序完成 P1-03, P1-04"
+
+# 真实执行任务步骤（仍不含 git push）
+python3 PTA-RUN_主编排器.py "按顺序完成 P1-03, P1-04" --execute
+
+# 真实执行 + 追加真实文档同步（git add/commit/push，唯一含真实推送的阶段）
+python3 PTA-RUN_主编排器.py "按顺序完成 P1-03, P1-04" --execute --sync -m "commit message"
+```
+
+**⚠️ 安全设计**：S02 原本会给任何 execute/sequential 任务自动追加一个真实 `git push`
+步骤且无法关闭。PTA-RUN 通过 `--no-sync` 把这一步从自动执行计划里摘出来，改成独立、
+显式确认的阶段——`--sync` 必须同时搭配 `--execute` 和 `--message` 才会真正触发，
+避免无人值守场景下未经确认就推送到共享仓库。
+
+### 2.1 手动逐步调用（调试 / 单步排查时使用）
 
 ```bash
 # Step 1: 解析意图（S01）
@@ -279,6 +305,7 @@ def _exec_my_tool(self, step: ExecutionStep) -> Tuple[bool, str]:
 
 | 文件 | 说明 | 大小 |
 |------|------|------|
+| [PTA-RUN_主编排器.py](PTA-RUN_主编排器.py) | 统一入口：串联 S01→S02→S03→S05 + 状态记忆 | 约 220 行 |
 | [PTA-S01_意图解析器.py](PTA-S01_意图解析器.py) | 自然语言 → 任务包 | 356 行 |
 | [PTA-S02_执行调度器.py](PTA-S02_执行调度器.py) | 任务包 → 执行计划 | 430 行 |
 | [PTA-S03_进度追踪器.py](PTA-S03_进度追踪器.py) | 监控进度 | 289 行 |
@@ -298,6 +325,7 @@ def _exec_my_tool(self, step: ExecutionStep) -> Tuple[bool, str]:
 | 版本 | 日期 | 变更 |
 |------|------|------|
 | v1.0.0 | 2026-07-03 | 初始版本，5 个子 Agent 全部完成 |
+| v1.1.0 | 2026-07-13 | 新增 PTA-RUN 主编排器（自动串联 + `.pta_state.json` 状态记忆）；修复 S02 脚本路径递归查找 bug（集成测试 82%→100%）；修复 S01 task_id 同日碰撞 bug；S02 新增 `--no-sync` 把 git push 从自动计划中摘出，改为显式确认阶段；.gitignore 修正（此前把三个 Agent 的 config.json 全部误伞盖忽略，从未进过版本库） |
 
 ---
 

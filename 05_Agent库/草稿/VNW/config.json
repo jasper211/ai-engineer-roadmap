@@ -1,0 +1,62 @@
+{
+  "agent_id": "VNW",
+  "name": "价值节点驱动工作流 Agent",
+  "version": "1.0.0",
+  "status": "草稿",
+  "description": "自动完成价值节点清单→信号提取→规则空白地图的全流程",
+  
+  "l3_flow": [
+    {
+      "code": "L3-VNW-01",
+      "name": "节点解析",
+      "sub_agents": ["VNW-S01", "VNW-S02"],
+      "input": "价值节点清单 Excel",
+      "output": "结构化节点 JSON"
+    },
+    {
+      "code": "L3-VNW-02",
+      "name": "信号提取",
+      "sub_agents": ["VNW-S03"],
+      "input": "结构化节点 JSON + 流程蓝图 Markdown",
+      "output": "信号基线 Markdown"
+    },
+    {
+      "code": "L3-VNW-03",
+      "name": "基线合并",
+      "sub_agents": ["VNW-S04"],
+      "input": "自动基线 + 手工基线",
+      "output": "完整基线 Markdown"
+    },
+    {
+      "code": "L3-VNW-04",
+      "name": "规则空白地图生成",
+      "sub_agents": ["VNW-S05", "VNW-S07"],
+      "input": "完整基线",
+      "output": "规则空白地图 HTML + 校验报告"
+    },
+    {
+      "code": "L3-VNW-05",
+      "name": "SOP底稿生成",
+      "sub_agents": ["VNW-S06"],
+      "input": "完整基线 + 流程蓝图",
+      "output": "SOP Markdown 草稿"
+    }
+  ],
+  
+  "skills_used": ["pandas", "markdown", "re", "jinja2", "watchdog"],
+  
+  "dependencies": {
+    "upstream": [],
+    "downstream": ["PTA-S04"]
+  },
+  
+  "trigger": {
+    "auto": ["价值节点清单 Excel 文件变更"],
+    "manual": ["用户指令: 重新生成基线", "用户指令: 生成某域规则空白"]
+  },
+  
+  "archive_gate": {
+    "mark_confirmed": false,
+    "deliverables": ["config.json", "README.md", "执行记录.md"]
+  }
+}

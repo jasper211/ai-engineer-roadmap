@@ -1,0 +1,62 @@
+{
+  "agent_id": "AIT",
+  "name": "AI 协同转型 Agent",
+  "version": "1.0.0",
+  "status": "草稿",
+  "description": "帮助协同部门识别 AI 化机会、设计流程、构建 Agent、交付 SOP",
+  
+  "l3_flow": [
+    {
+      "code": "L3-AIT-01",
+      "name": "需求识别",
+      "sub_agents": ["AIT-S01"],
+      "input": "部门访谈记录 / 会议纪要",
+      "output": "需求清单（优先级排序）"
+    },
+    {
+      "code": "L3-AIT-02",
+      "name": "流程分析",
+      "sub_agents": ["AIT-S02"],
+      "input": "流程文档 / SOP / 访谈",
+      "output": "流程图 + AI 化评估矩阵"
+    },
+    {
+      "code": "L3-AIT-03",
+      "name": "AI化设计",
+      "sub_agents": ["AIT-S03"],
+      "input": "流程分析结果",
+      "output": "AI 方案设计文档"
+    },
+    {
+      "code": "L3-AIT-04",
+      "name": "Agent构建",
+      "sub_agents": ["AIT-S04"],
+      "input": "AI 方案设计",
+      "output": "Agent JSON 配置 + Python 脚本"
+    },
+    {
+      "code": "L3-AIT-05",
+      "name": "SOP交付",
+      "sub_agents": ["AIT-S05", "AIT-S06"],
+      "input": "Agent 设计 + 流程",
+      "output": "SOP 手册 + 效果报告"
+    }
+  ],
+  
+  "skills_used": ["interview", "process-mapping", "agent-design", "sop-writing"],
+  
+  "dependencies": {
+    "upstream": ["VNW-S03", "PTA-S02"],
+    "downstream": []
+  },
+  
+  "trigger": {
+    "auto": [],
+    "manual": ["用户指令: 设计 XX 部门的 AI 工作流", "用户指令: 这个岗位哪些可以 AI 替代"]
+  },
+  
+  "archive_gate": {
+    "mark_confirmed": false,
+    "deliverables": ["config.json", "README.md", "AI_solution_design.md", "SOP_manual.md"]
+  }
+}

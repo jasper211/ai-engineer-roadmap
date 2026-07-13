@@ -1,0 +1,64 @@
+{
+  "agent_id": "PTA",
+  "name": "项目任务协同 Agent",
+  "version": "1.1.0",
+  "status": "草稿",
+  "description": "通用型项目执行引擎，适用于任何项目的任务全生命周期管理",
+  "entry_point": "PTA-RUN_主编排器.py",
+  "entry_point_note": "v1.1.0 新增：此前 S01-S05 是 5 个需人工依次调用的独立脚本，没有编排器和状态记忆，不满足 Agent 搭建SOP_v1.0.md §1.2 对 Agent（区别于脚本）的定义。PTA-RUN 自动串联 S01→S02→S03→S05 并持久化 .pta_state.json；唯一例外是 S04（真实 git push），刻意不自动触发，须显式传 --execute --sync -m。",
+
+  "l3_flow": [
+    {
+      "code": "L3-PTA-01",
+      "name": "任务解析",
+      "sub_agents": ["PTA-S01"],
+      "input": "自然语言指令",
+      "output": "结构化任务包 JSON"
+    },
+    {
+      "code": "L3-PTA-02",
+      "name": "执行编排",
+      "sub_agents": ["PTA-S02"],
+      "input": "结构化任务包",
+      "output": "执行计划 + 步骤清单"
+    },
+    {
+      "code": "L3-PTA-03",
+      "name": "进度监控",
+      "sub_agents": ["PTA-S03"],
+      "input": "执行步骤状态",
+      "output": "进度报告 + 风险预警"
+    },
+    {
+      "code": "L3-PTA-04",
+      "name": "产出同步",
+      "sub_agents": ["PTA-S04"],
+      "input": "任务完成信号",
+      "output": "Git 提交 + 看板更新"
+    },
+    {
+      "code": "L3-PTA-05",
+      "name": "归档复盘",
+      "sub_agents": ["PTA-S05"],
+      "input": "任务完整历史",
+      "output": "执行记录 + 教训库条目"
+    }
+  ],
+  
+  "skills_used": ["git", "markdown", "browser-use", "json"],
+  
+  "dependencies": {
+    "upstream": ["VNW-S05"],
+    "downstream": []
+  },
+  
+  "trigger": {
+    "auto": [],
+    "manual": ["用户指令: 按顺序完成...", "用户指令: 回顾下进度", "用户指令: 执行"]
+  },
+  
+  "archive_gate": {
+    "mark_confirmed": false,
+    "deliverables": ["config.json", "README.md", "执行记录.md"]
+  }
+}

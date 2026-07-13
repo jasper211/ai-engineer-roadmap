@@ -139,6 +139,33 @@ else
 fi
 
 echo ""
+
+# Test 7: PTA-RUN 主编排器
+echo "[Test 7] PTA-RUN 主编排器 (dry-run，自动串联 S01→S02→S03→S05)"
+echo "------------------------------------------------------------"
+
+ORCH_STATE="$PTA_DIR/.pta_state.json"
+[ -f "$ORCH_STATE" ] && mv "$ORCH_STATE" "$ORCH_STATE.pre_test_bak"
+
+python3 "$PTA_DIR/PTA-RUN_主编排器.py" "按顺序完成 P1-03, P1-04" 2>&1 | tail -10
+
+STATUS_OUT=$(python3 "$PTA_DIR/PTA-RUN_主编排器.py" --status 2>&1)
+echo "$STATUS_OUT" | tail -6
+
+if echo "$STATUS_OUT" | grep -q "历史任务（共 1 条"; then
+    echo "✅ 编排器测试通过: 状态记忆已写入 .pta_state.json"
+else
+    echo "❌ 编排器测试失败: 状态记忆未生成"
+    exit 1
+fi
+
+# 清理编排器测试产生的临时产物和状态文件（避免污染真实状态/看板归档）
+rm -rf "$PTA_DIR/.pta_runs"
+rm -f "$ORCH_STATE" "$ORCH_STATE.bak"
+[ -f "$ORCH_STATE.pre_test_bak" ] && mv "$ORCH_STATE.pre_test_bak" "$ORCH_STATE"
+find "$PROJECT_ROOT/01_execution" -maxdepth 1 -name "T-*" -exec rm -rf {} + 2>/dev/null
+
+echo ""
 echo "============================================================"
 echo "PTA Agent 集成测试完成"
 echo "============================================================"
@@ -149,6 +176,7 @@ echo "  ✅ S02 执行调度器: 通过"
 echo "  ✅ S03 进度追踪器: 通过"
 echo "  ✅ S04 文档同步器: 通过"
 echo "  ✅ S05 归档复盘器: 通过"
+echo "  ✅ PTA-RUN 主编排器: 通过"
 echo ""
 echo "测试产物:"
 echo "  任务包: $TEST_DIR/task_package_1.json"
