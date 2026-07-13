@@ -259,7 +259,16 @@ class ExecutionScheduler:
                 if alt_path.exists():
                     script_path = alt_path
                     break
-        
+
+        if not script_path.exists():
+            # 兜底：递归查找（覆盖 01_execution/P1-02_xxx/ 等嵌套子任务目录）
+            matches = [
+                m for m in self.project_root.rglob(step.script)
+                if ".git" not in m.parts
+            ]
+            if matches:
+                script_path = matches[0]
+
         if not script_path.exists():
             return False, f"脚本不存在: {step.script}"
         
