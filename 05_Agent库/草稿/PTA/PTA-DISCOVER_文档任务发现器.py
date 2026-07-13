@@ -34,6 +34,7 @@ import argparse
 import fnmatch
 import json
 import os
+import ssl
 import sys
 import time
 import urllib.error
@@ -94,6 +95,28 @@ class DiscoveryReport:
     errors: List[Dict] = field(default_factory=list)
 
 
+def _build_ssl_context() -> ssl.SSLContext:
+    """构造 HTTPS 用的 SSL 上下文。有些 Python 安装（尤其是 Homebrew 装的）默认证书路径
+    是坏的（openssl@3 的 cert.pem 不存在），urlopen 会报 CERTIFICATE_VERIFY_FAILED。
+    这里按优先级找一个真实存在的 CA 证书包，而不是绕过证书校验。"""
+    try:
+        import certifi
+        return ssl.create_default_context(cafile=certifi.where())
+    except ImportError:
+        pass
+    for candidate in (
+        "/etc/ssl/cert.pem",  # macOS 系统自带
+        "/usr/local/etc/ca-certificates/cert.pem",  # Homebrew (Intel)
+        "/opt/homebrew/etc/ca-certificates/cert.pem",  # Homebrew (Apple Silicon)
+    ):
+        if Path(candidate).exists():
+            return ssl.create_default_context(cafile=candidate)
+    return ssl.create_default_context()  # 用默认路径，找不到就让它照常报错
+
+
+_SSL_CONTEXT = _build_ssl_context()
+
+
 def _call_deepseek(api_key: str, model: str, user_content: str, max_retries: int = 2) -> str:
     """调用 DeepSeek Chat Completions（OpenAI 兼容接口），返回 message.content 字符串"""
     body = json.dumps({
@@ -119,7 +142,7 @@ def _call_deepseek(api_key: str, model: str, user_content: str, max_retries: int
     last_err = None
     for attempt in range(max_retries + 1):
         try:
-            with urllib.request.urlopen(req, timeout=60) as resp:
+            with urllib.request.urlopen(req, timeout=60, context=_SSL_CONTEXT) as resp:
                 data = json.loads(resp.read().decode("utf-8"))
                 return data["choices"][0]["message"]["content"]
         except urllib.error.HTTPError as e:
