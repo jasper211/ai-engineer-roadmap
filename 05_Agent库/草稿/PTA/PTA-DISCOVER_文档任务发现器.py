@@ -32,6 +32,7 @@ PTA-DISCOVER · 文档任务发现器
 
 import argparse
 import fnmatch
+import hashlib
 import json
 import os
 import ssl
@@ -178,11 +179,48 @@ def _scan_candidate_files(project_root: Path, days: int) -> List[Path]:
     return sorted(candidates)
 
 
+def _dedupe_by_content(files: List[Path]) -> "tuple[List[Path], List[Dict]]":
+    """按文件内容的 sha256 去重：同一份内容在项目里存在多份拷贝（比如按不同维度
+    重新归类整理出来的视图文件夹）时，只保留第一份，避免对着相同内容反复调用模型。"""
+    seen: Dict[str, Path] = {}
+    unique: List[Path] = []
+    dropped: List[Dict] = []
+    for f in files:
+        try:
+            digest = hashlib.sha256(f.read_bytes()).hexdigest()
+        except OSError:
+            unique.append(f)  # 读不了就留着，交给后面的读取逻辑报错
+            continue
+        if digest in seen:
+            dropped.append({"file": str(f), "duplicate_of": str(seen[digest])})
+        else:
+            seen[digest] = f
+            unique.append(f)
+    return unique, dropped
+
+
+TEXT_ENCODINGS = ("utf-8", "gbk", "gb18030", "big5")
+
+
 def _read_truncated(path: Path, max_chars: int) -> str:
+    """按常见编码依次尝试解码，而不是无脑假设 UTF-8。中国大陆项目里的 CSV/txt
+    经常是 Windows/Excel 导出的 GBK 编码，errors='ignore' 硬读会把中文读成乱码——
+    实测中曾把一份 GBK 的 CSV 读成乱码喂给模型，模型倒是诚实地给了低置信度，
+    但根子问题是这里读错了编码。"""
     try:
-        text = path.read_text(encoding="utf-8", errors="ignore")
+        data = path.read_bytes()
     except OSError as e:
         raise RuntimeError(f"无法读取文件: {e}")
+
+    for enc in TEXT_ENCODINGS:
+        try:
+            text = data.decode(enc)
+            break
+        except UnicodeDecodeError:
+            continue
+    else:
+        text = data.decode("utf-8", errors="ignore")  # 都失败就退回旧行为，至少不报错
+
     if len(text) > max_chars:
         text = text[:max_chars] + "\n...[内容已截断]"
     return text
@@ -274,8 +312,16 @@ def main():
         print("[错误] 没有候选文件。使用 --files 指定，或加 --scan 自动扫描。")
         sys.exit(1)
 
-    # 去重
+    # 先按路径去重（同一个文件被 --files 和 --scan 都选中），再按内容 sha256 去重
+    # （同一份内容在项目里存在多份拷贝，比如按不同维度重新归类出来的视图文件夹）
     files = sorted(set(files))
+    files, dupes = _dedupe_by_content(files)
+    if dupes:
+        print(f"[PTA-DISCOVER] 按内容去重：跳过 {len(dupes)} 个与已选文件内容完全相同的重复文件")
+        for d in dupes[:10]:
+            print(f"  - {d['file']}\n    (与 {d['duplicate_of']} 内容相同)")
+        if len(dupes) > 10:
+            print(f"  ... 还有 {len(dupes) - 10} 个")
 
     report = discover(project_root, files, args.model, args.max_chars_per_file, args.dry_run)
 
