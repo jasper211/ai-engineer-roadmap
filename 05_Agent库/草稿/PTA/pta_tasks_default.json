@@ -1,0 +1,70 @@
+{
+  "P0-02": {
+    "name": "前端 Vercel 部署",
+    "steps": [
+      {"action": "check_build", "tool": "bash", "command": "cd app_v2 && npm run build", "description": "检查前端构建"},
+      {"action": "deploy_vercel", "tool": "bash", "command": "cd app_v2 && vercel --prod", "description": "部署到 Vercel"},
+      {"action": "verify_url", "tool": "browser-use", "description": "验证部署 URL 可访问"}
+    ]
+  },
+  "P0-03": {
+    "name": "MCP Server 公开",
+    "steps": [
+      {"action": "test_local", "tool": "bash", "command": "cd process-db-mcp && node src/test-local.mjs", "description": "本地测试 MCP Server"},
+      {"action": "git_push", "tool": "bash", "command": "cd process-db-mcp && git push", "description": "推送到 GitHub"},
+      {"action": "verify_repo", "tool": "browser-use", "description": "验证 GitHub 仓库可访问"}
+    ]
+  },
+  "P1-01": {
+    "name": "PAY-COM 价值节点一致性校验",
+    "steps": [
+      {"action": "run_validation", "tool": "python", "script": "validate_vn_consistency.py", "description": "运行一致性校验脚本"},
+      {"action": "generate_report", "tool": "python", "script": "generate_html_report.py", "description": "生成 HTML 报告"},
+      {"action": "screenshot", "tool": "browser-use", "description": "browser-use 截图证据"}
+    ]
+  },
+  "P1-02": {
+    "name": "价值节点信号提取自动化",
+    "steps": [
+      {"action": "extract_signals", "tool": "python", "script": "extract_signals.py", "args": ["--domain", "PAY"], "description": "提取 PAY 域信号"},
+      {"action": "verify_output", "tool": "bash", "command": "ls -la outputs/", "description": "验证输出文件"}
+    ]
+  },
+  "P1-03": {
+    "name": "信号提取扩展到全量72节点",
+    "steps": [
+      {"action": "extract_all", "tool": "python", "script": "extract_signals.py", "args": ["--all"], "description": "全量信号提取"},
+      {"action": "verify_count", "tool": "bash", "command": "wc -l outputs/*baseline*.md", "description": "验证节点数量"}
+    ]
+  },
+  "P1-04": {
+    "name": "访谈规则继承",
+    "steps": [
+      {"action": "merge_rules", "tool": "python", "script": "merge_interview_rules.py", "description": "合并访谈规则"},
+      {"action": "verify_coverage", "tool": "bash", "command": "grep -c 'A类' outputs/*.md", "description": "验证规则覆盖率"}
+    ]
+  },
+  "P2-01": {
+    "name": "PTA Agent 搭建",
+    "steps": [
+      {"action": "develop_s01", "tool": "python", "script": "PTA-S01_意图解析器.py", "description": "开发意图解析器"},
+      {"action": "develop_s02", "tool": "python", "script": "PTA-S02_执行调度器.py", "description": "开发执行调度器"},
+      {"action": "develop_s04", "tool": "python", "script": "PTA-S04_文档同步器.py", "description": "开发文档同步器"},
+      {"action": "test_integration", "tool": "bash", "command": "bash test_pta_integration.sh", "description": "集成测试"}
+    ]
+  },
+  "P2-02": {
+    "name": "模型选型矩阵",
+    "steps": [
+      {"action": "research_models", "tool": "browser-use", "description": "调研主流模型能力"},
+      {"action": "create_matrix", "tool": "python", "script": "create_model_matrix.py", "description": "生成选型矩阵"}
+    ]
+  },
+  "P2-03": {
+    "name": "Skill 公开发布",
+    "steps": [
+      {"action": "package_skill", "tool": "bash", "command": "mkdir -p skill_package && cp -r scripts/* skill_package/", "description": "打包 Skill"},
+      {"action": "publish", "tool": "bash", "command": "git push", "description": "发布到 GitHub"}
+    ]
+  }
+}

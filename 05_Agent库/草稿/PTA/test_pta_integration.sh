@@ -166,6 +166,49 @@ rm -f "$ORCH_STATE" "$ORCH_STATE.bak"
 find "$PROJECT_ROOT/01_execution" -maxdepth 1 -name "T-*" -exec rm -rf {} + 2>/dev/null
 
 echo ""
+
+# Test 8: 跨项目任务知识库（pta_tasks.json 是否真的覆盖了本项目内置的 9 个任务）
+echo "[Test 8] 跨项目任务知识库 (pta_tasks.json 生效验证)"
+echo "------------------------------------------------------------"
+
+EXT_PROJECT="$TEST_DIR/fake_external_project"
+mkdir -p "$EXT_PROJECT"
+cat > "$EXT_PROJECT/pta_tasks.json" << 'TASKMAP_EOF'
+{
+  "ZZ-01": {
+    "name": "外部项目专属任务",
+    "steps": [
+      {"action": "ext_step", "tool": "bash", "command": "echo external-project-marker", "description": "外部项目自定义步骤"}
+    ]
+  }
+}
+TASKMAP_EOF
+
+python3 "$PTA_DIR/PTA-S01_意图解析器.py" "执行一下 ZZ-01 这个任务" \
+    --project-root "$EXT_PROJECT" --output "$TEST_DIR/ext_task.json" > /dev/null 2>&1
+
+EXT_TASK_NAME=$(python3 -c "import json; print(json.load(open('$TEST_DIR/ext_task.json'))['items'][0]['name'])" 2>/dev/null)
+
+if [ "$EXT_TASK_NAME" = "外部项目专属任务" ]; then
+    echo "✅ S01 正确加载外部项目的 pta_tasks.json（任务名: $EXT_TASK_NAME）"
+else
+    echo "❌ S01 未正确加载外部项目任务知识库（得到: $EXT_TASK_NAME）"
+    exit 1
+fi
+
+python3 "$PTA_DIR/PTA-S02_执行调度器.py" --input "$TEST_DIR/ext_task.json" \
+    --project-root "$EXT_PROJECT" --no-sync --output "$TEST_DIR/ext_plan.json" > /dev/null 2>&1
+
+EXT_ACTION=$(python3 -c "import json; print(json.load(open('$TEST_DIR/ext_plan.json'))['steps'][0]['action'])" 2>/dev/null)
+
+if [ "$EXT_ACTION" = "ext_step" ]; then
+    echo "✅ S02 正确使用外部项目自定义步骤（action: $EXT_ACTION，而非通用占位步骤）"
+else
+    echo "❌ S02 未使用外部项目自定义步骤（得到: $EXT_ACTION）"
+    exit 1
+fi
+
+echo ""
 echo "============================================================"
 echo "PTA Agent 集成测试完成"
 echo "============================================================"
@@ -177,6 +220,7 @@ echo "  ✅ S03 进度追踪器: 通过"
 echo "  ✅ S04 文档同步器: 通过"
 echo "  ✅ S05 归档复盘器: 通过"
 echo "  ✅ PTA-RUN 主编排器: 通过"
+echo "  ✅ 跨项目任务知识库: 通过"
 echo ""
 echo "测试产物:"
 echo "  任务包: $TEST_DIR/task_package_1.json"

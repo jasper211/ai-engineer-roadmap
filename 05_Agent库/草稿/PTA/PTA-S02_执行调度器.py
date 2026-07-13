@@ -16,6 +16,8 @@ from datetime import datetime
 from typing import Dict, List, Optional, Tuple, Any
 from dataclasses import dataclass, asdict
 
+import pta_common
+
 # ============================================================
 # 配置区
 # ============================================================
@@ -23,77 +25,9 @@ from dataclasses import dataclass, asdict
 # 项目根目录
 PROJECT_ROOT = Path("/Users/zhaoqitrenda.cn/Desktop/Jasper工作文档（不含EA项目）/Jasper AI协同经验引擎/AI工程能力整改项目")
 
-# 任务到执行步骤的映射（知识库）
-TASK_EXECUTION_MAP = {
-    "P0-02": {
-        "name": "前端 Vercel 部署",
-        "steps": [
-            {"action": "check_build", "tool": "bash", "command": "cd app_v2 && npm run build", "description": "检查前端构建"},
-            {"action": "deploy_vercel", "tool": "bash", "command": "cd app_v2 && vercel --prod", "description": "部署到 Vercel"},
-            {"action": "verify_url", "tool": "browser-use", "description": "验证部署 URL 可访问"},
-        ]
-    },
-    "P0-03": {
-        "name": "MCP Server 公开",
-        "steps": [
-            {"action": "test_local", "tool": "bash", "command": "cd process-db-mcp && node src/test-local.mjs", "description": "本地测试 MCP Server"},
-            {"action": "git_push", "tool": "bash", "command": "cd process-db-mcp && git push", "description": "推送到 GitHub"},
-            {"action": "verify_repo", "tool": "browser-use", "description": "验证 GitHub 仓库可访问"},
-        ]
-    },
-    "P1-01": {
-        "name": "PAY-COM 价值节点一致性校验",
-        "steps": [
-            {"action": "run_validation", "tool": "python", "script": "validate_vn_consistency.py", "description": "运行一致性校验脚本"},
-            {"action": "generate_report", "tool": "python", "script": "generate_html_report.py", "description": "生成 HTML 报告"},
-            {"action": "screenshot", "tool": "browser-use", "description": "browser-use 截图证据"},
-        ]
-    },
-    "P1-02": {
-        "name": "价值节点信号提取自动化",
-        "steps": [
-            {"action": "extract_signals", "tool": "python", "script": "extract_signals.py", "args": ["--domain", "PAY"], "description": "提取 PAY 域信号"},
-            {"action": "verify_output", "tool": "bash", "command": "ls -la outputs/", "description": "验证输出文件"},
-        ]
-    },
-    "P1-03": {
-        "name": "信号提取扩展到全量72节点",
-        "steps": [
-            {"action": "extract_all", "tool": "python", "script": "extract_signals.py", "args": ["--all"], "description": "全量信号提取"},
-            {"action": "verify_count", "tool": "bash", "command": "wc -l outputs/*baseline*.md", "description": "验证节点数量"},
-        ]
-    },
-    "P1-04": {
-        "name": "访谈规则继承",
-        "steps": [
-            {"action": "merge_rules", "tool": "python", "script": "merge_interview_rules.py", "description": "合并访谈规则"},
-            {"action": "verify_coverage", "tool": "bash", "command": "grep -c 'A类' outputs/*.md", "description": "验证规则覆盖率"},
-        ]
-    },
-    "P2-01": {
-        "name": "PTA Agent 搭建",
-        "steps": [
-            {"action": "develop_s01", "tool": "python", "script": "PTA-S01_意图解析器.py", "description": "开发意图解析器"},
-            {"action": "develop_s02", "tool": "python", "script": "PTA-S02_执行调度器.py", "description": "开发执行调度器"},
-            {"action": "develop_s04", "tool": "python", "script": "PTA-S04_文档同步器.py", "description": "开发文档同步器"},
-            {"action": "test_integration", "tool": "bash", "command": "bash test_pta_integration.sh", "description": "集成测试"},
-        ]
-    },
-    "P2-02": {
-        "name": "模型选型矩阵",
-        "steps": [
-            {"action": "research_models", "tool": "browser-use", "description": "调研主流模型能力"},
-            {"action": "create_matrix", "tool": "python", "script": "create_model_matrix.py", "description": "生成选型矩阵"},
-        ]
-    },
-    "P2-03": {
-        "name": "Skill 公开发布",
-        "steps": [
-            {"action": "package_skill", "tool": "bash", "command": "mkdir -p skill_package && cp -r scripts/* skill_package/", "description": "打包 Skill"},
-            {"action": "publish", "tool": "bash", "command": "git push", "description": "发布到 GitHub"},
-        ]
-    },
-}
+# 任务到执行步骤的映射（知识库）：不再硬编码在源码里，见 pta_common.load_task_map
+# —— 每个项目可以在自己的 project_root 下放一份 pta_tasks.json 来定义自己的任务，
+# 而不再局限于本项目内置的 pta_tasks_default.json 那 9 个任务。
 
 # 工具执行器映射
 TOOL_EXECUTORS = {
@@ -137,21 +71,22 @@ class ExecutionPlan:
 class ExecutionScheduler:
     """执行调度器：将任务包分解为执行步骤并调度执行"""
     
-    def __init__(self, project_root: Path, dry_run: bool = False):
+    def __init__(self, project_root: Path, dry_run: bool = False, task_map: Optional[Dict[str, dict]] = None):
         self.project_root = project_root
         self.dry_run = dry_run
         self.step_counter = 0
-    
+        self.task_map = task_map or {}
+
     def _generate_plan_id(self) -> str:
         """生成计划 ID"""
         now = datetime.now()
         return f"P-{now.strftime('%Y%m%d')}-{now.hour:02d}{now.minute:02d}"
-    
+
     def _get_task_execution_steps(self, task_id: str) -> Optional[List[Dict]]:
-        """从知识库获取任务的执行步骤"""
-        task_info = TASK_EXECUTION_MAP.get(task_id.upper())
+        """从任务知识库获取任务的执行步骤"""
+        task_info = self.task_map.get(task_id.upper())
         if task_info:
-            return task_info["steps"]
+            return task_info.get("steps")
         return None
     
     def create_plan(self, task_package: Dict, include_sync: bool = True) -> ExecutionPlan:
@@ -401,6 +336,7 @@ def main():
     parser.add_argument("--dry-run", action="store_true", help="试运行模式")
     parser.add_argument("--no-sync", action="store_true", help="不自动追加文档同步（git push）步骤")
     parser.add_argument("--project-root", default=str(PROJECT_ROOT), help="项目根目录")
+    parser.add_argument("--task-map", help="显式指定任务知识库 JSON 文件路径（优先级最高）")
     args = parser.parse_args()
 
     # 读取任务包
@@ -411,8 +347,13 @@ def main():
 
     task_package = json.loads(input_path.read_text(encoding="utf-8"))
 
+    # 加载任务知识库（本项目内置 9 个任务，或目标项目自己的 pta_tasks.json）
+    task_map = pta_common.load_task_map(
+        args.task_map, Path(args.project_root), Path(__file__).resolve().parent
+    )
+
     # 创建调度器
-    scheduler = ExecutionScheduler(Path(args.project_root), dry_run=args.dry_run)
+    scheduler = ExecutionScheduler(Path(args.project_root), dry_run=args.dry_run, task_map=task_map)
 
     # 创建执行计划
     plan = scheduler.create_plan(task_package, include_sync=not args.no_sync)

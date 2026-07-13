@@ -14,6 +14,8 @@ from datetime import datetime
 from typing import Dict, List, Optional, Tuple
 from dataclasses import dataclass, asdict
 
+import pta_common
+
 # ============================================================
 # 配置区
 # ============================================================
@@ -36,8 +38,9 @@ PRIORITY_PATTERNS = {
     "P3": ["低优先级", "不急", "未来", "考虑"],
 }
 
-# 任务 ID 提取模式
-TASK_ID_PATTERN = re.compile(r"(P\d+-\d+|P0-\d+|Phase\s*\d+)", re.IGNORECASE)
+# 任务 ID 提取模式：泛化为"大写字母前缀 + 1~2 段 -数字/字母"，覆盖不同项目的编号
+# 习惯（本项目 P1-01、Rw 项目 TRK-001、VN-PAY-04 等），而不再只认本项目的 P#-## 格式。
+TASK_ID_PATTERN = re.compile(r"\b([A-Z]{1,10}(?:-[A-Z0-9]{1,10}){1,2}|Phase\s*\d+)", re.IGNORECASE)
 
 # 约束条件关键词
 CONSTRAINT_PATTERNS = {
@@ -77,9 +80,10 @@ class TaskPackage:
 
 class IntentParser:
     """意图解析器：将自然语言指令转换为结构化任务包"""
-    
-    def __init__(self):
+
+    def __init__(self, task_map: Optional[Dict[str, dict]] = None):
         self.task_counter = 0
+        self.task_map = task_map or {}
     
     def _generate_task_id(self) -> str:
         """生成任务 ID"""
@@ -174,20 +178,11 @@ class IntentParser:
         return items
     
     def _get_task_name(self, task_id: str) -> str:
-        """从任务 ID 获取任务名称（从已知映射中）"""
-        # 已知任务映射
-        task_map = {
-            "P0-02": "前端 Vercel 部署",
-            "P0-03": "MCP Server 公开",
-            "P1-01": "PAY-COM 价值节点一致性校验",
-            "P1-02": "价值节点信号提取自动化",
-            "P1-03": "信号提取扩展到全量72节点",
-            "P1-04": "访谈规则继承",
-            "P2-01": "PTA Agent 搭建",
-            "P2-02": "模型选型矩阵",
-            "P2-03": "Skill 公开发布",
-        }
-        return task_map.get(task_id.upper(), f"任务 {task_id}")
+        """从任务 ID 获取任务名称（从项目任务知识库中，见 pta_common.load_task_map）"""
+        entry = self.task_map.get(task_id.upper())
+        if entry and entry.get("name"):
+            return entry["name"]
+        return f"任务 {task_id}"
     
     def _extract_constraints(self, text: str) -> List[str]:
         """提取约束条件"""
@@ -309,9 +304,17 @@ def main():
     parser = argparse.ArgumentParser(description="PTA-S01 · 意图解析器")
     parser.add_argument("input", help="用户自然语言指令")
     parser.add_argument("--output", "-o", help="输出 JSON 文件路径（可选）")
+    parser.add_argument("--project-root", help="目标项目根目录（用于查找该项目的 pta_tasks.json）")
+    parser.add_argument("--task-map", help="显式指定任务知识库 JSON 文件路径（优先级最高）")
     args = parser.parse_args()
-    
-    intent_parser = IntentParser()
+
+    task_map = pta_common.load_task_map(
+        args.task_map,
+        Path(args.project_root) if args.project_root else None,
+        Path(__file__).resolve().parent,
+    )
+
+    intent_parser = IntentParser(task_map=task_map)
     package = intent_parser.parse(args.input)
     
     # 输出结果

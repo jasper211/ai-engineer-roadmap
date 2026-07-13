@@ -99,16 +99,24 @@ def cmd_status() -> None:
     print("=" * 60)
 
 
-def run_instruction(instruction: str, execute: bool, sync: bool, message: str) -> None:
+def run_instruction(instruction: str, execute: bool, sync: bool, message: str,
+                     project_root: str = None, task_map: str = None) -> None:
     run_id = datetime.now().strftime("%Y%m%d-%H%M%S")
     run_dir = RUNS_DIR / run_id
     run_dir.mkdir(parents=True, exist_ok=True)
+
+    # 目标项目的任务知识库定位参数：不传则退回本项目内置的 pta_tasks_default.json
+    knowledge_args = []
+    if project_root:
+        knowledge_args += ["--project-root", project_root]
+    if task_map:
+        knowledge_args += ["--task-map", task_map]
 
     state = _load_state()
 
     # ---------- L3-PTA-01 任务解析 ----------
     task_path = run_dir / "task.json"
-    r = _run(["python3", str(S01), instruction, "--output", str(task_path)])
+    r = _run(["python3", str(S01), instruction, "--output", str(task_path)] + knowledge_args)
     if r.returncode != 0 or not task_path.exists():
         print("[错误] S01 意图解析失败，终止。")
         sys.exit(1)
@@ -137,7 +145,8 @@ def run_instruction(instruction: str, execute: bool, sync: bool, message: str) -
 
     # ---------- L3-PTA-02 执行编排（--no-sync：把文档同步摘出去，见文件头说明）----------
     plan_path = run_dir / "plan.json"
-    s02_cmd = ["python3", str(S02), "--input", str(task_path), "--output", str(plan_path), "--no-sync"]
+    s02_cmd = ["python3", str(S02), "--input", str(task_path), "--output", str(plan_path),
+               "--no-sync"] + knowledge_args
     if not execute:
         s02_cmd.append("--dry-run")
     r = _run(s02_cmd)
@@ -195,13 +204,17 @@ def main():
     parser.add_argument("--sync", action="store_true",
                          help="执行后调用 S04 做真实文档同步（git add/commit/push），需搭配 --execute 和 --message")
     parser.add_argument("--message", "-m", help="--sync 时的 git 提交信息")
+    parser.add_argument("--project-root",
+                         help="目标项目根目录（不传则默认本项目；传了会去该目录下找 pta_tasks.json）")
+    parser.add_argument("--task-map", help="显式指定任务知识库 JSON 文件路径（优先级高于 --project-root）")
     args = parser.parse_args()
 
     if args.status or not args.instruction:
         cmd_status()
         return
 
-    run_instruction(args.instruction, args.execute, args.sync, args.message)
+    run_instruction(args.instruction, args.execute, args.sync, args.message,
+                     project_root=args.project_root, task_map=args.task_map)
 
 
 if __name__ == "__main__":

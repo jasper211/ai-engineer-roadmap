@@ -1,7 +1,7 @@
 # PTA Agent · 项目任务协同 Agent
 
 > Agent ID: PTA
-> 版本: v1.1.0
+> 版本: v1.2.0
 > 状态: 已上线（5/5 子 Agent + 主编排器 + 4 个扩展工具）
 > 日期: 2026-07-03（v1.1.0 编排器更新: 2026-07-13）
 
@@ -246,7 +246,7 @@ python3 PTA-S05_归档复盘器.py --plan execution_plan.json --task-id P2-01 --
 | 问题 | 原因 | 解决 |
 |------|------|------|
 | S01 解析失败 | 指令过于模糊 | 提供具体任务 ID（如 P1-01） |
-| S02 步骤失败 | 脚本不存在 | 检查 TASK_EXECUTION_MAP 配置 |
+| S02 步骤失败 | 脚本不存在 | 检查任务知识库配置（见 §5.1，`pta_tasks.json` 或内置 `pta_tasks_default.json`） |
 | S04 Git 失败 | 无变更或冲突 | 检查 git status，手动解决冲突 |
 | S05 记录未生成 | 计划文件不存在 | 确认 plan.json 路径正确 |
 
@@ -264,19 +264,38 @@ python3 PTA-S04_文档同步器.py --task-id P2-01 --task-name "测试" -m "test
 
 ## 五、扩展开发
 
-### 5.1 添加新任务到执行映射
+### 5.1 添加新任务到执行映射（跨项目通用，v1.2.0 起）
 
-编辑 `PTA-S02_执行调度器.py` 中的 `TASK_EXECUTION_MAP`：
+v1.0.0 里任务执行知识库是硬编码在 `PTA-S02_执行调度器.py` 源码里的 Python 字典，
+只认识本项目自己的 9 个任务；v1.2.0 起改为外部 JSON 文件（`pta_common.py` 统一加载，
+S01/S02 共用），加载优先级：
 
-```python
-"P3-01": {
+1. `--task-map <path>` 显式指定的文件
+2. `--project-root <dir>` 下的 `pta_tasks.json`（**目标项目自己的**任务知识库）
+3. PTA 目录自带的 [pta_tasks_default.json](pta_tasks_default.json)（本项目内置 9 个任务，兜底）
+
+**给任意项目（不只是本项目）添加新任务**：在目标项目根目录放一份 `pta_tasks.json`：
+
+```json
+{
+  "P3-01": {
     "name": "新任务名称",
     "steps": [
-        {"action": "step1", "tool": "bash", "command": "echo 'hello'", "description": "第一步"},
-        {"action": "step2", "tool": "python", "script": "script.py", "description": "第二步"},
+      {"action": "step1", "tool": "bash", "command": "echo 'hello'", "description": "第一步"},
+      {"action": "step2", "tool": "python", "script": "script.py", "description": "第二步"}
     ]
+  }
 }
 ```
+
+然后：
+
+```bash
+python3 PTA-RUN_主编排器.py "执行 P3-01" --execute --project-root /path/to/other/project
+```
+
+未在任务知识库里定义的任务 ID，S02 会优雅降级为一个"请手动执行"的占位步骤，
+不会报错，也不会瞎猜命令。
 
 ### 5.2 添加新工具类型
 
@@ -306,6 +325,8 @@ def _exec_my_tool(self, step: ExecutionStep) -> Tuple[bool, str]:
 | 文件 | 说明 | 大小 |
 |------|------|------|
 | [PTA-RUN_主编排器.py](PTA-RUN_主编排器.py) | 统一入口：串联 S01→S02→S03→S05 + 状态记忆 | 约 220 行 |
+| [pta_common.py](pta_common.py) | 任务知识库加载逻辑（S01/S02 共用） | 约 40 行 |
+| [pta_tasks_default.json](pta_tasks_default.json) | 本项目内置的 9 个任务知识库（兜底） | 约 60 行 |
 | [PTA-S01_意图解析器.py](PTA-S01_意图解析器.py) | 自然语言 → 任务包 | 356 行 |
 | [PTA-S02_执行调度器.py](PTA-S02_执行调度器.py) | 任务包 → 执行计划 | 430 行 |
 | [PTA-S03_进度追踪器.py](PTA-S03_进度追踪器.py) | 监控进度 | 289 行 |
@@ -326,6 +347,7 @@ def _exec_my_tool(self, step: ExecutionStep) -> Tuple[bool, str]:
 |------|------|------|
 | v1.0.0 | 2026-07-03 | 初始版本，5 个子 Agent 全部完成 |
 | v1.1.0 | 2026-07-13 | 新增 PTA-RUN 主编排器（自动串联 + `.pta_state.json` 状态记忆）；修复 S02 脚本路径递归查找 bug（集成测试 82%→100%）；修复 S01 task_id 同日碰撞 bug；S02 新增 `--no-sync` 把 git push 从自动计划中摘出，改为显式确认阶段；.gitignore 修正（此前把三个 Agent 的 config.json 全部误伞盖忽略，从未进过版本库） |
+| v1.2.0 | 2026-07-13 | 任务知识库外置为 JSON（`pta_common.py` + `pta_tasks_default.json`），S01/S02 支持 `--project-root`/`--task-map` 加载任意项目自己的 `pta_tasks.json`，不再局限于本项目硬编码的 9 个任务；S01 任务 ID 识别正则从只认 `P#-##` 泛化为任意大写字母前缀编号（如 `TRK-001`、`RW-01`）；已用一个真实的假外部项目验证：自定义任务被正确识别并执行，而非落到通用占位步骤 |
 
 ---
 
