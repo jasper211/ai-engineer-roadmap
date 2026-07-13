@@ -44,6 +44,13 @@ FILE_PRIORITY = {
     ".json": 5,     # JSON 配置
 }
 
+# 扫描时排除的目录：不是"文件名以 . 开头"就能挡住的——.git/node_modules 这类目录
+# 内部文件名大多不以 . 开头（如 .git/HEAD、.git/config、.git/objects/xx/xxxx），
+# rglob("*") 会原样把它们当"文档"扫进去。实测过：在本项目自己的仓库上跑，会把
+# 350 个 .git 内部文件误当成文档。
+EXCLUDE_DIRS = {".git", "node_modules", "__pycache__", ".pta_runs", ".venv", "venv",
+                ".idea", ".vscode", ".pytest_cache"}
+
 # 任务状态关键词映射
 STATUS_KEYWORDS = {
     "completed": ["完成", "已归档", "已确认", "已冻结", "green", "done", "finished"],
@@ -159,10 +166,17 @@ class ProjectScanner:
         return FILE_PRIORITY.get(ext, 1)
     
     def _scan_files(self) -> Dict[str, DocumentInfo]:
-        """扫描所有文件"""
+        """扫描所有文件。用 os.walk 而不是 rglob，因为 rglob 没法在遍历时剪掉整个
+        目录——.git/node_modules 这类目录内部的文件名大多不以 "." 开头（.git/HEAD、
+        .git/config、.git/objects/xx/xxxx），只靠"文件名是否以 . 开头"挡不住它们，
+        实测会把几百个 .git 内部文件误当成"文档"扫进来。"""
         files = {}
-        for file_path in self.project_path.rglob("*"):
-            if file_path.is_file() and not file_path.name.startswith("."):
+        for root, dirs, filenames in os.walk(self.project_path):
+            dirs[:] = [d for d in dirs if d not in EXCLUDE_DIRS and not d.startswith(".")]
+            for name in filenames:
+                if name.startswith("."):
+                    continue
+                file_path = Path(root) / name
                 stat = file_path.stat()
                 doc = DocumentInfo(
                     path=str(file_path.relative_to(self.project_path)),
