@@ -30,6 +30,8 @@ from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Tuple, Set
 from dataclasses import dataclass, asdict
 
+import pta_workspace
+
 # ============================================================
 # 配置区
 # ============================================================
@@ -134,7 +136,8 @@ class ProjectScanner:
     
     def __init__(self, project_path: Path, snapshot_path: Optional[Path] = None):
         self.project_path = project_path
-        self.snapshot_path = snapshot_path or project_path / ".pta_snapshot.json"
+        # 默认落在专属工作区（pta_workspace.py），不再写进项目自己的文件夹
+        self.snapshot_path = snapshot_path or pta_workspace.get_project_workspace(project_path) / "scan_snapshot.json"
         self.snapshot = self._load_snapshot()
     
     def _load_snapshot(self) -> Dict:
@@ -642,29 +645,34 @@ class ProjectScanner:
 def main():
     parser = argparse.ArgumentParser(description="PTA-SCAN · 智能项目扫描器 v2")
     parser.add_argument("--project", "-p", required=True, help="项目路径")
-    parser.add_argument("--snapshot", "-s", help="快照文件路径（默认: .pta_snapshot.json）")
-    parser.add_argument("--output", "-o", help="输出报告路径")
+    parser.add_argument("--snapshot", "-s", help="快照文件路径（默认: 专属工作区下的 scan_snapshot.json，"
+                                                  "见 pta_workspace.py，不再写进项目自己的文件夹）")
+    parser.add_argument("--output", "-o", help="输出报告路径（默认: 专属工作区 reports/ 下自动命名）")
     parser.add_argument("--schedule", "-i", type=int, help="定时扫描间隔（小时）")
     args = parser.parse_args()
-    
+
     project_path = Path(args.project)
     if not project_path.exists():
         print(f"[错误] 项目路径不存在: {project_path}")
         return 1
-    
+
     snapshot_path = Path(args.snapshot) if args.snapshot else None
     scanner = ProjectScanner(project_path, snapshot_path)
-    
+
     if args.schedule:
         scanner.run_scheduled(args.schedule)
     else:
         report = scanner.scan()
         scanner.print_report(report)
-        
+
         if args.output:
             output_path = Path(args.output)
-            output_path.write_text(scanner.generate_task_assignment(report), encoding="utf-8")
-            print(f"[PTA-SCAN] 任务分配报告已保存: {output_path}")
+        else:
+            ws = pta_workspace.get_project_workspace(project_path)
+            output_path = ws / "reports" / f"scan-{datetime.now().strftime('%Y%m%d-%H%M%S')}.md"
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        output_path.write_text(scanner.generate_task_assignment(report), encoding="utf-8")
+        print(f"[PTA-SCAN] 任务分配报告已保存: {output_path}")
     
     return 0
 

@@ -1,9 +1,9 @@
 # PTA Agent · 项目任务协同 Agent
 
 > Agent ID: PTA
-> 版本: v1.5.1
+> 版本: v1.6.0
 > 状态: 已上线（5/5 子 Agent + 主编排器 + 5 个扩展工具）
-> 日期: 2026-07-03（v1.1.0 编排器更新: 2026-07-13 · v1.3.0 文档任务发现器: 2026-07-13 · v1.4.0 增量扫描: 2026-07-13 · v1.5.0 编排器接入发现: 2026-07-13 · v1.5.1 PTA-SCAN 修复: 2026-07-13）
+> 日期: 2026-07-03（v1.1.0 编排器更新: 2026-07-13 · v1.3.0 文档任务发现器: 2026-07-13 · v1.4.0 增量扫描: 2026-07-13 · v1.5.0 编排器接入发现: 2026-07-13 · v1.5.1 PTA-SCAN 修复: 2026-07-13 · v1.6.0 专属工作区: 2026-07-14）
 
 ---
 
@@ -33,9 +33,51 @@ PTA 是你的「AI 项目经理」，它能：
 
 ---
 
-## 二、快速开始
+## 二、专属工作区（v1.6.0 起）
 
-### 2.0 统一入口：PTA-RUN 主编排器（推荐）
+**背景**：PTA-DISCOVER/PTA-SCAN 曾经默认把状态文件写进目标项目自己的文件夹；
+PTA-S04 的 `git add .` 曾经在多会话并发编辑同一仓库时，把一份完全无关、正在
+另一个会话里编写的文件（`ob_sync_agent.py`）意外提交推送到共享仓库。两者根因
+是同一件事：PTA 的"自己的东西"和"项目的东西"没有物理隔离。
+
+**原则**：PTA 处理任何项目时，都不往目标项目自己的文件夹里写任何状态/快照/
+运行产物——那些统一落在 `pta_workspace.py` 定义的专属工作区：
+
+```
+Jasper工作文档（不含EA项目）/项目工作区/
+├── AI工程能力整改项目工作区/    ← PTA 处理自己所在项目时
+├── Rw权益项目工作区/            ← PTA 处理 Rw 项目时
+└── <任意项目名>工作区/          ← 命名规则：<项目文件夹 basename>工作区
+```
+
+这一层既不在任何目标项目里，也不在 PTA 自己所在的这个共享 git 仓库里（用
+`git rev-parse` 验证过：`Jasper工作文档（不含EA项目）` 这一级本身不是 git 仓库）。
+每个项目工作区内部：
+
+| 文件/目录 | 用途 |
+|-----------|------|
+| `state.json` | PTA-RUN 的任务历史/当前任务 |
+| `runs/` | 每次执行的运行产物（task.json/plan.json/report.json） |
+| `discover_state.json` | PTA-DISCOVER 的增量哈希记录 |
+| `scan_snapshot.json` | PTA-SCAN 的快照 |
+| `task_registry.json` | 任务分类管理登记表（见下） |
+| `reports/` | 发现报告等生成物 |
+
+**任务分类管理（`task_registry.json`）**：PTA-DISCOVER 每次发现任务后，会按
+`sha256(来源文件+任务名)` 做 key 合并进登记表——同一个任务反复出现在多次运行里
+不会变成好几条记录，只会更新 `last_seen`；`classification.workstream` 自动取
+来源文件的一级子目录名做轻量分类。**这一层仍然只是分类和追踪，不会自动把任务
+提升为可执行步骤**——安全边界不变，见 §4.6。
+
+**PTA-S04 的对应改动**：不再有 `git add .`。默认只 `git add` 它自己权威负责的
+两个产出（看板 + 刚生成的执行记录）；要提交其他源码改动必须显式传 `--files`
+逐个列出。详见 §4.4。
+
+---
+
+## 三、快速开始
+
+### 3.0 统一入口：PTA-RUN 主编排器（推荐）
 
 v1.0.0 的 5 个子 Agent 需要人工依次调用、手动接力传文件，本质是"脚本"而非
 [Agent 搭建 SOP](../Agent搭建SOP_v1.0.md) §1.2 定义的"Agent"（缺自动串联 + 状态记忆）。
@@ -61,7 +103,7 @@ python3 PTA-RUN_主编排器.py "按顺序完成 P1-03, P1-04" --execute --sync 
 显式确认的阶段——`--sync` 必须同时搭配 `--execute` 和 `--message` 才会真正触发，
 避免无人值守场景下未经确认就推送到共享仓库。
 
-**接入文档任务发现（v1.5.0 起）**：此前 PTA-DISCOVER（§3.6）是完全独立的工具，
+**接入文档任务发现（v1.5.0 起）**：此前 PTA-DISCOVER（§4.6）是完全独立的工具，
 跑完之后只有自己知道结果，PTA-RUN 的 `--status` 看不到"文档里发现了新任务"这件事——
 不符合 Agent 该有的"感知外部变化"能力。现在可以让 PTA-RUN 直接调度 PTA-DISCOVER：
 
@@ -76,7 +118,7 @@ python3 PTA-RUN_主编排器.py --status
 同样刻意保留安全边界：这一步仍然只把发现摘要记进状态文件，**不会**自动写入任何
 项目的 `pta_tasks.json`。需要 `export DEEPSEEK_API_KEY=sk-xxx`。
 
-### 2.1 手动逐步调用（调试 / 单步排查时使用）
+### 3.1 手动逐步调用（调试 / 单步排查时使用）
 
 ```bash
 # Step 1: 解析意图（S01）
@@ -95,7 +137,7 @@ python3 PTA-S04_文档同步器.py --task-id P2-01 --task-name "PTA搭建" -m "f
 python3 PTA-S05_归档复盘器.py --plan execution_plan.json --task-id P2-01 --task-name "PTA搭建"
 ```
 
-### 2.2 一键集成测试
+### 3.2 一键集成测试
 
 ```bash
 bash test_pta_integration.sh
@@ -103,9 +145,9 @@ bash test_pta_integration.sh
 
 ---
 
-## 三、子 Agent 详解
+## 四、子 Agent 详解
 
-### 3.1 PTA-S01 意图解析器
+### 4.1 PTA-S01 意图解析器
 
 **功能**：将自然语言指令转换为结构化任务包
 
@@ -144,7 +186,7 @@ python3 PTA-S01_意图解析器.py "帮我看看进度"
 
 ---
 
-### 3.2 PTA-S02 执行调度器
+### 4.2 PTA-S02 执行调度器
 
 **功能**：将任务包分解为可执行步骤，调度工具执行
 
@@ -171,7 +213,7 @@ python3 PTA-S02_执行调度器.py --input task.json --project-root /path/to/pro
 
 ---
 
-### 3.3 PTA-S03 进度追踪器
+### 4.3 PTA-S03 进度追踪器
 
 **功能**：监控执行状态，生成进度报告，检测异常
 
@@ -199,37 +241,42 @@ python3 PTA-S03_进度追踪器.py --plan execution_plan.json --output report.js
 
 ---
 
-### 3.4 PTA-S04 文档同步器
+### 4.4 PTA-S04 文档同步器
 
 **功能**：任务完成后自动同步文档（Git + 看板 + 执行记录）
 
 **输入**：任务完成信号
 **输出**：Git 提交 + 看板更新 + 执行记录
 
+**⚠️ v1.6.0 起不再有 `git add .`**（曾经的事故根因，见 §二）。默认只
+`git add` 看板 + 刚生成的执行记录这两个自己权威负责的产出；要提交别的源码
+改动（比如这次任务改了哪些 PTA 脚本），必须显式传 `--files` 逐个列出——不传
+就只有那两个文件会被提交。
+
 **常用命令**：
 
 ```bash
-# Dry-run 模式（推荐先测试）
+# Dry-run 模式（推荐先测试，会打印实际会 git add 哪些文件）
 python3 PTA-S04_文档同步器.py --task-id P2-01 --task-name "PTA搭建" -m "feat: PTA v1.0" --dry-run
 
-# 实际执行
+# 只同步看板 + 执行记录（不传 --files）
 python3 PTA-S04_文档同步器.py --task-id P2-01 --task-name "PTA搭建" -m "feat: PTA v1.0"
 
 # 更新看板状态
 python3 PTA-S04_文档同步器.py --task-id P2-01 --task-name "PTA搭建" -m "update: progress" --status "进行中"
 
-# 指定文件提交
+# 同时提交这次改动的源码文件（看板 + 执行记录仍会自动加入，不用重复列）
 python3 PTA-S04_文档同步器.py --task-id P2-01 --task-name "PTA搭建" -m "feat: add S01" --files file1.py file2.py
 ```
 
 **同步清单**：
-- [ ] Git add + commit + push
+- [ ] Git add（看板 + 执行记录 + 显式 --files，绝不 `git add .`） + commit + push
 - [ ] 更新 `能力整改看板.md`
 - [ ] 创建 `任务执行记录.md`
 
 ---
 
-### 3.5 PTA-S05 归档复盘器
+### 4.5 PTA-S05 归档复盘器
 
 **功能**：生成执行记录，沉淀经验教训，更新 F3 教训库
 
@@ -254,7 +301,7 @@ python3 PTA-S05_归档复盘器.py --plan execution_plan.json --task-id P2-01 --
 
 ---
 
-### 3.6 PTA-DISCOVER 文档任务发现器（扩展工具，v1.4.0）
+### 4.6 PTA-DISCOVER 文档任务发现器（扩展工具，v1.6.0）
 
 **功能**：调用 DeepSeek API 阅读外部项目的自由行文文档（合同/会议纪要/审计报告等），
 提取隐含的任务，产出人工可审阅的"发现报告"。
@@ -299,9 +346,9 @@ python3 PTA-DISCOVER_文档任务发现器.py --project /path/to/project --scan 
 
 ---
 
-## 四、故障排查
+## 五、故障排查
 
-### 4.1 常见问题
+### 5.1 常见问题
 
 | 问题 | 原因 | 解决 |
 |------|------|------|
@@ -310,7 +357,7 @@ python3 PTA-DISCOVER_文档任务发现器.py --project /path/to/project --scan 
 | S04 Git 失败 | 无变更或冲突 | 检查 git status，手动解决冲突 |
 | S05 记录未生成 | 计划文件不存在 | 确认 plan.json 路径正确 |
 
-### 4.2 调试模式
+### 5.2 调试模式
 
 所有子 Agent 都支持 `--dry-run` 模式：
 
@@ -322,9 +369,9 @@ python3 PTA-S04_文档同步器.py --task-id P2-01 --task-name "测试" -m "test
 
 ---
 
-## 五、扩展开发
+## 六、扩展开发
 
-### 5.1 添加新任务到执行映射（跨项目通用，v1.2.0 起）
+### 6.1 添加新任务到执行映射（跨项目通用，v1.2.0 起）
 
 v1.0.0 里任务执行知识库是硬编码在 `PTA-S02_执行调度器.py` 源码里的 Python 字典，
 只认识本项目自己的 9 个任务；v1.2.0 起改为外部 JSON 文件（`pta_common.py` 统一加载，
@@ -357,7 +404,7 @@ python3 PTA-RUN_主编排器.py "执行 P3-01" --execute --project-root /path/to
 未在任务知识库里定义的任务 ID，S02 会优雅降级为一个"请手动执行"的占位步骤，
 不会报错，也不会瞎猜命令。
 
-### 5.2 添加新工具类型
+### 6.2 添加新工具类型
 
 编辑 `PTA-S02_执行调度器.py` 中的 `TOOL_EXECUTORS`：
 
@@ -380,12 +427,13 @@ def _exec_my_tool(self, step: ExecutionStep) -> Tuple[bool, str]:
 
 ---
 
-## 六、文件清单
+## 七、文件清单
 
 | 文件 | 说明 | 大小 |
 |------|------|------|
 | [PTA-RUN_主编排器.py](PTA-RUN_主编排器.py) | 统一入口：串联 S01→S02→S03→S05 + 状态记忆 | 约 220 行 |
-| [PTA-DISCOVER_文档任务发现器.py](PTA-DISCOVER_文档任务发现器.py) | 调用 DeepSeek 从自由行文文档中发现任务（仅报告，不驱动执行） | 约 220 行 |
+| [PTA-DISCOVER_文档任务发现器.py](PTA-DISCOVER_文档任务发现器.py) | 调用 DeepSeek 从自由行文文档中发现任务（仅报告，不驱动执行） | 约 250 行 |
+| [pta_workspace.py](pta_workspace.py) | 专属工作区（隔离目标项目/共享仓库）+ 任务分类登记表 | 约 100 行 |
 | [pta_common.py](pta_common.py) | 任务知识库加载逻辑（S01/S02 共用） | 约 40 行 |
 | [pta_tasks_default.json](pta_tasks_default.json) | 本项目内置的 9 个任务知识库（兜底） | 约 60 行 |
 | [PTA-S01_意图解析器.py](PTA-S01_意图解析器.py) | 自然语言 → 任务包 | 356 行 |
@@ -402,7 +450,7 @@ def _exec_my_tool(self, step: ExecutionStep) -> Tuple[bool, str]:
 
 ---
 
-## 七、版本历史
+## 八、版本历史
 
 | 版本 | 日期 | 变更 |
 |------|------|------|
@@ -413,6 +461,7 @@ def _exec_my_tool(self, step: ExecutionStep) -> Tuple[bool, str]:
 | v1.4.0 | 2026-07-13 | PTA-DISCOVER `--scan` 从"按最近 N 天"改为按内容 sha256 跟自己的历史处理记录比对的真正增量扫描（记录存 `.pta_discover_state.json`，跟 PTA-SCAN 的快照文件分开维护，避免互相覆盖写）；新增 `--force` 强制全量重扫；已用三个场景验证：新文件→处理、内容不变→0 次调用直接跳过、内容变了→正确识别新增任务 |
 | v1.5.0 | 2026-07-13 | PTA-RUN 新增 `--discover --project-root <path>`，直接调度 PTA-DISCOVER 做增量文档任务发现，结果（含前 5 条预览）计入 `.pta_state.json`，`--status` 能直接看到"文档里发现了几条新任务"，不用再单独去读发现报告；同样保留安全边界，只记摘要，不自动写入任何项目的 `pta_tasks.json`；已端到端验证：首次发现、增量跳过（0 次调用）两种场景 |
 | v1.5.1 | 2026-07-13 | 修复 PTA-SCAN 的目录遍历 bug：原来只检查"文件名是否以 . 开头"，没排除 `.git`/`node_modules` 这类目录本身（.git 内部文件如 HEAD/config/objects/xx/xxxx 大多不以 . 开头），在本项目自己的仓库上实测会把 350 个 `.git` 内部文件误当成"文档"扫进去；改用 `os.walk` + 目录剪枝修复，修复后扫到 62 个真实文件、0 个 `.git` 文件，跟 `find` 独立核对结果一致 |
+| v1.6.0 | 2026-07-14 | 新增专属工作区（`pta_workspace.py`）：起因是 PTA-S04 的 `git add .` 在多会话并发编辑同一仓库时，把一份完全无关、正在另一个会话里编写的文件（`ob_sync_agent.py`）意外提交推送——排查发现 PTA-DISCOVER/PTA-SCAN 的默认状态文件本来就会写进目标项目自己的文件夹，同一类问题的两种表现。现在 PTA-RUN/PTA-DISCOVER/PTA-SCAN 的状态、快照、运行产物统一落在 `Jasper工作文档（不含EA项目）/项目工作区/<项目名>工作区/`（不在目标项目里，也不在这个共享仓库里）；PTA-S04 去掉 `git add .`，默认只 add 看板+执行记录，其余改动需显式 `--files`；新增任务分类管理 `task_registry.json`（跨次运行按内容去重、按来源目录轻量分类，仍不自动提升为可执行步骤）。已用假外部项目验证增量三场景 + 用真实仓库复现并验证 S04 不再误 add 无关文件 |
 
 ---
 

@@ -17,18 +17,21 @@ PTA-DISCOVER · 文档任务发现器
   命令注入面。要不要把某个发现的任务变成可执行步骤，永远是人工决定。
 
 增量扫描（v1.4.0 起）：
-  --scan 现在按内容哈希跟"上一次 PTA-DISCOVER 自己的处理记录"比对，只处理新增/变更
-  过的文件——而不是像 v1.3.0 那样每次全量重扫、靠"最近 N 天"这种粗糙的时间窗口。
-  记录存在 <project_root>/.pta_discover_state.json（跟 PTA-SCAN 的 .pta_snapshot.json
-  是两个独立文件——PTA-SCAN 每次运行会整体覆盖写自己的快照，如果共用一个文件会把
-  彼此的记录冲掉，所以两边各自维护，但用的是同一套"内容哈希比对"思路）。
+  --scan 按内容哈希跟"上一次 PTA-DISCOVER 自己的处理记录"比对，只处理新增/变更
+  过的文件——而不是每次全量重扫、靠"最近 N 天"这种粗糙的时间窗口。
+
+专属工作区（v1.6.0 起）：
+  增量记录、发现报告不再写进目标项目自己的文件夹——那样违反"不改任何项目文件"
+  的原则。默认落在 pta_workspace.py 定义的专属工作区（跟目标项目、跟 PTA 自己
+  所在的这个共享仓库都物理隔离），按项目分文件夹。发现的任务同时会合并进该项目
+  工作区的 task_registry.json，跨次运行去重、供后续人工审阅分类。
 
 运行：
   export DEEPSEEK_API_KEY=sk-xxx
 
   # 显式指定候选文件（总是处理，忽略增量状态）
   python3 PTA-DISCOVER_文档任务发现器.py --project /path/to/project \\
-      --files 合同.md 会议纪要.md --output discovered_tasks.json
+      --files 合同.md 会议纪要.md
 
   # 增量扫描：只处理自上次 PTA-DISCOVER 运行以来新增/变更的 .md/.txt/.csv
   python3 PTA-DISCOVER_文档任务发现器.py --project /path/to/project --scan
@@ -54,12 +57,13 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional
 
+import pta_workspace
+
 DEEPSEEK_API_URL = "https://api.deepseek.com/chat/completions"
 DEFAULT_MODEL = "deepseek-chat"
 MAX_CHARS_PER_FILE = 6000
 SCAN_EXTENSIONS = {".md", ".txt", ".csv"}
 SCAN_EXCLUDE_DIRS = {".git", "node_modules", "__pycache__", ".pta_runs"}
-STATE_FILENAME = ".pta_discover_state.json"
 
 SYSTEM_PROMPT = """你是一个项目任务提取助手。阅读用户提供的项目文档片段，找出其中隐含的
 任务/待办事项。任务可能是明确的清单项，也可能藏在合同条款、会议纪要、审计意见的
@@ -330,12 +334,13 @@ def main():
     parser.add_argument("--project", required=True, help="目标项目根目录")
     parser.add_argument("--files", nargs="*", help="显式指定候选文件（相对或绝对路径），总是处理，不受增量状态影响")
     parser.add_argument("--scan", action="store_true", help="自动扫描项目内所有 .md/.txt/.csv 文件，按增量状态过滤")
-    parser.add_argument("--state", help="增量状态文件路径（默认: <project>/.pta_discover_state.json）")
+    parser.add_argument("--state", help="增量状态文件路径（默认: 专属工作区下的 discover_state.json，"
+                                         "见 pta_workspace.py，不再写进项目自己的文件夹）")
     parser.add_argument("--force", action="store_true", help="忽略增量状态，--scan 找到的文件全部重新处理")
     parser.add_argument("--model", default=DEFAULT_MODEL, help="DeepSeek 模型（默认 deepseek-chat）")
     parser.add_argument("--max-chars-per-file", type=int, default=MAX_CHARS_PER_FILE,
                          help="每个文件截断的最大字符数（控制成本）")
-    parser.add_argument("--output", "-o", help="发现报告输出路径（JSON）")
+    parser.add_argument("--output", "-o", help="发现报告输出路径（默认: 专属工作区 reports/ 下自动命名）")
     parser.add_argument("--dry-run", action="store_true", help="只列出候选文件和大小，不调用 API，也不更新增量状态")
     args = parser.parse_args()
 
@@ -344,7 +349,8 @@ def main():
         print(f"[错误] 项目路径不存在: {project_root}")
         sys.exit(1)
 
-    state_path = Path(args.state).resolve() if args.state else project_root / STATE_FILENAME
+    workspace = pta_workspace.get_project_workspace(project_root)
+    state_path = Path(args.state).resolve() if args.state else workspace / "discover_state.json"
     state = _load_state(state_path)
 
     explicit_files: List[Path] = [Path(f).resolve() for f in (args.files or [])]
@@ -402,12 +408,20 @@ def main():
     print("   需要人工在目标项目的 pta_tasks.json 里手写对应的 steps，")
     print("   而不是把这份报告的内容直接搬进去。")
 
-    if args.output and not args.dry_run:
-        output_path = Path(args.output)
+    if not args.dry_run:
+        if args.output:
+            output_path = Path(args.output)
+        else:
+            output_path = workspace / "reports" / f"discover-{datetime.now().strftime('%Y%m%d-%H%M%S')}.json"
+        output_path.parent.mkdir(parents=True, exist_ok=True)
         output_path.write_text(
             json.dumps(asdict(report), ensure_ascii=False, indent=2), encoding="utf-8"
         )
         print(f"\n报告已保存: {output_path}")
+
+    if report.tasks and not args.dry_run:
+        pta_workspace.merge_task_registry(workspace, report.tasks)
+        print(f"任务已合并进登记表: {workspace / 'task_registry.json'}")
 
     if processed and not args.dry_run:
         state.update(processed)

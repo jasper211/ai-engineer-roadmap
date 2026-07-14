@@ -26,10 +26,18 @@ PTA-RUN · 主编排器（Orchestrator）
       真实执行 + 执行后追加真实文档同步（git add/commit/push）
 
   python3 PTA-RUN_主编排器.py --discover --project-root /path/to/other/project
-      对该项目跑一次 PTA-DISCOVER 增量文档任务发现（v1.5.0 起），结果计入
-      .pta_state.json——下次 --status 会看到"文档里发现了几条新任务"，而不需要
-      单独去读 PTA-DISCOVER 的报告文件。这一步仍然只产出人工可审阅的发现摘要，
-      不会自动写入任何项目的 pta_tasks.json。
+      对该项目跑一次 PTA-DISCOVER 增量文档任务发现（v1.5.0 起），结果计入该项目
+      专属工作区的 state.json——下次对同一个项目 --status 会看到"文档里发现了
+      几条新任务"，而不需要单独去读 PTA-DISCOVER 的报告文件。这一步仍然只产出
+      人工可审阅的发现摘要，不会自动写入任何项目的 pta_tasks.json。
+
+专属工作区（v1.6.0 起）：
+  PTA-RUN 自己的状态（任务历史、运行产物）不再固定放在 PTA 脚本所在的这个共享
+  仓库里——那样在多会话并发编辑同一仓库时，容易跟别人的工作互相干扰（真实发生过：
+  另一个会话在写 05_Agent库/OB知识库同步巡检Agent/ob_sync_agent.py，PTA-S04 的
+  `git add .` 把它意外提交推送了）。现在按 --project-root 指定的目标项目，分别
+  落在 pta_workspace.py 定义的专属工作区里；不传 --project-root 时默认视为
+  "PTA 自己所在的这个能力整改项目"，行为跟以前一致。
 """
 
 import argparse
@@ -39,9 +47,10 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
+import pta_workspace
+
 PTA_DIR = Path(__file__).resolve().parent
-STATE_PATH = PTA_DIR / ".pta_state.json"
-RUNS_DIR = PTA_DIR / ".pta_runs"
+HOME_PROJECT_ROOT = PTA_DIR.parent.parent.parent  # 05_Agent库/草稿/PTA -> 项目根目录
 
 S01 = PTA_DIR / "PTA-S01_意图解析器.py"
 S02 = PTA_DIR / "PTA-S02_执行调度器.py"
@@ -50,22 +59,26 @@ S04 = PTA_DIR / "PTA-S04_文档同步器.py"
 S05 = PTA_DIR / "PTA-S05_归档复盘器.py"
 DISCOVER = PTA_DIR / "PTA-DISCOVER_文档任务发现器.py"
 
-EMPTY_STATE = {"version": 1, "current_task": None, "task_history": [], "context": {}}
+EMPTY_STATE = {"version": 1, "current_task": None, "task_history": [], "context": {}, "discovery": None}
 
 
-def _load_state() -> dict:
-    if STATE_PATH.exists():
+def _resolve_project_root(project_root: str = None) -> Path:
+    return Path(project_root).resolve() if project_root else HOME_PROJECT_ROOT
+
+
+def _load_state(state_path: Path) -> dict:
+    if state_path.exists():
         try:
-            return json.loads(STATE_PATH.read_text(encoding="utf-8"))
+            return json.loads(state_path.read_text(encoding="utf-8"))
         except json.JSONDecodeError:
-            print(f"[警告] 状态文件损坏，已重置: {STATE_PATH}")
+            print(f"[警告] 状态文件损坏，已重置: {state_path}")
     return dict(EMPTY_STATE)
 
 
-def _save_state(state: dict) -> None:
-    if STATE_PATH.exists():
-        STATE_PATH.replace(STATE_PATH.with_name(STATE_PATH.name + ".bak"))
-    STATE_PATH.write_text(json.dumps(state, ensure_ascii=False, indent=2), encoding="utf-8")
+def _save_state(state_path: Path, state: dict) -> None:
+    if state_path.exists():
+        state_path.replace(state_path.with_name(state_path.name + ".bak"))
+    state_path.write_text(json.dumps(state, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
 def _run(cmd) -> subprocess.CompletedProcess:
@@ -78,10 +91,14 @@ def _run(cmd) -> subprocess.CompletedProcess:
     return result
 
 
-def cmd_status() -> None:
-    state = _load_state()
+def cmd_status(project_root: str = None) -> None:
+    resolved_root = _resolve_project_root(project_root)
+    workspace = pta_workspace.get_project_workspace(resolved_root)
+    state = _load_state(workspace / "state.json")
+
     print("=" * 60)
-    print("[PTA-RUN] 当前状态")
+    print(f"[PTA-RUN] 当前状态 · {resolved_root}")
+    print(f"工作区: {workspace}")
     print("=" * 60)
 
     cur = state.get("current_task")
@@ -99,16 +116,15 @@ def cmd_status() -> None:
         print(f"  - [{h.get('timestamp', '')[:19]}] {h.get('task_id')}: "
               f"{h.get('summary', '')} → {h.get('status')} ({h.get('success_rate', '?')})")
 
-    discoveries = state.get("discoveries", {})
-    if discoveries:
-        print(f"\n文档任务发现（PTA-DISCOVER，共 {len(discoveries)} 个项目有记录）:")
-        for project, d in discoveries.items():
-            print(f"  - {project}")
-            print(f"    最近一次: [{d.get('last_run', '')[:19]}] 处理了 {d.get('files_scanned', 0)} 个新增/变更文件，"
-                  f"发现 {d.get('tasks_found', 0)} 条任务（低置信度 {d.get('low_confidence', 0)} 条）")
-            for t in d.get("preview", []):
-                print(f"      · [{t.get('status')}] {t.get('name')} (owner: {t.get('owner')})")
-            print(f"    完整报告: {d.get('report_path', '')}")
+    d = state.get("discovery")
+    if d:
+        print(f"\n文档任务发现（PTA-DISCOVER）:")
+        print(f"  最近一次: [{d.get('last_run', '')[:19]}] 处理了 {d.get('files_scanned', 0)} 个新增/变更文件，"
+              f"发现 {d.get('tasks_found', 0)} 条任务（低置信度 {d.get('low_confidence', 0)} 条）")
+        for t in d.get("preview", []):
+            print(f"    · [{t.get('status')}] {t.get('name')} (owner: {t.get('owner')})")
+        print(f"  完整报告: {d.get('report_path', '')}")
+        print(f"  任务登记表: {workspace / 'task_registry.json'}")
         print("  ⚠️ 以上仅供人工审阅，未经确认不会写入任何项目的 pta_tasks.json")
 
     ctx = state.get("context", {})
@@ -119,13 +135,12 @@ def cmd_status() -> None:
 
 
 def run_discover(project_root: str, force: bool) -> None:
-    resolved_root = str(Path(project_root).resolve())
+    resolved_root = Path(project_root).resolve()
+    workspace = pta_workspace.get_project_workspace(resolved_root)
     run_id = datetime.now().strftime("%Y%m%d-%H%M%S")
-    run_dir = RUNS_DIR / f"discover-{run_id}"
-    run_dir.mkdir(parents=True, exist_ok=True)
-    report_path = run_dir / "report.json"
+    report_path = workspace / "reports" / f"discover-{run_id}.json"
 
-    cmd = ["python3", str(DISCOVER), "--project", resolved_root, "--scan",
+    cmd = ["python3", str(DISCOVER), "--project", str(resolved_root), "--scan",
            "--output", str(report_path)]
     if force:
         cmd.append("--force")
@@ -135,6 +150,7 @@ def run_discover(project_root: str, force: bool) -> None:
         print("[错误] PTA-DISCOVER 运行失败，状态未更新。")
         sys.exit(1)
 
+    state_path = workspace / "state.json"
     if not report_path.exists():
         print("[PTA-RUN] 本次没有新增/变更的文件需要处理，状态保持不变。")
         return
@@ -144,9 +160,8 @@ def run_discover(project_root: str, force: bool) -> None:
     low_confidence = sum(1 for t in tasks if t.get("confidence", 1.0) < 0.7)
     preview = sorted(tasks, key=lambda t: -t.get("confidence", 0))[:5]
 
-    state = _load_state()
-    discoveries = state.setdefault("discoveries", {})
-    discoveries[resolved_root] = {
+    state = _load_state(state_path)
+    state["discovery"] = {
         "last_run": datetime.now().isoformat(),
         "files_scanned": report.get("files_scanned", 0),  # PTA-DISCOVER 自身已做增量过滤，
         # 这里的数字就是"本次新增/变更"，不是项目全量文件数
@@ -158,19 +173,22 @@ def run_discover(project_root: str, force: bool) -> None:
         ],
         "report_path": str(report_path),
     }
-    _save_state(state)
+    _save_state(state_path, state)
 
     print(f"\n[PTA-RUN] 文档任务发现完成: {resolved_root}")
     print(f"  本次处理 {report.get('files_scanned', 0)} 个新增/变更文件，"
           f"发现 {len(tasks)} 条任务（低置信度 {low_confidence} 条）")
     print(f"  完整报告: {report_path}")
-    print(f"  状态已记入 .pta_state.json，下次 --status 会显示")
+    print(f"  状态已记入: {state_path}，下次 --status 会显示")
 
 
 def run_instruction(instruction: str, execute: bool, sync: bool, message: str,
                      project_root: str = None, task_map: str = None) -> None:
+    resolved_root = _resolve_project_root(project_root)
+    workspace = pta_workspace.get_project_workspace(resolved_root)
+    state_path = workspace / "state.json"
     run_id = datetime.now().strftime("%Y%m%d-%H%M%S")
-    run_dir = RUNS_DIR / run_id
+    run_dir = workspace / "runs" / run_id
     run_dir.mkdir(parents=True, exist_ok=True)
 
     # 目标项目的任务知识库定位参数：不传则退回本项目内置的 pta_tasks_default.json
@@ -180,7 +198,7 @@ def run_instruction(instruction: str, execute: bool, sync: bool, message: str,
     if task_map:
         knowledge_args += ["--task-map", task_map]
 
-    state = _load_state()
+    state = _load_state(state_path)
 
     # ---------- L3-PTA-01 任务解析 ----------
     task_path = run_dir / "task.json"
@@ -208,7 +226,7 @@ def run_instruction(instruction: str, execute: bool, sync: bool, message: str,
             "success_rate": "n/a",
             "timestamp": datetime.now().isoformat(),
         }
-        _save_state(state)
+        _save_state(state_path, state)
         return
 
     # ---------- L3-PTA-02 执行编排（--no-sync：把文档同步摘出去，见文件头说明）----------
@@ -242,7 +260,7 @@ def run_instruction(instruction: str, execute: bool, sync: bool, message: str,
     history.append(entry)
     state["task_history"] = history[-50:]
     state.setdefault("context", {})["last_run"] = run_id
-    _save_state(state)
+    _save_state(state_path, state)
 
     # ---------- L3-PTA-05 归档复盘（本地写入，无 git 动作，始终执行）----------
     _run(["python3", str(S05), "--plan", str(plan_path), "--task-id", task_id,
@@ -273,11 +291,12 @@ def main():
                          help="执行后调用 S04 做真实文档同步（git add/commit/push），需搭配 --execute 和 --message")
     parser.add_argument("--message", "-m", help="--sync 时的 git 提交信息")
     parser.add_argument("--project-root",
-                         help="目标项目根目录（不传则默认本项目；传了会去该目录下找 pta_tasks.json）")
+                         help="目标项目根目录（不传则默认本项目；决定去哪个专属工作区读写状态、"
+                              "去该目录下找 pta_tasks.json）")
     parser.add_argument("--task-map", help="显式指定任务知识库 JSON 文件路径（优先级高于 --project-root）")
     parser.add_argument("--discover", action="store_true",
                          help="对 --project-root 指定的项目跑一次 PTA-DISCOVER 增量文档任务发现，"
-                              "结果计入 .pta_state.json，供 --status 查看")
+                              "结果计入该项目专属工作区的 state.json，供 --status 查看")
     parser.add_argument("--force", action="store_true", help="--discover 时忽略增量记录，全部重新处理")
     args = parser.parse_args()
 
@@ -289,7 +308,7 @@ def main():
         return
 
     if args.status or not args.instruction:
-        cmd_status()
+        cmd_status(project_root=args.project_root)
         return
 
     run_instruction(args.instruction, args.execute, args.sync, args.message,

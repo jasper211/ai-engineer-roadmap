@@ -4,6 +4,11 @@
 PTA-S04 · 文档同步器
 功能：任务完成后自动同步文档（Git 提交 + 看板更新 + 执行记录）
 运行：python3 pta_s04_sync.py [--message "提交信息"] [--kanban] [--git]
+
+⚠️ v1.6.0 起不再有 `git add .` 这条路径（曾经的事故根因：在多会话并发编辑同一仓库
+时，把一份完全无关、正在另一个会话里编写的文件意外提交推送了）。默认只
+`git add` 自己权威负责的两个产出——看板文件、刚生成的执行记录；要提交别的源码
+改动，必须显式传 --files 逐个列出。
 """
 
 import os
@@ -70,29 +75,29 @@ class DocumentSyncer:
     def sync_git(self, message: str, files: List[str] = None) -> bool:
         """
         Git 同步：add → commit → push
-        
+
         Args:
             message: 提交信息
-            files: 指定文件列表（None 则添加所有变更）
+            files: 要 add 的具体文件列表。不再支持"不传就 git add ."——那是曾经
+                   把无关文件误提交推送的根因。调用方（sync()）负责算出这份列表：
+                   默认只有看板 + 刚生成的执行记录，--files 传的额外文件会加进来。
         """
         print(f"\n[PTA-S04] Git 同步开始...")
-        
+
         if self.dry_run:
-            print(f"  [DRY-RUN] 将执行: git add + commit '{message}' + push")
+            print(f"  [DRY-RUN] 将执行: git add {files or '(无文件)'} + commit '{message}' + push")
             self.results["git"]["status"] = "dry_run"
             return True
-        
-        # Step 1: git add
-        if files:
-            for f in files:
-                returncode, stdout, stderr = self._run_git(["add", f])
-                if returncode != 0:
-                    self.results["git"]["status"] = "failed"
-                    self.results["git"]["details"] = f"git add 失败: {stderr}"
-                    print(f"  ❌ git add 失败: {stderr}")
-                    return False
-        else:
-            returncode, stdout, stderr = self._run_git(["add", "."])
+
+        if not files:
+            self.results["git"]["status"] = "skipped"
+            self.results["git"]["details"] = "没有已知需要同步的文件（看板/执行记录都不存在，且未显式传 --files）"
+            print(f"  ℹ️ {self.results['git']['details']}")
+            return True
+
+        # Step 1: git add（逐个文件，绝不 git add .）
+        for f in files:
+            returncode, stdout, stderr = self._run_git(["add", f])
             if returncode != 0:
                 self.results["git"]["status"] = "failed"
                 self.results["git"]["details"] = f"git add 失败: {stderr}"
@@ -278,20 +283,30 @@ class DocumentSyncer:
         print(f"模式: {'DRY-RUN' if self.dry_run else '实际执行'}")
         print(f"{'='*60}")
         
-        # 1. Git 同步
-        git_success = self.sync_git(git_message, git_files)
-        
-        # 2. 看板更新
+        # 1. 看板更新（先写盘，这样 git add 才能真的加到它）
         kanban_success = self.update_kanban(task_id, kanban_status, kanban_progress)
-        
-        # 3. 执行记录
+
+        # 2. 执行记录（先写盘，同理）
         if outputs:
             record_success = self.generate_execution_record(task_id, task_name, outputs, lessons)
         else:
             self.results["execution_record"]["status"] = "skipped"
             self.results["execution_record"]["details"] = "未提供产出清单"
             record_success = True
-        
+
+        # 3. Git 同步：默认只 add 看板 + 刚生成的执行记录这两个自己权威负责的产出，
+        #    git_files 里显式指定的额外文件（比如这次改动的源码）一起加进来——
+        #    绝不 git add .，那是曾经把无关文件误提交推送的根因。
+        add_targets: List[str] = []
+        if self.kanban_path.exists():
+            add_targets.append(str(self.kanban_path))
+        record_path = self.results["execution_record"].get("details")
+        if outputs and record_path and Path(record_path).exists():
+            add_targets.append(record_path)
+        if git_files:
+            add_targets.extend(git_files)
+        git_success = self.sync_git(git_message, add_targets)
+
         # 汇总
         all_success = git_success and kanban_success and record_success
         
@@ -319,7 +334,10 @@ def main():
     parser.add_argument("--message", "-m", required=True, help="Git 提交信息")
     parser.add_argument("--status", default="已完成", help="看板状态（已完成/进行中/待启动）")
     parser.add_argument("--progress", help="进度更新（如 55 pct to 60 pct）")
-    parser.add_argument("--files", nargs="*", help="指定 Git 添加的文件")
+    parser.add_argument("--files", nargs="*",
+                         help="额外要 git add 的文件（比如这次改动的源码）；看板和刚生成的"
+                              "执行记录始终会自动加入，不需要在这里重复列。不传就只 add 那两个，"
+                              "绝不会 git add .")
     parser.add_argument("--dry-run", action="store_true", help="试运行模式（不实际执行）")
     parser.add_argument("--project-root", default=str(PROJECT_ROOT), help="项目根目录")
     args = parser.parse_args()

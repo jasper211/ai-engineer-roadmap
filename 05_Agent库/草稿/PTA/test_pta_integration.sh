@@ -144,7 +144,18 @@ echo ""
 echo "[Test 7] PTA-RUN 主编排器 (dry-run，自动串联 S01→S02→S03→S05)"
 echo "------------------------------------------------------------"
 
-ORCH_STATE="$PTA_DIR/.pta_state.json"
+# v1.6.0 起状态/运行产物落在专属工作区（pta_workspace.py），不再是 PTA_DIR 下的
+# .pta_state.json/.pta_runs——用同一个模块算出这次本项目对应的工作区路径，
+# 测试前备份真实状态，测试后原样恢复，避免污染真实的任务历史。
+HOME_WORKSPACE=$(python3 -c "
+import importlib.util
+from pathlib import Path
+spec = importlib.util.spec_from_file_location('pta_workspace', '$PTA_DIR/pta_workspace.py')
+m = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(m)
+print(m.get_project_workspace(Path('$PROJECT_ROOT')))
+")
+ORCH_STATE="$HOME_WORKSPACE/state.json"
 [ -f "$ORCH_STATE" ] && mv "$ORCH_STATE" "$ORCH_STATE.pre_test_bak"
 
 python3 "$PTA_DIR/PTA-RUN_主编排器.py" "按顺序完成 P1-03, P1-04" 2>&1 | tail -10
@@ -153,14 +164,14 @@ STATUS_OUT=$(python3 "$PTA_DIR/PTA-RUN_主编排器.py" --status 2>&1)
 echo "$STATUS_OUT" | tail -6
 
 if echo "$STATUS_OUT" | grep -q "历史任务（共 1 条"; then
-    echo "✅ 编排器测试通过: 状态记忆已写入 .pta_state.json"
+    echo "✅ 编排器测试通过: 状态记忆已写入专属工作区"
 else
     echo "❌ 编排器测试失败: 状态记忆未生成"
     exit 1
 fi
 
 # 清理编排器测试产生的临时产物和状态文件（避免污染真实状态/看板归档）
-rm -rf "$PTA_DIR/.pta_runs"
+rm -rf "$HOME_WORKSPACE/runs"
 rm -f "$ORCH_STATE" "$ORCH_STATE.bak"
 [ -f "$ORCH_STATE.pre_test_bak" ] && mv "$ORCH_STATE.pre_test_bak" "$ORCH_STATE"
 find "$PROJECT_ROOT/01_execution" -maxdepth 1 -name "T-*" -exec rm -rf {} + 2>/dev/null
