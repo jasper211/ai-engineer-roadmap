@@ -1,0 +1,38 @@
+{
+  "agent_id": "OB-SYNC-AG01",
+  "agent_name": "OB知识库同步巡检Agent",
+  "version": "v1.0",
+  "status": "active",
+  "created": "2026-07-10",
+  "description": "巡检 Obsidian 知识库的同步健康状态：验证符号链接完整性、MCP 配置正确性、多终端 AI 访问能力，生成健康报告",
+  "trigger": {
+    "mode": "manual_and_scheduled",
+    "manual": "python3 ob_sync_agent.py",
+    "scheduled": "建议通过 launchd 每日定时执行",
+    "event_driven": "MCP 配置路径变更后手动执行"
+  },
+  "inputs": {
+    "obsidian_vault_path": "/Users/zhaoqitrenda.cn/ObsidianVault",
+    "mcp_configs": {
+      "qoder": "/Users/zhaoqitrenda.cn/Library/Application Support/Qoder/SharedClientCache/mcp.json",
+      "claude_desktop": "/Users/zhaoqitrenda.cn/Library/Application Support/Claude/claude_desktop_config.json",
+      "kimi_code": "/Users/zhaoqitrenda.cn/.kimi-code/mcp.json"
+    },
+    "f_files": [
+      "项目-流程架构/08_任务与跟进/AI上下文/AI上下文启动文件_v2_0.md",
+      "项目-流程架构/08_任务与跟进/AI上下文/AI协作准则_v2_0.md",
+      "项目-流程架构/08_任务与跟进/AI上下文/教训档案_v2_0.md"
+    ]
+  },
+  "outputs": {
+    "report_path": "/Users/zhaoqitrenda.cn/ObsidianVault/项目-流程架构/08_任务与跟进/AI上下文/OB同步健康报告.md",
+    "format": "markdown"
+  },
+  "checks": [
+    "symlink_integrity",
+    "mcp_config_validity",
+    "mcp_server_connectivity",
+    "f_files_accessibility",
+    "vault_index_health"
+  ]
+}
