@@ -35,8 +35,26 @@
     参照 `10_部署与运行/` 的 launchd 方式。DISCOVER 迁移时顺带修了一个新发现的
     bug：内容去重跳过的重复文件此前没有被记进增量状态，下次运行会被重新当
     候选文件排队。
-  - ⏳ **批3待做**：`PTA-INTEL_智能项目分析器_v3.py` / `PTA-INTEL-RW_智能项目分析器_v3.py`
-    ——这两个是同一能力的两份高度重复实现（query 分派/CrossDocumentAnalyzer/main
-    流程高度同构，只有解析层真正不同：通用 MD/CSV 猜测 vs Rw 专用 CSV 精确
-    列名），确认要合并成一个技能，通过自动探测项目目录下有没有 Rw 特征 CSV
-    来选解析器。
+  - ✅ **批3已完成**：`PTA-INTEL_智能项目分析器_v3.py` / `PTA-INTEL-RW_智能项目分析器_v3.py`
+    → `06_开发技能_Develop_Skills/skills/project_intelligence.py`
+    （`agent.py --intel --intel-mode {analyze,query,cross} --project-root <path>`）。
+    深入对比后发现这两个脚本表面同构（都是 analyze/query/cross 三模式），但
+    数据模型完全不同——通用版猜 Markdown/CSV 结构（`TaskItem`），Rw 专用版
+    精确读固定台账 CSV 的固定列名（`TrackItem`，字段语义如 `source_work_id`/
+    `today_action`/`escalation` 完全对不上通用版）。**这次"合并"合并的是入口层，
+    不是数据模型**：两套解析器/分析器/CrossDocumentAnalyzer 原样保留（改名
+    `Generic*`/`Rw*` 避免类名冲突），新增 `ProjectIntelligence` 统一入口，
+    自动探测目标项目目录下有没有 `RwProjectParser.TRACKING_FILES` 列的那几份
+    固定台账 CSV 文件名来选后端。原脚本移入 `_retired_flat_structure/`。
+
+    **明确删除的部分**（不是迁移遗漏）：原 `PTA-INTEL`（不是 INTEL-RW，两边本就
+    不对称）内嵌了一套 `agent_status` 跨 Agent 状态上报，会把分析结果写进 PTA
+    工作区和目标项目之外的第三方路径（Jasper 全局的"Agent健康报告.md"/
+    "Agent运行仪表盘.md"）。这违反了本项目已确立的 workspace 隔离原则，迁移时
+    直接不保留这部分。
+
+    **顺带修的一个真实 bug**：迁移到共享的 `tools.file_diff.read_content_truncated`
+    时发现，原 PTA-SCAN/PTA-INTEL-RW 都在编码候选列表里显式试过 `utf-8-sig`
+    处理 Excel 导出 CSV 常见的 BOM 问题，但批2迁移 SCAN 时改用的共享函数没有
+    覆盖这一点——是一个当时没测出来的回归。这次统一在 `read_content_truncated`
+    里做了 BOM 剥离修复，批2的 `rule_based_task_scan.py` 也一并受益。

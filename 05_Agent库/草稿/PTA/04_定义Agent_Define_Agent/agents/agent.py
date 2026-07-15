@@ -75,6 +75,7 @@ from skills.rule_based_task_scan import (RuleBasedScanner, format_report_text as
                                           format_task_assignment_markdown)
 from skills.document_task_discovery import (DocumentDiscoverer, format_text as format_discovery_text,
                                              to_dict as discovery_to_dict)
+from skills.project_intelligence import ProjectIntelligence, format_analyze_text, format_cross_text
 from tools.task_knowledge import load_task_map, merge_suggested_tasks
 from tools.dir_scan import analyze_project, format_report_text, format_report_markdown
 from tools.wecom_notify import (load_wecom_config, build_notification_text,
@@ -265,6 +266,34 @@ def cmd_discover(project_root: str = None, files: list = None, scan: bool = Fals
     print(f"\n报告已保存: {output_path}")
 
 
+def cmd_intel(project_root: str = None, mode: str = "analyze", query: str = None, output: str = None) -> None:
+    """项目智能分析（原 PTA-INTEL/INTEL-RW 合并，批3 迁移）：自动探测目标项目
+    目录下有没有 Rw 特征跟踪台账 CSV，有就用 Rw 专用解析器，没有就退回通用
+    Markdown/CSV 解析器——调用方不需要自己判断该用哪个后端。只读分析，不接入
+    Think-Act-Observe 主循环，跟 --dashboard/--dir-scan 是同一类"给人看的报告"。"""
+    resolved_root = _resolve_project_root(project_root)
+    intel = ProjectIntelligence(resolved_root)
+
+    if mode == "analyze":
+        status = intel.analyze()
+        text = format_analyze_text(status, intel.is_rw)
+        print(text)
+    elif mode == "query":
+        if not query:
+            print("[错误] --intel-mode query 需要提供 --query 参数")
+            sys.exit(1)
+        text = intel.query(query)
+        print(text)
+    elif mode == "cross":
+        contradictions, gaps, duplicates = intel.cross()
+        text = format_cross_text(contradictions, gaps, duplicates)
+        print(text)
+
+    if output:
+        Path(output).write_text(text, encoding="utf-8")
+        print(f"\n报告已保存: {output}")
+
+
 def run_instruction(instruction: str, execute: bool, sync: bool, message: str,
                      project_root: str = None, task_map: str = None) -> None:
     resolved_root = _resolve_project_root(project_root)
@@ -379,7 +408,7 @@ def main():
     parser.add_argument("--dir-scan", action="store_true",
                          help="目录结构分析（原 PTA-EXT）：只读统计文件数/体积/类型分布")
     parser.add_argument("--depth", type=int, default=2, help="--dir-scan 专用：扫描深度（默认 2）")
-    parser.add_argument("--report-output", help="--dir-scan 专用：Markdown 报告输出路径")
+    parser.add_argument("--report-output", help="--dir-scan/--intel 专用：报告输出路径")
     parser.add_argument("--rule-scan", action="store_true",
                          help="规则扫描（原 PTA-SCAN，批2迁移）：本地零成本抽取markdown表格/CSV里的"
                               "结构化任务，识别逾期/阻塞/无负责人风险，不调用 LLM")
@@ -391,6 +420,12 @@ def main():
                          help="--discover 专用：自动扫描项目内候选文档，按增量状态过滤")
     parser.add_argument("--dry-run", action="store_true",
                          help="--discover 专用：只列出候选文件和估算字符数，不调用 API，不更新增量状态")
+    parser.add_argument("--intel", action="store_true",
+                         help="项目智能分析（原 PTA-INTEL/INTEL-RW 合并，批3迁移）：自动探测 Rw 项目特征 "
+                              "CSV 选解析器，深度文档分析/自然语言查询/跨文档矛盾遗漏重复检测")
+    parser.add_argument("--intel-mode", choices=["analyze", "query", "cross"], default="analyze",
+                         help="--intel 专用：分析模式，默认 analyze")
+    parser.add_argument("--query", "-q", help="--intel --intel-mode query 专用：自然语言查询问题")
     args = parser.parse_args()
 
     if args.daily_scan:
@@ -412,6 +447,11 @@ def main():
     if args.discover:
         cmd_discover(project_root=args.project_root, files=args.files, scan=args.scan,
                      force=args.force, dry_run=args.dry_run)
+        return
+
+    if args.intel:
+        cmd_intel(project_root=args.project_root, mode=args.intel_mode, query=args.query,
+                 output=args.report_output)
         return
 
     if args.status or not args.instruction:

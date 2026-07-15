@@ -197,10 +197,10 @@ python3 04_定义Agent_Define_Agent/agents/agent.py --dir-scan --project-root /p
 | EXT 目录结构分析（批1） | `agent.py --dir-scan --project-root /path --depth 2 --report-output report.md` |
 | DISCOVER 文档任务发现（批2） | `agent.py --discover --scan --project-root /path`（需 `DEEPSEEK_API_KEY`） |
 | SCAN 规则扫描（批2） | `agent.py --rule-scan --project-root /path`（零 LLM 调用） |
+| INTEL/INTEL-RW 项目智能分析（批3） | `agent.py --intel --intel-mode {analyze,query,cross} --project-root /path`（`query` 模式需加 `--query "问题"`；自动探测 Rw 特征 CSV 选后端，不需要手动区分） |
 | **MONITOR 自我监控**（PTA 自己用得怎么样，非分析别的项目，仍是独立脚本） | `python3 11_监控与优化_Monitor_and_Optimize/PTA-MONITOR_自我监控.py`（不传 `--project-root` 则汇总所有用过 PTA 的项目） |
-| INTEL / INTEL-RW 智能项目分析器（批3，尚未迁移） | 见各自源码文件头注释 |
 
-INTEL+INTEL-RW 合并（批3）已确认要做，尚未执行，详见
+批1/批2/批3 三批扩展脚本迁移全部完成，详见
 `11_监控与优化_Monitor_and_Optimize/README.md` 的迁移进度说明。
 
 ---

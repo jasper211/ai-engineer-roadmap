@@ -45,9 +45,18 @@ def read_content_truncated(path: Path, max_chars: int, encodings: tuple = DEFAUL
     经常是 Windows/Excel 导出的 GBK 编码，errors='ignore' 硬读会把中文读成
     乱码（PTA-DISCOVER 早期版本真实踩过这个坑）。
 
-    这是 skills/daily_sensing.py 和 skills/document_task_discovery.py 共用
-    的同一份实现——之前两边（daily_sensing 和退役前的 PTA-DISCOVER 脚本）
-    各自维护了一份几乎相同的编码兜底逻辑，这里收敛成一份。"""
+    这是 skills/daily_sensing.py、skills/document_task_discovery.py、
+    skills/rule_based_task_scan.py、skills/project_intelligence.py 共用的
+    同一份实现——迁移前这几边（含退役前的 PTA-DISCOVER/PTA-SCAN/PTA-INTEL-RW
+    脚本）各自维护了一份几乎相同的编码兜底逻辑，这里收敛成一份。
+
+    plain "utf-8" 编码能成功解码带 BOM 的文件，但会在开头留一个字面上的
+    U+FEFF 字符——如果这份内容后面要按列名做 CSV/表格解析（rule_based_task_scan、
+    project_intelligence 的 Rw 台账解析都是这样），这个字符会混进第一个字段名
+    里（`﻿track_id` 而不是 `track_id`），导致按列名查找全部落空。原
+    PTA-SCAN/PTA-INTEL-RW 脚本都在编码候选列表里显式试过 "utf-8-sig" 来处理
+    这个问题；这里改成解码后统一 strip 掉开头的 BOM 字符，不需要再单独试
+    一次 "utf-8-sig" 编码。"""
     path = Path(path)
     if path.suffix.lower() in OFFICE_EXTRACTORS:
         text = extract_office_text(path)
@@ -64,6 +73,7 @@ def read_content_truncated(path: Path, max_chars: int, encodings: tuple = DEFAUL
                 continue
         else:
             text = data.decode("utf-8", errors="ignore")
+        text = text.lstrip("﻿")
     if len(text) > max_chars:
         text = text[:max_chars] + "\n...[内容已截断]"
     return text

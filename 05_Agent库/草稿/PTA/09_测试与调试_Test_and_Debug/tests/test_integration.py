@@ -52,8 +52,9 @@ from skills.daily_sensing import DailySensor, SuggestedTask, DailyBriefing
 from skills.rule_based_task_scan import RuleBasedScanner
 import skills.document_task_discovery as document_task_discovery
 from skills.document_task_discovery import DocumentDiscoverer
+from skills.project_intelligence import ProjectIntelligence
 from tools import git_ops
-from tools.file_diff import snapshot_dir, diff_snapshots
+from tools.file_diff import snapshot_dir, diff_snapshots, read_content_truncated
 from tools.task_knowledge import load_task_map, merge_suggested_tasks
 from tools.wecom_notify import (build_notification_text, load_wecom_config, MAX_CONTENT_BYTES,
                                  _encode_multipart_file, _webhook_to_upload_url)
@@ -570,6 +571,64 @@ def test_19_document_task_discovery(tmp_dir: Path):
           f"增量跳过失败: scanned={report2.files_scanned}, skipped={report2.incremental_skipped}")
 
 
+def test_20_project_intelligence_auto_detect(tmp_dir: Path):
+    print("\n[Test 20] skills.project_intelligence 自动探测 Rw/通用后端")
+    print("-" * 60)
+
+    generic_root = tmp_dir / "intel_generic_fixture"
+    generic_root.mkdir(parents=True, exist_ok=True)
+    (generic_root / "清单.md").write_text(
+        "| work_id | action | owner | due | status |\n|---|---|---|---|---|\n"
+        "| T-01 | 补充数据字典 | HR | 2099-01-01 | 待开始 |\n", encoding="utf-8",
+    )
+    intel_generic = ProjectIntelligence(generic_root)
+    check(intel_generic.is_rw is False, "没有 Rw 特征 CSV 时正确回退到通用解析器",
+          "误判成了 Rw 项目")
+    status_generic = intel_generic.analyze()
+    check(len(status_generic.active_tasks) == 1, f"通用解析器正确抽取出1条活跃任务，得到 {len(status_generic.active_tasks)}",
+          f"通用解析器结果不符预期: {status_generic}")
+
+    rw_root = tmp_dir / "intel_rw_fixture"
+    rw_root.mkdir(parents=True, exist_ok=True)
+    # 带 UTF-8 BOM 写入——回归测试 read_content_truncated 的 BOM 剥离修复，
+    # 不剥离的话 csv.DictReader 会把第一个字段名读成 "﻿track_id"，
+    # 后面按 "track_id" 精确查找列名会全部落空
+    csv_bytes = (
+        "track_id,source_work_id,workstream,priority,owner,current_status,today_action,"
+        "blocker,gate,next_update,output,escalation\n"
+        "TRK-01,W-01,ToB,P0,Roy,blocked,推进合规审查,等待法务回复,Gate1,2020-01-01,,需Mark介入\n"
+    ).encode("utf-8")
+    (rw_root / "52_Phase0日常执行跟踪台账_v0.2.csv").write_bytes(b"\xef\xbb\xbf" + csv_bytes)
+
+    intel_rw = ProjectIntelligence(rw_root)
+    check(intel_rw.is_rw is True, "存在 Rw 特征 CSV 时正确选用 Rw 专用解析器", "未识别出 Rw 项目")
+    status_rw = intel_rw.analyze()
+    check(status_rw.total_tracks == 1 and status_rw.blocked == 1,
+          f"Rw 解析器正确抽取出1条跟踪项且识别为阻塞，得到 total={status_rw.total_tracks}, blocked={status_rw.blocked}",
+          f"Rw 解析器结果不符预期: {status_rw}")
+    check(intel_rw._rw_tracks[0].track_id == "TRK-01",
+          f"BOM 被正确剥离，track_id 精确匹配到列名: {intel_rw._rw_tracks[0].track_id!r}",
+          f"BOM 未被剥离，track_id 读取错误: {intel_rw._rw_tracks[0].track_id!r}")
+
+    answer = intel_rw.query("Roy的任务有哪些")
+    check("TRK-01" in answer, "Rw 后端的自然语言查询正确路由到对应人员", f"查询结果不含预期任务: {answer[:200]}")
+
+    contradictions, gaps, duplicates = intel_rw.cross()
+    check(isinstance(contradictions, list) and isinstance(gaps, list) and isinstance(duplicates, list),
+          "跨文档关联分析（Rw 后端）正常返回三个列表", "跨文档关联分析返回类型不符预期")
+
+
+def test_21_read_content_truncated_bom_strip(tmp_dir: Path):
+    print("\n[Test 21] tools.file_diff.read_content_truncated 剥离 UTF-8 BOM")
+    print("-" * 60)
+    fixture = tmp_dir / "bom_fixture.csv"
+    fixture.write_bytes(b"\xef\xbb\xbf" + "a,b\n1,2\n".encode("utf-8"))
+    text = read_content_truncated(fixture, max_chars=1000)
+    check(text.startswith("a,b"), f"BOM 被剥离，内容以正常字符开头: {text[:10]!r}",
+          f"BOM 未被剥离，内容开头异常: {text[:10]!r}")
+    check("﻿" not in text, "内容里不再含 U+FEFF 字符", "内容里仍残留 U+FEFF")
+
+
 def main():
     print("=" * 60)
     print("PTA 集成测试")
@@ -604,6 +663,8 @@ def main():
         test_17_fingerprint_dedup_ignores_related_files_drift(tmp_dir)
         test_18_rule_based_task_scan(tmp_dir)
         test_19_document_task_discovery(tmp_dir)
+        test_20_project_intelligence_auto_detect(tmp_dir)
+        test_21_read_content_truncated_bom_strip(tmp_dir)
     finally:
         shutil.rmtree(tmp_dir, ignore_errors=True)
         # Test 7/13 通过 subprocess 调用 agent.py，其专属工作区落在 memory.workspace 的
@@ -620,7 +681,7 @@ def main():
             print(f"  - {f}")
         return 1
 
-    print("PTA 集成测试完成：19/19 通过")
+    print("PTA 集成测试完成：21/21 通过")
     print("=" * 60)
     return 0
 
