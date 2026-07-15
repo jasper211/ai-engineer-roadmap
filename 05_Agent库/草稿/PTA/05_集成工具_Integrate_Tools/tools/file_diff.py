@@ -21,8 +21,12 @@ from difflib import unified_diff
 from pathlib import Path
 from typing import Dict, List, Optional, Set
 
+from tools.office_text import OFFICE_EXTRACTORS, extract_office_text
+
 DEFAULT_EXCLUDE_DIRS = {".git", "node_modules", "__pycache__", ".pta_runs", ".venv", "venv",
                         ".idea", ".vscode", ".pytest_cache"}
+
+DEFAULT_TEXT_ENCODINGS = ("utf-8", "gbk", "gb18030", "big5")
 
 
 def hash_file(path: Path) -> Optional[str]:
@@ -32,6 +36,37 @@ def hash_file(path: Path) -> Optional[str]:
         return hashlib.sha256(Path(path).read_bytes()).hexdigest()
     except OSError:
         return None
+
+
+def read_content_truncated(path: Path, max_chars: int, encodings: tuple = DEFAULT_TEXT_ENCODINGS) -> str:
+    """读取文件内容用于 diff/LLM 分析，按后缀自动分流：.docx/.xlsx 走
+    tools.office_text 抽取（原始格式是 zip+XML，不能直接 decode）；其余按
+    常见编码依次尝试解码，而不是无脑假设 UTF-8——中国大陆项目里的 CSV/txt
+    经常是 Windows/Excel 导出的 GBK 编码，errors='ignore' 硬读会把中文读成
+    乱码（PTA-DISCOVER 早期版本真实踩过这个坑）。
+
+    这是 skills/daily_sensing.py 和 skills/document_task_discovery.py 共用
+    的同一份实现——之前两边（daily_sensing 和退役前的 PTA-DISCOVER 脚本）
+    各自维护了一份几乎相同的编码兜底逻辑，这里收敛成一份。"""
+    path = Path(path)
+    if path.suffix.lower() in OFFICE_EXTRACTORS:
+        text = extract_office_text(path)
+    else:
+        try:
+            data = path.read_bytes()
+        except OSError:
+            return ""
+        for enc in encodings:
+            try:
+                text = data.decode(enc)
+                break
+            except UnicodeDecodeError:
+                continue
+        else:
+            text = data.decode("utf-8", errors="ignore")
+    if len(text) > max_chars:
+        text = text[:max_chars] + "\n...[内容已截断]"
+    return text
 
 
 def snapshot_dir(root: Path, extensions: Optional[Set[str]] = None,

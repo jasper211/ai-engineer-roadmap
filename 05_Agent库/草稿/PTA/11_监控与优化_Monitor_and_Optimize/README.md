@@ -22,13 +22,19 @@
     （`agent.py --dir-scan --project-root <path>`）。原脚本移入 `_retired_flat_structure/`，
     迁移时顺带修复了一个隐藏 bug：原 EXT 只排除隐藏目录，`node_modules` 这类
     非隐藏但该跳过的目录会被误统计进报告。
-  - ⏳ **批2待做**：`PTA-DISCOVER_文档任务发现器.py`（增量文档任务发现，需要
-    `DEEPSEEK_API_KEY`）/ `PTA-SCAN_智能项目扫描器_v2.py`（规则扫描）——
-    两者都还是独立脚本；SCAN 内部自己维护了一套哈希/快照/diff 逻辑，从未
-    真正调用 `tools/file_diff.py`（哈希算法也不一致：SCAN 用 md5，
-    file_diff.py 用 sha256），迁移时要真正切到 sha256、旧 `scan_snapshot.json`
-    快照失效就重扫；SCAN 的定时模式还会把报告直接写进项目目录本身，
-    违反隔离原则，也要一并修。
+  - ✅ **批2已完成**：`PTA-DISCOVER_文档任务发现器.py` → `06_开发技能_Develop_Skills/skills/document_task_discovery.py`
+    （`agent.py --discover --scan --project-root <path>`，需要 `DEEPSEEK_API_KEY`）；
+    `PTA-SCAN_智能项目扫描器_v2.py` → `06_开发技能_Develop_Skills/skills/rule_based_task_scan.py`
+    （`agent.py --rule-scan --project-root <path>`，零 LLM 调用）。原脚本移入
+    `_retired_flat_structure/`。迁移时的两处修复：① SCAN 真正切到了 sha256——
+    改用 `tools/file_diff.py` 的 `snapshot_dir`/`diff_snapshots`（此前自己维护
+    一套 md5 哈希/快照逻辑，旧 `scan_snapshot.json` 快照因此直接失效，首次运行
+    会重扫）；② 删除了 SCAN 的 `--schedule` 内部忙等循环——那个模式下会把报告
+    直接写进目标项目自己的目录，违反隔离原则，且跟本项目已确立的"外部调度器
+    （launchd）驱动单次调用"架构不一致（daily-scan 就是这个模式），如需定时跑
+    参照 `10_部署与运行/` 的 launchd 方式。DISCOVER 迁移时顺带修了一个新发现的
+    bug：内容去重跳过的重复文件此前没有被记进增量状态，下次运行会被重新当
+    候选文件排队。
   - ⏳ **批3待做**：`PTA-INTEL_智能项目分析器_v3.py` / `PTA-INTEL-RW_智能项目分析器_v3.py`
     ——这两个是同一能力的两份高度重复实现（query 分派/CrossDocumentAnalyzer/main
     流程高度同构，只有解析层真正不同：通用 MD/CSV 猜测 vs Rw 专用 CSV 精确

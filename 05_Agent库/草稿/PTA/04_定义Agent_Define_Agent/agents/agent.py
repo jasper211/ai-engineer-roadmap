@@ -71,6 +71,10 @@ from skills.archive_review import ArchiveReviewer
 from skills.doc_sync import DocumentSyncer
 from skills.daily_sensing import DailySensor, to_dict as daily_sensing_to_dict, format_text as format_daily_briefing
 from skills.project_dashboard import generate_for_person as generate_dashboard
+from skills.rule_based_task_scan import (RuleBasedScanner, format_report_text as format_rule_scan_text,
+                                          format_task_assignment_markdown)
+from skills.document_task_discovery import (DocumentDiscoverer, format_text as format_discovery_text,
+                                             to_dict as discovery_to_dict)
 from tools.task_knowledge import load_task_map, merge_suggested_tasks
 from tools.dir_scan import analyze_project, format_report_text, format_report_markdown
 from tools.wecom_notify import (load_wecom_config, build_notification_text,
@@ -205,6 +209,62 @@ def cmd_dir_scan(project_root: str = None, depth: int = 2, output: str = None) -
         print(f"\nMarkdown 报告已保存: {output}")
 
 
+def cmd_rule_scan(project_root: str = None) -> None:
+    """规则扫描（原 PTA-SCAN，批2 迁移）：本地零成本抽取已结构化文档（markdown
+    表格/CSV）里的任务，识别逾期/阻塞/无负责人风险。不调用 LLM，跟 --daily-scan
+    互补而非重叠——两者刻意保持独立技能。"""
+    resolved_root = _resolve_project_root(project_root)
+    workspace = ws.get_project_workspace(resolved_root)
+
+    state = ws.load_rule_scan_state(workspace)
+    scanner = RuleBasedScanner(resolved_root)
+    report, updated_state = scanner.scan(state)
+
+    print(format_rule_scan_text(report))
+    ws.save_rule_scan_state(workspace, updated_state)
+
+    run_id = datetime.now().strftime("%Y%m%d-%H%M%S")
+    output_path = workspace / "reports" / f"rule-scan-{run_id}.md"
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_text(format_task_assignment_markdown(report), encoding="utf-8")
+    print(f"\n任务分配报告已保存: {output_path}")
+
+
+def cmd_discover(project_root: str = None, files: list = None, scan: bool = False,
+                  force: bool = False, dry_run: bool = False) -> None:
+    """文档任务发现（原 PTA-DISCOVER，批2 迁移）：LLM 阅读叙述性文档（合同/会议
+    纪要/审计报告），抽取隐含任务，产出发现报告供人工审阅分类——安全边界不变：
+    绝不自动写入 pta_tasks.json 的可执行 steps，只合并进 task_registry.json。"""
+    resolved_root = _resolve_project_root(project_root)
+    workspace = ws.get_project_workspace(resolved_root)
+    state = ws.load_discover_state(workspace)
+
+    discoverer = DocumentDiscoverer(resolved_root)
+    try:
+        report, updated_state = discoverer.discover(
+            state, explicit_files=files, scan=scan, force=force, dry_run=dry_run)
+    except RuntimeError as e:
+        print(f"[错误] {e}")
+        sys.exit(1)
+
+    print(format_discovery_text(report))
+
+    if dry_run:
+        return
+
+    ws.save_discover_state(workspace, updated_state)
+
+    if report.tasks:
+        ws.merge_task_registry(workspace, report.tasks)
+        print(f"\n任务已合并进登记表: {workspace / 'task_registry.json'}")
+
+    run_id = datetime.now().strftime("%Y%m%d-%H%M%S")
+    output_path = workspace / "reports" / f"discover-{run_id}.json"
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_text(json.dumps(discovery_to_dict(report), ensure_ascii=False, indent=2), encoding="utf-8")
+    print(f"\n报告已保存: {output_path}")
+
+
 def run_instruction(instruction: str, execute: bool, sync: bool, message: str,
                      project_root: str = None, task_map: str = None) -> None:
     resolved_root = _resolve_project_root(project_root)
@@ -308,7 +368,7 @@ def main():
                          help="每日主动巡检：检测文件变化+关系分析+提炼建议任务（需 DEEPSEEK_API_KEY），"
                               "只生成简报写进 pta_tasks.json，不自动执行")
     parser.add_argument("--force", action="store_true",
-                         help="--daily-scan 专用：忽略增量哈希基线，把所有文件当新增重新分析一遍")
+                         help="--daily-scan/--discover 专用：忽略增量哈希基线，把所有文件当新增重新分析一遍")
     parser.add_argument("--notify", action="store_true",
                          help="--daily-scan 专用：有建议任务时推送企业微信群通知（@ 相关方），"
                               "默认关闭，需要先配置 02_配置项目_Configure_Project/wecom_config.json")
@@ -320,6 +380,17 @@ def main():
                          help="目录结构分析（原 PTA-EXT）：只读统计文件数/体积/类型分布")
     parser.add_argument("--depth", type=int, default=2, help="--dir-scan 专用：扫描深度（默认 2）")
     parser.add_argument("--report-output", help="--dir-scan 专用：Markdown 报告输出路径")
+    parser.add_argument("--rule-scan", action="store_true",
+                         help="规则扫描（原 PTA-SCAN，批2迁移）：本地零成本抽取markdown表格/CSV里的"
+                              "结构化任务，识别逾期/阻塞/无负责人风险，不调用 LLM")
+    parser.add_argument("--discover", action="store_true",
+                         help="文档任务发现（原 PTA-DISCOVER，批2迁移）：LLM 阅读叙述性文档（需 "
+                              "DEEPSEEK_API_KEY），抽取隐含任务供人工审阅，不进 pta_tasks.json 可执行流程")
+    parser.add_argument("--files", nargs="*", help="--discover 专用：显式指定候选文件，总是处理，不受增量状态影响")
+    parser.add_argument("--scan", action="store_true",
+                         help="--discover 专用：自动扫描项目内候选文档，按增量状态过滤")
+    parser.add_argument("--dry-run", action="store_true",
+                         help="--discover 专用：只列出候选文件和估算字符数，不调用 API，不更新增量状态")
     args = parser.parse_args()
 
     if args.daily_scan:
@@ -332,6 +403,15 @@ def main():
 
     if args.dir_scan:
         cmd_dir_scan(project_root=args.project_root, depth=args.depth, output=args.report_output)
+        return
+
+    if args.rule_scan:
+        cmd_rule_scan(project_root=args.project_root)
+        return
+
+    if args.discover:
+        cmd_discover(project_root=args.project_root, files=args.files, scan=args.scan,
+                     force=args.force, dry_run=args.dry_run)
         return
 
     if args.status or not args.instruction:

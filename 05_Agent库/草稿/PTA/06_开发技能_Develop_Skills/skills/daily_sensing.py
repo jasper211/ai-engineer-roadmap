@@ -27,18 +27,18 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional
 
-from tools.file_diff import snapshot_dir, diff_snapshots, unified_diff_text
+from tools.file_diff import snapshot_dir, diff_snapshots, unified_diff_text, read_content_truncated
 from tools.llm_client import call_deepseek, DEFAULT_MODEL
-from tools.office_text import extract_office_text, OFFICE_EXTRACTORS
+from tools.office_text import OFFICE_EXTRACTORS
 
 SKILLS_DIR = Path(__file__).resolve().parent
 PTA_DIR = SKILLS_DIR.parent.parent
 DEFAULT_SYSTEM_PROMPT_PATH = PTA_DIR / "08_设计提示词_Design_Prompts" / "prompts" / "daily_sensing_system.md"
 
-# .docx/.xlsx 走 tools.office_text 的专门抽取（见 _read_truncated），不是直接
-# 当文本 decode——原始格式是 zip+XML，直接 decode 会是乱码。
+# .docx/.xlsx 走 tools.file_diff.read_content_truncated 内部对 tools.office_text
+# 的分流抽取，不是直接当文本 decode——原始格式是 zip+XML，直接 decode 会是乱码。
 DEFAULT_SCAN_EXTENSIONS = {".md", ".txt", ".csv", ".py", ".js", ".mjs", ".ts",
-                            ".json", ".sh", ".yaml", ".yml", ".docx", ".xlsx"}
+                            ".json", ".sh", ".yaml", ".yml"} | set(OFFICE_EXTRACTORS)
 
 # PTA 自己写进目标项目的输出产物，不是项目本身的原生内容——如果不排除，
 # 下次扫描会把刚写进 pta_tasks.json 的建议任务当成"新变化"，反过来分析出
@@ -94,24 +94,7 @@ class DailyBriefing:
 
 
 def _read_truncated(path: Path, max_chars: int = MAX_CHARS_PER_FILE) -> str:
-    if path.suffix.lower() in OFFICE_EXTRACTORS:
-        text = extract_office_text(path)
-    else:
-        try:
-            data = path.read_bytes()
-        except OSError:
-            return ""
-        for enc in ("utf-8", "gbk", "gb18030"):
-            try:
-                text = data.decode(enc)
-                break
-            except UnicodeDecodeError:
-                continue
-        else:
-            text = data.decode("utf-8", errors="ignore")
-    if len(text) > max_chars:
-        text = text[:max_chars] + "\n...[内容已截断]"
-    return text
+    return read_content_truncated(path, max_chars)
 
 
 def _read_pta_focus(project_root: Path) -> Optional[str]:

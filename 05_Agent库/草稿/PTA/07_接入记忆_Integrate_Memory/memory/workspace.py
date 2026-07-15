@@ -148,3 +148,53 @@ def save_daily_sensing_state(workspace: Path, state: dict) -> None:
     path = workspace / "daily_sensing_state.json"
     state["updated_at"] = datetime.now().isoformat()
     path.write_text(json.dumps(state, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+# ============================================================
+# 文档任务发现增量状态（discover_state.json，供 skills/document_task_discovery.py 使用）
+# ============================================================
+
+EMPTY_DISCOVER_STATE = {"updated_at": None, "file_hashes": {}}
+
+
+def load_discover_state(workspace: Path) -> dict:
+    """独立于 daily_sensing_state.json——两者的"已处理"判断语义不同（一个是
+    "内容变没变过 LLM 语义分析"，一个是"今天扫描有没有变化"），共用一份文件
+    会让其中一边的增量状态被另一边污染，PTA-DISCOVER 时代就是按这条原则
+    单独开了一份状态文件，这里保留同样的边界。"""
+    path = workspace / "discover_state.json"
+    if path.exists():
+        try:
+            return json.loads(path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            print(f"[警告] 文档任务发现状态文件损坏，已重置: {path}")
+    return dict(EMPTY_DISCOVER_STATE)
+
+
+def save_discover_state(workspace: Path, state: dict) -> None:
+    path = workspace / "discover_state.json"
+    state["updated_at"] = datetime.now().isoformat()
+    path.write_text(json.dumps(state, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+# ============================================================
+# 规则扫描增量状态（rule_scan_state.json，供 skills/rule_based_task_scan.py 使用）
+# ============================================================
+
+EMPTY_RULE_SCAN_STATE = {"updated_at": None, "file_hashes": {}, "tasks": []}
+
+
+def load_rule_scan_state(workspace: Path) -> dict:
+    path = workspace / "rule_scan_state.json"
+    if path.exists():
+        try:
+            return json.loads(path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            print(f"[警告] 规则扫描状态文件损坏，已重置: {path}")
+    return dict(EMPTY_RULE_SCAN_STATE)
+
+
+def save_rule_scan_state(workspace: Path, state: dict) -> None:
+    path = workspace / "rule_scan_state.json"
+    state["updated_at"] = datetime.now().isoformat()
+    path.write_text(json.dumps(state, ensure_ascii=False, indent=2), encoding="utf-8")

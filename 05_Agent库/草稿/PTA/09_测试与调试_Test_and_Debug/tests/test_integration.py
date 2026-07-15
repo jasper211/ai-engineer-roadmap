@@ -49,6 +49,9 @@ from skills.doc_sync import DocumentSyncer
 from skills.archive_review import ArchiveReviewer
 import skills.daily_sensing as daily_sensing
 from skills.daily_sensing import DailySensor, SuggestedTask, DailyBriefing
+from skills.rule_based_task_scan import RuleBasedScanner
+import skills.document_task_discovery as document_task_discovery
+from skills.document_task_discovery import DocumentDiscoverer
 from tools import git_ops
 from tools.file_diff import snapshot_dir, diff_snapshots
 from tools.task_knowledge import load_task_map, merge_suggested_tasks
@@ -501,6 +504,72 @@ def test_17_fingerprint_dedup_ignores_related_files_drift(tmp_dir: Path):
           f"task_map_entries 异常: {list(task_map2.keys())}")
 
 
+def test_18_rule_based_task_scan(tmp_dir: Path):
+    print("\n[Test 18] skills.rule_based_task_scan 规则抽取（sha256 + 零 LLM 调用）")
+    print("-" * 60)
+    root = tmp_dir / "rule_scan_fixture"
+    root.mkdir(parents=True, exist_ok=True)
+    (root / "清单.md").write_text(
+        "| work_id | action | named_owner | due_date | status |\n"
+        "|---|---|---|---|---|\n"
+        "| T-01 | 完成KPI映射表评审 | Terresa | 2020-01-01 | 待确认 |\n"
+        "| T-02 | 归档访谈记录 | HR | 2099-01-01 | 完成 |\n",
+        encoding="utf-8",
+    )
+
+    scanner = RuleBasedScanner(root)
+    report1, state1 = scanner.scan(previous_state={})
+    check(len(list(state1["file_hashes"].values())[0]) == 64,
+          "真正切换到了 sha256（哈希长度64，不是 md5 的32）",
+          f"哈希长度不对: {len(list(state1['file_hashes'].values())[0])}")
+    check(len(report1.tasks) == 2 and report1.new_files == 1,
+          f"从 markdown 表格正确抽取出 2 条任务，1 个新增文件", f"任务抽取结果不符预期: {report1.tasks}")
+    overdue = [r for r in report1.risks if r.type == "overdue"]
+    blocked = [r for r in report1.risks if r.type == "blocked"]
+    check(len(overdue) == 1 and len(blocked) == 1,
+          f"正确识别逾期({len(overdue)})和阻塞({len(blocked)})风险", f"风险识别不符预期: {report1.risks}")
+
+    # 第二次扫描：文件没变化，任务应该原样保留、不重复铸造、不重新判定为新增
+    report2, state2 = scanner.scan(previous_state=state1)
+    check(report2.new_files == 0 and len(report2.tasks) == 2 and all(not t.is_new for t in report2.tasks),
+          "无变化时任务原样保留、不重复标记为新增", f"增量复用失败: new_files={report2.new_files}, tasks={report2.tasks}")
+
+
+def test_19_document_task_discovery(tmp_dir: Path):
+    print("\n[Test 19] skills.document_task_discovery 增量去重 + 内容去重（stub 掉 LLM 调用）")
+    print("-" * 60)
+    root = tmp_dir / "discovery_fixture"
+    root.mkdir(parents=True, exist_ok=True)
+    (root / "会议纪要.md").write_text("Terresa 需要在下周五前完成 KPI 映射表的审阅工作。\n", encoding="utf-8")
+    (root / "会议纪要_副本.md").write_text("Terresa 需要在下周五前完成 KPI 映射表的审阅工作。\n", encoding="utf-8")
+
+    def _stub_with_task(system_prompt, user_content, api_key, model=None, **kw):
+        return json.dumps({"tasks": [{"name": "审阅KPI映射表", "owner": "Terresa", "status": "pending",
+                                        "due_date": "2026-07-24", "evidence": "下周五前完成", "confidence": 0.9}]},
+                           ensure_ascii=False)
+
+    document_task_discovery.call_deepseek = _stub_with_task
+    discoverer = DocumentDiscoverer(root, api_key="fake-key-not-used")
+    report1, state1 = discoverer.discover(previous_state={}, scan=True)
+
+    check(len(report1.duplicates_skipped) == 1,
+          "内容完全相同的重复文件被正确去重（只处理1份）", f"内容去重未生效: {report1.duplicates_skipped}")
+    check(report1.files_scanned == 1 and len(report1.tasks) == 1,
+          "只处理了1个文件、抽取出1条任务", f"结果不符预期: scanned={report1.files_scanned}, tasks={report1.tasks}")
+
+    def _boom(*a, **kw):
+        raise AssertionError("不应该调用——两份文件内容自上次运行以来都没有变化")
+    document_task_discovery.call_deepseek = _boom
+
+    report2, state2 = discoverer.discover(previous_state=state1, scan=True)
+    # 两份文件都要被跳过——包括第一轮里被内容去重掉的那份：它的哈希也要被
+    # 记进状态，否则下次运行会重新把它排进候选队列（这是迁移时发现并修复的
+    # 一个真实 bug：内容去重跳过的文件此前没有被记进 file_hashes）
+    check(report2.files_scanned == 0 and report2.incremental_skipped == 2,
+          "无变化时两份文件都被增量跳过（含此前被内容去重掉的那份），零 LLM 调用",
+          f"增量跳过失败: scanned={report2.files_scanned}, skipped={report2.incremental_skipped}")
+
+
 def main():
     print("=" * 60)
     print("PTA 集成测试")
@@ -533,6 +602,8 @@ def main():
         test_15_wecom_file_upload_encoding(tmp_dir)
         test_16_office_file_extraction(tmp_dir)
         test_17_fingerprint_dedup_ignores_related_files_drift(tmp_dir)
+        test_18_rule_based_task_scan(tmp_dir)
+        test_19_document_task_discovery(tmp_dir)
     finally:
         shutil.rmtree(tmp_dir, ignore_errors=True)
         # Test 7/13 通过 subprocess 调用 agent.py，其专属工作区落在 memory.workspace 的
@@ -549,7 +620,7 @@ def main():
             print(f"  - {f}")
         return 1
 
-    print("PTA 集成测试完成：17/17 通过")
+    print("PTA 集成测试完成：19/19 通过")
     print("=" * 60)
     return 0
 
