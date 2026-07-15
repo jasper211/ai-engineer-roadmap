@@ -11,10 +11,18 @@
 未来要做的通用版职责，两者不要混在一起）。
 """
 
-import csv
 from pathlib import Path
 from typing import Dict, List
 from dataclasses import dataclass
+
+from tools.rw_conventions import find_rw_data_dir, find_tracking_csv, blocker_is_active as _blocker_is_active
+
+# tools.rw_conventions.blocker_is_active 判断逻辑上的注释：真实 Rw 台账里
+# "无阻塞"常见写法不只是精确的一个"无"字，还有"无(Roy财务口径已确认
+# 20260708;服务范围Amanda已确认)"这种"无+补充说明"的格式——之前这里跟
+# skills/project_intelligence.py 的 Rw 后端各自独立维护一份 `blocker != "无"`
+# 精确字符串比较，都踩了同一个把解释性文字误判成"有阻塞"的坑，现在抽到
+# tools/rw_conventions.py 共用一份。
 
 
 @dataclass
@@ -43,30 +51,27 @@ class ProjectSummary:
 
 
 class RwParser:
-    """Rw 项目解析器"""
+    """Rw 项目解析器。
 
-    TRACKING_FILE = "52_Phase0日常执行跟踪台账_v0.2.csv"
-    CHARTER_FILE = "01_项目章程_Project_Charter.md"
+    project_path 必须是台账 CSV 实际所在的目录（用 tools.rw_conventions.
+    find_rw_data_dir() 解析出来的那一层），不是项目的顶层根目录——真实项目里
+    这两者不是一回事，台账通常嵌套在类似 07_项目立项启动/ 这样的子目录里，
+    generate_for_person() 这个便捷入口负责做这次解析。"""
 
     def __init__(self, project_path: Path):
         self.project_path = project_path
         self.tracks: List[TrackItem] = []
 
-    def _read_csv(self, file_path: Path) -> List[Dict]:
-        for encoding in ["utf-8-sig", "utf-8", "gbk", "gb2312"]:
-            try:
-                with open(file_path, "r", encoding=encoding, newline="") as f:
-                    return list(csv.DictReader(f))
-            except (UnicodeDecodeError, OSError):
-                continue
-        return []
-
     def parse(self) -> List[TrackItem]:
-        file_path = self.project_path / self.TRACKING_FILE
-        if not file_path.exists():
+        from tools.file_diff import read_content_truncated
+        import csv as csv_module
+
+        file_path = find_tracking_csv(self.project_path)
+        if file_path is None:
             return []
 
-        rows = self._read_csv(file_path)
+        content = read_content_truncated(file_path, 10_000_000)
+        rows = list(csv_module.DictReader(content.splitlines()))
         for row in rows:
             track_id = row.get("track_id", "")
             if not track_id or track_id == "track_id":
@@ -84,7 +89,9 @@ class RwParser:
 
     def get_project_summary(self) -> ProjectSummary:
         """获取项目摘要（从章程提取）"""
-        charter_path = self.project_path / self.CHARTER_FILE
+        from tools.file_diff import read_content_truncated
+        from tools.rw_conventions import CHARTER_FILE
+        charter_path = self.project_path / CHARTER_FILE
 
         summary = ProjectSummary(
             name="RW 权益 Layer B 事业线建设项目",
@@ -95,8 +102,8 @@ class RwParser:
         )
 
         if charter_path.exists():
-            try:
-                content = charter_path.read_text(encoding="utf-8")
+            content = read_content_truncated(charter_path, 10_000_000)
+            if content:
                 lines = content.split("\n")
                 for i, line in enumerate(lines):
                     if "一句话定义" in line:
@@ -106,15 +113,13 @@ class RwParser:
                                 summary.one_liner = text
                                 break
                         break
-            except OSError:
-                pass
 
         if self.tracks:
             completed = sum(1 for t in self.tracks
                              if any(kw in t.status.lower() for kw in ["done", "completed", "confirmed"]))
             summary.completion_pct = completed / len(self.tracks) * 100
 
-            blocked = sum(1 for t in self.tracks if t.blocker and t.blocker != "无")
+            blocked = sum(1 for t in self.tracks if _blocker_is_active(t.blocker))
             if blocked > len(self.tracks) * 0.5:
                 summary.overall_health = "red"
             elif blocked > 0:
@@ -169,7 +174,7 @@ class DashboardGenerator:
             by_ws[ws]["total"] += 1
             if any(kw in t.status.lower() for kw in ["done", "completed", "confirmed"]):
                 by_ws[ws]["done"] += 1
-            elif t.blocker and t.blocker != "无":
+            elif _blocker_is_active(t.blocker):
                 by_ws[ws]["blocked"] += 1
 
         for ws, stats in sorted(by_ws.items()):
@@ -190,11 +195,11 @@ class DashboardGenerator:
 
         lines = [f"## 👤 {person.upper()} 的任务看板\n", "", f"**总计**: {len(my_tracks)} 项\n"]
 
-        blocked = [t for t in my_tracks if t.blocker and t.blocker != "无"]
-        active = [t for t in my_tracks
-                  if not any(kw in t.status.lower() for kw in ["done", "completed", "confirmed"])
-                  and (not t.blocker or t.blocker == "无")]
         done = [t for t in my_tracks if any(kw in t.status.lower() for kw in ["done", "completed", "confirmed"])]
+        # 阻塞/进行中都要求"未完成"——否则一条已经标记完成、blocker 字段还留着
+        # 历史说明文字的跟踪项，会同时出现在"已完成"和"阻塞中"两个板块里
+        blocked = [t for t in my_tracks if t not in done and _blocker_is_active(t.blocker)]
+        active = [t for t in my_tracks if t not in done and t not in blocked]
 
         if blocked:
             lines.append("### 🔴 阻塞中（需立即处理）\n")
@@ -223,7 +228,11 @@ class DashboardGenerator:
         return lines
 
     def _generate_risks(self) -> List[str]:
-        blockers = [t for t in self.tracks if t.blocker and t.blocker != "无"]
+        # 排除已完成的——否则一条已标记完成、blocker 字段还留着历史说明文字的
+        # 跟踪项，会被当成"关键风险"列出来
+        blockers = [t for t in self.tracks
+                   if _blocker_is_active(t.blocker)
+                   and not any(kw in t.status.lower() for kw in ["done", "completed", "confirmed"])]
         if not blockers:
             return []
 
@@ -247,7 +256,7 @@ class DashboardGenerator:
         sorted_active = sorted(active, key=lambda t: priority_order.get(t.priority, 3))
 
         for t in sorted_active[:8]:
-            icon = "🔴" if t.blocker and t.blocker != "无" else "🟡"
+            icon = "🔴" if _blocker_is_active(t.blocker) else "🟡"
             lines.append(f"{icon} **[{t.priority}] [{t.track_id}]** {t.action[:80]}")
             lines.append(f"   Owner: {t.owner} | Gate: {t.gate}")
             lines.append("")
@@ -257,11 +266,20 @@ class DashboardGenerator:
 
 def generate_for_person(project_root: Path, person: str = "all") -> str:
     """便捷入口：给定项目路径 + 人名，直接返回渲染好的仪表盘 Markdown 字符串。
+    project_root 可以是项目的真正根目录，也可以直接是台账 CSV 所在的子目录——
+    在项目目录下递归查找台账 CSV 实际所在的位置（真实项目里通常嵌套在类似
+    07_项目立项启动/ 这样的子目录，不在根目录），调用方不需要知道内部结构。
     没有找到跟踪数据时抛 RuntimeError，由调用方（agent.py）决定如何提示。"""
-    parser = RwParser(Path(project_root))
+    data_dir = find_rw_data_dir(Path(project_root))
+    if data_dir is None:
+        from tools.rw_conventions import TRACKING_FILES
+        raise RuntimeError(f"未找到跟踪数据: 在 {project_root} 及其子目录下都没有找到 Rw 跟踪台账 CSV"
+                           f"（查找的文件名: {', '.join(TRACKING_FILES)}）")
+
+    parser = RwParser(data_dir)
     tracks = parser.parse()
     if not tracks:
-        raise RuntimeError(f"未找到跟踪数据: {parser.project_path / RwParser.TRACKING_FILE}")
+        raise RuntimeError(f"未找到跟踪数据: {data_dir} 下的台账 CSV 存在但没有解析出有效跟踪项")
 
     summary = parser.get_project_summary()
     dash = DashboardGenerator(tracks, summary)

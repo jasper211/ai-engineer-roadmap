@@ -52,7 +52,10 @@ from skills.daily_sensing import DailySensor, SuggestedTask, DailyBriefing
 from skills.rule_based_task_scan import RuleBasedScanner
 import skills.document_task_discovery as document_task_discovery
 from skills.document_task_discovery import DocumentDiscoverer
-from skills.project_intelligence import ProjectIntelligence
+from skills.project_intelligence import ProjectIntelligence, RwTrackItem, RwProjectAnalyzer, _blocker_is_active as intel_blocker_is_active
+from skills.project_dashboard import (TrackItem as DashTrackItem, DashboardGenerator, ProjectSummary,
+                                       _blocker_is_active as dash_blocker_is_active)
+from tools.rw_conventions import find_tracking_csv, find_rw_data_dir, is_rw_project as rw_is_rw_project
 from tools import git_ops
 from tools.file_diff import snapshot_dir, diff_snapshots, read_content_truncated
 from tools.task_knowledge import load_task_map, merge_suggested_tasks
@@ -629,6 +632,104 @@ def test_21_read_content_truncated_bom_strip(tmp_dir: Path):
     check("﻿" not in text, "内容里不再含 U+FEFF 字符", "内容里仍残留 U+FEFF")
 
 
+def test_22_rw_progress_math_never_negative(tmp_dir: Path):
+    print("\n[Test 22] skills.project_intelligence RwProjectAnalyzer 进度统计不再出现负数")
+    print("-" * 60)
+    print("（复现真实 Rw 项目数据跑出的 bug：is_completed/is_blocked/is_ready 三个")
+    print("   判断互相独立、可能同时命中，导致减法算出「进行中: -9」）")
+
+    # 构造一条会同时命中"已完成"和"阻塞"的跟踪项（真实数据里的典型形态：状态
+    # 写着 done，但 blocker 字段还留着历史说明文字，没有清空）
+    tracks = [
+        RwTrackItem(track_id="TRK-01", source_work_id="W-01", workstream="ToB", priority="P0",
+                    owner="Roy", current_status="done", today_action="", blocker="历史遗留说明未清空",
+                    gate="Gate1", next_update="", output="已交付", escalation=""),
+        RwTrackItem(track_id="TRK-02", source_work_id="W-02", workstream="ToI", priority="P1",
+                    owner="Amanda", current_status="in_progress", today_action="推进数据校验",
+                    blocker="", gate="Gate1", next_update="", output="", escalation=""),
+    ]
+    status = RwProjectAnalyzer(tracks, charter="", reports=[]).analyze()
+
+    check(status.in_progress >= 0, f"进行中不再出现负数: {status.in_progress}",
+          f"进行中出现负数: {status.in_progress}")
+    total_check = status.completed + status.blocked + status.ready + status.in_progress + status.not_started
+    check(total_check == status.total_tracks,
+          f"五个分类恰好分完总数，不重叠不遗漏: {total_check} == {status.total_tracks}",
+          f"五个分类之和跟总数对不上: {total_check} != {status.total_tracks}")
+    check(status.completed == 1, f"已完成正确计入1条（哪怕它 blocker 字段非空）: {status.completed}",
+          f"已完成计数不符预期: {status.completed}")
+
+
+def test_23_blocker_active_detection(tmp_dir: Path):
+    print("\n[Test 23] blocker 字段判断识别「无(说明)」格式，project_dashboard/project_intelligence 两边一致")
+    print("-" * 60)
+    print("（复现真实 Rw 项目数据里的假阳性：blocker=\"无(Roy财务口径已确认...)\"")
+    print("   被 `blocker != 无` 精确字符串比较误判成「有阻塞」）")
+
+    cases = [
+        ("无", False), ("", False),
+        ("无(Roy财务口径已确认20260708;服务范围Amanda已确认)", False),
+        ("等待法务回复", True),
+    ]
+    for blocker_text, expect_active in cases:
+        check(intel_blocker_is_active(blocker_text) == expect_active,
+              f"project_intelligence: {blocker_text!r} 判断为 {'有效阻塞' if expect_active else '无阻塞'} 正确",
+              f"project_intelligence: {blocker_text!r} 判断错误")
+        check(dash_blocker_is_active(blocker_text) == expect_active,
+              f"project_dashboard: {blocker_text!r} 判断为 {'有效阻塞' if expect_active else '无阻塞'} 正确",
+              f"project_dashboard: {blocker_text!r} 判断错误")
+
+    # 端到端：已完成但 blocker 字段有说明文字的跟踪项，不该同时出现在
+    # "已完成"和"阻塞中"两个板块里
+    tracks = [DashTrackItem(track_id="TRK-01", workstream="ToB", priority="P0", owner="Roy",
+                             status="done", action="", blocker="无(历史说明，非真实阻塞)",
+                             gate="Gate1", next_update="")]
+    summary = ProjectSummary(name="测试项目", one_liner="", current_phase="", phase_goal="",
+                              start_date="", end_date="", overall_health="green", completion_pct=100.0)
+    rendered = DashboardGenerator(tracks, summary).generate_for_person("Roy")
+    check("阻塞中" not in rendered or "TRK-01" not in rendered.split("阻塞中")[1].split("###")[0],
+          "已完成且 blocker 字段是「无(说明)」的跟踪项，没有被同时列进阻塞中板块",
+          f"已完成的跟踪项被误列进阻塞中: {rendered[:500]}")
+
+
+def test_24_find_tracking_csv_at_true_project_root(tmp_dir: Path):
+    print("\n[Test 24] tools.rw_conventions 指向项目真正根目录时能递归找到台账，"
+         "重名文件优先选最近修改的")
+    print("-" * 60)
+    print("（复现真实场景：--intel/--dashboard 指向 Rw权益项目/ 根目录时都失效——")
+    print("   台账 CSV 实际嵌套在 07_项目立项启动/ 子目录，不在根目录；")
+    print("   而且另一个 Agent 的工作区里还留着一份更早的同名基线快照，")
+    print("   第一版实现用 rglob 结果的第一项，不确定地选中了错误的那份）")
+
+    root = tmp_dir / "rw_dedup_fixture"
+    canonical_dir = root / "07_项目立项启动"
+    baseline_dir = root / "08_OB_工作区" / "01_启动基线"
+    canonical_dir.mkdir(parents=True, exist_ok=True)
+    baseline_dir.mkdir(parents=True, exist_ok=True)
+
+    filename = "52_Phase0日常执行跟踪台账_v0.2.csv"
+    header = "track_id,source_work_id,workstream,priority,owner,current_status,today_action,blocker,gate,next_update,output,escalation\n"
+    (baseline_dir / filename).write_text(header + "TRK-OLD,W-01,ToB,P0,Roy,pending,,,,,,\n", encoding="utf-8")
+    (baseline_dir / filename).touch()  # 先写旧快照
+
+    import time
+    time.sleep(1.1)  # 确保 mtime 有可辨识的先后差异（部分文件系统 mtime 精度是秒级）
+
+    (canonical_dir / filename).write_text(header + "TRK-NEW,W-02,ToI,P1,Amanda,done,,,,,,\n", encoding="utf-8")
+
+    check(rw_is_rw_project(root) is True,
+          "指向项目真正根目录（不是子目录）时，能递归识别出这是 Rw 项目", "未能识别出 Rw 项目")
+
+    found = find_tracking_csv(root)
+    check(found is not None and found.parent == canonical_dir,
+          f"重名文件里正确选中了最近修改的那一份（07_项目立项启动/，不是旧基线快照）: {found}",
+          f"选错了文件: {found}")
+
+    data_dir = find_rw_data_dir(root)
+    check(data_dir == canonical_dir, f"数据目录正确解析为最近修改文件所在的目录: {data_dir}",
+          f"数据目录解析错误: {data_dir}")
+
+
 def main():
     print("=" * 60)
     print("PTA 集成测试")
@@ -665,6 +766,9 @@ def main():
         test_19_document_task_discovery(tmp_dir)
         test_20_project_intelligence_auto_detect(tmp_dir)
         test_21_read_content_truncated_bom_strip(tmp_dir)
+        test_22_rw_progress_math_never_negative(tmp_dir)
+        test_23_blocker_active_detection(tmp_dir)
+        test_24_find_tracking_csv_at_true_project_root(tmp_dir)
     finally:
         shutil.rmtree(tmp_dir, ignore_errors=True)
         # Test 7/13 通过 subprocess 调用 agent.py，其专属工作区落在 memory.workspace 的
@@ -681,7 +785,7 @@ def main():
             print(f"  - {f}")
         return 1
 
-    print("PTA 集成测试完成：21/21 通过")
+    print("PTA 集成测试完成：24/24 通过")
     print("=" * 60)
     return 0
 
