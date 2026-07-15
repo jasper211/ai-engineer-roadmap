@@ -47,20 +47,24 @@ import argparse
 import hashlib
 import json
 import os
-import ssl
 import sys
-import time
-import urllib.error
-import urllib.request
 from dataclasses import asdict, dataclass, field
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional
 
+# pta_workspace.py 已随 v2.0.0 迁移移入 _retired_flat_structure/（本脚本本身
+# 尚未纳入 agents/skills/tools 结构迁移范围，去留待确认，暂时保持独立可运行）；
+# v2.1.0 起本脚本又被归到 11_监控与优化_Monitor_and_Optimize/ 里，_retired_flat_structure/
+# 是它上一级（PTA 项目根目录）的子目录，所以要往上退一层再找
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "_retired_flat_structure"))
 import pta_workspace
 
-DEEPSEEK_API_URL = "https://api.deepseek.com/chat/completions"
-DEFAULT_MODEL = "deepseek-chat"
+# v2.3.0：DeepSeek 调用逻辑（重试/SSL 证书回退）已抽到 tools/llm_client.py，
+# 供 daily_sensing 技能复用，这里改成 import 而不是维护第二份同样的实现
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "05_集成工具_Integrate_Tools"))
+from tools.llm_client import call_deepseek, DEFAULT_MODEL  # noqa: E402
+
 MAX_CHARS_PER_FILE = 6000
 SCAN_EXTENSIONS = {".md", ".txt", ".csv"}
 SCAN_EXCLUDE_DIRS = {".git", "node_modules", "__pycache__", ".pta_runs"}
@@ -108,70 +112,6 @@ class DiscoveryReport:
     files_with_tasks: int
     tasks: List[Dict] = field(default_factory=list)
     errors: List[Dict] = field(default_factory=list)
-
-
-def _build_ssl_context() -> ssl.SSLContext:
-    """构造 HTTPS 用的 SSL 上下文。有些 Python 安装（尤其是 Homebrew 装的）默认证书路径
-    是坏的（openssl@3 的 cert.pem 不存在），urlopen 会报 CERTIFICATE_VERIFY_FAILED。
-    这里按优先级找一个真实存在的 CA 证书包，而不是绕过证书校验。"""
-    try:
-        import certifi
-        return ssl.create_default_context(cafile=certifi.where())
-    except ImportError:
-        pass
-    for candidate in (
-        "/etc/ssl/cert.pem",  # macOS 系统自带
-        "/usr/local/etc/ca-certificates/cert.pem",  # Homebrew (Intel)
-        "/opt/homebrew/etc/ca-certificates/cert.pem",  # Homebrew (Apple Silicon)
-    ):
-        if Path(candidate).exists():
-            return ssl.create_default_context(cafile=candidate)
-    return ssl.create_default_context()  # 用默认路径，找不到就让它照常报错
-
-
-_SSL_CONTEXT = _build_ssl_context()
-
-
-def _call_deepseek(api_key: str, model: str, user_content: str, max_retries: int = 2) -> str:
-    """调用 DeepSeek Chat Completions（OpenAI 兼容接口），返回 message.content 字符串"""
-    body = json.dumps({
-        "model": model,
-        "messages": [
-            {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": user_content},
-        ],
-        "temperature": 0,
-        "response_format": {"type": "json_object"},
-    }).encode("utf-8")
-
-    req = urllib.request.Request(
-        DEEPSEEK_API_URL,
-        data=body,
-        method="POST",
-        headers={
-            "Authorization": f"Bearer {api_key}",
-            "Content-Type": "application/json",
-        },
-    )
-
-    last_err = None
-    for attempt in range(max_retries + 1):
-        try:
-            with urllib.request.urlopen(req, timeout=60, context=_SSL_CONTEXT) as resp:
-                data = json.loads(resp.read().decode("utf-8"))
-                return data["choices"][0]["message"]["content"]
-        except urllib.error.HTTPError as e:
-            detail = e.read().decode("utf-8", errors="replace")
-            if e.code == 429 and attempt < max_retries:
-                wait = 2 ** (attempt + 1)
-                print(f"  [限流] 429，{wait}s 后重试...")
-                time.sleep(wait)
-                last_err = f"HTTP {e.code}: {detail}"
-                continue
-            raise RuntimeError(f"DeepSeek API 请求失败 HTTP {e.code}: {detail}") from e
-        except urllib.error.URLError as e:
-            raise RuntimeError(f"DeepSeek API 网络错误: {e}") from e
-    raise RuntimeError(f"DeepSeek API 请求失败（已重试 {max_retries} 次）: {last_err}")
 
 
 def _scan_candidate_files(project_root: Path) -> List[Path]:
@@ -299,7 +239,7 @@ def discover(project_root: Path, files: List[Path], model: str, max_chars: int,
                 if digest:
                     processed[rel] = digest
                 continue
-            raw = _call_deepseek(api_key, model, f"文件路径: {rel}\n\n{content}")
+            raw = call_deepseek(SYSTEM_PROMPT, f"文件路径: {rel}\n\n{content}", api_key, model=model)
             parsed = json.loads(raw)
             tasks = parsed.get("tasks", [])
             if tasks:

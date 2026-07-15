@@ -21,6 +21,7 @@ PTA-SCAN · 智能项目扫描器 v2
 
 import os
 import re
+import sys
 import json
 import time
 import hashlib
@@ -30,6 +31,11 @@ from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Tuple, Set
 from dataclasses import dataclass, asdict
 
+# pta_workspace.py 已随 v2.0.0 迁移移入 _retired_flat_structure/（本脚本本身
+# 尚未纳入 agents/skills/tools 结构迁移范围，去留待确认，暂时保持独立可运行）；
+# v2.1.0 起本脚本又被归到 11_监控与优化_Monitor_and_Optimize/ 里，_retired_flat_structure/
+# 是它上一级（PTA 项目根目录）的子目录，所以要往上退一层再找
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "_retired_flat_structure"))
 import pta_workspace
 
 # ============================================================

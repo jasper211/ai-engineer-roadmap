@@ -1,0 +1,73 @@
+# PTA · 项目任务协同 Agent 定义
+# 迁移说明：原扁平结构里没有单独的配置文件描述"这是个 Agent"——Agent 的身份
+# 是隐式散落在 README/AI_PLATFORM_GUIDE 里的。这次迁移到标准结构后用这份文件
+# 把身份、能力边界、安全约束显式声明出来，供任何加载这个项目的 AI 终端先读一遍。
+
+name: PTA
+full_name: 项目任务协同 Agent（Project Task Assistant）
+version: 2.4.0
+entrypoint: 04_定义Agent_Define_Agent/agents/agent.py
+# v2.1.0：目录按《Agent 项目搭建全流程》11 步方法论重排为 01-11 编号+中英文
+# 顶层文件夹（见 PTA/README.md），agents/skills/tools/memory/prompts/tests
+# 包名本身不变，只是各自嵌套进对应编号目录里。
+# v2.2.0：修复"指令被判定为模糊需澄清"时漏写 task_history 的 bug（见下方
+# run_instruction 里 needs_clarification 分支）；新增
+# 11_监控与优化_Monitor_and_Optimize/PTA-MONITOR_自我监控.py，读这份
+# task_history 汇总 PTA 自己的调用成功率/澄清率，不属于本 Agent 的 skills，
+# 是独立的监控脚本。
+# v2.3.0：新增 --daily-scan 主动感知能力，见下方 daily_sensing 一节；
+# 主 skills/tools 列表描述的仍是"被动执行"这条 think-act-observe 主循环，
+# daily_sensing 是独立的另一条能力，不混进这个列表。
+# v2.4.0：6个扩展脚本迁移进skills/tools批1完成——project_dashboard（原
+# PTA-DASH，新增 --dashboard）、dir_scan（原 PTA-EXT，新增 --dir-scan）。
+# 批2（DISCOVER/SCAN 去重+包装成 skill）、批3（INTEL+INTEL-RW 合并）已
+# 确认要做，待后续执行，详见 11_监控与优化_Monitor_and_Optimize/README.md。
+
+description: >
+  理解一句自然语言指令，拆解成可执行步骤，实际调度执行，追踪进度，
+  归档复盘沉淀经验；跨会话记得"上次做到哪、下一步是什么"；每天主动检测
+  项目文件变化、分析变化间的关系、提炼建议任务，经人工确认后再执行。
+
+loop: think-act-observe
+skills:
+  - intent_parsing      # Think：自然语言 → 结构化任务包
+  - execution_planning   # Act：任务包 → 执行步骤 → 调用 tools 实际执行
+  - progress_tracking     # Observe：执行结果 → 进度报告 + 异常预警
+  - archive_review        # 归档复盘：生成执行记录、提炼经验教训（本地写入，无 git 动作）
+  - doc_sync               # 显式同步：看板更新 + 真实 git push（唯一有副作用的技能）
+  - project_dashboard        # 项目仪表盘（原 PTA-DASH，v2.4.0批1）：--dashboard，只读报告不接入主循环
+
+tools:
+  - shell_exec    # bash / python 脚本 / browser-use 占位执行器
+  - git_ops        # git add/commit/push 封装（绝不 git add .）
+  - task_knowledge   # 加载目标项目的 pta_tasks.json 任务知识库 + merge_suggested_tasks 安全写入
+  - dir_scan          # 目录结构分析（原 PTA-EXT，v2.4.0批1）：--dir-scan
+
+memory:
+  - workspace   # 专属工作区隔离 + state.json/daily_sensing_state.json 跨会话状态持久化
+
+daily_sensing:
+  # 独立于上面 think-act-observe 主循环的能力，入口是 agent.py 的 --daily-scan
+  entrypoint: "agent.py --daily-scan --project-root <path>"
+  skill: daily_sensing   # 06_开发技能_Develop_Skills/skills/daily_sensing.py 的 DailySensor
+  tools: [file_diff, llm_client]   # 05_集成工具_Integrate_Tools/tools/ 下新增的两个通用工具
+  requires_env: DEEPSEEK_API_KEY
+  confirmation_gate: >
+    只产出简报 + 把建议任务铸造成 RPT-YYYYMMDD-NN 格式 ID 写进目标项目 pta_tasks.json，
+    绝不自动执行——Jasper 手动打 `agent.py "执行 RPT-xxx" --execute` 确认后，
+    才走完全不变的正常执行管线（think-act-observe 主循环零改动）。
+  scheduling: 10_部署与运行_Deploy_and_Run/com.jasper.pta-daily-scan.plist（需手动安装）
+
+safety:
+  - "doc_sync（真实 git push）必须显式传 --sync，且搭配 --execute 和 --message；三者缺一不触发"
+  - "git_ops.sync_git 绝不 git add .，只 add 调用方显式列出的文件"
+  - "PTA 自己的状态/运行产物写入目标项目专属工作区（memory/workspace.py 的 WORKSPACE_ROOT 下），"
+  - "  物理隔离于目标项目自身文件夹和 PTA 源码所在的共享仓库"
+  - "--dry-run 语义：不传 --execute 时默认只出计划不做真实副作用，这是 execution_planning 的默认行为"
+  - "daily_sensing 的 LLM 输出只能是建议任务的名称/理由/优先级，绝不能是可执行的 steps/command——"
+  - "  避免被篡改的文档诱导模型生成危险命令又被 --execute 无脑跑掉，所有 RPT-* 任务的 steps 都是"
+  - "  本地合成的人工核对占位步骤，见 merge_suggested_tasks 和 daily_sensing_system.md"
+
+not_migrated:
+  - "PTA-DISCOVER（文档任务发现）、PTA-DASH/EXT/INTEL/INTEL-RW/SCAN 等扩展脚本暂未纳入 skills/tools 迁移，"
+  - "  仍是独立可运行的扁平脚本，按方法论归到 11_监控与优化_Monitor_and_Optimize/ 下，是否也要拆成 skills/tools 待与 Jasper 确认"

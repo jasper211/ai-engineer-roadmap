@@ -19,11 +19,21 @@ PTA-INTEL · 智能项目分析器 v3
 import os
 import re
 import json
+import sys
 import argparse
 from pathlib import Path
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Tuple
 from dataclasses import dataclass, asdict
+
+# ── agent_status 导入（共享模块在 05_Agent库 上级目录） ──
+# 当前: 05_Agent库/草稿/PTA/11_监控与优化_Monitor_and_Optimize/ → 上4级到 05_Agent库/
+_agent_lib = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+sys.path.insert(0, _agent_lib)
+try:
+    import agent_status
+except ImportError:
+    agent_status = None
 
 # ============================================================
 # 数据模型
@@ -688,6 +698,167 @@ class CrossDocumentAnalyzer:
         return duplicates
 
 # ============================================================
+# Agent 状态上报
+# ============================================================
+
+UNIFIED_REPORT = "/Users/zhaoqitrenda.cn/Desktop/Jasper工作文档（不含EA项目）/Jasper AI协同经验引擎/Agent健康报告.md"
+DASHBOARD_PATH = "/Users/zhaoqitrenda.cn/Desktop/Jasper工作文档（不含EA项目）/Jasper AI协同经验引擎/Agent运行仪表盘.md"
+
+
+def _update_agent_status(status, write_files: bool = True):
+    """上报 PTA 运行状态到 agent_status 注册中心"""
+    if agent_status is None:
+        return
+
+    now_str = datetime.now().strftime("%Y-%m-%d %H:%M")
+
+    # 计算状态
+    completed = completed_count = 0
+    blocked = blocked_count = 0
+    total = 0
+    if status and hasattr(status, 'active_tasks'):
+        # 从 ProjectStatus 对象提取
+        all_tasks = status.active_tasks + status.blocked_tasks
+        completed = sum(1 for t in all_tasks if t.is_completed)
+        blocked = sum(1 for t in all_tasks if t.is_blocked)
+        total = len(all_tasks)
+    elif status and isinstance(status, dict):
+        # 从字典提取
+        completed = status.get("completed", 0)
+        blocked = status.get("blocked", 0)
+        total = status.get("total", 0)
+
+    has_blockers = blocked > 0
+    status_str = "🟡 测试中" if has_blockers else "🟢 正常"
+    errors_list = []
+    if has_blockers:
+        errors_list.append(f"{blocked} 个阻塞任务")
+
+    # 生成详情 Markdown
+    detail_lines = []
+    if status:
+        if hasattr(status, 'project_name'):
+            detail_lines.append(f"**项目**: {status.project_name}")
+            detail_lines.append("")
+            detail_lines.append(f"| 指标 | 值 |")
+            detail_lines.append(f"|------|----|")
+            detail_lines.append(f"| 分析文档数 | {len(status.recent_docs) if hasattr(status, 'recent_docs') else '—'} |")
+            detail_lines.append(f"| 任务总数 | {total} |")
+            detail_lines.append(f"| 已完成 | {completed} |")
+            detail_lines.append(f"| 阻塞中 | {blocked} |")
+            detail_lines.append(f"| 风险数 | {len(status.risks) if hasattr(status, 'risks') else 0} |")
+            detail_lines.append("")
+        elif isinstance(status, dict):
+            detail_lines.append(f"| 指标 | 值 |")
+            detail_lines.append(f"|------|----|")
+            detail_lines.append(f"| 任务总数 | {total} |")
+            detail_lines.append(f"| 已完成 | {completed} |")
+            detail_lines.append(f"| 阻塞中 | {blocked} |")
+            detail_lines.append("")
+
+    detail = "\n".join(detail_lines) if detail_lines else ""
+
+    agent_status.register("PTA-INTEL-AG01", {
+        "description": "PTA智能项目分析",
+        "schedule": "手动/按需执行",
+        "checks": ["文档扫描", "任务解析", "风险检测", "跨文档关联"],
+    })
+    agent_status.update("PTA-INTEL-AG01", {
+        "status": status_str,
+        "last_run": now_str,
+        "next_run": "—",
+        "results": {
+            "文档扫描": f"{total} 任务" if total else "✅",
+            "任务解析": f"{completed}/{total} 完成",
+            "风险检测": f"{blocked} 阻塞" if blocked else "✅",
+            "跨文档关联": "✅",
+        },
+        "errors": errors_list,
+        "detail": detail,
+    })
+
+    if write_files:
+        agent_status.write_report(UNIFIED_REPORT)
+        _write_dashboard()
+
+
+def _write_dashboard():
+    """生成仪表盘 Markdown"""
+    try:
+        agents = agent_status.read_all()
+        now = datetime.now().strftime("%Y-%m-%d %H:%M")
+
+        lines = [
+            "# Agent 运行仪表盘",
+            "",
+            "> **文档定位**：集中展示所有 Jasper AI Agent 的运行状态与健康指标",
+            "> **核心作用**：一站式查看 Agent 是否存活、最近一次执行结果、异常告警",
+            "> **使用场景**：每日开工时扫一眼确认所有 Agent 正常",
+            "> **维护责任**：各 Agent 通过 agent_status.py 自动写入状态；本文件自动生成，勿手动编辑",
+            "",
+            "---",
+            "",
+            "## 总体概览",
+            "",
+        ]
+
+        if not agents:
+            lines.append("*暂无已注册的 Agent*")
+        else:
+            lines.append("| Agent | 状态 | 最后巡检 | 下次巡检 | 详情 |")
+            lines.append("|-------|------|---------|---------|------|")
+            for a in agents:
+                name = a.get("name", "?")
+                status_s = a.get("status", "?")
+                last = a.get("last_run", "—")
+                next_run = a.get("next_run", "—")
+                anchor = name.lower()
+                lines.append(f"| {name} | {status_s} | {last} | {next_run} | [查看](#{anchor}) |")
+            lines.append("")
+
+        lines.append("## 各 Agent 详情")
+        lines.append("")
+        for a in agents:
+            name = a.get("name", "?")
+            desc = a.get("description", "")
+            status_s = a.get("status", "?")
+            schedule = a.get("schedule", "")
+            results = a.get("results", {})
+            errors = a.get("errors", [])
+            checks = a.get("checks", [])
+
+            anchor = name.lower()
+            lines.append(f"### {name}")
+            lines.append("")
+            lines.append(f"**{desc}**　|　状态：{status_s}　|　调度：{schedule}")
+            lines.append("")
+
+            if errors:
+                lines.append("⚠️ **异常**：")
+                for e in errors:
+                    lines.append(f"- {e}")
+                lines.append("")
+
+            if results:
+                lines.append("| 检查项 | 结果 |")
+                lines.append("|--------|------|")
+                for c in checks:
+                    lines.append(f"| {c} | {results.get(c, '⏳')} |")
+                lines.append("")
+
+            lines.append("---")
+            lines.append("")
+
+        lines.append(f"*最后生成：{now}*")
+
+        os.makedirs(os.path.dirname(DASHBOARD_PATH), exist_ok=True)
+        with open(DASHBOARD_PATH, 'w', encoding='utf-8') as f:
+            f.write("\n".join(lines))
+    except Exception:
+        pass
+
+
+# ============================================================
 # 主程序
 # ============================================================
 
@@ -737,6 +908,9 @@ def main():
             report = analyzer.query("综合报告")
             Path(args.output).write_text(report, encoding="utf-8")
             print(f"\n[PTA-INTEL] 报告已保存: {args.output}")
+
+        # ── Agent 状态上报 ──
+        _update_agent_status(status, True)
     
     elif args.mode == "query":
         # 智能查询模式

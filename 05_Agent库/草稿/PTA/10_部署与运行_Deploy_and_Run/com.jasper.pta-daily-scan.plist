@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.jasper.pta-daily-scan</string>
+
+    <!-- 直接用 ProgramArguments 数组调用 python3，不像 OB 巡检 agent 那样包一层
+         osascript do shell script——那是为了访问受 macOS TCC 权限限制的 Obsidian
+         vault 路径才需要的，PTA 每日巡检只碰普通文件系统路径，不需要这层包装，
+         也省得处理中文路径的 shell 转义。 -->
+    <key>ProgramArguments</key>
+    <array>
+        <string>/opt/homebrew/bin/python3</string>
+        <!-- ⚠️ 装的时候用 `which python3` 确认这个路径对不对（Intel Mac 通常是
+             /usr/local/bin/python3），launchd 不读 shell profile，PATH 里不一定
+             有 Homebrew 的 python3。 -->
+        <string>REPLACE_WITH_PTA_AGENT_PY_ABSOLUTE_PATH</string>
+        <!-- 例：/Users/xxx/.../05_Agent库/草稿/PTA/04_定义Agent_Define_Agent/agents/agent.py -->
+        <string>--daily-scan</string>
+        <string>--project-root</string>
+        <string>REPLACE_WITH_TARGET_PROJECT_ABSOLUTE_PATH</string>
+        <string>--notify</string>
+        <!-- 需要 02_配置项目_Configure_Project/wecom_config.json 已填好真实
+             webhook_url + 四人手机号，否则 --notify 会被优雅跳过（打印提示，
+             不影响本地扫描本身）。 -->
+    </array>
+
+    <!-- 每天固定时间点跑一次，不用 StartInterval（那是"每 N 秒一次"，跨睡眠/
+         唤醒会漂移，也不保证"每天固定时间"）。8点是默认值，按需调整。 -->
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key>
+        <integer>10</integer>
+        <key>Minute</key>
+        <integer>0</integer>
+    </dict>
+
+    <key>RunAtLoad</key>
+    <false/>
+
+    <key>StandardOutPath</key>
+    <string>/tmp/pta-daily-scan.log</string>
+    <key>StandardErrorPath</key>
+    <string>/tmp/pta-daily-scan.err</string>
+
+    <!-- ⚠️⚠️⚠️ 真实的 DEEPSEEK_API_KEY 绝不能填在这份文件里！这份文件在
+         git 仓库里会被追踪、可能推到远程（jasper211/ai-engineer-roadmap）。
+         按 INSTALL_DAILY_SCAN.md 的说明，把这个占位符复制到
+         ~/Library/LaunchAgents/ 之后，只在那份【不受 git 追踪】的副本里
+         填真实 key。 -->
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
+        <key>DEEPSEEK_API_KEY</key>
+        <string>REPLACE_WITH_YOUR_REAL_KEY_ONLY_IN_THE_INSTALLED_COPY</string>
+    </dict>
+</dict>
+</plist>
