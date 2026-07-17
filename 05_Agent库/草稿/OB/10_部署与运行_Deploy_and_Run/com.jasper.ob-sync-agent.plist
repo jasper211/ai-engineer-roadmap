@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.jasper.ob-sync-agent</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/osascript</string>
+        <string>-e</string>
+        <string>do shell script "PATH=/usr/local/bin:/usr/bin:/bin:/opt/homebrew/bin /usr/bin/python3 '/Users/a112233/Library/Application Support/jasper/ob-sync-agent/ob_sync_agent.py' --output /tmp/ob-sync-health-report.md --auto-fix --quiet"</string>
+    </array>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>StartInterval</key>
+    <integer>3600</integer>
+    <key>KeepAlive</key>
+    <false/>
+    <key>StandardOutPath</key>
+    <string>/tmp/ob-sync-agent.log</string>
+    <key>StandardErrorPath</key>
+    <string>/tmp/ob-sync-agent.err</string>
+</dict>
+</plist>

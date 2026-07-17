@@ -1,0 +1,99 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+工具：LLM 调用封装（移植自 PTA 的 tools/llm_client.py，逻辑不变）。
+
+不做成跨 Agent import——每个 Agent 自己的 tools/ 保持自包含，是已确立的
+惯例（PTA/OB 各自维护一份，不是共享一个外部包）。这份逻辑本身已经在 PTA 上
+真实跑过多次、修过真实的 SSL 证书路径坑（build_ssl_context 的存在就是那次
+修复的痕迹），直接复用已验证过的实现，不重新发明。
+"""
+
+import json
+import ssl
+import time
+import urllib.error
+import urllib.request
+from pathlib import Path
+
+DEEPSEEK_API_URL = "https://api.deepseek.com/chat/completions"
+DEFAULT_MODEL = "deepseek-chat"
+
+
+def build_ssl_context() -> ssl.SSLContext:
+    """构造 HTTPS 用的 SSL 上下文。有些 Python 安装（尤其是 Homebrew 装的）默认证书路径
+    是坏的（openssl@3 的 cert.pem 不存在），urlopen 会报 CERTIFICATE_VERIFY_FAILED。
+    这里按优先级找一个真实存在的 CA 证书包，而不是绕过证书校验。"""
+    try:
+        import certifi
+        return ssl.create_default_context(cafile=certifi.where())
+    except ImportError:
+        pass
+    for candidate in (
+        "/etc/ssl/cert.pem",
+        "/usr/local/etc/ca-certificates/cert.pem",
+        "/opt/homebrew/etc/ca-certificates/cert.pem",
+    ):
+        if Path(candidate).exists():
+            return ssl.create_default_context(cafile=candidate)
+    return ssl.create_default_context()
+
+
+_SSL_CONTEXT = build_ssl_context()
+
+
+def call_deepseek(system_prompt: str, user_content: str, api_key: str,
+                   model: str = DEFAULT_MODEL, max_retries: int = 2,
+                   temperature: float = 0, json_mode: bool = True) -> str:
+    """调用 DeepSeek Chat Completions（OpenAI 兼容接口），返回 message.content 字符串。"""
+    body_dict = {
+        "model": model,
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_content},
+        ],
+        "temperature": temperature,
+    }
+    if json_mode:
+        body_dict["response_format"] = {"type": "json_object"}
+    body = json.dumps(body_dict).encode("utf-8")
+
+    req = urllib.request.Request(
+        DEEPSEEK_API_URL,
+        data=body,
+        method="POST",
+        headers={
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+        },
+    )
+
+    last_err = None
+    for attempt in range(max_retries + 1):
+        try:
+            with urllib.request.urlopen(req, timeout=60, context=_SSL_CONTEXT) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+                return data["choices"][0]["message"]["content"]
+        except urllib.error.HTTPError as e:
+            detail = e.read().decode("utf-8", errors="replace")
+            if e.code == 429 and attempt < max_retries:
+                wait = 2 ** (attempt + 1)
+                print(f"  [限流] 429，{wait}s 后重试...")
+                time.sleep(wait)
+                last_err = f"HTTP {e.code}: {detail}"
+                continue
+            raise RuntimeError(f"DeepSeek API 请求失败 HTTP {e.code}: {detail}") from e
+        except urllib.error.URLError as e:
+            # 真实批量提炼时复现过：连续大量请求会偶发 SSL 连接中断
+            # （UNEXPECTED_EOF_WHILE_READING）/读超时，这类网络抖动通常是
+            # 暂时性的——之前只对 HTTP 429 限流重试，URLError 直接抛异常，
+            # 188 个文件的批次里 17 个因为这个原因失败，比例不低。这里补上
+            # 同样的重试逻辑，不区分"是不是SSL的错"，只要是 URLError 就重试。
+            if attempt < max_retries:
+                wait = 2 ** (attempt + 1)
+                print(f"  [网络错误] {e}，{wait}s 后重试...")
+                time.sleep(wait)
+                last_err = f"URLError: {e}"
+                continue
+            raise RuntimeError(f"DeepSeek API 网络错误（已重试 {max_retries} 次）: {e}") from e
+    raise RuntimeError(f"DeepSeek API 请求失败（已重试 {max_retries} 次）: {last_err}")

@@ -1,0 +1,87 @@
+# OB · Obsidian 知识库 Agent 定义
+# 迁移说明：原游离目录『OB知识库同步巡检Agent/』只有巡检一项能力、且没有按
+# 01-11骨架组织。这次正式纳入体系，定位扩展为三条能力线（巡检/检索服务/
+# 概念笔记提炼），参照PTA的agent.yaml格式书写身份声明。
+
+name: OB
+full_name: Obsidian 知识库 Agent
+version: 0.4.0
+entrypoint: 04_定义Agent_Define_Agent/agents/agent.py
+
+description: >
+  全部业务Agent（PTA/VNW/AIT）+ 多AI终端（Claude Desktop/Qoder/Kimi Code）
+  共享的知识库基础设施。不是单一 think-act-observe 循环，是三条独立触发的
+  能力线：①巡检知识库同步健康 ②对业务Agent暴露检索服务（薄客户端模式）
+  ③把项目原始文档提炼成概念笔记/知识原子。
+
+capability_lines:
+  - id: sync_health
+    entrypoint: "agent.py --sync-check"
+    skill: vault_sync_health   # 06_开发技能_Develop_Skills/skills/vault_sync_health.py，迁移自 ob_sync_agent.py
+    trigger: "定时（launchd）+ 手动"
+    status: 已迁移+真实数据验证通过（8测试场景约20项断言，含v0.3.1新增的GitHub同步检查）
+    note: >
+      已有实际代码验证过（原 ob_sync_agent.py），迁移是"重组不重写"。v0.3.1
+      新增 check_github_sync：工作区干净时 git pull --ff-only，确保检索/
+      MCP读到的本地内容跟GitHub一致；不干净则跳过并报警，不自动stash/合并。
+
+  - id: knowledge_retrieval
+    entrypoint: "agent.py --retrieve \"<query>\" [--mode hybrid|keyword|vector|graph] [--max-results N]"
+    skill: knowledge_retrieval   # 06_开发技能_Develop_Skills/skills/knowledge_retrieval.py
+    trigger: "业务Agent按需调用 / CLI直接调用"
+    status: 已实现+真实数据验证通过（hybrid降级/keyword/graph/无命中4场景），底层依赖obsidian-mcp-server
+    note: >
+      底层依赖 obsidian-mcp-server 的 hybrid_search（关键词+图谱+向量RRF融合），
+      本轮已校准5个真实bug（symlink死循环/空chunk/graph模式失效/
+      graphSearch空指针崩溃/RRF按chunkId而非notePath分组）。
+      薄客户端设计：PTA 只知道"什么时候该问、问完怎么用"，不直接耦合MCP协议细节。
+      vault重置已完成（2026-07-16），当前检索到的是真实概念笔记，不再是原始
+      文档镜像。
+
+  - id: concept_note_extraction
+    entrypoint: "agent.py --extract <文件路径> --project <项目名> [--vault-path <路径>]"
+    skill: concept_note_extraction   # 06_开发技能_Develop_Skills/skills/concept_note_extraction.py
+    trigger: "单文件手动调用"
+    status: 已实现+真实LLM调用验证通过
+    requires_env: DEEPSEEK_API_KEY（每次调用产生真实费用）
+    note: >
+      原子粒度由LLM按 prompts/concept_note_extraction_system.md 的定义判断
+      （一条规则/决策/定义/经验教训/背景说明，非整篇摘要）；去重先按标题
+      精确匹配，未命中再查 tools/atom_embeddings.py 的语义相似（v0.4.0
+      升级，本机无OPENAI_API_KEY时优雅退回精确匹配）；写入侧直接走本地
+      文件IO，不经MCP（MCP连接只读）。
+
+  - id: batch_concept_extraction
+    entrypoint: "agent.py --extract-project <Rw权益项目|EA流程架构项目|Jasper AI协同经验引擎> [--dry-run] [--max-files N]"
+    skill: batch_concept_extraction   # 06_开发技能_Develop_Skills/skills/batch_concept_extraction.py
+    trigger: "手动调用，或 10_部署与运行/com.jasper.ob-daily-extract.plist 定时（模板未安装）"
+    status: 已实现+真实验证通过（v0.4.0新增）
+    requires_env: DEEPSEEK_API_KEY（--dry-run 除外）
+    note: >
+      按 tools/project_filters.py 的价值分层规则筛选候选文件（EA项目：
+      00→03→08→01→02/规则分析（Jasper）优先级，跳过04-07代码资产层和
+      归档内容；Rw/AI项目：关键字黑名单排除），tools/file_diff.py 做增量
+      比对（只处理新增/变更），memory/workspace.py 持久化每个项目的扫描
+      快照（OB_WORKSPACE_ROOT物理隔离，默认落 项目工作区/OB/）。铁律：
+      对目标项目文件只读，不修改/移动/删除——真实验证过（处理前后源文件
+      哈希比对+状态文件隔离核查）。
+
+vault:
+  merge_strategy: 三项目合并为一个vault，内部按项目分三个顶层目录（不拆分独立vault）
+  projects: [Rw权益项目, EA流程架构项目, Jasper AI协同经验引擎]
+  path: ~/Desktop/Jasper工作文档（不含EA项目）/OB知识库_vault
+    （2026-07-17起，Desktop为唯一真源，iCloud vault改为单向同步生成的镜像副本，
+    见 tools/sync_to_icloud.py；手机端仍读iCloud容器内的镜像）
+  reset: 已完成（2026-07-16）——删除Rw权益项目/项目-流程架构镜像symlink+自引用symlink，
+    vault现在只承载概念/+MOC/真实概念笔记
+
+safety:
+  - "巡检能力的--auto-fix只修复MCP配置这一类纯字符串路径替换，不做任何删除类自愈操作"
+  - "概念笔记提炼的写入侧只写入vault对应项目目录下，不能覆盖symlink外的任意路径；
+     测试/验证必须通过--vault-path指向scratchpad等隔离路径，不直接对真实vault跑"
+  - "OB自己的状态/运行产物走workspace隔离（同PTA的memory/workspace.py隔离原则），不落进共享仓库"
+
+not_yet_implemented:
+  - "memory/workspace.py、批量文档扫描编排逻辑+增量变更检测（复用PTA的
+     file_diff思路，覆盖三个项目全量文件前需先定筛选规则避免噪音/API费用
+     失控）暂未开发"

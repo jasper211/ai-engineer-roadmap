@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.jasper.ob-daily-extract</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/bash</string>
+        <string>-c</string>
+        <string>
+          AGENT="/Users/a112233/Desktop/Jasper工作文档（不含EA项目）/Jasper AI协同经验引擎/AI工程能力整改项目/05_Agent库/草稿/OB/04_定义Agent_Define_Agent/agents/agent.py";
+          /usr/local/bin/python3 "$AGENT" --extract-project "Rw权益项目" --max-files 20 --quiet;
+          /usr/local/bin/python3 "$AGENT" --extract-project "EA流程架构项目" --max-files 20 --quiet;
+          /usr/local/bin/python3 "$AGENT" --extract-project "Jasper AI协同经验引擎" --max-files 20 --quiet;
+        </string>
+    </array>
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key>
+        <integer>2</integer>
+        <key>Minute</key>
+        <integer>0</integer>
+    </dict>
+    <key>RunAtLoad</key>
+    <false/>
+    <key>StandardOutPath</key>
+    <string>/tmp/ob-daily-extract.log</string>
+    <key>StandardErrorPath</key>
+    <string>/tmp/ob-daily-extract.err</string>
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>DEEPSEEK_API_KEY</key>
+        <string>__FILL_IN_YOUR_OWN_KEY__</string>
+    </dict>
+</dict>
+</plist>
