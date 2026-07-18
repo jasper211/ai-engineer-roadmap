@@ -174,11 +174,20 @@ def make_retriever() -> KnowledgeRetriever:
 
 
 def test_08_retrieve_hybrid_degrades_gracefully():
-    print("Test 8: --retrieve hybrid模式在无向量索引时优雅降级，不崩溃")
+    # 2026-07-18更新：embedding_config.json现在已配置真实SiliconFlow key，
+    # "没配key直接抛异常"这条旧的降级路径不再触发。改成retrieval_bridge.py
+    # 给buildVectorIndex单独包了vector_build_timeout（默认8秒）——vault涨到
+    # 7000+文件后.vector-cache.json缓存不匹配，现算全量embedding要20-60分钟，
+    # 8秒内跑不完就当作"这次拿不到向量"直接降级到关键词+图谱，不再是"没配
+    # key"触发降级，是"来不及算"触发降级，效果一致：hybrid模式不会再卡死
+    # 常规查询请求。真正一次性构建向量索引缓存仍是待专门安排的独立任务
+    # （不是这次改动的范围），跟这里的"单次查询不该被这个耗时任务拖住"是
+    # 两回事。
+    print("Test 8: --retrieve hybrid模式在向量索引缓存未命中时优雅降级，不卡死")
     retriever = make_retriever()
     context = retriever.get_context("价值节点", max_results=3, mode="hybrid")
     check("无 error 字段", "error" not in context, f"实际: {context}")
-    check("has_vector 为 False（本机未配置OPENAI_API_KEY）", context["has_vector"] is False)
+    check("has_vector 为 False（缓存未命中，8秒内放弃现算）", context["has_vector"] is False)
     check("mode_effective 标注为降级", "降级" in context["mode_effective"], f"实际: {context['mode_effective']}")
     check("返回非空atoms（真实vault对这个查询应有命中）", len(context["atoms"]) > 0)
 
@@ -332,15 +341,35 @@ def test_15_stale_atom_marking():
     shutil.rmtree(sandbox_root)
 
 
+def test_16_retrieve_metadata_enrichment():
+    print("Test 16: 检索结果补充entity_type/authority_layer/confidence/所属枢纽元数据")
+    retriever = make_retriever()
+    context = retriever.get_context("佣金结算", max_results=5, mode="keyword")
+    check("无error", "error" not in context, f"实际: {context}")
+    check("返回非空atoms", len(context["atoms"]) > 0)
+    first = context["atoms"][0]
+    check("atom含authority_layer字段", "authority_layer" in first)
+    check("atom含confidence字段", "confidence" in first)
+    check("atom含entity_type字段", "entity_type" in first)
+    check("atom含hubs字段(list)", isinstance(first.get("hubs"), list))
+    check("至少一条结果有非空authority_layer（真实vault应命中已迁移原子）",
+          any(a.get("authority_layer") for a in context["atoms"]),
+          f"实际: {[a.get('authority_layer') for a in context['atoms']]}")
+
+    prompt_text = retriever.format_for_prompt(context)
+    check("format_for_prompt输出含信任标注(方括号badge)", "[" in prompt_text and "]" in prompt_text)
+
+
 def main():
-    print("=== OB Agent 集成测试（v0.4.2，覆盖巡检+检索服务+批量提炼筛选/增量/过时原子标记）===\n")
+    print("=== OB Agent 集成测试（v0.4.5，覆盖巡检+检索服务(含元数据补充)+批量提炼筛选/增量/过时原子标记）===\n")
     for fn in [test_01_symlinks, test_02_mcp_configs, test_03_mcp_server_connectivity,
                test_04_f_files, test_05_vault_stats, test_06_sync_integrity,
                test_07_full_run_and_report, test_08_retrieve_hybrid_degrades_gracefully,
                test_09_retrieve_keyword_and_graph_modes, test_10_retrieve_no_match_returns_empty_gracefully,
                test_11_github_sync, test_12_ea_candidates_layered_priority,
                test_13_generic_candidates_archive_exclusion, test_14_file_diff_snapshot_and_diff,
-               test_14b_read_content_truncated_utf16_bom, test_15_stale_atom_marking]:
+               test_14b_read_content_truncated_utf16_bom, test_15_stale_atom_marking,
+               test_16_retrieve_metadata_enrichment]:
         fn()
         print()
 

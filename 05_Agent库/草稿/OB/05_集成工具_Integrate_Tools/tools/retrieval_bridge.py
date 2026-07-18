@@ -27,26 +27,59 @@ def hybrid_search(
     mode: str = "hybrid",
     max_results: int = 5,
     timeout: int = 60,
+    vector_build_timeout: int = 8,
 ) -> dict:
     """调用 obsidian-mcp-server 的 hybridSearch，返回 {results, has_vector} 或 {error}。
 
     mode: "hybrid" | "keyword" | "vector" | "graph"（同 obsidian-mcp-server 的定义）
+
+    vector_build_timeout: buildVectorIndex 自己的超时上限（秒），独立于外层
+    subprocess 的 timeout。2026-07-18 真实复现过的问题：embedding_config.json
+    配置真实key后，"没有key"这条优雅降级路径不再触发，缓存未命中时
+    buildVectorIndex 会老老实实现算全量embedding（vault 7000+文件，预计
+    20-60分钟），而不是像之前"没配key直接抛异常→秒级捕获降级"那样快速失败。
+    这里给 buildVectorIndex 单独包一层 Promise.race 超时——命中缓存的正常
+    情况几秒内跑完不受影响；缓存未命中需要现算的情况，8秒内跑不完就当作
+    "这次拿不到向量"直接降级，而不是让整个请求跟着现算全量embedding的
+    时间陪跑。真正需要一次性构建向量索引，走专门的 --backfill 之类的入口，
+    不应该是普通一次查询请求的副作用。
     """
     query_json = json.dumps(query, ensure_ascii=False)
     options_json = json.dumps({"mode": mode, "maxResults": max_results}, ensure_ascii=False)
+
+    # 只有 mode 真的需要向量（hybrid/vector）才尝试 buildVectorIndex——之前不管
+    # mode 是什么都无条件尝试，真实复现过：vault 涨到7000+文件后，缓存不匹配时
+    # buildVectorIndex 会现算全量embedding，连 keyword/graph 这种压根不需要向量
+    # 的请求也被拖到60秒超时（本该几百毫秒内返回）。keyword/graph 模式直接跳过，
+    # 不影响 hybrid/vector 模式原有的"缓存未命中则现算+优雅降级"行为。
+    needs_vector = mode in ("hybrid", "vector")
+    vector_build_ms = vector_build_timeout * 1000
+    vector_setup = (
+        (
+            f"let vectorIndex = null;"
+            f"try {{"
+            f"  const withTimeout = (p, ms) => Promise.race(["
+            f"    p, new Promise((_, rej) => setTimeout(() => rej(new Error('vector_build_timeout')), ms))"
+            f"  ]);"
+            f"  vectorIndex = await withTimeout(vec.buildVectorIndex(idx, {{ useCache: true }}), {vector_build_ms});"
+            f"  if (!vectorIndex.embeddings || vectorIndex.embeddings.length === 0) vectorIndex = null;"
+            f"}} catch (e) {{ vectorIndex = null; }}"
+        )
+        if needs_vector
+        else "let vectorIndex = null;"
+    )
 
     script = (
         f"import('{vault_mjs}').then(async v => {{"
         f"const vec = await import('{vector_mjs}');"
         f"const idx = v.buildIndex('{vault_path}');"
-        f"let vectorIndex = null;"
-        f"try {{"
-        f"  vectorIndex = await vec.buildVectorIndex(idx, {{ useCache: true }});"
-        f"  if (!vectorIndex.embeddings || vectorIndex.embeddings.length === 0) vectorIndex = null;"
-        f"}} catch (e) {{ vectorIndex = null; }}"
+        f"{vector_setup}"
         f"const results = await vec.hybridSearch(idx, vectorIndex, {query_json}, {options_json});"
         f"console.log(JSON.stringify({{ results, hasVector: !!vectorIndex }}));"
-        f"}}).catch(e => console.log(JSON.stringify({{error: e.message}})));"
+        f"process.exit(0);"  # buildVectorIndex超时放弃后，被丢弃的embedding请求可能还在
+        # 后台跑，不强制退出的话Node事件循环会一直等它，subprocess.run()就白等了——
+        # 拿到结果就立刻退出，不等任何遗留的后台异步任务
+        f"}}).catch(e => {{ console.log(JSON.stringify({{error: e.message}})); process.exit(1); }});"
     )
 
     output = ""
