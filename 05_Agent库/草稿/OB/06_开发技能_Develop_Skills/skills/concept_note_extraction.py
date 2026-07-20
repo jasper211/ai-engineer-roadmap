@@ -37,6 +37,7 @@ from tools.llm_client import call_deepseek, DEFAULT_MODEL
 
 PROMPTS_DIR = Path(__file__).resolve().parent.parent.parent / "08_设计提示词_Design_Prompts" / "prompts"
 SYSTEM_PROMPT_PATH = PROMPTS_DIR / "concept_note_extraction_system.md"
+TABLE_SYSTEM_PROMPT_PATH = PROMPTS_DIR / "table_extraction_system.md"
 
 
 def _repair_json_escapes(text: str) -> str:
@@ -46,6 +47,26 @@ def _repair_json_escapes(text: str) -> str:
     'Invalid \\escape' 整个提炼失败。这里把"反斜杠后面不是合法转义字符"的
     情况原样转成字面反斜杠（\\\\），不影响本来就合法的转义序列。"""
     return re.sub(r'\\(?!["\\/bfnrtu])', r'\\\\', text)
+
+
+def _repair_unescaped_quote_at(text: str, error: json.JSONDecodeError) -> Optional[str]:
+    """修复LLM输出里字符串值内部未转义的双引号。真实复现过：源文档用中文
+    语境的直引号做强调（如"是否熔断"），LLM原样把这对引号写进JSON字符串值，
+    没有转义——JSON字符串在遇到这个引号时提前"闭合"，后面的文本变成不合法的
+    游离token，报'Expecting , delimiter'（不是'Invalid \\escape'，是完全
+    不同的错误类型，_repair_json_escapes处理不了这种）。
+
+    做法：从报错位置（error.pos）往回找最近一个"未转义的双引号"，把它转义成
+    \\"。一次只修一个，调用方在循环里反复调用直到解析成功或达到重试上限——
+    一份文档的summary里可能不止一处这种引号，不能假设修一次就够。找不到可修的
+    引号时返回None，调用方据此判断"这个策略也救不了，放弃"。"""
+    pos = error.pos
+    i = pos - 1
+    while i >= 0:
+        if text[i] == '"' and (i == 0 or text[i - 1] != "\\"):
+            return text[:i] + '\\"' + text[i + 1:]
+        i -= 1
+    return None
 
 
 def _slugify(title: str) -> str:
@@ -65,29 +86,76 @@ class ConceptNoteExtractor:
         self.api_key = api_key
         self.model = model
         self.system_prompt = SYSTEM_PROMPT_PATH.read_text(encoding="utf-8")
+        self.table_system_prompt = TABLE_SYSTEM_PROMPT_PATH.read_text(encoding="utf-8")
         # Optional[tools.atom_embeddings.AtomEmbeddingStore]——不传则完全等价于
         # MVP 阶段的纯精确匹配去重，行为不变
         self.embedding_store = embedding_store
 
     def extract_atoms(self, content: str) -> List[Dict]:
         """调用 LLM 提炼知识原子，返回列表（未写入磁盘）。"""
-        response = call_deepseek(self.system_prompt, content, self.api_key, model=self.model)
+        return self._extract_with_prompt(self.system_prompt, content)
+
+    def extract_table_atoms(self, table_markdown: str) -> List[Dict]:
+        """表格版提炼——喂一批已序列化成markdown表格的行（见tools/table_reader.py），
+        用专门的table_extraction_system.md提示词（不机械按行拆、允许合并同实体
+        多行）。跟extract_atoms()共用JSON解析+非法转义修复逻辑，只是换了提示词
+        和输入形态，返回的atom字典格式跟文档提炼完全一致，可以直接喂给
+        write_atom()复用同一套去重/写入逻辑。"""
+        return self._extract_with_prompt(self.table_system_prompt, table_markdown)
+
+    def _extract_with_prompt(self, system_prompt: str, content: str, max_quote_repairs: int = 10) -> List[Dict]:
+        response = call_deepseek(system_prompt, content, self.api_key, model=self.model)
         try:
             data = json.loads(response)
         except json.JSONDecodeError:
             # 源文档含正则表达式/路径等反斜杠内容时，LLM 引用原文可能产出
             # 非法JSON转义（真实复现过），先尝试修复一次再重新解析，不是
             # 第一次失败就放弃整份文档的提炼
-            data = json.loads(_repair_json_escapes(response))
+            text = _repair_json_escapes(response)
+            try:
+                data = json.loads(text)
+            except json.JSONDecodeError as e:
+                # 反斜杠修复解决不了，可能是字符串值里的未转义双引号
+                # （真实复现过：中文语境直引号强调，如"是否熔断"被LLM原样
+                # 写进JSON值）——逐个修复直到能解析或达到重试上限，一份
+                # 文档可能不止一处这种引号
+                for _ in range(max_quote_repairs):
+                    fixed = _repair_unescaped_quote_at(text, e)
+                    if fixed is None:
+                        raise
+                    text = fixed
+                    try:
+                        data = json.loads(text)
+                        break
+                    except json.JSONDecodeError as e2:
+                        e = e2
+                else:
+                    raise
         return data.get("atoms", [])
 
     def _atom_path(self, atom_title: str) -> Path:
         return self.vault_path / self.project_name / f"{_slugify(atom_title)}.md"
 
+    # 更新时新旧内容语义相似度低于这个阈值，判定"不是简单改写，是实质性
+    #不同的说法"，改走待校准流程而不是直接覆盖。2026-07-21新增，阈值是
+    # 起始估计（同一个slug的新旧版本理论上应该比"不同原子间是否相似"要求
+    # 更高，那个场景真实测过0.6-0.75是合理匹配范围），没有专门跑过大样本
+    # 校准，用出真实数据后可能需要调整，先用这个值让机制跑起来。
+    CALIBRATION_SIMILARITY_THRESHOLD = 0.80
+
     def write_atom(self, atom: Dict, source_path: str) -> Dict:
         """把一个原子写成 .md 文件（frontmatter + 正文 + 关联概念的 wikilink）。
         先按标题精确匹配；未命中且配置了 embedding_store 时，再查语义相似——
-        命中则写入相似原子对应的文件（视为更新而非新建同义重复原子）。"""
+        命中则写入相似原子对应的文件（视为更新而非新建同义重复原子）。
+
+        2026-07-21新增两道刹车（Jasper提出的原子质量梳理原则）：
+        ①更新不再无痕覆盖——旧内容存进"## 历史版本"区块（只留上一版，不是
+        无限累积，避免文件无限膨胀），至少保证"覆盖了什么"有据可查。
+        ②更新前算新旧内容语义相似度，明显不像"同一件事的改写"（低于
+        CALIBRATION_SIMILARITY_THRESHOLD）时不直接覆盖主内容——旧内容原样
+        保留在原地，新内容作为"待校准候选"单独列出来，新旧原子title冲突
+        但内容实质不同，交给人判断怎么合并/该信哪个，批量任务不擅自替
+        Jasper做这个判断。"""
         path = self._atom_path(atom["title"])
         existed = path.exists()
 
@@ -100,9 +168,41 @@ class ConceptNoteExtractor:
                 existed = path.exists()
 
         path.parent.mkdir(parents=True, exist_ok=True)
+        old_text = path.read_text(encoding="utf-8") if existed else None
+
+        similarity = None
+        if existed and self.embedding_store is not None:
+            similarity = self.embedding_store.content_similarity(
+                path.stem, atom["title"], atom.get("summary", "")
+            )
+        needs_calibration = similarity is not None and similarity < self.CALIBRATION_SIMILARITY_THRESHOLD
 
         related = atom.get("related_concepts", [])
         related_block = "\n".join(f"- [[{r}]]" for r in related) if related else "（暂无）"
+
+        if needs_calibration:
+            content = (
+                (old_text or "").rstrip("\n")
+                + f"\n\n---\n⚠️ **待校准**：源文档「{source_path}」提炼出内容差异较大的新版本"
+                f"（语义相似度{similarity:.2f}，低于{self.CALIBRATION_SIMILARITY_THRESHOLD}阈值），"
+                "新旧内容未自动合并，需人工判断保留哪个/如何合并"
+                f"（标记时间：{datetime.now().isoformat(timespec='seconds')}）。\n\n"
+                f"### 候选新内容（来自「{source_path}」）\n\n{atom.get('summary', '')}\n"
+            )
+            path.write_text(content, encoding="utf-8")
+            return {"action": "needs_calibration", "path": str(path), "title": atom["title"], "similarity": similarity}
+
+        history_block = ""
+        if old_text:
+            old_summary_m = re.search(r"^# .+?\n\n(.+?)\n\n## ", old_text, re.S)
+            old_extracted_m = re.search(r"^extracted_at: (.+)$", old_text, re.M)
+            if old_summary_m:
+                old_extracted = old_extracted_m.group(1) if old_extracted_m else "未知时间"
+                history_block = (
+                    "\n## 历史版本（仅保留上一版，更早版本见git历史）\n\n"
+                    f"<details><summary>{old_extracted} 的版本</summary>\n\n"
+                    f"{old_summary_m.group(1).strip()}\n\n</details>\n"
+                )
 
         content = (
             "---\n"
@@ -116,6 +216,7 @@ class ConceptNoteExtractor:
             f"{atom.get('summary', '')}\n\n"
             "## 关联概念\n\n"
             f"{related_block}\n"
+            f"{history_block}"
         )
         path.write_text(content, encoding="utf-8")
 
@@ -125,7 +226,8 @@ class ConceptNoteExtractor:
             # "缓存 key == vault 文件名"这条一致性，下次查相似时才对得上
             self.embedding_store.store_embedding(path.stem, atom["title"], atom.get("summary", ""))
 
-        return {"action": "updated" if existed else "created", "path": str(path), "title": atom["title"]}
+        return {"action": "updated" if existed else "created", "path": str(path), "title": atom["title"],
+                "similarity": similarity}
 
     def mark_atom_stale(self, atom_slug: str, reason: str) -> bool:
         """给一个原子文件追加"待复核"标记，不删除、不覆盖原有内容——真实场景：
@@ -153,3 +255,39 @@ class ConceptNoteExtractor:
         atoms = self.extract_atoms(content)
         results = [self.write_atom(a, source_path) for a in atoms]
         return {"source": source_path, "atom_count": len(atoms), "results": results}
+
+    def process_table_file(self, source_path: str, abs_path, batch_size: int = 25) -> Dict:
+        """表格版完整流程：读取xlsx/csv的每个数据块（xlsx每个非元信息sheet
+        算一块，csv整份算一块）→ 每块按batch_size行分批 → 每批调用LLM提炼
+        →写入。返回结构跟process_document一致（source/atom_count/results），
+        调用方（batch_concept_extraction.py）不需要区分表格还是文档来处理
+        返回值。
+
+        一份表格文件通常比一篇文档产出多得多的原子（比如300行的KPI映射表
+        可能产出上百个原子），这是真实数据量决定的，不是bug。
+
+        每批单独try/except——真实复现过：一份xlsx可能有几十批，某一批JSON
+        解析失败或网络抖动，不该让同一份文件里已经成功写入的其他批次也
+        白跑（之前的实现是整个文件级别一次try/except，一批出错就丢了这份
+        文件所有批次的进度，包括已经成功的）。失败的批次记进errors返回，
+        不重新抛异常，调用方（batch_concept_extraction.py）据此判断这份
+        文件整体算不算"处理完成"。"""
+        from tools import table_reader
+
+        blocks = table_reader.read_table_blocks(Path(abs_path))
+        all_results = []
+        errors = []
+        for block in blocks:
+            rows = block["rows"]
+            label_parts = block["source_label"].split(" / ", 1)
+            block_source = f"{source_path} / {label_parts[1]}" if len(label_parts) > 1 else source_path
+            for i in range(0, len(rows), batch_size):
+                batch = rows[i:i + batch_size]
+                table_md = table_reader.serialize_rows_markdown(block["columns"], batch)
+                try:
+                    atoms = self.extract_table_atoms(table_md)
+                    all_results.extend(self.write_atom(a, block_source) for a in atoms)
+                except Exception as e:
+                    errors.append({"block": block_source, "batch_start_row": i, "error": str(e)})
+
+        return {"source": source_path, "atom_count": len(all_results), "results": all_results, "errors": errors}

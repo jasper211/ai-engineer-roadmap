@@ -75,6 +75,7 @@ class BatchConceptExtractor:
             "processed": 0,
             "atoms_created": 0,
             "atoms_updated": 0,
+            "atoms_needs_calibration": 0,
             "atoms_marked_stale": 0,
             "errors": [],
         }
@@ -98,19 +99,33 @@ class BatchConceptExtractor:
         # 不会导致已成功处理过的文件在下次运行时被重复提炼
         running_snapshot = dict(old_snapshot)
 
+        table_extensions = {".xlsx", ".csv"}
         for rel_path in to_process:
             abs_path = Path(self.project_root) / rel_path
             try:
-                content = file_diff.read_content_truncated(abs_path, max_chars=20000)
-                result = extractor.process_document(rel_path, content)
+                if abs_path.suffix.lower() in table_extensions:
+                    # 表格（03层权威数据）走专门的行批量提炼路径，不读成纯文本
+                    # 喂给文档提示词——见concept_note_extraction.py.process_table_file()
+                    result = extractor.process_table_file(rel_path, abs_path)
+                else:
+                    content = file_diff.read_content_truncated(abs_path, max_chars=20000)
+                    result = extractor.process_document(rel_path, content)
                 summary["processed"] += 1
                 new_atom_slugs = []
                 for r in result["results"]:
                     if r["action"] == "created":
                         summary["atoms_created"] += 1
+                    elif r["action"] == "needs_calibration":
+                        summary["atoms_needs_calibration"] += 1
                     else:
                         summary["atoms_updated"] += 1
                     new_atom_slugs.append(Path(r["path"]).stem)
+                # 表格文件的分批错误（process_table_file内部已经per-batch
+                # try/except过，不会抛异常到这里）——仍然要让Jasper看到哪些
+                # 批次没成功，即便文件整体判定为"已处理"（已成功的批次不该
+                # 因为个别批次失败就被当成整个文件没处理过，见函数内注释）
+                for block_error in result.get("errors", []):
+                    summary["errors"].append({"file": rel_path, **block_error})
 
                 # 这份文档如果是"变更"（不是首次新增），对比它上次产出的原子
                 # 集合——旧有新无的，说明新版本内容不再支持这个原子，标记待复核

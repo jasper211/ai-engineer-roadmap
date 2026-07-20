@@ -175,6 +175,23 @@ class AtomEmbeddingStore:
         # 存过的那批比，新原子之间不会互相发现相似
         return best_slug if best_score >= threshold else None
 
+    def content_similarity(self, existing_slug: str, new_title: str, new_summary: str) -> Optional[float]:
+        """给定"即将被更新的原子"（existing_slug）和"新提炼出的内容"，算
+        两者的语义相似度——用于write_atom()判断这次"更新"是不是真的只是
+        改写同一件事，还是内容实质变了（该走待校准流程，不该悄悄覆盖）。
+
+        复用缓存里已经存过的旧原子embedding（存的时候就是"上一次的
+        title+summary"），不用重新embed旧内容，只embed新内容算一次。
+        旧原子没有缓存过embedding（比如embedding功能是后来才接入的存量
+        原子）或新内容embed失败时返回None——调用方按None处理成"没法判断，
+        走默认的直接更新路径"，不阻塞正常流程。"""
+        if existing_slug not in self._data:
+            return None
+        result = embed_text(self.vector_mjs, f"{new_title}\n{new_summary}")
+        if "error" in result:
+            return None
+        return _cosine_similarity(result["embedding"], self._data[existing_slug]["embedding"])
+
     def store_embedding(self, atom_slug: str, title: str, summary: str) -> bool:
         """计算并存储一个原子的 embedding，返回是否成功（失败=无可用API）。"""
         result = embed_text(self.vector_mjs, f"{title}\n{summary}")

@@ -9,10 +9,33 @@
         <string>/bin/bash</string>
         <string>-c</string>
         <string>
-          AGENT="/Users/a112233/Desktop/Jasper工作文档（不含EA项目）/Jasper AI协同经验引擎/AI工程能力整改项目/05_Agent库/草稿/OB/04_定义Agent_Define_Agent/agents/agent.py";
-          /usr/local/bin/python3 "$AGENT" --extract-project "Rw权益项目" --max-files 20 --quiet;
+          OB_DIR="/Users/a112233/Desktop/Jasper工作文档（不含EA项目）/Jasper AI协同经验引擎/AI工程能力整改项目/05_Agent库/草稿/OB";
+          AGENT="$OB_DIR/04_定义Agent_Define_Agent/agents/agent.py";
+          VAULT="/Users/a112233/Desktop/Jasper工作文档（不含EA项目）/OB知识库_vault";
+          COOP_ENGINE_REPO="/Users/a112233/Desktop/Jasper工作文档（不含EA项目）/Jasper AI协同经验引擎/AI工程能力整改项目";
+          export DEEPSEEK_API_KEY=$(/usr/local/bin/python3 -c "import json; print(json.load(open('$OB_DIR/02_配置项目_Configure_Project/deepseek_config.json'))['DEEPSEEK_API_KEY'])");
+          export OB_WORKSPACE_ROOT="/Users/a112233/Desktop/Jasper工作文档（不含EA项目）/项目工作区/OB";
+
+          # 只跑EA+协同经验引擎——Rw权益项目是OB服务的对象项目，2026-07-18
+          # Jasper范围裁定明确不纳入OB自己的知识库批量提炼
           /usr/local/bin/python3 "$AGENT" --extract-project "EA流程架构项目" --max-files 20 --quiet;
           /usr/local/bin/python3 "$AGENT" --extract-project "Jasper AI协同经验引擎" --max-files 20 --quiet;
+
+          /usr/local/bin/python3 "$OB_DIR/05_集成工具_Integrate_Tools/tools/sync_to_icloud.py";
+
+          # commit+push是尽力而为——launchd环境下SSH agent/keychain访问可能跟
+          # 交互式终端不完全一样，push失败不该导致整个每日任务判定为失败
+          # （原子已经提炼好写进vault了，push失败只是没同步到GitHub，下次
+          # 任务运行或Jasper手动push都能补上），所以每条git命令后面都跟`|| true`。
+          cd "$VAULT";
+          git add -A;
+          git commit -m "chore: 每日自动增量提炼 $(date +%F)" || true;
+          git push origin main || true;
+
+          cd "$COOP_ENGINE_REPO";
+          git add "05_Agent库/草稿/OB/";
+          git commit -m "chore: 每日自动增量提炼 $(date +%F)（OB agent状态更新）" || true;
+          git push origin main || true;
         </string>
     </array>
     <key>StartCalendarInterval</key>
@@ -28,10 +51,5 @@
     <string>/tmp/ob-daily-extract.log</string>
     <key>StandardErrorPath</key>
     <string>/tmp/ob-daily-extract.err</string>
-    <key>EnvironmentVariables</key>
-    <dict>
-        <key>DEEPSEEK_API_KEY</key>
-        <string>__FILL_IN_YOUR_OWN_KEY__</string>
-    </dict>
 </dict>
 </plist>

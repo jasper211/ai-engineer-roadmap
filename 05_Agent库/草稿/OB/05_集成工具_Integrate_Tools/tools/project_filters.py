@@ -18,17 +18,37 @@ from pathlib import Path
 from typing import List
 
 from tools.file_diff import CONCEPT_EXTRACTION_EXTENSIONS
+from tools import table_reader
 
 # ── EA项目（流程架构项目_jasper）：按治理分层的处理优先级 ──
 # 顺序即优先级：00治理 → 03发布成果 → 08任务与跟进 → 01原始材料 → 02过程成果
-# （只探入"规则分析（Jasper）"这一个子目录，其余业务维度子目录本阶段跳过）。
+# （规则分析（Jasper）+ 2026-07-20起新增的其余02层共享业务维度目录）。
 # 04-07（Skill库/Agent库/Scripts库/Memory）是代码资产，非知识内容，不在其列。
+#
+# 2026-07-20 Jasper范围裁定：此前02层只扫"规则分析（Jasper）"这一个Jasper
+# 个人工作区子目录，其余Terresa等人也在更新的共享业务维度目录（L3流程库/
+# 价值流建模/映射分析等）一直被跳过——真实触发场景：Terresa更新了L3流程库的
+# 流程蓝图，OB完全检测不到。现在覆盖到全部02层子目录（在"规则分析（Jasper）"
+# 之后，即02层内部仍是"Jasper个人工作区优先，共享目录其次"，跟00/03/08/01
+# 这几个更权威的层比仍然排在最后，没有改变整体"权威层优先"的原则）。
 EA_LAYER_PRIORITY = [
     "00_治理与元模型",
     "03_发布成果-交付物",
     "08_任务与跟进",
     "01_原始材料-外部导入",
     "02_过程成果-工作产出/规则分析（Jasper）",
+    "02_过程成果-工作产出/L3流程库",
+    "02_过程成果-工作产出/映射分析",
+    "02_过程成果-工作产出/KPI穿透",
+    "02_过程成果-工作产出/岗位族设计",
+    "02_过程成果-工作产出/校验与上下文",
+    "02_过程成果-工作产出/校验与评估",
+    "02_过程成果-工作产出/价值流建模",
+    "02_过程成果-工作产出/数据库",
+    "02_过程成果-工作产出/组织重组",
+    "02_过程成果-工作产出/价值链L1建模",
+    "02_过程成果-工作产出/L4-核心交付物",
+    "02_过程成果-工作产出/L2业务能力",
 ]
 
 # 通用归档/废弃关键字——即便在优先层内，命中这些关键字的子目录/文件也跳过
@@ -46,12 +66,23 @@ def _is_archived(name: str) -> bool:
 def _walk_candidates(base_dir: Path) -> List[Path]:
     """在 base_dir 下递归找候选文件（.md/.docx/.txt），跳过隐藏目录和
     命中归档关键字的目录/文件。返回绝对路径列表，按 os.walk 的自然顺序
-    （同一层级内不额外排序，保持文件系统原有的相对次序）。"""
+    （同一层级内不额外排序，保持文件系统原有的相对次序）。
+
+    2026-07-21 新增版本去重：真实复现过（L3流程库/下14组文件），同一份
+    文档的多个历史版本（如"流程蓝图_L3-SSVA..._V1.1.md"和"..._V1.2.md"）
+    会同时躺在文件夹里，此前逐个当独立文档提炼，产出重复甚至冲突的原子，
+    旧版本的过时内容原样留在vault里没人清理。复用tools/table_reader.py
+    已经验证过的版本分组逻辑（按文件名版本号分组，只取最新），从只给表格
+    用扩展成文档候选也用同一套规则——按目录分组（不同目录下同名文件不放
+    一组，避免跨目录误判），组内保留原有相对顺序，只去掉每组内非最新的
+    版本。"""
     results = []
     if not base_dir.exists():
         return results
+    by_dir: dict = {}
     for dirpath, dirnames, filenames in os.walk(base_dir):
         dirnames[:] = [d for d in dirnames if not d.startswith(".") and not _is_archived(d)]
+        dir_files = []
         for name in filenames:
             if name.startswith("."):
                 continue
@@ -60,19 +91,39 @@ def _walk_candidates(base_dir: Path) -> List[Path]:
             ext = Path(name).suffix.lower()
             if ext not in CONCEPT_EXTRACTION_EXTENSIONS:
                 continue
-            results.append(Path(dirpath) / name)
+            dir_files.append(Path(dirpath) / name)
+        if dir_files:
+            by_dir[dirpath] = dir_files
+
+    for dirpath, dir_files in by_dir.items():
+        latest_only = table_reader.group_latest_versions(dir_files)
+        latest_set = set(latest_only)
+        # group_latest_versions 内部按 base_name 分组、组间无序返回，这里
+        # 按原始 dir_files 的顺序重新过滤，保持"文件系统自然顺序"这条既有约定
+        results.extend(f for f in dir_files if f in latest_set)
     return results
 
 
 def get_ea_candidates(project_root: str) -> List[str]:
     """EA项目专用：按 EA_LAYER_PRIORITY 顺序遍历，返回相对 project_root 的
-    路径列表（按优先级分层排序，同层内按文件系统自然顺序）。"""
+    路径列表（按优先级分层排序，同层内按文件系统自然顺序）。
+
+    2026-07-20 Jasper范围裁定新增：03_发布成果-交付物层的xlsx/csv权威数据表
+    也纳入候选（此前 CONCEPT_EXTRACTION_EXTENSIONS 只认.md/.docx/.txt，表格
+    完全不在扫描范围内——真实触发场景：Terresa更新了价值节点清单/KPI映射表，
+    OB却检测不到变化）。只在03层加表格候选，不是全项目通用规则——01/02/08层
+    的表格文件（多是草稿/中间数据）暂不纳入，避免把还没定稿的数据当权威内容
+    提炼。按tools/table_reader.list_table_candidates()做版本分组只取最新版本，
+    避免同一张表的历史版本被重复提炼。"""
     root = Path(project_root)
     ordered_relative: List[str] = []
     for layer in EA_LAYER_PRIORITY:
         layer_path = root / layer
         for abs_path in _walk_candidates(layer_path):
             ordered_relative.append(str(abs_path.relative_to(root)))
+        if layer == "03_发布成果-交付物":
+            for table_path in table_reader.list_table_candidates(str(root), subdir=layer):
+                ordered_relative.append(str(table_path.relative_to(root)))
     return ordered_relative
 
 

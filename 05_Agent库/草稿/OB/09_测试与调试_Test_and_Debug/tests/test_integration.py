@@ -215,20 +215,29 @@ def test_10_retrieve_no_match_returns_empty_gracefully():
 
 
 def test_12_ea_candidates_layered_priority():
+    # 2026-07-20更新：02层范围从"只扫规则分析（Jasper）"扩到覆盖L3流程库/
+    # 映射分析/KPI穿透等全部共享业务维度目录（Jasper范围裁定，真实触发场景：
+    # Terresa更新L3流程库流程蓝图，OB此前检测不到）。断言相应更新：02层内部
+    # 仍是"规则分析（Jasper）排最前"，但后面不再要求"只有规则分析（Jasper）"。
     print("Test 12: project_filters.get_ea_candidates 按分层优先级排序（对真实EA项目跑）")
     candidates = project_filters.get_ea_candidates(EA_PROJECT_ROOT)
     check("返回非空列表", len(candidates) > 0, f"实际数量: {len(candidates)}")
 
     layers_seen = [c.split("/")[0] for c in candidates]
     first_layer_files = [c for c in candidates if c.startswith("00_治理与元模型")]
-    last_layer_files = [c for c in candidates if c.startswith("02_过程成果-工作产出")]
+    layer02_files = [c for c in candidates if c.startswith("02_过程成果-工作产出")]
     check("00_治理与元模型 出现在候选列表里", len(first_layer_files) > 0)
-    check("02_过程成果-工作产出/规则分析（Jasper） 出现在候选列表里且排在最后",
-          len(last_layer_files) > 0 and layers_seen.index(last_layer_files[0].split("/")[0]) > layers_seen.index(first_layer_files[0].split("/")[0]) if first_layer_files and last_layer_files else False)
+    check("02_过程成果-工作产出 整体排在00_治理与元模型之后",
+          len(layer02_files) > 0 and layers_seen.index(layer02_files[0].split("/")[0]) > layers_seen.index(first_layer_files[0].split("/")[0]) if first_layer_files and layer02_files else False)
     check("04-07层（代码资产）不出现在候选列表里",
           not any(c.startswith(("04_Skill库", "05_Agent库", "06_Scripts库", "07_Memory")) for c in candidates))
-    check("02层里只有'规则分析（Jasper）'子目录，没有其他业务维度子目录",
-          all("规则分析（Jasper）" in c for c in candidates if c.startswith("02_过程成果-工作产出")))
+    rule_analysis_files = [c for c in layer02_files if "规则分析（Jasper）" in c]
+    other_02_files = [c for c in layer02_files if "规则分析（Jasper）" not in c]
+    check("02层规则分析（Jasper）排在其他02层共享目录之前（个人工作区优先级不变）",
+          len(rule_analysis_files) > 0 and len(other_02_files) > 0
+          and candidates.index(rule_analysis_files[-1]) < candidates.index(other_02_files[0]))
+    check("02层共享目录（L3流程库等）现在确实被覆盖到了",
+          any("L3流程库" in c for c in other_02_files))
     check("归档关键字文件被排除", not any(("归档" in c or "旧版" in c or "backup" in c.lower()) for c in candidates))
 
 
