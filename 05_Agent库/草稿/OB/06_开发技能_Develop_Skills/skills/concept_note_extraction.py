@@ -131,7 +131,15 @@ class ConceptNoteExtractor:
                         e = e2
                 else:
                     raise
-        return data.get("atoms", [])
+        atoms = data.get("atoms", [])
+        # 真实复现过：LLM偶发输出缺"title"字段的atom对象（json本身合法，
+        # 只是结构不完整，_repair_*系列救不了这种）——write_atom()直接用
+        # atom["title"]会KeyError崩掉整份文档，改成跳过这一条、保留其余
+        # 合法的atom，不因为一条数据不完整就丢掉整份提炼结果。同一次调用
+        # 里其他LLM响应实测过完全正常，这是偶发的输出质量问题，不是提示词
+        # 系统性缺陷。
+        valid_atoms = [a for a in atoms if isinstance(a, dict) and a.get("title")]
+        return valid_atoms
 
     def _atom_path(self, atom_title: str) -> Path:
         return self.vault_path / self.project_name / f"{_slugify(atom_title)}.md"
