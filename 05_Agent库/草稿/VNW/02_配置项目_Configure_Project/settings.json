@@ -1,0 +1,15 @@
+{
+  "agent_id": "VNW",
+  "name": "价值节点驱动工作流 Agent",
+  "version": "0.2.0",
+  "status": "草稿",
+  "description": "监测价值节点清单变更，并生成可追溯的信号基线。",
+  "migration_note": "v0.1.0：按SOP v1.2建立01-11骨架；首批迁移清单监控与Phase1信号提取，形成检测→提取→状态落盘的最小闭环。真实V3.44验证发现Sheet改名、标题行偏移、熔断字段类型变化，已在迁移副本中兼容，不修改Phase1原件。",
+  "watch_patterns": ["D1_价值节点清单_*.xlsx"],
+  "default_domain": "PAY",
+  "legacy_signal_extractor": "05_Agent库/草稿/VNW/06_开发技能_Develop_Skills/skills/signal_extractor_legacy.py",
+  "workspace_dir": ".vnw_workspace",
+  "skills": ["change_detection", "signal_extraction", "minimum_loop"],
+  "tools": ["file_fingerprint", "legacy_runner"],
+  "archive_gate": {"mark_confirmed": false}
+}
