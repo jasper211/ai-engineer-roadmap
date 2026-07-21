@@ -44,8 +44,17 @@ _SSL_CONTEXT = build_ssl_context()
 
 def call_deepseek(system_prompt: str, user_content: str, api_key: str,
                    model: str = DEFAULT_MODEL, max_retries: int = 2,
-                   temperature: float = 0, json_mode: bool = True) -> str:
-    """调用 DeepSeek Chat Completions（OpenAI 兼容接口），返回 message.content 字符串。"""
+                   temperature: float = 0, json_mode: bool = True,
+                   max_tokens: int = 8192) -> str:
+    """调用 DeepSeek Chat Completions（OpenAI 兼容接口），返回 message.content 字符串。
+
+    max_tokens 显式设置为8192（deepseek-chat文档标注的输出上限）——此前
+    没传这个参数，走API默认值，真实复现过：源文档本身信息密度高（比如一份
+    包含几十个价值节点的表格布局dump），提炼出的atoms数组太长，输出在还没
+    走完整个JSON结构时被默认的更低output限制截断，产出'Unterminated
+    string'这类"JSON从中间断掉"的错误——这跟已经修过的"字符串内容转义
+    错误"是不同性质的问题，转义修复函数救不了从根上就不完整的JSON，
+    只能从源头把输出上限提高。"""
     body_dict = {
         "model": model,
         "messages": [
@@ -53,6 +62,7 @@ def call_deepseek(system_prompt: str, user_content: str, api_key: str,
             {"role": "user", "content": user_content},
         ],
         "temperature": temperature,
+        "max_tokens": max_tokens,
     }
     if json_mode:
         body_dict["response_format"] = {"type": "json_object"}
