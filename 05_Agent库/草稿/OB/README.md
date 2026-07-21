@@ -4,6 +4,21 @@ v0.4.0 —— 按 01-11 骨架（同 PTA 已验证的标准模板）搭建，三
 检索服务/概念笔记提炼）全部实现+真实数据验证通过，vault 已完成物理迁移+
 内容重置，概念笔记提炼补齐了批量+增量编排（不再只能单文件手动调用）。
 
+**2026-07-21 补充（写入侧自动化增强，详见
+[写入侧自动化增强设计_v1.md](03_规划项目结构_Plan_Project_Structure/写入侧自动化增强设计_v1.md)）**：
+- `write_atom()` 现在补齐 authority_layer（确定性派生）/confidence+
+  confidence_reason（LLM随提炼一并给出）/decision_status/entity_type/
+  entity_ref 完整schema，不再只写5个基础字段——此前 Jasper AI协同经验引擎
+  418个原子schema"贫瘠"就是因为这一步一直缺失，不是EA/Jasper两个项目本该
+  用不同schema
+- 新增 `agent.py --cluster-project <项目名>`（`skills/cluster_atoms.py`）：
+  把"待聚类"原子匹配进既有枢纽或组建新枢纽，硬性限制单枢纽不超过15个原子，
+  直接针对已发现的"财务流程与凭证"204原子巨型垃圾桶枢纽问题设计防线
+- 修复 `com.jasper.ob-sync-agent.plist` 指向已废弃脚本路径的问题
+- **`com.jasper.ob-daily-extract.plist` 仍未激活**（模板已就绪，需 Jasper
+  确认真实API成本后手动 `launchctl load`）；聚类脚本已用合成数据验证但
+  未跑过真实vault数据，建议先 `--dry-run` 验证
+
 原游离目录 `05_Agent库/OB知识库同步巡检Agent/` 已清空移除，历史代码保留在
 [`_retired_flat_structure/`](_retired_flat_structure/)。
 

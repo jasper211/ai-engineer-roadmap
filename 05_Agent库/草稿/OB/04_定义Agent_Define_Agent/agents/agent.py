@@ -47,6 +47,7 @@ from skills.vault_sync_health import VaultSyncHealthChecker
 from skills.knowledge_retrieval import KnowledgeRetriever
 from skills.concept_note_extraction import ConceptNoteExtractor
 from skills.batch_concept_extraction import BatchConceptExtractor
+from skills.cluster_atoms import AtomClusterer
 from tools import agent_status
 from tools.atom_embeddings import AtomEmbeddingStore
 from memory import workspace as ws
@@ -240,6 +241,48 @@ def cmd_extract_project(args) -> int:
     return 0
 
 
+def cmd_cluster_project(args) -> int:
+    if args.cluster_project not in PROJECT_ROOTS:
+        print(f"❌ 未知项目「{args.cluster_project}」，可选: {list(PROJECT_ROOTS.keys())}")
+        return 1
+
+    if not args.dry_run:
+        api_key = os.environ.get("DEEPSEEK_API_KEY")
+        if not api_key:
+            print("❌ 未设置 DEEPSEEK_API_KEY 环境变量，聚类连贯性判断需要真实LLM调用（--dry-run 不需要）")
+            return 1
+    else:
+        api_key = None
+
+    clusterer = AtomClusterer(
+        vault_path=args.vault_path or VAULT_PATH,
+        project_name=args.cluster_project,
+        vector_mjs=VECTOR_SERVER_SCRIPT,
+        api_key=api_key or "",
+    )
+
+    if not args.quiet:
+        mode = "（dry-run，不调用LLM/不花钱）" if args.dry_run else "（真实调用DeepSeek判断连贯性，产生真实费用）"
+        print(f"🧠 增量聚类「{args.cluster_project}」{mode} ...")
+
+    summary = clusterer.scan_and_cluster(dry_run=args.dry_run, max_llm_calls=args.max_llm_calls)
+
+    print(f"待聚类原子: {summary['unclustered_scanned']} | 既有枢纽: {summary['existing_hubs']}")
+    if args.dry_run:
+        print("将会执行的操作（不实际调用LLM/不写vault）:")
+        for p in summary["plan"]:
+            print(f"  [{p['action']}] {p.get('hub', '')} {p['atoms']}")
+    else:
+        print(f"并入既有枢纽: {summary['matched_to_existing_hub']} | 新建枢纽: {summary['new_hubs_created']} | "
+              f"仍待聚类: {summary['atoms_still_unclustered']} | 无embedding跳过: {summary['skipped_no_embedding']} | "
+              f"LLM调用次数: {summary['llm_calls']}")
+        if summary["errors"]:
+            print(f"错误 ({len(summary['errors'])}):")
+            for e in summary["errors"]:
+                print(f"  {e}")
+    return 0
+
+
 def cmd_backfill_embeddings(args) -> int:
     project_root = PROJECT_ROOTS.get(args.backfill_embeddings)
     if not project_root:
@@ -283,6 +326,9 @@ def main():
     parser.add_argument("--max-files", type=int, default=None, help="--extract-project 单次最多处理的文件数（控制单次成本）")
     parser.add_argument("--backfill-embeddings", type=str, default=None, metavar="PROJECT_NAME",
                         help=f"给vault里已有但embedding缓存里没有的原子回填embedding（不重新提炼，只算向量）：{list(PROJECT_ROOTS.keys())} 之一，产生真实embedding API费用")
+    parser.add_argument("--cluster-project", type=str, default=None, metavar="PROJECT_NAME",
+                        help=f"知识枢纽增量聚类：把「待聚类」原子匹配进既有枢纽或组建新枢纽，{list(PROJECT_ROOTS.keys())} 之一，需DEEPSEEK_API_KEY（--dry-run除外），产生真实费用")
+    parser.add_argument("--max-llm-calls", type=int, default=None, help="--cluster-project 单次最多发起的LLM连贯性判断调用次数（控制单次成本）")
     parser.add_argument("--quiet", action="store_true", help="不打印进度到 stdout")
     args = parser.parse_args()
 
@@ -303,6 +349,9 @@ def main():
 
     if args.backfill_embeddings:
         sys.exit(cmd_backfill_embeddings(args))
+
+    if args.cluster_project:
+        sys.exit(cmd_cluster_project(args))
 
     parser.print_help()
     sys.exit(0)

@@ -140,3 +140,45 @@ def get_candidates(project_name: str, project_root: str) -> List[str]:
     if project_name == "EA流程架构项目":
         return get_ea_candidates(project_root)
     return get_generic_candidates(project_root)
+
+
+# ── authority_layer 派生（2026-07-21新增）──
+# 背景：vault里EA项目的原子有authority_layer字段（00_治理/01_原始/02_草稿/
+# 03_已锁定/08_任务跟进），这套值本来就是EA_LAYER_PRIORITY那几个源目录名的
+# 治理含义——但当前批量提炼流程（concept_note_extraction.py.write_atom()）
+# 从没写过这个字段，是因为没人把"源文件在哪个分层目录下"这条已有信息接到
+# 写入逻辑上，不是需要新设计一套判断规则。这里只是把EA_LAYER_PRIORITY的
+# 目录名映射成atom frontmatter用的authority_layer取值，纯字符串前缀匹配，
+# 不需要LLM判断。
+EA_AUTHORITY_LAYER_MAP = {
+    "00_治理与元模型": "00_治理",
+    "03_发布成果-交付物": "03_已锁定",
+    "08_任务与跟进": "08_任务跟进",
+    "01_原始材料-外部导入": "01_原始",
+    # 02_过程成果-工作产出 下全部子目录（规则分析（Jasper）/L3流程库/映射分析等）
+    # 统一归"02_草稿"——这些都是过程中的工作产出，还没走到03层锁定发布
+    "02_过程成果-工作产出": "02_草稿",
+}
+
+# Rw权益项目/Jasper AI协同经验引擎目前没有EA项目这套治理分层（project_filters
+# 顶部注释已说明："暂无同等细致的分层，用更简单的关键字黑名单排除"）——在这两个
+# 项目自己的分层方案定下来之前（需要Jasper拍板，见路线图"待确认事项"），统一
+# 给"02_草稿"这个中性默认值，不虚构一个假的权威判断。等这两个项目也有分层
+# 定义后，这里要改成按各自项目的规则派生，不能一直用这个默认值。
+GENERIC_PROJECT_DEFAULT_AUTHORITY_LAYER = "02_草稿"
+
+
+def derive_authority_layer(project_name: str, source_relative_path: str) -> str:
+    """给定项目名+源文件相对路径（write_atom()里source字段的值），返回这个
+    原子应该写入的authority_layer。EA项目按源文件所在分层目录前缀匹配；其余
+    项目暂时统一返回默认值（见上方GENERIC_PROJECT_DEFAULT_AUTHORITY_LAYER的
+    说明，是已知的临时简化，不是最终方案）。"""
+    if project_name == "EA流程架构项目":
+        for prefix, layer in EA_AUTHORITY_LAYER_MAP.items():
+            if source_relative_path.startswith(prefix):
+                return layer
+        # 理论上不会走到这里——candidates本来就是从EA_LAYER_PRIORITY这几个
+        # 目录下筛出来的，source只能是这几个前缀之一；保留兜底避免未来
+        # EA_LAYER_PRIORITY改了但这里忘了同步时直接崩溃
+        return "02_草稿"
+    return GENERIC_PROJECT_DEFAULT_AUTHORITY_LAYER

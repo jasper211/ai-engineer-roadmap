@@ -34,6 +34,7 @@ from pathlib import Path
 from typing import Dict, List, Optional
 
 from tools.llm_client import call_deepseek, DEFAULT_MODEL
+from tools.project_filters import derive_authority_layer
 
 PROMPTS_DIR = Path(__file__).resolve().parent.parent.parent / "08_设计提示词_Design_Prompts" / "prompts"
 SYSTEM_PROMPT_PATH = PROMPTS_DIR / "concept_note_extraction_system.md"
@@ -212,12 +213,35 @@ class ConceptNoteExtractor:
                     f"{old_summary_m.group(1).strip()}\n\n</details>\n"
                 )
 
+        # 2026-07-21新增：补齐治理/聚类字段，对齐EA项目早期迁移脚本(migrate_
+        # full_vault.py，本仓库已不存)产出的完整schema——此前write_atom()只写
+        # 5个基础字段，导致本流程(agent.py --extract-project)产出的原子(如
+        # Jasper AI协同经验引擎的418个)跟EA项目原子是两套不同成熟度的schema，
+        # 见路线图诊断"跨项目schema不一致"一节。
+        # confidence/confidence_reason来自LLM按提示词新增的打分标准判断，不是
+        # 硬编码；decision_status/entity_type/entity_ref三个字段仍然只能是
+        # 占位符——decision_status要等治理评审通过后才该改(不该在创建时就自称
+        # 已确认)，entity_type/entity_ref要等聚类脚本跑过才有值(聚类是本次
+        # 之外的独立设计，见"阶段F设计"文档的聚类小节)，authority_layer则是
+        # 唯一可以在写入时就确定性派生的字段(来自源文件所在分层目录，不依赖
+        # LLM判断)。
+        authority_layer = derive_authority_layer(self.project_name, source_path)
+        confidence = atom.get("confidence") or "UNSTATED"
+        confidence_reason = atom.get("confidence_reason", "")
+
         content = (
             "---\n"
             "type: concept_atom\n"
             f"concept_type: {atom.get('concept_type', '未分类')}\n"
             f"project: {self.project_name}\n"
             f"source: {source_path}\n"
+            f"authority_layer: {authority_layer}\n"
+            f"confidence: {confidence}\n"
+            f"confidence_reason: {confidence_reason}\n"
+            "decision_status: UNSTATED\n"
+            "as_of: 未知\n"
+            "entity_type: 待聚类\n"
+            "entity_ref: （无）\n"
             f"extracted_at: {datetime.now().isoformat(timespec='seconds')}\n"
             "---\n\n"
             f"# {atom['title']}\n\n"

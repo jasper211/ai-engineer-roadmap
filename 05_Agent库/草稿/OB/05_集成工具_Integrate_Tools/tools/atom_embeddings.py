@@ -192,6 +192,17 @@ class AtomEmbeddingStore:
             return None
         return _cosine_similarity(result["embedding"], self._data[existing_slug]["embedding"])
 
+    def similarity_between(self, slug_a: str, slug_b: str) -> Optional[float]:
+        """给定两个都已经有缓存embedding的原子slug，直接算余弦相似度，不发起
+        任何新的embedding API调用。任一slug没有缓存时返回None（调用方应把
+        None理解为"没法比较"，不是"不相似"）——2026-07-21新增，供
+        skills/cluster_atoms.py做"待聚类原子 vs 既有枢纽成员"的相似度匹配，
+        这类比较双方都是已经提炼过、大概率已经缓存过embedding的原子，不需要
+        走find_similar_atom()那种"边查边新增缓存"的逻辑。"""
+        if slug_a not in self._data or slug_b not in self._data:
+            return None
+        return _cosine_similarity(self._data[slug_a]["embedding"], self._data[slug_b]["embedding"])
+
     def store_embedding(self, atom_slug: str, title: str, summary: str) -> bool:
         """计算并存储一个原子的 embedding，返回是否成功（失败=无可用API）。"""
         result = embed_text(self.vector_mjs, f"{title}\n{summary}")

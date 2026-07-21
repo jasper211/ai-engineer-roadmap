@@ -16,8 +16,8 @@ from pathlib import Path
 from typing import Dict, Optional
 
 FRONTMATTER_FIELDS = [
-    "concept_type", "authority_layer", "confidence", "decision_status",
-    "as_of", "entity_type", "entity_ref",
+    "concept_type", "authority_layer", "confidence", "confidence_reason",
+    "decision_status", "as_of", "entity_type", "entity_ref",
 ]
 
 HUB_LINK_RE = re.compile(r"## 所属枢纽\n\n((?:- \[\[.+?\]\]\n?)+)")
