@@ -242,6 +242,7 @@ class ConceptNoteExtractor:
             "as_of: 未知\n"
             "entity_type: 待聚类\n"
             "entity_ref: （无）\n"
+            "status: 生效\n"
             f"extracted_at: {datetime.now().isoformat(timespec='seconds')}\n"
             "---\n\n"
             f"# {atom['title']}\n\n"
