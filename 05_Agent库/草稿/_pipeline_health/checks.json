@@ -1,0 +1,311 @@
+{
+  "_meta": {
+    "spec": "Pipeline差距矩阵_检测机制设计_v1.0.md",
+    "matrix_source": "05_Agent库/草稿/[RPT]_AI协同建造者_Agent架构目标差距与实现路径_Jasper_v5.0.html",
+    "note": "只收录 evidence_type=auto 的检测项（GOVERN/OWN 里能部分自动读取但不做判断的项也在此列，靠 probe.mode=readonly 区分）；纯 manual 且无 probe 的项不进本文件，报告里直接按矩阵原文列出即可。probe 路径均相对 project_root，除非用 abs_path。"
+  },
+  "checks": [
+    {
+      "id": "S1-BUILD-1",
+      "stage_id": 1,
+      "stage_name": "OB背景上下文",
+      "dimension": "BUILD",
+      "claim": "OB skills/knowledge_retrieval.py 存在",
+      "evidence_type": "auto",
+      "evidence_source": "文件存在性检查",
+      "probe": {
+        "kind": "file_exists",
+        "path": "05_Agent库/草稿/OB/06_开发技能_Develop_Skills/skills/knowledge_retrieval.py"
+      }
+    },
+    {
+      "id": "S1-BUILD-2",
+      "stage_id": 1,
+      "stage_name": "OB背景上下文",
+      "dimension": "BUILD",
+      "claim": "vault概念笔记原子数量（跟踪周环比，不跟矩阵HTML的数字做绝对比对——两边计数口径可能不同，差异由人判断是否需要改矩阵）",
+      "evidence_type": "auto",
+      "evidence_source": "count_glob，跟上次记录的数字比较",
+      "probe": {
+        "kind": "count_glob",
+        "abs_root": "/Users/a112233/Desktop/Jasper工作文档（不含EA项目）/OB知识库_vault",
+        "pattern": "*.md",
+        "recursive": true,
+        "mode": "track_change"
+      }
+    },
+    {
+      "id": "S1-VERIFY-1",
+      "stage_id": 1,
+      "stage_name": "OB背景上下文",
+      "dimension": "VERIFY",
+      "claim": "业务Agent（PTA/VNW/AIT）零调用 knowledge_retrieval/get_context（矩阵现状声明，持续确认是否仍然成立）",
+      "evidence_type": "auto",
+      "evidence_source": "grep PTA/VNW/AIT源码是否出现调用",
+      "probe": {
+        "kind": "grep_count",
+        "roots": [
+          "PTA",
+          "VNW",
+          "AIT"
+        ],
+        "glob": "*.py",
+        "pattern": "knowledge_retrieval|get_context\\(",
+        "expect_zero": true
+      }
+    },
+    {
+      "id": "S2-BUILD-1",
+      "stage_id": 2,
+      "stage_name": "VNW发现→SOP",
+      "dimension": "BUILD",
+      "claim": "VNW settings.json 的 skills 数组长度（跟踪变化，判断5段流程完成到第几段）",
+      "evidence_type": "auto",
+      "evidence_source": "读取 VNW/02_配置项目_Configure_Project/settings.json 的 skills 字段",
+      "probe": {
+        "kind": "json_field",
+        "path": "05_Agent库/草稿/VNW/02_配置项目_Configure_Project/settings.json",
+        "field": "skills",
+        "value_type": "list_len",
+        "mode": "track_change"
+      }
+    },
+    {
+      "id": "S2-VERIFY-1",
+      "stage_id": 2,
+      "stage_name": "VNW发现→SOP",
+      "dimension": "VERIFY",
+      "claim": "VNW集成测试跑得通，记录用例数+exit code，跟上次比较是否退步",
+      "evidence_type": "auto",
+      "evidence_source": "运行 VNW/09_测试与调试_Test_and_Debug/tests/test_integration.py",
+      "probe": {
+        "kind": "run_test_script",
+        "path": "05_Agent库/草稿/VNW/09_测试与调试_Test_and_Debug/tests/test_integration.py",
+        "mode": "track_change"
+      }
+    },
+    {
+      "id": "S2-GOVERN-1",
+      "stage_id": 2,
+      "stage_name": "VNW发现→SOP",
+      "dimension": "GOVERN",
+      "claim": "VNW settings.json 的 migration_note 字段是否有更新（有更新=本周有实质进展记录）",
+      "evidence_type": "auto",
+      "evidence_source": "读取字段内容做哈希，跟上次记录比较",
+      "probe": {
+        "kind": "json_field",
+        "path": "05_Agent库/草稿/VNW/02_配置项目_Configure_Project/settings.json",
+        "field": "migration_note",
+        "value_type": "text_hash",
+        "mode": "track_change"
+      }
+    },
+    {
+      "id": "S3-BUILD-1",
+      "stage_id": 3,
+      "stage_name": "VNW→AIT移交",
+      "dimension": "BUILD",
+      "claim": "VNW/AIT代码里目前没有出现\"SOP标记\"相关字段/函数（矩阵声明\"无代码\"，持续确认没有变化——变化了应主动提示，不等人手动发现）",
+      "evidence_type": "auto",
+      "evidence_source": "grep VNW/AIT源码",
+      "probe": {
+        "kind": "grep_count",
+        "roots": [
+          "VNW",
+          "AIT"
+        ],
+        "glob": "*.py",
+        "pattern": "sop_marked|sop_status|handoff_to_ait",
+        "expect_zero": true
+      }
+    },
+    {
+      "id": "S3-VERIFY-1",
+      "stage_id": 3,
+      "stage_name": "VNW→AIT移交",
+      "dimension": "VERIFY",
+      "claim": "是否出现命名含 handoff 的测试文件（目前应为0）",
+      "evidence_type": "auto",
+      "evidence_source": "在VNW/AIT测试目录里按文件名匹配",
+      "probe": {
+        "kind": "count_glob",
+        "roots": [
+          "VNW",
+          "AIT"
+        ],
+        "pattern": "*handoff*",
+        "recursive": true,
+        "expect_zero": true
+      }
+    },
+    {
+      "id": "S4-BUILD-1",
+      "stage_id": 4,
+      "stage_name": "AIT三轨道建造",
+      "dimension": "BUILD",
+      "claim": "AIT config.json 的 version + skills_used 数组（跟踪变化）",
+      "evidence_type": "auto",
+      "evidence_source": "读取 AIT/config.json",
+      "probe": {
+        "kind": "json_field",
+        "path": "05_Agent库/草稿/AIT/config.json",
+        "field": "version,skills_used",
+        "value_type": "composite",
+        "mode": "track_change"
+      }
+    },
+    {
+      "id": "S4-VERIFY-1",
+      "stage_id": 4,
+      "stage_name": "AIT三轨道建造",
+      "dimension": "VERIFY",
+      "claim": "AIT是否已有测试文件（目前应为0）",
+      "evidence_type": "auto",
+      "evidence_source": "count_glob AIT目录下 test_*.py",
+      "probe": {
+        "kind": "count_glob",
+        "roots": [
+          "AIT"
+        ],
+        "pattern": "test_*.py",
+        "recursive": true,
+        "mode": "track_change"
+      }
+    },
+    {
+      "id": "S4-VERIFY-2",
+      "stage_id": 4,
+      "stage_name": "AIT三轨道建造",
+      "dimension": "VERIFY",
+      "claim": "L3-COM案例文档（唯一真实校准案例）是否仍在更新——最近一次文件修改时间",
+      "evidence_type": "auto",
+      "evidence_source": "mtime检查，L3-COM_佣金全链路管理Agent目录下最新文件修改时间",
+      "probe": {
+        "kind": "mtime_latest",
+        "abs_root": "/Users/a112233/Desktop/流程架构项目_jasper/02_过程成果-工作产出/规则分析（Jasper）/Agent规划与搭建/L3-COM_佣金全链路管理Agent",
+        "mode": "track_change"
+      }
+    },
+    {
+      "id": "S5-BUILD-1",
+      "stage_id": 5,
+      "stage_name": "PTA协同执行",
+      "dimension": "BUILD",
+      "claim": "PTA settings.json 的 version 字段（跟踪变化，本项目最活跃的Agent）",
+      "evidence_type": "auto",
+      "evidence_source": "读取 PTA/02_配置项目_Configure_Project/settings.json",
+      "probe": {
+        "kind": "json_field",
+        "path": "05_Agent库/草稿/PTA/02_配置项目_Configure_Project/settings.json",
+        "field": "version",
+        "value_type": "raw",
+        "mode": "track_change"
+      }
+    },
+    {
+      "id": "S5-VERIFY-1",
+      "stage_id": 5,
+      "stage_name": "PTA协同执行",
+      "dimension": "VERIFY",
+      "claim": "PTA集成测试24项全过，跟上次比较是否退步——全矩阵里生产自动化程度最高的环节",
+      "evidence_type": "auto",
+      "evidence_source": "运行 PTA/09_测试与调试_Test_and_Debug/tests/test_integration.py",
+      "probe": {
+        "kind": "run_test_script",
+        "path": "05_Agent库/草稿/PTA/09_测试与调试_Test_and_Debug/tests/test_integration.py",
+        "mode": "track_change"
+      }
+    },
+    {
+      "id": "S5-VERIFY-2",
+      "stage_id": 5,
+      "stage_name": "PTA协同执行",
+      "dimension": "VERIFY",
+      "claim": "daily_sensing launchd任务的日志最近一次真实运行时间——矩阵里\"运行\"两个字最该被验证的地方，如果停了应该最先被发现",
+      "evidence_type": "auto",
+      "evidence_source": "检查 /tmp/pta-daily-scan.log 的mtime，超过约定周期(约38小时,容许延迟)未更新即drift",
+      "probe": {
+        "kind": "mtime_staleness",
+        "abs_path": "/tmp/pta-daily-scan.log",
+        "max_age_hours": 38
+      }
+    },
+    {
+      "id": "S5-VERIFY-3",
+      "stage_id": 5,
+      "stage_name": "PTA协同执行",
+      "dimension": "VERIFY",
+      "claim": "PTA README.md 声明的测试项数量应与 test_integration.py 实际测试函数数一致（文档漂移检测，2026-07-21已发现一次13 vs 24的真实漂移）",
+      "evidence_type": "auto",
+      "evidence_source": "正则提取README声明数字 + 实测 test_integration.py 里 def test_ 数量，两者比对",
+      "probe": {
+        "kind": "doc_count_drift",
+        "doc_path": "05_Agent库/草稿/PTA/README.md",
+        "doc_pattern": "测试（(\\d+)\\s*项",
+        "code_path": "05_Agent库/草稿/PTA/09_测试与调试_Test_and_Debug/tests/test_integration.py",
+        "code_pattern": "^def test_\\d+_"
+      }
+    },
+    {
+      "id": "S5-OWN-1",
+      "stage_id": 5,
+      "stage_name": "PTA协同执行",
+      "dimension": "OWN",
+      "claim": "archive_gate.mark_confirmed 当前值——脚本只读取记录，不判断该不该推进Mark确认",
+      "evidence_type": "manual",
+      "evidence_source": "读取 PTA/02_配置项目_Configure_Project/settings.json 的 archive_gate.mark_confirmed",
+      "probe": {
+        "kind": "json_field",
+        "path": "05_Agent库/草稿/PTA/02_配置项目_Configure_Project/settings.json",
+        "field": "archive_gate.mark_confirmed",
+        "value_type": "raw",
+        "mode": "readonly"
+      }
+    },
+    {
+      "id": "S6-BUILD-1",
+      "stage_id": 6,
+      "stage_name": "方法论双循环",
+      "dimension": "BUILD",
+      "claim": "\"方法论转正Agent\"目录目前应不存在于05_Agent库/草稿/下，持续确认",
+      "evidence_type": "auto",
+      "evidence_source": "目录存在性检查",
+      "probe": {
+        "kind": "dir_exists_any",
+        "candidates": [
+          "方法论转正Agent",
+          "METHOD"
+        ],
+        "expect_false": true
+      }
+    },
+    {
+      "id": "S6-GOVERN-1",
+      "stage_id": 6,
+      "stage_name": "方法论双循环",
+      "dimension": "GOVERN",
+      "claim": "Agent验证标准清单_v1.0.md 最后更新时间（跟踪变化）",
+      "evidence_type": "auto",
+      "evidence_source": "mtime检查",
+      "probe": {
+        "kind": "mtime_latest",
+        "path": "05_Agent库/草稿/Agent验证标准清单_v1.0.md",
+        "mode": "track_change"
+      }
+    },
+    {
+      "id": "S7-BUILD-1",
+      "stage_id": 7,
+      "stage_name": "部门接管复制",
+      "dimension": "BUILD",
+      "claim": "AIT的SOP_manual.md交付物目前应不存在（部门接管尚未开始的现状确认）",
+      "evidence_type": "auto",
+      "evidence_source": "文件存在性检查",
+      "probe": {
+        "kind": "file_exists",
+        "path": "05_Agent库/草稿/AIT/SOP_manual.md",
+        "expect_false": true
+      }
+    }
+  ]
+}

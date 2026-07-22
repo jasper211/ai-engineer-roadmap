@@ -76,6 +76,8 @@ from skills.rule_based_task_scan import (RuleBasedScanner, format_report_text as
 from skills.document_task_discovery import (DocumentDiscoverer, format_text as format_discovery_text,
                                              to_dict as discovery_to_dict)
 from skills.project_intelligence import ProjectIntelligence, format_analyze_text, format_cross_text
+from skills.pipeline_health import (load_checks, run_all_checks, _save_baseline, REPORT_DIR_RELATIVE,
+                                     format_report_markdown as format_pipeline_report_markdown)
 from tools.task_knowledge import load_task_map, merge_suggested_tasks
 from tools.dir_scan import analyze_project, format_report_text, format_report_markdown
 from tools.wecom_notify import (load_wecom_config, build_notification_text,
@@ -119,7 +121,8 @@ def cmd_status(project_root: str = None) -> None:
     print("=" * 60)
 
 
-def cmd_daily_scan(project_root: str = None, force: bool = False, notify: bool = False) -> None:
+def cmd_daily_scan(project_root: str = None, force: bool = False, notify: bool = False,
+                    extra_exclude_dirs: list = None) -> None:
     """每日主动巡检：本地 diff → 合并 LLM 分析 → 建议任务写进 pta_tasks.json，
     但绝不自动执行——确认执行走的是 run_instruction() 完全不变的现有路径
     （`agent.py "执行 RPT-xxx" --execute`），这里只负责"发现+提议"。
@@ -133,7 +136,7 @@ def cmd_daily_scan(project_root: str = None, force: bool = False, notify: bool =
     state = ws.load_state(workspace)
     recent_history = state.get("task_history", [])[-5:]
 
-    sensor = DailySensor(resolved_root)
+    sensor = DailySensor(resolved_root, extra_exclude_dirs=set(extra_exclude_dirs) if extra_exclude_dirs else None)
     try:
         briefing, updated_sensing_state, task_map_entries = sensor.scan(
             sensing_state, force=force, recent_task_history=recent_history)
@@ -294,6 +297,67 @@ def cmd_intel(project_root: str = None, mode: str = "analyze", query: str = None
         print(f"\n报告已保存: {output}")
 
 
+def cmd_pipeline_check(project_root: str = None, checks_path: str = None,
+                        notify: bool = False, dry_run: bool = False) -> None:
+    """Pipeline差距矩阵周检测（新增能力，跟 --daily-scan 平级、不是它的子功能）：
+    依据 05_Agent库/草稿/_pipeline_health/checks.json 里定义的检测项，逐条查证据
+    （文件存在性/测试exit code/字段读取/mtime），跟上次记录比对，把"矩阵声明"
+    和"实际状态"的差异摆出来——全部是确定性检查，不调用 LLM，不做主观判断。
+
+    dry_run=True 时只打印报告到终端，不写报告文件、不更新基线、不发通知——
+    首次启用必须先 --dry-run 核对输出格式和检测项跑得通，跟 daily_sensing
+    v2.3.0 上线时的做法一致。"""
+    resolved_root = _resolve_project_root(project_root)
+    # 不同于 task_map 的"未显式传 --project-root 就不查目标目录"策略：
+    # checks.json 天然就属于被检测项目自己（这次是本项目自己检测自己），
+    # 默认目标（home project）下也应该直接命中它真实的 checks.json，
+    # 不应该退化去用兜底的空白默认值。
+    checks = load_checks(checks_path, resolved_root)
+
+    if not checks:
+        print("[pipeline-check] 未找到任何检测项定义（checks.json 为空或不存在），无事可做。")
+        return
+
+    report_dir = resolved_root / REPORT_DIR_RELATIVE
+    report_dir.mkdir(parents=True, exist_ok=True)
+
+    results, new_baseline = run_all_checks(resolved_root, checks, report_dir)
+    run_date = datetime.now().strftime("%Y-%m-%d")
+    report_text = format_pipeline_report_markdown(results, run_date)
+    print(report_text)
+
+    if dry_run:
+        print("ℹ️ [DRY-RUN] 未写入报告文件、未更新基线、未发送通知。")
+        return
+
+    report_path = report_dir / f"检测记录_{run_date}.md"
+    report_path.write_text(report_text, encoding="utf-8")
+    _save_baseline(report_dir, new_baseline)
+    print(f"\n报告已保存: {report_path}")
+
+    drifted = [r for r in results if r.drift is True]
+    if notify and drifted:
+        config = load_wecom_config()
+        if not config:
+            print("\nℹ️ 未找到 wecom_config.json，跳过企业微信通知。")
+        else:
+            lines = [f"【PTA Pipeline周检测】发现 {len(drifted)} 处与矩阵声明不一致："]
+            for r in drifted[:10]:
+                c = r.check
+                lines.append(f"- [{c['stage_id']} {c['stage_name']}/{c['dimension']}] {c['claim']}")
+            lines.append(f"\n完整报告: {report_path}")
+            content = "\n".join(lines)
+            mobiles = config.get("mobiles", {})
+            mentioned = [mobiles["Jasper"]] if "Jasper" in mobiles else []
+            result = send_wecom_text(config["webhook_url"], content, mentioned)
+            if result.get("errcode") == 0:
+                print("\n✅ 企业微信通知已发送")
+            else:
+                print(f"\n⚠️ 企业微信通知发送失败: {result.get('errmsg')}")
+    elif notify:
+        print("\nℹ️ 本周无drift，跳过企业微信通知（无需打扰）。")
+
+
 def run_instruction(instruction: str, execute: bool, sync: bool, message: str,
                      project_root: str = None, task_map: str = None) -> None:
     resolved_root = _resolve_project_root(project_root)
@@ -398,9 +462,12 @@ def main():
                               "只生成简报写进 pta_tasks.json，不自动执行")
     parser.add_argument("--force", action="store_true",
                          help="--daily-scan/--discover 专用：忽略增量哈希基线，把所有文件当新增重新分析一遍")
+    parser.add_argument("--exclude-dirs", nargs="*",
+                         help="--daily-scan 专用：额外排除的目录名（与内置的 .git/node_modules 等默认排除项"
+                              "取并集，不是替换），用于把大文件夹里跟本项目无关的子目录排除在扫描外")
     parser.add_argument("--notify", action="store_true",
-                         help="--daily-scan 专用：有建议任务时推送企业微信群通知（@ 相关方），"
-                              "默认关闭，需要先配置 02_配置项目_Configure_Project/wecom_config.json")
+                         help="--daily-scan/--pipeline-check 共用：有建议任务/发现drift时推送企业微信"
+                              "群通知，默认关闭，需要先配置 02_配置项目_Configure_Project/wecom_config.json")
     parser.add_argument("--dashboard", action="store_true",
                          help="项目仪表盘（原 PTA-DASH，Rw 项目专用）：以人为中心的进度/风险报告")
     parser.add_argument("--person", "-u", default="all",
@@ -419,17 +486,23 @@ def main():
     parser.add_argument("--scan", action="store_true",
                          help="--discover 专用：自动扫描项目内候选文档，按增量状态过滤")
     parser.add_argument("--dry-run", action="store_true",
-                         help="--discover 专用：只列出候选文件和估算字符数，不调用 API，不更新增量状态")
+                         help="--discover 专用：只列出候选文件和估算字符数，不调用 API，不更新增量状态；"
+                              "--pipeline-check 专用：只打印报告，不写报告文件/不更新基线/不发通知")
     parser.add_argument("--intel", action="store_true",
                          help="项目智能分析（原 PTA-INTEL/INTEL-RW 合并，批3迁移）：自动探测 Rw 项目特征 "
                               "CSV 选解析器，深度文档分析/自然语言查询/跨文档矛盾遗漏重复检测")
     parser.add_argument("--intel-mode", choices=["analyze", "query", "cross"], default="analyze",
                          help="--intel 专用：分析模式，默认 analyze")
     parser.add_argument("--query", "-q", help="--intel --intel-mode query 专用：自然语言查询问题")
+    parser.add_argument("--pipeline-check", action="store_true",
+                         help="Pipeline差距矩阵周检测：依据 checks.json 定义的确定性检查项（文件存在性/"
+                              "测试exit code/字段读取/mtime），核实矩阵声明与实际状态是否一致，不做主观判断")
+    parser.add_argument("--checks-path", help="显式指定 checks.json 路径（优先级高于 --project-root）")
     args = parser.parse_args()
 
     if args.daily_scan:
-        cmd_daily_scan(project_root=args.project_root, force=args.force, notify=args.notify)
+        cmd_daily_scan(project_root=args.project_root, force=args.force, notify=args.notify,
+                       extra_exclude_dirs=args.exclude_dirs)
         return
 
     if args.dashboard:
@@ -452,6 +525,11 @@ def main():
     if args.intel:
         cmd_intel(project_root=args.project_root, mode=args.intel_mode, query=args.query,
                  output=args.report_output)
+        return
+
+    if args.pipeline_check:
+        cmd_pipeline_check(project_root=args.project_root, checks_path=args.checks_path,
+                           notify=args.notify, dry_run=args.dry_run)
         return
 
     if args.status or not args.instruction:

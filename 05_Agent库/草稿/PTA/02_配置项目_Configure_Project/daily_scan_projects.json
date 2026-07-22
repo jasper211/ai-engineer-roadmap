@@ -1,0 +1,21 @@
+{
+  "_meta": {
+    "note": "多项目每日巡检的项目清单——10_部署与运行_Deploy_and_Run/multi_project_daily_scan.py 读这份文件，逐个项目调用 agent.py --daily-scan。加新项目只需要在这里追加一条，不需要再装新的 launchd plist。exclude_dirs 是在内置默认排除（.git/node_modules等）基础上的追加排除，不是替换。"
+  },
+  "projects": [
+    {
+      "name": "EA流程架构项目",
+      "project_root": "/Users/a112233/Desktop/流程架构项目_jasper"
+    },
+    {
+      "name": "Rw权益项目",
+      "project_root": "/Users/a112233/Desktop/Rw权益项目"
+    },
+    {
+      "name": "Jasper工作文档",
+      "project_root": "/Users/a112233/Desktop/Jasper工作文档（不含EA项目）",
+      "exclude_dirs": ["OB知识库_vault", "项目：EG", "刘敏然", "eg-frontend"],
+      "exclude_note": "OB知识库_vault 由 OB 自己的巡检机制单独管，且当前有独立批量提炼任务在跑，churn极大不适合混进daily_sensing；项目：EG/刘敏然 是无关客户/个人项目，不属于 Jasper 规则文档范畴；eg-frontend 是指向项目：EG内部路径的symlink，同一份内容排除避免重复"
+    }
+  ]
+}

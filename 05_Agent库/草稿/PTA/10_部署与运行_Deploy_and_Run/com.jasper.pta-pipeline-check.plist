@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.jasper.pta-pipeline-check</string>
+
+    <!-- 独立于 com.jasper.pta-daily-scan.plist 的另一条 launchd 条目——两者
+         触发节奏完全不同（每周 vs 每天），刻意不合并进同一个 plist/同一次
+         --daily-scan 调用，理由见规格文档§六：本检测全部是确定性检查，不需要
+         daily_sensing 那套 LLM 关系分析，混进去反而降低确定性、且平白产生
+         DeepSeek 调用费用。 -->
+    <key>ProgramArguments</key>
+    <array>
+        <string>/opt/homebrew/bin/python3</string>
+        <!-- ⚠️ 装的时候用 `which python3` 确认这个路径对不对（Intel Mac 通常是
+             /usr/local/bin/python3），launchd 不读 shell profile。 -->
+        <string>REPLACE_WITH_PTA_AGENT_PY_ABSOLUTE_PATH</string>
+        <!-- 例：/Users/xxx/.../05_Agent库/草稿/PTA/04_定义Agent_Define_Agent/agents/agent.py -->
+        <string>--pipeline-check</string>
+        <string>--notify</string>
+        <!-- --notify 时只有出现 drift_flag=true 才真的推送企业微信，没有 drift
+             就不打扰；需要 02_配置项目_Configure_Project/wecom_config.json 已
+             填好真实 webhook_url + Jasper 手机号，否则会被优雅跳过。 -->
+    </array>
+
+    <!-- 每周五触发，跟章程里"能力整改看板"周五复盘节奏对齐：检测报告产出后
+         周五复盘时直接读这份报告，不用现场现查。Weekday: 6 = 周五
+         （launchd 的 Weekday 用 0/7=周日、1=周一...6=周五）。 -->
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Weekday</key>
+        <integer>6</integer>
+        <key>Hour</key>
+        <integer>9</integer>
+        <key>Minute</key>
+        <integer>0</integer>
+    </dict>
+
+    <key>RunAtLoad</key>
+    <false/>
+
+    <key>StandardOutPath</key>
+    <string>/tmp/pta-pipeline-check.log</string>
+    <key>StandardErrorPath</key>
+    <string>/tmp/pta-pipeline-check.err</string>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
+    </dict>
+    <!-- 不需要 DEEPSEEK_API_KEY——本检测全部是确定性检查（文件/测试/字段/
+         mtime），不调用 LLM，这是它跟 daily-scan plist 的另一处关键差异。 -->
+</dict>
+</plist>

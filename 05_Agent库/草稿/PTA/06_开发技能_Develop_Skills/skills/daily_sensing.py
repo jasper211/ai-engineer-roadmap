@@ -27,7 +27,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional
 
-from tools.file_diff import snapshot_dir, diff_snapshots, unified_diff_text, read_content_truncated
+from tools.file_diff import snapshot_dir, diff_snapshots, unified_diff_text, read_content_truncated, DEFAULT_EXCLUDE_DIRS
 from tools.llm_client import call_deepseek, DEFAULT_MODEL
 from tools.office_text import OFFICE_EXTRACTORS
 
@@ -129,13 +129,19 @@ class DailySensor:
 
     def __init__(self, project_root: Path, api_key: Optional[str] = None,
                  model: str = DEFAULT_MODEL, extensions: Optional[set] = None,
-                 system_prompt_path: Path = DEFAULT_SYSTEM_PROMPT_PATH):
+                 system_prompt_path: Path = DEFAULT_SYSTEM_PROMPT_PATH,
+                 extra_exclude_dirs: Optional[set] = None):
         import os
         self.project_root = Path(project_root)
         self.api_key = api_key or os.environ.get("DEEPSEEK_API_KEY")
         self.model = model
         self.extensions = extensions or DEFAULT_SCAN_EXTENSIONS
         self.system_prompt_path = system_prompt_path
+        # snapshot_dir 的 exclude_dirs 参数是"整体替换默认值"，不是"追加"——
+        # 这里做并集，确保调用方额外排除自己项目里的某个大目录（比如把
+        # OB知识库_vault、无关客户项目挂在同一个大文件夹里巡检时）不会
+        # 意外连 .git/node_modules 这些一直该排除的目录都跟着漏排了。
+        self.exclude_dirs = DEFAULT_EXCLUDE_DIRS | (extra_exclude_dirs or set())
 
     def _load_system_prompt(self) -> str:
         if not self.system_prompt_path.exists():
@@ -159,7 +165,7 @@ class DailySensor:
         old_snapshot_shape = {path: {"hash": h} for path, h in old_hashes.items()}
 
         current_snapshot = snapshot_dir(self.project_root, extensions=self.extensions,
-                                          exclude_files=PTA_OWN_ARTIFACTS)
+                                          exclude_files=PTA_OWN_ARTIFACTS, exclude_dirs=self.exclude_dirs)
         diff = diff_snapshots(old_snapshot_shape, current_snapshot)
 
         generated_at = datetime.now().isoformat()

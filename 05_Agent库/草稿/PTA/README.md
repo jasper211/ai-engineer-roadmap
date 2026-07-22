@@ -72,7 +72,8 @@ PTA/
 │       └── daily_sensing_system.md      每日巡检的 LLM 系统提示词（含安全边界）
 ├── 09_测试与调试_Test_and_Debug/           测试与调试：集成测试
 │   └── tests/
-│       └── test_integration.py   集成测试（13 项，含每日巡检相关测试）
+│       └── test_integration.py   集成测试（24 项，含每日巡检/规则扫描/文档发现/
+│                                   项目智能分析/Rw专项校准等相关测试）
 ├── 10_部署与运行_Deploy_and_Run/           部署与运行：一键启动 + 定时任务
 │   ├── quick_start.sh
 │   ├── com.jasper.pta-daily-scan.plist    每日巡检定时任务模板（占位符，需手动安装）
@@ -118,6 +119,25 @@ python3 04_定义Agent_Define_Agent/agents/agent.py "执行 RPT-20260715-01" --p
 （标记"仍待确认"，不会重复铸造新 ID）。要每天自动跑，见
 [`10_部署与运行_Deploy_and_Run/INSTALL_DAILY_SCAN.md`](10_部署与运行_Deploy_and_Run/INSTALL_DAILY_SCAN.md)
 手动安装 launchd 定时任务（不会自动安装）。
+
+## Pipeline 健康检测（v2.9.0 新增）
+
+依据《Pipeline差距矩阵_检测机制设计_v1.0.md》规格：跟 `--daily-scan` 平级、
+不是它的子功能，全部是确定性检查（文件存在性/测试 exit code/字段读取/mtime），
+不调用 LLM，不做主观判断——只把"矩阵声明"和"实际状态"的差异摆出来，人来决定
+要不要改矩阵。
+
+```bash
+# 检测项定义读取优先级同 pta_tasks.json：--checks-path 显式路径 >
+# project_root 下的 05_Agent库/草稿/_pipeline_health/checks.json > 内置空白兜底
+python3 04_定义Agent_Define_Agent/agents/agent.py --pipeline-check --dry-run   # 首次必须先 dry-run 核对格式
+python3 04_定义Agent_Define_Agent/agents/agent.py --pipeline-check --notify   # 正式运行，发现drift才推送企业微信
+```
+
+报告落在 `{project_root}/05_Agent库/草稿/_pipeline_health/检测记录_YYYY-MM-DD.md`，
+基线存于同目录 `.baseline.json`。要每周自动跑，见
+[`10_部署与运行_Deploy_and_Run/com.jasper.pta-pipeline-check.plist`](10_部署与运行_Deploy_and_Run/com.jasper.pta-pipeline-check.plist)
+（跟 daily-scan 的每日 plist 完全独立，每周五触发，手动安装）。
 
 ## 安全约束（历次迁移都不变）
 

@@ -15,7 +15,7 @@
 
 import os
 from pathlib import Path
-from typing import List
+from typing import List, Optional, Tuple, Union
 
 from tools.file_diff import CONCEPT_EXTRACTION_EXTENSIONS
 from tools import table_reader
@@ -30,17 +30,40 @@ from tools import table_reader
 # 01层除M-01/M-88外的其余M编号、02层规则分析下的过程性子文件夹如访谈/信号
 # 提取/EA_P0等）暂不取，需要时走人工指令临时新增，不再默认全量扫描。
 # 04-07（Skill库/Agent库/Scripts库/Memory）是代码资产，非知识内容，不在其列。
-EA_LAYER_PRIORITY = [
-    "00_治理与元模型/概念笔记",
+# 2026-07-21二次收窄：Jasper纠正上一版白名单，去掉概念笔记（本来就是空
+# 目录，无实际影响）、治理日志（166个原子）、M-88_mark日常输出（661个
+# 原子）——这三个连同上一版已排除的目录，一并归入"暂不取"。
+#
+# 2026-07-21三次调整：Jasper把"03_访谈准备与执行"下两个结果型子文件夹
+# （规则空白地图/熔断节点补建清单，均为已定稿的分域结果文档，跟同级的
+# 访谈过程文件不是一回事）、"04_规则与GAP产出"（规则/Gap清单）、以及
+# "02_信号提取基线/提取合集校准"里"XX域_价值节点信号提取基线"这一类
+# 结果文件重新纳入白名单。
+#
+# 每一项是 (路径, 文件名必须包含的子串或None)——大部分是"整个子目录都要"
+# 用None；"提取合集校准"这一个例外：目录里混着三种文件（域_价值节点信号
+# 提取基线/任务包_XX域信号提取基线/任务包_XX域规则空白地图与熔断清单），
+# Jasper只要第一种，用文件名子串过滤而不是整个目录搬进来，避免把还没
+# 定稿的任务包类文件也带进来。
+EA_LAYER_PRIORITY: List[Union[str, Tuple[str, Optional[str]]]] = [
     "00_治理与元模型/项目章程",
-    "00_治理与元模型/治理日志",
     "01_原始材料-外部导入/M-01_方法论与标准",
-    "01_原始材料-外部导入/M-88_mark日常输出",
     "02_过程成果-工作产出/规则分析（Jasper）/05_SOP",
     "02_过程成果-工作产出/规则分析（Jasper）/Agent规划与搭建",
     "02_过程成果-工作产出/规则分析（Jasper）/Agent与Skill体系",
+    "02_过程成果-工作产出/规则分析（Jasper）/03_访谈准备与执行/规则空白地图",
+    "02_过程成果-工作产出/规则分析（Jasper）/03_访谈准备与执行/熔断节点补建清单",
+    "02_过程成果-工作产出/规则分析（Jasper）/04_规则与GAP产出",
+    ("02_过程成果-工作产出/规则分析（Jasper）/02_信号提取基线/提取合集校准", "价值节点信号提取基线"),
     "03_发布成果-交付物/权威数据",
 ]
+
+
+def _layer_path_and_filter(layer: Union[str, Tuple[str, Optional[str]]]) -> Tuple[str, Optional[str]]:
+    """兼容EA_LAYER_PRIORITY里普通字符串项和(路径,文件名过滤)元组项两种写法。"""
+    if isinstance(layer, tuple):
+        return layer
+    return layer, None
 
 # 通用归档/废弃关键字——即便在优先层内，命中这些关键字的子目录/文件也跳过
 # （比如 00/03 层内部也可能有"_归档"这类子目录）。"历史遗留"是2026-07-16
@@ -110,10 +133,15 @@ def get_ea_candidates(project_root: str) -> List[str]:
     root = Path(project_root)
     ordered_relative: List[str] = []
     for layer in EA_LAYER_PRIORITY:
-        layer_path = root / layer
+        path, name_filter = _layer_path_and_filter(layer)
+        layer_path = root / path
         for abs_path in _walk_candidates(layer_path):
+            if name_filter and name_filter not in abs_path.name:
+                continue
             ordered_relative.append(str(abs_path.relative_to(root)))
-        for table_path in table_reader.list_table_candidates(str(root), subdir=layer):
+        for table_path in table_reader.list_table_candidates(str(root), subdir=path):
+            if name_filter and name_filter not in table_path.name:
+                continue
             ordered_relative.append(str(table_path.relative_to(root)))
     return ordered_relative
 

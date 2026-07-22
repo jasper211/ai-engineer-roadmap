@@ -19,7 +19,14 @@ from typing import Dict, List, Optional
 
 WORKSPACE_ROOT = Path(os.environ.get(
     "PTA_WORKSPACE_ROOT",
-    "/Users/zhaoqitrenda.cn/Desktop/Jasper工作文档（不含EA项目）/项目工作区",
+    # 兜底默认值改用 Path.home() 动态推导，不再写死某台机器的用户名——
+    # 之前硬编码的 /Users/zhaoqitrenda.cn/... 是上一台机器的路径，换到新机器
+    # （当前用户名不同）后这个目录本来就不存在/不可写，get_project_workspace()
+    # 的 mkdir 会直接抛 PermissionError，真实复现过（--pipeline-check 和
+    # --daily-scan 都踩到过）。PTA_WORKSPACE_ROOT 环境变量仍然是首选的显式
+    # 覆盖方式，这里只是让"没设置环境变量时"的兜底值本身也是可用的，而不是
+    # 一个必然失败的死路径。
+    str(Path.home() / "Desktop" / "Jasper工作文档（不含EA项目）" / "项目工作区"),
 ))
 
 EMPTY_STATE = {"version": 1, "current_task": None, "task_history": [], "context": {}, "discovery": None}
