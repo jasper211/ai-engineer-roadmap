@@ -373,3 +373,34 @@ def format_report_markdown(results: List[CheckResult], run_date: str) -> str:
         lines.append("（无）")
 
     return "\n".join(lines) + "\n"
+
+
+def summarize_latest_report(report_dir: Path) -> dict:
+    """给前端仪表盘用的只读摘要——找最新一份周检测报告，数一下drift条数，
+    绝不重新跑任何检测（run_all_checks会真实改写.baseline.json，只能通过
+    --pipeline-check这条显式CLI/定时任务路径触发，不能被页面加载动作触发）。
+
+    没有任何报告时（比如还没手动跑过一次--pipeline-check）返回全空，不报错，
+    调用方（前端）据此显示"还没有检测记录"而不是崩溃。"""
+    reports = sorted(report_dir.glob("检测记录_*.md"))
+    if not reports:
+        return {"report_date": None, "drift_count": 0, "report_path": None}
+
+    latest = reports[-1]
+    text = latest.read_text(encoding="utf-8")
+
+    # 只数"本周与矩阵声明不一致的地方"这一节里的表格数据行，用下一个"## "
+    # 标题当结束边界——表头行/分隔线（|---|...|）不算数据行。
+    section = re.search(r"## 本周与矩阵声明不一致的地方.*?\n(.*?)(?=\n## |\Z)", text, re.DOTALL)
+    drift_count = 0
+    if section:
+        for line in section.group(1).splitlines():
+            line = line.strip()
+            if line.startswith("|") and not line.startswith("|---") and "矩阵声明" not in line:
+                drift_count += 1
+
+    return {
+        "report_date": latest.stem.replace("检测记录_", ""),
+        "drift_count": drift_count,
+        "report_path": str(latest),
+    }

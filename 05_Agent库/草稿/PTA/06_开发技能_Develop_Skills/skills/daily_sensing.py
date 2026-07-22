@@ -420,16 +420,19 @@ def to_dict(briefing: DailyBriefing) -> dict:
 _CIRCLED_DIGITS = "①②③④⑤⑥⑦⑧⑨⑩"
 
 
+def _days_since(iso_ts: str) -> int:
+    if not iso_ts:
+        return 0
+    try:
+        return max((datetime.now() - datetime.fromisoformat(iso_ts)).days, 0)
+    except ValueError:
+        return 0
+
+
 def _days_pending(t: SuggestedTask) -> int:
     """从 first_suggested 算到现在过了几天——用于把"搁置太久没人管"的任务
     跟"今天刚发现"的任务区分开，不是所有 suggested_tasks 都一样新鲜。"""
-    if not t.first_suggested:
-        return 0
-    try:
-        delta = datetime.now() - datetime.fromisoformat(t.first_suggested)
-        return max(delta.days, 0)
-    except ValueError:
-        return 0
+    return _days_since(t.first_suggested)
 
 
 def _bucket_tasks(briefing: DailyBriefing):
@@ -440,6 +443,49 @@ def _bucket_tasks(briefing: DailyBriefing):
     aging_tasks = sorted((t for t in briefing.suggested_tasks if not t.is_new),
                          key=_days_pending, reverse=True)
     return new_tasks, aging_tasks
+
+
+def list_tasks_from_state(state: dict, project_name: str = "", resolved_within_days: int = 14) -> dict:
+    """给前端仪表盘用的只读聚合——直接读 daily_sensing_state.json 里已经
+    持久化的 suggested_task_fingerprints，不跑 LLM、不做任何文件 diff（那是
+    scan() 的职责；仪表盘打开页面/刷新不该触发一次真实巡检，会产生真实
+    API 调用费用，且跟"每天定时跑一次"的既定节奏冲突）。
+
+    分三桶：
+    - new：pending 状态且首次发现在 1 天以内——没有真正的"这次巡检有没有
+      新发现"上下文（不跑 scan()，读不到），用"离首次发现是否够近"做近似，
+      够仪表盘展示轻重缓急用，不追求跟 _bucket_tasks 的 is_new 语义完全一致
+    - aging：pending 状态且不满足 new 的条件，按搁置天数从久到近排序
+    - resolved_recent：done/dismissed 且 status_updated_at 在
+      resolved_within_days 天内——**这是一个持续滚动的时间窗判断，不是
+      shown_as_resolved 那个"简报只报一次"标记的复用**：shown_as_resolved
+      服务的是每日推送场景（避免同一条完成消息被推两次），仪表盘是随时
+      可能被打开的常驻界面，用那个标记会导致用户刷新一次页面后，"刚完成"
+      的提示就再也看不到了，两者语义不同，不能共用同一套判定。
+    """
+    fingerprints = state.get("suggested_task_fingerprints", {})
+    new_tasks, aging_tasks, resolved_recent = [], [], []
+
+    for fp in fingerprints.values():
+        status = fp.get("status", "pending")
+        base_item = {
+            "task_id": fp.get("task_id", ""), "name": fp.get("name", ""),
+            "priority": fp.get("priority", "P2"), "signal_to": fp.get("signal_to", []),
+            "needs_mark_alignment": fp.get("needs_mark_alignment", False),
+            "related_files": fp.get("related_files", []), "project_name": project_name,
+        }
+        if status == "pending":
+            days = _days_since(fp.get("first_suggested", ""))
+            item = {**base_item, "days_pending": days}
+            (new_tasks if days < 1 else aging_tasks).append(item)
+        elif status in ("done", "dismissed"):
+            updated_at = fp.get("status_updated_at", "")
+            if updated_at and _days_since(updated_at) <= resolved_within_days:
+                resolved_recent.append({**base_item, "status": status, "status_updated_at": updated_at})
+
+    aging_tasks.sort(key=lambda x: x["days_pending"], reverse=True)
+    resolved_recent.sort(key=lambda x: x["status_updated_at"], reverse=True)
+    return {"new": new_tasks, "aging": aging_tasks, "resolved_recent": resolved_recent}
 
 
 def _format_task_block(t: SuggestedTask, marker: str, show_age: bool) -> List[str]:

@@ -33,6 +33,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+from datetime import datetime, timedelta
 from pathlib import Path
 
 TESTS_DIR = Path(__file__).resolve().parent
@@ -41,6 +42,7 @@ PTA_DIR = NUMBERED_DIR.parent                # PTA 项目根目录
 
 for _pkg_dir in ("05_集成工具_Integrate_Tools", "06_开发技能_Develop_Skills", "07_接入记忆_Integrate_Memory"):
     sys.path.insert(0, str(PTA_DIR / _pkg_dir))
+sys.path.insert(0, str(PTA_DIR / "12_任务看板_Task_Dashboard" / "api"))
 
 from skills.intent_parsing import IntentParser
 from skills.execution_planning import ExecutionScheduler
@@ -48,7 +50,8 @@ from skills.progress_tracking import ProgressTracker
 from skills.doc_sync import DocumentSyncer
 from skills.archive_review import ArchiveReviewer
 import skills.daily_sensing as daily_sensing
-from skills.daily_sensing import DailySensor, SuggestedTask, DailyBriefing
+from skills.daily_sensing import DailySensor, SuggestedTask, DailyBriefing, list_tasks_from_state
+from skills.pipeline_health import summarize_latest_report
 from skills.rule_based_task_scan import RuleBasedScanner
 import skills.document_task_discovery as document_task_discovery
 from skills.document_task_discovery import DocumentDiscoverer
@@ -730,6 +733,124 @@ def test_24_find_tracking_csv_at_true_project_root(tmp_dir: Path):
           f"数据目录解析错误: {data_dir}")
 
 
+def test_25_list_tasks_from_state():
+    print("\n[Test 25] skills.daily_sensing.list_tasks_from_state 纯函数分桶（任务看板API用）")
+    print("-" * 60)
+    now = datetime.now()
+    state = {
+        "suggested_task_fingerprints": {
+            "fp_new": {"task_id": "RPT-A", "name": "今天刚发现", "status": "pending",
+                        "first_suggested": now.isoformat(), "priority": "P1",
+                        "signal_to": ["Jasper"], "needs_mark_alignment": False, "related_files": []},
+            "fp_aging": {"task_id": "RPT-B", "name": "搁置很久了", "status": "pending",
+                          "first_suggested": (now - timedelta(days=6)).isoformat(), "priority": "P0",
+                          "signal_to": [], "needs_mark_alignment": True, "related_files": ["x.md"]},
+            "fp_resolved_recent": {"task_id": "RPT-C", "name": "刚关闭", "status": "dismissed",
+                                     "status_updated_at": (now - timedelta(days=2)).isoformat(),
+                                     "first_suggested": (now - timedelta(days=10)).isoformat(),
+                                     "priority": "P2", "signal_to": [], "needs_mark_alignment": False,
+                                     "related_files": []},
+            "fp_resolved_stale": {"task_id": "RPT-D", "name": "很久以前关闭的，不该出现", "status": "done",
+                                    "status_updated_at": (now - timedelta(days=30)).isoformat(),
+                                    "first_suggested": (now - timedelta(days=40)).isoformat(),
+                                    "priority": "P2", "signal_to": [], "needs_mark_alignment": False,
+                                    "related_files": []},
+        }
+    }
+    result = list_tasks_from_state(state, project_name="测试项目", resolved_within_days=14)
+
+    check(len(result["new"]) == 1 and result["new"][0]["task_id"] == "RPT-A",
+          "首次发现在1天内的正确分到new桶", f"new桶不对: {result['new']}")
+    check(len(result["aging"]) == 1 and result["aging"][0]["task_id"] == "RPT-B"
+          and result["aging"][0]["days_pending"] == 6,
+          "搁置6天的正确分到aging桶且天数计算正确", f"aging桶不对: {result['aging']}")
+    check(len(result["resolved_recent"]) == 1 and result["resolved_recent"][0]["task_id"] == "RPT-C",
+          "14天内关闭的出现在resolved_recent，30天前关闭的被正确排除（不是shown_as_resolved式的"
+          "只报一次，是持续滚动的时间窗）", f"resolved_recent不对: {result['resolved_recent']}")
+    check(all(t["project_name"] == "测试项目" for bucket in result.values() for t in bucket),
+          "每条任务都正确标注了project_name（供跨项目聚合视图使用）", "project_name标注缺失/错误")
+
+
+def test_26_summarize_latest_report(tmp_dir: Path):
+    print("\n[Test 26] skills.pipeline_health.summarize_latest_report 纯函数读取最新报告")
+    print("-" * 60)
+    report_dir = tmp_dir / "pipeline_health_fixture"
+    report_dir.mkdir(parents=True, exist_ok=True)
+
+    (report_dir / "检测记录_2026-07-14.md").write_text(
+        "# Pipeline差距矩阵 · 周检测 2026-07-14\n\n"
+        "## 本周与矩阵声明不一致的地方（drift_flag=true）\n"
+        "| 阶段 | 维度 | 矩阵声明 | 本周实测 | 说明 |\n|---|---|---|---|---|\n"
+        "| 1 X | BUILD | a | b | c |\n", encoding="utf-8")
+    (report_dir / "检测记录_2026-07-21.md").write_text(
+        "# Pipeline差距矩阵 · 周检测 2026-07-21\n\n"
+        "## 本周与矩阵声明不一致的地方（drift_flag=true）\n"
+        "| 阶段 | 维度 | 矩阵声明 | 本周实测 | 说明 |\n|---|---|---|---|---|\n"
+        "| 1 X | BUILD | a | b | c |\n"
+        "| 2 Y | VERIFY | d | e | f |\n\n"
+        "## 本周无变化（跟上次检测一致，未发现drift）\n（无）\n", encoding="utf-8")
+
+    result = summarize_latest_report(report_dir)
+    check(result["report_date"] == "2026-07-21", "选中了最新（文件名日期最大）的报告，不是最早的那份",
+          f"选错报告: {result['report_date']}")
+    check(result["drift_count"] == 2, f"正确数出2条drift表格数据行（表头/分隔线不计入）",
+          f"drift计数错误: {result['drift_count']}")
+
+    empty_dir = tmp_dir / "no_reports_yet"
+    empty_dir.mkdir()
+    empty_result = summarize_latest_report(empty_dir)
+    check(empty_result == {"report_date": None, "drift_count": 0, "report_path": None},
+          "还没有任何报告时优雅返回全空，不抛异常", f"空目录场景处理不对: {empty_result}")
+
+
+def test_27_task_dashboard_api_smoke():
+    print("\n[Test 27] 12_任务看板_Task_Dashboard/api 服务器冒烟测试（真实起停HTTP服务）")
+    print("-" * 60)
+    import threading
+    import time
+    import urllib.error
+    import urllib.request
+    import server as dashboard_server  # 依赖顶部已插入的 sys.path（12_任务看板_Task_Dashboard/api）
+
+    httpd = dashboard_server.ThreadingHTTPServer(("127.0.0.1", 0), dashboard_server.Handler)
+    port = httpd.server_address[1]
+    thread = threading.Thread(target=httpd.serve_forever, daemon=True)
+    thread.start()
+    time.sleep(0.2)  # 给线程一点真实启动时间，避免第一个请求打到还没ready的socket
+
+    try:
+        with urllib.request.urlopen(f"http://127.0.0.1:{port}/api/projects", timeout=5) as resp:
+            projects = json.loads(resp.read())
+        check(isinstance(projects, list),
+              f"/api/projects 真实返回列表（{len(projects)} 个已配置项目）",
+              f"/api/projects 返回类型不对: {type(projects)}")
+
+        with urllib.request.urlopen(f"http://127.0.0.1:{port}/api/tasks?project=all", timeout=5) as resp:
+            tasks = json.loads(resp.read())
+        check(set(tasks.keys()) == {"new", "aging", "resolved_recent"},
+              "/api/tasks 真实返回三个桶的聚合结构", f"/api/tasks 返回结构不对: {tasks.keys()}")
+
+        with urllib.request.urlopen(f"http://127.0.0.1:{port}/api/pipeline-status", timeout=5) as resp:
+            pipeline = json.loads(resp.read())
+        check("drift_count" in pipeline, "/api/pipeline-status 真实返回drift_count字段",
+              f"/api/pipeline-status 返回不对: {pipeline}")
+
+        # 用一个真实不存在的项目名测 dismiss——不应该真的改到任何真实文件，
+        # 只验证"找不到项目"这条路径返回404，而不是500崩溃或误创建新文件。
+        body = json.dumps({"project": "不存在的项目_test_only", "status": "dismissed"}).encode("utf-8")
+        req = urllib.request.Request(f"http://127.0.0.1:{port}/api/tasks/RPT-FAKE/status",
+                                       data=body, headers={"Content-Type": "application/json"})
+        try:
+            urllib.request.urlopen(req, timeout=5)
+            check(False, "", "对不存在的项目发起dismiss应该返回404，但没有抛HTTPError")
+        except urllib.error.HTTPError as e:
+            check(e.code == 404, "对不存在的项目发起dismiss正确返回404，不是误写文件或500崩溃",
+                  f"返回码不对: {e.code}")
+    finally:
+        httpd.shutdown()
+        thread.join(timeout=5)
+
+
 def main():
     print("=" * 60)
     print("PTA 集成测试")
@@ -769,6 +890,9 @@ def main():
         test_22_rw_progress_math_never_negative(tmp_dir)
         test_23_blocker_active_detection(tmp_dir)
         test_24_find_tracking_csv_at_true_project_root(tmp_dir)
+        test_25_list_tasks_from_state()
+        test_26_summarize_latest_report(tmp_dir)
+        test_27_task_dashboard_api_smoke()
     finally:
         shutil.rmtree(tmp_dir, ignore_errors=True)
         # Test 7/13 通过 subprocess 调用 agent.py，其专属工作区落在 memory.workspace 的
@@ -785,7 +909,7 @@ def main():
             print(f"  - {f}")
         return 1
 
-    print("PTA 集成测试完成：24/24 通过")
+    print("PTA 集成测试完成：27/27 通过")
     print("=" * 60)
     return 0
 

@@ -226,3 +226,56 @@ def save_rule_scan_state(workspace: Path, state: dict) -> None:
     path = workspace / "rule_scan_state.json"
     state["updated_at"] = datetime.now().isoformat()
     path.write_text(json.dumps(state, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+# ============================================================
+# Skill 调用频率日志（skill_usage_log.json）——为未来"哪些skill该优化/该
+# 合并/几乎没人用"这类判断提供依据。这是 PTA 自己的运行时数据，不是针对
+# 某个目标项目的内容，所以不走 per-project workspace，直接落在 PTA 自己的
+# 07_接入记忆_Integrate_Memory/ 下（不进 git，见 .gitignore）。
+# ============================================================
+
+SKILL_USAGE_LOG_PATH = Path(__file__).resolve().parent.parent / "skill_usage_log.json"
+
+
+def log_skill_call(skill_name: str, project_root: Optional[str] = None) -> None:
+    """记一条"这个 skill 被调用了一次"——纯追加，不做任何聚合/判断（那是
+    仪表盘 API 的事）。读写失败（比如磁盘满）不该让调用方的主流程跟着失败，
+    静默忽略，这不是关键路径。
+
+    这个日志从这个函数第一次被调用那天开始累计——此前完全没有任何地方记录
+    过"哪个skill被调用了几次"，历史调用量没有留下痕迹，没法补，仪表盘展示
+    时需要如实说明这一点，不能暗示是PTA诞生以来的完整历史。"""
+    try:
+        if SKILL_USAGE_LOG_PATH.exists():
+            data = json.loads(SKILL_USAGE_LOG_PATH.read_text(encoding="utf-8"))
+        else:
+            data = {"calls": []}
+        data["calls"].append({
+            "skill": skill_name,
+            "timestamp": datetime.now().isoformat(),
+            "project_root": project_root,
+        })
+        SKILL_USAGE_LOG_PATH.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    except OSError:
+        pass
+
+
+def load_skill_usage_summary() -> List[dict]:
+    """给仪表盘用的聚合视图——按 skill 分组统计调用次数 + 最后调用时间，
+    按次数从多到少排序，方便一眼看出"哪个技能用得最多/几乎没人用"。"""
+    if not SKILL_USAGE_LOG_PATH.exists():
+        return []
+    try:
+        data = json.loads(SKILL_USAGE_LOG_PATH.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return []
+
+    counts: Dict[str, dict] = {}
+    for call in data.get("calls", []):
+        skill = call.get("skill", "unknown")
+        entry = counts.setdefault(skill, {"skill": skill, "count": 0, "last_called": ""})
+        entry["count"] += 1
+        if call.get("timestamp", "") > entry["last_called"]:
+            entry["last_called"] = call["timestamp"]
+    return sorted(counts.values(), key=lambda x: x["count"], reverse=True)

@@ -415,6 +415,7 @@ def run_instruction(instruction: str, execute: bool, sync: bool, message: str,
     state = ws.load_state(workspace)
 
     # ---------- Think：意图解析 ----------
+    ws.log_skill_call("intent_parsing", project_root)
     parser = IntentParser(task_map=task_knowledge)
     task_package = parser.parse(instruction)
     task_dict = parser.to_dict(task_package)
@@ -563,42 +564,54 @@ def main():
     parser.add_argument("--checks-path", help="显式指定 checks.json 路径（优先级高于 --project-root）")
     args = parser.parse_args()
 
+    # 每个分发分支调用前记一条skill调用日志——纯统计用途，为"哪个skill用得多/
+    # 几乎没人用"这类未来优化判断提供依据，不影响任何主流程行为，写入失败也
+    # 静默忽略（见 memory.workspace.log_skill_call 的设计）。
     if args.dismiss:
+        ws.log_skill_call("dismiss", args.project_root)
         cmd_dismiss(task_id=args.dismiss, project_root=args.project_root)
         return
 
     if args.seed_baseline:
+        ws.log_skill_call("seed_baseline", args.project_root)
         cmd_seed_baseline(project_root=args.project_root, extra_exclude_dirs=args.exclude_dirs)
         return
 
     if args.daily_scan:
+        ws.log_skill_call("daily_sensing", args.project_root)
         cmd_daily_scan(project_root=args.project_root, force=args.force, notify=args.notify,
                        extra_exclude_dirs=args.exclude_dirs)
         return
 
     if args.dashboard:
+        ws.log_skill_call("project_dashboard", args.project_root)
         cmd_dashboard(project_root=args.project_root, person=args.person)
         return
 
     if args.dir_scan:
+        ws.log_skill_call("dir_scan", args.project_root)
         cmd_dir_scan(project_root=args.project_root, depth=args.depth, output=args.report_output)
         return
 
     if args.rule_scan:
+        ws.log_skill_call("rule_based_task_scan", args.project_root)
         cmd_rule_scan(project_root=args.project_root)
         return
 
     if args.discover:
+        ws.log_skill_call("document_task_discovery", args.project_root)
         cmd_discover(project_root=args.project_root, files=args.files, scan=args.scan,
                      force=args.force, dry_run=args.dry_run, use_ob_context=args.use_ob_context)
         return
 
     if args.intel:
+        ws.log_skill_call("project_intelligence", args.project_root)
         cmd_intel(project_root=args.project_root, mode=args.intel_mode, query=args.query,
                  output=args.report_output)
         return
 
     if args.pipeline_check:
+        ws.log_skill_call("pipeline_health", args.project_root)
         cmd_pipeline_check(project_root=args.project_root, checks_path=args.checks_path,
                            notify=args.notify, dry_run=args.dry_run)
         return
