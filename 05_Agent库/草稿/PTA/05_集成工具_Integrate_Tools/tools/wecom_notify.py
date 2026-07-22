@@ -49,16 +49,54 @@ def load_wecom_config(path: Optional[Path] = None) -> Optional[dict]:
         return None
 
 
+def truncate_utf8_safe(content: str, max_bytes: int = MAX_CONTENT_BYTES,
+                        suffix: str = "\n...(已截断，见完整简报)") -> str:
+    """按字节数截断，从末尾开始一段段砍，避免截断点落在多字节字符中间产生乱码
+    （简单粗暴地按字节数切片可能切断一个多字节 UTF-8 字符）。预留空间必须
+    按后缀本身的实际字节数算，不能写死一个数字——之前写死"30"时漏算了
+    后缀里中文字符每个占3字节，导致加上后缀后总长度反而超过了上限。"""
+    content_bytes = content.encode("utf-8")
+    if len(content_bytes) <= max_bytes:
+        return content
+    suffix_bytes = len(suffix.encode("utf-8"))
+    truncated = content_bytes[:max_bytes - suffix_bytes]
+    while truncated:
+        try:
+            text = truncated.decode("utf-8")
+            break
+        except UnicodeDecodeError:
+            truncated = truncated[:-1]
+    else:
+        text = ""
+    return text + suffix
+
+
+def build_notification_text_from_content(content: str, mobiles_map: Dict[str, str],
+                                          report_path: Optional[str] = None) -> Tuple[str, List[str]]:
+    """给一段调用方已经格式化好的正文（比如 skills.daily_sensing.format_text_plain
+    的输出），只负责两件事：按企业微信 text 消息的字节上限截断、决定 @ 谁。
+    不在这里重新拼正文内容——避免跟 daily_sensing 的格式化逻辑重复维护两份，
+    每次改简报格式只用改一个地方。
+
+    与组内成员沟通后确定：只 @ Jasper 本人，不 @ Terresa/HR/Carrie——正文里
+    仍然会显示"通知: XX"这类信号判断，但机器人不会替 Jasper 越过他直接去 @
+    到其他人；要不要转达、怎么转达，由 Jasper 自己看完消息后决定。
+
+    Returns: (content, mentioned_mobiles)
+    """
+    if report_path:
+        content = content + f"\n\n完整简报: {report_path}"
+    mentioned_mobiles = [mobiles_map["Jasper"]] if "Jasper" in mobiles_map else []
+    return truncate_utf8_safe(content), mentioned_mobiles
+
+
 def build_notification_text(briefing, mobiles_map: Dict[str, str],
                              report_path: Optional[str] = None) -> Tuple[str, List[str]]:
-    """
-    把简报浓缩成一条企业微信消息——不塞完整理由/涉及文件，只给每条任务一行
-    摘要 + 完整简报路径，具体内容留给 Jasper 自己去看完整报告。
-
-    与组内成员沟通后确定：消息只 @ Jasper 本人，不 @ Terresa/HR/Carrie——
-    每条任务的 signal_to 判断结果仍然会显示在消息文字里（"通知: XX"），
-    但机器人不会替 Jasper 越过他直接去 @ 到其他人；要不要转达、怎么转达，
-    由 Jasper 自己看完消息后决定。
+    """（历史接口，测试套件仍在用）把简报浓缩成一条企业微信消息——不塞完整
+    理由/涉及文件，只给每条任务一行摘要 + 完整简报路径。agent.py 的
+    cmd_daily_scan 现在改用 build_notification_text_from_content()搭配
+    skills.daily_sensing.format_text_plain()，这个函数保留给需要"直接从
+    briefing对象生成通知文字、不经过daily_sensing格式化"场景的调用方。
 
     Returns: (content, mentioned_mobiles)
     """
@@ -76,29 +114,8 @@ def build_notification_text(briefing, mobiles_map: Dict[str, str],
         lines.append(f"\n完整简报: {report_path}")
 
     content = "\n".join(lines)
-
     mentioned_mobiles = [mobiles_map["Jasper"]] if "Jasper" in mobiles_map else []
-
-    content_bytes = content.encode("utf-8")
-    if len(content_bytes) > MAX_CONTENT_BYTES:
-        # 按字节数截断，从末尾开始一段段砍，避免截断点落在多字节字符中间产生乱码
-        # （简单粗暴地按字节数切片可能切断一个多字节 UTF-8 字符）。预留空间必须
-        # 按后缀本身的实际字节数算，不能写死一个数字——之前写死"30"时漏算了
-        # 后缀里中文字符每个占3字节，导致加上后缀后总长度反而超过了上限。
-        suffix = "\n...(已截断，见完整简报)"
-        suffix_bytes = len(suffix.encode("utf-8"))
-        truncated = content_bytes[:MAX_CONTENT_BYTES - suffix_bytes]
-        while truncated:
-            try:
-                text = truncated.decode("utf-8")
-                break
-            except UnicodeDecodeError:
-                truncated = truncated[:-1]
-        else:
-            text = ""
-        content = text + suffix
-
-    return content, mentioned_mobiles
+    return truncate_utf8_safe(content), mentioned_mobiles
 
 
 def send_text(webhook_url: str, content: str, mentioned_mobiles: Optional[List[str]] = None) -> dict:

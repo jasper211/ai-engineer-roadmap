@@ -157,6 +157,27 @@ def save_daily_sensing_state(workspace: Path, state: dict) -> None:
     path.write_text(json.dumps(state, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
+def mark_suggested_task_status(workspace: Path, task_id: str, status: str) -> bool:
+    """把某个 daily_sensing 建议任务的指纹状态改成 status（"done"/"dismissed"）。
+
+    这是"执行→回写"闭环缺失的补丁：此前 status 只在建议任务第一次生成时被
+    写成 "pending"，之后再没有任何代码路径改过它，导致哪怕任务真的被
+    `--execute` 执行完了，daily_sensing 也永远认为它"仍待确认"，天天在简报里
+    重复出现（真实问题，不是假设）。
+
+    返回是否找到并修改成功——task_id 不是 daily_sensing 产出的（比如手写的
+    P0-02 这类任务）时找不到，返回 False，调用方据此静默跳过，不报错。"""
+    state = load_daily_sensing_state(workspace)
+    fingerprints = state.get("suggested_task_fingerprints", {})
+    for fp in fingerprints.values():
+        if fp.get("task_id") == task_id:
+            fp["status"] = status
+            fp["status_updated_at"] = datetime.now().isoformat()
+            save_daily_sensing_state(workspace, state)
+            return True
+    return False
+
+
 # ============================================================
 # 文档任务发现增量状态（discover_state.json，供 skills/document_task_discovery.py 使用）
 # ============================================================

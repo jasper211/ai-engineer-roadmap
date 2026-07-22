@@ -53,6 +53,8 @@ MAX_DIFF_LINES = 50
 class ChangeItem:
     file: str
     summary: str
+    who: str = "未知"
+    domain: str = "其他"
 
 
 @dataclass
@@ -77,12 +79,21 @@ class SuggestedTask:
     relevance_reason: str = ""
     related_files: List[str] = field(default_factory=list)
     is_new: bool = True
+    first_suggested: str = ""  # ISO 时间戳，供 format_text 算"搁置了几天"用
+
+
+@dataclass
+class ResolvedTask:
+    task_id: str
+    name: str
+    status: str  # "done" / "dismissed"
 
 
 @dataclass
 class DailyBriefing:
     generated_at: str
     project_root: str
+    resolved_tasks: List[ResolvedTask] = field(default_factory=list)
     files_added: int = 0
     files_changed: int = 0
     files_removed: int = 0
@@ -186,6 +197,18 @@ class DailySensor:
             - updated_state 交给调用方存回 daily_sensing_state.json
             - task_map_entries 交给调用方 merge 进目标项目的 pta_tasks.json
         """
+        # 先算"最近被标记完成/关闭、但还没在任何一次简报里露过面"的任务——
+        # 这一步必须在 diff 是否为空的分支之前做，不然"今天文件没变化"会导致
+        # 已完成的任务永远没有机会被展示一次。每条只展示一次（写回
+        # shown_as_resolved=True），不是每天都重复报"这条已完成"。
+        base_fp = dict(previous_state.get("suggested_task_fingerprints", {}))
+        resolved_tasks = []
+        for fp in base_fp.values():
+            if fp.get("status") in ("done", "dismissed") and not fp.get("shown_as_resolved"):
+                resolved_tasks.append(ResolvedTask(task_id=fp["task_id"], name=fp.get("name", ""),
+                                                     status=fp["status"]))
+                fp["shown_as_resolved"] = True
+
         old_hashes = {} if force else previous_state.get("file_hashes", {})
         old_snapshot_shape = {path: {"hash": h} for path, h in old_hashes.items()}
 
@@ -208,15 +231,18 @@ class DailySensor:
                     priority=fp.get("priority", "P2"), signal_to=fp.get("signal_to", []),
                     needs_mark_alignment=fp.get("needs_mark_alignment", False),
                     relevance_reason="沿用上次判断", related_files=[], is_new=False,
+                    first_suggested=fp.get("first_suggested", ""),
                 )
-                for fp in previous_state.get("suggested_task_fingerprints", {}).values()
+                for fp in base_fp.values()
                 if fp.get("status") == "pending"
             ]
             briefing = DailyBriefing(
                 generated_at=generated_at, project_root=str(self.project_root),
-                suggested_tasks=pending_tasks, skipped_llm_call=True,
+                suggested_tasks=pending_tasks, skipped_llm_call=True, resolved_tasks=resolved_tasks,
             )
-            return briefing, previous_state, {}
+            updated_state = dict(previous_state)
+            updated_state["suggested_task_fingerprints"] = base_fp
+            return briefing, updated_state, {}
 
         old_contents = previous_state.get("file_contents", {})
         updated_contents = dict(old_contents)
@@ -261,14 +287,15 @@ class DailySensor:
         raw = call_deepseek(system_prompt, user_content, self.api_key, model=self.model)
         parsed = json.loads(raw)
 
-        changes = [ChangeItem(file=c.get("file", ""), summary=c.get("summary", ""))
+        changes = [ChangeItem(file=c.get("file", ""), summary=c.get("summary", ""),
+                                who=c.get("who", "未知") or "未知", domain=c.get("domain", "其他") or "其他")
                    for c in parsed.get("changes", [])]
         relationships = [RelationshipItem(description=r.get("description", ""),
                                             related_files=r.get("related_files", []))
                           for r in parsed.get("relationships", [])]
 
         date_str = datetime.now().strftime("%Y%m%d")
-        existing_fp = previous_state.get("suggested_task_fingerprints", {})
+        existing_fp = base_fp
         used_today = {v["task_id"] for v in existing_fp.values()
                       if v.get("task_id", "").startswith(f"RPT-{date_str}-")}
         updated_fp = dict(existing_fp)
@@ -289,10 +316,25 @@ class DailySensor:
 
             if fingerprint in existing_fp:
                 task_id = existing_fp[fingerprint]["task_id"]
-                is_new = False
+                prior_status = existing_fp[fingerprint].get("status", "pending")
+                # 同一件事（指纹相同）之前被标过 done/dismissed，但今天又被模型
+                # 重新建议出来——说明这件事其实没真正解决/关掉，应该重新变回
+                # pending，而不是被 **existing_fp 的展开悄悄保留成旧状态、
+                # 但同时又出现在"建议任务"列表里，造成"已完成但又建议你做"的
+                # 自相矛盾状态。
+                reopened = prior_status in ("done", "dismissed")
+                # 重开的任务当"新"处理，不是"搁置中"——它上一次是被判定已完成/
+                # 已关闭的，今天重新出现意味着"这件事其实又/还没解决"，语义上
+                # 更接近一条新发现，而不是"一直没人理会的旧任务"，不该跟真正
+                # 搁置了很久的任务混进同一个"⏳搁置中"桶、还显示"已搁置0天"
+                # 这种自相矛盾的文案。
+                is_new = reopened
                 updated_fp[fingerprint] = {**existing_fp[fingerprint], "last_suggested": now_iso,
                                              "name": name, "priority": priority, "signal_to": signal_to,
-                                             "needs_mark_alignment": needs_mark_alignment}
+                                             "needs_mark_alignment": needs_mark_alignment,
+                                             "status": "pending" if reopened else prior_status}
+                if reopened:
+                    updated_fp[fingerprint]["first_suggested"] = now_iso  # 重新计天数，不沿用旧的搁置时长
             else:
                 task_id = _mint_rpt_id(date_str, used_today)
                 is_new = True
@@ -305,6 +347,7 @@ class DailySensor:
                 task_id=task_id, name=name, rationale=t.get("rationale", ""),
                 priority=priority, signal_to=signal_to, needs_mark_alignment=needs_mark_alignment,
                 relevance_reason=t.get("relevance_reason", ""), related_files=related_files, is_new=is_new,
+                first_suggested=updated_fp[fingerprint]["first_suggested"],
             ))
 
             task_map_entries[task_id] = {
@@ -320,7 +363,7 @@ class DailySensor:
             generated_at=generated_at, project_root=str(self.project_root),
             files_added=len(diff.added), files_changed=len(diff.changed), files_removed=len(diff.removed),
             changes=changes, relationships=relationships, suggested_tasks=suggested_tasks,
-            focus_note=focus_note, skipped_llm_call=False,
+            focus_note=focus_note, skipped_llm_call=False, resolved_tasks=resolved_tasks,
         )
 
         updated_state = {
@@ -339,7 +382,44 @@ def to_dict(briefing: DailyBriefing) -> dict:
 _CIRCLED_DIGITS = "①②③④⑤⑥⑦⑧⑨⑩"
 
 
+def _days_pending(t: SuggestedTask) -> int:
+    """从 first_suggested 算到现在过了几天——用于把"搁置太久没人管"的任务
+    跟"今天刚发现"的任务区分开，不是所有 suggested_tasks 都一样新鲜。"""
+    if not t.first_suggested:
+        return 0
+    try:
+        delta = datetime.now() - datetime.fromisoformat(t.first_suggested)
+        return max(delta.days, 0)
+    except ValueError:
+        return 0
+
+
+def _bucket_tasks(briefing: DailyBriefing):
+    """把 suggested_tasks 分成"今天新发现"和"搁置中"两桶，后者按搁置天数
+    从久到近排序——搁置越久的任务应该排在最前面，最该被注意到，而不是
+    跟今天新出现的混在一起、淹没在列表顺序里。"""
+    new_tasks = [t for t in briefing.suggested_tasks if t.is_new]
+    aging_tasks = sorted((t for t in briefing.suggested_tasks if not t.is_new),
+                         key=_days_pending, reverse=True)
+    return new_tasks, aging_tasks
+
+
+def _format_task_block(t: SuggestedTask, marker: str, show_age: bool) -> List[str]:
+    signal = f"通知: {', '.join(t.signal_to)}" if t.signal_to else "通知: （无）"
+    age_note = f"，已搁置{_days_pending(t)}天" if show_age else ""
+    lines = [f"  {marker} {t.task_id} · {t.name}（{t.priority}，{signal}{age_note}）",
+             f"      理由: {t.rationale}"]
+    if t.relevance_reason:
+        lines.append(f"      信号依据: {t.relevance_reason}")
+    if t.needs_mark_alignment:
+        lines.append("      ⚠️ 需 Terresa/HR/Jasper 先内部对齐，再线下带方案找 Mark")
+    if t.related_files:
+        lines.append(f"      涉及文件: {', '.join(t.related_files)}")
+    return lines
+
+
 def format_text(briefing: DailyBriefing) -> str:
+    """详细版（技术向，供 Jasper 深入排查用，作为企业微信附件发送）。"""
     lines = [f"今日巡检简报 · {briefing.project_root}", f"生成时间: {briefing.generated_at}"]
 
     if briefing.skipped_llm_call:
@@ -348,8 +428,16 @@ def format_text(briefing: DailyBriefing) -> str:
         total = briefing.files_added + briefing.files_changed + briefing.files_removed
         lines.append(f"- 检测到 {total} 处变更"
                       f"（新增 {briefing.files_added} / 变更 {briefing.files_changed} / 删除 {briefing.files_removed}）")
+
+        # 按域分组展示，不是碎片化的逐文件流水账——同一域内的多处变化放在
+        # 一起，才能看出"这一块今天在忙什么"，而不是要自己在几十行里拼图。
+        groups: "Dict[str, List[ChangeItem]]" = {}
         for c in briefing.changes:
-            lines.append(f"  · {c.file}: {c.summary}")
+            groups.setdefault(c.domain, []).append(c)
+        for domain, items in groups.items():
+            lines.append(f"- {domain}（{len(items)}处）：")
+            for c in items:
+                lines.append(f"  · [{c.who}] {c.file}: {c.summary}")
 
         if briefing.relationships:
             lines.append("- 关联分析：")
@@ -359,30 +447,68 @@ def format_text(briefing: DailyBriefing) -> str:
         if briefing.focus_note:
             lines.append(f"- ⚠️ {briefing.focus_note}")
 
-    # 建议任务：无论本次是否真的跑了 LLM 分析都要展示——diff 为空时，previous_state
-    # 里"仍待确认"的建议任务由调用方（scan()的空 diff 分支）原样带进了这个列表，
-    # 不能因为跳过了 LLM 调用就把它们从简报里漏掉。
-    if briefing.suggested_tasks:
-        lines.append("- 建议任务：")
-        for i, t in enumerate(briefing.suggested_tasks):
-            marker = _CIRCLED_DIGITS[i] if i < len(_CIRCLED_DIGITS) else f"({i + 1})"
-            tag = "[新]" if t.is_new else "[仍待确认]"
-            signal = f"通知: {', '.join(t.signal_to)}" if t.signal_to else "通知: （无）"
-            lines.append(f"  {tag} {marker} {t.task_id} · {t.name}（{t.priority}，{signal}）")
-            lines.append(f"      理由: {t.rationale}")
-            if t.relevance_reason:
-                lines.append(f"      信号依据: {t.relevance_reason}")
-            if t.needs_mark_alignment:
-                lines.append("      ⚠️ 需 Terresa/HR/Jasper 先内部对齐，再线下带方案找 Mark")
-            if t.related_files:
-                # 补上源文件路径——没有这个，"跟进XX裁定清单"这类任务名脱离了
-                # 当天的扫描上下文就没法追溯回具体是哪些文档，不好落地推进。
-                lines.append(f"      涉及文件: {', '.join(t.related_files)}")
+    if briefing.resolved_tasks:
+        lines.append("- ✅ 自上次简报以来已完成/关闭：")
+        for r in briefing.resolved_tasks:
+            status_label = "已完成" if r.status == "done" else "已关闭（人工判定不需要执行）"
+            lines.append(f"  · {r.task_id} · {r.name} [{status_label}]")
+
+    new_tasks, aging_tasks = _bucket_tasks(briefing)
+    if new_tasks or aging_tasks:
+        if new_tasks:
+            lines.append("- 🆕 新增建议任务：")
+            for i, t in enumerate(new_tasks):
+                marker = _CIRCLED_DIGITS[i] if i < len(_CIRCLED_DIGITS) else f"({i + 1})"
+                lines.extend(_format_task_block(t, marker, show_age=False))
+        if aging_tasks:
+            lines.append("- ⏳ 搁置中（按搁置天数从久到近排序）：")
+            for i, t in enumerate(aging_tasks):
+                marker = _CIRCLED_DIGITS[i] if i < len(_CIRCLED_DIGITS) else f"({i + 1})"
+                lines.extend(_format_task_block(t, marker, show_age=True))
         lines.append("")
         lines.append("确认执行某条建议任务，运行：")
         lines.append(f'  agent.py "执行 <任务ID>" --project-root {briefing.project_root} --execute')
-        lines.append("不确认就是不管它——同一条建议下次巡检还会出现，标记为「仍待确认」，不会重复生成新ID。")
+        lines.append("确认这条不需要执行（比如已经用别的方式处理掉了），运行：")
+        lines.append(f'  agent.py --dismiss <任务ID> --project-root {briefing.project_root}')
+        lines.append("两者都不做就是继续搁置——下次简报会显示它已经搁置了几天，不会静默消失，也不会重复生成新ID。")
     elif not briefing.skipped_llm_call:
         lines.append("- 本次没有产生需要关注的建议任务")
 
+    return "\n".join(lines)
+
+
+def format_text_plain(briefing: DailyBriefing) -> str:
+    """通俗版（非技术向，给 Jasper 自己快速扫一眼用）：不出现文件路径/域标签
+    这类技术细节，只回答"发生了什么、有什么新的要办、有什么拖了很久没办、
+    有什么办完了"。跟详细版一起发——详细版走企业微信文件附件，这份走
+    企业微信正文文字，各自发挥各自的用途，不是互相替代。"""
+    project_name = Path(briefing.project_root).name
+    lines = [f"【{project_name}】今日简报"]
+
+    if briefing.skipped_llm_call:
+        lines.append("今天这个项目没有新变化。")
+    else:
+        total = briefing.files_added + briefing.files_changed + briefing.files_removed
+        domains = sorted({c.domain for c in briefing.changes}, key=lambda d: d != "其他")
+        domain_note = "、".join(domains[:4]) if domains else ""
+        lines.append(f"今天有 {total} 处更新" + (f"，主要在{domain_note}几块" if domain_note else "") + "。")
+
+    new_tasks, aging_tasks = _bucket_tasks(briefing)
+    if new_tasks:
+        lines.append(f"\n🆕 新任务（{len(new_tasks)}）：")
+        for i, t in enumerate(new_tasks, 1):
+            lines.append(f"{i}. [{t.priority}] {t.name}")
+    if aging_tasks:
+        lines.append(f"\n⏳ 还没处理，已经拖着的（{len(aging_tasks)}）：")
+        for i, t in enumerate(aging_tasks, 1):
+            lines.append(f"{i}. {t.name}（{_days_pending(t)}天）")
+    if briefing.resolved_tasks:
+        lines.append(f"\n✅ 刚完成/关闭（{len(briefing.resolved_tasks)}）：")
+        for i, r in enumerate(briefing.resolved_tasks, 1):
+            lines.append(f"{i}. {r.name}")
+
+    if not (new_tasks or aging_tasks) and briefing.skipped_llm_call:
+        return "\n".join(lines)
+
+    lines.append("\n详细版见附件。")
     return "\n".join(lines)

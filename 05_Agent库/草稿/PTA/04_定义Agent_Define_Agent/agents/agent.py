@@ -69,7 +69,8 @@ from skills.execution_planning import ExecutionScheduler
 from skills.progress_tracking import ProgressTracker
 from skills.archive_review import ArchiveReviewer
 from skills.doc_sync import DocumentSyncer
-from skills.daily_sensing import DailySensor, to_dict as daily_sensing_to_dict, format_text as format_daily_briefing
+from skills.daily_sensing import (DailySensor, to_dict as daily_sensing_to_dict,
+                                    format_text as format_daily_briefing, format_text_plain)
 from skills.project_dashboard import generate_for_person as generate_dashboard
 from skills.rule_based_task_scan import (RuleBasedScanner, format_report_text as format_rule_scan_text,
                                           format_task_assignment_markdown)
@@ -80,7 +81,7 @@ from skills.pipeline_health import (load_checks, run_all_checks, _save_baseline,
                                      format_report_markdown as format_pipeline_report_markdown)
 from tools.task_knowledge import load_task_map, merge_suggested_tasks
 from tools.dir_scan import analyze_project, format_report_text, format_report_markdown
-from tools.wecom_notify import (load_wecom_config, build_notification_text,
+from tools.wecom_notify import (load_wecom_config, build_notification_text_from_content,
                                  send_text as send_wecom_text, upload_file as upload_wecom_file,
                                  send_file as send_wecom_file)
 
@@ -150,9 +151,11 @@ def cmd_daily_scan(project_root: str = None, force: bool = False, notify: bool =
     run_id = datetime.now().strftime("%Y%m%d-%H%M%S")
     report_json_path = workspace / "reports" / f"daily-scan-{run_id}.json"
     report_md_path = workspace / "reports" / f"daily-scan-{run_id}.md"
+    report_plain_path = workspace / "reports" / f"daily-scan-{run_id}-plain.md"
     report_json_path.write_text(json.dumps(daily_sensing_to_dict(briefing), ensure_ascii=False, indent=2),
                                   encoding="utf-8")
     report_md_path.write_text(text, encoding="utf-8")
+    report_plain_path.write_text(format_text_plain(briefing), encoding="utf-8")
 
     ws.save_daily_sensing_state(workspace, updated_sensing_state)
 
@@ -165,14 +168,19 @@ def cmd_daily_scan(project_root: str = None, force: bool = False, notify: bool =
     }
     ws.save_state(workspace, state)
 
-    if notify and briefing.suggested_tasks:
+    if notify and (briefing.suggested_tasks or briefing.resolved_tasks):
         config = load_wecom_config()
         if not config:
             print("\nℹ️ 未找到 wecom_config.json，跳过企业微信通知"
                   "（模板见 02_配置项目_Configure_Project/wecom_config.example.json）。")
         else:
-            content, mentioned_mobiles = build_notification_text(
-                briefing, config.get("mobiles", {}), report_path=str(report_md_path))
+            # 正文用通俗版（format_text_plain）：不出现文件路径/域标签这类
+            # 技术细节，手机上扫一眼就知道新增/搁置/完成各有几条；详细版
+            # （report_md_path，逐域分组+完整理由）作为文件附件随后发出，
+            # 两个版本各司其职，不是互相替代。
+            plain_text = format_text_plain(briefing)
+            content, mentioned_mobiles = build_notification_text_from_content(
+                plain_text, config.get("mobiles", {}), report_path=str(report_md_path))
             result = send_wecom_text(config["webhook_url"], content, mentioned_mobiles)
             if result.get("errcode") == 0:
                 print(f"\n✅ 企业微信通知已发送（@ {len(mentioned_mobiles)} 人）")
@@ -190,6 +198,21 @@ def cmd_daily_scan(project_root: str = None, force: bool = False, notify: bool =
                 print(f"\n⚠️ 企业微信通知发送失败: {result.get('errmsg')}")
 
     print(f"\n简报已保存: {report_md_path}")
+
+
+def cmd_dismiss(task_id: str, project_root: str = None) -> None:
+    """人工关闭一条建议任务，不走--execute（比如已经用别的方式处理掉了，
+    或者判断这条建议不需要真的执行）。跟 mark_suggested_task_status(..., "done")
+    是同一个补齐"执行→回写"闭环的机制，区别只是状态标"dismissed"而不是
+    "done"——报告里会分别标注"已完成"和"已关闭（人工判定不需要执行）"，
+    不混为一谈。"""
+    resolved_root = _resolve_project_root(project_root)
+    workspace = ws.get_project_workspace(resolved_root)
+    found = ws.mark_suggested_task_status(workspace, task_id, "dismissed")
+    if found:
+        print(f"[dismiss] {task_id} 已标记为关闭，下次简报会展示一次「已关闭」后不再出现。")
+    else:
+        print(f"[dismiss] 未找到 {task_id}（可能不是 daily_sensing 产出的建议任务，或项目路径不对）。")
 
 
 def cmd_seed_baseline(project_root: str = None, extra_exclude_dirs: list = None) -> None:
@@ -448,6 +471,15 @@ def run_instruction(instruction: str, execute: bool, sync: bool, message: str,
     state.setdefault("context", {})["last_run"] = run_id
     ws.save_state(workspace, state)
 
+    # ---------- 执行→回写闭环（补 daily_sensing 此前缺失的一环）----------
+    # 真实执行成功、且 task_id 恰好是 daily_sensing 铸造的建议任务（fingerprint
+    # 里能找到）时，把它标记为 done——否则这条建议会永远停在"pending"，天天
+    # 在简报里重复出现，看不出到底有没有人处理过。task_id 不是 daily_sensing
+    # 产出的（比如手写的 P0-02）时，mark_suggested_task_status 找不到、静默
+    # 返回 False，不影响这里的主流程。
+    if execute and report_dict.get("status") == "completed":
+        ws.mark_suggested_task_status(workspace, task_id, "done")
+
     # ---------- 归档复盘（本地写入，无 git 动作，始终执行）----------
     reviewer = ArchiveReviewer(resolved_root)
     reviewer.review(task_id, task_name, plan_dict, update_lessons=False)
@@ -484,6 +516,9 @@ def main():
                               "只生成简报写进 pta_tasks.json，不自动执行")
     parser.add_argument("--force", action="store_true",
                          help="--daily-scan/--discover 专用：忽略增量哈希基线，把所有文件当新增重新分析一遍")
+    parser.add_argument("--dismiss", metavar="TASK_ID",
+                         help="人工关闭一条daily_sensing建议任务（不执行），标记为dismissed，"
+                              "下次简报展示一次「已关闭」后不再重复出现")
     parser.add_argument("--seed-baseline", action="store_true",
                          help="给从未跑过--daily-scan的项目建立起点基线，不调LLM/不产出简报/不推送通知，"
                               "只写本地文件快照；避免首次真实巡检把全部现存文件当'今天的变化'打包分析")
@@ -527,6 +562,10 @@ def main():
                               "测试exit code/字段读取/mtime），核实矩阵声明与实际状态是否一致，不做主观判断")
     parser.add_argument("--checks-path", help="显式指定 checks.json 路径（优先级高于 --project-root）")
     args = parser.parse_args()
+
+    if args.dismiss:
+        cmd_dismiss(task_id=args.dismiss, project_root=args.project_root)
+        return
 
     if args.seed_baseline:
         cmd_seed_baseline(project_root=args.project_root, extra_exclude_dirs=args.exclude_dirs)
