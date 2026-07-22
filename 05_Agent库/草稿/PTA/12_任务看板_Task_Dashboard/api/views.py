@@ -22,8 +22,10 @@ for _pkg_dir in ("05_集成工具_Integrate_Tools", "06_开发技能_Develop_Ski
     sys.path.insert(0, str(PTA_DIR / _pkg_dir))
 
 from memory import workspace as ws
-from skills.daily_sensing import list_tasks_from_state
-from skills.pipeline_health import summarize_latest_report, REPORT_DIR_RELATIVE
+from skills.daily_sensing import list_tasks_from_state, latest_report_summary
+from skills.pipeline_health import summarize_latest_report, drift_detail_from_latest_report, REPORT_DIR_RELATIVE
+from skills.agent_status import detect_all_agent_statuses
+from tools.ob_bridge import get_background
 
 DAILY_SCAN_PROJECTS_PATH = PTA_DIR / "02_配置项目_Configure_Project" / "daily_scan_projects.json"
 # HOME_PROJECT_ROOT 的推导跟 agent.py 完全一致（PTA -> 草稿 -> 05_Agent库 -> 项目根目录），
@@ -114,3 +116,77 @@ def pipeline_status() -> dict:
     在这里触发重新检测（那会真实改写.baseline.json）。"""
     report_dir = HOME_PROJECT_ROOT / REPORT_DIR_RELATIVE
     return summarize_latest_report(report_dir)
+
+
+def pipeline_drift_detail() -> dict:
+    """pipeline-status只给一个drift_count数字，前端"漂移详情"页面需要完整
+    的阶段/维度/矩阵声明/本周实测/说明表格，才能真正定位到"具体是哪里在
+    偏离"，不只是知道"有N处偏离"。"""
+    report_dir = HOME_PROJECT_ROOT / REPORT_DIR_RELATIVE
+    return drift_detail_from_latest_report(report_dir)
+
+
+def activity_feed(project_filter: str = "all") -> List[dict]:
+    """"今日动态"——每个已配置项目最新一份daily-scan报告的原始变化列表，
+    project_filter="all"时返回全部项目各自最新一份（不合并成一个大列表，
+    前端按project_name分组展示，保留"这是哪个项目的动态"这层信息）。
+    从没跑过daily-scan的项目（latest_report_summary返回None）直接跳过，
+    不在列表里出现空占位。"""
+    projects = _load_watched_projects()
+    if project_filter != "all":
+        projects = [p for p in projects if p.get("name") == project_filter]
+
+    result = []
+    for p in projects:
+        name = p.get("name", "")
+        root = Path(p.get("project_root", ""))
+        if not root.exists():
+            continue
+        workspace = ws.get_project_workspace(root)
+        summary = latest_report_summary(workspace, project_name=name)
+        if summary is not None:
+            result.append(summary)
+    return result
+
+
+def ob_search(query: str, mode: str = "hybrid", max_results: int = 5) -> dict:
+    """OB背景检索框——实时调用tools/ob_bridge.get_background()，不缓存不落盘
+    （每次都是一次真实的OB subprocess调用，检索本身不是高频路径，见ob_bridge.py
+    顶部注释）。找不到背景/OB不存在/调用异常都由get_background内部吞掉优雅
+    返回None，这里原样透传成found=False，不是接口层面的错误。"""
+    text = get_background(query, mode=mode, max_results=max_results)
+    return {"query": query, "found": text is not None, "background": text}
+
+
+def execution_history(project_filter: str = "all", limit: int = 30) -> List[dict]:
+    """"执行记录"——跨项目合并 state.json 里的 task_history（run_instruction()
+    每次真实执行/dry-run都会追加一条），按 timestamp 降序、只取最近 limit 条。
+    这是纯读取，不新增任何字段，跟 state.json 里已经存在的结构完全一致，
+    只是加了 project_name 标注来源、并做跨项目合并排序。"""
+    projects = _load_watched_projects()
+    if project_filter != "all":
+        projects = [p for p in projects if p.get("name") == project_filter]
+
+    merged = []
+    for p in projects:
+        name = p.get("name", "")
+        root = Path(p.get("project_root", ""))
+        if not root.exists():
+            continue
+        workspace = ws.get_project_workspace(root)
+        state = ws.load_state(workspace)
+        for entry in state.get("task_history", []):
+            merged.append({**entry, "project_name": name})
+
+    merged.sort(key=lambda e: e.get("timestamp", ""), reverse=True)
+    return merged[:limit]
+
+
+def agent_monitor() -> dict:
+    """Agent执行监控器：五个主Agent(PTA/VNW/AIT/方法论转正Agent/OB)的真实
+    自动化状态(四态) + PTA自己的skill调用频率统计。两者分开检测、原样打包
+    在一个响应里返回，前端一次请求就能渲染整个监控面板，不必再拼两次请求。"""
+    return {
+        "agents": detect_all_agent_statuses(),
+        "skill_usage": ws.load_skill_usage_summary(),
+    }

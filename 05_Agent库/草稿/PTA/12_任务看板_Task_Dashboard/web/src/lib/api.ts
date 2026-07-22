@@ -34,6 +34,97 @@ export interface PipelineStatus {
   report_path: string | null
 }
 
+export interface DriftRow {
+  stage: string
+  dimension: string
+  claim: string
+  actual: string
+  note: string
+}
+
+export interface DriftDetail {
+  report_date: string | null
+  report_path: string | null
+  drift_rows: DriftRow[]
+}
+
+export interface ExecutionHistoryEntry {
+  task_id: string
+  summary: string
+  status: string
+  success_rate: string
+  mode: string
+  timestamp: string
+  run_dir?: string
+  project_name: string
+}
+
+export interface ChangeItem {
+  file: string
+  summary: string
+  who: string
+  domain: string
+}
+
+export interface RelationshipItem {
+  description: string
+  related_files: string[]
+}
+
+export interface ResolvedTaskItem {
+  task_id: string
+  name: string
+  status: string
+  evidence: string
+}
+
+export interface ActivityFeedEntry {
+  project_name: string
+  generated_at: string
+  files_added: number
+  files_changed: number
+  files_removed: number
+  changes: ChangeItem[]
+  relationships: RelationshipItem[]
+  resolved_tasks: ResolvedTaskItem[]
+  skipped_llm_call: boolean
+}
+
+export interface LaunchdJob {
+  label: string
+  pid: string | null
+  last_exit_code: number | null
+  healthy: boolean
+}
+
+export type AgentStatusValue = '自动' | '人工' | '未搭建' | '死的'
+
+export interface AgentStatusInfo {
+  agent_id: string
+  display_name: string
+  description: string
+  status: AgentStatusValue
+  has_code: boolean
+  launchd_jobs: LaunchdJob[]
+}
+
+export interface SkillUsageEntry {
+  skill: string
+  count: number
+  last_called: string
+}
+
+export interface AgentMonitorResponse {
+  agents: AgentStatusInfo[]
+  skill_usage: SkillUsageEntry[]
+}
+
+export interface ObSearchResult {
+  query: string
+  found: boolean
+  background: string | null
+}
+
 async function getJSON<T>(url: string): Promise<T> {
   const resp = await fetch(url)
   if (!resp.ok) throw new Error(`${url} 请求失败: HTTP ${resp.status}`)
@@ -50,6 +141,26 @@ export function fetchTasks(project: string = 'all'): Promise<TaskBuckets> {
 
 export function fetchPipelineStatus(): Promise<PipelineStatus> {
   return getJSON('/api/pipeline-status')
+}
+
+export function fetchPipelineDriftDetail(): Promise<DriftDetail> {
+  return getJSON('/api/pipeline-drift-detail')
+}
+
+export function fetchExecutionHistory(project: string = 'all', limit: number = 30): Promise<ExecutionHistoryEntry[]> {
+  return getJSON(`/api/execution-history?project=${encodeURIComponent(project)}&limit=${limit}`)
+}
+
+export function fetchActivityFeed(project: string = 'all'): Promise<ActivityFeedEntry[]> {
+  return getJSON(`/api/activity-feed?project=${encodeURIComponent(project)}`)
+}
+
+export function fetchAgentMonitor(): Promise<AgentMonitorResponse> {
+  return getJSON('/api/agent-monitor')
+}
+
+export function fetchObSearch(query: string): Promise<ObSearchResult> {
+  return getJSON(`/api/ob-search?query=${encodeURIComponent(query)}`)
 }
 
 export async function setTaskStatus(

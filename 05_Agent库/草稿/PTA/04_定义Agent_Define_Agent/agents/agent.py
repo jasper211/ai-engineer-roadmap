@@ -445,6 +445,7 @@ def run_instruction(instruction: str, execute: bool, sync: bool, message: str,
         return
 
     # ---------- Act：执行编排（include_sync=False，同步是独立的显式阶段，见文件头）----------
+    ws.log_skill_call("execution_planning", project_root)
     scheduler = ExecutionScheduler(resolved_root, dry_run=not execute, task_map=task_knowledge)
     plan = scheduler.create_plan(task_dict, include_sync=False)
     exec_result = scheduler.execute_plan(plan)
@@ -452,6 +453,7 @@ def run_instruction(instruction: str, execute: bool, sync: bool, message: str,
     (run_dir / "plan.json").write_text(json.dumps(plan_dict, ensure_ascii=False, indent=2), encoding="utf-8")
 
     # ---------- Observe：进度报告 ----------
+    ws.log_skill_call("progress_tracking", project_root)
     tracker = ProgressTracker(plan_dict)
     report = tracker.generate_report()
     tracker.print_report(report)
@@ -482,6 +484,7 @@ def run_instruction(instruction: str, execute: bool, sync: bool, message: str,
         ws.mark_suggested_task_status(workspace, task_id, "done")
 
     # ---------- 归档复盘（本地写入，无 git 动作，始终执行）----------
+    ws.log_skill_call("archive_review", project_root)
     reviewer = ArchiveReviewer(resolved_root)
     reviewer.review(task_id, task_name, plan_dict, update_lessons=False)
 
@@ -492,6 +495,7 @@ def run_instruction(instruction: str, execute: bool, sync: bool, message: str,
         elif not message:
             print("\n⚠️ --sync 需要提供 --message，已跳过。")
         else:
+            ws.log_skill_call("doc_sync", project_root)
             syncer = DocumentSyncer(resolved_root, dry_run=False)
             syncer.sync(task_id, task_name, message)
     else:

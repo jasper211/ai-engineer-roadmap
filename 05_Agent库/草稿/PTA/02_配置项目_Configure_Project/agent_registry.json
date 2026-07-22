@@ -1,0 +1,63 @@
+{
+  "_meta": {
+    "purpose": "任务看板「Agent执行监控器」的真实数据来源——五个主Agent(PTA/VNW/AIT/方法论转正Agent/OB)各自的代码存在性+launchd自动化状态，供 skills/agent_status.py 检测。",
+    "四态定义": {
+      "自动": "有真实launchd job，且所有匹配job最近一次运行退出码为0（或当前正在运行）",
+      "人工": "有真实代码，但没有匹配到任何launchd job",
+      "未搭建": "既没有launchd job，也找不到任何真实代码路径",
+      "死的": "有launchd job，但至少一个job最近一次运行退出码非0（预期自动运行却在失败）"
+    },
+    "维护说明": "VNW/AIT搭建进度推进后，只需要更新这里的code_paths/launchd_labels，不需要改detect逻辑本身。",
+    "path_base": "所有code_paths均相对于用户Desktop下的「Jasper工作文档（不含EA项目）」目录（PTA/VNW/OB三者的共同上级），由 skills/agent_status.py 用 Path.home()/Desktop/该目录名 拼出绝对路径。"
+  },
+  "agents": [
+    {
+      "agent_id": "PTA",
+      "display_name": "PTA · 项目任务协同",
+      "description": "多项目每日巡检 + 任务生命周期管理 + Pipeline矩阵漂移周检测",
+      "code_paths": [
+        "Jasper AI协同经验引擎/AI工程能力整改项目/05_Agent库/草稿/PTA/04_定义Agent_Define_Agent/agents/agent.py"
+      ],
+      "launchd_labels": [
+        "com.jasper.pta-multi-daily-scan",
+        "com.jasper.pta-pipeline-check"
+      ]
+    },
+    {
+      "agent_id": "VNW",
+      "display_name": "VNW · 价值节点-规则分析前端",
+      "description": "节点-规则-SOP任务推动前端，已有真实代码（app_v2，含构建产物），尚无自动化调度",
+      "code_paths": [
+        "规则前端设计/Agent_价值节点-规则分析前端/app_v2/src",
+        "规则前端设计/Agent_价值节点-规则分析前端/app_v2/package.json"
+      ],
+      "launchd_labels": []
+    },
+    {
+      "agent_id": "AIT",
+      "display_name": "AIT · 跨部门大件任务协同",
+      "description": "VNW之后的下一步规划，尚未开始搭建，无任何可执行代码",
+      "code_paths": [],
+      "launchd_labels": []
+    },
+    {
+      "agent_id": "方法论转正Agent",
+      "display_name": "方法论转正 Agent",
+      "description": "方法论沉淀转正流程Agent，尚未启动搭建",
+      "code_paths": [],
+      "launchd_labels": []
+    },
+    {
+      "agent_id": "OB",
+      "display_name": "OB · Obsidian知识库Agent",
+      "description": "知识库批量提炼+同步巡检，独立项目管理，PTA仅做只读状态展示",
+      "code_paths": [
+        "Jasper AI协同经验引擎/AI工程能力整改项目/05_Agent库/草稿/OB/04_定义Agent_Define_Agent/agents/agent.py"
+      ],
+      "launchd_labels": [
+        "com.jasper.ob-daily-extract",
+        "com.jasper.ob-sync-agent"
+      ]
+    }
+  ]
+}

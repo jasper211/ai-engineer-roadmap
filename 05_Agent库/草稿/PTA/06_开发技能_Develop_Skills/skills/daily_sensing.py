@@ -488,6 +488,41 @@ def list_tasks_from_state(state: dict, project_name: str = "", resolved_within_d
     return {"new": new_tasks, "aging": aging_tasks, "resolved_recent": resolved_recent}
 
 
+def latest_report_summary(workspace: Path, project_name: str = "") -> Optional[dict]:
+    """给任务看板"今日动态"用的只读读取——找该项目工作区里最新一份
+    daily-scan-*.json 报告（run_id 用 YYYYMMDD-HHMMSS 命名，文件名字典序
+    排序即时间序，不需要额外解析时间戳），原样把 changes/relationships/
+    resolved_tasks 摘出来给前端渲染。不触发扫描——跟 list_tasks_from_state
+    同样的原则，仪表盘打开页面不该产生真实 LLM 调用费用，这里只读已经
+    落盘的报告文件。
+
+    从没跑过 --daily-scan 的项目（reports/ 目录为空）返回 None，调用方
+    据此展示"该项目还没有过巡检记录"，不是当成错误。"""
+    reports_dir = workspace / "reports"
+    if not reports_dir.exists():
+        return None
+    report_files = sorted(reports_dir.glob("daily-scan-*.json"))
+    if not report_files:
+        return None
+    latest = report_files[-1]
+    try:
+        data = json.loads(latest.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return None
+
+    return {
+        "project_name": project_name,
+        "generated_at": data.get("generated_at", ""),
+        "files_added": data.get("files_added", 0),
+        "files_changed": data.get("files_changed", 0),
+        "files_removed": data.get("files_removed", 0),
+        "changes": data.get("changes", []),
+        "relationships": data.get("relationships", []),
+        "resolved_tasks": data.get("resolved_tasks", []),
+        "skipped_llm_call": data.get("skipped_llm_call", False),
+    }
+
+
 def _format_task_block(t: SuggestedTask, marker: str, show_age: bool) -> List[str]:
     signal = f"通知: {', '.join(t.signal_to)}" if t.signal_to else "通知: （无）"
     age_note = f"，已搁置{_days_pending(t)}天" if show_age else ""

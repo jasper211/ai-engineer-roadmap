@@ -50,8 +50,11 @@ from skills.progress_tracking import ProgressTracker
 from skills.doc_sync import DocumentSyncer
 from skills.archive_review import ArchiveReviewer
 import skills.daily_sensing as daily_sensing
-from skills.daily_sensing import DailySensor, SuggestedTask, DailyBriefing, list_tasks_from_state
-from skills.pipeline_health import summarize_latest_report
+from skills.daily_sensing import (DailySensor, SuggestedTask, DailyBriefing, list_tasks_from_state,
+                                   latest_report_summary)
+from skills.pipeline_health import summarize_latest_report, drift_detail_from_latest_report
+from skills.agent_status import (detect_all_agent_statuses, STATUS_AUTO, STATUS_MANUAL,
+                                  STATUS_UNBUILT, STATUS_DEAD)
 from skills.rule_based_task_scan import RuleBasedScanner
 import skills.document_task_discovery as document_task_discovery
 from skills.document_task_discovery import DocumentDiscoverer
@@ -65,6 +68,7 @@ from tools.task_knowledge import load_task_map, merge_suggested_tasks
 from tools.wecom_notify import (build_notification_text, load_wecom_config, MAX_CONTENT_BYTES,
                                  _encode_multipart_file, _webhook_to_upload_url)
 from memory.workspace import get_project_workspace
+import memory.workspace as ws
 
 FAILURES = []
 
@@ -851,6 +855,190 @@ def test_27_task_dashboard_api_smoke():
         thread.join(timeout=5)
 
 
+def test_28_agent_status_detection():
+    print("\n[Test 28] skills.agent_status.detect_all_agent_statuses 真实五Agent状态检测")
+    print("-" * 60)
+    # 不用fixture造假数据——这个技能的核心价值就是读真实launchctl+真实目录，
+    # 造一份假registry反而测不出"真实环境下这套判定逻辑到底对不对"，这点
+    # 跟test_9/test_24"复现真实场景"是同一个原则。
+    result = detect_all_agent_statuses()
+    by_id = {a["agent_id"]: a for a in result}
+
+    check(set(by_id.keys()) == {"PTA", "VNW", "AIT", "方法论转正Agent", "OB"},
+          "五个已登记Agent全部出现在检测结果里", f"Agent集合不对: {set(by_id.keys())}")
+
+    valid_states = {STATUS_AUTO, STATUS_MANUAL, STATUS_UNBUILT, STATUS_DEAD}
+    check(all(a["status"] in valid_states for a in result),
+          "每个Agent的status都落在四态定义内，没有出现意外的第五种值",
+          f"出现非法状态: {[a['status'] for a in result if a['status'] not in valid_states]}")
+
+    check(by_id["AIT"]["status"] == STATUS_UNBUILT and by_id["方法论转正Agent"]["status"] == STATUS_UNBUILT,
+          "AIT/方法论转正Agent目前都还没有任何代码，正确判定为「未搭建」",
+          f"AIT={by_id['AIT']['status']}, 方法论={by_id['方法论转正Agent']['status']}")
+
+    check(len(by_id["OB"]["launchd_jobs"]) == 2,
+          "OB的两个真实launchd job都被匹配到（不是笼统的单一状态，能看清具体哪个job的细节）",
+          f"OB launchd_jobs数量不对: {len(by_id['OB']['launchd_jobs'])}")
+
+    check(by_id["PTA"]["has_code"] is True and by_id["VNW"]["has_code"] is True,
+          "PTA/VNW的真实代码路径都被正确识别为存在",
+          f"has_code判定错误: PTA={by_id['PTA']['has_code']}, VNW={by_id['VNW']['has_code']}")
+
+
+def test_29_skill_usage_summary_and_agent_monitor_endpoint(tmp_dir: Path):
+    print("\n[Test 29] memory.workspace.load_skill_usage_summary 聚合 + /api/agent-monitor 冒烟")
+    print("-" * 60)
+    # 用tmp_dir下的独立文件替身，不碰真实的skill_usage_log.json——那份文件
+    # 记录的是PTA真实生产使用的调用频率，测试往里灌假数据会污染未来"哪个
+    # skill真的常用"这个判断本身的价值。
+    original_path = ws.SKILL_USAGE_LOG_PATH
+    fake_log = tmp_dir / "skill_usage_log_fixture.json"
+    ws.SKILL_USAGE_LOG_PATH = fake_log
+    try:
+        ws.log_skill_call("daily_sensing", "/fake/project")
+        ws.log_skill_call("daily_sensing", "/fake/project")
+        ws.log_skill_call("intent_parsing", "/fake/project")
+
+        summary = ws.load_skill_usage_summary()
+        by_skill = {s["skill"]: s for s in summary}
+        check(by_skill["daily_sensing"]["count"] == 2 and by_skill["intent_parsing"]["count"] == 1,
+              "按skill分组的调用次数统计正确", f"计数错误: {summary}")
+        check(summary[0]["skill"] == "daily_sensing",
+              "按调用次数从多到少排序，daily_sensing(2次)排在intent_parsing(1次)前面",
+              f"排序不对: {[s['skill'] for s in summary]}")
+    finally:
+        ws.SKILL_USAGE_LOG_PATH = original_path
+
+    import threading
+    import time
+    import urllib.request
+    import server as dashboard_server
+
+    httpd = dashboard_server.ThreadingHTTPServer(("127.0.0.1", 0), dashboard_server.Handler)
+    port = httpd.server_address[1]
+    thread = threading.Thread(target=httpd.serve_forever, daemon=True)
+    thread.start()
+    time.sleep(0.2)
+    try:
+        with urllib.request.urlopen(f"http://127.0.0.1:{port}/api/agent-monitor", timeout=5) as resp:
+            payload = json.loads(resp.read())
+        check(set(payload.keys()) == {"agents", "skill_usage"},
+              "/api/agent-monitor 真实返回agents+skill_usage两个字段",
+              f"返回结构不对: {payload.keys()}")
+        check(len(payload["agents"]) == 5, "/api/agent-monitor 里五个Agent的真实状态都在",
+              f"agents数量不对: {len(payload['agents'])}")
+    finally:
+        httpd.shutdown()
+        thread.join(timeout=5)
+
+
+def test_30_latest_report_summary(tmp_dir: Path):
+    print("\n[Test 30] skills.daily_sensing.latest_report_summary 纯函数读取最新daily-scan报告")
+    print("-" * 60)
+    workspace = tmp_dir / "activity_feed_fixture"
+    reports_dir = workspace / "reports"
+    reports_dir.mkdir(parents=True, exist_ok=True)
+
+    for run_id, changes_count in (("20260720-100000", 1), ("20260721-110000", 3)):
+        payload = {
+            "generated_at": f"2026-07-{run_id[6:8]}T11:00:00",
+            "project_root": str(workspace), "files_added": changes_count, "files_changed": 0,
+            "files_removed": 0,
+            "changes": [{"file": f"f{i}.md", "summary": "x", "who": "未知", "domain": "其他"}
+                        for i in range(changes_count)],
+            "relationships": [], "suggested_tasks": [], "resolved_tasks": [], "focus_note": "",
+            "skipped_llm_call": False,
+        }
+        (reports_dir / f"daily-scan-{run_id}.json").write_text(
+            json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+
+    result = latest_report_summary(workspace, project_name="测试项目")
+    check(result is not None and len(result["changes"]) == 3,
+          "选中了最新（run_id最大）的报告，不是最早的那份",
+          f"选错报告或字段不对: {result}")
+    check(result["project_name"] == "测试项目", "project_name正确标注来源",
+          f"project_name不对: {result.get('project_name')}")
+
+    empty_workspace = tmp_dir / "no_daily_scan_yet"
+    empty_workspace.mkdir()
+    check(latest_report_summary(empty_workspace) is None,
+          "从没跑过--daily-scan的项目（reports/目录都不存在）优雅返回None，不抛异常",
+          "空workspace场景处理不对")
+
+
+def test_31_drift_detail_from_latest_report(tmp_dir: Path):
+    print("\n[Test 31] skills.pipeline_health.drift_detail_from_latest_report 完整表格解析")
+    print("-" * 60)
+    report_dir = tmp_dir / "pipeline_drift_detail_fixture"
+    report_dir.mkdir(parents=True, exist_ok=True)
+    (report_dir / "检测记录_2026-07-21.md").write_text(
+        "# Pipeline差距矩阵 · 周检测 2026-07-21\n\n"
+        "## 本周与矩阵声明不一致的地方（drift_flag=true）\n"
+        "| 阶段 | 维度 | 矩阵声明 | 本周实测 | 说明 |\n|---|---|---|---|---|\n"
+        "| 1 OB背景上下文 | BUILD | 声明A | 实测A | 说明A |\n"
+        "| 5 PTA协同执行 | VERIFY | 声明B | 实测B | 说明B |\n\n"
+        "## 本周无变化（跟上次检测一致，未发现drift）\n（无）\n", encoding="utf-8")
+
+    result = drift_detail_from_latest_report(report_dir)
+    check(result["report_date"] == "2026-07-21", "选中最新报告",
+          f"报告日期不对: {result['report_date']}")
+    check(len(result["drift_rows"]) == 2, f"完整解析出2条drift行（不只是数量，是完整字段）",
+          f"drift_rows数量不对: {len(result['drift_rows'])}")
+    row = result["drift_rows"][0]
+    check(row == {"stage": "1 OB背景上下文", "dimension": "BUILD", "claim": "声明A",
+                  "actual": "实测A", "note": "说明A"},
+          "每行的stage/dimension/claim/actual/note五个字段都正确解析",
+          f"字段解析不对: {row}")
+
+    empty_dir = tmp_dir / "no_reports_for_detail"
+    empty_dir.mkdir()
+    check(drift_detail_from_latest_report(empty_dir) == {"report_date": None, "report_path": None, "drift_rows": []},
+          "还没有任何报告时优雅返回全空", "空目录场景处理不对")
+
+
+def test_32_new_dashboard_endpoints_smoke():
+    print("\n[Test 32] 任务看板新增4个接口冒烟测试（activity-feed/pipeline-drift-detail/execution-history/ob-search）")
+    print("-" * 60)
+    import threading
+    import time
+    import urllib.request
+    import server as dashboard_server
+
+    httpd = dashboard_server.ThreadingHTTPServer(("127.0.0.1", 0), dashboard_server.Handler)
+    port = httpd.server_address[1]
+    thread = threading.Thread(target=httpd.serve_forever, daemon=True)
+    thread.start()
+    time.sleep(0.2)
+    try:
+        with urllib.request.urlopen(f"http://127.0.0.1:{port}/api/activity-feed?project=all", timeout=5) as resp:
+            feed = json.loads(resp.read())
+        check(isinstance(feed, list), f"/api/activity-feed 真实返回列表（{len(feed)} 个有过巡检记录的项目）",
+              f"/api/activity-feed 返回类型不对: {type(feed)}")
+
+        with urllib.request.urlopen(f"http://127.0.0.1:{port}/api/pipeline-drift-detail", timeout=5) as resp:
+            detail = json.loads(resp.read())
+        check("drift_rows" in detail, "/api/pipeline-drift-detail 真实返回drift_rows字段",
+              f"/api/pipeline-drift-detail 返回不对: {detail}")
+
+        with urllib.request.urlopen(f"http://127.0.0.1:{port}/api/execution-history?project=all&limit=5", timeout=5) as resp:
+            history = json.loads(resp.read())
+        check(isinstance(history, list), f"/api/execution-history 真实返回列表（{len(history)} 条）",
+              f"/api/execution-history 返回类型不对: {type(history)}")
+
+        # 真实调用OB子进程（不mock）——用一个大概率命中的通用查询词，验证接口
+        # 链路本身通的（found可能True可能False，取决于vault内容，不断言具体值，
+        # 只断言结构，避免测试跟vault内容强耦合而变脆）。
+        with urllib.request.urlopen(f"http://127.0.0.1:{port}/api/ob-search?query=%E4%BB%B7%E5%80%BC%E8%8A%82%E7%82%B9",
+                                     timeout=30) as resp:
+            ob_result = json.loads(resp.read())
+        check(set(ob_result.keys()) == {"query", "found", "background"},
+              "/api/ob-search 真实返回query/found/background三个字段",
+              f"/api/ob-search 返回结构不对: {ob_result.keys()}")
+    finally:
+        httpd.shutdown()
+        thread.join(timeout=5)
+
+
 def main():
     print("=" * 60)
     print("PTA 集成测试")
@@ -893,6 +1081,11 @@ def main():
         test_25_list_tasks_from_state()
         test_26_summarize_latest_report(tmp_dir)
         test_27_task_dashboard_api_smoke()
+        test_28_agent_status_detection()
+        test_29_skill_usage_summary_and_agent_monitor_endpoint(tmp_dir)
+        test_30_latest_report_summary(tmp_dir)
+        test_31_drift_detail_from_latest_report(tmp_dir)
+        test_32_new_dashboard_endpoints_smoke()
     finally:
         shutil.rmtree(tmp_dir, ignore_errors=True)
         # Test 7/13 通过 subprocess 调用 agent.py，其专属工作区落在 memory.workspace 的
@@ -909,7 +1102,7 @@ def main():
             print(f"  - {f}")
         return 1
 
-    print("PTA 集成测试完成：27/27 通过")
+    print("PTA 集成测试完成：32/32 通过")
     print("=" * 60)
     return 0
 

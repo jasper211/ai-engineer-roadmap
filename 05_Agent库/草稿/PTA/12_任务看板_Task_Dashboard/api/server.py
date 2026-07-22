@@ -95,8 +95,24 @@ class Handler(BaseHTTPRequestHandler):
         elif parsed.path == "/api/tasks":
             project = query.get("project", ["all"])[0]
             self._send_json(200, views.aggregate_tasks(project))
+        elif parsed.path == "/api/activity-feed":
+            project = query.get("project", ["all"])[0]
+            self._send_json(200, views.activity_feed(project))
         elif parsed.path == "/api/pipeline-status":
             self._send_json(200, views.pipeline_status())
+        elif parsed.path == "/api/pipeline-drift-detail":
+            self._send_json(200, views.pipeline_drift_detail())
+        elif parsed.path == "/api/ob-search":
+            search_query = query.get("query", [""])[0]
+            mode = query.get("mode", ["hybrid"])[0]
+            max_results = int(query.get("max_results", ["5"])[0])
+            self._send_json(200, views.ob_search(search_query, mode, max_results))
+        elif parsed.path == "/api/execution-history":
+            project = query.get("project", ["all"])[0]
+            limit = int(query.get("limit", ["30"])[0])
+            self._send_json(200, views.execution_history(project, limit))
+        elif parsed.path == "/api/agent-monitor":
+            self._send_json(200, views.agent_monitor())
         elif parsed.path.startswith("/api/"):
             self._send_json(404, {"error": f"未知接口: {parsed.path}"})
         else:

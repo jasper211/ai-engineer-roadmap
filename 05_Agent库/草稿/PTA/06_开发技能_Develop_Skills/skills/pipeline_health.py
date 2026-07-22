@@ -404,3 +404,41 @@ def summarize_latest_report(report_dir: Path) -> dict:
         "drift_count": drift_count,
         "report_path": str(latest),
     }
+
+
+def _parse_table_rows(section_text: str) -> List[dict]:
+    """把 `| 阶段 | 维度 | 矩阵声明 | 本周实测 | 说明 |` 格式的markdown表格
+    数据行解析成结构化字典列表，跳过表头行和`|---|`分隔线。"""
+    rows = []
+    for line in section_text.splitlines():
+        line = line.strip()
+        if not line.startswith("|") or line.startswith("|---") or "矩阵声明" in line:
+            continue
+        cells = [c.strip() for c in line.strip("|").split("|")]
+        if len(cells) != 5:
+            continue
+        stage, dimension, claim, actual, note = cells
+        rows.append({"stage": stage, "dimension": dimension, "claim": claim,
+                      "actual": actual, "note": note})
+    return rows
+
+
+def drift_detail_from_latest_report(report_dir: Path) -> dict:
+    """给任务看板"Pipeline漂移详情"用的完整表格——不只是summarize_latest_report
+    那个数字，而是每一条drift的阶段/维度/矩阵声明/本周实测/说明全部给出来，
+    供前端渲染成可展开的详情表。同样只读最新报告，不重新跑检测。"""
+    reports = sorted(report_dir.glob("检测记录_*.md"))
+    if not reports:
+        return {"report_date": None, "report_path": None, "drift_rows": []}
+
+    latest = reports[-1]
+    text = latest.read_text(encoding="utf-8")
+
+    section = re.search(r"## 本周与矩阵声明不一致的地方.*?\n(.*?)(?=\n## |\Z)", text, re.DOTALL)
+    drift_rows = _parse_table_rows(section.group(1)) if section else []
+
+    return {
+        "report_date": latest.stem.replace("检测记录_", ""),
+        "report_path": str(latest),
+        "drift_rows": drift_rows,
+    }
