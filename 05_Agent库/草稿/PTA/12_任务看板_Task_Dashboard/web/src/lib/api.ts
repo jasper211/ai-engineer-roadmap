@@ -13,6 +13,7 @@ export interface Task {
   days_pending?: number
   status?: string
   status_updated_at?: string
+  evidence?: string
 }
 
 export interface TaskBuckets {
@@ -125,6 +126,13 @@ export interface ObSearchResult {
   background: string | null
 }
 
+export interface WatchedProjectConfig {
+  name: string
+  project_root: string
+  exclude_dirs?: string[]
+  exclude_note?: string
+}
+
 async function getJSON<T>(url: string): Promise<T> {
   const resp = await fetch(url)
   if (!resp.ok) throw new Error(`${url} 请求失败: HTTP ${resp.status}`)
@@ -161,6 +169,28 @@ export function fetchAgentMonitor(): Promise<AgentMonitorResponse> {
 
 export function fetchObSearch(query: string): Promise<ObSearchResult> {
   return getJSON(`/api/ob-search?query=${encodeURIComponent(query)}`)
+}
+
+export function fetchWatchedProjects(): Promise<WatchedProjectConfig[]> {
+  return getJSON('/api/watched-projects')
+}
+
+export async function addWatchedProject(
+  name: string,
+  projectRoot: string,
+  excludeDirs?: string[],
+): Promise<{ success: boolean; error?: string; seeded_files?: number }> {
+  const resp = await fetch('/api/watched-projects', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name, project_root: projectRoot, exclude_dirs: excludeDirs }),
+  })
+  return resp.json()
+}
+
+export async function removeWatchedProject(name: string): Promise<{ success: boolean; error?: string }> {
+  const resp = await fetch(`/api/watched-projects/${encodeURIComponent(name)}`, { method: 'DELETE' })
+  return resp.json()
 }
 
 export async function setTaskStatus(

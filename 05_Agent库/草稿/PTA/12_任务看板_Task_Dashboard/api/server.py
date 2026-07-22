@@ -24,13 +24,14 @@ import re
 import sys
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from urllib.parse import urlparse, parse_qs
+from urllib.parse import urlparse, parse_qs, unquote
 
 import views
 
 WEB_DIST_DIR = views.DASHBOARD_DIR / "web" / "dist"
 
 TASK_STATUS_PATH = re.compile(r"^/api/tasks/([^/]+)/status$")
+WATCHED_PROJECT_PATH = re.compile(r"^/api/watched-projects/([^/]+)$")
 # 只允许这两个取值——"关闭"和"取消关闭(重新跟踪)"，这是前端勾选交互唯一
 # 需要的两种状态转换；不开放任意字符串，避免前端一个笔误就把某条任务的
 # 状态写成垃圾值。
@@ -82,7 +83,7 @@ class Handler(BaseHTTPRequestHandler):
         # 预检请求兜底（同上，单用户本地工具场景下大概率用不到，但补上不费事）。
         self.send_response(204)
         self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS")
         self.send_header("Access-Control-Allow-Headers", "Content-Type")
         self.end_headers()
 
@@ -113,22 +114,39 @@ class Handler(BaseHTTPRequestHandler):
             self._send_json(200, views.execution_history(project, limit))
         elif parsed.path == "/api/agent-monitor":
             self._send_json(200, views.agent_monitor())
+        elif parsed.path == "/api/watched-projects":
+            self._send_json(200, views.list_watched_projects_config())
         elif parsed.path.startswith("/api/"):
             self._send_json(404, {"error": f"未知接口: {parsed.path}"})
         else:
             self._send_static(parsed.path)
 
+    def _read_json_body(self) -> dict:
+        length = int(self.headers.get("Content-Length", 0))
+        return json.loads(self.rfile.read(length) or b"{}")
+
     def do_POST(self):
         parsed = urlparse(self.path)
+
+        if parsed.path == "/api/watched-projects":
+            try:
+                body = self._read_json_body()
+            except json.JSONDecodeError:
+                self._send_json(400, {"error": "请求体不是合法JSON"})
+                return
+            result = views.add_watched_project(
+                body.get("name", ""), body.get("project_root", ""), body.get("exclude_dirs"))
+            self._send_json(200 if result.get("success") else 400, result)
+            return
+
         match = TASK_STATUS_PATH.match(parsed.path)
         if not match:
             self._send_json(404, {"error": f"未知接口: {parsed.path}"})
             return
 
         task_id = match.group(1)
-        length = int(self.headers.get("Content-Length", 0))
         try:
-            body = json.loads(self.rfile.read(length) or b"{}")
+            body = self._read_json_body()
         except json.JSONDecodeError:
             self._send_json(400, {"error": "请求体不是合法JSON"})
             return
@@ -144,6 +162,16 @@ class Handler(BaseHTTPRequestHandler):
 
         result = views.dismiss_task(project, task_id, status)
         self._send_json(200 if result.get("found") else 404, result)
+
+    def do_DELETE(self):
+        parsed = urlparse(self.path)
+        match = WATCHED_PROJECT_PATH.match(parsed.path)
+        if not match:
+            self._send_json(404, {"error": f"未知接口: {parsed.path}"})
+            return
+        name = unquote(match.group(1))
+        result = views.remove_watched_project(name)
+        self._send_json(200 if result.get("success") else 404, result)
 
 
 def main():

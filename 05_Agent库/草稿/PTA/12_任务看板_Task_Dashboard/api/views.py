@@ -22,7 +22,7 @@ for _pkg_dir in ("05_集成工具_Integrate_Tools", "06_开发技能_Develop_Ski
     sys.path.insert(0, str(PTA_DIR / _pkg_dir))
 
 from memory import workspace as ws
-from skills.daily_sensing import list_tasks_from_state, latest_report_summary
+from skills.daily_sensing import list_tasks_from_state, latest_report_summary, DailySensor
 from skills.pipeline_health import summarize_latest_report, drift_detail_from_latest_report, REPORT_DIR_RELATIVE
 from skills.agent_status import detect_all_agent_statuses
 from tools.ob_bridge import get_background
@@ -41,6 +41,78 @@ def _load_watched_projects() -> List[dict]:
     except json.JSONDecodeError:
         return []
     return data.get("projects", [])
+
+
+def _save_watched_projects(projects: List[dict]) -> None:
+    """写回daily_scan_projects.json——保留原有的_meta字段（不重新生成，避免
+    人工维护的说明文字被API写操作覆盖掉），只替换projects数组本身。"""
+    existing = {}
+    if DAILY_SCAN_PROJECTS_PATH.exists():
+        try:
+            existing = json.loads(DAILY_SCAN_PROJECTS_PATH.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            existing = {}
+    existing["projects"] = projects
+    DAILY_SCAN_PROJECTS_PATH.write_text(
+        json.dumps(existing, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+def list_watched_projects_config() -> List[dict]:
+    """给管理界面用的原始配置读取（name/project_root/exclude_dirs），区别于
+    list_projects()——那个函数额外拼装了exists/last_daily_scan运行时信息，
+    是给"运行状态"页面看的只读展示；这个是给"新增/删除项目"表单用的编辑态数据，
+    两者关注点不同，不合并成一个函数。"""
+    return _load_watched_projects()
+
+
+def add_watched_project(name: str, project_root: str, exclude_dirs: List[str] = None) -> dict:
+    """新增一个每日巡检项目——写进daily_scan_projects.json后，立刻为它建立
+    种子基线（DailySensor.seed_baseline()，只做文件快照不调LLM），避免下一次
+    真实--daily-scan把项目里全部现存文件当成"今天的变化"打包分析（这是
+    v2.10.2真实踩过的坑：Rw/Jasper工作文档两个项目首次接入时都因为没有基线，
+    直接跑巡检会把上千个文件当新增去分析）。
+
+    name不能为空/不能跟已有项目重名，project_root必须是真实存在的目录——
+    校验失败时返回{success: False, error}，不写文件也不建基线。"""
+    name = (name or "").strip()
+    project_root = (project_root or "").strip()
+    if not name:
+        return {"success": False, "error": "项目名称不能为空"}
+    if not project_root:
+        return {"success": False, "error": "project_root不能为空"}
+
+    root = Path(project_root)
+    if not root.exists() or not root.is_dir():
+        return {"success": False, "error": f"目录不存在: {project_root}"}
+
+    projects = _load_watched_projects()
+    if any(p.get("name") == name for p in projects):
+        return {"success": False, "error": f"项目名称已存在: {name}"}
+
+    entry = {"name": name, "project_root": str(root)}
+    if exclude_dirs:
+        entry["exclude_dirs"] = exclude_dirs
+    projects.append(entry)
+    _save_watched_projects(projects)
+
+    sensor = DailySensor(root, extra_exclude_dirs=set(exclude_dirs) if exclude_dirs else None)
+    seeded_state = sensor.seed_baseline()
+    workspace = ws.get_project_workspace(root)
+    ws.save_daily_sensing_state(workspace, seeded_state)
+
+    return {"success": True, "seeded_files": len(seeded_state["file_hashes"])}
+
+
+def remove_watched_project(name: str) -> dict:
+    """从daily_scan_projects.json里移除一个项目——只删配置条目，不删它已经
+    产生的工作区/报告数据（那些是历史记录，删项目配置不该连带销毁历史，
+    真要清理由人自己去项目工作区手动处理）。"""
+    projects = _load_watched_projects()
+    remaining = [p for p in projects if p.get("name") != name]
+    if len(remaining) == len(projects):
+        return {"success": False, "error": f"未找到项目: {name}"}
+    _save_watched_projects(remaining)
+    return {"success": True}
 
 
 def _resolve_workspace_for_project(project_name: str) -> "tuple[Path, Path] | None":

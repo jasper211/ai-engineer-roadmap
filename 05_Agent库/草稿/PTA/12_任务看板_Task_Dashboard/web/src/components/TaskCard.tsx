@@ -59,6 +59,11 @@ export function TaskCard({ task, onToggle, checked }: Props) {
             <FileText size={12} /> {task.related_files.join('、')}
           </div>
         )}
+        {task.evidence && (
+          <div className="mt-1 text-xs text-accent-success">
+            ✅ 文件回执自动识别 — {task.evidence}
+          </div>
+        )}
       </div>
     </div>
   )

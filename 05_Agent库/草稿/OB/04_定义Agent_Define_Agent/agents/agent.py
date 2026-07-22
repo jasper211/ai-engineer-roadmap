@@ -80,13 +80,15 @@ F_FILES = [
 DEFAULT_OUTPUT_PATH = "/Users/a112233/Desktop/Jasper工作文档（不含EA项目）/Jasper AI协同经验引擎/Agent健康报告.md"
 
 # 三个项目的真实 Desktop 路径——--extract-project 的项目名到根目录映射。
-# 注：Jasper AI协同经验引擎目前只扫描 AI工程能力整改项目 子目录（56个候选
-# 文件，已验证），其上级目录里散落的方法论/上下文md文件（上下文_*/index_v*
-# 等）暂未纳入扫描范围，留待后续确认是否要扩大这个项目的扫描根目录。
+# 2026-07-22 Jasper范围裁定：Jasper AI协同经验引擎白名单收窄到只保留
+# 三大主Agent体系架构（最新版）+ Mark_AI经验合集学习参考——后者是根目录下
+# 跟 AI工程能力整改项目 平级的独立文件夹，之前的根目录设定只扫描
+# AI工程能力整改项目子目录，够不到它，所以这里把根目录上移一级（改动细节
+# 见 tools/project_filters.py 的 JASPER_ENGINE_LAYER_PRIORITY）。
 PROJECT_ROOTS = {
     "Rw权益项目": "/Users/a112233/Desktop/Rw权益项目",
     "EA流程架构项目": "/Users/a112233/Desktop/流程架构项目_jasper",
-    "Jasper AI协同经验引擎": "/Users/a112233/Desktop/Jasper工作文档（不含EA项目）/Jasper AI协同经验引擎/AI工程能力整改项目",
+    "Jasper AI协同经验引擎": "/Users/a112233/Desktop/Jasper工作文档（不含EA项目）/Jasper AI协同经验引擎",
 }
 
 

@@ -4,6 +4,7 @@ import {
   fetchProjects, fetchPipelineStatus, fetchPipelineDriftDetail, fetchExecutionHistory,
   type ProjectInfo, type PipelineStatus, type DriftDetail, type ExecutionHistoryEntry,
 } from '../lib/api'
+import { WatchedProjectManager } from '../components/WatchedProjectManager'
 
 function timeAgo(iso: string | null): string {
   if (!iso) return '从未运行'
@@ -53,6 +54,8 @@ export function PtaStatus() {
           {projects.length === 0 && <p className="text-sm text-text-muted">daily_scan_projects.json 里没有配置项目</p>}
         </div>
       </section>
+
+      <WatchedProjectManager onChanged={() => fetchProjects().then(setProjects)} />
 
       <section>
         <h2 className="text-sm font-medium text-text-secondary mb-3">Pipeline 矩阵漂移检测（pipeline-check，周五 11:00）</h2>

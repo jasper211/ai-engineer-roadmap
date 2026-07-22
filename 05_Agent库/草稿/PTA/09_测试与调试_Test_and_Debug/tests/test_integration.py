@@ -932,6 +932,153 @@ def test_29_skill_usage_summary_and_agent_monitor_endpoint(tmp_dir: Path):
         thread.join(timeout=5)
 
 
+def test_33_file_receipt_evidence_persists_into_fingerprint(tmp_dir: Path):
+    print("\n[Test 33] 文件回执自动识别的evidence真正持久化进fingerprint（B类修复）")
+    print("-" * 60)
+    # 复现此前的真实缺口：evidence 之前只塞进当次简报的 ResolvedTask 对象，
+    # 从没存回 fingerprint 本身——list_tasks_from_state()（仪表盘读的持久化
+    # 状态，不是当次简报）永远拿不到"文件回执自动识别"的判断依据，过了当天
+    # 就再也看不到为什么这条任务被关闭了。
+    root = tmp_dir / "evidence_persist_fixture"
+    root.mkdir(parents=True, exist_ok=True)
+    (root / "note.md").write_text("初始内容\n", encoding="utf-8")
+
+    sensor = DailySensor(root, api_key="fake-key-not-used")
+
+    def _stub_task(system_prompt, user_content, api_key, model=None, **kw):
+        return json.dumps({
+            "changes": [{"file": "note.md", "summary": "新增了初始内容"}],
+            "relationships": [],
+            "suggested_tasks": [{"name": "补充KPI表格", "rationale": "r", "priority": "P1",
+                                   "signal_to": ["Jasper"], "needs_mark_alignment": False,
+                                   "relevance_reason": "rr", "related_files": ["kpi_table.csv"]}],
+        }, ensure_ascii=False)
+
+    daily_sensing.call_deepseek = _stub_task
+    briefing1, state1, _ = sensor.scan(previous_state={})
+    task_id = briefing1.suggested_tasks[0].task_id
+
+    # 第二次扫描：新增了 kpi_table.csv，stub 判断这满足了上面那条搁置任务的
+    # 要求，返回真实的 evidence 文字。
+    (root / "kpi_table.csv").write_text("kpi,value\nA,1\n", encoding="utf-8")
+
+    def _stub_resolve(system_prompt, user_content, api_key, model=None, **kw):
+        return json.dumps({
+            "changes": [{"file": "kpi_table.csv", "summary": "新增KPI表格"}],
+            "relationships": [], "suggested_tasks": [],
+            "resolved_pending_tasks": [{"task_id": task_id, "evidence": "kpi_table.csv已新增，包含KPI数据"}],
+        }, ensure_ascii=False)
+
+    daily_sensing.call_deepseek = _stub_resolve
+    briefing2, state2, _ = sensor.scan(previous_state=state1)
+
+    check(len(briefing2.resolved_tasks) == 1 and briefing2.resolved_tasks[0].evidence == "kpi_table.csv已新增，包含KPI数据",
+          "当次简报正确展示识别依据", f"当次简报resolved_tasks不对: {briefing2.resolved_tasks}")
+
+    fp = next(f for f in state2["suggested_task_fingerprints"].values() if f["task_id"] == task_id)
+    check(fp["status"] == "done" and fp.get("evidence") == "kpi_table.csv已新增，包含KPI数据",
+          "evidence真正持久化进了fingerprint本身，不只是当次简报的临时对象",
+          f"fingerprint里的evidence丢失: {fp}")
+
+    # 用list_tasks_from_state()验证仪表盘视角（过了"当次简报"这个时间点后）
+    # 依然能拿到evidence——这才是这个bug真正影响的场景。
+    dashboard_view = list_tasks_from_state(state2, project_name="测试项目")
+    resolved_item = next(t for t in dashboard_view["resolved_recent"] if t["task_id"] == task_id)
+    check(resolved_item["evidence"] == "kpi_table.csv已新增，包含KPI数据",
+          "仪表盘视角（list_tasks_from_state）也能读到evidence，不依赖当天的简报对象",
+          f"仪表盘视角evidence丢失: {resolved_item}")
+
+
+def test_34_watched_project_management(tmp_dir: Path):
+    print("\n[Test 34] 巡检项目管理：新增/删除真实写回daily_scan_projects.json")
+    print("-" * 60)
+    import threading
+    import time
+    import urllib.error
+    import urllib.request
+    import server as dashboard_server
+
+    project_root = tmp_dir / "watched_project_mgmt_fixture"
+    project_root.mkdir(parents=True, exist_ok=True)
+    (project_root / "note.md").write_text("测试内容\n", encoding="utf-8")
+    test_name = "__test_only_watched_project__"
+
+    httpd = dashboard_server.ThreadingHTTPServer(("127.0.0.1", 0), dashboard_server.Handler)
+    port = httpd.server_address[1]
+    thread = threading.Thread(target=httpd.serve_forever, daemon=True)
+    thread.start()
+    time.sleep(0.2)
+
+    try:
+        # 新增一个真实存在的目录——应该成功，且立刻建好种子基线（不调用LLM）。
+        body = json.dumps({"name": test_name, "project_root": str(project_root)}).encode("utf-8")
+        req = urllib.request.Request(f"http://127.0.0.1:{port}/api/watched-projects",
+                                       data=body, headers={"Content-Type": "application/json"})
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            add_result = json.loads(resp.read())
+        check(add_result.get("success") is True and add_result.get("seeded_files", 0) >= 1,
+              f"新增真实存在的目录成功，且建立了种子基线（{add_result.get('seeded_files')}个文件）",
+              f"新增失败: {add_result}")
+
+        with urllib.request.urlopen(f"http://127.0.0.1:{port}/api/watched-projects", timeout=5) as resp:
+            listed = json.loads(resp.read())
+        check(any(p["name"] == test_name for p in listed),
+              "新增的项目真实出现在watched-projects列表里", f"新增的项目未出现在列表: {listed}")
+
+        # 重复新增同名项目应该失败（不静默覆盖）。
+        req2 = urllib.request.Request(f"http://127.0.0.1:{port}/api/watched-projects",
+                                        data=body, headers={"Content-Type": "application/json"})
+        try:
+            urllib.request.urlopen(req2, timeout=5)
+            check(False, "", "重复新增同名项目应该返回400，但没有抛HTTPError")
+        except urllib.error.HTTPError as e:
+            check(e.code == 400, "重复新增同名项目正确返回400（不静默覆盖已有配置）",
+                  f"返回码不对: {e.code}")
+
+        # 新增一个不存在的目录应该失败，不写入配置。
+        bad_body = json.dumps({"name": "__不该存在的项目__", "project_root": "/definitely/not/exists/xyz"}).encode("utf-8")
+        req3 = urllib.request.Request(f"http://127.0.0.1:{port}/api/watched-projects",
+                                        data=bad_body, headers={"Content-Type": "application/json"})
+        try:
+            urllib.request.urlopen(req3, timeout=5)
+            check(False, "", "新增不存在的目录应该返回400")
+        except urllib.error.HTTPError as e:
+            check(e.code == 400, "新增不存在的目录正确返回400，不污染配置文件", f"返回码不对: {e.code}")
+
+        # 删除刚新增的测试项目——验证真的从配置文件里消失。
+        del_req = urllib.request.Request(f"http://127.0.0.1:{port}/api/watched-projects/{test_name}", method="DELETE")
+        with urllib.request.urlopen(del_req, timeout=5) as resp:
+            del_result = json.loads(resp.read())
+        check(del_result.get("success") is True, "删除测试项目成功", f"删除失败: {del_result}")
+
+        with urllib.request.urlopen(f"http://127.0.0.1:{port}/api/watched-projects", timeout=5) as resp:
+            listed_after = json.loads(resp.read())
+        check(not any(p["name"] == test_name for p in listed_after),
+              "删除后测试项目真的从配置文件消失，没有留下痕迹",
+              f"测试项目仍残留在配置里: {listed_after}")
+
+        # 删除一个不存在的项目名应该404，不是静默成功。
+        from urllib.parse import quote as _url_quote
+        del_req2 = urllib.request.Request(
+            f"http://127.0.0.1:{port}/api/watched-projects/{_url_quote('__不存在的项目__')}", method="DELETE")
+        try:
+            urllib.request.urlopen(del_req2, timeout=5)
+            check(False, "", "删除不存在的项目应该返回404")
+        except urllib.error.HTTPError as e:
+            check(e.code == 404, "删除不存在的项目正确返回404", f"返回码不对: {e.code}")
+    finally:
+        httpd.shutdown()
+        thread.join(timeout=5)
+        # 双重保险：不管上面assertion有没有全部通过，都确保测试项目不会残留在
+        # 真实的daily_scan_projects.json里（这个文件被真实写入过，不是隔离的
+        # 临时fixture）。
+        import views as _views
+        remaining = _views._load_watched_projects()
+        if any(p.get("name") == test_name for p in remaining):
+            _views._save_watched_projects([p for p in remaining if p.get("name") != test_name])
+        shutil.rmtree(get_project_workspace(project_root), ignore_errors=True)
+
+
 def test_30_latest_report_summary(tmp_dir: Path):
     print("\n[Test 30] skills.daily_sensing.latest_report_summary 纯函数读取最新daily-scan报告")
     print("-" * 60)
@@ -1086,6 +1233,8 @@ def main():
         test_30_latest_report_summary(tmp_dir)
         test_31_drift_detail_from_latest_report(tmp_dir)
         test_32_new_dashboard_endpoints_smoke()
+        test_33_file_receipt_evidence_persists_into_fingerprint(tmp_dir)
+        test_34_watched_project_management(tmp_dir)
     finally:
         shutil.rmtree(tmp_dir, ignore_errors=True)
         # Test 7/13 通过 subprocess 调用 agent.py，其专属工作区落在 memory.workspace 的
@@ -1102,7 +1251,7 @@ def main():
             print(f"  - {f}")
         return 1
 
-    print("PTA 集成测试完成：32/32 通过")
+    print("PTA 集成测试完成：34/34 通过")
     print("=" * 60)
     return 0
 

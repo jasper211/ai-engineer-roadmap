@@ -123,21 +123,29 @@ def _walk_candidates(base_dir: Path) -> List[Path]:
     return results
 
 
-def get_ea_candidates(project_root: str) -> List[str]:
-    """EA项目专用：按 EA_LAYER_PRIORITY 顺序遍历，返回相对 project_root 的
-    路径列表（按优先级分层排序，同层内按文件系统自然顺序）。
+# 2026-07-22新增：Jasper AI协同经验引擎白名单收窄——只保留"三大主Agent
+# 体系架构"（文件名过滤，_walk_candidates内置的版本分组会自动只留最新版，
+# 不用额外处理）+ Mark_AI经验合集学习参考（整个文件夹）。这个项目的根目录
+# 已经在agent.py.PROJECT_ROOTS里上移到"Jasper AI协同经验引擎"这一级
+# （原来只到"AI工程能力整改项目"子目录，够不到跟它平级的Mark_AI经验合集
+# 学习参考），所以这里的路径都要带上"AI工程能力整改项目/"前缀。
+JASPER_ENGINE_LAYER_PRIORITY: List[Union[str, Tuple[str, Optional[str]]]] = [
+    ("AI工程能力整改项目/05_Agent库/草稿", "三大主Agent体系架构"),
+    "Mark_AI经验合集学习参考",
+]
 
-    2026-07-21更新：表格候选(xlsx/csv)不再只在"03_发布成果-交付物"这一个
-    硬编码层生效——范围收缩到具体白名单子目录后，M-01_方法论与标准/M-88_
-    mark日常输出/Agent与Skill体系这几个新纳入的目录里也有真实xlsx/csv文件
-    （真实盘点过：约19个不重复文件），之前的写法会让这些文件既不走表格路径
-    （层级判断只认03层）也不走文档路径（xlsx/csv不在CONCEPT_EXTRACTION_
-    EXTENSIONS里），完全没人提炼。现在对EA_LAYER_PRIORITY里每一层都尝试
-    list_table_candidates()——函数本身对没有xlsx/csv的目录直接返回空列表，
+
+def _get_whitelisted_candidates(project_root: str, layer_priority: List[Union[str, Tuple[str, Optional[str]]]]) -> List[str]:
+    """按给定的分层白名单顺序遍历，返回相对 project_root 的路径列表——
+    EA项目和Jasper AI协同经验引擎共用这套逻辑，区别只是各自的白名单列表
+    不同（EA_LAYER_PRIORITY / JASPER_ENGINE_LAYER_PRIORITY）。
+
+    表格候选(xlsx/csv)不限定在某一个特定层——对白名单里每一层都尝试
+    list_table_candidates()，函数本身对没有xlsx/csv的目录直接返回空列表，
     不会因为多扫几层就产出错误候选，成本可忽略。"""
     root = Path(project_root)
     ordered_relative: List[str] = []
-    for layer in EA_LAYER_PRIORITY:
+    for layer in layer_priority:
         path, name_filter = _layer_path_and_filter(layer)
         layer_path = root / path
         for abs_path in _walk_candidates(layer_path):
@@ -151,9 +159,20 @@ def get_ea_candidates(project_root: str) -> List[str]:
     return ordered_relative
 
 
+def get_ea_candidates(project_root: str) -> List[str]:
+    """EA项目专用：按 EA_LAYER_PRIORITY 白名单遍历。"""
+    return _get_whitelisted_candidates(project_root, EA_LAYER_PRIORITY)
+
+
+def get_jasper_engine_candidates(project_root: str) -> List[str]:
+    """Jasper AI协同经验引擎专用：按 JASPER_ENGINE_LAYER_PRIORITY 白名单遍历。"""
+    return _get_whitelisted_candidates(project_root, JASPER_ENGINE_LAYER_PRIORITY)
+
+
 def get_generic_candidates(project_root: str) -> List[str]:
-    """Rw权益项目/AI工程能力整改项目专用：全目录扫描 + 归档关键字黑名单排除，
-    暂无分层优先级（同一层级/顺序按文件系统自然顺序）。"""
+    """Rw权益项目专用（目前唯一还在用这条通用路径的项目）：全目录扫描 +
+    归档关键字黑名单排除，暂无分层优先级（同一层级/顺序按文件系统自然
+    顺序）。"""
     root = Path(project_root)
     return [str(p.relative_to(root)) for p in _walk_candidates(root)]
 
@@ -163,6 +182,8 @@ def get_candidates(project_name: str, project_root: str) -> List[str]:
     PROJECT_ROOTS 映射用的同一套项目名。"""
     if project_name == "EA流程架构项目":
         return get_ea_candidates(project_root)
+    if project_name == "Jasper AI协同经验引擎":
+        return get_jasper_engine_candidates(project_root)
     return get_generic_candidates(project_root)
 
 

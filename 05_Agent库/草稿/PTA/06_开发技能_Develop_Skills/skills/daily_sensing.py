@@ -207,7 +207,7 @@ class DailySensor:
         for fp in base_fp.values():
             if fp.get("status") in ("done", "dismissed") and not fp.get("shown_as_resolved"):
                 resolved_tasks.append(ResolvedTask(task_id=fp["task_id"], name=fp.get("name", ""),
-                                                     status=fp["status"]))
+                                                     status=fp["status"], evidence=fp.get("evidence", "")))
                 fp["shown_as_resolved"] = True
 
         old_hashes = {} if force else previous_state.get("file_hashes", {})
@@ -390,11 +390,17 @@ class DailySensor:
                 continue  # 模型编造的/不在搁置列表里的 task_id，直接丢弃
             for fp in updated_fp.values():
                 if fp.get("task_id") == rid and fp.get("status") == "pending":
+                    evidence = r.get("evidence", "")
                     fp["status"] = "done"
                     fp["status_updated_at"] = now_iso
                     fp["shown_as_resolved"] = True
+                    # 此前只把evidence放进当次简报的ResolvedTask对象里，没有存回
+                    # fingerprint本身——导致仪表盘的list_tasks_from_state()（读的
+                    # 是持久化的fingerprint，不是当次简报）永远拿不到"文件回执自动
+                    # 识别"的判断依据，过了当天就再也看不到为什么这条任务被关闭了。
+                    fp["evidence"] = evidence
                     resolved_tasks.append(ResolvedTask(task_id=rid, name=fp.get("name", ""),
-                                                         status="done", evidence=r.get("evidence", "")))
+                                                         status="done", evidence=evidence))
                     break
 
         briefing = DailyBriefing(
@@ -481,7 +487,8 @@ def list_tasks_from_state(state: dict, project_name: str = "", resolved_within_d
         elif status in ("done", "dismissed"):
             updated_at = fp.get("status_updated_at", "")
             if updated_at and _days_since(updated_at) <= resolved_within_days:
-                resolved_recent.append({**base_item, "status": status, "status_updated_at": updated_at})
+                resolved_recent.append({**base_item, "status": status, "status_updated_at": updated_at,
+                                          "evidence": fp.get("evidence", "")})
 
     aging_tasks.sort(key=lambda x: x["days_pending"], reverse=True)
     resolved_recent.sort(key=lambda x: x["status_updated_at"], reverse=True)
