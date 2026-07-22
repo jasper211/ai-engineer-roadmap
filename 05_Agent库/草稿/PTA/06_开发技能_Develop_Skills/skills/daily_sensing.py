@@ -148,6 +148,31 @@ class DailySensor:
             raise RuntimeError(f"找不到系统提示词文件: {self.system_prompt_path}")
         return self.system_prompt_path.read_text(encoding="utf-8")
 
+    def seed_baseline(self) -> dict:
+        """只做本地文件快照+内容抓取，不做 diff、不调 LLM、不产出简报——用于
+        给从未跑过 daily_sensing 的项目建立起点基线。
+
+        真实动机：Rw权益项目(1719个候选文件)、Jasper工作文档(440个候选文件)
+        从未建过基线，如果直接跑 scan()，old_hashes 是空的，diff_snapshots
+        会把当前全部文件判定为"新增"，打包成一次巨大的合并 LLM 调用去分析——
+        这不是"今天变了什么"的正常用法，是把整个项目当天全量灌进去，语义上
+        不对，也真实浪费 token。seed_baseline() 只建立"这是起点"这份记录，
+        从下一次真实 --daily-scan 开始才是名副其实的增量对比。
+
+        连 file_contents 一起存（不只是 file_hashes）：否则种子之后第一次
+        真实检测到某文件变化时，diff_snapshots 的旧内容会是空字符串，展示成
+        "整个文件都是新增内容"而不是真正的增量 diff，精度会打折扣。"""
+        snapshot = snapshot_dir(self.project_root, extensions=self.extensions,
+                                  exclude_files=PTA_OWN_ARTIFACTS, exclude_dirs=self.exclude_dirs)
+        file_hashes = {path: info["hash"] for path, info in snapshot.items()}
+        file_contents = {path: _read_truncated(self.project_root / path) for path in snapshot}
+        return {
+            "updated_at": datetime.now().isoformat(),
+            "file_hashes": file_hashes,
+            "file_contents": file_contents,
+            "suggested_task_fingerprints": {},
+        }
+
     def scan(self, previous_state: dict, force: bool = False,
               recent_task_history: Optional[List[dict]] = None) -> "tuple[DailyBriefing, dict, Dict[str, dict]]":
         """

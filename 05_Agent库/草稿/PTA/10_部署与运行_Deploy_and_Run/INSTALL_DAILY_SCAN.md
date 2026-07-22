@@ -1,5 +1,13 @@
 # 安装每日巡检定时任务（手动步骤，不会被自动执行）
 
+> **多项目场景（EA/Rw/Jasper工作文档等同时巡检）请改装
+> `com.jasper.pta-multi-daily-scan.plist`**，步骤类似（同样要填python3路径+API
+> Key，但不需要填`--project-root`——项目清单维护在
+> `02_配置项目_Configure_Project/daily_scan_projects.json` 里，加新项目改那份
+> JSON 就够，不需要再装新 plist）。以下步骤以单项目版
+> `com.jasper.pta-daily-scan.plist` 为例，多项目版把第2步的文件名换掉、
+> 第3步跳过"目标项目路径"占位符即可，其余一致。
+
 这份文档描述怎么把 `com.jasper.pta-daily-scan.plist` 装成 macOS 每天自动运行
 的定时任务。**这些步骤需要你自己手动做一遍**——不会有任何脚本替你跑
 `launchctl load` 或写入 `~/Library/LaunchAgents/`。

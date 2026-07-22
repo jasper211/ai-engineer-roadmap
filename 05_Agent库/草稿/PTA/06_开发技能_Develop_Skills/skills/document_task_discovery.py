@@ -37,6 +37,7 @@ from typing import Dict, List, Optional
 
 from tools.file_diff import snapshot_dir, hash_file, read_content_truncated
 from tools.llm_client import call_deepseek, DEFAULT_MODEL
+from tools.ob_bridge import get_background
 
 SKILLS_DIR = Path(__file__).resolve().parent
 PTA_DIR = SKILLS_DIR.parent.parent
@@ -104,13 +105,20 @@ class DocumentDiscoverer:
     def __init__(self, project_root: Path, api_key: Optional[str] = None,
                  model: str = DEFAULT_MODEL, extensions: Optional[set] = None,
                  system_prompt_path: Path = DEFAULT_SYSTEM_PROMPT_PATH,
-                 max_chars_per_file: int = MAX_CHARS_PER_FILE):
+                 max_chars_per_file: int = MAX_CHARS_PER_FILE,
+                 use_ob_context: bool = False):
         self.project_root = Path(project_root)
         self.api_key = api_key or os.environ.get("DEEPSEEK_API_KEY")
         self.model = model
         self.extensions = extensions or DEFAULT_SCAN_EXTENSIONS
         self.system_prompt_path = system_prompt_path
         self.max_chars_per_file = max_chars_per_file
+        # 试点接入 OB 背景检索（PTA↔OB 接口设计里"背景记忆层缺口"的第一个真实
+        # 落地）——选这个技能试点，是因为它读的是叙述性文档（合同/会议纪要），
+        # 单文件孤立分析，最容易把历史记录/已过时内容误判成新任务；有没有
+        # 项目背景，对这类噪音的影响最直接。默认关闭：这是新接口，先小范围验证
+        # 有没有实际改善判断质量，不默认打开增加每次调用的延迟和OB侧负载。
+        self.use_ob_context = use_ob_context
 
     def _load_system_prompt(self) -> str:
         if not self.system_prompt_path.exists():
@@ -190,7 +198,16 @@ class DocumentDiscoverer:
                     if digest:
                         new_hashes[rel] = digest
                     continue
-                raw = call_deepseek(system_prompt, f"文件路径: {rel}\n\n{content}", self.api_key, model=self.model)
+                background = get_background(Path(rel).stem) if self.use_ob_context else None
+                user_message = f"文件路径: {rel}\n\n{content}"
+                if background:
+                    # 背景放在正文之前，让模型先建立"这份文档在讲什么项目背景/
+                    # 已有哪些定论"的认知，再判断这份文档里的内容是不是真的
+                    # "新任务"，而不是历史记录里早就处理过的旧事——这正是
+                    # rule_based_task_scan/document_task_discovery此前在真实
+                    # 叙述性文档上噪音大的根因（详见架构文档AIT §3.6）。
+                    user_message = f"（以下是OB检索到的项目背景，供参考，不代表一定相关）\n{background}\n\n---\n\n{user_message}"
+                raw = call_deepseek(system_prompt, user_message, self.api_key, model=self.model)
                 parsed = json.loads(raw)
                 tasks = parsed.get("tasks", [])
                 if tasks:

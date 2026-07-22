@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.jasper.pta-multi-daily-scan</string>
+
+    <!-- 取代原来"一个项目一个plist"的模式（原 com.jasper.pta-daily-scan.plist
+         仍保留，单项目场景可以继续用它）——协同项目从 EA/Rw 扩展到还要加
+         Jasper工作文档、以后还会继续加，改成一个 job 触发
+         multi_project_daily_scan.py，项目清单在 daily_scan_projects.json 里维护，
+         加新项目不需要再装新 plist。 -->
+    <key>ProgramArguments</key>
+    <array>
+        <string>/opt/homebrew/bin/python3</string>
+        <!-- ⚠️ 装的时候用 `which python3` 确认这个路径对不对（Intel Mac 通常是
+             /usr/local/bin/python3），launchd 不读 shell profile。 -->
+        <string>REPLACE_WITH_MULTI_PROJECT_DAILY_SCAN_PY_ABSOLUTE_PATH</string>
+        <!-- 例：/Users/xxx/.../05_Agent库/草稿/PTA/10_部署与运行_Deploy_and_Run/multi_project_daily_scan.py -->
+        <string>--notify</string>
+    </array>
+
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key>
+        <integer>10</integer>
+        <key>Minute</key>
+        <integer>0</integer>
+    </dict>
+
+    <key>RunAtLoad</key>
+    <false/>
+
+    <key>StandardOutPath</key>
+    <string>/tmp/pta-multi-daily-scan.log</string>
+    <key>StandardErrorPath</key>
+    <string>/tmp/pta-multi-daily-scan.err</string>
+
+    <!-- ⚠️⚠️⚠️ 真实的 DEEPSEEK_API_KEY 绝不能填在这份文件里！这份文件在
+         git 仓库里会被追踪、可能推到远程。按 INSTALL_DAILY_SCAN.md 的说明，
+         把这个占位符复制到 ~/Library/LaunchAgents/ 之后，只在那份【不受 git
+         追踪】的副本里填真实 key。
+         PTA_WORKSPACE_ROOT 不是必填——workspace.py 的兜底默认值已经改成按
+         Path.home() 动态推导，这台机器不设置也能正确落在
+         ~/Desktop/Jasper工作文档（不含EA项目）/项目工作区/；只有想换到别的
+         位置时才需要显式设置。 -->
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
+        <key>DEEPSEEK_API_KEY</key>
+        <string>REPLACE_WITH_YOUR_REAL_KEY_ONLY_IN_THE_INSTALLED_COPY</string>
+    </dict>
+</dict>
+</plist>

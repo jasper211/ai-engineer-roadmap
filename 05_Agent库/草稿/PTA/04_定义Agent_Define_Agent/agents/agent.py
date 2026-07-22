@@ -192,6 +192,23 @@ def cmd_daily_scan(project_root: str = None, force: bool = False, notify: bool =
     print(f"\n简报已保存: {report_md_path}")
 
 
+def cmd_seed_baseline(project_root: str = None, extra_exclude_dirs: list = None) -> None:
+    """给从未跑过 --daily-scan 的项目建立起点基线，不调 LLM、不产出简报、
+    不推送通知——只是本地文件快照写进 daily_sensing_state.json。真实场景：
+    Rw权益项目(1719候选文件)/Jasper工作文档(440候选文件)首次接入多项目巡检
+    时都没有基线，直接跑 --daily-scan 会把全部文件当"今天的变化"打包成一次
+    巨大的合并LLM调用，语义不对也真实费token；先种子基线，从下一次真实
+    --daily-scan 起才是名副其实的增量对比。"""
+    resolved_root = _resolve_project_root(project_root)
+    workspace = ws.get_project_workspace(resolved_root)
+
+    sensor = DailySensor(resolved_root, extra_exclude_dirs=set(extra_exclude_dirs) if extra_exclude_dirs else None)
+    seeded_state = sensor.seed_baseline()
+    ws.save_daily_sensing_state(workspace, seeded_state)
+    print(f"[seed-baseline] 已为 {resolved_root} 建立基线：{len(seeded_state['file_hashes'])} 个文件，"
+          f"未调用LLM、未产出简报。下一次 --daily-scan 起才是真正的增量对比。")
+
+
 def cmd_dashboard(project_root: str = None, person: str = "all") -> None:
     """项目仪表盘（原 PTA-DASH，批1 迁移）：以人为中心的报告，不接入 Think-Act-Observe
     主循环——这是"给人看的报告"，不是"任务执行"，不需要状态记忆/归档。"""
@@ -235,15 +252,20 @@ def cmd_rule_scan(project_root: str = None) -> None:
 
 
 def cmd_discover(project_root: str = None, files: list = None, scan: bool = False,
-                  force: bool = False, dry_run: bool = False) -> None:
+                  force: bool = False, dry_run: bool = False, use_ob_context: bool = False) -> None:
     """文档任务发现（原 PTA-DISCOVER，批2 迁移）：LLM 阅读叙述性文档（合同/会议
     纪要/审计报告），抽取隐含任务，产出发现报告供人工审阅分类——安全边界不变：
-    绝不自动写入 pta_tasks.json 的可执行 steps，只合并进 task_registry.json。"""
+    绝不自动写入 pta_tasks.json 的可执行 steps，只合并进 task_registry.json。
+
+    use_ob_context=True 时接入 OB 背景检索（tools/ob_bridge.py，PTA↔OB 接口
+    设计的第一个真实试点），每个文件分析前先问一次 OB "这份文档相关的项目
+    背景是什么"，注入提示词——目的是缓解本技能在叙述性文档上噪音大的问题
+    （历史记录容易被误判成新任务）。默认关闭，新接口先小范围验证。"""
     resolved_root = _resolve_project_root(project_root)
     workspace = ws.get_project_workspace(resolved_root)
     state = ws.load_discover_state(workspace)
 
-    discoverer = DocumentDiscoverer(resolved_root)
+    discoverer = DocumentDiscoverer(resolved_root, use_ob_context=use_ob_context)
     try:
         report, updated_state = discoverer.discover(
             state, explicit_files=files, scan=scan, force=force, dry_run=dry_run)
@@ -462,6 +484,9 @@ def main():
                               "只生成简报写进 pta_tasks.json，不自动执行")
     parser.add_argument("--force", action="store_true",
                          help="--daily-scan/--discover 专用：忽略增量哈希基线，把所有文件当新增重新分析一遍")
+    parser.add_argument("--seed-baseline", action="store_true",
+                         help="给从未跑过--daily-scan的项目建立起点基线，不调LLM/不产出简报/不推送通知，"
+                              "只写本地文件快照；避免首次真实巡检把全部现存文件当'今天的变化'打包分析")
     parser.add_argument("--exclude-dirs", nargs="*",
                          help="--daily-scan 专用：额外排除的目录名（与内置的 .git/node_modules 等默认排除项"
                               "取并集，不是替换），用于把大文件夹里跟本项目无关的子目录排除在扫描外")
@@ -485,6 +510,9 @@ def main():
     parser.add_argument("--files", nargs="*", help="--discover 专用：显式指定候选文件，总是处理，不受增量状态影响")
     parser.add_argument("--scan", action="store_true",
                          help="--discover 专用：自动扫描项目内候选文档，按增量状态过滤")
+    parser.add_argument("--use-ob-context", action="store_true",
+                         help="--discover 专用：分析前先调用OB（tools/ob_bridge.py）检索项目背景注入"
+                              "提示词，缓解叙述性文档上的噪音；默认关闭，需要OB agent.py可正常运行")
     parser.add_argument("--dry-run", action="store_true",
                          help="--discover 专用：只列出候选文件和估算字符数，不调用 API，不更新增量状态；"
                               "--pipeline-check 专用：只打印报告，不写报告文件/不更新基线/不发通知")
@@ -499,6 +527,10 @@ def main():
                               "测试exit code/字段读取/mtime），核实矩阵声明与实际状态是否一致，不做主观判断")
     parser.add_argument("--checks-path", help="显式指定 checks.json 路径（优先级高于 --project-root）")
     args = parser.parse_args()
+
+    if args.seed_baseline:
+        cmd_seed_baseline(project_root=args.project_root, extra_exclude_dirs=args.exclude_dirs)
+        return
 
     if args.daily_scan:
         cmd_daily_scan(project_root=args.project_root, force=args.force, notify=args.notify,
@@ -519,7 +551,7 @@ def main():
 
     if args.discover:
         cmd_discover(project_root=args.project_root, files=args.files, scan=args.scan,
-                     force=args.force, dry_run=args.dry_run)
+                     force=args.force, dry_run=args.dry_run, use_ob_context=args.use_ob_context)
         return
 
     if args.intel:

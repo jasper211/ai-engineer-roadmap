@@ -22,7 +22,11 @@ import urllib.request
 from pathlib import Path
 
 DEEPSEEK_API_URL = "https://api.deepseek.com/chat/completions"
-DEFAULT_MODEL = "deepseek-chat"
+# deepseek-chat/deepseek-reasoner 官方已宣布2026-07-24 15:59 UTC起完全下线
+# （届时会路由到 deepseek-v4-flash 的非思考/思考模式，不是继续可用）——这次换
+# 成 deepseek-v4-pro 既是 Jasper 要更强模型的明确要求，也顺带避开三天后的
+# 硬性下线时间点，两者刚好同时满足。
+DEFAULT_MODEL = "deepseek-v4-pro"
 
 
 def build_ssl_context() -> ssl.SSLContext:
@@ -81,7 +85,11 @@ def call_deepseek(system_prompt: str, user_content: str, api_key: str,
     last_err = None
     for attempt in range(max_retries + 1):
         try:
-            with urllib.request.urlopen(req, timeout=60, context=_SSL_CONTEXT) as resp:
+            # 60秒对deepseek-chat够用，但换成deepseek-v4-pro（带"思考模式"的
+            # 推理模型）后真实跑EA项目6天累积diff时超时了——推理模型响应本来
+            # 就比非推理的chat模型慢，尤其是大上下文，180秒是留了余量而不是
+            # 精确计算出来的，之后如果还不够可能要考虑分批而不是继续加大超时。
+            with urllib.request.urlopen(req, timeout=180, context=_SSL_CONTEXT) as resp:
                 data = json.loads(resp.read().decode("utf-8"))
                 return data["choices"][0]["message"]["content"]
         except urllib.error.HTTPError as e:
