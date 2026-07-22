@@ -21,34 +21,25 @@ from tools.file_diff import CONCEPT_EXTRACTION_EXTENSIONS
 from tools import table_reader
 
 # ── EA项目（流程架构项目_jasper）：按治理分层的处理优先级 ──
-# 顺序即优先级：00治理 → 03发布成果 → 08任务与跟进 → 01原始材料 → 02过程成果
-# （规则分析（Jasper）+ 2026-07-20起新增的其余02层共享业务维度目录）。
+# 2026-07-21 Jasper范围收缩裁定（推翻2026-07-20的"全部02层子目录覆盖"）：
+# 前一版把02层11个共享业务维度目录全量纳入，跟entity_ref矛盾扫描/251个
+# 结构孤立原子审查两轮真实数据对上——过程性/任务跟踪类文档（08层、02层的
+# 访谈/信号提取过程文件）是矛盾和噪音的主要来源（M3核心介入点88条vs126条、
+# KPI企业目录32行vs43行这类"进行中决策快照"互相打架），根子是"边写边提炼"。
+# 改为只收"成型的方法论文档和结果文档"这几个具体子目录，其余（含整个08层、
+# 01层除M-01/M-88外的其余M编号、02层规则分析下的过程性子文件夹如访谈/信号
+# 提取/EA_P0等）暂不取，需要时走人工指令临时新增，不再默认全量扫描。
 # 04-07（Skill库/Agent库/Scripts库/Memory）是代码资产，非知识内容，不在其列。
-#
-# 2026-07-20 Jasper范围裁定：此前02层只扫"规则分析（Jasper）"这一个Jasper
-# 个人工作区子目录，其余Terresa等人也在更新的共享业务维度目录（L3流程库/
-# 价值流建模/映射分析等）一直被跳过——真实触发场景：Terresa更新了L3流程库的
-# 流程蓝图，OB完全检测不到。现在覆盖到全部02层子目录（在"规则分析（Jasper）"
-# 之后，即02层内部仍是"Jasper个人工作区优先，共享目录其次"，跟00/03/08/01
-# 这几个更权威的层比仍然排在最后，没有改变整体"权威层优先"的原则）。
 EA_LAYER_PRIORITY = [
-    "00_治理与元模型",
-    "03_发布成果-交付物",
-    "08_任务与跟进",
-    "01_原始材料-外部导入",
-    "02_过程成果-工作产出/规则分析（Jasper）",
-    "02_过程成果-工作产出/L3流程库",
-    "02_过程成果-工作产出/映射分析",
-    "02_过程成果-工作产出/KPI穿透",
-    "02_过程成果-工作产出/岗位族设计",
-    "02_过程成果-工作产出/校验与上下文",
-    "02_过程成果-工作产出/校验与评估",
-    "02_过程成果-工作产出/价值流建模",
-    "02_过程成果-工作产出/数据库",
-    "02_过程成果-工作产出/组织重组",
-    "02_过程成果-工作产出/价值链L1建模",
-    "02_过程成果-工作产出/L4-核心交付物",
-    "02_过程成果-工作产出/L2业务能力",
+    "00_治理与元模型/概念笔记",
+    "00_治理与元模型/项目章程",
+    "00_治理与元模型/治理日志",
+    "01_原始材料-外部导入/M-01_方法论与标准",
+    "01_原始材料-外部导入/M-88_mark日常输出",
+    "02_过程成果-工作产出/规则分析（Jasper）/05_SOP",
+    "02_过程成果-工作产出/规则分析（Jasper）/Agent规划与搭建",
+    "02_过程成果-工作产出/规则分析（Jasper）/Agent与Skill体系",
+    "03_发布成果-交付物/权威数据",
 ]
 
 # 通用归档/废弃关键字——即便在优先层内，命中这些关键字的子目录/文件也跳过
@@ -108,22 +99,22 @@ def get_ea_candidates(project_root: str) -> List[str]:
     """EA项目专用：按 EA_LAYER_PRIORITY 顺序遍历，返回相对 project_root 的
     路径列表（按优先级分层排序，同层内按文件系统自然顺序）。
 
-    2026-07-20 Jasper范围裁定新增：03_发布成果-交付物层的xlsx/csv权威数据表
-    也纳入候选（此前 CONCEPT_EXTRACTION_EXTENSIONS 只认.md/.docx/.txt，表格
-    完全不在扫描范围内——真实触发场景：Terresa更新了价值节点清单/KPI映射表，
-    OB却检测不到变化）。只在03层加表格候选，不是全项目通用规则——01/02/08层
-    的表格文件（多是草稿/中间数据）暂不纳入，避免把还没定稿的数据当权威内容
-    提炼。按tools/table_reader.list_table_candidates()做版本分组只取最新版本，
-    避免同一张表的历史版本被重复提炼。"""
+    2026-07-21更新：表格候选(xlsx/csv)不再只在"03_发布成果-交付物"这一个
+    硬编码层生效——范围收缩到具体白名单子目录后，M-01_方法论与标准/M-88_
+    mark日常输出/Agent与Skill体系这几个新纳入的目录里也有真实xlsx/csv文件
+    （真实盘点过：约19个不重复文件），之前的写法会让这些文件既不走表格路径
+    （层级判断只认03层）也不走文档路径（xlsx/csv不在CONCEPT_EXTRACTION_
+    EXTENSIONS里），完全没人提炼。现在对EA_LAYER_PRIORITY里每一层都尝试
+    list_table_candidates()——函数本身对没有xlsx/csv的目录直接返回空列表，
+    不会因为多扫几层就产出错误候选，成本可忽略。"""
     root = Path(project_root)
     ordered_relative: List[str] = []
     for layer in EA_LAYER_PRIORITY:
         layer_path = root / layer
         for abs_path in _walk_candidates(layer_path):
             ordered_relative.append(str(abs_path.relative_to(root)))
-        if layer == "03_发布成果-交付物":
-            for table_path in table_reader.list_table_candidates(str(root), subdir=layer):
-                ordered_relative.append(str(table_path.relative_to(root)))
+        for table_path in table_reader.list_table_candidates(str(root), subdir=layer):
+            ordered_relative.append(str(table_path.relative_to(root)))
     return ordered_relative
 
 
