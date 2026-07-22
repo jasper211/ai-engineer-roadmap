@@ -87,6 +87,7 @@ class ResolvedTask:
     task_id: str
     name: str
     status: str  # "done" / "dismissed"
+    evidence: str = ""  # 非空时说明是"文件回执自动识别"关闭的，附上判断依据
 
 
 @dataclass
@@ -230,7 +231,7 @@ class DailySensor:
                     rationale="沿用上次巡检的建议，本次无新变化未重新分析",
                     priority=fp.get("priority", "P2"), signal_to=fp.get("signal_to", []),
                     needs_mark_alignment=fp.get("needs_mark_alignment", False),
-                    relevance_reason="沿用上次判断", related_files=[], is_new=False,
+                    relevance_reason="沿用上次判断", related_files=fp.get("related_files", []), is_new=False,
                     first_suggested=fp.get("first_suggested", ""),
                 )
                 for fp in base_fp.values()
@@ -278,6 +279,22 @@ class DailySensor:
         if recent_task_history:
             history_lines = [f"- {h.get('summary','')} → {h.get('status','')}" for h in recent_task_history[-5:]]
             user_parts.append("### Jasper 最近让 PTA 做过的事\n" + "\n".join(history_lines))
+
+        # 喂给模型"当前搁置中的建议任务"，让它顺手判断今天的变化里有没有哪个
+        # 文件恰好是某条任务的回执——这是"文件回执自动识别"这个能力的输入端，
+        # 只有 pending 状态的任务才有意义（done/dismissed 已经关闭，不需要
+        # 再被判断一遍）。
+        pending_for_matching = [
+            {"task_id": fp["task_id"], "name": fp.get("name", ""), "related_files": fp.get("related_files", [])}
+            for fp in base_fp.values() if fp.get("status") == "pending"
+        ]
+        if pending_for_matching:
+            lines = []
+            for p in pending_for_matching:
+                files_note = f"（关注文件：{', '.join(p['related_files'])}）" if p["related_files"] else ""
+                lines.append(f"- {p['task_id']}: {p['name']}{files_note}")
+            user_parts.append("### 当前搁置中、等待回执确认的建议任务\n" + "\n".join(lines))
+
         user_content = "\n\n".join(user_parts)
 
         if not self.api_key:
@@ -332,6 +349,7 @@ class DailySensor:
                 updated_fp[fingerprint] = {**existing_fp[fingerprint], "last_suggested": now_iso,
                                              "name": name, "priority": priority, "signal_to": signal_to,
                                              "needs_mark_alignment": needs_mark_alignment,
+                                             "related_files": related_files,
                                              "status": "pending" if reopened else prior_status}
                 if reopened:
                     updated_fp[fingerprint]["first_suggested"] = now_iso  # 重新计天数，不沿用旧的搁置时长
@@ -341,7 +359,8 @@ class DailySensor:
                 updated_fp[fingerprint] = {"task_id": task_id, "first_suggested": now_iso,
                                              "last_suggested": now_iso, "status": "pending",
                                              "name": name, "priority": priority, "signal_to": signal_to,
-                                             "needs_mark_alignment": needs_mark_alignment}
+                                             "needs_mark_alignment": needs_mark_alignment,
+                                             "related_files": related_files}
 
             suggested_tasks.append(SuggestedTask(
                 task_id=task_id, name=name, rationale=t.get("rationale", ""),
@@ -358,6 +377,25 @@ class DailySensor:
                     "description": f"{t.get('rationale', '')}，需人工确认后再决定实际执行步骤",
                 }],
             }
+
+        # 文件回执自动识别：模型判断"今天的变化"满足了某条 pending 任务的
+        # 要求——只信任真实存在于 pending_for_matching 里的 task_id（不让模型
+        # 凭空编一个），命中的立刻标 done 并计入这次简报的 resolved_tasks，
+        # 不用等下一轮才展示（下一轮才展示会让"回执生效"这件事看起来延迟了
+        # 一天，体验上很怪）。
+        pending_task_ids = {p["task_id"] for p in pending_for_matching}
+        for r in parsed.get("resolved_pending_tasks", []):
+            rid = r.get("task_id", "")
+            if rid not in pending_task_ids:
+                continue  # 模型编造的/不在搁置列表里的 task_id，直接丢弃
+            for fp in updated_fp.values():
+                if fp.get("task_id") == rid and fp.get("status") == "pending":
+                    fp["status"] = "done"
+                    fp["status_updated_at"] = now_iso
+                    fp["shown_as_resolved"] = True
+                    resolved_tasks.append(ResolvedTask(task_id=rid, name=fp.get("name", ""),
+                                                         status="done", evidence=r.get("evidence", "")))
+                    break
 
         briefing = DailyBriefing(
             generated_at=generated_at, project_root=str(self.project_root),
@@ -450,8 +488,15 @@ def format_text(briefing: DailyBriefing) -> str:
     if briefing.resolved_tasks:
         lines.append("- ✅ 自上次简报以来已完成/关闭：")
         for r in briefing.resolved_tasks:
-            status_label = "已完成" if r.status == "done" else "已关闭（人工判定不需要执行）"
+            if r.evidence:
+                status_label = "已完成（文件回执自动识别）"
+            elif r.status == "done":
+                status_label = "已完成"
+            else:
+                status_label = "已关闭（人工判定不需要执行）"
             lines.append(f"  · {r.task_id} · {r.name} [{status_label}]")
+            if r.evidence:
+                lines.append(f"      识别依据: {r.evidence}（如判断有误，重新提出同一件事即可自动重开）")
 
     new_tasks, aging_tasks = _bucket_tasks(briefing)
     if new_tasks or aging_tasks:
@@ -505,7 +550,8 @@ def format_text_plain(briefing: DailyBriefing) -> str:
     if briefing.resolved_tasks:
         lines.append(f"\n✅ 刚完成/关闭（{len(briefing.resolved_tasks)}）：")
         for i, r in enumerate(briefing.resolved_tasks, 1):
-            lines.append(f"{i}. {r.name}")
+            auto_note = "（自动识别到回执）" if r.evidence else ""
+            lines.append(f"{i}. {r.name}{auto_note}")
 
     if not (new_tasks or aging_tasks) and briefing.skipped_llm_call:
         return "\n".join(lines)

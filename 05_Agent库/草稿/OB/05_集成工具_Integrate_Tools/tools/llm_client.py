@@ -17,7 +17,13 @@ import urllib.request
 from pathlib import Path
 
 DEEPSEEK_API_URL = "https://api.deepseek.com/chat/completions"
-DEFAULT_MODEL = "deepseek-chat"
+# 2026-07-22更新：旧别名"deepseek-chat"（当前暗中指向deepseek-v4-flash
+# 非思考模式）将在2026-07-24 15:59 UTC下线（DeepSeek官方文档确认），改用
+# 正式模型ID。Jasper明确选择pro档（deepseek-v4-pro，1.6T总参数/49B激活
+# 参数，质量对标顶级闭源模型），不是更快更便宜的flash档——本次调整前
+# vault里已有的原子都是flash跑出来的，这个模型切换之后新提炼的原子在
+# 质量基准上跟旧原子会不一致，是已知的、有意识的取舍，不是bug。
+DEFAULT_MODEL = "deepseek-v4-pro"
 
 
 def build_ssl_context() -> ssl.SSLContext:
