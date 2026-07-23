@@ -34,7 +34,7 @@ from pathlib import Path
 from typing import Dict, List, Optional
 
 from tools.llm_client import call_deepseek, DEFAULT_MODEL
-from tools.project_filters import derive_authority_layer
+from tools.project_filters import derive_authority_layer, derive_domain
 
 PROMPTS_DIR = Path(__file__).resolve().parent.parent.parent / "08_设计提示词_Design_Prompts" / "prompts"
 SYSTEM_PROMPT_PATH = PROMPTS_DIR / "concept_note_extraction_system.md"
@@ -226,6 +226,10 @@ class ConceptNoteExtractor:
         # 唯一可以在写入时就确定性派生的字段(来自源文件所在分层目录，不依赖
         # LLM判断)。
         authority_layer = derive_authority_layer(self.project_name, source_path)
+        # 2026-07-22新增：业务域只对EA项目有意义（Jasper AI协同经验引擎的
+        # 白名单来源——三大主Agent体系架构/Mark_AI经验合集学习参考——没有
+        # PAY/HR这类域结构，硬套会产出假阳性匹配），其他项目一律"（无）"
+        domain = derive_domain(source_path) if self.project_name == "EA流程架构项目" else "（无）"
         confidence = atom.get("confidence") or "UNSTATED"
         confidence_reason = atom.get("confidence_reason", "")
 
@@ -236,6 +240,7 @@ class ConceptNoteExtractor:
             f"project: {self.project_name}\n"
             f"source: {source_path}\n"
             f"authority_layer: {authority_layer}\n"
+            f"domain: {domain}\n"
             f"confidence: {confidence}\n"
             f"confidence_reason: {confidence_reason}\n"
             "decision_status: UNSTATED\n"

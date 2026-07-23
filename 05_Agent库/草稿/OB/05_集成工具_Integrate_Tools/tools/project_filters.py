@@ -40,35 +40,50 @@ from tools import table_reader
 # "02_信号提取基线/提取合集校准"里"XX域_价值节点信号提取基线"这一类
 # 结果文件重新纳入白名单。
 #
-# 每一项是 (路径, 文件名必须包含的子串或None)——大部分是"整个子目录都要"
-# 用None；"提取合集校准"这一个例外：目录里混着三种文件（域_价值节点信号
-# 提取基线/任务包_XX域信号提取基线/任务包_XX域规则空白地图与熔断清单），
-# Jasper只要第一种，用文件名子串过滤而不是整个目录搬进来，避免把还没
-# 定稿的任务包类文件也带进来。
-EA_LAYER_PRIORITY: List[Union[str, Tuple[str, Optional[str]]]] = [
-    "00_治理与元模型/项目章程",
-    "01_原始材料-外部导入/M-01_方法论与标准",
-    "02_过程成果-工作产出/规则分析（Jasper）/05_SOP",
-    "02_过程成果-工作产出/规则分析（Jasper）/Agent规划与搭建",
-    "02_过程成果-工作产出/规则分析（Jasper）/Agent与Skill体系",
-    "02_过程成果-工作产出/规则分析（Jasper）/03_访谈准备与执行/规则空白地图",
-    "02_过程成果-工作产出/规则分析（Jasper）/03_访谈准备与执行/熔断节点补建清单",
-    "02_过程成果-工作产出/规则分析（Jasper）/04_规则与GAP产出",
-    ("02_过程成果-工作产出/规则分析（Jasper）/02_信号提取基线/提取合集校准", "价值节点信号提取基线"),
-]
-
 # 2026-07-21四次调整：Jasper移除"03_发布成果-交付物/权威数据"——理由：这批
 # 表格文件本身是多版本混合、大部分内容其实是过程性数据（不是"结果文档"这个
 # 白名单原则本来要选的东西），且长期方案是接数据库直连（等EA的数据库落地后，
 # 直接以数据库内容作为原子提炼的权威源，而不是数据库导出的中间CSV/xlsx快照）
 # ——跟PDF支持一样列为后续任务，不是这次要做的事，先从白名单去掉。
+#
+# 2026-07-22五次调整（Jasper逐项纠正）：
+# - 整个去掉"Agent规划与搭建"
+# - "Agent与Skill体系"不再整体收录，改成只要子文件夹"Agent执行机制梳理"
+#   （30个分Agent文件+索引，是Agent执行治理机制这个主题本身；同级的候选
+#   Agent目录/L4封装可行性评估/岗位族关系蓝图这些是别的主题，不要）
+# - "规则空白地图"加文件名过滤"第一层"，排除掉混进去的
+#   "任务包_4域B标签模板化返工_v1.0.md"（不是"XX_第一层_规则空白地图"
+#   这个统一格式的域文件）
+# - "熔断节点补建清单"不用加过滤——已有的版本分组逻辑（group_latest_
+#   versions，按"域前缀_熔断节点补建清单"分组）已经能把12个文件（部分域
+#   有v1.0/v1.1/v1.2多版本）正确收窄到8个域各自的最新版，不需要额外处理
+# - "04_规则与GAP产出"加文件名过滤"清单"（排除掉6份"XX_三方沟通报告"，
+#   只留"规则清单_XX"和"Gap清单_XX"这两类）+ 不要CSV（只要md）——CSV这类
+#   表格候选默认会对每一层都尝试，这里显式关掉，靠三元组第三项实现
+#
+# 每一项是 (路径, 文件名必须包含的子串或None) 或 (路径, 文件名过滤,
+# 是否也扫表格候选)——两元组默认扫表格候选（True），需要显式排除csv/xlsx
+# 时才用三元组传False。
+EA_LAYER_PRIORITY: List[Union[str, Tuple[str, Optional[str]], Tuple[str, Optional[str], bool]]] = [
+    "00_治理与元模型/项目章程",
+    "01_原始材料-外部导入/M-01_方法论与标准",
+    "02_过程成果-工作产出/规则分析（Jasper）/05_SOP",
+    "02_过程成果-工作产出/规则分析（Jasper）/Agent与Skill体系/Agent执行机制梳理",
+    ("02_过程成果-工作产出/规则分析（Jasper）/03_访谈准备与执行/规则空白地图", "第一层"),
+    "02_过程成果-工作产出/规则分析（Jasper）/03_访谈准备与执行/熔断节点补建清单",
+    ("02_过程成果-工作产出/规则分析（Jasper）/04_规则与GAP产出", "清单", False),
+    ("02_过程成果-工作产出/规则分析（Jasper）/02_信号提取基线/提取合集校准", "价值节点信号提取基线"),
+]
 
 
-def _layer_path_and_filter(layer: Union[str, Tuple[str, Optional[str]]]) -> Tuple[str, Optional[str]]:
-    """兼容EA_LAYER_PRIORITY里普通字符串项和(路径,文件名过滤)元组项两种写法。"""
+def _layer_path_and_filter(layer) -> Tuple[str, Optional[str], bool]:
+    """兼容EA_LAYER_PRIORITY里三种写法：纯路径字符串 / (路径,文件名过滤) /
+    (路径,文件名过滤,是否扫表格候选)。"""
     if isinstance(layer, tuple):
-        return layer
-    return layer, None
+        if len(layer) == 3:
+            return layer
+        return layer[0], layer[1], True
+    return layer, None, True
 
 # 通用归档/废弃关键字——即便在优先层内，命中这些关键字的子目录/文件也跳过
 # （比如 00/03 层内部也可能有"_归档"这类子目录）。"历史遗留"是2026-07-16
@@ -146,12 +161,14 @@ def _get_whitelisted_candidates(project_root: str, layer_priority: List[Union[st
     root = Path(project_root)
     ordered_relative: List[str] = []
     for layer in layer_priority:
-        path, name_filter = _layer_path_and_filter(layer)
+        path, name_filter, include_tables = _layer_path_and_filter(layer)
         layer_path = root / path
         for abs_path in _walk_candidates(layer_path):
             if name_filter and name_filter not in abs_path.name:
                 continue
             ordered_relative.append(str(abs_path.relative_to(root)))
+        if not include_tables:
+            continue
         for table_path in table_reader.list_table_candidates(str(root), subdir=path):
             if name_filter and name_filter not in table_path.name:
                 continue
@@ -187,37 +204,89 @@ def get_candidates(project_name: str, project_root: str) -> List[str]:
     return get_generic_candidates(project_root)
 
 
-# ── authority_layer 派生（2026-07-21新增）──
+# ── authority_layer 派生（2026-07-21新增，2026-07-22修正）──
 # 背景：vault里EA项目的原子有authority_layer字段（00_治理/01_原始/02_草稿/
-# 03_已锁定/08_任务跟进），这套值本来就是EA_LAYER_PRIORITY那几个源目录名的
-# 治理含义——但当前批量提炼流程（concept_note_extraction.py.write_atom()）
-# 从没写过这个字段，是因为没人把"源文件在哪个分层目录下"这条已有信息接到
-# 写入逻辑上，不是需要新设计一套判断规则。这里只是把EA_LAYER_PRIORITY的
-# 目录名映射成atom frontmatter用的authority_layer取值，纯字符串前缀匹配，
-# 不需要LLM判断。
+# 02_定稿/03_已锁定/08_任务跟进），本来是EA_LAYER_PRIORITY那几个源目录名的
+# 治理含义——最初按"02_过程成果-工作产出"整个顶层目录统一映射"02_草稿"，
+# 这在02层还覆盖11个共享业务维度目录（含访谈/信号提取这类真正的过程文件）
+# 时是对的。但2026-07-21范围五次收窄后，02层白名单只剩5个Jasper明确挑出来
+# 的"结果性"子文件夹（SOP/Agent执行机制梳理/规则空白地图/熔断节点补建
+# 清单/规则与GAP产出/提取合集校准）——这些是Jasper选进白名单的理由就是
+# "已经是定稿结果，不是过程文件"，继续统一贴"02_草稿"会跟白名单本身的
+# 筛选逻辑自相矛盾，且直接误导下游Agent读取的信任标注（检索层会把
+# authority_layer显式标成信任徽章）。改为更细粒度匹配：白名单里这几个
+# 结果性子目录单独映射"02_定稿"（不是草稿，但也没走完Mark审核锁定进03层
+# 的正式晋升流程，跟"03_已锁定"区分开），比"02_过程成果-工作产出"这个
+# 粗前缀更早匹配到，才会生效（dict在Python 3.7+保证插入顺序，靠这个
+# 保证细粒度条目排在粗前缀条目之前）。
 EA_AUTHORITY_LAYER_MAP = {
     "00_治理与元模型": "00_治理",
     "03_发布成果-交付物": "03_已锁定",
     "08_任务与跟进": "08_任务跟进",
     "01_原始材料-外部导入": "01_原始",
-    # 02_过程成果-工作产出 下全部子目录（规则分析（Jasper）/L3流程库/映射分析等）
-    # 统一归"02_草稿"——这些都是过程中的工作产出，还没走到03层锁定发布
+    # 02层白名单里的5个结果性子目录——比下面的粗前缀更细，必须排在前面
+    "02_过程成果-工作产出/规则分析（Jasper）/05_SOP": "02_定稿",
+    "02_过程成果-工作产出/规则分析（Jasper）/Agent与Skill体系/Agent执行机制梳理": "02_定稿",
+    "02_过程成果-工作产出/规则分析（Jasper）/03_访谈准备与执行/规则空白地图": "02_定稿",
+    "02_过程成果-工作产出/规则分析（Jasper）/03_访谈准备与执行/熔断节点补建清单": "02_定稿",
+    "02_过程成果-工作产出/规则分析（Jasper）/04_规则与GAP产出": "02_定稿",
+    "02_过程成果-工作产出/规则分析（Jasper）/02_信号提取基线/提取合集校准": "02_定稿",
+    # 02_过程成果-工作产出 下其余子目录（理论上不会再命中——candidates已经
+    # 从白名单筛过，保留这条纯做兜底，避免白名单以后又加了新02层子目录、
+    # 这里忘了同步细粒度映射时直接崩溃或误标）
     "02_过程成果-工作产出": "02_草稿",
 }
 
-# Rw权益项目/Jasper AI协同经验引擎目前没有EA项目这套治理分层（project_filters
-# 顶部注释已说明："暂无同等细致的分层，用更简单的关键字黑名单排除"）——在这两个
-# 项目自己的分层方案定下来之前（需要Jasper拍板，见路线图"待确认事项"），统一
-# 给"02_草稿"这个中性默认值，不虚构一个假的权威判断。等这两个项目也有分层
-# 定义后，这里要改成按各自项目的规则派生，不能一直用这个默认值。
+# ── 业务域(domain) 派生（2026-07-22新增）──
+# 背景：白名单收窄后的语料本质是"8个业务域 × {SOP/规则空白地图/熔断清单/
+# 规则清单/GAP清单/提取基线}"这样一个矩阵结构，业务域是现在语料的核心
+# 组织维度（真实盘点过：45.2%的原子文件名里能直接匹配到域前缀），但之前
+# schema没有专门字段承载，只能藏在source路径的文件名里，检索/枢纽聚类都
+# 用不上这个信号。纯字符串匹配源文件名，不需要LLM判断。
+EA_DOMAINS = ["PAY", "HR", "FA", "KA", "EQ", "INS", "PARTNER", "TREASURY"]
+
+
+def derive_domain(source_relative_path: str) -> str:
+    """从source路径的文件名里匹配业务域前缀，匹配不到返回"（无）"（不是
+    每个白名单来源都有域结构——比如00_治理与元模型/项目章程、01_原始材料
+    -外部导入/M-01_方法论与标准这两个来源就没有域概念，如实标"无"而不是
+    编一个假域）。大小写不敏感匹配文件名（不匹配整个路径——路径里
+    "规则分析（Jasper）"这类目录名可能意外命中域缩写，只信文件名更准）。"""
+    filename = source_relative_path.split("/")[-1].upper()
+    for domain in EA_DOMAINS:
+        if domain in filename:
+            return domain
+    return "（无）"
+
+# 2026-07-22新增：Jasper AI协同经验引擎白名单收窄到2项后，同样不该再用
+# "02_草稿"这个通用默认值——三大主Agent体系架构是架构定义文档（治理性质），
+# Mark_AI经验合集学习参考是Mark沉淀的方法论源材料（跟EA的01_原始材料性质
+# 类似），两者都不是"草稿"。用子串匹配而不是前缀匹配——这个项目的根目录
+# 2026-07-22从"AI工程能力整改项目"上移到"Jasper AI协同经验引擎"，改前
+# 提炼的原子source字段是老根目录相对路径（不带"AI工程能力整改项目/"
+# 前缀），改后新提炼的原子source带这个前缀，前缀匹配会漏判老格式，子串
+# 匹配对两种格式都有效。
+JASPER_ENGINE_AUTHORITY_LAYER_MAP = {
+    "三大主Agent体系架构": "00_治理",
+    "Mark_AI经验合集学习参考": "01_原始",
+}
+
+# Rw权益项目目前没有EA项目这套治理分层（project_filters顶部注释已说明：
+# "暂无同等细致的分层，用更简单的关键字黑名单排除"）——项目自己的分层方案
+# 定下来之前，统一给"02_草稿"这个中性默认值，不虚构一个假的权威判断。
 GENERIC_PROJECT_DEFAULT_AUTHORITY_LAYER = "02_草稿"
 
 
 def derive_authority_layer(project_name: str, source_relative_path: str) -> str:
     """给定项目名+源文件相对路径（write_atom()里source字段的值），返回这个
-    原子应该写入的authority_layer。EA项目按源文件所在分层目录前缀匹配；其余
-    项目暂时统一返回默认值（见上方GENERIC_PROJECT_DEFAULT_AUTHORITY_LAYER的
-    说明，是已知的临时简化，不是最终方案）。"""
+    原子应该写入的authority_layer。EA项目/Jasper AI协同经验引擎按各自的
+    白名单映射表做前缀匹配；Rw权益项目暂时统一返回默认值（见上方
+    GENERIC_PROJECT_DEFAULT_AUTHORITY_LAYER的说明，是已知的临时简化）。"""
+    if project_name == "Jasper AI协同经验引擎":
+        for keyword, layer in JASPER_ENGINE_AUTHORITY_LAYER_MAP.items():
+            if keyword in source_relative_path:
+                return layer
+        return "01_原始"
     if project_name == "EA流程架构项目":
         for prefix, layer in EA_AUTHORITY_LAYER_MAP.items():
             if source_relative_path.startswith(prefix):
