@@ -178,6 +178,58 @@ def mark_suggested_task_status(workspace: Path, task_id: str, status: str) -> bo
     return False
 
 
+def update_suggested_task_decision(workspace: Path, task_id: str, updates: dict) -> dict:
+    """更新驾驶舱人工决策字段，同时保留 daily_sensing 原有状态机。
+
+    ``status`` 仍只表示任务是否待处理/已完成/已关闭；``decision_status`` 表示
+    人对候选任务做出的接收、转交或合并判断。两者分开后，前端扩展不会破坏
+    daily_sensing 的自动回执和跨日重提逻辑。
+    """
+    allowed = {
+        "decision_status", "owner", "due_date", "acceptance_criteria",
+        "decision_note", "merged_into", "title", "priority",
+    }
+    safe_updates = {key: value for key, value in updates.items() if key in allowed}
+    state = load_daily_sensing_state(workspace)
+    fingerprints = state.get("suggested_task_fingerprints", {})
+    for fp in fingerprints.values():
+        if fp.get("task_id") != task_id:
+            continue
+        plan_inputs_changed = (
+            ("title" in safe_updates and safe_updates["title"] != fp.get("name", "")) or
+            ("priority" in safe_updates and safe_updates["priority"] != fp.get("priority", "P2")) or
+            ("acceptance_criteria" in safe_updates and
+             safe_updates["acceptance_criteria"] != fp.get("acceptance_criteria", ""))
+        )
+        if "title" in safe_updates:
+            fp["name"] = safe_updates.pop("title")
+        fp.update(safe_updates)
+        fp["decision_updated_at"] = datetime.now().isoformat()
+        decision = fp.get("decision_status", "pending_review")
+        if decision in ("dismissed", "merged"):
+            fp["status"] = "dismissed"
+            fp["status_updated_at"] = fp["decision_updated_at"]
+        elif decision in ("pending_review", "accepted", "transferred"):
+            fp["status"] = "pending"
+        if decision != "accepted" or plan_inputs_changed:
+            fp.pop("execution", None)
+        save_daily_sensing_state(workspace, state)
+        return {"found": True, "task": dict(fp)}
+    return {"found": False}
+
+
+def update_suggested_task_execution(workspace: Path, task_id: str, execution: dict) -> dict:
+    """保存驾驶舱执行准备状态；真实执行仍只能走 agent.py 的显式授权入口。"""
+    state = load_daily_sensing_state(workspace)
+    for fp in state.get("suggested_task_fingerprints", {}).values():
+        if fp.get("task_id") != task_id:
+            continue
+        fp["execution"] = execution
+        save_daily_sensing_state(workspace, state)
+        return {"found": True, "execution": execution}
+    return {"found": False}
+
+
 # ============================================================
 # 文档任务发现增量状态（discover_state.json，供 skills/document_task_discovery.py 使用）
 # ============================================================

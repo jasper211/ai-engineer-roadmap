@@ -1,13 +1,14 @@
 # PTA · 项目任务协同 Agent
 
-v2.3.0 —— 目录按《Agent 项目搭建全流程》11 步方法论重排为 01-11 编号+中英文
+v2.18.0 —— 目录按《Agent 项目搭建全流程》11 步方法论重排为 01-12 编号+中英文
 顶层文件夹。这是本项目第二次结构迁移：v2.0.0 先从 5 个独立脚本
 （PTA-S01~S05）+ 一个主编排器（PTA-RUN）的扁平结构，迁移为
 `agents/skills/tools/memory/prompts/tests` 六个职责模块；v2.1.0 在此基础上
 给这六个模块套上编号外壳，**这套 01-11 结构是以后任何 Agent 搭建都要遵循的
 标准模板，不只是 PTA 自己的一次性调整**；v2.3.0 新增 `--daily-scan` 每日
 主动巡检能力，PTA 从纯粹的"被动执行引擎"升级为"主动感知 + 人工确认 + 执行"
-的闭环。
+的闭环；v2.17.0 将第12步任务看板升级为“今日指挥中心 + 候选任务决策抽屉”；
+v2.18.0 接入执行计划生成、风险标注、dry-run 和批准记录，真实执行仍需二次授权。
 
 历史版本 README（v1.x，扁平结构时期）保留在
 [`_retired_flat_structure/README_v1.md`](_retired_flat_structure/README_v1.md)。
@@ -72,7 +73,7 @@ PTA/
 │       └── daily_sensing_system.md      每日巡检的 LLM 系统提示词（含安全边界）
 ├── 09_测试与调试_Test_and_Debug/           测试与调试：集成测试
 │   └── tests/
-│       └── test_integration.py   集成测试（24 项，含每日巡检/规则扫描/文档发现/
+│       └── test_integration.py   集成测试（36 项，含每日巡检/规则扫描/文档发现/
 │                                   项目智能分析/Rw专项校准等相关测试）
 ├── 10_部署与运行_Deploy_and_Run/           部署与运行：一键启动 + 定时任务
 │   ├── quick_start.sh
@@ -81,6 +82,7 @@ PTA/
 ├── 11_监控与优化_Monitor_and_Optimize/     监控与优化：PTA 自我监控 + 分析/巡检类扩展脚本
 │   ├── PTA-MONITOR_自我监控.py            监控 PTA 自己被调用得怎么样（成功率/澄清率等）
 │   └── PTA-DASH/DISCOVER/EXT/INTEL/INTEL-RW/SCAN（"帮你分析别的项目"，未纳入 skills/tools 迁移，见下）
+├── 12_任务看板_Task_Dashboard/             本地任务驾驶舱：人工决策、项目态势与运行监控
 └── _retired_flat_structure/   旧版扁平脚本（S01-S05/RUN/config.json 等），保留供追溯，不再是入口
 ```
 

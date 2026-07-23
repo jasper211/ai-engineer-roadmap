@@ -350,9 +350,14 @@ class DailySensor:
                                              "name": name, "priority": priority, "signal_to": signal_to,
                                              "needs_mark_alignment": needs_mark_alignment,
                                              "related_files": related_files,
+                                             "rationale": t.get("rationale", ""),
+                                             "relevance_reason": t.get("relevance_reason", ""),
                                              "status": "pending" if reopened else prior_status}
                 if reopened:
                     updated_fp[fingerprint]["first_suggested"] = now_iso  # 重新计天数，不沿用旧的搁置时长
+                    updated_fp[fingerprint]["decision_status"] = "pending_review"
+                    updated_fp[fingerprint]["merged_into"] = ""
+                    updated_fp[fingerprint].pop("execution", None)
             else:
                 task_id = _mint_rpt_id(date_str, used_today)
                 is_new = True
@@ -360,7 +365,10 @@ class DailySensor:
                                              "last_suggested": now_iso, "status": "pending",
                                              "name": name, "priority": priority, "signal_to": signal_to,
                                              "needs_mark_alignment": needs_mark_alignment,
-                                             "related_files": related_files}
+                                             "related_files": related_files,
+                                             "rationale": t.get("rationale", ""),
+                                             "relevance_reason": t.get("relevance_reason", ""),
+                                             "decision_status": "pending_review"}
 
             suggested_tasks.append(SuggestedTask(
                 task_id=task_id, name=name, rationale=t.get("rationale", ""),
@@ -479,6 +487,17 @@ def list_tasks_from_state(state: dict, project_name: str = "", resolved_within_d
             "priority": fp.get("priority", "P2"), "signal_to": fp.get("signal_to", []),
             "needs_mark_alignment": fp.get("needs_mark_alignment", False),
             "related_files": fp.get("related_files", []), "project_name": project_name,
+            "rationale": fp.get("rationale", ""),
+            "relevance_reason": fp.get("relevance_reason", ""),
+            "decision_status": fp.get("decision_status", "pending_review"),
+            "decision_updated_at": fp.get("decision_updated_at", ""),
+            "owner": fp.get("owner", ""), "due_date": fp.get("due_date", ""),
+            "acceptance_criteria": fp.get("acceptance_criteria", ""),
+            "decision_note": fp.get("decision_note", ""),
+            "merged_into": fp.get("merged_into", ""),
+            "execution": fp.get("execution"),
+            "first_suggested": fp.get("first_suggested", ""),
+            "last_suggested": fp.get("last_suggested", ""),
         }
         if status == "pending":
             days = _days_since(fp.get("first_suggested", ""))

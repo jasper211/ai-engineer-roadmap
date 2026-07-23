@@ -31,6 +31,8 @@ import views
 WEB_DIST_DIR = views.DASHBOARD_DIR / "web" / "dist"
 
 TASK_STATUS_PATH = re.compile(r"^/api/tasks/([^/]+)/status$")
+TASK_DECISION_PATH = re.compile(r"^/api/tasks/([^/]+)/decision$")
+TASK_EXECUTION_PATH = re.compile(r"^/api/tasks/([^/]+)/execution/(prepare|dry-run|approve)$")
 WATCHED_PROJECT_PATH = re.compile(r"^/api/watched-projects/([^/]+)$")
 # 只允许这两个取值——"关闭"和"取消关闭(重新跟踪)"，这是前端勾选交互唯一
 # 需要的两种状态转换；不开放任意字符串，避免前端一个笔误就把某条任务的
@@ -128,6 +130,27 @@ class Handler(BaseHTTPRequestHandler):
     def do_POST(self):
         parsed = urlparse(self.path)
 
+        execution_match = TASK_EXECUTION_PATH.match(parsed.path)
+        if execution_match:
+            try:
+                body = self._read_json_body()
+            except json.JSONDecodeError:
+                self._send_json(400, {"error": "请求体不是合法JSON"})
+                return
+            project = body.get("project", "")
+            if not project:
+                self._send_json(400, {"error": "缺少 project 字段"})
+                return
+            task_id, action = execution_match.groups()
+            if action == "prepare":
+                result = views.prepare_task_execution(project, task_id)
+            elif action == "dry-run":
+                result = views.dry_run_task_execution(project, task_id)
+            else:
+                result = views.approve_task_execution(project, task_id, body.get("approval_note", ""))
+            self._send_json(200 if result.get("success") else 400, result)
+            return
+
         if parsed.path == "/api/watched-projects":
             try:
                 body = self._read_json_body()
@@ -137,6 +160,25 @@ class Handler(BaseHTTPRequestHandler):
             result = views.add_watched_project(
                 body.get("name", ""), body.get("project_root", ""), body.get("exclude_dirs"))
             self._send_json(200 if result.get("success") else 400, result)
+            return
+
+        decision_match = TASK_DECISION_PATH.match(parsed.path)
+        if decision_match:
+            try:
+                body = self._read_json_body()
+            except json.JSONDecodeError:
+                self._send_json(400, {"error": "请求体不是合法JSON"})
+                return
+            project = body.pop("project", "")
+            decision = body.get("decision_status", "")
+            if not project:
+                self._send_json(400, {"error": "缺少 project 字段"})
+                return
+            if decision not in {"pending_review", "accepted", "transferred", "dismissed", "merged"}:
+                self._send_json(400, {"error": "decision_status 取值不合法"})
+                return
+            result = views.decide_task(project, decision_match.group(1), body)
+            self._send_json(200 if result.get("found") else 404, result)
             return
 
         match = TASK_STATUS_PATH.match(parsed.path)

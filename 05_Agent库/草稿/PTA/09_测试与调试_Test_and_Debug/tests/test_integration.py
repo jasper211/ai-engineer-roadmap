@@ -1069,14 +1069,86 @@ def test_34_watched_project_management(tmp_dir: Path):
     finally:
         httpd.shutdown()
         thread.join(timeout=5)
-        # 双重保险：不管上面assertion有没有全部通过，都确保测试项目不会残留在
-        # 真实的daily_scan_projects.json里（这个文件被真实写入过，不是隔离的
-        # 临时fixture）。
+        # 双重保险：不管上面检查有没有全部通过，都清理真实配置和测试工作区。
         import views as _views
         remaining = _views._load_watched_projects()
         if any(p.get("name") == test_name for p in remaining):
             _views._save_watched_projects([p for p in remaining if p.get("name") != test_name])
         shutil.rmtree(get_project_workspace(project_root), ignore_errors=True)
+
+
+def test_35_task_decision_state_is_separate_from_execution_state(tmp_dir: Path):
+    print("\n[Test 35] 驾驶舱人工决策状态与巡检执行状态兼容")
+    print("-" * 60)
+    workspace = tmp_dir / "decision_workspace"
+    workspace.mkdir(parents=True, exist_ok=True)
+    ws.save_daily_sensing_state(workspace, {
+        "file_hashes": {}, "file_contents": {},
+        "suggested_task_fingerprints": {"fp": {
+            "task_id": "RPT-TEST-01", "name": "测试候选任务", "priority": "P1",
+            "status": "pending", "first_suggested": datetime.now().isoformat(),
+            "last_suggested": datetime.now().isoformat(), "related_files": [],
+        }},
+    })
+    accepted = ws.update_suggested_task_decision(workspace, "RPT-TEST-01", {
+        "decision_status": "accepted", "owner": "Jasper",
+        "acceptance_criteria": "测试通过且产出文件存在",
+    })
+    accepted_fp = accepted["task"]
+    check(accepted_fp["decision_status"] == "accepted" and accepted_fp["status"] == "pending",
+          "接受任务只更新人工决策层，仍保留pending供后续执行/自动回执",
+          f"接受后的双层状态不对: {accepted_fp}")
+    view = list_tasks_from_state(ws.load_daily_sensing_state(workspace), "测试项目")
+    check(view["new"][0]["owner"] == "Jasper" and view["new"][0]["acceptance_criteria"],
+          "负责人和验收标准已进入驾驶舱读取模型", f"驾驶舱字段丢失: {view}")
+
+    merged = ws.update_suggested_task_decision(workspace, "RPT-TEST-01", {
+        "decision_status": "merged", "merged_into": "RPT-EXISTING-01",
+    })
+    check(merged["task"]["status"] == "dismissed" and merged["task"]["merged_into"] == "RPT-EXISTING-01",
+          "合并决策会关闭重复候选并保留目标任务ID", f"合并状态不对: {merged}")
+
+
+def test_36_execution_preparation_dry_run_and_approval(tmp_dir: Path):
+    print("\n[Test 36] 驾驶舱执行准备：计划→dry-run→批准，不触发真实执行")
+    print("-" * 60)
+    import views as dashboard_views
+    root = tmp_dir / "execution_console_project"
+    workspace = tmp_dir / "execution_console_workspace"
+    root.mkdir(); workspace.mkdir()
+    (root / "pta_tasks.json").write_text(json.dumps({
+        "RPT-TEST-02": {"name": "驾驶舱执行测试", "steps": [{
+            "action": "validate", "tool": "bash", "command": "echo should-not-run-for-real",
+            "description": "验证执行准备",
+        }]}
+    }, ensure_ascii=False), encoding="utf-8")
+    ws.save_daily_sensing_state(workspace, {
+        "file_hashes": {}, "file_contents": {},
+        "suggested_task_fingerprints": {"fp": {
+            "task_id": "RPT-TEST-02", "name": "驾驶舱执行测试", "priority": "P1",
+            "status": "pending", "decision_status": "accepted",
+            "first_suggested": datetime.now().isoformat(), "last_suggested": datetime.now().isoformat(),
+        }},
+    })
+    original_resolver = dashboard_views._resolve_workspace_for_project
+    dashboard_views._resolve_workspace_for_project = lambda _name: (root, workspace)
+    try:
+        prepared = dashboard_views.prepare_task_execution("测试项目", "RPT-TEST-02")
+        check(prepared["success"] and prepared["execution"]["state"] == "plan_ready",
+              "已接受任务生成了执行计划", f"计划生成失败: {prepared}")
+        check(prepared["execution"]["risk_level"] == "high",
+              "bash步骤被确定性标记为高风险并要求再次确认", f"风险分级不对: {prepared}")
+        dry = dashboard_views.dry_run_task_execution("测试项目", "RPT-TEST-02")
+        check(dry["success"] and dry["execution"]["state"] == "dry_run_passed",
+              "dry-run通过且结果持久化", f"dry-run失败: {dry}")
+        output = dry["execution"]["dry_run"]["steps"][0]["output"]
+        check(output.startswith("[DRY-RUN]"), "步骤只返回DRY-RUN预览，没有真实运行命令", f"dry-run输出异常: {output}")
+        approved = dashboard_views.approve_task_execution("测试项目", "RPT-TEST-02", "上线前再次核对")
+        check(approved["success"] and approved["execution"]["state"] == "approved"
+              and approved["execution"]["requires_explicit_execute"] is True,
+              "批准后仍明确要求真实执行二次授权", f"批准状态不对: {approved}")
+    finally:
+        dashboard_views._resolve_workspace_for_project = original_resolver
 
 
 def test_30_latest_report_summary(tmp_dir: Path):
@@ -1235,6 +1307,8 @@ def main():
         test_32_new_dashboard_endpoints_smoke()
         test_33_file_receipt_evidence_persists_into_fingerprint(tmp_dir)
         test_34_watched_project_management(tmp_dir)
+        test_35_task_decision_state_is_separate_from_execution_state(tmp_dir)
+        test_36_execution_preparation_dry_run_and_approval(tmp_dir)
     finally:
         shutil.rmtree(tmp_dir, ignore_errors=True)
         # Test 7/13 通过 subprocess 调用 agent.py，其专属工作区落在 memory.workspace 的
@@ -1251,7 +1325,7 @@ def main():
             print(f"  - {f}")
         return 1
 
-    print("PTA 集成测试完成：34/34 通过")
+    print("PTA 集成测试完成：36/36 通过")
     print("=" * 60)
     return 0
 

@@ -14,6 +14,34 @@ export interface Task {
   status?: string
   status_updated_at?: string
   evidence?: string
+  rationale?: string
+  relevance_reason?: string
+  decision_status?: 'pending_review' | 'accepted' | 'transferred' | 'dismissed' | 'merged'
+  decision_updated_at?: string
+  owner?: string
+  due_date?: string
+  acceptance_criteria?: string
+  decision_note?: string
+  merged_into?: string
+  first_suggested?: string
+  last_suggested?: string
+  execution?: TaskExecution | null
+}
+
+export interface StepRisk { level: 'low' | 'high' | 'critical'; label: string; requires_reconfirm: boolean }
+export interface ExecutionStepInfo {
+  seq: number; action: string; tool: string; command?: string; script?: string; description: string;
+  status: string; output?: string; error?: string; risk: StepRisk
+}
+export interface TaskExecution {
+  state: 'plan_ready' | 'dry_run_passed' | 'dry_run_failed' | 'approved'
+  prepared_at: string
+  plan: { plan_id: string; task_id: string; task_name: string; status: string; steps: ExecutionStepInfo[] }
+  risk_level: 'low' | 'high' | 'critical'
+  dry_run: null | { status: string; completed: number; failed: number; total: number; run_at: string; steps: ExecutionStepInfo[] }
+  approved_at: string | null
+  approval_note: string
+  requires_explicit_execute?: boolean
 }
 
 export interface TaskBuckets {
@@ -206,3 +234,37 @@ export async function setTaskStatus(
   if (!resp.ok) throw new Error(`关闭/重开任务失败: HTTP ${resp.status}`)
   return resp.json()
 }
+
+export interface TaskDecisionInput {
+  decision_status: 'pending_review' | 'accepted' | 'transferred' | 'dismissed' | 'merged'
+  title?: string
+  priority?: string
+  owner?: string
+  due_date?: string
+  acceptance_criteria?: string
+  decision_note?: string
+  merged_into?: string
+}
+
+export async function decideTask(project: string, taskId: string, input: TaskDecisionInput) {
+  const resp = await fetch(`/api/tasks/${encodeURIComponent(taskId)}/decision`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ project, ...input }),
+  })
+  if (!resp.ok) throw new Error(`保存任务决策失败: HTTP ${resp.status}`)
+  return resp.json() as Promise<{ found: boolean }>
+}
+
+async function executionAction(project: string, taskId: string, action: 'prepare' | 'dry-run' | 'approve', approval_note = '') {
+  const resp = await fetch(`/api/tasks/${encodeURIComponent(taskId)}/execution/${action}`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ project, approval_note }),
+  })
+  const payload = await resp.json()
+  if (!resp.ok) throw new Error(payload.error || `${action} 失败`)
+  return payload as { success: boolean; execution: TaskExecution }
+}
+export const prepareTaskExecution = (project: string, taskId: string) => executionAction(project, taskId, 'prepare')
+export const dryRunTaskExecution = (project: string, taskId: string) => executionAction(project, taskId, 'dry-run')
+export const approveTaskExecution = (project: string, taskId: string, note = '') => executionAction(project, taskId, 'approve', note)

@@ -11,6 +11,7 @@ Task_Dashboard/api/ 下，比 agent.py 深一层，PTA_DIR 的推导多一层 pa
 
 import json
 import sys
+from datetime import datetime
 from pathlib import Path
 from typing import Dict, List
 
@@ -26,6 +27,8 @@ from skills.daily_sensing import list_tasks_from_state, latest_report_summary, D
 from skills.pipeline_health import summarize_latest_report, drift_detail_from_latest_report, REPORT_DIR_RELATIVE
 from skills.agent_status import detect_all_agent_statuses
 from tools.ob_bridge import get_background
+from tools.task_knowledge import load_task_map
+from skills.execution_planning import ExecutionScheduler, ExecutionPlan, ExecutionStep
 
 DAILY_SCAN_PROJECTS_PATH = PTA_DIR / "02_配置项目_Configure_Project" / "daily_scan_projects.json"
 # HOME_PROJECT_ROOT 的推导跟 agent.py 完全一致（PTA -> 草稿 -> 05_Agent库 -> 项目根目录），
@@ -179,6 +182,102 @@ def dismiss_task(project_name: str, task_id: str, status: str) -> dict:
     _root, workspace = resolved
     found = ws.mark_suggested_task_status(workspace, task_id, status)
     return {"found": found}
+
+
+def decide_task(project_name: str, task_id: str, updates: dict) -> dict:
+    """保存候选任务的人工决策与执行前上下文，不触发任何命令或外部通知。"""
+    resolved = _resolve_workspace_for_project(project_name)
+    if resolved is None:
+        return {"found": False, "error": f"未知项目: {project_name}"}
+    _root, workspace = resolved
+    return ws.update_suggested_task_decision(workspace, task_id, updates)
+
+
+def _find_task_fingerprint(workspace: Path, task_id: str) -> dict:
+    state = ws.load_daily_sensing_state(workspace)
+    for fp in state.get("suggested_task_fingerprints", {}).values():
+        if fp.get("task_id") == task_id:
+            return fp
+    return {}
+
+
+def _step_risk(step: dict) -> dict:
+    """确定性风险标注，只提示和设门，不尝试主观判断命令是否“合理”。"""
+    text = " ".join(str(step.get(k) or "") for k in ("tool", "action", "command", "script")).lower()
+    critical_tokens = ("git push", "rm -", "sudo ", "curl ", "wget ", "ssh ", "osascript")
+    if any(token in text for token in critical_tokens):
+        return {"level": "critical", "label": "外部或不可逆动作", "requires_reconfirm": True}
+    if step.get("tool") in ("bash", "python", "browser-use") and step.get("action") != "manual_review":
+        return {"level": "high", "label": "可执行工具调用", "requires_reconfirm": True}
+    return {"level": "low", "label": "人工核对/只读准备", "requires_reconfirm": False}
+
+
+def prepare_task_execution(project_name: str, task_id: str) -> dict:
+    resolved = _resolve_workspace_for_project(project_name)
+    if resolved is None:
+        return {"success": False, "error": f"未知项目: {project_name}"}
+    root, workspace = resolved
+    fp = _find_task_fingerprint(workspace, task_id)
+    if not fp:
+        return {"success": False, "error": f"未找到任务: {task_id}"}
+    if fp.get("decision_status") != "accepted":
+        return {"success": False, "error": "只有已接受的任务可以生成执行计划"}
+    task_map = load_task_map(None, root)
+    package = {"task_id": task_id, "items": [{"id": task_id, "name": fp.get("name", task_id)}]}
+    scheduler = ExecutionScheduler(root, dry_run=True, task_map=task_map)
+    plan = scheduler.to_dict(scheduler.create_plan(package, include_sync=False))
+    for step in plan["steps"]:
+        step["risk"] = _step_risk(step)
+    levels = [s["risk"]["level"] for s in plan["steps"]]
+    overall = "critical" if "critical" in levels else "high" if "high" in levels else "low"
+    execution = {
+        "state": "plan_ready", "prepared_at": datetime.now().isoformat(),
+        "plan": plan, "risk_level": overall, "dry_run": None,
+        "approved_at": None, "approval_note": "",
+    }
+    ws.update_suggested_task_execution(workspace, task_id, execution)
+    return {"success": True, "execution": execution}
+
+
+def dry_run_task_execution(project_name: str, task_id: str) -> dict:
+    resolved = _resolve_workspace_for_project(project_name)
+    if resolved is None:
+        return {"success": False, "error": f"未知项目: {project_name}"}
+    root, workspace = resolved
+    fp = _find_task_fingerprint(workspace, task_id)
+    execution = fp.get("execution") if fp else None
+    if not execution or not execution.get("plan"):
+        return {"success": False, "error": "请先生成执行计划"}
+    plan_data = execution["plan"]
+    steps = []
+    for raw in plan_data.get("steps", []):
+        clean = {k: v for k, v in raw.items() if k != "risk"}
+        steps.append(ExecutionStep(**clean))
+    plan = ExecutionPlan(plan_id=plan_data["plan_id"], task_id=plan_data["task_id"],
+                         task_name=plan_data["task_name"], steps=steps)
+    result = ExecutionScheduler(root, dry_run=True).execute_plan(plan)
+    execution["dry_run"] = {**result, "run_at": datetime.now().isoformat()}
+    execution["state"] = "dry_run_passed" if result["failed"] == 0 else "dry_run_failed"
+    execution["approved_at"] = None
+    ws.update_suggested_task_execution(workspace, task_id, execution)
+    return {"success": result["failed"] == 0, "execution": execution}
+
+
+def approve_task_execution(project_name: str, task_id: str, approval_note: str = "") -> dict:
+    resolved = _resolve_workspace_for_project(project_name)
+    if resolved is None:
+        return {"success": False, "error": f"未知项目: {project_name}"}
+    _root, workspace = resolved
+    fp = _find_task_fingerprint(workspace, task_id)
+    execution = fp.get("execution") if fp else None
+    if not execution or execution.get("state") != "dry_run_passed":
+        return {"success": False, "error": "只有 dry-run 通过的计划可以批准"}
+    execution["state"] = "approved"
+    execution["approved_at"] = datetime.now().isoformat()
+    execution["approval_note"] = (approval_note or "").strip()
+    execution["requires_explicit_execute"] = True
+    ws.update_suggested_task_execution(workspace, task_id, execution)
+    return {"success": True, "execution": execution}
 
 
 def pipeline_status() -> dict:

@@ -1,3 +1,24 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  * { box-sizing: border-box; }
+  body { min-width: 320px; background-image: radial-gradient(circle at 20% -10%, rgba(99,102,241,.14), transparent 32rem); }
+  button, select, input, textarea { font: inherit; }
+}
+
+@layer components {
+  .eyebrow { @apply flex items-center gap-1.5 font-mono text-[10px] font-semibold tracking-[0.18em] text-accent-secondary; }
+  .metric-card { @apply flex items-center gap-3 rounded-2xl border border-border-default bg-bg-elevated p-4; }
+  .metric-icon { @apply grid h-9 w-9 shrink-0 place-items-center rounded-xl; }
+  .project-chip { @apply rounded-md bg-bg-surface px-2 py-0.5 text-[10px] text-text-secondary; }
+  .tab-button { @apply flex items-center gap-2 border-b-2 border-transparent px-3 py-3 text-xs text-text-muted transition hover:text-text-primary; }
+  .tab-button span { @apply rounded-full bg-bg-surface px-1.5 py-0.5 font-mono text-[10px]; }
+  .tab-button-active { @apply border-accent-primary text-text-primary; }
+  .field { @apply block w-full rounded-lg border border-border-default bg-bg-base px-3 py-2.5 text-sm text-text-primary outline-none transition placeholder:text-text-muted focus:border-accent-primary; }
+  .action-primary, .action-secondary, .action-danger { @apply flex items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm font-medium transition disabled:opacity-50; }
+  .action-primary { @apply bg-accent-primary text-white hover:bg-accent-primary-light; }
+  .action-secondary { @apply border border-border-default bg-bg-surface text-text-primary hover:border-border-hover; }
+  .action-danger { @apply border border-accent-danger/20 bg-accent-danger/5 text-accent-danger hover:bg-accent-danger/10; }
+}
