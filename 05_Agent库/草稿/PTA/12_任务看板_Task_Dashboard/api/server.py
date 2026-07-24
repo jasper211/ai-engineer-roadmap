@@ -100,6 +100,8 @@ class Handler(BaseHTTPRequestHandler):
         elif parsed.path == "/api/tasks":
             project = query.get("project", ["all"])[0]
             self._send_json(200, views.aggregate_tasks(project))
+        elif parsed.path == "/api/personal-work":
+            self._send_json(200, views.personal_work())
         elif parsed.path == "/api/activity-feed":
             project = query.get("project", ["all"])[0]
             self._send_json(200, views.activity_feed(project))

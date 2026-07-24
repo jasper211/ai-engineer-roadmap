@@ -170,6 +170,84 @@ def aggregate_tasks(project_filter: str = "all") -> dict:
     return merged
 
 
+PERSONAL_ACTION_TERMS = (
+    "人机协同", "人机规则", "人机分工", "agent化", "agent 化",
+    "sop", "信号识别", "响应规则", "流程重构", "任务自动化",
+)
+EA_APPLICATION_TERMS = (
+    "ea流程架构", "ea 项目", "ea项目", "应用到ea", "应用于ea",
+    "反哺ea", "用于ea", "映射到ea",
+)
+
+
+def _task_search_text(task: dict) -> str:
+    """合并任务的可解释字段；不使用项目名，避免仅因属于 EA 就命中。"""
+    parts = [
+        task.get("name", ""), task.get("evidence", ""), task.get("rationale", ""),
+        task.get("relevance_reason", ""), " ".join(task.get("related_files", [])),
+    ]
+    return " ".join(str(part) for part in parts if part).lower()
+
+
+def personal_work() -> dict:
+    """按 Jasper 已确认的工作边界筛选开放任务，Rw 暂不参与个人判断。"""
+    buckets = aggregate_tasks("all")
+    tasks = buckets["new"] + buckets["aging"]
+    direct_actions, ea_applications, pending_evaluation = [], [], []
+    excluded = {"EA": 0, "Jasper": 0, "Rw": 0, "other": 0}
+
+    for task in tasks:
+        project = task.get("project_name", "")
+        text = _task_search_text(task)
+        action_hits = [term for term in PERSONAL_ACTION_TERMS if term in text]
+        ea_hits = [term for term in EA_APPLICATION_TERMS if term in text]
+        enriched = dict(task)
+
+        if "EA" in project:
+            if action_hits:
+                enriched["personal_bucket"] = "direct_action"
+                enriched["personal_reason"] = (
+                    "命中 EA 个人职责：" + "、".join(action_hits[:3])
+                    + "；需要判断其对人机协同流程、SOP、规则或 Agent 化的影响。"
+                )
+                direct_actions.append(enriched)
+            else:
+                excluded["EA"] += 1
+        elif "Jasper" in project:
+            if action_hits and ea_hits:
+                enriched["personal_bucket"] = "ea_application"
+                enriched["personal_reason"] = (
+                    "Jasper 变化已出现 EA 应用映射："
+                    + "、".join(dict.fromkeys((action_hits + ea_hits)[:4])) + "。"
+                )
+                ea_applications.append(enriched)
+            elif action_hits:
+                enriched["personal_bucket"] = "pending_evaluation"
+                enriched["personal_reason"] = (
+                    "具有人机协同或 Agent 应用潜力，但当前证据未明确指向 EA；"
+                    "先评估，不进入行动区。"
+                )
+                pending_evaluation.append(enriched)
+            else:
+                excluded["Jasper"] += 1
+        elif "Rw" in project:
+            excluded["Rw"] += 1
+        else:
+            excluded["other"] += 1
+
+    return {
+        "scope": {
+            "ea": "人机协同流程与 SOP、信号与人机规则、端到端任务 Agent 化",
+            "jasper": "只有能够应用到 EA 人机协同设计的变化进入行动区",
+            "rw": "暂不设计个人聚焦，仅在指挥中心知悉变化",
+        },
+        "direct_actions": direct_actions,
+        "ea_applications": ea_applications,
+        "pending_evaluation": pending_evaluation,
+        "excluded_counts": excluded,
+    }
+
+
 def dismiss_task(project_name: str, task_id: str, status: str) -> dict:
     """前端"关闭/继续跟踪"勾选的落地点——status 只应该是 "dismissed"（关闭）
     或 "pending"（重新开始跟踪，即取消关闭），由调用方（server.py 的请求体

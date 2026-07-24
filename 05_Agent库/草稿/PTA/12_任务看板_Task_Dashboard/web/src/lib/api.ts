@@ -26,6 +26,8 @@ export interface Task {
   first_suggested?: string
   last_suggested?: string
   execution?: TaskExecution | null
+  personal_bucket?: 'direct_action' | 'ea_application' | 'pending_evaluation'
+  personal_reason?: string
 }
 
 export interface StepRisk { level: 'low' | 'high' | 'critical'; label: string; requires_reconfirm: boolean }
@@ -48,6 +50,14 @@ export interface TaskBuckets {
   new: Task[]
   aging: Task[]
   resolved_recent: Task[]
+}
+
+export interface PersonalWorkResponse {
+  scope: { ea: string; jasper: string; rw: string }
+  direct_actions: Task[]
+  ea_applications: Task[]
+  pending_evaluation: Task[]
+  excluded_counts: { EA: number; Jasper: number; Rw: number; other: number }
 }
 
 export interface ProjectInfo {
@@ -201,6 +211,10 @@ export function fetchProjects(): Promise<ProjectInfo[]> {
 
 export function fetchTasks(project: string = 'all'): Promise<TaskBuckets> {
   return getJSON(`/api/tasks?project=${encodeURIComponent(project)}`)
+}
+
+export function fetchPersonalWork(): Promise<PersonalWorkResponse> {
+  return getJSON('/api/personal-work')
 }
 
 export function fetchPipelineStatus(): Promise<PipelineStatus> {
