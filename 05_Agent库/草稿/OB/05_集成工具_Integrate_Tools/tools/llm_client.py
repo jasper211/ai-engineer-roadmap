@@ -87,7 +87,11 @@ def call_deepseek(system_prompt: str, user_content: str, api_key: str,
     last_err = None
     for attempt in range(max_retries + 1):
         try:
-            with urllib.request.urlopen(req, timeout=60, context=_SSL_CONTEXT) as resp:
+            # 2026-07-24：超时从60秒提到180秒——deepseek-v4-pro（1.6T参数，
+            # 比flash大得多）响应明显更慢，切pro后真实批次里出现大量
+            # "read operation timed out"（读响应体阶段超时，不是连接超时），
+            # 60秒对pro不够用，flash时期够用是因为那是个小得多的模型。
+            with urllib.request.urlopen(req, timeout=180, context=_SSL_CONTEXT) as resp:
                 data = json.loads(resp.read().decode("utf-8"))
                 return data["choices"][0]["message"]["content"]
         except urllib.error.HTTPError as e:
@@ -99,17 +103,22 @@ def call_deepseek(system_prompt: str, user_content: str, api_key: str,
                 last_err = f"HTTP {e.code}: {detail}"
                 continue
             raise RuntimeError(f"DeepSeek API 请求失败 HTTP {e.code}: {detail}") from e
-        except urllib.error.URLError as e:
+        except (urllib.error.URLError, TimeoutError) as e:
             # 真实批量提炼时复现过：连续大量请求会偶发 SSL 连接中断
             # （UNEXPECTED_EOF_WHILE_READING）/读超时，这类网络抖动通常是
             # 暂时性的——之前只对 HTTP 429 限流重试，URLError 直接抛异常，
             # 188 个文件的批次里 17 个因为这个原因失败，比例不低。这里补上
             # 同样的重试逻辑，不区分"是不是SSL的错"，只要是 URLError 就重试。
+            # 2026-07-24补充：单独加 TimeoutError——urllib的"读响应体阶段
+            # 超时"（跟"连接阶段超时"不同）抛出的是裸 TimeoutError，不会被
+            # urllib.error.URLError 接住，之前完全没有重试，切pro模型后
+            # 这类超时变得频繁（pro生成慢），真实复现过91个文件的批次里
+            # 10+个因为这个原因直接失败、一次重试都没有。
             if attempt < max_retries:
                 wait = 2 ** (attempt + 1)
                 print(f"  [网络错误] {e}，{wait}s 后重试...")
                 time.sleep(wait)
-                last_err = f"URLError: {e}"
+                last_err = f"{type(e).__name__}: {e}"
                 continue
             raise RuntimeError(f"DeepSeek API 网络错误（已重试 {max_retries} 次）: {e}") from e
     raise RuntimeError(f"DeepSeek API 请求失败（已重试 {max_retries} 次）: {last_err}")
