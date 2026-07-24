@@ -94,9 +94,23 @@ class AtomClusterer:
                     "path": md_file,
                 })
             elif atom_type == "concept_atom":
-                entity_type_m = re.search(r"^entity_type: (.+)$", fm, re.M)
-                entity_type = entity_type_m.group(1).strip() if entity_type_m else ""
-                if entity_type != "待聚类":
+                # 2026-07-24修复：判断条件从"entity_type字面等于'待聚类'"改成
+                # "还没有所属枢纽 且 没有正式entity_ref编码"——原来的写法把
+                # "聚类资格"跟"entity_type取值"绑死，2026-07-24新增SOP/Agent
+                # 机制/规则与GAP等7个白名单来源类别后，1924个原子的entity_type
+                # 从"待聚类"改成了具体类别，这些原子实际上仍然没有加入任何
+                # 枢纽（图谱连通性可以验证：枢纽覆盖率只有12.9%），但字面判断
+                # 会把它们全部跳过，永远进不了聚类候选池。entity_type分类
+                # （内容是什么类型）和枢纽聚类（内容关联到什么具体主题）是
+                # 两件事，不该用同一个字段互相门禁——有正式entity_ref编码的
+                # 原子走另一套entity_ref枢纽机制，不归这里管；已经有
+                # "## 所属枢纽"的原子跳过（避免重复处理）；其余的（不管
+                # entity_type写的是"待聚类"还是"SOP"还是别的）都是候选。
+                if "## 所属枢纽" in text:
+                    continue
+                entity_ref_m = re.search(r"^entity_ref: (.+)$", fm, re.M)
+                entity_ref = entity_ref_m.group(1).strip() if entity_ref_m else "（无）"
+                if entity_ref not in ("（无）", "无", ""):
                     continue
                 parsed = _parse_atom_file(md_file)
                 if parsed is None:
@@ -181,8 +195,14 @@ class AtomClusterer:
 
     def _append_hub_section(self, atom_path: Path, hub_ref: str):
         text = atom_path.read_text(encoding="utf-8")
-        # entity_type/entity_ref 字段就地替换（原子创建时是"待聚类"/"（无）"）
-        text = re.sub(r"^entity_type: .+$", "entity_type: 非正式主题", text, count=1, flags=re.M)
+        # entity_ref 就地替换成所属枢纽编码（原子创建时是"（无）"）。
+        # entity_type 只在原值还是通用的"待聚类"时才改成"非正式主题"——
+        # 2026-07-24修复：原来无条件覆盖成"非正式主题"，会把SOP/Agent机制/
+        # 规则与GAP等7个白名单来源类别的具体分类清空重置成通用值，这两个
+        # 字段现在是正交的（entity_type=内容类型，属不属于枢纽=另一件事），
+        # 不该因为进了枢纽就丢失更具体的类型信息。
+        if re.search(r"^entity_type: 待聚类$", text, re.M):
+            text = re.sub(r"^entity_type: .+$", "entity_type: 非正式主题", text, count=1, flags=re.M)
         text = re.sub(r"^entity_ref: .+$", f"entity_ref: {hub_ref}", text, count=1, flags=re.M)
         if "## 所属枢纽" not in text:
             text = text.rstrip("\n") + f"\n\n## 所属枢纽\n\n- [[{hub_ref}]]\n"
