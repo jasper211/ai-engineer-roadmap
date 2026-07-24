@@ -1,11 +1,13 @@
 {
   "_meta": {
-    "note": "多项目每日巡检的项目清单——10_部署与运行_Deploy_and_Run/multi_project_daily_scan.py 读这份文件，逐个项目调用 agent.py --daily-scan。加新项目只需要在这里追加一条，不需要再装新的 launchd plist。exclude_dirs 是在内置默认排除（.git/node_modules等）基础上的追加排除，不是替换。"
+    "note": "多项目每日巡检的项目清单——10_部署与运行_Deploy_and_Run/multi_project_daily_scan.py 读这份文件，逐个项目调用 agent.py --daily-scan。加新项目只需要在这里追加一条，不需要再装新的 launchd plist。exclude_dirs 是在内置默认排除（.git/node_modules等）基础上的追加排除，不是替换。system_prompt 是相对 08_设计提示词_Design_Prompts/prompts/ 的文件名，未配置时 agent.py 的 _resolve_daily_scan_system_prompt() 会回退到 daily_sensing.py 的默认通用提示词——不是每个项目都需要专属判断标准，Rw权益项目目前刻意留空用通用版。"
   },
   "projects": [
     {
       "name": "EA流程架构项目",
-      "project_root": "/Users/a112233/Desktop/流程架构项目_jasper"
+      "project_root": "/Users/a112233/Desktop/流程架构项目_jasper",
+      "system_prompt": "daily_sensing_system_ea.md",
+      "system_prompt_note": "EA项目判断标准：变化是否触发流程/SOP修订、按四人协同裁定权限模型（业务架构→Mark/流程类→Terresa/执行规则SOP类→Jasper/HR岗位类→Ivan）该归口谁、是否有02→03晋升信号——不是通用的'跟四方有没有关系'判断。"
     },
     {
       "name": "Rw权益项目",
@@ -14,6 +16,8 @@
     {
       "name": "Jasper工作文档",
       "project_root": "/Users/a112233/Desktop/Jasper工作文档（不含EA项目）",
+      "system_prompt": "daily_sensing_system_jasper_meta.md",
+      "system_prompt_note": "这里是Jasper自己的方法论/工具试验田，判断标准是'反哺EA成熟度'三档（已验证可复用/探索阶段/纯内部工具），不是'这件事重不重要'——已验证可复用的才允许在rationale里使用'反哺EA'类措辞。",
       "exclude_dirs": [
         "OB知识库_vault",
         "项目：EG",

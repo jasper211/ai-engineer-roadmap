@@ -43,6 +43,7 @@ PTA_DIR = NUMBERED_DIR.parent                # PTA 项目根目录
 for _pkg_dir in ("05_集成工具_Integrate_Tools", "06_开发技能_Develop_Skills", "07_接入记忆_Integrate_Memory"):
     sys.path.insert(0, str(PTA_DIR / _pkg_dir))
 sys.path.insert(0, str(PTA_DIR / "12_任务看板_Task_Dashboard" / "api"))
+sys.path.insert(0, str(PTA_DIR / "04_定义Agent_Define_Agent" / "agents"))
 
 from skills.intent_parsing import IntentParser
 from skills.execution_planning import ExecutionScheduler
@@ -69,6 +70,7 @@ from tools.wecom_notify import (build_notification_text, load_wecom_config, MAX_
                                  _encode_multipart_file, _webhook_to_upload_url)
 from memory.workspace import get_project_workspace
 import memory.workspace as ws
+import agent as agent_module
 
 FAILURES = []
 
@@ -1240,6 +1242,40 @@ def test_37_command_center_file_ssot_is_complete(tmp_dir: Path):
         cross_sensing.call_deepseek = original_cross_call
 
 
+def test_38_daily_scan_per_project_system_prompt(tmp_dir: Path):
+    print("\n[Test 38] agent.py 按项目差异化选择daily_sensing系统提示词")
+    print("-" * 60)
+    # 复现真实需求：EA/Jasper工作文档两个项目现在有各自的判断标准（EA走
+    # 四人协同裁定权限模型，Jasper工作文档走"反哺EA成熟度"三档），不该再用
+    # 同一份通用提示词——这里验证的是"选对了文件"，不是提示词内容本身
+    # （内容是给LLM看的自然语言指令，没有机器可判断的"对错"，能验证的只有
+    # 路由是否精确指向配置里声明的那份文件）。
+    ea_root = Path("/Users/a112233/Desktop/流程架构项目_jasper")
+    jasper_root = Path("/Users/a112233/Desktop/Jasper工作文档（不含EA项目）")
+    rw_root = Path("/Users/a112233/Desktop/Rw权益项目")
+    unknown_root = tmp_dir / "not_a_watched_project"
+    unknown_root.mkdir(parents=True, exist_ok=True)
+
+    ea_prompt = agent_module._resolve_daily_scan_system_prompt(ea_root)
+    check(ea_prompt is not None and ea_prompt.name == "daily_sensing_system_ea.md" and ea_prompt.exists(),
+          "EA流程架构项目正确路由到daily_sensing_system_ea.md，且文件真实存在",
+          f"EA项目提示词路由不对: {ea_prompt}")
+
+    jasper_prompt = agent_module._resolve_daily_scan_system_prompt(jasper_root)
+    check(jasper_prompt is not None and jasper_prompt.name == "daily_sensing_system_jasper_meta.md"
+          and jasper_prompt.exists(),
+          "Jasper工作文档正确路由到daily_sensing_system_jasper_meta.md，且文件真实存在",
+          f"Jasper工作文档提示词路由不对: {jasper_prompt}")
+
+    check(agent_module._resolve_daily_scan_system_prompt(rw_root) is None,
+          "Rw权益项目没有配置system_prompt，正确回退None（调用方据此用通用默认提示词）",
+          "Rw权益项目不该有专属提示词覆盖，但返回了非None")
+
+    check(agent_module._resolve_daily_scan_system_prompt(unknown_root) is None,
+          "不在daily_scan_projects.json清单里的项目正确回退None",
+          "未登记项目不该有提示词覆盖，但返回了非None")
+
+
 def test_30_latest_report_summary(tmp_dir: Path):
     print("\n[Test 30] skills.daily_sensing.latest_report_summary 纯函数读取最新daily-scan报告")
     print("-" * 60)
@@ -1399,6 +1435,7 @@ def main():
         test_35_task_decision_state_is_separate_from_execution_state(tmp_dir)
         test_36_execution_preparation_dry_run_and_approval(tmp_dir)
         test_37_command_center_file_ssot_is_complete(tmp_dir)
+        test_38_daily_scan_per_project_system_prompt(tmp_dir)
     finally:
         shutil.rmtree(tmp_dir, ignore_errors=True)
         # Test 7/13 通过 subprocess 调用 agent.py，其专属工作区落在 memory.workspace 的
@@ -1415,7 +1452,7 @@ def main():
             print(f"  - {f}")
         return 1
 
-    print("PTA 集成测试完成：37/37 通过")
+    print("PTA 集成测试完成：38/38 通过")
     print("=" * 60)
     return 0
 

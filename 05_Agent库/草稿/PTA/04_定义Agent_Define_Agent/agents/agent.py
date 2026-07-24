@@ -54,6 +54,7 @@ import json
 import sys
 from datetime import datetime
 from pathlib import Path
+from typing import Optional
 
 AGENTS_DIR = Path(__file__).resolve().parent
 NUMBERED_DIR = AGENTS_DIR.parent          # 04_定义Agent_Define_Agent/
@@ -88,6 +89,33 @@ from tools.wecom_notify import (load_wecom_config, build_notification_text_from_
 
 def _resolve_project_root(project_root: str = None) -> Path:
     return Path(project_root).resolve() if project_root else HOME_PROJECT_ROOT
+
+
+DAILY_SCAN_PROJECTS_PATH = PTA_DIR / "02_配置项目_Configure_Project" / "daily_scan_projects.json"
+PROMPTS_DIR = PTA_DIR / "08_设计提示词_Design_Prompts" / "prompts"
+
+
+def _resolve_daily_scan_system_prompt(resolved_root: Path) -> Optional[Path]:
+    """按 resolved_root 去 daily_scan_projects.json 里找对应项目条目的
+    system_prompt 覆盖（相对 08_设计提示词_Design_Prompts/prompts/ 的文件名）。
+
+    背景：一套通用提示词判断"这条变化跟我有没有关系"太粗——EA项目的判断标准
+    是"是否触发流程/SOP/人机协同规则修订、该找四人裁定模型里的谁"，Jasper工作
+    文档的判断标准是"这个方法/工具是否已经具备反哺EA的条件"，Rw项目暂时还是
+    通用判断。找不到匹配项目/没配置system_prompt字段/配置文件本身不存在，都
+    返回None——调用方据此使用DailySensor的默认通用提示词，不报错。"""
+    if not DAILY_SCAN_PROJECTS_PATH.exists():
+        return None
+    try:
+        data = json.loads(DAILY_SCAN_PROJECTS_PATH.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return None
+    for p in data.get("projects", []):
+        root = p.get("project_root", "")
+        if root and Path(root).resolve() == resolved_root:
+            prompt_name = p.get("system_prompt")
+            return (PROMPTS_DIR / prompt_name) if prompt_name else None
+    return None
 
 
 def cmd_status(project_root: str = None) -> None:
@@ -137,7 +165,11 @@ def cmd_daily_scan(project_root: str = None, force: bool = False, notify: bool =
     state = ws.load_state(workspace)
     recent_history = state.get("task_history", [])[-5:]
 
-    sensor = DailySensor(resolved_root, extra_exclude_dirs=set(extra_exclude_dirs) if extra_exclude_dirs else None)
+    prompt_override = _resolve_daily_scan_system_prompt(resolved_root)
+    sensor_kwargs = {"extra_exclude_dirs": set(extra_exclude_dirs) if extra_exclude_dirs else None}
+    if prompt_override:
+        sensor_kwargs["system_prompt_path"] = prompt_override
+    sensor = DailySensor(resolved_root, **sensor_kwargs)
     try:
         briefing, updated_sensing_state, task_map_entries = sensor.scan(
             sensing_state, force=force, recent_task_history=recent_history)
