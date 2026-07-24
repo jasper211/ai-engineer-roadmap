@@ -55,6 +55,10 @@ class ChangeItem:
     summary: str
     who: str = "未知"
     domain: str = "其他"
+    change_type: str = "changed"  # added / changed / removed
+    before_excerpt: str = ""
+    after_excerpt: str = ""
+    diff_text: str = ""
 
 
 @dataclass
@@ -248,22 +252,40 @@ class DailySensor:
         old_contents = previous_state.get("file_contents", {})
         updated_contents = dict(old_contents)
         diff_hunks = []  # [{"file":..., "diff_text":...}]
+        # SSOT事实层：不依赖LLM是否遗漏某个文件。这里完整保留本轮所有新增/
+        # 修改/删除文件的类型、前后内容摘录和可读diff，驾驶舱据此展示“到底变了啥”。
+        local_change_details: Dict[str, dict] = {}
 
         for path in diff.added:
             new_content = _read_truncated(self.project_root / path)
             updated_contents[path] = new_content
-            diff_hunks.append({"file": path, "diff_text": f"（新增文件）\n{new_content[:1000]}"})
+            diff_text = f"（新增文件）\n{new_content[:1000]}"
+            diff_hunks.append({"file": path, "diff_text": diff_text})
+            local_change_details[path] = {
+                "change_type": "added", "before_excerpt": "",
+                "after_excerpt": new_content[:3000], "diff_text": diff_text,
+            }
 
         for path in diff.changed:
             new_content = _read_truncated(self.project_root / path)
             old_content = old_contents.get(path, "")
+            diff_text = unified_diff_text(old_content, new_content, max_lines=MAX_DIFF_LINES)
             diff_hunks.append({
                 "file": path,
-                "diff_text": unified_diff_text(old_content, new_content, max_lines=MAX_DIFF_LINES),
+                "diff_text": diff_text,
             })
+            local_change_details[path] = {
+                "change_type": "changed", "before_excerpt": old_content[:3000],
+                "after_excerpt": new_content[:3000], "diff_text": diff_text,
+            }
             updated_contents[path] = new_content
 
         for path in diff.removed:
+            old_content = old_contents.get(path, "")
+            local_change_details[path] = {
+                "change_type": "removed", "before_excerpt": old_content[:3000],
+                "after_excerpt": "", "diff_text": f"（删除文件）\n{old_content[:1000]}",
+            }
             updated_contents.pop(path, None)
 
         focus_text = _read_pta_focus(self.project_root)
@@ -304,9 +326,30 @@ class DailySensor:
         raw = call_deepseek(system_prompt, user_content, self.api_key, model=self.model)
         parsed = json.loads(raw)
 
-        changes = [ChangeItem(file=c.get("file", ""), summary=c.get("summary", ""),
-                                who=c.get("who", "未知") or "未知", domain=c.get("domain", "其他") or "其他")
-                   for c in parsed.get("changes", [])]
+        changes = []
+        seen_change_files = set()
+        for c in parsed.get("changes", []):
+            file_path = c.get("file", "")
+            facts = local_change_details.get(file_path, {})
+            changes.append(ChangeItem(
+                file=file_path, summary=c.get("summary", ""),
+                who=c.get("who", "未知") or "未知", domain=c.get("domain", "其他") or "其他",
+                change_type=facts.get("change_type", "changed"),
+                before_excerpt=facts.get("before_excerpt", ""),
+                after_excerpt=facts.get("after_excerpt", ""),
+                diff_text=facts.get("diff_text", ""),
+            ))
+            seen_change_files.add(file_path)
+        # 模型可能合并或漏掉“普通”变化；SSOT不能因此丢文件，缺失项用确定性事实补齐。
+        for file_path, facts in local_change_details.items():
+            if file_path in seen_change_files:
+                continue
+            changes.append(ChangeItem(
+                file=file_path, summary="本轮巡检检测到文件变化，暂无语义摘要",
+                change_type=facts["change_type"],
+                before_excerpt=facts["before_excerpt"], after_excerpt=facts["after_excerpt"],
+                diff_text=facts["diff_text"],
+            ))
         relationships = [RelationshipItem(description=r.get("description", ""),
                                             related_files=r.get("related_files", []))
                           for r in parsed.get("relationships", [])]

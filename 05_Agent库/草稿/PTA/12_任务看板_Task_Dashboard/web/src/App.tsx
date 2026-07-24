@@ -9,7 +9,7 @@ type Tab = 'tasks' | 'activity' | 'agents' | 'status'
 
 const TABS: { key: Tab; label: string; icon: typeof Command }[] = [
   { key: 'tasks', label: '指挥中心', icon: Command },
-  { key: 'activity', label: '项目态势', icon: Newspaper },
+  { key: 'activity', label: '与我相关', icon: Newspaper },
   { key: 'agents', label: 'Agent监控', icon: Cpu },
   { key: 'status', label: '运行状态', icon: Activity },
 ]

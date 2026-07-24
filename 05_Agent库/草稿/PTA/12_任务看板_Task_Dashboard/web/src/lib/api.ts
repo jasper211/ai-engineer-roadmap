@@ -93,6 +93,10 @@ export interface ChangeItem {
   summary: string
   who: string
   domain: string
+  change_type: 'added' | 'changed' | 'removed'
+  before_excerpt: string
+  after_excerpt: string
+  diff_text: string
 }
 
 export interface RelationshipItem {
@@ -117,6 +121,30 @@ export interface ActivityFeedEntry {
   relationships: RelationshipItem[]
   resolved_tasks: ResolvedTaskItem[]
   skipped_llm_call: boolean
+}
+
+export interface CommandProject extends ActivityFeedEntry {
+  role: 'core' | 'lab' | 'case' | 'other'
+  label: string
+  question: string
+  total_changes: number
+  related_tasks: Task[]
+}
+
+export interface CrossProjectRelation {
+  from_project: string
+  to_project: string
+  shared_domains: string[]
+  evidence_files: string[]
+  analysis: string
+  confidence: string
+  needs_review: boolean
+}
+
+export interface CommandCenterResponse {
+  period_basis: string
+  projects: CommandProject[]
+  cross_project_relations: CrossProjectRelation[]
 }
 
 export interface LaunchdJob {
@@ -189,6 +217,10 @@ export function fetchExecutionHistory(project: string = 'all', limit: number = 3
 
 export function fetchActivityFeed(project: string = 'all'): Promise<ActivityFeedEntry[]> {
   return getJSON(`/api/activity-feed?project=${encodeURIComponent(project)}`)
+}
+
+export function fetchCommandCenter(): Promise<CommandCenterResponse> {
+  return getJSON('/api/command-center')
 }
 
 export function fetchAgentMonitor(): Promise<AgentMonitorResponse> {

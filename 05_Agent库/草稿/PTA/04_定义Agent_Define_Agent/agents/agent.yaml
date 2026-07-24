@@ -5,7 +5,7 @@
 
 name: PTA
 full_name: 项目任务协同 Agent（Project Task Assistant）
-version: 2.4.0
+version: 2.19.0
 entrypoint: 04_定义Agent_Define_Agent/agents/agent.py
 # v2.1.0：目录按《Agent 项目搭建全流程》11 步方法论重排为 01-11 编号+中英文
 # 顶层文件夹（见 PTA/README.md），agents/skills/tools/memory/prompts/tests
@@ -36,6 +36,7 @@ skills:
   - archive_review        # 归档复盘：生成执行记录、提炼经验教训（本地写入，无 git 动作）
   - doc_sync               # 显式同步：看板更新 + 真实 git push（唯一有副作用的技能）
   - project_dashboard        # 项目仪表盘（原 PTA-DASH，v2.4.0批1）：--dashboard，只读报告不接入主循环
+  - cross_project_sensing    # 三项目巡检后的跨项目关系分析，只读已落盘事实
 
 tools:
   - shell_exec    # bash / python 脚本 / browser-use 占位执行器

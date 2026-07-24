@@ -1,133 +1,37 @@
-import { useEffect, useState } from 'react'
-import { Search } from 'lucide-react'
-import { fetchActivityFeed, fetchObSearch, type ActivityFeedEntry, type ChangeItem } from '../lib/api'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { AlertTriangle, ArrowUpRight, FileText, Sparkles } from 'lucide-react'
+import { fetchTasks, type Task, type TaskBuckets } from '../lib/api'
+import { PriorityBadge } from '../components/StatusBadge'
+import { TaskDecisionDrawer } from '../components/TaskDecisionDrawer'
 
-function groupByDomain(changes: ChangeItem[]): Record<string, ChangeItem[]> {
-  const groups: Record<string, ChangeItem[]> = {}
-  for (const c of changes) {
-    (groups[c.domain] ??= []).push(c)
-  }
-  return groups
-}
-
-function ProjectFeedCard({ entry }: { entry: ActivityFeedEntry }) {
-  const groups = groupByDomain(entry.changes)
-  const total = entry.files_added + entry.files_changed + entry.files_removed
-
-  return (
-    <div className="rounded-radius-md border border-border-default bg-bg-elevated p-4">
-      <div className="flex items-center justify-between">
-        <span className="font-medium text-sm">{entry.project_name}</span>
-        <span className="text-xs text-text-muted">
-          {new Date(entry.generated_at).toLocaleString('zh-CN')}
-        </span>
-      </div>
-
-      {total === 0 ? (
-        <p className="text-sm text-text-muted mt-2">最近一次巡检无变化</p>
-      ) : (
-        <div className="mt-3 space-y-3">
-          {Object.entries(groups).map(([domain, items]) => (
-            <div key={domain}>
-              <div className="text-xs font-medium text-text-secondary mb-1">{domain}（{items.length}处）</div>
-              <ul className="space-y-0.5">
-                {items.map((c, i) => (
-                  <li key={i} className="text-xs text-text-muted">
-                    <span className="text-text-secondary">[{c.who}]</span> {c.file}：{c.summary}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {entry.resolved_tasks.length > 0 && (
-        <div className="mt-3 border-t border-border-default pt-2 space-y-1">
-          {entry.resolved_tasks.map((t) => (
-            <div key={t.task_id} className="text-xs text-accent-success">
-              ✅ {t.task_id} · {t.name}
-              {t.evidence && <span className="text-text-muted"> — {t.evidence}</span>}
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  )
-}
-
-function ObSearchBox() {
-  const [query, setQuery] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [result, setResult] = useState<string | null>(null)
-  const [searched, setSearched] = useState(false)
-
-  async function runSearch() {
-    if (!query.trim()) return
-    setLoading(true)
-    setSearched(true)
-    try {
-      const res = await fetchObSearch(query)
-      setResult(res.background)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  return (
-    <section>
-      <h2 className="text-sm font-medium text-text-secondary mb-3">OB 背景检索</h2>
-      <div className="flex gap-2">
-        <input
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && runSearch()}
-          placeholder="输入关键词查OB知识库背景，例如：价值节点"
-          className="flex-1 rounded-radius-sm border border-border-default bg-bg-surface px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-border-hover"
-        />
-        <button
-          onClick={runSearch}
-          disabled={loading || !query.trim()}
-          className="flex items-center gap-1.5 rounded-radius-sm bg-accent-primary px-3 py-2 text-sm text-white disabled:opacity-50"
-        >
-          <Search size={14} /> {loading ? '检索中…' : '检索'}
-        </button>
-      </div>
-      {searched && !loading && (
-        <div className="mt-3 rounded-radius-md border border-border-default bg-bg-elevated p-4">
-          {result ? (
-            <pre className="text-xs text-text-secondary whitespace-pre-wrap font-mono">{result}</pre>
-          ) : (
-            <p className="text-sm text-text-muted">未检索到相关背景</p>
-          )}
-        </div>
-      )}
-    </section>
-  )
+function TaskAdvice({ task, onOpen }: { task: Task; onOpen: () => void }) {
+  const advice = task.needs_mark_alignment
+    ? '先内部对齐事实和备选方案，再线下找 Mark 裁定。'
+    : task.signal_to?.length
+      ? `建议由 ${task.signal_to.join('、')} 核对来源文件，确认是否进入执行。`
+      : '建议先核对来源文件和影响范围，再决定是否处理。'
+  return <button onClick={onOpen} className="group w-full rounded-xl border border-border-default bg-bg-elevated p-4 text-left hover:border-border-hover">
+    <div className="flex items-start gap-3"><div className="min-w-0 flex-1"><div className="flex flex-wrap items-center gap-2"><PriorityBadge priority={task.priority}/><span className="font-mono text-[10px] text-text-muted">{task.task_id}</span><span className="project-chip">{task.project_name}</span></div><h3 className="mt-2 text-sm font-medium leading-6">{task.name}</h3></div><ArrowUpRight size={15} className="text-text-muted group-hover:text-accent-primary-light"/></div>
+    <p className="mt-3 text-xs leading-5 text-accent-secondary">{advice}</p>
+    {task.related_files.length > 0 ? <div className="mt-3 flex items-start gap-2 text-[10px] text-text-muted"><FileText size={12}/><span>{task.related_files.join('、')}</span></div> : <div className="mt-3 flex items-center gap-2 text-[10px] text-accent-warning"><AlertTriangle size={12}/>当前缺少明确关联文件，执行前需补充证据</div>}
+  </button>
 }
 
 export function ActivityFeed() {
-  const [feed, setFeed] = useState<ActivityFeedEntry[] | null>(null)
-
-  useEffect(() => {
-    fetchActivityFeed().then(setFeed)
-  }, [])
-
-  return (
-    <div className="p-6 max-w-4xl mx-auto space-y-8">
-      <h1 className="text-lg font-heading font-medium">今日动态</h1>
-
-      <section className="space-y-3">
-        {feed === null ? (
-          <p className="text-sm text-text-muted">加载中…</p>
-        ) : feed.length === 0 ? (
-          <p className="text-sm text-text-muted">还没有任何项目跑过daily-scan</p>
-        ) : (
-          feed.map((entry) => <ProjectFeedCard key={entry.project_name} entry={entry} />)
-        )}
-      </section>
-
-      <ObSearchBox />
-    </div>
-  )
+  const [buckets, setBuckets] = useState<TaskBuckets | null>(null)
+  const [selected, setSelected] = useState<Task | null>(null)
+  const load = useCallback(async () => setBuckets(await fetchTasks('all')), [])
+  useEffect(() => { load() }, [load])
+  const tasks = useMemo(() => buckets ? [...buckets.new, ...buckets.aging] : [], [buckets])
+  const groups = useMemo(() => ({
+    EA: tasks.filter(t => t.project_name.includes('EA')),
+    Jasper: tasks.filter(t => t.project_name.includes('Jasper')),
+    Rw: tasks.filter(t => t.project_name.includes('Rw')),
+  }), [tasks])
+  if (!buckets) return <div className="p-8 text-text-muted">正在读取从文件变化中识别出的任务…</div>
+  return <main className="mx-auto max-w-6xl space-y-7 px-5 py-7 lg:px-8">
+    <header><div className="eyebrow"><Sparkles size={12}/>DOWNSTREAM FROM FILE FACTS</div><h1 className="mt-2 font-heading text-2xl font-semibold">与我相关的任务建议</h1><p className="mt-2 text-sm text-text-secondary">这里只展示从三个项目文件变化中推导出的下游建议；事实原文仍以指挥中心为准。</p></header>
+    {Object.entries(groups).map(([name, items]) => <section key={name}><div className="mb-3 flex items-center gap-2"><h2 className="text-sm font-medium">{name}</h2><span className="rounded-full bg-bg-surface px-2 py-1 font-mono text-[10px] text-text-muted">{items.length}</span></div>{items.length ? <div className="grid gap-3 md:grid-cols-2">{items.map(t => <TaskAdvice key={t.task_id} task={t} onOpen={() => setSelected(t)}/>)}</div> : <div className="rounded-xl border border-border-default bg-bg-elevated px-5 py-8 text-xs text-text-muted">当前没有从该项目变化中识别出与你相关的开放任务</div>}</section>)}
+    <TaskDecisionDrawer task={selected} onClose={() => setSelected(null)} onSaved={load}/>
+  </main>
 }

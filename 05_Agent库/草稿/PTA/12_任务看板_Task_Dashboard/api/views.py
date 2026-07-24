@@ -320,6 +320,116 @@ def activity_feed(project_filter: str = "all") -> List[dict]:
     return result
 
 
+PROJECT_ROLES = {
+    "EA流程架构项目": {
+        "role": "core", "label": "核心业务主线",
+        "question": "业务事实发生了什么，哪些规则、SOP或裁定事项需要 Jasper 掌握？",
+    },
+    "Jasper工作文档": {
+        "role": "lab", "label": "AI 技术试验田",
+        "question": "Agent、方法论和工具发生了什么，哪些能力可以反哺 EA？",
+    },
+    "Rw权益项目": {
+        "role": "case", "label": "真实项目全貌案例",
+        "question": "真实项目发生了什么，哪些事实可以验证或修正 EA/Jasper 的方法？",
+    },
+}
+
+
+def _infer_legacy_change_type(change: dict) -> str:
+    """v2.19前报告没有change_type，旧数据只做保守推断并明确兼容，不伪造diff。"""
+    if change.get("change_type") in ("added", "changed", "removed"):
+        return change["change_type"]
+    text = f"{change.get('summary', '')} {change.get('file', '')}"
+    if any(word in text for word in ("删除", "移除")):
+        return "removed"
+    if any(word in text for word in ("新增", "新建", "创建")):
+        return "added"
+    return "changed"
+
+
+def _build_cross_project_relations(projects: List[dict]) -> List[dict]:
+    """从最新一次巡检的共同业务域生成待核对关系线索，不把关键词重合冒充因果。"""
+    direction_notes = {
+        ("Jasper工作文档", "EA流程架构项目"): "Jasper 技术试验可能形成 EA 可复用能力",
+        ("EA流程架构项目", "Rw权益项目"): "EA 方法或规则可在 Rw 真实案例中核验",
+        ("Rw权益项目", "EA流程架构项目"): "Rw 真实事实可能反向校准 EA 方法",
+        ("Rw权益项目", "Jasper工作文档"): "Rw 暴露的问题可能转化为技术试验需求",
+        ("EA流程架构项目", "Jasper工作文档"): "EA 业务问题可能需要 Jasper 技术能力支撑",
+        ("Jasper工作文档", "Rw权益项目"): "Jasper 新能力可能在 Rw 案例中进行真实性验证",
+    }
+    result = []
+    for source in projects:
+        source_domains = {c.get("domain", "") for c in source.get("changes", [])
+                          if c.get("domain") and c.get("domain") != "其他"}
+        if not source_domains:
+            continue
+        for target in projects:
+            if source["project_name"] == target["project_name"]:
+                continue
+            shared = sorted(source_domains & {
+                c.get("domain", "") for c in target.get("changes", [])
+                if c.get("domain") and c.get("domain") != "其他"
+            })
+            if not shared:
+                continue
+            pair = (source["project_name"], target["project_name"])
+            evidence = [
+                c["file"] for c in source.get("changes", []) + target.get("changes", [])
+                if c.get("domain") in shared
+            ][:6]
+            result.append({
+                "from_project": pair[0], "to_project": pair[1],
+                "shared_domains": shared, "evidence_files": evidence,
+                "analysis": direction_notes.get(pair, "两个项目在相同业务域出现同步变化"),
+                "confidence": "线索", "needs_review": True,
+            })
+    return result
+
+
+def command_center() -> dict:
+    """个人指挥中心SSOT：三项目最新成功巡检事实 + 下游任务 + 跨项目关系线索。"""
+    feed = activity_feed("all")
+    task_buckets = aggregate_tasks("all")
+    open_tasks = task_buckets["new"] + task_buckets["aging"]
+    project_entries = []
+    for entry in feed:
+        name = entry["project_name"]
+        changes = []
+        for raw in entry.get("changes", []):
+            change = dict(raw)
+            change["change_type"] = _infer_legacy_change_type(change)
+            change.setdefault("before_excerpt", "")
+            change.setdefault("after_excerpt", "")
+            change.setdefault("diff_text", "")
+            changes.append(change)
+        role = PROJECT_ROLES.get(name, {"role": "other", "label": "观察项目", "question": ""})
+        project_tasks = [t for t in open_tasks if t.get("project_name") == name]
+        project_entries.append({
+            **entry, **role, "changes": changes,
+            "related_tasks": project_tasks,
+            "total_changes": entry.get("files_added", 0) + entry.get("files_changed", 0)
+                             + entry.get("files_removed", 0),
+        })
+    role_order = {"core": 0, "lab": 1, "case": 2, "other": 3}
+    project_entries.sort(key=lambda p: role_order.get(p["role"], 9))
+    relations = _build_cross_project_relations(project_entries)
+    stored_path = ws.WORKSPACE_ROOT / "_PTA指挥中心" / "cross_project_latest.json"
+    if stored_path.exists():
+        try:
+            stored = json.loads(stored_path.read_text(encoding="utf-8"))
+            current_times = {p["project_name"]: p.get("generated_at", "") for p in project_entries}
+            if stored.get("source_report_timestamps") == current_times:
+                relations = stored.get("relations", relations)
+        except json.JSONDecodeError:
+            pass
+    return {
+        "period_basis": "每个项目从上一次成功巡检到本次巡检之间的全部文件变化",
+        "projects": project_entries,
+        "cross_project_relations": relations,
+    }
+
+
 def ob_search(query: str, mode: str = "hybrid", max_results: int = 5) -> dict:
     """OB背景检索框——实时调用tools/ob_bridge.get_background()，不缓存不落盘
     （每次都是一次真实的OB subprocess调用，检索本身不是高频路径，见ob_bridge.py

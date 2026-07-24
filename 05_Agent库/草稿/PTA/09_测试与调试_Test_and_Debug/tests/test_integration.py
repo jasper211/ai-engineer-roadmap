@@ -1151,6 +1151,95 @@ def test_36_execution_preparation_dry_run_and_approval(tmp_dir: Path):
         dashboard_views._resolve_workspace_for_project = original_resolver
 
 
+def test_37_command_center_file_ssot_is_complete(tmp_dir: Path):
+    print("\n[Test 37] 指挥中心SSOT：LLM漏项也不丢文件，新增/修改/删除和diff完整")
+    print("-" * 60)
+    root = tmp_dir / "command_center_ssot"
+    root.mkdir()
+    (root / "changed.md").write_text("旧内容\n", encoding="utf-8")
+    (root / "removed.md").write_text("删除前事实\n", encoding="utf-8")
+    sensor = DailySensor(root, api_key="fake")
+    baseline = sensor.seed_baseline()
+    (root / "changed.md").write_text("新内容\n", encoding="utf-8")
+    (root / "removed.md").unlink()
+    (root / "added.md").write_text("新增事实\n", encoding="utf-8")
+
+    # 故意只让模型返回changed.md；added/removed必须由本地确定性事实层补齐。
+    def _stub_partial(system_prompt, user_content, api_key, model=None, **kw):
+        return json.dumps({
+            "changes": [{"file": "changed.md", "summary": "内容由旧改新",
+                         "who": "Jasper", "domain": "测试"}],
+            "relationships": [], "suggested_tasks": [],
+        }, ensure_ascii=False)
+
+    daily_sensing.call_deepseek = _stub_partial
+    briefing, _state, _entries = sensor.scan(baseline)
+    by_file = {c.file: c for c in briefing.changes}
+    check(set(by_file) == {"changed.md", "removed.md", "added.md"},
+          "模型只返回1项时，SSOT仍完整保留全部3个变化文件", f"文件集合不完整: {set(by_file)}")
+    check(by_file["added.md"].change_type == "added"
+          and by_file["changed.md"].change_type == "changed"
+          and by_file["removed.md"].change_type == "removed",
+          "新增/修改/删除类型由本地diff确定，不依赖模型猜测",
+          f"变化类型不对: {[(k, v.change_type) for k, v in by_file.items()]}")
+    check("旧内容" in by_file["changed.md"].before_excerpt
+          and "新内容" in by_file["changed.md"].after_excerpt
+          and "删除前事实" in by_file["removed.md"].before_excerpt,
+          "修改前后内容与删除前最后事实均被保存", "内容级事实缺失")
+
+    import views as dashboard_views
+    original_feed = dashboard_views.activity_feed
+    original_tasks = dashboard_views.aggregate_tasks
+    dashboard_views.activity_feed = lambda _filter="all": [
+        {"project_name": "Rw权益项目", "generated_at": "2026-07-24T10:00:00",
+         "files_added": 0, "files_changed": 0, "files_removed": 0, "changes": [],
+         "relationships": [], "resolved_tasks": [], "skipped_llm_call": True},
+        {"project_name": "EA流程架构项目", "generated_at": "2026-07-24T10:00:00",
+         "files_added": 1, "files_changed": 0, "files_removed": 0,
+         "changes": [{"file": "ea.md", "summary": "新增规则", "who": "Jasper", "domain": "规则"}],
+         "relationships": [], "resolved_tasks": [], "skipped_llm_call": False},
+        {"project_name": "Jasper工作文档", "generated_at": "2026-07-24T10:00:00",
+         "files_added": 0, "files_changed": 1, "files_removed": 0,
+         "changes": [{"file": "agent.py", "summary": "更新规则Agent", "who": "Jasper", "domain": "规则"}],
+         "relationships": [], "resolved_tasks": [], "skipped_llm_call": False},
+    ]
+    dashboard_views.aggregate_tasks = lambda _filter="all": {"new": [], "aging": [], "resolved_recent": []}
+    try:
+        command = dashboard_views.command_center()
+        check([p["role"] for p in command["projects"]] == ["core", "lab", "case"],
+              "三项目按EA主视图→Jasper试验田→Rw案例顺序输出",
+              f"项目角色顺序错误: {[p['role'] for p in command['projects']]}")
+        check(len(command["cross_project_relations"]) >= 1,
+              "共同业务域被识别为跨项目关系线索", "未生成EA/Jasper跨项目关系线索")
+    finally:
+        dashboard_views.activity_feed = original_feed
+        dashboard_views.aggregate_tasks = original_tasks
+
+    import skills.cross_project_sensing as cross_sensing
+    original_cross_call = cross_sensing.call_deepseek
+    cross_sensing.call_deepseek = lambda *args, **kwargs: json.dumps({"relations": [{
+        "from_project": "Jasper工作文档", "to_project": "EA流程架构项目",
+        "analysis": "Agent能力可支撑EA规则分析", "shared_domains": ["规则"],
+        "evidence_files": ["agent.py", "ea.md"], "confidence": "中", "needs_review": True,
+    }]}, ensure_ascii=False)
+    try:
+        output = tmp_dir / "cross_project_latest.json"
+        result = cross_sensing.analyze_cross_project_relations(
+            [
+                {"project_name": "EA流程架构项目", "generated_at": "t1",
+                 "changes": [{"file": "ea.md", "summary": "规则", "domain": "规则"}],
+                 "relationships": []},
+                {"project_name": "Jasper工作文档", "generated_at": "t2",
+                 "changes": [{"file": "agent.py", "summary": "Agent", "domain": "规则"}],
+                 "relationships": []},
+            ], "fake-key", output)
+        check(len(result["relations"]) == 1 and output.exists(),
+              "跨项目深度分析结果与源报告时间戳持久化，页面刷新不触发LLM",
+              f"跨项目分析未正确落盘: {result}")
+    finally:
+        cross_sensing.call_deepseek = original_cross_call
+
+
 def test_30_latest_report_summary(tmp_dir: Path):
     print("\n[Test 30] skills.daily_sensing.latest_report_summary 纯函数读取最新daily-scan报告")
     print("-" * 60)
@@ -1309,6 +1398,7 @@ def main():
         test_34_watched_project_management(tmp_dir)
         test_35_task_decision_state_is_separate_from_execution_state(tmp_dir)
         test_36_execution_preparation_dry_run_and_approval(tmp_dir)
+        test_37_command_center_file_ssot_is_complete(tmp_dir)
     finally:
         shutil.rmtree(tmp_dir, ignore_errors=True)
         # Test 7/13 通过 subprocess 调用 agent.py，其专属工作区落在 memory.workspace 的
@@ -1325,7 +1415,7 @@ def main():
             print(f"  - {f}")
         return 1
 
-    print("PTA 集成测试完成：36/36 通过")
+    print("PTA 集成测试完成：37/37 通过")
     print("=" * 60)
     return 0
 
