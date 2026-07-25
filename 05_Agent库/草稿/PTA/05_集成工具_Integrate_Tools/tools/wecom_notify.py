@@ -34,6 +34,8 @@ DEFAULT_CONFIG_PATH = TOOLS_DIR.parent.parent / "02_配置项目_Configure_Proje
 _SSL_CONTEXT = build_ssl_context()
 
 MAX_CONTENT_BYTES = 2048  # 企业微信 text 消息内容长度上限
+DASHBOARD_URL = "http://localhost:8787"
+DASHBOARD_FOOTER = f"\n\n打开 PTA 个人任务驾驶舱（请在 Jasper 的 Mac 上打开）\n{DASHBOARD_URL}"
 
 
 def load_wecom_config(path: Optional[Path] = None) -> Optional[dict]:
@@ -86,8 +88,14 @@ def build_notification_text_from_content(content: str, mobiles_map: Dict[str, st
     """
     if report_path:
         content = content + f"\n\n完整简报: {report_path}"
+    # 驾驶舱入口必须保留在消息末尾；先为 footer 预留字节，再截断正文，避免长简报
+    # 把链接截掉。localhost 只供 Jasper 本机打开，不宣称手机或其他电脑可访问。
+    content = truncate_utf8_safe(
+        content,
+        max_bytes=MAX_CONTENT_BYTES - len(DASHBOARD_FOOTER.encode("utf-8")),
+    ) + DASHBOARD_FOOTER
     mentioned_mobiles = [mobiles_map["Jasper"]] if "Jasper" in mobiles_map else []
-    return truncate_utf8_safe(content), mentioned_mobiles
+    return content, mentioned_mobiles
 
 
 def build_notification_text(briefing, mobiles_map: Dict[str, str],
@@ -113,9 +121,12 @@ def build_notification_text(briefing, mobiles_map: Dict[str, str],
     if report_path:
         lines.append(f"\n完整简报: {report_path}")
 
-    content = "\n".join(lines)
+    content = truncate_utf8_safe(
+        "\n".join(lines),
+        max_bytes=MAX_CONTENT_BYTES - len(DASHBOARD_FOOTER.encode("utf-8")),
+    ) + DASHBOARD_FOOTER
     mentioned_mobiles = [mobiles_map["Jasper"]] if "Jasper" in mobiles_map else []
-    return truncate_utf8_safe(content), mentioned_mobiles
+    return content, mentioned_mobiles
 
 
 def send_text(webhook_url: str, content: str, mentioned_mobiles: Optional[List[str]] = None) -> dict:

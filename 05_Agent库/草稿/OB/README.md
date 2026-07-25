@@ -1,23 +1,37 @@
 # OB · Obsidian 知识库 Agent
 
-v0.4.0 —— 按 01-11 骨架（同 PTA 已验证的标准模板）搭建，三条能力线（巡检/
+v0.4.6 —— 按 01-11 骨架（同 PTA 已验证的标准模板）搭建，三条能力线（巡检/
 检索服务/概念笔记提炼）全部实现+真实数据验证通过，vault 已完成物理迁移+
 内容重置，概念笔记提炼补齐了批量+增量编排（不再只能单文件手动调用）。
 
-**2026-07-21 补充（写入侧自动化增强，详见
-[写入侧自动化增强设计_v1.md](03_规划项目结构_Plan_Project_Structure/写入侧自动化增强设计_v1.md)）**：
-- `write_atom()` 现在补齐 authority_layer（确定性派生）/confidence+
-  confidence_reason（LLM随提炼一并给出）/decision_status/entity_type/
-  entity_ref 完整schema，不再只写5个基础字段——此前 Jasper AI协同经验引擎
-  418个原子schema"贫瘠"就是因为这一步一直缺失，不是EA/Jasper两个项目本该
-  用不同schema
-- 新增 `agent.py --cluster-project <项目名>`（`skills/cluster_atoms.py`）：
-  把"待聚类"原子匹配进既有枢纽或组建新枢纽，硬性限制单枢纽不超过15个原子，
-  直接针对已发现的"财务流程与凭证"204原子巨型垃圾桶枢纽问题设计防线
-- 修复 `com.jasper.ob-sync-agent.plist` 指向已废弃脚本路径的问题
-- **`com.jasper.ob-daily-extract.plist` 仍未激活**（模板已就绪，需 Jasper
-  确认真实API成本后手动 `launchctl load`）；聚类脚本已用合成数据验证但
-  未跑过真实vault数据，建议先 `--dry-run` 验证
+**2026-07-25 补充（近期进展汇总，取代此前已归档的《OBagent诊断与整合
+路线图_v1》——那份文档记录的10155原子/483枢纽是白名单收窄前的旧数据，
+已不适用）**：
+- **EA白名单从17项收窄到8项**（`project_filters.py`的`EA_LAYER_PRIORITY`），
+  只保留"成型的方法论文档和结果文档"（项目章程/方法论标准/SOP/Agent执行
+  机制梳理/规则空白地图/熔断节点补建清单/规则与GAP产出/信号提取基线），
+  原子总量从万级降到千级，实时数字见vault内`MOC/仪表盘_项目全景.md`
+- **schema新增`domain`字段**（EA专属，PAY/HR/FA/KA/EQ/INS/PARTNER/
+  TREASURY业务域），**`entity_type`新增7个白名单来源类分类**（SOP/Agent
+  机制/规则与GAP/方法论标准/规则空白/信号基线/熔断规则），解决了此前87%
+  原子`entity_type`是通用"待聚类"占位符的问题
+- **枢纽规模上限（HUB_SIZE_CAP=15）的增量拦截 vs 存量拆分是两件事**：
+  `cluster_atoms.py`的`_match_existing_hubs`对新增原子的拦截一直是对的；
+  真正遗留的是白名单收窄前用无上限旧脚本产出的3个巨型枢纽（财务流程与
+  凭证36/调度触发模式21/绩效考核管理16），已用`split_oversized_hub.py`
+  一次性拆成14个更窄的子枢纽，超限枢纽数3→0（脚本按惯例已归档为
+  `已完成_split_oversized_hub.py`）
+- **DeepSeek模型从`deepseek-chat`（即将废弃的flash别名）切到显式
+  `deepseek-v4-pro`**，`llm_client.py`同时修了两个真实超时bug（timeout
+  60s→180s、`TimeoutError`未被捕获导致重试逻辑被跳过）
+- **MCP知识库接入**：`obsidian-mcp-server`已修复冷启动时同步构建向量
+  索引阻塞握手的bug（改成后台异步构建），Claude Code已通过
+  `claude mcp add --scope user`验证连接成功；Codex/Qoder配置已写入，
+  待重启验证
+- `raw/`原始资料层新增PDF直接摄入支持说明（.docx等非纯文本格式仍需先
+  转换）
+- `com.jasper.ob-daily-extract.plist` **已激活**（`launchctl`确认在跑，
+  每日增量提炼+两个仓库commit&push）
 
 原游离目录 `05_Agent库/OB知识库同步巡检Agent/` 已清空移除，历史代码保留在
 [`_retired_flat_structure/`](_retired_flat_structure/)。
@@ -124,13 +138,18 @@ OB/
 └── _retired_flat_structure/          原游离目录迁移前的完整代码，标注"不再是入口"
 ```
 
-## 当前状态（v0.4.0）
+## 当前状态（v0.4.6）
 
-三条能力线全部实现+真实数据验证通过；vault 已完成物理迁移+内容重置；
-概念笔记提炼补齐批量+增量编排。下一步：PTA↔OB 真正接线（PTA 的分析类
-skill 调用 OB 的 `--retrieve` 取背景上下文，目前代码里还没有这条调用）。
+三条能力线全部实现+真实数据验证通过；vault 已完成白名单收窄+schema
+分类体系扩展+历史遗留巨型枢纽拆分；MCP多端接入进行中（Claude Code已
+验证，Codex/Qoder待重启验证）。**仍然真实存在的差距**：PTA↔OB 尚未真正
+接线（PTA 的分析类 skill 调用 OB 的 `--retrieve` 取背景上下文，目前代码
+里还没有这条调用）；方法论转正Agent的行业自学习线（`方法论知识库/`目录）
+是独立schema、Claudian对话驱动，跟本Agent的原子提炼是并行的两条线，
+详见`双Agent协作契约_OB与方法论转正Agent.md`。
 
 ## 关联文档
 
-- [三大主Agent体系架构 v1.2](../三大主Agent体系架构_v1.2.md) 七节/九-2节
+- [三大主Agent体系架构 v1.3](../三大主Agent体系架构_v1.3.md) 七节/九-2节
 - [Agent搭建SOP v1.2](../Agent搭建SOP_v1.2.md)
+- [双Agent协作契约_OB与方法论转正Agent.md](../双Agent协作契约_OB与方法论转正Agent.md)

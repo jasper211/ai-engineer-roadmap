@@ -33,6 +33,10 @@ cd .. && python3 api/server.py --port 8787
 打开 http://localhost:8787——同一个Python进程既服务API也服务这份build出来的
 静态前端。
 
+本机日常使用由 `com.jasper.pta-dashboard.plist` 在登录时自动启动并保持运行；
+PTA 企业微信每日简报固定附带 `http://localhost:8787`，该地址仅在 Jasper
+自己的 Mac 上有效。
+
 ## 当前范围
 
 - 指挥中心：完整展示新增、修改、删除文件；关键变化默认展开，普通变化按需展开。

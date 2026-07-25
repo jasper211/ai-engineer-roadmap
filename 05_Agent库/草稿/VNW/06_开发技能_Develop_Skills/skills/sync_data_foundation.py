@@ -3,7 +3,7 @@
 
 一键可重复执行:每次01-04源文件(价值节点清单/信号提取基线/访谈产出/规则与GAP产出)
 或L4 Skill封装可行性评估更新后,重新运行本脚本,把前端展示数据底座里的派生表
-(T1/T2/T6/T9/T11/T12/T13/T14/T18/T19/T20/T21/T24)全部按最新源重新生成一遍。
+(T1/T2/T6/T9/T11/T12/T13/T14/T18/T19/T20/T21/T24/T25)全部按最新源重新生成一遍。
 
 设计原则(2026-07-25首次落地时定的,后续修改请保持):
 - 幂等:每次都是全量重新生成,不是增量追加。同样的源文件跑两次,结果字节级一致。
@@ -12,6 +12,12 @@
 - 同时写两处物理副本(规则分析工作区 + 规则前端设计的独立数据底座),保持已有的双份同步惯例。
 - 03层'规则空白地图'目前只认PAY这种'交付物N：'逐个编号的格式;EQ/HR/INS/PARTNER/TREASURY/FA
   用的是'交付物群(N子产物合并分析)'合并写法,本脚本不解析,T24因此只覆盖PAY,运行时会如实打印这个限制。
+- 03层'熔断节点补建清单'各域自动取最新版本号(PAY用v1.2/FA用v1.1/HR用v1.1/其余域用v1.0),
+  PAY是7列格式、其余7域是5列格式(标签有'负责人'/'负责人岗位'/'当前状态'等出入,已用同义词表对齐),
+  两种格式都已解析进T18,8个域全覆盖。
+- 熔断判定:T1不携带任何熔断/Gate字段(2026-07-25拍板,过程核心产物是03层不是02层)。
+  唯一权威判定在T25——节点出现在'熔断节点补建清单'里即为熔断,这解决了此前发现的
+  KA域矛盾(02层Step2曾把KAEM-02/KASC-01标成非熔断,但03层文件明确写KA全域6节点都熔断)。
 - T21审计结果是本次运行的即时快照,不做历史累积;需要看历史变化去查git history或另存副本。
 
 用法: python3 sync_data_foundation.py
@@ -129,9 +135,8 @@ def _deliverable_rows(block: str) -> list[dict]:
     out = []
     if not m:
         return out
-    for r in m.group(1).split("\n"):
-        if not r.startswith("|") or "---" in r:
-            continue
+    rows = [r for r in m.group(1).split("\n") if r.startswith("|") and "---" not in r]
+    for r in rows[1:]:  # rows[0]是表头(交付物/形态/来源),跳过
         cells = [c.strip() for c in r.strip("|").split("|")]
         if len(cells) < 3 or not cells[0]:
             continue
@@ -144,9 +149,8 @@ def _signal4_rows(block: str, node_id: str, counter: list[int]) -> list[dict]:
     out = []
     if not m:
         return out
-    for r in m.group(1).split("\n"):
-        if not r.startswith("|") or "---" in r:
-            continue
+    rows = [r for r in m.group(1).split("\n") if r.startswith("|") and "---" not in r]
+    for r in rows[1:]:  # rows[0]是表头(分类/信号内容/来源),跳过
         cells = [c.strip() for c in r.strip("|").split("|")]
         if len(cells) < 3:
             continue
@@ -173,11 +177,14 @@ def _split_roles(raw: str) -> tuple[list[str], str]:
 
 
 def build_from_signal_baselines():
+    # 2026-07-25决定:T1不承载熔断判断(gate_status/gate_1/2/3/verdict),
+    # 熔断信息统一以03层(规则空白地图+熔断节点补建清单)为权威来源,见build_t25_fused_status()。
+    # 原因:02层Step2的'熔断状态'列本身跨域写法/判定不统一(曾发现KA域KAEM-02/KASC-01矛盾)。
     t1_fields = [
-        "node_id", "domain", "node_name", "l3_flow", "l3_status", "gate_status", "priority",
+        "node_id", "domain", "node_name", "l3_flow", "l3_status", "priority",
         "start_point", "end_point", "end_standard", "frequency", "l4_name", "value_property",
         "physical_correspondence", "data_validation", "producer", "consumer", "single_point_risk",
-        "gate_1", "gate_2", "gate_3", "verdict", "composition", "kpi_anchors", "m_anchors",
+        "composition", "kpi_anchors", "m_anchors",
         "strategic_note", "version", "last_updated", "source_file",
     ]
     t6_fields = [
@@ -215,11 +222,14 @@ def build_from_signal_baselines():
                 if len(cells) >= 2 and cells[0].startswith("VN-"):
                     step2[cells[0]] = dict(zip(header, cells))
 
-        headers = list(NODE_HEADER_RE.finditer(text))
+        # 只在'## Step 3'到'## Step 4'之间找逐节点小节,避免最后一个节点的区间越界吃进Step4-7的内容
+        step3_m = re.search(r"## Step 3.*?(?=\n## Step 4|\Z)", text, re.S)
+        step3_text = step3_m.group(0) if step3_m else text
+        headers = list(NODE_HEADER_RE.finditer(step3_text))
         for i, hm in enumerate(headers):
             node_id = hm.group(1)
             node_name = hm.group(2).strip()
-            block = text[hm.end(): headers[i + 1].start() if i + 1 < len(headers) else len(text)]
+            block = step3_text[hm.end(): headers[i + 1].start() if i + 1 < len(headers) else len(step3_text)]
             s2 = step2.get(node_id, {})
             kpi, manchor, strat = _kpi_m(block)
             gates = _gate_table(block)
@@ -229,7 +239,7 @@ def build_from_signal_baselines():
                 "node_id": node_id, "domain": domain,
                 "node_name": node_name or s2.get("节点名称(v2.0)", ""),
                 "l3_flow": s2.get("L3名称", ""), "l3_status": s2.get("L3现状", ""),
-                "gate_status": s2.get("熔断状态", ""), "priority": s2.get("优先级", ""),
+                "priority": s2.get("优先级", ""),
                 "start_point": _field(block, "起点A") or s2.get("起点A", ""),
                 "end_point": _field(block, "终点Z") or s2.get("终点Z", ""),
                 "end_standard": _field(block, "终点标准"), "frequency": _field(block, "频次"),
@@ -238,8 +248,6 @@ def build_from_signal_baselines():
                 "data_validation": _field(block, "数据验证"),
                 "producer": _field(block, "生产方"), "consumer": _field(block, "消费方"),
                 "single_point_risk": _field(block, "单点风险"),
-                "gate_1": gates["gate_1"], "gate_2": gates["gate_2"], "gate_3": gates["gate_3"],
-                "verdict": gates["verdict"],
                 "composition": " + ".join(d["name"] for d in deliverables),
                 "kpi_anchors": kpi, "m_anchors": manchor, "strategic_note": strat,
                 "version": "v1.0(提取合集校准)", "last_updated": "2026-06-25", "source_file": md_file.name,
@@ -384,6 +392,157 @@ def enrich_t6_and_build_t24(t6_rows: list[dict]):
 
 
 # ---------------------------------------------------------------------------
+# 阶段3b: 03层熔断节点补建清单(各域取最新版本) → T18(熔断任务分发)
+# PAY格式(7列: 行动/类型/执行主体/期望产出/交付物上传要求/预估周期)和其余7域的
+# 标准格式(5列: 行动/负责人[岗位]/期望产出/阻塞或状态或预估周期)不同,分别处理,
+# 用同义词表把不同域的列名对齐到T18统一字段。
+# ---------------------------------------------------------------------------
+NODE_BLOCK_RE = re.compile(r"^### (?:节点\s+)?(VN-[A-Z0-9]+-\d+)\s*[·・]?\s*([^\[\n]*)", re.M)
+
+_EXECUTOR_SYNONYMS = ["执行主体", "负责人岗位", "负责人"]
+_DEADLINE_SYNONYMS = ["预估周期"]
+_REMARK_SYNONYMS = ["阻塞", "状态", "当前状态", "交付物上传要求"]
+
+
+def _pick_col(header: list[str], synonyms: list[str]) -> str | None:
+    for syn in synonyms:
+        if syn in header:
+            return syn
+    return None
+
+
+def build_t18_from_remediation_lists():
+    t18_fields = [
+        "task_id", "node_id", "node_name", "domain", "task_name", "action_tier",
+        "executor_role", "executor_dept", "assigned_date", "deadline", "task_status",
+        "deliverable_id", "deliverable_name", "recording_uploaded", "gate_unlock_date", "remarks",
+    ]
+    rows = []
+    tid = [0]
+    files_used = []
+    domain_task_count = {}
+
+    for domain in DOMAINS:
+        src = latest(GAP_MAP_DIR.parent / "熔断节点补建清单", f"{domain}_熔断节点补建清单_v*.md")
+        if src is None:
+            domain_task_count[domain] = 0
+            continue
+        files_used.append(src.name)
+        text = src.read_text(encoding="utf-8", errors="replace")
+
+        blocks = list(NODE_BLOCK_RE.finditer(text))
+        count_before = tid[0]
+        for i, bm in enumerate(blocks):
+            node_id = bm.group(1)
+            node_name = bm.group(2).strip(" ·[")
+            block_text = text[bm.end(): blocks[i + 1].start() if i + 1 < len(blocks) else len(text)]
+
+            table_m = re.search(r"\n(\|\s*#\s*\|[^\n]*\|\n(?:\|[^\n]*\|\n?)+)", block_text)
+            if not table_m:
+                continue
+            table_lines = [ln for ln in table_m.group(1).split("\n") if ln.startswith("|") and "---" not in ln]
+            if len(table_lines) < 2:
+                continue
+            header = [c.strip() for c in table_lines[0].strip("|").split("|")]
+            executor_col = _pick_col(header, _EXECUTOR_SYNONYMS)
+            deadline_col = _pick_col(header, _DEADLINE_SYNONYMS)
+            remark_col = _pick_col(header, _REMARK_SYNONYMS)
+            action_col = "行动" if "行动" in header else ("行动项" if "行动项" in header else None)
+            deliverable_col = "期望产出（交付物）" if "期望产出（交付物）" in header else "期望产出"
+            type_col = "类型" if "类型" in header else None
+
+            for line in table_lines[1:]:
+                cells = [c.strip() for c in line.strip("|").split("|")]
+                if len(cells) != len(header):
+                    continue
+                row = dict(zip(header, cells))
+                if action_col and not row.get(action_col):
+                    continue
+                tid[0] += 1
+                rows.append({
+                    "task_id": f"T18-{domain}-{tid[0]:04d}", "node_id": node_id,
+                    "node_name": node_name, "domain": domain,
+                    "task_name": row.get(action_col, "") if action_col else "",
+                    "action_tier": row.get(type_col, "") if type_col else "",
+                    "executor_role": row.get(executor_col, "") if executor_col else "",
+                    "executor_dept": "", "assigned_date": "",
+                    "deadline": row.get(deadline_col, "") if deadline_col else "",
+                    "task_status": "未分发", "deliverable_id": "",
+                    "deliverable_name": row.get(deliverable_col, ""),
+                    "recording_uploaded": "N",
+                    "gate_unlock_date": "",
+                    "remarks": row.get(remark_col, "") if remark_col else "",
+                })
+        domain_task_count[domain] = tid[0] - count_before
+
+    return (t18_fields, rows), files_used, domain_task_count
+
+
+# ---------------------------------------------------------------------------
+# 阶段3c: T25(熔断状态清单) —— 03层是VNW熔断判定的唯一权威来源(2026-07-25拍板)
+# 判定逻辑:节点出现在'熔断节点补建清单'里(该清单按定义只收录熔断节点) → 熔断;
+# T1全量节点里没出现在该清单的 → 非熔断。不依赖'规则空白地图'头部的'包含节点/熔断节点'
+# 声明(核实过FA用半角冒号、PARTNER把'熔断节点'叫成'待补入节点'且域内数字自相矛盾,
+# 头部声明跨域写法不统一,不可靠;熔断节点补建清单的收录范围本身就是权威边界)。
+# ---------------------------------------------------------------------------
+FUSED_TYPE_RE = re.compile(r"\*\*熔断类型\*\*：(.*?)(?=\n\n|\Z)", re.S)
+
+
+VN_CODE_RE = re.compile(r"VN-[A-Z0-9]+-\d+")
+
+
+def build_t25_fused_status(new_t1_rows: list[dict], t18_rows: list[dict]):
+    # 熔断集合不能只取t18_rows里成功解析出任务表的节点——2026-07-25核实发现FA域v1.1
+    # 一份文件里混了三种格式(标准任务表/F1-F2-F3访谈更新叙述/无表格的'未变更节点'引用表),
+    # 只有第一种会进t18_rows,导致FOB-02/FPG-01/FPG-02/FOR-02/FTR-01被漏判成非熔断
+    # (T13节点复评追踪交叉核对时发现的)。改为对整份'熔断节点补建清单'原文做VN编码全文扫描,
+    # 该文件按定义只讨论本域熔断节点,扫出来的编码集合天然就是熔断集合,不受内部格式差异影响。
+    fused_ids = set()
+    for domain in DOMAINS:
+        src = latest(GAP_MAP_DIR.parent / "熔断节点补建清单", f"{domain}_熔断节点补建清单_v*.md")
+        if src is None:
+            continue
+        text = src.read_text(encoding="utf-8", errors="replace")
+        fused_ids |= set(VN_CODE_RE.findall(text))
+    # 已核实的误判:VN-EQ-03只在EQ文件里作为'归属并入VN-EQ-03'这类交叉引用出现(某个真熔断
+    # 节点的补建行动提到要把交付物合并进它),它自己不是熔断节点(核实过EQ规则空白地图'包含
+    # 节点'列表明确把它列为8个通过节点之一)。跟T13交叉核对时发现,人工排除。
+    fused_ids -= {"VN-EQ-03"}
+    node_to_domain = {r["node_id"]: r["domain"] for r in new_t1_rows}
+    node_to_name = {r["node_id"]: r["node_name"] for r in new_t1_rows}
+
+    # 补充抓取'**熔断类型**：'这个bullet(仅EQ/PAY/TREASURY用了这个写法,其余域留空,如实标注)
+    fused_type_by_node = {}
+    for domain in DOMAINS:
+        src = latest(GAP_MAP_DIR.parent / "熔断节点补建清单", f"{domain}_熔断节点补建清单_v*.md")
+        if src is None:
+            continue
+        text = src.read_text(encoding="utf-8", errors="replace")
+        blocks = list(NODE_BLOCK_RE.finditer(text))
+        for i, bm in enumerate(blocks):
+            node_id = bm.group(1)
+            block_text = text[bm.end(): blocks[i + 1].start() if i + 1 < len(blocks) else len(text)]
+            m = FUSED_TYPE_RE.search(block_text)
+            if m:
+                fused_type_by_node[node_id] = m.group(1).strip()
+
+    rows = []
+    for r in new_t1_rows:
+        nid = r["node_id"]
+        is_fused = nid in fused_ids
+        rows.append({
+            "node_id": nid, "node_name": node_to_name.get(nid, ""),
+            "domain": node_to_domain.get(nid, ""),
+            "fused_status": "熔断" if is_fused else "非熔断",
+            "fused_type": fused_type_by_node.get(nid, ""),
+            "source": "03层·熔断节点补建清单(收录=熔断,未收录=非熔断)",
+            "last_updated": TODAY,
+        })
+    fields = ["node_id", "node_name", "domain", "fused_status", "fused_type", "source", "last_updated"]
+    return fields, rows
+
+
+# ---------------------------------------------------------------------------
 # 阶段4: 校验T5/T7与04层是否仍然一致(只读校验,不重建;不一致直接抛错,不能静默通过)
 # ---------------------------------------------------------------------------
 def validate_t5_t7_against_source():
@@ -392,18 +551,24 @@ def validate_t5_t7_against_source():
     with open(DB1 / "T7_缺口清单_全域_v4.2.csv", encoding="utf-8") as f:
         t7 = list(csv.DictReader(f))
 
+    # 2026-07-25核实:截至目前8个域的规则清单/Gap清单确实都只有v1.0(核对过,连_归档里
+    # 的EFA001/PAY002等都是被合并进v1.0的更早期素材,不是v1.0之后的新版本)。但踩过熔断
+    # 补建清单硬编码版本号漏掉v1.1/v1.2的教训,这里改用latest()自动探测,以后04层如果真出
+    # v1.1,不用再手动改文件名。
     problems = []
     for dm in DOMAINS:
-        rule_file = RULE_GAP_DIR / f"规则清单_{dm}_v1.0.csv"
-        gap_file = RULE_GAP_DIR / f"Gap清单_{dm}_v1.0.csv"
-        rule04 = set(r["rule_id"] for r in read_csv(rule_file)) if rule_file.exists() else set()
-        gap04 = set(r["gap_id"] for r in read_csv(gap_file)) if gap_file.exists() else set()
+        rule_file = latest(RULE_GAP_DIR, f"规则清单_{dm}_v*.csv")
+        gap_file = latest(RULE_GAP_DIR, f"Gap清单_{dm}_v*.csv")
+        rule04 = set(r["rule_id"] for r in read_csv(rule_file)) if rule_file else set()
+        gap04 = set(r["gap_id"] for r in read_csv(gap_file)) if gap_file else set()
         t5_ids = set(r["rule_id"] for r in t5 if r["domain"] == dm)
         t7_ids = set(r["gap_id"] for r in t7 if r["domain"] == dm)
         if rule04 != t5_ids:
-            problems.append(f"{dm}规则清单: 04层{len(rule04)}条 vs T5{len(t5_ids)}条,不一致")
+            problems.append(
+                f"{dm}规则清单: {rule_file.name if rule_file else '(缺失)'}有{len(rule04)}条 vs T5{len(t5_ids)}条,不一致")
         if gap04 != t7_ids:
-            problems.append(f"{dm}Gap清单: 04层{len(gap04)}条 vs T7{len(t7_ids)}条,不一致")
+            problems.append(
+                f"{dm}Gap清单: {gap_file.name if gap_file else '(缺失)'}有{len(gap04)}条 vs T7{len(t7_ids)}条,不一致")
     return problems
 
 
@@ -443,13 +608,12 @@ def build_t20(new_t1_rows: list[dict]):
 # ---------------------------------------------------------------------------
 # 阶段6: T9/T13/T18/T19孤儿引用校验 + T14机械计数重算
 # ---------------------------------------------------------------------------
-def reconcile_and_recount(new_t1_rows, t2_rows, t5_rows, domain_result):
+def reconcile_and_recount(new_t1_rows, t2_rows, t5_rows, domain_result, t18_rows):
     new_t1_ids = set(r["node_id"] for r in new_t1_rows)
     orphan_report = []
     for fname, key in [
         ("T9_价值流归属_全域_v1.4.csv", "vn_id"),
         ("T13_节点复评追踪_全域_v1.7.csv", "node_id"),
-        ("T18_熔断任务分发_全域_v1.0.csv", "node_id"),
         ("T19_SOP生产进度_全域_v1.0.csv", "node_id"),
     ]:
         path = DB1 / fname
@@ -458,6 +622,10 @@ def reconcile_and_recount(new_t1_rows, t2_rows, t5_rows, domain_result):
         ids = set(r[key] for r in read_csv(path) if r.get(key))
         orphans = sorted(ids - new_t1_ids)
         orphan_report.append((fname, len(ids), len(orphans), orphans))
+
+    t18_ids = set(r["node_id"] for r in t18_rows)
+    t18_orphans = sorted(t18_ids - new_t1_ids)
+    orphan_report.append(("T18_熔断任务分发_全域_v2.0.csv", len(t18_ids), len(t18_orphans), t18_orphans))
 
     t1_by_domain = Counter(r["domain"] for r in new_t1_rows)
     node_to_domain = {r["node_id"]: r["domain"] for r in new_t1_rows}
@@ -552,19 +720,27 @@ def main():
     print("VNW 数据底座同步 —— 开始")
     print("=" * 70)
 
-    print("\n[1/7] 从02层8域信号基线重建 T1/T2/T6/T11/T12 ...")
+    print("\n[1/8] 从02层8域信号基线重建 T1/T2/T6/T11/T12 ...")
     tables, t2_rows, files_used = build_from_signal_baselines()
     print(f"  用到{len(files_used)}个域文件: {files_used}")
     print(f"  T1={len(tables['t1'][1])}节点  T2={len(t2_rows)}信号  "
           f"T6={len(tables['t6'][1])}交付物  T11={len(tables['t11'][1])}岗位映射  T12={len(tables['t12'][1])}Gate明细")
 
-    print("\n[2/7] 用03层规则空白地图回填T6 + 建T24 ...")
+    print("\n[2/8] 用03层规则空白地图回填T6 + 建T24 ...")
     t6_rows, filled, t24, t24_coverage = enrich_t6_and_build_t24(tables["t6"][1])
     print(f"  T6回填 {filled}/{len(t6_rows)} 行")
     print(f"  T24({len(t24[1])}条,仅PAY格式覆盖) 各域交付物清单回填候选: "
           f"{ {k: v['交付物清单回填候选'] for k, v in t24_coverage.items()} }")
 
-    print("\n[3/7] 校验T5/T7是否仍与04层一致(不重建,只报警) ...")
+    print("\n[3/8] 用03层熔断节点补建清单(各域取最新版本) 重建T18 + 建T25(熔断状态清单) ...")
+    t18, t18_files, t18_domain_count = build_t18_from_remediation_lists()
+    print(f"  用到{len(t18_files)}个域文件: {t18_files}")
+    print(f"  T18共{len(t18[1])}条任务, 各域任务数: {t18_domain_count}")
+    t25 = build_t25_fused_status(tables["t1"][1], t18[1])
+    fused_n = sum(1 for r in t25[1] if r["fused_status"] == "熔断")
+    print(f"  T25: {fused_n}/{len(t25[1])}个节点判定为熔断 (T1本身已不再携带熔断字段)")
+
+    print("\n[4/8] 校验T5/T7是否仍与04层一致(不重建,只报警) ...")
     t5t7_problems = validate_t5_t7_against_source()
     if t5t7_problems:
         print("  ⚠ 发现不一致:")
@@ -573,22 +749,22 @@ def main():
     else:
         print("  ✅ T5/T7与04层完全一致")
 
-    print("\n[4/7] 重建T20(L4 Skill封装可行性评估) ...")
+    print("\n[5/8] 重建T20(L4 Skill封装可行性评估) ...")
     t20_fields, t20_rows, src_name = build_t20(tables["t1"][1])
     print(f"  源文件: {src_name}  共{len(t20_rows)}条L4")
 
-    print("\n[5/7] 校验T9/T13/T18/T19孤儿引用 + 重算T14计数 ...")
+    print("\n[6/8] 校验T9/T13/T18/T19孤儿引用 + 重算T14计数 ...")
     t5_rows = read_csv(DB1 / "T5_规则清单_全域_v3.0.csv")
-    orphan_report, t14 = reconcile_and_recount(tables["t1"][1], t2_rows, t5_rows, t24_coverage)
+    orphan_report, t14 = reconcile_and_recount(tables["t1"][1], t2_rows, t5_rows, t24_coverage, t18[1])
     for fname, total, n_orphan, orphans in orphan_report:
         flag = "✅" if n_orphan == 0 else "⚠"
         print(f"  {flag} {fname}: {total}个node_id, 孤儿引用{n_orphan}个")
 
-    print("\n[6/7] 生成T21审计快照(全量重写) ...")
+    print("\n[7/8] 生成T21审计快照(全量重写) ...")
     t21 = build_t21(tables["t1"][1], orphan_report, t5t7_problems, t24_coverage)
     print(f"  T21共{len(t21[1])}条记录")
 
-    print("\n[7/7] 写出全部表(两处数据底座同步) ...")
+    print("\n[8/8] 写出全部表(两处数据底座同步) ...")
     write_both("T1_节点索引_全域_v2.0.csv", *tables["t1"])
     write_both("T2_信号数据_全域_v3.0.csv",
                ["signal_id", "node_id", "content", "source", "confidence", "rule_subtype",
@@ -599,6 +775,8 @@ def main():
     write_both("T11_岗位映射_全域_v3.0.csv", *tables["t11"])
     write_both("T12_Gate评级明细_全域_v3.0.csv", *tables["t12"])
     write_both("T14_域扩展进度_全域_v2.1.csv", *t14)
+    write_both("T18_熔断任务分发_全域_v2.0.csv", *t18)
+    write_both("T25_熔断状态清单_全域_v1.0.csv", *t25)
     write_both("T20_L4自动化Tier评估_全域_v1.0.csv", t20_fields, t20_rows)
     write_both("T24_交付物四标签风险分析_全域_v1.0.csv", *t24)
     write_both("T21_数据对齐审计_全域_v1.0.csv", *t21)
