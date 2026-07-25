@@ -30,6 +30,7 @@ T9/T13只做孤儿引用校验,不重建内容(它们是人工维护的过程追
 from __future__ import annotations
 
 import csv
+import json
 import re
 from collections import Counter, defaultdict
 from pathlib import Path
@@ -52,6 +53,12 @@ DB1 = RULE_ANALYSIS / "前端展示数据底座"
 DB2 = Path("/Users/a112233/Desktop/Jasper工作文档（不含EA项目）/规则前端设计/数据底座")
 DOMAINS = ["EQ", "FA", "HR", "INS", "KA", "PARTNER", "PAY", "TREASURY"]
 TODAY = "2026-07-25"
+
+# 2026-07-25:VNW前端(app_v2)接入数据底座,同步脚本末尾多一步把表导出成JSON给前端读。
+APP_V2_DATA_DIR = Path(
+    "/Users/a112233/Desktop/Jasper工作文档（不含EA项目）/规则前端设计/"
+    "Agent_价值节点-规则分析前端/app_v2/public/data"
+)
 
 # 2026-07-25:两处数据底座按Jasper要求分成5个子文件夹,本脚本只写A类(自动同步)。
 # B/C/D类是校验读取的对象,不是本脚本的写入目标,但读取路径要跟着改。
@@ -306,7 +313,9 @@ def build_from_signal_baselines():
         headers = list(NODE_HEADER_RE.finditer(step3_text))
         for i, hm in enumerate(headers):
             node_id = hm.group(1)
-            node_name = hm.group(2).strip()
+            # 源标题行有的带'[🔴熔断]'这类后缀标注(如'### VN-EQ-01 · 同行经代服务方案 [🔴熔断]'),
+            # T1不携带熔断信息(2026-07-25拍板,见build_t25_fused_status),node_name要把这个后缀去掉
+            node_name = re.sub(r"\s*\[[^\[\]]*\]\s*$", "", hm.group(2).strip()).strip()
             block = step3_text[hm.end(): headers[i + 1].start() if i + 1 < len(headers) else len(step3_text)]
             s2 = step2.get(node_id, {})
             kpi, manchor, strat = _kpi_m(block)
@@ -912,6 +921,40 @@ def build_t21(new_t1_rows, orphan_report, t5t7_problems, t24_coverage):
 
 
 # ---------------------------------------------------------------------------
+# 阶段8: 导出JSON给前端(app_v2)用 —— A类16张(本次已在内存里,直接导出)+
+# C类7张/T22(D类,人工维护/试点,脚本不重建内容,原样从磁盘读出转JSON,保持前端
+# 现有页面不断供)。E类(L3蓝图覆盖清单)不导出,不在前端范围内。
+# ---------------------------------------------------------------------------
+MANUAL_TABLES_FOR_JSON = {
+    # json_key: 磁盘文件名(在对应分类文件夹下,用table_path()找)
+    "interview_leads": "T3_访谈线索_全域_v3.2.csv",
+    "actions": "T4_行动项_全域_v2.7.csv",
+    "value_stream": "T9_价值流归属_全域_v1.4.csv",
+    "interview_batches": "T10_访谈批次与岗位映射_全域_v2.0.csv",
+    "node_review": "T13_节点复评追踪_全域_v1.7.csv",
+    "interview_recordings": "T16_访谈记录跟踪_全域_v2.0.csv",
+    "report_tracking": "T17_报告跟踪_全域_v1.0.csv",
+    "sop_pilot_classification": "T22_SOP规则人机协同分类_全域_v1.0.csv",
+}
+
+
+def export_json_for_frontend(built_tables: dict[str, list[dict]]):
+    APP_V2_DATA_DIR.mkdir(parents=True, exist_ok=True)
+    exported = {}
+    for key, rows in built_tables.items():
+        with open(APP_V2_DATA_DIR / f"{key}.json", "w", encoding="utf-8") as f:
+            json.dump(rows, f, ensure_ascii=False, indent=2)
+        exported[key] = len(rows)
+    for key, fname in MANUAL_TABLES_FOR_JSON.items():
+        path = table_path(DB1, fname)
+        rows = read_csv(path) if path.exists() else []
+        with open(APP_V2_DATA_DIR / f"{key}.json", "w", encoding="utf-8") as f:
+            json.dump(rows, f, ensure_ascii=False, indent=2)
+        exported[key] = len(rows)
+    return exported
+
+
+# ---------------------------------------------------------------------------
 # 主流程
 # ---------------------------------------------------------------------------
 def main():
@@ -997,6 +1040,29 @@ def main():
     write_both("T26_候选Agent汇总_全域_v1.0.csv", *t26)
     write_both("T24_交付物四标签风险分析_全域_v1.0.csv", *t24)
     write_both("T21_数据对齐审计_全域_v1.0.csv", *t21)
+
+    print("\n[附加] 导出JSON给VNW前端(app_v2/public/data/) ...")
+    built_tables = {
+        "node_index": tables["t1"][1],
+        "signals": t2_rows,
+        "rules": t5[1],
+        "gaps": t7[1],
+        "deliverables": t6_rows,
+        "role_mapping": tables["t11"][1],
+        "gate_ratings": tables["t12"][1],
+        "domain_progress": t14[1],
+        "fused_tasks": t18[1],
+        "sop_progress": t19[1],
+        "ait_handoff": t23[1],
+        "fused_status": t25[1],
+        "l4_tier": t20[1],
+        "candidate_agents": t26[1],
+        "deliverable_risk": t24[1],
+        "data_audit": t21[1],
+    }
+    exported = export_json_for_frontend(built_tables)
+    print(f"  共导出{len(exported)}张表到 {APP_V2_DATA_DIR}")
+    print(f"  {exported}")
 
     print("\n" + "=" * 70)
     print("同步完成")

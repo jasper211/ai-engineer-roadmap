@@ -1,15 +1,15 @@
 {
   "S1-BUILD-2": {
-    "value": 2050,
-    "recorded_at": "2026-07-21T22:20:48.434104"
+    "value": 2643,
+    "recorded_at": "2026-07-25T11:11:41.177423"
   },
   "S1-VERIFY-1": {
     "value": 0,
-    "recorded_at": "2026-07-21T22:20:48.434360"
+    "recorded_at": "2026-07-25T11:11:41.177751"
   },
   "S2-BUILD-1": {
     "value": 3,
-    "recorded_at": "2026-07-21T22:20:48.434523"
+    "recorded_at": "2026-07-25T11:11:41.177940"
   },
   "S2-VERIFY-1": {
     "value": {
@@ -19,19 +19,19 @@
       "passed": true,
       "stdout_tail": ""
     },
-    "recorded_at": "2026-07-21T22:20:48.710454"
+    "recorded_at": "2026-07-25T11:11:41.445356"
   },
   "S2-GOVERN-1": {
     "value": "b67e83a41a9e18f02cd5574f578dbcc8a0efbb5f68967594982f169c65bd7dba",
-    "recorded_at": "2026-07-21T22:20:48.711010"
+    "recorded_at": "2026-07-25T11:11:41.445806"
   },
   "S3-BUILD-1": {
     "value": 0,
-    "recorded_at": "2026-07-21T22:20:48.711268"
+    "recorded_at": "2026-07-25T11:11:41.446075"
   },
   "S3-VERIFY-1": {
     "value": 0,
-    "recorded_at": "2026-07-21T22:20:48.711304"
+    "recorded_at": "2026-07-25T11:11:41.446109"
   },
   "S4-BUILD-1": {
     "value": {
@@ -43,54 +43,54 @@
         "sop-writing"
       ]
     },
-    "recorded_at": "2026-07-21T22:20:48.711564"
+    "recorded_at": "2026-07-25T11:11:41.446228"
   },
   "S4-VERIFY-1": {
     "value": 0,
-    "recorded_at": "2026-07-21T22:20:48.711642"
+    "recorded_at": "2026-07-25T11:11:41.446247"
   },
   "S4-VERIFY-2": {
     "value": "2026-07-16T04:31:43.133501",
-    "recorded_at": "2026-07-21T22:20:48.712140"
+    "recorded_at": "2026-07-25T11:11:41.446585"
   },
   "S5-BUILD-1": {
-    "value": "2.9.0",
-    "recorded_at": "2026-07-21T22:20:48.712385"
+    "value": "2.20.0",
+    "recorded_at": "2026-07-25T11:11:41.446851"
   },
   "S5-VERIFY-1": {
     "value": {
       "exists": true,
-      "exit_code": 1,
-      "declared_tests": 24,
-      "passed": false,
-      "stdout_tail": "✅ project_dashboard: '无(Roy财务口径已确认20260708;服务范围Amanda已确认)' 判断为 无阻塞 正确\n✅ project_intelligence: '等待法务回复' 判断为 有效阻塞 正确\n✅ project_dashboard: '等待法务回复' 判断为 有效阻塞 正确\n✅ 已完成且 blocker 字段是「无(说明)」的跟踪项，没有被同时列进阻塞中板块\n\n[Test 24] tools.rw_conventions 指向项目真正根目录时能递归找到台账，重名文件优先选最近修改的\n------------------------------------------------------------\n（复现真实场景：--intel/--dashboard 指向 Rw权益项目/ 根目录时都失效——\n   台账 CSV 实际嵌套在 07_项目立项启动/ 子目录，不在根目录；\n   而且另一个 Agent 的工作区里还留着一份更早的同名基线快照，\n   第一版实现用 rglob 结果的第一项，不确定地选中了错误的那份）\n✅ 指向项目真正根目录（不是子目录）时，能递归识别出这是 Rw 项目\n✅ 重名文件里正确选中了最近修改的那一份（07_项目立项启动/，不是旧基线快照）: /var/folders/8t/7t6j8kfj081bfqtfnkl2t2c40000gn/T/pta_test_8cstu8fk/rw_dedup_fixture/07_项目立项启动/52_Phase0日常执行跟踪台账_v0.2.csv\n✅ 数据目录正确解析为最近修改文件所在的目录: /var/folders/8t/7t6j8kfj081bfqtfnkl2t2c40000gn/T/pta_test_8cstu8fk/rw_dedup_fixture/07_项目立项启动\n"
+      "exit_code": 0,
+      "declared_tests": 38,
+      "passed": true,
+      "stdout_tail": " completed\n✅ dry-run通过且结果持久化\n✅ 步骤只返回DRY-RUN预览，没有真实运行命令\n✅ 批准后仍明确要求真实执行二次授权\n\n[Test 37] 指挥中心SSOT：LLM漏项也不丢文件，新增/修改/删除和diff完整\n------------------------------------------------------------\n✅ 模型只返回1项时，SSOT仍完整保留全部3个变化文件\n✅ 新增/修改/删除类型由本地diff确定，不依赖模型猜测\n✅ 修改前后内容与删除前最后事实均被保存\n✅ 三项目按EA主视图→Jasper试验田→Rw案例顺序输出\n✅ 共同业务域被识别为跨项目关系线索\n✅ 跨项目深度分析结果与源报告时间戳持久化，页面刷新不触发LLM\n\n[Test 38] agent.py 按项目差异化选择daily_sensing系统提示词\n------------------------------------------------------------\n✅ EA流程架构项目正确路由到daily_sensing_system_ea.md，且文件真实存在\n✅ Jasper工作文档正确路由到daily_sensing_system_jasper_meta.md，且文件真实存在\n✅ Rw权益项目没有配置system_prompt，正确回退None（调用方据此用通用默认提示词）\n✅ 不在daily_scan_projects.json清单里的项目正确回退None\n\n============================================================\nPTA 集成测试完成：38/38 通过\n============================================================\n"
     },
-    "recorded_at": "2026-07-21T22:20:51.543324"
+    "recorded_at": "2026-07-25T11:46:58.120527"
   },
   "S5-VERIFY-2": {
     "value": {
       "exists": false,
       "age_hours": null
     },
-    "recorded_at": "2026-07-21T22:20:51.543509"
+    "recorded_at": "2026-07-25T11:46:58.120691"
   },
   "S5-VERIFY-3": {
     "value": {
-      "declared": 24,
-      "actual": 24
+      "declared": 37,
+      "actual": 38
     },
-    "recorded_at": "2026-07-21T22:20:51.545481"
+    "recorded_at": "2026-07-25T11:46:58.122354"
   },
   "S6-BUILD-1": {
-    "value": false,
-    "recorded_at": "2026-07-21T22:20:51.545902"
+    "value": true,
+    "recorded_at": "2026-07-25T11:46:58.122686"
   },
   "S6-GOVERN-1": {
     "value": "2026-07-14T01:24:00.811417",
-    "recorded_at": "2026-07-21T22:20:51.545961"
+    "recorded_at": "2026-07-25T11:46:58.122731"
   },
   "S7-BUILD-1": {
     "value": false,
-    "recorded_at": "2026-07-21T22:20:51.545983"
+    "recorded_at": "2026-07-25T11:46:58.122756"
   }
 }
