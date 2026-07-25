@@ -3,12 +3,17 @@
 
 一键可重复执行:每次01-04源文件(价值节点清单/信号提取基线/访谈产出/规则与GAP产出)
 或L4 Skill封装可行性评估更新后,重新运行本脚本,把前端展示数据底座里的派生表
-(T1/T2/T6/T9/T11/T12/T13/T14/T18/T19/T20/T21/T24/T25)全部按最新源重新生成一遍。
+(T1/T2/T6/T11/T12/T14/T18/T19/T20/T21/T23/T24/T25/T26)全部按最新源重新生成一遍。
+T9/T13只做孤儿引用校验,不重建内容(它们是人工维护的过程追踪表,owner/phase/blocker
+这类字段无法从源文件机械推导)。T3/T4/T10/T16/T17不在本脚本管理范围内。T22是人工试点
+分类示例,同样不在自动重建范围内(详见build_t21里对应的T21审计条目)。
 
 设计原则(2026-07-25首次落地时定的,后续修改请保持):
 - 幂等:每次都是全量重新生成,不是增量追加。同样的源文件跑两次,结果字节级一致。
 - 不改源文件:01-05五层原始文档、04层规则/GAP清单只读,从不写入。
-- T5/T7 不重建:04层规则/GAP清单已验证是权威版本,这里只做一致性校验,校验失败会报错而不是静默跳过。
+- T5/T7(2026-07-25起):直接从04层规则清单/Gap清单拼接重建,不再是"只校验不重写"。
+  T7的sop_field_affected字段(04层原始文件里没有,是后续补充的45条真实值)重建时按gap_id
+  从旧文件读回保留,不会被重建流程清空。
 - 同时写两处物理副本(规则分析工作区 + 规则前端设计的独立数据底座),保持已有的双份同步惯例。
 - 03层'规则空白地图'目前只认PAY这种'交付物N：'逐个编号的格式;EQ/HR/INS/PARTNER/TREASURY/FA
   用的是'交付物群(N子产物合并分析)'合并写法,本脚本不解析,T24因此只覆盖PAY,运行时会如实打印这个限制。
@@ -48,10 +53,31 @@ DB2 = Path("/Users/a112233/Desktop/Jasper工作文档（不含EA项目）/规则
 DOMAINS = ["EQ", "FA", "HR", "INS", "KA", "PARTNER", "PAY", "TREASURY"]
 TODAY = "2026-07-25"
 
+# 2026-07-25:两处数据底座按Jasper要求分成5个子文件夹,本脚本只写A类(自动同步)。
+# B/C/D类是校验读取的对象,不是本脚本的写入目标,但读取路径要跟着改。
+TABLE_SUBDIR = {
+    "T1": "A_自动同步_当前有效", "T2": "A_自动同步_当前有效", "T6": "A_自动同步_当前有效",
+    "T11": "A_自动同步_当前有效", "T12": "A_自动同步_当前有效", "T14": "A_自动同步_当前有效",
+    "T18": "A_自动同步_当前有效", "T19": "A_自动同步_当前有效", "T20": "A_自动同步_当前有效",
+    "T21": "A_自动同步_当前有效", "T23": "A_自动同步_当前有效", "T24": "A_自动同步_当前有效",
+    "T25": "A_自动同步_当前有效", "T26": "A_自动同步_当前有效",
+    "T5": "A_自动同步_当前有效", "T7": "A_自动同步_当前有效",
+    "T3": "C_人工维护_未自动化", "T4": "C_人工维护_未自动化", "T9": "C_人工维护_未自动化",
+    "T10": "C_人工维护_未自动化", "T13": "C_人工维护_未自动化", "T16": "C_人工维护_未自动化",
+    "T17": "C_人工维护_未自动化",
+    "T22": "D_人工试点_非自动",
+}
+
+
+def table_path(base: Path, name: str) -> Path:
+    prefix = name.split("_")[0]
+    subdir = TABLE_SUBDIR.get(prefix)
+    return (base / subdir / name) if subdir else (base / name)
+
 
 def write_both(name: str, fieldnames: list[str], rows: list[dict]) -> None:
     for target in (DB1, DB2):
-        with open(target / name, "w", encoding="utf-8", newline="") as f:
+        with open(table_path(target, name), "w", encoding="utf-8", newline="") as f:
             w = csv.DictWriter(f, fieldnames=fieldnames)
             w.writeheader()
             w.writerows(rows)
@@ -595,33 +621,55 @@ def build_t25_fused_status(new_t1_rows: list[dict], t18_rows: list[dict]):
 
 
 # ---------------------------------------------------------------------------
-# 阶段4: 校验T5/T7与04层是否仍然一致(只读校验,不重建;不一致直接抛错,不能静默通过)
+# 阶段4: T5/T7直接从04层规则清单/Gap清单重建(2026-07-25起,不再是'只校验不重建')
 # ---------------------------------------------------------------------------
-def validate_t5_t7_against_source():
-    with open(DB1 / "T5_规则清单_全域_v3.0.csv", encoding="utf-8") as f:
-        t5 = list(csv.DictReader(f))
-    with open(DB1 / "T7_缺口清单_全域_v4.2.csv", encoding="utf-8") as f:
-        t7 = list(csv.DictReader(f))
 
-    # 2026-07-25核实:截至目前8个域的规则清单/Gap清单确实都只有v1.0(核对过,连_归档里
-    # 的EFA001/PAY002等都是被合并进v1.0的更早期素材,不是v1.0之后的新版本)。但踩过熔断
-    # 补建清单硬编码版本号漏掉v1.1/v1.2的教训,这里改用latest()自动探测,以后04层如果真出
-    # v1.1,不用再手动改文件名。
-    problems = []
+
+def build_t5_t7():
+    """2026-07-25起T5/T7从'只校验不重建'改为直接从04层规则清单/Gap清单拼接重建,
+    跟其他表一样纳入A类自动同步,不再单独留在B类。
+    T5(规则清单):04层各域文件本身没有domain列,拼接时按域文件名补上,20列跟旧T5完全对齐。
+    T7(缺口清单):04层各域文件已带domain列,但比旧T7少两列——sop_field_affected(45行有真实值,
+    04层原始文件里没有这个字段,是后续人工/流程补充的)和resolution_date(旧T7里全部为空)。
+    重建时从'旧T7'按gap_id读回sop_field_affected的值,不能让这次重建把这45条丢了;
+    resolution_date当前确实没有别的来源,如实留空。"""
+    # 2026-07-25把T5/T7从B类挪进A类,旧T7物理文件在迁移前还留在B文件夹里,
+    # 这里显式读B文件夹的旧版本抢救sop_field_affected(T5/T7一旦在A类重建之后,
+    # 旧B文件夹副本会被清空,这个显式路径只是这一次迁移用,不是长期依赖B文件夹)。
+    old_t7_path = DB1 / "B_已验证未重写_04层原表" / "T7_缺口清单_全域_v4.2.csv"
+    if not old_t7_path.exists():
+        old_t7_path = table_path(DB1, "T7_缺口清单_全域_v4.2.csv")  # 已迁移过一次之后,从A类读回保留值
+    old_sop_field = {}
+    if old_t7_path.exists():
+        for r in read_csv(old_t7_path):
+            if r.get("sop_field_affected"):
+                old_sop_field[r["gap_id"]] = r["sop_field_affected"]
+
+    t5_fields = ["rule_id", "node_id", "rule_name", "rule_class", "rule_trigger", "rule_action",
+                 "rule_standard", "rule_exception", "rule_owner", "data_anchor", "externalized",
+                 "gap_type", "gap_description", "priority", "source", "round", "source_recording",
+                 "version", "legacy_rule_id", "domain"]
+    t7_fields = ["gap_id", "node_id", "node_name", "domain", "description", "gap_type",
+                 "gap_subtype", "priority", "extractability", "status", "resolution_note",
+                 "linked_rule_id", "linked_recording_md", "sop_status", "sop_field_affected",
+                 "resolution_date"]
+
+    t5_rows, t7_rows = [], []
     for dm in DOMAINS:
         rule_file = latest(RULE_GAP_DIR, f"规则清单_{dm}_v*.csv")
         gap_file = latest(RULE_GAP_DIR, f"Gap清单_{dm}_v*.csv")
-        rule04 = set(r["rule_id"] for r in read_csv(rule_file)) if rule_file else set()
-        gap04 = set(r["gap_id"] for r in read_csv(gap_file)) if gap_file else set()
-        t5_ids = set(r["rule_id"] for r in t5 if r["domain"] == dm)
-        t7_ids = set(r["gap_id"] for r in t7 if r["domain"] == dm)
-        if rule04 != t5_ids:
-            problems.append(
-                f"{dm}规则清单: {rule_file.name if rule_file else '(缺失)'}有{len(rule04)}条 vs T5{len(t5_ids)}条,不一致")
-        if gap04 != t7_ids:
-            problems.append(
-                f"{dm}Gap清单: {gap_file.name if gap_file else '(缺失)'}有{len(gap04)}条 vs T7{len(t7_ids)}条,不一致")
-    return problems
+        if rule_file:
+            for r in read_csv(rule_file):
+                row = {f: r.get(f, "") for f in t5_fields}
+                row["domain"] = dm
+                t5_rows.append(row)
+        if gap_file:
+            for r in read_csv(gap_file):
+                row = {f: r.get(f, "") for f in t7_fields}
+                row["sop_field_affected"] = old_sop_field.get(r["gap_id"], "")
+                row["resolution_date"] = ""
+                t7_rows.append(row)
+    return (t5_fields, t5_rows), (t7_fields, t7_rows)
 
 
 # ---------------------------------------------------------------------------
@@ -748,6 +796,30 @@ def build_t19_sop_status(t7_rows: list[dict]):
     return fields, rows
 
 
+def build_t23_handoff_tracking(new_t1_rows: list[dict], t19_rows: list[dict]):
+    """T23此前是用旁支脚本手动建的一次性快照,从没被纳入sync_data_foundation.py,
+    2026-07-25发现并补上。内容本身是机械的(每个节点未移交状态+L3-COM试点标记),
+    可以每次跟着T1节点集重新生成,不用再手动维护。sop_status_ref从新T19按sop_ref=node_id关联。"""
+    sop_status_by_node = {r["sop_ref"]: r["sop_status"] for r in t19_rows if r["coding_scheme"] == "VN价值节点"}
+    pay_pilot_nodes = {"VN-PAY-01", "VN-PAY-02", "VN-PAY-03", "VN-PAY-04", "VN-PAY-05",
+                        "VN-PAY-06", "VN-PAY-07", "VN-PAY-08", "VN-PAY-09"}
+    fields = ["node_id", "sop_status_ref", "handoff_status", "handoff_date",
+              "ait_breakdown_status", "pilot_flag", "decision_ref", "next_action", "last_updated"]
+    rows = []
+    for r in new_t1_rows:
+        nid = r["node_id"]
+        is_pilot = nid in pay_pilot_nodes
+        rows.append({
+            "node_id": nid, "sop_status_ref": sop_status_by_node.get(nid, ""),
+            "handoff_status": "未移交", "handoff_date": "",
+            "ait_breakdown_status": "", "pilot_flag": "TRUE" if is_pilot else "FALSE",
+            "decision_ref": "D-20260721-001" if is_pilot else "",
+            "next_action": "等VNW批次2(基线合并)完成后,倒推L3-COM为AIT标准格式SOP" if is_pilot else "",
+            "last_updated": TODAY,
+        })
+    return fields, rows
+
+
 def reconcile_and_recount(new_t1_rows, t2_rows, t5_rows, domain_result, t18_rows):
     new_t1_ids = set(r["node_id"] for r in new_t1_rows)
     orphan_report = []
@@ -756,7 +828,7 @@ def reconcile_and_recount(new_t1_rows, t2_rows, t5_rows, domain_result, t18_rows
         ("T9_价值流归属_全域_v1.4.csv", "vn_id"),
         ("T13_节点复评追踪_全域_v1.7.csv", "node_id"),
     ]:
-        path = DB1 / fname
+        path = table_path(DB1, fname)
         if not path.exists():
             continue
         ids = set(r[key] for r in read_csv(path) if r.get(key))
@@ -770,7 +842,7 @@ def reconcile_and_recount(new_t1_rows, t2_rows, t5_rows, domain_result, t18_rows
     t1_by_domain = Counter(r["domain"] for r in new_t1_rows)
     node_to_domain = {r["node_id"]: r["domain"] for r in new_t1_rows}
     t2_by_domain = Counter(node_to_domain.get(r["node_id"], "?") for r in t2_rows)
-    t3_rows = read_csv(DB1 / "T3_访谈线索_全域_v3.2.csv")
+    t3_rows = read_csv(table_path(DB1, "T3_访谈线索_全域_v3.2.csv"))
     t3_by_domain = Counter()
     for r in t3_rows:
         dom = node_to_domain.get(r.get("node_id", ""))
@@ -778,7 +850,7 @@ def reconcile_and_recount(new_t1_rows, t2_rows, t5_rows, domain_result, t18_rows
             t3_by_domain[dom] += 1
     t5_by_domain = Counter(r["domain"] for r in t5_rows)
 
-    t14_path = latest(DB1, "T14_域扩展进度_全域_v*.csv")
+    t14_path = latest(DB1 / "A_自动同步_当前有效", "T14_域扩展进度_全域_v*.csv")
     t14_old = read_csv(t14_path) if t14_path else []
     t14_fields = [
         "domain", "domain_name", "node_count", "current_phase", "signal_baseline",
@@ -829,6 +901,10 @@ def build_t21(new_t1_rows, orphan_report, t5t7_problems, t24_coverage):
                 f"{dm}域的规则空白地图未能解析出交付物清单(可能格式与已适配的PAY/EQ/HR/TREASURY/FA不同,需人工核实)")
     add("功能限制", "T24", "低",
         "T24(交付物四标签风险分析)目前只解析PAY域'交付物N：'逐个编号格式;EQ/HR/INS/PARTNER/TREASURY/FA用'交付物群(合并分析)'格式未解析")
+    add("人工维护表", "T22", "低",
+        "T22(SOP规则人机协同分类)是VN-PAY-01的4条人工试点分类示例(2026-07-25建,pilot_flag=TRUE),"
+        "不是从01-04源文件能机械推导的内容(需要人工判断Auto/人工/协同),不在本脚本的自动重建范围内,"
+        "不会随源文件更新而自动刷新——如果要扩大到其他节点/规则,需要人工逐条补充,不是脚本能做的")
 
     fields = ["audit_id", "audit_type", "scope", "severity", "issue_desc", "detected_date",
               "source_script", "status", "resolved_date", "resolution_note"]
@@ -869,14 +945,10 @@ def main():
     fused_n = sum(1 for r in t25[1] if r["fused_status"] == "熔断")
     print(f"  T25: {fused_n}/{len(t25[1])}个节点判定为熔断 (T1本身已不再携带熔断字段)")
 
-    print("\n[4/8] 校验T5/T7是否仍与04层一致(不重建,只报警) ...")
-    t5t7_problems = validate_t5_t7_against_source()
-    if t5t7_problems:
-        print("  ⚠ 发现不一致:")
-        for p in t5t7_problems:
-            print("   -", p)
-    else:
-        print("  ✅ T5/T7与04层完全一致")
+    print("\n[4/8] 重建T5/T7(直接从04层规则清单/Gap清单拼接,不再只校验) ...")
+    t5, t7 = build_t5_t7()
+    print(f"  T5共{len(t5[1])}条规则  T7共{len(t7[1])}条Gap "
+          f"(sop_field_affected保留了{sum(1 for r in t7[1] if r['sop_field_affected'])}条既有值)")
 
     print("\n[5/8] 重建T20(L4 Skill封装可行性评估+候选Agent归属) + T26(候选Agent汇总) ...")
     t20, t20_src = build_t20()
@@ -885,21 +957,23 @@ def main():
     print(f"  T26源文件: {t26_src}  共{len(t26[1])}个候选Agent")
 
     print("\n[5b/8] 重建T19 —— 直接扫描05_SOP当前全部文件(含TOI/TOB-EVD/L3非VN编码) ...")
-    t7_rows = read_csv(DB1 / "T7_缺口清单_全域_v4.2.csv")
-    t19 = build_t19_sop_status(t7_rows)
+    t19 = build_t19_sop_status(t7[1])
     from collections import Counter as _Counter
     print(f"  共{len(t19[1])}份SOP文件, 编码体系分布: "
           f"{dict(_Counter(r['coding_scheme'] for r in t19[1]))}")
 
+    t23 = build_t23_handoff_tracking(tables["t1"][1], t19[1])
+
     print("\n[6/8] 校验T9/T13孤儿引用 + 重算T14计数 ...")
-    t5_rows = read_csv(DB1 / "T5_规则清单_全域_v3.0.csv")
-    orphan_report, t14 = reconcile_and_recount(tables["t1"][1], t2_rows, t5_rows, t24_coverage, t18[1])
+    orphan_report, t14 = reconcile_and_recount(tables["t1"][1], t2_rows, t5[1], t24_coverage, t18[1])
     for fname, total, n_orphan, orphans in orphan_report:
         flag = "✅" if n_orphan == 0 else "⚠"
         print(f"  {flag} {fname}: {total}个node_id, 孤儿引用{n_orphan}个")
 
     print("\n[7/8] 生成T21审计快照(全量重写) ...")
-    t21 = build_t21(tables["t1"][1], orphan_report, t5t7_problems, t24_coverage)
+    # T5/T7现在直接从04层构建(build_t5_t7),不再是'先有旧文件再校验'的模式,
+    # 天然保证一致,不会再产生'04层-T5/T7不一致'这类审计条目
+    t21 = build_t21(tables["t1"][1], orphan_report, [], t24_coverage)
     print(f"  T21共{len(t21[1])}条记录")
 
     print("\n[8/8] 写出全部表(两处数据底座同步) ...")
@@ -909,12 +983,15 @@ def main():
                 "completeness", "l_layer", "rule_trigger", "rule_action", "rule_standard",
                 "rule_exception", "rule_owner", "externalized", "round", "source_recording"],
                t2_rows)
+    write_both("T5_规则清单_全域_v3.0.csv", *t5)
+    write_both("T7_缺口清单_全域_v4.2.csv", *t7)
     write_both("T6_交付物清单_全域_v3.1.csv", tables["t6"][0], t6_rows)
     write_both("T11_岗位映射_全域_v3.0.csv", *tables["t11"])
     write_both("T12_Gate评级明细_全域_v3.0.csv", *tables["t12"])
     write_both("T14_域扩展进度_全域_v2.1.csv", *t14)
     write_both("T18_熔断任务分发_全域_v2.0.csv", *t18)
     write_both("T19_SOP生产进度_全域_v2.0.csv", *t19)
+    write_both("T23_VNW_AIT移交追踪_全域_v2.0.csv", *t23)
     write_both("T25_熔断状态清单_全域_v1.0.csv", *t25)
     write_both("T20_L4自动化Tier评估_全域_v2.0.csv", *t20)
     write_both("T26_候选Agent汇总_全域_v1.0.csv", *t26)
