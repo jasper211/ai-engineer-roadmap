@@ -150,6 +150,6 @@ OB/
 
 ## 关联文档
 
-- [三大主Agent体系架构 v1.3](../三大主Agent体系架构_v1.3.md) 七节/九-2节
+- [三大主Agent体系架构 v1.4](../三大主Agent体系架构_v1.4.md) 七节/九节
 - [Agent搭建SOP v1.2](../Agent搭建SOP_v1.2.md)
 - [双Agent协作契约_OB与方法论转正Agent.md](../双Agent协作契约_OB与方法论转正Agent.md)

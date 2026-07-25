@@ -37,9 +37,8 @@ import openpyxl
 RULE_ANALYSIS = Path(
     "/Users/a112233/Desktop/流程架构项目_jasper/02_过程成果-工作产出/规则分析（Jasper）"
 )
-AUTHORITATIVE_LIST = Path(
-    "/Users/a112233/Desktop/流程架构项目_jasper/03_发布成果-交付物/权威数据/D1_价值节点清单_V3.44.xlsx"
-)
+# 注:EA权威清单V3.44不在Jasper定义的输入范围内(2026-07-25拍板),本脚本不再对照它,
+# 相关路径常量已移除,不用于任何审计/校验逻辑。
 SIGNAL_BASELINE_DIR = RULE_ANALYSIS / "02_信号提取基线" / "提取合集校准"
 GAP_MAP_DIR = RULE_ANALYSIS / "03_访谈准备与执行" / "规则空白地图"
 RULE_GAP_DIR = RULE_ANALYSIS / "04_规则与GAP产出"
@@ -174,6 +173,59 @@ def _split_roles(raw: str) -> tuple[list[str], str]:
     m = re.search(r"[（(]", raw)
     main, note = (raw[: m.start()], raw[m.start():]) if m else (raw, "")
     return [p.strip() for p in re.split(r"\s*/\s*", main) if p.strip()], note.strip()
+
+
+SOP_DIR = RULE_ANALYSIS / "05_SOP"
+
+
+def build_sop_only_nodes(t1_rows: list[dict], t1_fields: list[str]):
+    """2026-07-25拍板:05_SOP里出现但02层8域批次没覆盖到的节点,以05_SOP为准补进T1
+    (Jasper原话:'已05内的为准,旧的来源可以忽略')。通用逻辑,不是这次的6个节点写死——
+    以后05_SOP再出现T1没有的新节点,重跑同步脚本会自动补上。
+    优先解析SOP正文里的'节点信息'表(节点ID/节点名称/所属域/触发条件/主责岗位);
+    没有这张表的(如老式PAY风格SOP),退化到只用头部'关联价值节点：'这一行提取node_id+name。"""
+    existing_ids = set(r["node_id"] for r in t1_rows)
+    added = []
+    for sop_file in sorted(SOP_DIR.glob("SOP_*.md")):
+        text = sop_file.read_text(encoding="utf-8", errors="replace")
+        # 从'关联价值节点：'整行提取全部VN编码(可能一行写多个节点,如'VN-EQ-01 xxx；VN-EQ-02 xxx')
+        assoc_m = re.search(r"关联价值节点[：:](.*)", text)
+        candidate_ids = set(VN_CODE_RE.findall(assoc_m.group(1))) if assoc_m else set()
+        # 兜底:节点信息表里的'节点ID'行
+        node_info_m = re.search(r"节点ID\s*\|\s*(VN-[A-Z0-9]+-\d+)", text)
+        if node_info_m:
+            candidate_ids.add(node_info_m.group(1))
+        missing = candidate_ids - existing_ids
+        if not missing:
+            continue
+        for node_id in missing:
+            # 尝试用'节点信息'表(如果这份SOP同时覆盖多个节点,表里的节点ID未必匹配当前node_id,
+            # 此时退化到只填node_id+name,不强行套用可能属于别的节点的字段)
+            row = {f: "" for f in t1_fields}
+            row["node_id"] = node_id
+            info_block_m = re.search(
+                rf"节点ID\s*\|\s*{re.escape(node_id)}\s*\|?.*?(?=\n---|\n##|\Z)", text, re.S)
+            if info_block_m:
+                block = info_block_m.group(0)
+                name_m = re.search(r"节点名称\s*\|\s*([^\n|]+)", block)
+                domain_m = re.search(r"所属域\s*\|\s*([^\n|]+)", block)
+                trigger_m = re.search(r"触发条件\s*\|\s*([^\n|]+)", block)
+                owner_m = re.search(r"主责岗位\s*\|\s*([^\n|]+)", block)
+                row["node_name"] = name_m.group(1).strip() if name_m else ""
+                row["domain"] = (domain_m.group(1).strip()[:2] if domain_m else "")
+                row["start_point"] = trigger_m.group(1).strip() if trigger_m else ""
+                row["producer"] = owner_m.group(1).strip() if owner_m else ""
+            else:
+                # 退化路径:从'关联价值节点：VN-XXX 名称'这段文字里抠节点名
+                name_fallback = re.search(rf"{re.escape(node_id)}\s+([^\n；;、]+)", assoc_m.group(1) if assoc_m else "")
+                row["node_name"] = name_fallback.group(1).strip() if name_fallback else ""
+                row["domain"] = node_id.split("-")[1] if "-" in node_id else ""
+            row["version"] = "05_SOP直接来源(不在02层8域批次内)"
+            row["last_updated"] = TODAY
+            row["source_file"] = sop_file.name
+            added.append(row)
+            existing_ids.add(node_id)
+    return added
 
 
 def build_from_signal_baselines():
@@ -575,21 +627,23 @@ def validate_t5_t7_against_source():
 # ---------------------------------------------------------------------------
 # 阶段5: L4 Skill封装可行性评估 → T20
 # ---------------------------------------------------------------------------
-def build_t20(new_t1_rows: list[dict]):
-    L4_CODE_RE = re.compile(r"L4-[A-Z]+-\d+")
-
-    def split_multi(raw):
-        return [p.strip() for p in re.split(r"[;,/、，；]", raw) if p.strip()]
-
-    l4_to_nodes, l3_to_nodes = defaultdict(set), defaultdict(set)
-    for row in new_t1_rows:
-        node_id = row["node_id"]
-        # 新T1没有l4_codes字段(v2.0血统不带),这里退回用domain做粗匹配的降级策略在下面统一处理
-        l3_to_nodes[row["domain"]].add(node_id)
-
+def build_t20():
+    """T20源: L4流程_Skill封装可行性评估(判断依据/物理交付物等字段更细)。
+    'candidate_agent'字段从候选Agent目录_数据表_v3.xlsx按l4_code关联补入——
+    2026-07-25核实过两份文件对全部368条L4的automation_tier判断完全一致(零差异),
+    候选Agent目录多出的是'这条L4归属哪个候选Agent'这一列,直接并进来,不用重复建表。"""
     src = latest(AGENT_SKILL_DIR, "L4流程_Skill封装可行性评估_确认最终版*.xlsx")
     if src is None:
-        return [], []
+        return ([], []), None
+
+    agent_src = latest(AGENT_SKILL_DIR, "候选Agent目录_数据表_v*.xlsx")
+    l4_to_agent = {}
+    if agent_src is not None:
+        wb_a = openpyxl.load_workbook(agent_src, read_only=True, data_only=True)
+        for r in list(wb_a["L4明细"].iter_rows(values_only=True))[1:]:
+            if r[3]:  # L4编码
+                l4_to_agent[r[3]] = r[6] or ""  # 候选Agent(30个)
+
     wb = openpyxl.load_workbook(src, read_only=True, data_only=True)
     ws = wb["L4明细_最终确认版"]
     rows = list(ws.iter_rows(values_only=True))[1:]
@@ -597,24 +651,110 @@ def build_t20(new_t1_rows: list[dict]):
         "l1_domain", "business_domain", "l3_code", "l3_process", "l4_code", "l4_activity",
         "physical_deliverable_ideal", "action_nature", "action_singularity", "final_tier",
         "judgment_basis", "automation_tier", "funds_safety_hard_gate", "physical_execution_type",
+        "candidate_agent",
     ]
     out_rows = []
     for r in rows:
         rec = dict(zip(field_names, ["" if v is None else v for v in r]))
+        rec["candidate_agent"] = l4_to_agent.get(rec["l4_code"], "")
         out_rows.append(rec)
-    return field_names, out_rows, src.name
+    return (field_names, out_rows), src.name
+
+
+def build_t26_candidate_agents():
+    """T26: 候选Agent组合汇总(30个候选Agent各自的L4覆盖数/Tier分布/定位类型),
+    源头是候选Agent目录_数据表_v3.xlsx的'Agent汇总'sheet。"""
+    src = latest(AGENT_SKILL_DIR, "候选Agent目录_数据表_v*.xlsx")
+    if src is None:
+        return ([], []), None
+    wb = openpyxl.load_workbook(src, read_only=True, data_only=True)
+    rows = list(wb["Agent汇总"].iter_rows(values_only=True))[1:]
+    field_names = [
+        "candidate_agent", "l4_coverage_count", "auto_count", "aug_count", "hybrid_count",
+        "human_count", "hybrid_human_ratio", "positioning_type",
+        "funds_safety_gate_count", "physical_execution_count",
+    ]
+    out_rows = []
+    for r in rows:
+        if not r[0]:
+            continue
+        out_rows.append(dict(zip(field_names, ["" if v is None else v for v in r])))
+    return (field_names, out_rows), src.name
 
 
 # ---------------------------------------------------------------------------
 # 阶段6: T9/T13/T18/T19孤儿引用校验 + T14机械计数重算
 # ---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
+# 阶段5b: T19重建 —— 真正扫描05_SOP当前全部文件(2026-07-25发现之前只认'SOP_VN-*.md',
+# 漏了8份用TOI/TOB-EVD-编码和L3-编码写的SOP,41份文件里只覆盖了33份)。
+# 三种编码体系都收:VN价值节点(可关联T7做Gap对齐校验)/TOI-TOB证据类/L3流程类(后两种
+# 不挂在具体价值节点下,gap字段留空,如实标注,不编造关联)。
+# ---------------------------------------------------------------------------
+# 不要求以'_'收尾——'SOP_VN-XX-例会机制_...'这种编码后面直接接中文说明(没有下划线分隔),
+# 之前要求trailing'_'导致这两份匹配失败,退化成用整个文件名当ref,现在放开这个限制。
+SOP_REF_RE = re.compile(r"SOP_([A-Za-z0-9]+(?:-[A-Za-z0-9]+)*)")
+
+
+def build_t19_sop_status(t7_rows: list[dict]):
+    node_gaps_db = defaultdict(list)  # node_id -> [status, status, ...]，T7自带status字段(open/等)
+    for row in t7_rows:
+        node_gaps_db[row["node_id"]].append(row.get("status", ""))
+
+    fields = ["sop_ref", "coding_scheme", "domain", "sop_title", "sop_version",
+              "sop_status", "generation_date", "gap_total", "gap_open", "gap_resolved",
+              "sop_file", "last_synced"]
+    rows = []
+    for sop_file in sorted(SOP_DIR.glob("SOP_*.md")):
+        text = sop_file.read_text(encoding="utf-8", errors="replace")
+        m = SOP_REF_RE.match(sop_file.name)
+        ref = m.group(1) if m else sop_file.stem
+
+        if ref.startswith("VN-"):
+            scheme = "VN价值节点"
+            domain_m = re.match(r"VN-([A-Z]+)-", ref)
+            domain = domain_m.group(1) if domain_m else ""
+        elif ref.startswith(("TOI-", "TOB-")):
+            scheme = "TOI-TOB证据"
+            domain = ""
+        elif ref.startswith("L3-"):
+            scheme = "L3流程"
+            domain = ""
+        else:
+            scheme = "其他"
+            domain = ""
+
+        title_m = re.search(r"^#\s*(?:SOP[·_ ]?)?(.+)$", text, re.M)
+        version_m = re.search(r"版本[：:]\s*(v[\d.]+)", text)
+        status_m = re.search(r"[>\s]状态[：:]\s*([^\n]+)", text)
+        date_m = re.search(r"生成日期[：:]\s*([\d-]+)", text)
+
+        gap_total = gap_open = gap_resolved = ""
+        if scheme == "VN价值节点":
+            statuses = node_gaps_db.get(ref, [])
+            gap_total = str(len(statuses))
+            gap_open = str(sum(1 for s in statuses if s == "open"))
+            gap_resolved = str(sum(1 for s in statuses if s and s != "open"))
+
+        rows.append({
+            "sop_ref": ref, "coding_scheme": scheme, "domain": domain,
+            "sop_title": title_m.group(1).strip() if title_m else "",
+            "sop_version": version_m.group(1) if version_m else "",
+            "sop_status": status_m.group(1).strip() if status_m else "",
+            "generation_date": date_m.group(1) if date_m else "",
+            "gap_total": gap_total, "gap_open": gap_open, "gap_resolved": gap_resolved,
+            "sop_file": sop_file.name, "last_synced": TODAY,
+        })
+    return fields, rows
+
+
 def reconcile_and_recount(new_t1_rows, t2_rows, t5_rows, domain_result, t18_rows):
     new_t1_ids = set(r["node_id"] for r in new_t1_rows)
     orphan_report = []
+    # T19已改为直接扫描05_SOP现场文件重建(不再是靠node_id孤儿校验的静态表),不在这里查
     for fname, key in [
         ("T9_价值流归属_全域_v1.4.csv", "vn_id"),
         ("T13_节点复评追踪_全域_v1.7.csv", "node_id"),
-        ("T19_SOP生产进度_全域_v1.0.csv", "node_id"),
     ]:
         path = DB1 / fname
         if not path.exists():
@@ -663,20 +803,9 @@ def reconcile_and_recount(new_t1_rows, t2_rows, t5_rows, domain_result, t18_rows
 # 阶段7: 生成T21审计快照(全量重写,不累积历史)
 # ---------------------------------------------------------------------------
 def build_t21(new_t1_rows, orphan_report, t5t7_problems, t24_coverage):
-    def get_node_ids_v344():
-        wb = openpyxl.load_workbook(AUTHORITATIVE_LIST, read_only=True, data_only=True)
-        ws = wb["1.价值节点总览"]
-        rows = list(ws.iter_rows(values_only=True))
-        ids = set()
-        for r in rows[4:]:
-            v = r[1]
-            if v and str(v).strip().startswith("VN-"):
-                ids.add(str(v).strip())
-        return ids
-
-    new_t1_ids = set(r["node_id"] for r in new_t1_rows)
-    ids_v344 = get_node_ids_v344()
-
+    # 2026-07-25拍板:审计范围只按Jasper定义的输入文件走(02层信号基线/03层规则空白地图+
+    # 熔断节点补建清单/04层规则GAP清单/L4评估表/候选Agent数据表),不再拿EA项目的权威清单
+    # V3.44做比对——V3.44不在本次定义的输入范围内,不算数据表的缺口,不进这张审计表。
     rows, aid = [], [0]
 
     def add(audit_type, scope, severity, issue_desc):
@@ -688,10 +817,6 @@ def build_t21(new_t1_rows, orphan_report, t5t7_problems, t24_coverage):
             "resolved_date": "", "resolution_note": "",
         })
 
-    for nid in sorted(ids_v344 - new_t1_ids):
-        add("清单版本脱节", nid, "中", "V3.44权威清单已有此节点,数据底座T1未覆盖")
-    for nid in sorted(new_t1_ids - ids_v344):
-        add("清单版本脱节", nid, "中", "数据底座T1已有此节点,V3.44权威清单未收录")
     for fname, total, n_orphan, orphans in orphan_report:
         if n_orphan:
             add("下游表孤儿引用", fname, "高" if n_orphan > 5 else "中",
@@ -702,8 +827,6 @@ def build_t21(new_t1_rows, orphan_report, t5t7_problems, t24_coverage):
         if info["交付物清单回填候选"] == 0 and dm != "KA":
             add("03层规则空白地图未解析", dm, "低",
                 f"{dm}域的规则空白地图未能解析出交付物清单(可能格式与已适配的PAY/EQ/HR/TREASURY/FA不同,需人工核实)")
-    add("结构性缺口", "02_信号提取基线", "高",
-        "02_信号提取基线文件夹为空文件夹的判断已被本轮修正——实际内容在PAY域/全域/提取合集校准三个子目录下,本脚本已读取")
     add("功能限制", "T24", "低",
         "T24(交付物四标签风险分析)目前只解析PAY域'交付物N：'逐个编号格式;EQ/HR/INS/PARTNER/TREASURY/FA用'交付物群(合并分析)'格式未解析")
 
@@ -725,6 +848,12 @@ def main():
     print(f"  用到{len(files_used)}个域文件: {files_used}")
     print(f"  T1={len(tables['t1'][1])}节点  T2={len(t2_rows)}信号  "
           f"T6={len(tables['t6'][1])}交付物  T11={len(tables['t11'][1])}岗位映射  T12={len(tables['t12'][1])}Gate明细")
+
+    sop_extra_nodes = build_sop_only_nodes(tables["t1"][1], tables["t1"][0])
+    if sop_extra_nodes:
+        tables["t1"][1].extend(sop_extra_nodes)
+        print(f"  + 05_SOP补充了{len(sop_extra_nodes)}个02层批次没有的节点: "
+              f"{[r['node_id'] for r in sop_extra_nodes]}")
 
     print("\n[2/8] 用03层规则空白地图回填T6 + 建T24 ...")
     t6_rows, filled, t24, t24_coverage = enrich_t6_and_build_t24(tables["t6"][1])
@@ -749,11 +878,20 @@ def main():
     else:
         print("  ✅ T5/T7与04层完全一致")
 
-    print("\n[5/8] 重建T20(L4 Skill封装可行性评估) ...")
-    t20_fields, t20_rows, src_name = build_t20(tables["t1"][1])
-    print(f"  源文件: {src_name}  共{len(t20_rows)}条L4")
+    print("\n[5/8] 重建T20(L4 Skill封装可行性评估+候选Agent归属) + T26(候选Agent汇总) ...")
+    t20, t20_src = build_t20()
+    print(f"  T20源文件: {t20_src}  共{len(t20[1])}条L4")
+    t26, t26_src = build_t26_candidate_agents()
+    print(f"  T26源文件: {t26_src}  共{len(t26[1])}个候选Agent")
 
-    print("\n[6/8] 校验T9/T13/T18/T19孤儿引用 + 重算T14计数 ...")
+    print("\n[5b/8] 重建T19 —— 直接扫描05_SOP当前全部文件(含TOI/TOB-EVD/L3非VN编码) ...")
+    t7_rows = read_csv(DB1 / "T7_缺口清单_全域_v4.2.csv")
+    t19 = build_t19_sop_status(t7_rows)
+    from collections import Counter as _Counter
+    print(f"  共{len(t19[1])}份SOP文件, 编码体系分布: "
+          f"{dict(_Counter(r['coding_scheme'] for r in t19[1]))}")
+
+    print("\n[6/8] 校验T9/T13孤儿引用 + 重算T14计数 ...")
     t5_rows = read_csv(DB1 / "T5_规则清单_全域_v3.0.csv")
     orphan_report, t14 = reconcile_and_recount(tables["t1"][1], t2_rows, t5_rows, t24_coverage, t18[1])
     for fname, total, n_orphan, orphans in orphan_report:
@@ -776,8 +914,10 @@ def main():
     write_both("T12_Gate评级明细_全域_v3.0.csv", *tables["t12"])
     write_both("T14_域扩展进度_全域_v2.1.csv", *t14)
     write_both("T18_熔断任务分发_全域_v2.0.csv", *t18)
+    write_both("T19_SOP生产进度_全域_v2.0.csv", *t19)
     write_both("T25_熔断状态清单_全域_v1.0.csv", *t25)
-    write_both("T20_L4自动化Tier评估_全域_v1.0.csv", t20_fields, t20_rows)
+    write_both("T20_L4自动化Tier评估_全域_v2.0.csv", *t20)
+    write_both("T26_候选Agent汇总_全域_v1.0.csv", *t26)
     write_both("T24_交付物四标签风险分析_全域_v1.0.csv", *t24)
     write_both("T21_数据对齐审计_全域_v1.0.csv", *t21)
 
