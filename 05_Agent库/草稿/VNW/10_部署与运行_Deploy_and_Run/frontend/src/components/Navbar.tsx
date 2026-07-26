@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { NavLink } from 'react-router'
+import { NavLink, Link } from 'react-router'
 import {
-  Activity, AlertTriangle, Bot, ChevronRight, Database, GitBranch,
+  Activity, AlertTriangle, Bot, ChevronRight, Database, ExternalLink, GitBranch,
   HeartPulse, LayoutDashboard, Menu, Network, Table2, Users, X,
 } from 'lucide-react'
 
@@ -81,7 +81,15 @@ function Navigation({ close }: { close?: () => void }) {
         ))}
       </div>
 
-      <div className="border-t border-border-default p-4">
+      <div className="border-t border-border-default p-4 space-y-3">
+        <Link
+          to="/brief"
+          onClick={close}
+          className="flex items-center justify-between rounded-xl border border-accent-primary/30 bg-accent-primary/10 p-3 text-xs font-medium text-accent-primary-light hover:bg-accent-primary/15"
+        >
+          <span>业务视图(给负责人看)</span>
+          <ExternalLink className="h-3.5 w-3.5" />
+        </Link>
         <div className="rounded-xl border border-accent-success/20 bg-accent-success/5 p-3">
           <div className="flex items-center gap-2 text-xs font-medium text-accent-success">
             <span className="h-2 w-2 rounded-full bg-accent-success shadow-[0_0_10px_#34D399]" />

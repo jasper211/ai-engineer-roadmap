@@ -156,7 +156,7 @@ export default function NodeDetail() {
               )}
               {review && (
                 <div className="rounded-lg border border-border-default bg-bg-elevated p-4 md:col-span-2">
-                  <h3 className="mb-3 text-sm font-semibold text-text-primary">复评追踪</h3>
+                  <h3 className="mb-3 text-sm font-semibold text-text-primary">复评追踪 <span className="ml-1 text-xs font-normal text-text-muted">(T13人工维护,未纳入本次同步范围)</span></h3>
                   <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
                     {[
                       ['阶段', review.phase], ['结果', review.review_result], ['负责人', review.owner],
@@ -232,6 +232,9 @@ export default function NodeDetail() {
 
         {tab === 'interviews' && (
           <div className="space-y-4">
+            <p className="rounded-lg border border-accent-warning/30 bg-accent-warning/5 px-3 py-2 text-xs text-accent-warning">
+              T3/T10/T16为人工维护表,本次数据底座大修未覆盖同步,可能与当前节点集有出入(已发现真实错配案例,如REC-018引用的部分节点编码不在当前T1中)。
+            </p>
             {batches.length > 0 && <div className="rounded-lg border border-border-default bg-bg-elevated p-4">
               <h3 className="mb-3 text-sm font-semibold text-text-primary">访谈批次 ({batches.length})</h3>
               <DataTable data={batches} columns={[

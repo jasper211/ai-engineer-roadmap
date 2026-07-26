@@ -25,6 +25,9 @@ export default function InterviewSOP() {
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
         <h1 className="font-heading text-2xl font-bold text-text-primary">访谈与SOP中心</h1>
         <p className="text-sm text-text-secondary">访谈管理 · 岗位映射 · SOP梳理 · 报告跟踪</p>
+        <p className="mt-2 rounded-lg border border-accent-warning/30 bg-accent-warning/5 px-3 py-2 text-xs text-accent-warning">
+          批次/记录/线索/报告跟踪均为人工维护表,本次数据底座大修未覆盖同步,内容可能滞后于当前节点集(报告跟踪自建表起一直是0行)。
+        </p>
       </motion.div>
 
       {/* Tabs */}
