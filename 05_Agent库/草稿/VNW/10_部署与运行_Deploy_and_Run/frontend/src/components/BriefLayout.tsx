@@ -1,5 +1,5 @@
 import { Link } from 'react-router'
-import { GitBranch, Settings2 } from 'lucide-react'
+import { Bot, GitBranch, Settings2 } from 'lucide-react'
 
 export default function BriefLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -16,6 +16,12 @@ export default function BriefLayout({ children }: { children: React.ReactNode })
             </div>
           </Link>
           <div className="flex items-center gap-2">
+            <Link
+              to="/brief/automation"
+              className="flex items-center gap-1.5 rounded-md border border-border-default px-3 py-1.5 text-xs text-text-muted hover:text-text-secondary"
+            >
+              <Bot className="h-3.5 w-3.5" /> 自动化全景(L4级)
+            </Link>
             <Link
               to="/internal"
               className="flex items-center gap-1.5 rounded-md border border-border-default px-3 py-1.5 text-xs text-text-muted hover:text-text-secondary"

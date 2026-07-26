@@ -39,6 +39,16 @@ export default function BriefNodeDetail() {
   const flowContext = (data.flow_context || []).find((row: any) => row.node_id === nodeId)?.blueprint
 
   const taskDone = fusedTasks.filter((t: any) => t.task_status === '已完成').length
+  const isFused = fused?.fused_status === '熔断'
+  const mappedL4Codes: string[] = flowContext?.node_l4_map?.[nodeId || ''] || []
+  const conclusion = isFused ? '暂不进入 AI 工具设计' : '可进入业务验证'
+  const evidenceText = isFused
+    ? `${fused.fused_type || '规则或交付物基础仍有缺口'}；补建任务完成 ${taskDone}/${fusedTasks.length}`
+    : '当前权威清单未将该节点列为熔断节点'
+  const conditionText = isFused
+    ? '完成补建任务、核验交付物，并由负责人确认解除熔断'
+    : '确认业务价值、使用场景、输入数据与人工授权边界'
+  const actionText = isFused ? '继续补建并安排复核' : '发起小范围业务验证'
 
   return (
     <div className="space-y-5">
@@ -61,16 +71,13 @@ export default function BriefNodeDetail() {
           <h2 className="font-heading text-base font-semibold text-text-primary">1 · 核心判断</h2>
         </div>
 
-        {fused ? (
-          <div className="mt-3 space-y-2">
-            <div className="flex items-center gap-2"><StatusBadge status={fused.fused_status} /><span className="text-sm text-text-secondary">{fused.fused_status === '非熔断' ? '具备进入业务验证的基础，可以判断采用自动化、Skill 还是 Agent。' : '暂不进入 AI 工具设计，应先补齐规则或交付物定义。'}</span></div>
-            {fused.fused_status === '熔断' && (
-              <p className="text-xs text-text-muted">来源:{fused.source}</p>
-            )}
-          </div>
-        ) : (
-          <p className="mt-3 text-sm text-text-muted">该节点尚无熔断状态判定记录。</p>
-        )}
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          <JudgmentField label="结论" value={fused ? conclusion : '待形成判断'} emphasis />
+          <JudgmentField label="判断依据" value={fused ? evidenceText : '尚无权威熔断状态记录'} />
+          <JudgmentField label={isFused ? '解除条件' : '验证条件'} value={conditionText} />
+          <JudgmentField label="建议动作" value={actionText} emphasis />
+        </div>
+        {fused && <p className="mt-3 text-[11px] text-text-muted">判断来源：{fused.source} · 更新日期 {fused.last_updated}</p>}
 
         {fused?.fused_status === '熔断' && fusedTasks.length > 0 && (
           <div className="mt-4 rounded-lg border border-border-default bg-bg-elevated p-3">
@@ -100,30 +107,6 @@ export default function BriefNodeDetail() {
           </div>
         )}
 
-        {flowContext?.l4s?.length > 0 ? (
-          <div className="mt-4">
-            <div className="flex items-center justify-between">
-              <p className="text-xs font-medium text-text-secondary">该节点所在流程的 L4 自动化评估</p>
-              <Link to="/brief/automation" className="text-xs text-accent-primary hover:underline">查看全域评估 →</Link>
-            </div>
-            <div className="mt-2 space-y-2">
-              {flowContext.l4s.map((l4: any) => (
-                <div key={l4.l4_code} className="rounded-lg border border-border-default bg-bg-elevated p-3">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="font-mono text-xs text-text-muted">{l4.l4_code}</span>
-                    <span className="text-sm font-medium text-text-primary">{l4.l4_name}</span>
-                    <StatusBadge status={l4.automation_tier || '待评估'} />
-                  </div>
-                  <p className="mt-2 text-xs text-text-secondary">{automationNarrative(l4)}</p>
-                  {l4.judgment_basis && <p className="mt-1 text-xs text-text-muted">判断依据：{l4.judgment_basis}</p>}
-                  {l4.candidate_agent && <p className="mt-1 text-xs text-text-muted">候选承载：{l4.candidate_agent}</p>}
-                </div>
-              ))}
-            </div>
-          </div>
-        ) : (
-          <p className="mt-4 rounded-lg bg-bg-surface p-3 text-xs text-text-muted">当前节点尚未建立可靠的流程蓝图—L4映射，保持“待补映射”，不生成推测性结论。</p>
-        )}
       </motion.div>
 
       {/* 2. 交付物与流程背景 */}
@@ -171,6 +154,62 @@ export default function BriefNodeDetail() {
               <Field label="下游流程" value={flowContext.downstream} />
             </div>
             <p className="mt-3 text-[11px] text-text-muted">来源：{flowContext.source_file}</p>
+          </div>
+        )}
+
+        {flowContext?.steps?.length > 0 && (
+          <div className="mt-4">
+            <div className="flex flex-wrap items-end justify-between gap-2">
+              <div>
+                <p className="text-sm font-semibold text-text-primary">完整流程步骤</p>
+                <p className="mt-1 text-xs text-text-muted">蓝色步骤表示流程蓝图已明确映射到当前价值节点。</p>
+              </div>
+              {mappedL4Codes.length === 0 && <span className="rounded-full bg-accent-warning/10 px-2 py-1 text-xs text-accent-warning">尚无步骤级映射</span>}
+            </div>
+            <div className="mt-3 space-y-2">
+              {flowContext.steps.map((step: any, index: number) => {
+                const highlighted = mappedL4Codes.includes(step.l4_code)
+                return (
+                  <div key={step.step_id} className="flex gap-3">
+                    <div className="flex w-7 shrink-0 flex-col items-center">
+                      <span className={`grid h-7 w-7 place-items-center rounded-full text-xs font-medium ${highlighted ? 'bg-accent-primary text-white' : 'border border-border-default bg-bg-surface text-text-muted'}`}>{index + 1}</span>
+                      {index < flowContext.steps.length - 1 && <span className={`h-full w-px ${highlighted ? 'bg-accent-primary/50' : 'bg-border-default'}`} />}
+                    </div>
+                    <div className={`mb-2 flex-1 rounded-lg border p-3 ${highlighted ? 'border-accent-primary/50 bg-accent-primary/10' : 'border-border-default bg-bg-surface'}`}>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="text-sm font-medium text-text-primary">{step.step_name}</span>
+                        {step.l4_code && <span className="font-mono text-xs text-text-muted">{step.l4_code}</span>}
+                        {highlighted && <span className="rounded-full bg-accent-primary px-2 py-0.5 text-[11px] text-white">当前价值节点</span>}
+                      </div>
+                      {step.activities?.length > 0 && <p className="mt-1 text-xs text-text-secondary">{step.activities.join('；')}</p>}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        )}
+
+        {flowContext?.l4s?.length > 0 && (
+          <div className="mt-4">
+            <div className="flex items-center justify-between">
+              <p className="text-sm font-semibold text-text-primary">L4 自动化评估</p>
+              <Link to="/brief/automation" className="text-xs text-accent-primary hover:underline">查看全域评估 →</Link>
+            </div>
+            <div className="mt-2 space-y-2">
+              {flowContext.l4s.map((l4: any) => (
+                <div key={l4.l4_code} className={`rounded-lg border p-3 ${mappedL4Codes.includes(l4.l4_code) ? 'border-accent-primary/50 bg-accent-primary/5' : 'border-border-default bg-bg-surface'}`}>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="font-mono text-xs text-text-muted">{l4.l4_code}</span>
+                    <span className="text-sm font-medium text-text-primary">{l4.l4_name}</span>
+                    <StatusBadge status={l4.automation_tier || '待评估'} />
+                  </div>
+                  <p className="mt-2 text-xs text-text-secondary">{automationNarrative(l4)}</p>
+                  {l4.judgment_basis && <p className="mt-1 text-xs text-text-muted">判断依据：{l4.judgment_basis}</p>}
+                  {l4.candidate_agent && <p className="mt-1 text-xs text-text-muted">候选承载：{l4.candidate_agent}</p>}
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </motion.div>
@@ -224,6 +263,15 @@ function automationNarrative(l4: any) {
     Human: `当前仍应以人工执行为主，可先从资料检索、检查清单或留痕辅助切入，不宜直接追求全自动。`,
   }
   return tierText[l4.automation_tier] || `尚未完成自动化分级，建议围绕“${target}”补充输入、规则、授权和验收条件。`
+}
+
+function JudgmentField({ label, value, emphasis = false }: { label: string; value: string; emphasis?: boolean }) {
+  return (
+    <div className="rounded-lg border border-border-default bg-bg-elevated p-3">
+      <p className="text-xs text-text-muted">{label}</p>
+      <p className={`mt-1 text-sm ${emphasis ? 'font-semibold text-text-primary' : 'text-text-secondary'}`}>{value}</p>
+    </div>
+  )
 }
 
 function DecisionButton({ active, icon, title, desc, onClick }: { active: boolean; icon: React.ReactNode; title: string; desc: string; onClick: () => void }) {

@@ -54,7 +54,7 @@ DB1 = RULE_ANALYSIS / "前端展示数据底座"
 # VNW内的数据底座是前端与Agent共用的权威副本；EA项目内DB1保留为业务工作区镜像。
 DB2 = VNW_ROOT / "07_接入记忆_Integrate_Memory" / "data_foundation"
 DOMAINS = ["EQ", "FA", "HR", "INS", "KA", "PARTNER", "PAY", "TREASURY"]
-TODAY = "2026-07-25"
+TODAY = "2026-07-26"
 
 # 2026-07-25:VNW前端接入数据底座,同步脚本末尾多一步把表导出成JSON给前端读。
 APP_V2_DATA_DIR = Path(
@@ -780,7 +780,12 @@ def build_t26_candidate_agents():
 # ---------------------------------------------------------------------------
 # 不要求以'_'收尾——'SOP_VN-XX-例会机制_...'这种编码后面直接接中文说明(没有下划线分隔),
 # 之前要求trailing'_'导致这两份匹配失败,退化成用整个文件名当ref,现在放开这个限制。
-SOP_REF_RE = re.compile(r"SOP_([A-Za-z0-9]+(?:-[A-Za-z0-9]+)*)")
+# 2026-07-26修复:纯ASCII的主分组之外,加一个可选的"-中文描述段"尾缀(遇到下一个'_'才停),
+# 专门覆盖'VN-XX-例会机制'/'VN-XX-季度激励'这种域码是占位符'XX'、靠后缀中文区分的文件——
+# 之前两份文件都被截断成'VN-XX',sop_ref冲突导致T19出现两行相同ref(排查SOP版前端原型时
+# 发现,该原型后已取消,但这条ref唯一性修复是T19自身的数据正确性问题,予以保留)。
+# 其余正常文件(ASCII段后直接跟'_'的)不受影响,可选组不会触发。
+SOP_REF_RE = re.compile(r"SOP_([A-Za-z0-9]+(?:-[A-Za-z0-9]+)*(?:-[^_]+)?)")
 
 
 def build_t19_sop_status(t7_rows: list[dict]):

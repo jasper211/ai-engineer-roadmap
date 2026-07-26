@@ -55,6 +55,48 @@ def parse_l4s(text: str) -> list[dict]:
     return rows
 
 
+def parse_steps(text: str, l4s: list[dict]) -> list[dict]:
+    """优先读取蓝图主干步骤代码块；没有统一步骤结构时退化为 L4 顺序。"""
+    steps = []
+    block = re.search(r"##\s*(?:§3|三、).*?(?:主干步骤|流程步骤详述)(.*?)(?=\n---|\n##\s)", text, re.S)
+    if block:
+        matches = list(re.finditer(r"\[Step\s*(\d+)\]\s*([^\n]+)(.*?)(?=\n\[Step\s*\d+\]|\Z)", block.group(1), re.S))
+        for match in matches:
+            body = match.group(3)
+            l4_match = re.search(r"(L4-[A-Za-z0-9-]+)", body)
+            activities = [
+                line.strip(" ·\t") for line in body.splitlines()
+                if line.strip().startswith("·")
+            ]
+            steps.append({
+                "step_id": f"STEP-{int(match.group(1)):02d}",
+                "step_name": match.group(2).strip(),
+                "l4_code": l4_match.group(1) if l4_match else "",
+                "activities": activities,
+            })
+    if not steps:
+        steps = [{
+            "step_id": f"STEP-{index:02d}",
+            "step_name": item["l4_name"],
+            "l4_code": item["l4_code"],
+            "activities": [],
+        } for index, item in enumerate(l4s, 1)]
+    return steps
+
+
+def parse_node_l4_map(text: str) -> dict[str, list[str]]:
+    """只采纳蓝图中显式出现于同一行的 VN→L4 对应关系。"""
+    result: dict[str, list[str]] = {}
+    for line in text.splitlines():
+        vn_match = re.search(r"(VN-[A-Z0-9]+-\d+)", line)
+        if not vn_match:
+            continue
+        codes = re.findall(r"(L4-[A-Za-z0-9-]+)", line)
+        if codes:
+            result[vn_match.group(1)] = list(dict.fromkeys(codes))
+    return result
+
+
 def main() -> None:
     nodes = json.loads((DATA_DIR / "node_index.json").read_text())
     tiers = json.loads((DATA_DIR / "l4_tier.json").read_text())
@@ -64,8 +106,9 @@ def main() -> None:
     for code, path in latest_blueprints().items():
         text = path.read_text(encoding="utf-8", errors="replace")
         l3_name = table_value(text, "L3名称")
+        parsed_l4s = parse_l4s(text)
         l4s = []
-        for item in parse_l4s(text):
+        for item in parsed_l4s:
             assessment = tier_by_code.get(item["l4_code"], {})
             l4s.append({**item, **{
                 key: assessment.get(key, "") for key in (
@@ -85,6 +128,8 @@ def main() -> None:
             "downstream": table_value(text, "关联下游L3"),
             "source_file": path.name,
             "l4s": l4s,
+            "steps": parse_steps(text, parsed_l4s),
+            "node_l4_map": parse_node_l4_map(text),
         })
 
     contexts = []
