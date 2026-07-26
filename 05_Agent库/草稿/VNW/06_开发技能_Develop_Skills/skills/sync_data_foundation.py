@@ -43,6 +43,7 @@ import openpyxl
 RULE_ANALYSIS = Path(
     "/Users/a112233/Desktop/流程架构项目_jasper/02_过程成果-工作产出/规则分析（Jasper）"
 )
+VNW_ROOT = Path(__file__).resolve().parents[2]
 # 注:EA权威清单V3.44不在Jasper定义的输入范围内(2026-07-25拍板),本脚本不再对照它,
 # 相关路径常量已移除,不用于任何审计/校验逻辑。
 SIGNAL_BASELINE_DIR = RULE_ANALYSIS / "02_信号提取基线" / "提取合集校准"
@@ -50,14 +51,14 @@ GAP_MAP_DIR = RULE_ANALYSIS / "03_访谈准备与执行" / "规则空白地图"
 RULE_GAP_DIR = RULE_ANALYSIS / "04_规则与GAP产出"
 AGENT_SKILL_DIR = RULE_ANALYSIS / "Agent与Skill体系"
 DB1 = RULE_ANALYSIS / "前端展示数据底座"
-DB2 = Path("/Users/a112233/Desktop/Jasper工作文档（不含EA项目）/规则前端设计/数据底座")
+# VNW内的数据底座是前端与Agent共用的权威副本；EA项目内DB1保留为业务工作区镜像。
+DB2 = VNW_ROOT / "07_接入记忆_Integrate_Memory" / "data_foundation"
 DOMAINS = ["EQ", "FA", "HR", "INS", "KA", "PARTNER", "PAY", "TREASURY"]
 TODAY = "2026-07-25"
 
-# 2026-07-25:VNW前端(app_v2)接入数据底座,同步脚本末尾多一步把表导出成JSON给前端读。
+# 2026-07-25:VNW前端接入数据底座,同步脚本末尾多一步把表导出成JSON给前端读。
 APP_V2_DATA_DIR = Path(
-    "/Users/a112233/Desktop/Jasper工作文档（不含EA项目）/规则前端设计/"
-    "Agent_价值节点-规则分析前端/app_v2/public/data"
+    VNW_ROOT / "10_部署与运行_Deploy_and_Run" / "frontend" / "public" / "data"
 )
 
 # 2026-07-25:两处数据底座按Jasper要求分成5个子文件夹,本脚本只写A类(自动同步)。
@@ -1041,7 +1042,7 @@ def main():
     write_both("T24_交付物四标签风险分析_全域_v1.0.csv", *t24)
     write_both("T21_数据对齐审计_全域_v1.0.csv", *t21)
 
-    print("\n[附加] 导出JSON给VNW前端(app_v2/public/data/) ...")
+    print("\n[附加] 导出JSON给VNW前端(frontend/public/data/) ...")
     built_tables = {
         "node_index": tables["t1"][1],
         "signals": t2_rows,

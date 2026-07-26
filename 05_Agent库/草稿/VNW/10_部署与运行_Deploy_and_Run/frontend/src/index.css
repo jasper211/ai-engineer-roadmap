@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html.dark {
+    background-color: #0B0E17;
+    color: #F1F5F9;
+  }
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background:
+      radial-gradient(circle at 80% -10%, rgba(99, 102, 241, 0.13), transparent 28rem),
+      radial-gradient(circle at 5% 65%, rgba(34, 211, 238, 0.05), transparent 26rem),
+      #0B0E17;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  button, a { -webkit-tap-highlight-color: transparent; }
+  button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible {
+    outline: 2px solid #818CF8;
+    outline-offset: 2px;
+  }
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #2A324A transparent;
+  }
+}
+
+@layer components {
+  .panel {
+    @apply rounded-2xl border border-border-default bg-bg-elevated/90 shadow-panel backdrop-blur-sm;
+  }
+  .eyebrow {
+    @apply text-[10px] font-semibold uppercase tracking-[0.18em] text-text-muted;
+  }
+  .metric-value {
+    @apply font-mono text-2xl font-semibold tracking-tight text-text-primary;
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(99,102,241,0.4); }
+  50% { box-shadow: 0 0 20px 4px rgba(99,102,241,0.2); }
+}

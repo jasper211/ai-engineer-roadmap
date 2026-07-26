@@ -1,0 +1,62 @@
+[
+  {
+    "classification_id": "CLS-001",
+    "node_id": "VN-PAY-01",
+    "rule_id": "PAY-R001",
+    "sop_section": "第三章·交付物1·步骤1.2",
+    "classification": "机器规则",
+    "ai_rule_def": "IF 当前日期进入新季度 THEN 触发全量佣金准入表更新;IF 季度中保司加佣 THEN 判断产品是否为常卖产品(白名单)→常卖即时更新/非常卖延至下季度",
+    "human_rule_def": "",
+    "collab_rule_def": "常卖产品白名单目前仅'万年青'一例,新产品归类边界不清时需人工裁定(对应G026)",
+    "confidence": "中",
+    "pilot_flag": "TRUE",
+    "confirmed_by": "",
+    "confirm_date": "",
+    "note": "试点示例,未经负责人确认;trigger/action/standard/exception在T5/SOP里均已明确,机器规则候选度高,但白名单判定边界(G026)未解决前不能全自动"
+  },
+  {
+    "classification_id": "CLS-002",
+    "node_id": "VN-PAY-01",
+    "rule_id": "",
+    "sop_section": "第三章·交付物1·步骤4.1",
+    "classification": "机器规则",
+    "ai_rule_def": "IF 同产品同期存在两条effective_start_time/end_time区间重叠 THEN 拦截录入并报错(对应G034,当前系统未建设此校验)",
+    "human_rule_def": "",
+    "collab_rule_def": "",
+    "confidence": "高",
+    "pilot_flag": "TRUE",
+    "confirmed_by": "",
+    "confirm_date": "",
+    "note": "试点示例,未经负责人确认;是最典型的确定性校验规则,当前是纯人工检查,自动化优先级应最高"
+  },
+  {
+    "classification_id": "CLS-003",
+    "node_id": "VN-PAY-01",
+    "rule_id": "",
+    "sop_section": "第三章·交付物2·步骤2.1-2.2",
+    "classification": "人的规则",
+    "ai_rule_def": "",
+    "human_rule_def": "市场佣金表出表前必须经叶总数据定版确认方可发出,未收到确认严禁发出;财务终验责任人待Mark指定(对应G029)",
+    "collab_rule_def": "",
+    "confidence": "高",
+    "pilot_flag": "TRUE",
+    "confirmed_by": "",
+    "confirm_date": "",
+    "note": "试点示例,未经负责人确认;资金/对外数据发布类审批,即便前序步骤全自动化,该签字关卡建议仍保留Human gate,逻辑同L3-COM案例的资金风险覆盖原则"
+  },
+  {
+    "classification_id": "CLS-004",
+    "node_id": "VN-PAY-01",
+    "rule_id": "",
+    "sop_section": "第三章·交付物1·步骤2.3",
+    "classification": "协同规则",
+    "ai_rule_def": "IF 折扣版且Basic Rate缺失 THEN 按已确认的计算说明公式倒推",
+    "human_rule_def": "IF 倒推逻辑复杂/规则未覆盖 THEN 向RO/资深运营发邮件确认书面逻辑,严禁猜测",
+    "collab_rule_def": "机器先按已知公式库尝试匹配,匹配失败或置信度低于阈值时升级人工确认;人工确认后的新公式需回写进公式库,供下次机器规则直接复用",
+    "confidence": "中",
+    "pilot_flag": "TRUE",
+    "confirmed_by": "",
+    "confirm_date": "",
+    "note": "试点示例,未经负责人确认;是'已知情形机器处理、未知情形升级人工、人工结果反哺机器'的协同边界典型案例"
+  }
+]
