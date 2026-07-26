@@ -489,7 +489,8 @@ NODE_BLOCK_RE = re.compile(r"^### (?:节点\s+)?(VN-[A-Z0-9]+-\d+)\s*[·・]?\s*
 
 _EXECUTOR_SYNONYMS = ["执行主体", "负责人岗位", "负责人"]
 _DEADLINE_SYNONYMS = ["预估周期"]
-_REMARK_SYNONYMS = ["阻塞", "状态", "当前状态", "交付物上传要求"]
+_STATUS_SYNONYMS = ["任务状态", "当前状态", "状态"]
+_REMARK_SYNONYMS = ["阻塞", "交付物上传要求"]
 
 
 def _pick_col(header: list[str], synonyms: list[str]) -> str | None:
@@ -497,6 +498,23 @@ def _pick_col(header: list[str], synonyms: list[str]) -> str | None:
         if syn in header:
             return syn
     return None
+
+
+def _normalize_task_status(raw: str) -> str:
+    """源文档状态是唯一输入；避免每次同步把已核实进度重置为“未分发”。
+
+    推荐源文档统一使用：未分发 / 进行中 / 待验收 / 已完成 / 已阻塞。
+    """
+    value = (raw or "").strip()
+    if any(word in value for word in ("已完成", "完成", "已验收", "关闭")):
+        return "已完成"
+    if any(word in value for word in ("待验收", "待核实", "待确认")):
+        return "待验收"
+    if any(word in value for word in ("进行中", "处理中", "已分发", "推进中")):
+        return "进行中"
+    if any(word in value for word in ("阻塞", "暂停")):
+        return "已阻塞"
+    return "未分发"
 
 
 def build_t18_from_remediation_lists():
@@ -534,6 +552,7 @@ def build_t18_from_remediation_lists():
             header = [c.strip() for c in table_lines[0].strip("|").split("|")]
             executor_col = _pick_col(header, _EXECUTOR_SYNONYMS)
             deadline_col = _pick_col(header, _DEADLINE_SYNONYMS)
+            status_col = _pick_col(header, _STATUS_SYNONYMS)
             remark_col = _pick_col(header, _REMARK_SYNONYMS)
             action_col = "行动" if "行动" in header else ("行动项" if "行动项" in header else None)
             deliverable_col = "期望产出（交付物）" if "期望产出（交付物）" in header else "期望产出"
@@ -555,7 +574,8 @@ def build_t18_from_remediation_lists():
                     "executor_role": row.get(executor_col, "") if executor_col else "",
                     "executor_dept": "", "assigned_date": "",
                     "deadline": row.get(deadline_col, "") if deadline_col else "",
-                    "task_status": "未分发", "deliverable_id": "",
+                    "task_status": _normalize_task_status(row.get(status_col, "") if status_col else ""),
+                    "deliverable_id": "",
                     "deliverable_name": row.get(deliverable_col, ""),
                     "recording_uploaded": "N",
                     "gate_unlock_date": "",
@@ -591,7 +611,16 @@ def build_t25_fused_status(new_t1_rows: list[dict], t18_rows: list[dict]):
         if src is None:
             continue
         text = src.read_text(encoding="utf-8", errors="replace")
-        fused_ids |= set(VN_CODE_RE.findall(text))
+        blocks = list(NODE_BLOCK_RE.finditer(text))
+        for i, bm in enumerate(blocks):
+            node_id = bm.group(1)
+            block_text = text[bm.end(): blocks[i + 1].start() if i + 1 < len(blocks) else len(text)]
+            # 持续迭代口径：源文档明确标记节点已解锁后，下一次同步自动解除熔断。
+            # 推荐写法：**节点状态**：已解锁（也兼容“解除熔断/已完成”）。
+            state_match = re.search(r"\*\*节点状态\*\*\s*[：:]\s*([^\n]+)", block_text)
+            state = state_match.group(1).strip() if state_match else ""
+            if not any(word in state for word in ("已解锁", "解除熔断", "已完成")):
+                fused_ids.add(node_id)
     # 已核实的误判:VN-EQ-03只在EQ文件里作为'归属并入VN-EQ-03'这类交叉引用出现(某个真熔断
     # 节点的补建行动提到要把交付物合并进它),它自己不是熔断节点(核实过EQ规则空白地图'包含
     # 节点'列表明确把它列为8个通过节点之一)。跟T13交叉核对时发现,人工排除。

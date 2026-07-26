@@ -26,6 +26,7 @@ const TABLE_FILES: Record<string, string> = {
   candidate_agents: '/data/candidate_agents.json',
   // D类:人工试点,非自动更新,但仍可浏览
   sop_pilot_classification: '/data/sop_pilot_classification.json',
+  flow_context: '/data/flow_context.json',
 };
 const TABLE_NAMES = Object.keys(TABLE_FILES);
 

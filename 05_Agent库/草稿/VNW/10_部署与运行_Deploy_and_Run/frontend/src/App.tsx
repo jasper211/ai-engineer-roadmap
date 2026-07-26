@@ -21,10 +21,11 @@ export default function App() {
       <Route path="/brief" element={<BriefLayout><BriefHome /></BriefLayout>} />
       <Route path="/brief/node/:nodeId" element={<BriefLayout><BriefNodeDetail /></BriefLayout>} />
       <Route path="/brief/automation" element={<BriefLayout><BriefAutomation /></BriefLayout>} />
+      <Route path="/" element={<BriefLayout><BriefHome /></BriefLayout>} />
       <Route path="*" element={
         <Layout>
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/internal" element={<Home />} />
             <Route path="/workflow" element={<Workflow />} />
             <Route path="/nodes" element={<Nodes />} />
             <Route path="/node/:nodeId" element={<NodeDetail />} />

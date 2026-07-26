@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { loadAllData } from '@/lib/data'
 import { ChevronDown, ChevronUp, Info } from 'lucide-react'
@@ -20,9 +20,7 @@ export default function BriefAutomation() {
   const [data, setData] = useState<any>(null)
   const [expanded, setExpanded] = useState<string | null>(null)
 
-  useState(() => {
-    if (!data) loadAllData().then(setData)
-  })
+  useEffect(() => { loadAllData().then(setData) }, [])
 
   if (!data) return <div className="flex min-h-[60vh] items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-2 border-accent-primary border-t-transparent" /></div>
 

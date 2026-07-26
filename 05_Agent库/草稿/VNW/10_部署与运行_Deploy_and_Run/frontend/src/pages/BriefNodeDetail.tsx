@@ -1,18 +1,20 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams, useNavigate, Link } from 'react-router'
 import { motion } from 'framer-motion'
 import { loadAllData, getDomainInfo } from '@/lib/data'
 import { StatusBadge, PriorityBadge } from '@/components/StatusBadge'
-import { ArrowLeft, Flame, CheckCircle2, AlertTriangle, ArrowRightCircle, Info } from 'lucide-react'
+import { ArrowLeft, Flame, CheckCircle2, AlertTriangle, ArrowRightCircle, FlaskConical, PauseCircle, HelpCircle, GitBranch } from 'lucide-react'
 
 export default function BriefNodeDetail() {
   const { nodeId } = useParams()
   const navigate = useNavigate()
   const [data, setData] = useState<any>(null)
+  const [decision, setDecision] = useState('')
 
-  useState(() => {
-    if (!data) loadAllData().then(setData)
-  })
+  useEffect(() => { loadAllData().then(setData) }, [])
+  useEffect(() => {
+    setDecision(localStorage.getItem(`vnw-decision-${nodeId}`) || '')
+  }, [nodeId])
 
   if (!data) return <div className="flex min-h-[60vh] items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-2 border-accent-primary border-t-transparent" /></div>
 
@@ -31,6 +33,10 @@ export default function BriefNodeDetail() {
   const fusedTasks = (data.fused_tasks || []).filter((t: any) => t.node_id === nodeId)
   const risks = (data.deliverable_risk || []).filter((r: any) => r.node_id === nodeId)
   const handoff = (data.ait_handoff || []).find((h: any) => h.node_id === nodeId)
+  const deliverables = (data.deliverables || []).filter((d: any) =>
+    d.node_id === nodeId || d.vn_id === nodeId || d.value_node_id === nodeId
+  )
+  const flowContext = (data.flow_context || []).find((row: any) => row.node_id === nodeId)?.blueprint
 
   const taskDone = fusedTasks.filter((t: any) => t.task_status === '已完成').length
 
@@ -47,17 +53,17 @@ export default function BriefNodeDetail() {
         <PriorityBadge priority={node.priority} />
       </motion.div>
 
-      {/* 核心结论:自动化/Skill就绪度 */}
+      {/* 1. 核心结论 */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
         className={`rounded-xl border p-5 ${fused?.fused_status === '熔断' ? 'border-accent-danger/30 bg-accent-danger/5' : 'border-accent-success/30 bg-accent-success/5'}`}>
         <div className="flex items-center gap-2">
           {fused?.fused_status === '熔断' ? <Flame className="h-5 w-5 text-accent-danger" /> : <CheckCircle2 className="h-5 w-5 text-accent-success" />}
-          <h2 className="font-heading text-base font-semibold text-text-primary">自动化 / Skill 就绪度评估</h2>
+          <h2 className="font-heading text-base font-semibold text-text-primary">1 · 核心判断</h2>
         </div>
 
         {fused ? (
           <div className="mt-3 space-y-2">
-            <div className="flex items-center gap-2"><StatusBadge status={fused.fused_status} /><span className="text-sm text-text-secondary">{fused.fused_type || (fused.fused_status === '非熔断' ? '规则基础已具备,未发现阻断性缺口' : '')}</span></div>
+            <div className="flex items-center gap-2"><StatusBadge status={fused.fused_status} /><span className="text-sm text-text-secondary">{fused.fused_status === '非熔断' ? '具备进入业务验证的基础，可以判断采用自动化、Skill 还是 Agent。' : '暂不进入 AI 工具设计，应先补齐规则或交付物定义。'}</span></div>
             {fused.fused_status === '熔断' && (
               <p className="text-xs text-text-muted">来源:{fused.source}</p>
             )}
@@ -94,16 +100,48 @@ export default function BriefNodeDetail() {
           </div>
         )}
 
-        <div className="mt-4 flex items-start gap-2 rounded-lg bg-bg-surface p-3 text-xs text-text-muted">
-          <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-          <span>L4级自动化Tier(Auto/Aug/Hybrid/Human)与候选Agent归属目前只做到L4活动颗粒度,还无法可靠地关联回具体价值节点——这是已知数据缺口,不在此处编造。<Link to="/brief/automation" className="text-accent-primary hover:underline">查看全域L4自动化评估参考 →</Link></span>
-        </div>
+        {flowContext?.l4s?.length > 0 ? (
+          <div className="mt-4">
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-medium text-text-secondary">该节点所在流程的 L4 自动化评估</p>
+              <Link to="/brief/automation" className="text-xs text-accent-primary hover:underline">查看全域评估 →</Link>
+            </div>
+            <div className="mt-2 space-y-2">
+              {flowContext.l4s.map((l4: any) => (
+                <div key={l4.l4_code} className="rounded-lg border border-border-default bg-bg-elevated p-3">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="font-mono text-xs text-text-muted">{l4.l4_code}</span>
+                    <span className="text-sm font-medium text-text-primary">{l4.l4_name}</span>
+                    <StatusBadge status={l4.automation_tier || '待评估'} />
+                  </div>
+                  <p className="mt-2 text-xs text-text-secondary">{automationNarrative(l4)}</p>
+                  {l4.judgment_basis && <p className="mt-1 text-xs text-text-muted">判断依据：{l4.judgment_basis}</p>}
+                  {l4.candidate_agent && <p className="mt-1 text-xs text-text-muted">候选承载：{l4.candidate_agent}</p>}
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <p className="mt-4 rounded-lg bg-bg-surface p-3 text-xs text-text-muted">当前节点尚未建立可靠的流程蓝图—L4映射，保持“待补映射”，不生成推测性结论。</p>
+        )}
       </motion.div>
 
-      {/* 流程背景 */}
+      {/* 2. 交付物与流程背景 */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
         className="rounded-xl border border-border-default bg-bg-elevated p-5">
-        <h2 className="font-heading text-base font-semibold text-text-primary">流程背景与现状</h2>
+        <h2 className="font-heading text-base font-semibold text-text-primary">2 · 交付物与流程现状</h2>
+        {deliverables.length > 0 && (
+          <div className="mt-3 rounded-lg border border-border-default bg-bg-surface p-3">
+            <p className="text-xs text-text-muted">已有交付物记录</p>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {deliverables.map((item: any, index: number) => (
+                <span key={item.deliverable_id || index} className="rounded-md bg-bg-elevated px-2 py-1 text-xs text-text-secondary">
+                  {item.deliverable_name || item.name || item.deliverable || `交付物 ${index + 1}`}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
         <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
           <Field label="所属L3流程" value={node.l3_flow} />
           <Field label="流程现状" value={node.l3_status} />
@@ -118,15 +156,42 @@ export default function BriefNodeDetail() {
             <span>单点风险:{node.single_point_risk}</span>
           </div>
         )}
+        {flowContext && (
+          <div className="mt-4 rounded-lg border border-border-default bg-bg-surface p-4">
+            <div className="flex items-center gap-2">
+              <GitBranch className="h-4 w-4 text-accent-primary-light" />
+              <p className="text-sm font-semibold text-text-primary">{flowContext.l3_code} · {flowContext.l3_name}</p>
+            </div>
+            <div className="mt-3 grid gap-3 sm:grid-cols-2">
+              <Field label="流程状态" value={flowContext.status} />
+              <Field label="主责与协作" value={[flowContext.owner, flowContext.collaborators].filter(Boolean).join('；')} />
+              <Field label="触发条件" value={flowContext.trigger} />
+              <Field label="退出条件" value={flowContext.exit} />
+              <Field label="上游流程" value={flowContext.upstream} />
+              <Field label="下游流程" value={flowContext.downstream} />
+            </div>
+            <p className="mt-3 text-[11px] text-text-muted">来源：{flowContext.source_file}</p>
+          </div>
+        )}
       </motion.div>
 
-      {/* 验证与下一步 */}
+      {/* 3-5. 决策、AIT移交与设计归档 */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
         className="rounded-xl border border-border-default bg-bg-elevated p-5">
         <div className="flex items-center gap-2">
           <ArrowRightCircle className="h-5 w-5 text-accent-primary" />
-          <h2 className="font-heading text-base font-semibold text-text-primary">验证与下一步</h2>
+          <h2 className="font-heading text-base font-semibold text-text-primary">3 · 业务决定：是否进入验证？</h2>
         </div>
+        <p className="mt-2 text-sm text-text-secondary">这一步只做业务决策，不要求业务负责人先理解 Agent 架构。</p>
+        <div className="mt-4 grid gap-2 sm:grid-cols-3">
+          <DecisionButton active={decision === 'validate'} icon={<FlaskConical className="h-4 w-4" />} title="进入验证" desc="确认价值与使用场景" onClick={() => saveDecision('validate')} />
+          <DecisionButton active={decision === 'clarify'} icon={<HelpCircle className="h-4 w-4" />} title="补充信息" desc="规则或交付物仍不清楚" onClick={() => saveDecision('clarify')} />
+          <DecisionButton active={decision === 'pause'} icon={<PauseCircle className="h-4 w-4" />} title="暂不推进" desc="当前收益或优先级不足" onClick={() => saveDecision('pause')} />
+        </div>
+        {decision && <p className="mt-3 text-xs text-accent-success">本机已记录选择；后续接入正式工作流时再同步到 VNW 数据底座。</p>}
+
+        <div className="my-5 border-t border-border-default" />
+        <h3 className="text-sm font-semibold text-text-primary">4 · AIT 接入状态</h3>
         <div className="mt-3 flex items-center gap-2">
           <StatusBadge status={handoff?.handoff_status || '未移交'} />
           {handoff?.pilot_flag === 'TRUE' && <span className="rounded-full bg-accent-primary/10 px-2 py-0.5 text-xs text-accent-primary-light">AIT试点中</span>}
@@ -134,10 +199,39 @@ export default function BriefNodeDetail() {
         {handoff?.next_action ? (
           <p className="mt-2 text-sm text-text-secondary">下一步:{handoff.next_action}{handoff.decision_ref ? `(依据 ${handoff.decision_ref})` : ''}</p>
         ) : (
-          <p className="mt-2 text-sm text-text-muted">尚未安排下线验证。若确认该节点具备自动化/Skill搭建条件,下一步是移交AIT进入方案设计。</p>
+          <p className="mt-2 text-sm text-text-muted">尚未安排验证。选择“进入验证”并完成业务验证后，再移交 AIT。</p>
         )}
+        <div className="mt-4 rounded-lg border border-border-default bg-bg-surface p-3">
+          <p className="text-xs font-medium text-text-secondary">5 · 形成设计记录</p>
+          <p className="mt-1 text-xs text-text-muted">AIT 接入后，将验证结论沉淀为工具、Skill 或 Agent 的边界、输入输出、规则、授权与验收标准。</p>
+        </div>
       </motion.div>
     </div>
+  )
+
+  function saveDecision(value: string) {
+    setDecision(value)
+    localStorage.setItem(`vnw-decision-${nodeId}`, value)
+  }
+}
+
+function automationNarrative(l4: any) {
+  const target = l4.physical_deliverable_ideal || l4.blueprint_deliverable || '该活动交付物'
+  const tierText: Record<string, string> = {
+    Auto: `适合优先验证端到端自动化，目标是稳定生成“${target}”，重点核实输入数据完整性和异常处理。`,
+    Aug: `适合先搭建辅助型 Skill，由 AI 处理信息整理与初稿，人负责判断和确认“${target}”。`,
+    Hybrid: `适合设计人机协同方案：AI 承担标准步骤，人保留关键判断、授权和验收。目标交付物为“${target}”。`,
+    Human: `当前仍应以人工执行为主，可先从资料检索、检查清单或留痕辅助切入，不宜直接追求全自动。`,
+  }
+  return tierText[l4.automation_tier] || `尚未完成自动化分级，建议围绕“${target}”补充输入、规则、授权和验收条件。`
+}
+
+function DecisionButton({ active, icon, title, desc, onClick }: { active: boolean; icon: React.ReactNode; title: string; desc: string; onClick: () => void }) {
+  return (
+    <button onClick={onClick} className={`rounded-lg border p-3 text-left transition-colors ${active ? 'border-accent-primary bg-accent-primary/10' : 'border-border-default bg-bg-surface hover:border-text-muted'}`}>
+      <span className={`flex items-center gap-2 text-sm font-medium ${active ? 'text-accent-primary-light' : 'text-text-primary'}`}>{icon}{title}</span>
+      <span className="mt-1 block text-xs text-text-muted">{desc}</span>
+    </button>
   )
 }
 

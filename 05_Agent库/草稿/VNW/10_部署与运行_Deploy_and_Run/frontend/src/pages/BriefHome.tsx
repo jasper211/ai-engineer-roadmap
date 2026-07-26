@@ -1,19 +1,18 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { motion } from 'framer-motion'
 import { loadAllData, DOMAINS, getDomainInfo } from '@/lib/data'
 import { StatusBadge } from '@/components/StatusBadge'
-import { Search, ChevronRight, FlaskConical } from 'lucide-react'
+import { Search, ChevronRight, FlaskConical, CircleHelp, ShieldCheck } from 'lucide-react'
 
 export default function BriefHome() {
   const navigate = useNavigate()
   const [data, setData] = useState<any>(null)
   const [search, setSearch] = useState('')
   const [domainFilter, setDomainFilter] = useState('')
+  const [statusFilter, setStatusFilter] = useState<'all' | 'fused' | 'ready' | 'ait'>('all')
 
-  useState(() => {
-    if (!data) loadAllData().then(setData)
-  })
+  useEffect(() => { loadAllData().then(setData) }, [])
 
   const nodes = data?.node_index || []
   const fusedMap: Record<string, any> = {}
@@ -24,35 +23,52 @@ export default function BriefHome() {
   const filtered = nodes.filter((n: any) => {
     const matchSearch = !search || n.node_id?.toLowerCase().includes(search.toLowerCase()) || n.node_name?.includes(search)
     const matchDomain = !domainFilter || n.domain === domainFilter
-    return matchSearch && matchDomain
+    const fused = fusedMap[n.node_id]?.fused_status === '熔断'
+    const ait = handoffMap[n.node_id]?.pilot_flag === 'TRUE' || handoffMap[n.node_id]?.handoff_status === '已移交'
+    const matchStatus = statusFilter === 'all'
+      || (statusFilter === 'fused' && fused)
+      || (statusFilter === 'ready' && !fused && !ait)
+      || (statusFilter === 'ait' && ait)
+    return matchSearch && matchDomain && matchStatus
   })
 
   if (!data) return <div className="flex min-h-[60vh] items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-2 border-accent-primary border-t-transparent" /></div>
 
   const fusedCount = (data.fused_status || []).filter((f: any) => f.fused_status === '熔断').length
   const pilotCount = (data.ait_handoff || []).filter((h: any) => h.pilot_flag === 'TRUE').length
+  const readyCount = nodes.filter((node: any) =>
+    fusedMap[node.node_id]?.fused_status !== '熔断'
+    && handoffMap[node.node_id]?.pilot_flag !== 'TRUE'
+    && handoffMap[node.node_id]?.handoff_status !== '已移交'
+  ).length
 
   return (
     <div className="space-y-6">
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-        <h1 className="font-heading text-2xl font-bold text-text-primary">价值节点浏览</h1>
+        <p className="text-xs font-medium uppercase tracking-[0.16em] text-accent-primary-light">先看结论，再决定是否验证</p>
+        <h1 className="mt-2 font-heading text-2xl font-bold text-text-primary">哪些业务交付物值得做成 AI 工具？</h1>
         <p className="mt-1 text-sm text-text-secondary">
-          每个节点是否已具备可自动化/搭建Skill的条件、当前流程背景、以及是否需要下线验证——一目了然。
+          选择一个价值节点，查看自动化或 Skill 机会、流程现状和证据，再决定是否交给 AIT 继续设计。
         </p>
       </motion.div>
 
-      <div className="grid grid-cols-3 gap-3">
-        <div className="rounded-lg border border-border-default bg-bg-elevated p-4">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <StatFilter active={statusFilter === 'all'} onClick={() => setStatusFilter('all')} value={nodes.length} label="全部机会" />
+        <StatFilter active={statusFilter === 'fused'} onClick={() => setStatusFilter('fused')} value={fusedCount} label="熔断 · 先补建" tone="danger" />
+        <StatFilter active={statusFilter === 'ready'} onClick={() => setStatusFilter('ready')} value={readyCount} label="可进入验证" tone="success" />
+        <StatFilter active={statusFilter === 'ait'} onClick={() => setStatusFilter('ait')} value={pilotCount} label="AIT · 已承接" tone="primary" />
+        {/* 数字卡同时也是筛选标签，避免再增加一层导航。 */}
+        <div className="hidden rounded-lg border border-border-default bg-bg-elevated p-4">
           <p className="font-mono text-2xl font-medium text-text-primary">{nodes.length}</p>
           <p className="mt-1 text-xs text-text-muted">全部节点</p>
         </div>
-        <div className="rounded-lg border border-border-default bg-bg-elevated p-4">
+        <div className="hidden rounded-lg border border-border-default bg-bg-elevated p-4">
           <p className="font-mono text-2xl font-medium text-accent-danger">{fusedCount}</p>
-          <p className="mt-1 text-xs text-text-muted">熔断中(规则未就绪)</p>
+          <p className="mt-1 text-xs text-text-muted">需先补齐规则</p>
         </div>
-        <div className="rounded-lg border border-border-default bg-bg-elevated p-4">
+        <div className="hidden rounded-lg border border-border-default bg-bg-elevated p-4">
           <p className="font-mono text-2xl font-medium text-accent-primary-light">{pilotCount}</p>
-          <p className="mt-1 text-xs text-text-muted">已进入AIT试点</p>
+          <p className="mt-1 text-xs text-text-muted">已进入 AIT</p>
         </div>
       </div>
 
@@ -75,6 +91,7 @@ export default function BriefHome() {
           const dInfo = getDomainInfo(node.node_id)
           const fused = fusedMap[node.node_id]
           const handoff = handoffMap[node.node_id]
+          const ready = fused?.fused_status === '非熔断'
           return (
             <motion.div key={node.node_id} className="group cursor-pointer rounded-lg border border-border-default bg-bg-elevated p-4"
               style={{ borderTopWidth: 3, borderTopColor: dInfo.color }}
@@ -91,7 +108,17 @@ export default function BriefHome() {
                 <span className="text-xs text-text-secondary">{node.domain} · {node.l3_flow}</span>
               </div>
               <div className="mt-3 flex flex-wrap items-center gap-2">
-                {fused && <StatusBadge status={fused.fused_status} />}
+                {ready ? (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-accent-success/10 px-2 py-0.5 text-xs text-accent-success">
+                    <ShieldCheck className="h-3 w-3" /> 可进入业务验证
+                  </span>
+                ) : fused ? (
+                  <StatusBadge status={fused.fused_status} />
+                ) : (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-bg-surface px-2 py-0.5 text-xs text-text-muted">
+                    <CircleHelp className="h-3 w-3" /> 待评估
+                  </span>
+                )}
                 {handoff?.pilot_flag === 'TRUE' && (
                   <span className="inline-flex items-center gap-1 rounded-full bg-accent-primary/10 px-2 py-0.5 text-xs text-accent-primary-light">
                     <FlaskConical className="h-3 w-3" /> AIT试点
@@ -110,5 +137,20 @@ export default function BriefHome() {
         </div>
       )}
     </div>
+  )
+}
+
+function StatFilter({ active, onClick, value, label, tone = 'default' }: { active: boolean; onClick: () => void; value: number; label: string; tone?: 'default' | 'danger' | 'success' | 'primary' }) {
+  const toneClass = {
+    default: 'text-text-primary',
+    danger: 'text-accent-danger',
+    success: 'text-accent-success',
+    primary: 'text-accent-primary-light',
+  }[tone]
+  return (
+    <button onClick={onClick} className={`rounded-lg border bg-bg-elevated p-4 text-left transition-colors ${active ? 'border-accent-primary ring-1 ring-accent-primary/30' : 'border-border-default hover:border-text-muted'}`}>
+      <p className={`font-mono text-2xl font-medium ${toneClass}`}>{value}</p>
+      <p className="mt-1 text-xs text-text-muted">{label}</p>
+    </button>
   )
 }
