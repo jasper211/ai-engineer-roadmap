@@ -293,12 +293,19 @@ class VaultSyncHealthChecker:
         now = datetime.now().strftime("%Y-%m-%d %H:%M")
         lines = [f"# OB 知识库同步健康报告", "", f"> 自动生成 | {now} | Agent: OB", ""]
 
-        statuses = [("符号链接", sl_ok), ("MCP配置", mcp_ok), ("MCP Server", srv_ok),
-                    ("F文件", ff_ok), ("同步完整性", sync_ok), ("GitHub同步", gh_ok)]
+        # GitHub同步的"⚠️ 跳过"（本地有未提交改动，主动不pull避免冲突）跟真正的
+        # "❌ pull失败/超时"是两种性质完全不同的情况——前者是正常的进行中状态，
+        # 汇总表如果都渲染成❌会比实际情况更吓人。gh_ok仍然按原逻辑参与all_ok
+        # 判定（跳过也算"还没确认同步"，值得被看到），只是这里单独取实际status
+        # 文本的符号，不再把它压扁成布尔值。
+        gh_symbol = all_results["github_sync"].get("status", "❌")[:1] if not gh_ok else "✅"
+        statuses = [("符号链接", sl_ok, None), ("MCP配置", mcp_ok, None), ("MCP Server", srv_ok, None),
+                    ("F文件", ff_ok, None), ("同步完整性", sync_ok, None), ("GitHub同步", gh_ok, gh_symbol)]
         lines.append(f"## 总体状态：{'🟢 全部正常' if all_ok else '🔴 存在异常'}")
         lines.append("")
-        for name, ok in statuses:
-            lines.append(f"| {name} | {'✅' if ok else '❌'} |")
+        for name, ok, symbol_override in statuses:
+            symbol = symbol_override if symbol_override else ("✅" if ok else "❌")
+            lines.append(f"| {name} | {symbol} |")
         lines.append("")
 
         lines.append("## 一、符号链接")

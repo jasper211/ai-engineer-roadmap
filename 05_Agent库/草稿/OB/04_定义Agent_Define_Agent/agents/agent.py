@@ -65,7 +65,10 @@ VECTOR_SERVER_SCRIPT = "/Users/a112233/Desktop/Jasper工作文档（不含EA项�
 MCP_CONFIGS = {
     "Qoder": "/Users/a112233/Library/Application Support/Qoder/SharedClientCache/mcp.json",
     "Claude Desktop": "/Users/a112233/Library/Application Support/Claude/claude_desktop_config.json",
-    "Kimi Code": "/Users/a112233/.kimi-code/mcp.json",
+    # Kimi Code：2026-07-25确认这台机器从未安装/配置过（~/.kimi-code/mcp.json
+    # 不存在），不是"该配好没配好"，是这台机器根本不用它——把它列进必查清单
+    # 会拖累整体巡检判定（一个不存在的文件读取失败就让MCP配置这项判红），
+    # 如果以后这台机器真的装了Kimi Code再加回来
 }
 
 F_FILES = [
@@ -128,9 +131,20 @@ def cmd_sync_check(args) -> int:
         "schedule": "每小时 + 开机",
         "checks": list(result["summary"].keys()),
     })
+    # GitHub同步的"本地有未提交改动，主动跳过pull"是正常的进行中状态，跟真正的
+    # pull失败/超时性质不同，这里单独用原始status文本的符号而不是压扁成布尔值，
+    # 避免"Agent 健康报告"（跨Agent汇总，PTA等读的就是这份）比实际情况更吓人
+    gh_raw_status = result.get("github_sync", {}).get("status", "")
+    results_display = {}
+    for k, v in result["summary"].items():
+        if k == "GitHub同步" and not v and gh_raw_status.startswith("⚠️"):
+            results_display[k] = "⚠️"
+        else:
+            results_display[k] = "✅" if v else "❌"
+
     agent_status.update("OB", {
         "status": "🟢 全部正常" if result["all_ok"] else "🔴 存在异常",
-        "results": {k: ("✅" if v else "❌") for k, v in result["summary"].items()},
+        "results": results_display,
         "errors": [k for k, v in result["summary"].items() if not v],
         "detail": result["report_markdown"],
     })
