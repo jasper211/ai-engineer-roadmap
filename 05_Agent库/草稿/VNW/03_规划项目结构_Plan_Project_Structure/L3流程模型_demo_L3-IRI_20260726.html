@@ -306,6 +306,71 @@
     .hub-branches { width: 1px; border-right: 0; border-bottom: 0; }
   }
 
+  /* Panel C · workshop task board */
+  .workshop-toolbar {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    margin-bottom: 12px; flex-wrap: wrap;
+  }
+  .workshop-toolbar-left, .workshop-toolbar-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .workshop-select, .workshop-btn {
+    border: 1px solid var(--border); border-radius: 7px; background: var(--surface-2);
+    color: var(--text); padding: 6px 9px; font: 11.5px inherit;
+  }
+  .workshop-btn { cursor: pointer; }
+  .workshop-btn:hover { border-color: var(--accent-border); }
+  .workshop-stat { color: var(--text-muted); font-size: 11px; }
+  .kanban {
+    display: grid; grid-template-columns: repeat(4, minmax(220px, 1fr)); gap: 10px;
+    overflow-x: auto; padding-bottom: 4px;
+  }
+  .kanban-col {
+    min-height: 330px; border: 1px solid var(--border); border-radius: 10px;
+    background: var(--surface-2); padding: 10px;
+  }
+  .kanban-col.drag-over { border-color: var(--accent); background: var(--accent-soft); }
+  .kanban-head { display: flex; align-items: center; gap: 7px; margin-bottom: 9px; }
+  .kanban-dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+  .kanban-title { font-size: 12px; font-weight: 700; }
+  .kanban-count {
+    margin-left: auto; min-width: 20px; border-radius: 999px; background: var(--surface);
+    padding: 1px 6px; color: var(--text-muted); font: 10px ui-monospace, monospace; text-align: center;
+  }
+  .kanban-cards { min-height: 275px; display: flex; flex-direction: column; gap: 7px; }
+  .task-card {
+    border: 1px solid var(--border); border-radius: 8px; background: var(--surface);
+    padding: 9px; box-shadow: 0 1px 2px rgba(20,20,10,.05); cursor: grab;
+  }
+  .task-card:active { cursor: grabbing; }
+  .task-card.dragging { opacity: .42; }
+  .task-card.changed { border-color: var(--accent-border); }
+  .task-meta { display: flex; align-items: center; gap: 5px; color: var(--text-faint); font: 9.5px ui-monospace, monospace; }
+  .task-deliverable {
+    max-width: 130px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .task-changed {
+    margin-left: auto; color: var(--accent); background: var(--accent-soft);
+    border-radius: 4px; padding: 1px 4px; font: 9px inherit;
+  }
+  .task-name { margin-top: 5px; font-size: 11.5px; font-weight: 650; line-height: 1.35; }
+  .task-why { margin-top: 5px; color: var(--text-muted); font-size: 10px; line-height: 1.4; }
+  .task-move {
+    width: 100%; margin-top: 7px; border: 0; border-top: 1px solid var(--border);
+    background: transparent; color: var(--text-muted); padding-top: 5px; font: 9.5px inherit;
+  }
+  .governance-strip {
+    display: flex; gap: 7px; overflow-x: auto; margin: 12px 0 0; padding: 9px;
+    border: 1px dashed var(--tier-hybrid); border-radius: 9px; background: var(--tier-hybrid-soft);
+  }
+  .governance-label { flex: none; color: var(--tier-hybrid); font-size: 10px; font-weight: 700; padding-top: 3px; }
+  .governance-card {
+    flex: 0 0 auto; border: 1px solid var(--border); border-radius: 6px;
+    background: var(--surface); padding: 4px 7px; font-size: 10px;
+  }
+  .workshop-note { margin-top: 10px; color: var(--text-faint); font-size: 10.5px; }
+  @media (max-width: 920px) {
+    .kanban { grid-template-columns: repeat(4, 240px); }
+  }
+
   /* panel F drawer */
   details.drawer summary {
     cursor: pointer; list-style: none; display: flex; align-items: center; gap: 8px;
@@ -520,6 +585,47 @@
     <p class="panel-source" style="margin-top:10px;">诚实说明：<b>dim_process.l4_accountable_family/role 这两个数据库字段实际是空的</b>，此热力图的角色归属来自蓝图文本，不是数据库权威字段。"保司关系经理(B协作)"这一列蓝图里只有笼统的"协作岗位"标签，没有指向任何一条具体L4，如实留空——这一列整体空白本身就是一个值得注意的现状：协作岗位在执行细节上目前没有被拆解到任务级。</p>
   </div>
 
+  <!-- Panel C -->
+  <div class="panel">
+    <div class="panel-head">
+      <div class="panel-title">面板 C &middot; AI任务卡片工作坊 <span class="panel-tag">Workshop Kanban</span></div>
+      <div class="panel-source">初始任务：<b>流程蓝图</b> + <b>规则空白地图</b> &middot; 推荐Tier：<b>dim_process</b></div>
+    </div>
+    <p class="delivery-intro">每张卡片是一项“生产L4交付物的任务”。拖动卡片，或使用卡片底部的下拉框，在四种AI分工之间调整；橙色边框表示工作坊判断与系统建议不同。</p>
+
+    <div class="workshop-toolbar">
+      <div class="workshop-toolbar-left">
+        <label for="task-l4-filter" class="workshop-stat">按交付物筛选</label>
+        <select id="task-l4-filter" class="workshop-select">
+          <option value="all">全部L4交付物</option>
+          <option value="L4-IRI-01">L4-IRI-01 · 权限清单</option>
+          <option value="L4-IRI-02">L4-IRI-02 · 资源对接清单</option>
+          <option value="L4-IRI-03">L4-IRI-03 · 对接完成报告</option>
+          <option value="L4-IRI-04">L4-IRI-04 · 权限生效通知</option>
+          <option value="L4-IRI-05">L4-IRI-05 · 整合就绪确认书</option>
+          <option value="L4-IRI-06">L4-IRI-06 · 对接技术规范</option>
+          <option value="L4-IRI-07">L4-IRI-07 · 培训换手记录</option>
+        </select>
+      </div>
+      <div class="workshop-toolbar-right">
+        <span id="task-change-stat" class="workshop-stat">0项调整</span>
+        <button id="task-reset" class="workshop-btn" type="button">重置为系统建议</button>
+      </div>
+    </div>
+
+    <div id="task-kanban" class="kanban" aria-label="AI任务卡片墙"></div>
+
+    <div class="governance-strip">
+      <span class="governance-label">⚠ 前置治理卡</span>
+      <span class="governance-card">建立整合就绪Checklist</span>
+      <span class="governance-card">定义签字人及授权边界</span>
+      <span class="governance-card">定义签字顺序与代签规则</span>
+      <span class="governance-card">建立异常处理与升级机制</span>
+      <span class="governance-card">建立权限分级管理标准</span>
+    </div>
+    <p class="workshop-note">本面板是讨论空间，不是权威数据表。页面刷新或点击重置会恢复系统建议；当前调整不会写回数据库、流程蓝图或规则材料。</p>
+  </div>
+
   <!-- Panel D -->
   <div class="tri-grid" style="grid-template-columns: repeat(2, 1fr);">
 
@@ -728,3 +834,125 @@
 
   <footer>数据来源：process_analytics schema（dim_process / dim_vn / bridge_l3_l2 / dim_org / dim_deliverable / bridge_vn_l4 / bridge_kpi_l3，只读查询）＋ 流程蓝图_L3-IRI_V1.1.md &middot; 2026-07-26</footer>
 </div>
+
+<script>
+  (() => {
+    const columns = [
+      { id: "Human", title: "暂不替代", color: "#d92d20" },
+      { id: "Hybrid", title: "人机协同", color: "#e0a83f" },
+      { id: "Aug", title: "AI增强", color: "#3a72b8" },
+      { id: "Auto", title: "可完全自动", color: "#1f9d76" }
+    ];
+    const tasks = [
+      { id:"T01", l4:"L4-IRI-01", deliverable:"《权限清单》", name:"收集合同与授权范围", tier:"Aug", why:"AI可抽取合同与DIM_License中的权限条款" },
+      { id:"T02", l4:"L4-IRI-01", deliverable:"《权限清单》", name:"对比权限边界并识别冲突", tier:"Aug", why:"适合规则比对与差异提示" },
+      { id:"T03", l4:"L4-IRI-01", deliverable:"《权限清单》", name:"生成权限清单初稿", tier:"Aug", why:"基于模板和已确认条款生成" },
+      { id:"T04", l4:"L4-IRI-01", deliverable:"《权限清单》", name:"裁定权限边界并签批", tier:"Human", why:"蓝图明确Mark必须介入" },
+      { id:"T05", l4:"L4-IRI-02", deliverable:"《资源对接清单》", name:"汇集保司可用资源", tier:"Auto", why:"结构化信息汇集，无需策略判断" },
+      { id:"T06", l4:"L4-IRI-02", deliverable:"《资源对接清单》", name:"资源分类、去重与缺项检查", tier:"Auto", why:"可按标准字段机械校验" },
+      { id:"T07", l4:"L4-IRI-02", deliverable:"《资源对接清单》", name:"生成资源对接清单", tier:"Auto", why:"输入与模板明确" },
+      { id:"T08", l4:"L4-IRI-06", deliverable:"《对接技术规范》", name:"收集API、SSO与系统约束", tier:"Auto", why:"系统元数据可自动汇集" },
+      { id:"T09", l4:"L4-IRI-06", deliverable:"《对接技术规范》", name:"生成对接技术规范初稿", tier:"Auto", why:"依据接口与安全规则生成" },
+      { id:"T10", l4:"L4-IRI-06", deliverable:"《对接技术规范》", name:"根据联调结果修订规范", tier:"Hybrid", why:"AI提出修订，人确认技术取舍" },
+      { id:"T11", l4:"L4-IRI-03", deliverable:"对接完成报告", name:"执行系统、数据、人员三线对接", tier:"Aug", why:"AI辅助协调和跟踪，仍需跨团队执行" },
+      { id:"T12", l4:"L4-IRI-03", deliverable:"对接完成报告", name:"汇集联调日志与异常", tier:"Auto", why:"日志采集和异常归类可自动完成" },
+      { id:"T13", l4:"L4-IRI-03", deliverable:"对接完成报告", name:"执行技术验证", tier:"Hybrid", why:"测试可自动，人负责异常裁定" },
+      { id:"T14", l4:"L4-IRI-03", deliverable:"对接完成报告", name:"生成对接完成报告", tier:"Auto", why:"基于测试证据自动汇总" },
+      { id:"T15", l4:"L4-IRI-04", deliverable:"权限生效通知", name:"执行权限配置", tier:"Auto", why:"蓝图定义为系统自动化配置" },
+      { id:"T16", l4:"L4-IRI-04", deliverable:"权限生效通知", name:"执行权限生效测试", tier:"Hybrid", why:"自动测试，人处理失败例外" },
+      { id:"T17", l4:"L4-IRI-04", deliverable:"权限生效通知", name:"生成并分发权限生效通知", tier:"Auto", why:"满足质量门后自动触发" },
+      { id:"T18", l4:"L4-IRI-07", deliverable:"《培训换手记录》", name:"生成培训材料", tier:"Aug", why:"AI生成初稿，人确认业务语境" },
+      { id:"T19", l4:"L4-IRI-07", deliverable:"《培训换手记录》", name:"开展现场培训", tier:"Human", why:"涉及现场宣讲与互动" },
+      { id:"T20", l4:"L4-IRI-07", deliverable:"《培训换手记录》", name:"执行知识检查", tier:"Aug", why:"AI出题和评分，人处理争议" },
+      { id:"T21", l4:"L4-IRI-07", deliverable:"《培训换手记录》", name:"生成培训换手记录", tier:"Auto", why:"依据签到、测验与确认记录生成" },
+      { id:"T22", l4:"L4-IRI-05", deliverable:"《整合就绪确认书》", name:"汇集全部前置交付物", tier:"Auto", why:"可按L4交付物清单自动归集" },
+      { id:"T23", l4:"L4-IRI-05", deliverable:"《整合就绪确认书》", name:"执行整合就绪Checklist核验", tier:"Auto", why:"模板建立后可机械核验" },
+      { id:"T24", l4:"L4-IRI-05", deliverable:"《整合就绪确认书》", name:"处理核验异常与升级", tier:"Hybrid", why:"AI识别问题，人决定处置和例外" },
+      { id:"T25", l4:"L4-IRI-05", deliverable:"《整合就绪确认书》", name:"完成多部门签字确认", tier:"Human", why:"授权边界和签字机制尚未定义" },
+      { id:"T26", l4:"L4-IRI-05", deliverable:"《整合就绪确认书》", name:"生成确认书并触发L3-IBE", tier:"Auto", why:"签字证据齐全后可自动生成与触发" }
+    ].map(task => ({ ...task, current: task.tier }));
+
+    const board = document.getElementById("task-kanban");
+    const filter = document.getElementById("task-l4-filter");
+    const stat = document.getElementById("task-change-stat");
+    const reset = document.getElementById("task-reset");
+    let draggedId = null;
+
+    function moveTask(taskId, targetTier) {
+      const task = tasks.find(item => item.id === taskId);
+      if (!task || !columns.some(col => col.id === targetTier)) return;
+      task.current = targetTier;
+      render();
+    }
+
+    function cardTemplate(task) {
+      const changed = task.current !== task.tier;
+      return `
+        <article class="task-card${changed ? " changed" : ""}" draggable="true" data-task-id="${task.id}">
+          <div class="task-meta">
+            <span>${task.l4}</span>
+            <span class="task-deliverable">${task.deliverable}</span>
+            ${changed ? `<span class="task-changed">原建议 ${task.tier}</span>` : ""}
+          </div>
+          <div class="task-name">${task.name}</div>
+          <div class="task-why">${task.why}</div>
+          <select class="task-move" data-task-move="${task.id}" aria-label="调整${task.name}的AI分工">
+            ${columns.map(col => `<option value="${col.id}"${col.id === task.current ? " selected" : ""}>移至：${col.title}</option>`).join("")}
+          </select>
+        </article>`;
+    }
+
+    function render() {
+      const activeL4 = filter.value;
+      board.innerHTML = columns.map(col => {
+        const visible = tasks.filter(task => task.current === col.id && (activeL4 === "all" || task.l4 === activeL4));
+        return `
+          <section class="kanban-col" data-tier="${col.id}">
+            <div class="kanban-head">
+              <span class="kanban-dot" style="background:${col.color}"></span>
+              <span class="kanban-title">${col.title}</span>
+              <span class="kanban-count">${visible.length}</span>
+            </div>
+            <div class="kanban-cards">${visible.map(cardTemplate).join("")}</div>
+          </section>`;
+      }).join("");
+
+      const changedCount = tasks.filter(task => task.current !== task.tier).length;
+      stat.textContent = `${changedCount}项调整`;
+
+      board.querySelectorAll(".task-card").forEach(card => {
+        card.addEventListener("dragstart", () => {
+          draggedId = card.dataset.taskId;
+          card.classList.add("dragging");
+        });
+        card.addEventListener("dragend", () => {
+          draggedId = null;
+          card.classList.remove("dragging");
+          board.querySelectorAll(".kanban-col").forEach(col => col.classList.remove("drag-over"));
+        });
+      });
+      board.querySelectorAll(".kanban-col").forEach(col => {
+        col.addEventListener("dragover", event => {
+          event.preventDefault();
+          col.classList.add("drag-over");
+        });
+        col.addEventListener("dragleave", () => col.classList.remove("drag-over"));
+        col.addEventListener("drop", event => {
+          event.preventDefault();
+          if (draggedId) moveTask(draggedId, col.dataset.tier);
+        });
+      });
+      board.querySelectorAll("[data-task-move]").forEach(select => {
+        select.addEventListener("change", event => moveTask(select.dataset.taskMove, event.target.value));
+        select.addEventListener("mousedown", event => event.stopPropagation());
+      });
+    }
+
+    filter.addEventListener("change", render);
+    reset.addEventListener("click", () => {
+      tasks.forEach(task => { task.current = task.tier; });
+      render();
+    });
+    render();
+  })();
+</script>
