@@ -232,14 +232,79 @@
   }
   .quad-xaxis-arrow { color: var(--text-muted); font-weight: 600; }
 
-  .deliv-item {
-    display: flex; justify-content: space-between; gap: 8px; align-items: start;
-    padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 12px;
+  /* Panel E · Delivery Map */
+  .delivery-intro {
+    max-width: 78ch; margin: -2px 0 18px; color: var(--text-muted); font-size: 12.5px;
   }
-  .deliv-item:last-child { border-bottom: none; }
-  .deliv-name { font-weight: 600; }
-  .deliv-dest { color: var(--text-faint); font-size: 11px; }
-  .deliv-flag { color: var(--tier-hybrid); }
+  .delivery-map { display: flex; flex-direction: column; align-items: center; }
+  .map-source, .map-outcome {
+    width: min(100%, 560px); border: 1px solid var(--border); border-radius: 10px;
+    background: var(--surface-2); padding: 11px 14px; text-align: center;
+  }
+  .map-kicker {
+    color: var(--text-faint); font-size: 10px; font-weight: 700; letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+  .map-source strong, .map-outcome strong { display: block; margin-top: 2px; font-size: 13px; }
+  .map-source span, .map-outcome span { color: var(--text-muted); font-size: 11px; }
+  .map-link {
+    width: 1px; height: 24px; border-left: 1px dashed var(--accent-border); position: relative;
+  }
+  .map-link::after {
+    content: "▼"; position: absolute; bottom: -7px; left: -5px; color: var(--accent); font-size: 9px;
+  }
+  .delivery-field {
+    width: 100%; border: 1px solid var(--accent-border); border-radius: 14px;
+    background: var(--accent-soft); padding: 18px;
+  }
+  .l3-hub {
+    width: min(100%, 620px); margin: 0 auto; border: 1.5px solid var(--accent-border);
+    border-radius: 12px; background: var(--surface); padding: 15px 18px; text-align: center;
+    box-shadow: var(--shadow);
+  }
+  .l3-hub strong { display: block; margin-top: 3px; font-size: 15px; }
+  .l3-hub p { margin: 5px auto 0; max-width: 70ch; color: var(--text-muted); font-size: 11.5px; }
+  .hub-branches {
+    width: 72%; height: 24px; margin: 0 auto; border-left: 1px dashed var(--accent-border);
+    border-right: 1px dashed var(--accent-border); border-bottom: 1px dashed var(--accent-border);
+  }
+  .delivery-nodes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .delivery-node {
+    min-width: 0; border: 1px solid var(--border); border-radius: 10px;
+    background: var(--surface); padding: 11px; position: relative;
+  }
+  .delivery-node.risk { border-color: var(--tier-hybrid); }
+  .node-top { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+  .node-code { color: var(--text-faint); font: 10px ui-monospace, monospace; }
+  .node-tier {
+    border-radius: 999px; padding: 2px 7px; font: 700 9.5px ui-monospace, monospace;
+  }
+  .node-name { margin-top: 5px; font-size: 12.5px; font-weight: 700; }
+  .node-ai {
+    margin-top: 8px; border-radius: 7px; background: var(--accent-soft); padding: 7px 8px;
+    color: var(--text-muted); font-size: 10.5px; line-height: 1.45;
+  }
+  .node-ai b { display: block; margin-bottom: 2px; color: var(--accent); font-size: 9.5px; letter-spacing: .03em; }
+  .node-quality { margin-top: 7px; color: var(--text-faint); font-size: 10px; }
+  .node-warning { margin-top: 6px; color: var(--tier-hybrid); font-size: 10px; }
+  .map-outcome {
+    border-color: #1f9d7655; background: var(--tier-auto-soft);
+  }
+  .map-outcome .map-kicker { color: var(--tier-auto); }
+  .delivery-principle {
+    margin-top: 14px; border-left: 3px solid var(--accent); padding: 9px 12px;
+    background: var(--surface-2); border-radius: 0 8px 8px 0; font-size: 11.5px;
+    color: var(--text-muted);
+  }
+  .delivery-principle b { color: var(--text); }
+  @media (max-width: 920px) {
+    .delivery-nodes { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 560px) {
+    .delivery-field { padding: 12px; }
+    .delivery-nodes { grid-template-columns: 1fr; }
+    .hub-branches { width: 1px; border-right: 0; border-bottom: 0; }
+  }
 
   /* panel F drawer */
   details.drawer summary {
@@ -455,7 +520,7 @@
     <p class="panel-source" style="margin-top:10px;">诚实说明：<b>dim_process.l4_accountable_family/role 这两个数据库字段实际是空的</b>，此热力图的角色归属来自蓝图文本，不是数据库权威字段。"保司关系经理(B协作)"这一列蓝图里只有笼统的"协作岗位"标签，没有指向任何一条具体L4，如实留空——这一列整体空白本身就是一个值得注意的现状：协作岗位在执行细节上目前没有被拆解到任务级。</p>
   </div>
 
-  <!-- D / E -->
+  <!-- Panel D -->
   <div class="tri-grid" style="grid-template-columns: repeat(2, 1fr);">
 
     <div class="panel">
@@ -502,18 +567,88 @@
       <p class="matrix-note">Y轴(可行性)按每条L4的<b class="mono">dim_process.agentifiability</b>定位(真实、逐条不同)；X轴(业务价值)7条L4共用同一个坐标——因为价值数据只精确到L3级：<b class="mono">bridge_kpi_l3</b>给L3-IRI唯一挂钩的KPI贡献权重0.15，在全部24条L3级权重里排在<b style="color:var(--tier-hybrid)">第12.5百分位</b>(中位数0.4)，即"确实偏低"而不只是"未确认"。5条Auto落在观察区，2条Hybrid落在暂缓区——跟第7层给出的移交建议一致。</p>
     </div>
 
-    <div class="panel">
-      <div class="panel-head">
-        <div class="panel-title">面板 E &middot; L4交付物地图</div>
-      </div>
-      <div class="deliv-item"><div><div class="deliv-name">《权限清单》</div><div class="panel-source mono">L4-IRI-01</div></div><div class="deliv-dest">Mark签批存档</div></div>
-      <div class="deliv-item"><div><div class="deliv-name">《资源对接清单》</div><div class="panel-source mono">L4-IRI-02</div></div><div class="deliv-dest">移交执行团队</div></div>
-      <div class="deliv-item"><div><div class="deliv-name">对接完成报告</div><div class="panel-source mono">L4-IRI-03</div></div><div class="deliv-dest">内部存档</div></div>
-      <div class="deliv-item"><div><div class="deliv-name">权限生效通知</div><div class="panel-source mono">L4-IRI-04</div></div><div class="deliv-dest">全员同步</div></div>
-      <div class="deliv-item"><div><div class="deliv-name deliv-flag">《整合就绪确认书》⚠</div><div class="panel-source mono">L4-IRI-05 &middot; 唯一挂价值节点</div></div><div class="deliv-dest">触发L3-IBE</div></div>
-      <div class="deliv-item"><div><div class="deliv-name">《对接技术规范》</div><div class="panel-source mono">L4-IRI-06</div></div><div class="deliv-dest">IT团队执行</div></div>
-      <div class="deliv-item"><div><div class="deliv-name">《培训换手记录》</div><div class="panel-source mono">L4-IRI-07</div></div><div class="deliv-dest">内部存档</div></div>
+  </div>
+
+  <!-- Panel E -->
+  <div class="panel">
+    <div class="panel-head">
+      <div class="panel-title">面板 E &middot; L4交付物地图 <span class="panel-tag">Delivery Map</span></div>
+      <div class="panel-source">能力：<b>bridge_l3_l2</b> &middot; L4/Tier：<b>dim_process</b> &middot; 交付物：<b>流程蓝图</b></div>
     </div>
+    <p class="delivery-intro">从“岗位是否会被替代”切换到“交付物如何被重新生产”：先看L2能力提出的业务要求，再看L3如何组织7项L4交付物，最后看这些交付物怎样共同形成可验收的价值节点。</p>
+
+    <div class="delivery-map">
+      <div class="map-source">
+        <div class="map-kicker">上游依赖 &middot; L2能力</div>
+        <strong>CAP-L2-1-S3 &middot; 保司资源整合能力</strong>
+        <span>定义资源、系统、权限与人员完成整合的能力边界</span>
+      </div>
+      <div class="map-link"></div>
+
+      <div class="delivery-field">
+        <div class="l3-hub">
+          <div class="map-kicker">中心目标 &middot; L3-IRI</div>
+          <strong>完成保司资源整合，并达到可运营状态</strong>
+          <p>不是完成若干岗位动作，而是形成一组可检查、可追溯、可验收的交付物，最终证明“整合就绪”。</p>
+        </div>
+        <div class="hub-branches"></div>
+
+        <div class="delivery-nodes">
+          <div class="delivery-node">
+            <div class="node-top"><span class="node-code">L4-IRI-01</span><span class="node-tier tier-Hybrid">Hybrid</span></div>
+            <div class="node-name">《权限清单》</div>
+            <div class="node-ai"><b>✦ AI重塑方式</b>生成谈判底稿、识别权限差异与冲突；由Mark保留最终权限裁决。</div>
+            <div class="node-quality">质量锚点：边界完整、冲突已裁定、签批可追溯</div>
+          </div>
+          <div class="delivery-node">
+            <div class="node-top"><span class="node-code">L4-IRI-02</span><span class="node-tier tier-Auto">Auto</span></div>
+            <div class="node-name">《资源对接清单》</div>
+            <div class="node-ai"><b>✦ AI重塑方式</b>自动汇集多源资源、去重归类、检查缺项并生成标准清单。</div>
+            <div class="node-quality">质量锚点：资源全量、状态准确、责任清晰</div>
+          </div>
+          <div class="delivery-node">
+            <div class="node-top"><span class="node-code">L4-IRI-03</span><span class="node-tier tier-Auto">Auto</span></div>
+            <div class="node-name">对接完成报告</div>
+            <div class="node-ai"><b>✦ AI重塑方式</b>聚合联调日志、异常、测试结果与关闭证据，自动形成报告。</div>
+            <div class="node-quality">质量锚点：测试有证据、异常有闭环</div>
+          </div>
+          <div class="delivery-node">
+            <div class="node-top"><span class="node-code">L4-IRI-04</span><span class="node-tier tier-Auto">Auto</span></div>
+            <div class="node-name">权限生效通知</div>
+            <div class="node-ai"><b>✦ AI重塑方式</b>监听配置与验证结果，满足条件后自动生成并定向分发通知。</div>
+            <div class="node-quality">质量锚点：生效对象、时间和权限范围一致</div>
+          </div>
+          <div class="delivery-node risk">
+            <div class="node-top"><span class="node-code">L4-IRI-05</span><span class="node-tier tier-Auto">Auto</span></div>
+            <div class="node-name">《整合就绪确认书》</div>
+            <div class="node-ai"><b>✦ AI重塑方式</b>自动核验全部前置交付物与checklist，证据齐备后生成确认书。</div>
+            <div class="node-quality">质量锚点：签字版、前置证据齐全、可触发L3-IBE</div>
+            <div class="node-warning">⚠ 当前仍为口头确认；签字机制落地前暂缓自动出具</div>
+          </div>
+          <div class="delivery-node">
+            <div class="node-top"><span class="node-code">L4-IRI-06</span><span class="node-tier tier-Auto">Auto</span></div>
+            <div class="node-name">《对接技术规范》</div>
+            <div class="node-ai"><b>✦ AI重塑方式</b>依据系统能力、接口约束和安全要求生成规范，并随联调结果更新。</div>
+            <div class="node-quality">质量锚点：接口可执行、安全约束完整</div>
+          </div>
+          <div class="delivery-node">
+            <div class="node-top"><span class="node-code">L4-IRI-07</span><span class="node-tier tier-Hybrid">Hybrid</span></div>
+            <div class="node-name">《培训换手记录》</div>
+            <div class="node-ai"><b>✦ AI重塑方式</b>生成培训材料、知识检查与换手清单；人完成宣讲和最终确认。</div>
+            <div class="node-quality">质量锚点：关键人员掌握、换手责任明确</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="map-link"></div>
+      <div class="map-outcome">
+        <div class="map-kicker">向后服务 &middot; 价值节点</div>
+        <strong>VN-INS-03 &middot; 整合就绪确认书</strong>
+        <span>P1 &middot; 达标标准：签字版 &middot; 验收后触发 L3-IBE</span>
+      </div>
+    </div>
+
+    <div class="delivery-principle"><b>业务解读：</b>AI的价值不是简单减少某个岗位的工作量，而是让交付物从“人工收集和口头确认”转变为“由数据和证据持续驱动、自动检查、按质量门生成”的生产逻辑。</div>
   </div>
 
   <!-- Panel F -->
