@@ -1,0 +1,595 @@
+<title>L3-IRI · AI原生流程模型 demo</title>
+<style>
+  :root {
+    --bg: #f7f6f2;
+    --surface: #ffffff;
+    --surface-2: #f0eee7;
+    --border: #ddd8cc;
+    --text: #1c2029;
+    --text-muted: #6d7280;
+    --text-faint: #9a9d8f;
+    --accent: #b8631f;
+    --accent-soft: #b8631f14;
+    --accent-border: #b8631f55;
+    --tier-auto: #1f9d76;
+    --tier-auto-soft: #1f9d7618;
+    --tier-aug: #3a72b8;
+    --tier-aug-soft: #3a72b818;
+    --tier-hybrid: #b8821f;
+    --tier-hybrid-soft: #b8821f18;
+    --tier-human: #6d7280;
+    --tier-human-soft: #6d728018;
+    --shadow: 0 1px 2px rgba(20,20,10,0.06), 0 8px 24px rgba(20,20,10,0.05);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #10141c;
+      --surface: #171d29;
+      --surface-2: #1e2635;
+      --border: #2a3345;
+      --text: #e6e9f0;
+      --text-muted: #8b93a7;
+      --text-faint: #5c6479;
+      --accent: #e0a054;
+      --accent-soft: #e0a05420;
+      --accent-border: #e0a05460;
+      --tier-auto: #45c9a0;
+      --tier-auto-soft: #45c9a022;
+      --tier-aug: #5b93d9;
+      --tier-aug-soft: #5b93d922;
+      --tier-hybrid: #e0a83f;
+      --tier-hybrid-soft: #e0a83f22;
+      --tier-human: #8b93a7;
+      --tier-human-soft: #8b93a722;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 12px 32px rgba(0,0,0,0.35);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #10141c; --surface: #171d29; --surface-2: #1e2635; --border: #2a3345;
+    --text: #e6e9f0; --text-muted: #8b93a7; --text-faint: #5c6479;
+    --accent: #e0a054; --accent-soft: #e0a05420; --accent-border: #e0a05460;
+    --tier-auto: #45c9a0; --tier-auto-soft: #45c9a022;
+    --tier-aug: #5b93d9; --tier-aug-soft: #5b93d922;
+    --tier-hybrid: #e0a83f; --tier-hybrid-soft: #e0a83f22;
+    --tier-human: #8b93a7; --tier-human-soft: #8b93a722;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 12px 32px rgba(0,0,0,0.35);
+  }
+  :root[data-theme="light"] {
+    --bg: #f7f6f2; --surface: #ffffff; --surface-2: #f0eee7; --border: #ddd8cc;
+    --text: #1c2029; --text-muted: #6d7280; --text-faint: #9a9d8f;
+    --accent: #b8631f; --accent-soft: #b8631f14; --accent-border: #b8631f55;
+    --tier-auto: #1f9d76; --tier-auto-soft: #1f9d7618;
+    --tier-aug: #3a72b8; --tier-aug-soft: #3a72b818;
+    --tier-hybrid: #b8821f; --tier-hybrid-soft: #b8821f18;
+    --tier-human: #6d7280; --tier-human-soft: #6d728018;
+    --shadow: 0 1px 2px rgba(20,20,10,0.06), 0 8px 24px rgba(20,20,10,0.05);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: ui-sans-serif, -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    font-size: 14px;
+    line-height: 1.55;
+    margin: 0;
+    padding: 28px 32px 64px;
+  }
+  .mono { font-family: ui-monospace, "SF Mono", "Cascadia Code", Consolas, monospace; }
+  .wrap { max-width: 1180px; margin: 0 auto; }
+
+  /* header */
+  header { margin-bottom: 22px; }
+  .eyebrow {
+    font-size: 11px; letter-spacing: 0.09em; text-transform: uppercase;
+    color: var(--text-faint); font-weight: 600; margin: 0 0 6px;
+  }
+  h1 { font-size: 26px; font-weight: 700; margin: 0 0 6px; text-wrap: balance; letter-spacing: -0.01em; }
+  .subtitle { color: var(--text-muted); font-size: 13.5px; max-width: 68ch; }
+  .path {
+    margin-top: 10px; display: flex; align-items: center; gap: 8px;
+    font-size: 12.5px; color: var(--text-muted); flex-wrap: wrap;
+  }
+  .path b { color: var(--text); font-weight: 600; }
+  .path .arrow { color: var(--text-faint); }
+
+  /* KPI strip */
+  .kpi-strip {
+    display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px;
+    margin: 20px 0 26px;
+  }
+  .kpi {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 13px 14px; box-shadow: var(--shadow);
+  }
+  .kpi .num { font-family: ui-monospace, "SF Mono", Consolas, monospace; font-size: 22px; font-weight: 600;
+    font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+  .kpi .lbl { font-size: 11.5px; color: var(--text-muted); margin-top: 2px; }
+  .kpi.warn .num { color: var(--tier-hybrid); }
+  .kpi.good .num { color: var(--tier-auto); }
+  .kpi.accent .num { color: var(--accent); }
+
+  /* section shell */
+  .panel {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 18px 20px; box-shadow: var(--shadow); margin-bottom: 16px;
+  }
+  .panel-head {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
+    margin-bottom: 14px;
+  }
+  .panel-title { display: flex; align-items: center; gap: 8px; font-size: 14.5px; font-weight: 700; }
+  .panel-tag {
+    font-size: 10.5px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
+    color: var(--text-faint); background: var(--surface-2); border: 1px solid var(--border);
+    border-radius: 5px; padding: 2px 7px;
+  }
+  .panel-source { font-size: 11.5px; color: var(--text-faint); }
+  .panel-source b { color: var(--text-muted); font-weight: 600; }
+
+  /* Panel A: flow */
+  .flow { display: flex; flex-direction: column; }
+  .flow-step {
+    display: grid; grid-template-columns: 26px 1fr auto; gap: 12px; align-items: start;
+    padding: 10px 0; border-bottom: 1px dashed var(--border);
+  }
+  .flow-step:last-child { border-bottom: none; }
+  .flow-n {
+    width: 22px; height: 22px; border-radius: 50%; background: var(--surface-2);
+    border: 1px solid var(--border); display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; color: var(--text-muted); font-family: ui-monospace, monospace;
+  }
+  .flow-body .l4code { font-family: ui-monospace, monospace; font-size: 11px; color: var(--text-faint); }
+  .flow-body .name { font-weight: 600; font-size: 13.5px; margin: 1px 0 2px; }
+  .flow-body .detail { font-size: 12px; color: var(--text-muted); max-width: 62ch; }
+  .flow-body .gate {
+    margin-top: 5px; font-size: 11.5px; color: var(--tier-aug);
+    background: var(--tier-aug-soft); display: inline-block; padding: 2px 7px; border-radius: 5px;
+  }
+  .flow-body .flag {
+    margin-top: 5px; font-size: 11.5px; color: var(--tier-hybrid);
+    background: var(--tier-hybrid-soft); display: inline-block; padding: 2px 7px; border-radius: 5px;
+  }
+  .tier-chip {
+    font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 999px; white-space: nowrap;
+    font-family: ui-monospace, monospace;
+  }
+  .tier-Auto { color: var(--tier-auto); background: var(--tier-auto-soft); }
+  .tier-Aug { color: var(--tier-aug); background: var(--tier-aug-soft); }
+  .tier-Hybrid { color: var(--tier-hybrid); background: var(--tier-hybrid-soft); }
+  .tier-Human { color: var(--tier-human); background: var(--tier-human-soft); }
+
+  /* grid of B/D/E */
+  .tri-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  @media (max-width: 920px) { .tri-grid { grid-template-columns: 1fr; } .kpi-strip { grid-template-columns: repeat(3,1fr); } }
+
+  /* Panel B heatmap */
+  .heat-wrap { overflow-x: auto; }
+  .heat-grid {
+    display: grid; grid-template-columns: 190px repeat(3, 1fr); gap: 5px; min-width: 620px;
+  }
+  .heat-corner { }
+  .heat-col-head {
+    font-size: 11.5px; font-weight: 700; color: var(--text-muted); text-align: center;
+    padding: 6px 4px; display: flex; flex-direction: column; gap: 2px;
+  }
+  .heat-col-head span { font-weight: 400; font-size: 10px; color: var(--text-faint); }
+  .heat-col-head.accent-col { color: var(--accent); }
+  .heat-row-head {
+    font-size: 12px; font-weight: 600; display: flex; flex-direction: column; gap: 1px;
+    padding: 8px 8px 8px 0; justify-content: center;
+  }
+  .heat-row-head .mono { font-size: 10px; color: var(--text-faint); font-weight: 400; }
+  .heat-cell {
+    border-radius: 7px; min-height: 44px; display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; font-family: ui-monospace, monospace; position: relative;
+    border: 1px solid transparent;
+  }
+  .heat-cell.empty { border: 1px dashed var(--border); }
+  .heat-icon { position: absolute; top: 3px; right: 5px; font-size: 10px; }
+  .tier-Auto-cell { background: var(--tier-auto); color: var(--surface); }
+  .tier-Aug-cell { background: var(--tier-aug); color: var(--surface); }
+  .tier-Hybrid-cell { background: var(--tier-hybrid); color: var(--surface); }
+  .tier-Human-cell { background: var(--tier-human); color: var(--surface); }
+  .heat-legend {
+    display: flex; flex-wrap: wrap; gap: 14px; margin-top: 14px; font-size: 11.5px; color: var(--text-muted);
+  }
+  .heat-legend-item { display: flex; align-items: center; gap: 6px; }
+  .sw { width: 12px; height: 12px; border-radius: 4px; display: inline-block; }
+  .matrix-note { font-size: 11px; color: var(--text-muted); margin-top: 22px; }
+
+  /* Panel D quadrant */
+  .quad { display: flex; flex-direction: column; }
+  .quad-yaxis-label {
+    font-size: 10.5px; color: var(--text-faint); display: flex; align-items: center; gap: 4px;
+  }
+  .quad-yaxis-label.top { margin-bottom: 4px; }
+  .quad-yaxis-label.bottom { margin-top: 4px; }
+  .quad-grid {
+    position: relative; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr;
+    gap: 2px; aspect-ratio: 1 / 0.92; background: var(--border); border-radius: 8px; overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .quad-zone { background: var(--surface); padding: 10px 11px; display: flex; flex-direction: column; gap: 2px; }
+  .quad-zone-head { display: flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 700; }
+  .quad-icon { font-size: 13px; }
+  .quad-zone-sub { font-size: 10px; color: var(--text-faint); }
+  .quad-zone-action { font-size: 10.5px; color: var(--text-muted); margin-top: auto; padding-top: 6px; }
+  .quad-win { background: var(--tier-auto-soft); }
+  .quad-win .quad-zone-action { color: var(--tier-auto); font-weight: 600; }
+  .quad-watch { background: var(--tier-aug-soft); }
+  .quad-strategy { background: var(--tier-hybrid-soft); }
+  .quad-hold { background: var(--tier-human-soft); }
+  .quad-point {
+    position: absolute; width: 30px; height: 30px; border-radius: 50%;
+    background: var(--accent); border: 2.5px solid var(--surface); box-shadow: 0 0 0 1px var(--accent-border);
+    transform: translate(-50%, 50%); display: flex; align-items: center; justify-content: center; z-index: 2;
+  }
+  .quad-point-alt { background: var(--tier-hybrid); }
+  .quad-point-n { color: var(--surface); font-weight: 700; font-size: 13px; font-family: ui-monospace, monospace; }
+  .quad-xaxis {
+    display: flex; justify-content: space-between; margin-top: 6px; font-size: 10.5px; color: var(--text-faint);
+  }
+  .quad-xaxis-arrow { color: var(--text-muted); font-weight: 600; }
+
+  .deliv-item {
+    display: flex; justify-content: space-between; gap: 8px; align-items: start;
+    padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 12px;
+  }
+  .deliv-item:last-child { border-bottom: none; }
+  .deliv-name { font-weight: 600; }
+  .deliv-dest { color: var(--text-faint); font-size: 11px; }
+  .deliv-flag { color: var(--tier-hybrid); }
+
+  /* panel F drawer */
+  details.drawer summary {
+    cursor: pointer; list-style: none; display: flex; align-items: center; gap: 8px;
+    font-weight: 700; font-size: 14.5px;
+  }
+  details.drawer summary::-webkit-details-marker { display: none; }
+  details.drawer summary .chevron { transition: transform 0.15s ease; color: var(--text-faint); font-size: 11px; }
+  details.drawer[open] summary .chevron { transform: rotate(90deg); }
+  .datatable-wrap { overflow-x: auto; margin-top: 14px; }
+  table.datatable { width: 100%; border-collapse: collapse; font-size: 12px; }
+  table.datatable th {
+    text-align: left; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.04em;
+    color: var(--text-faint); font-weight: 600; padding: 6px 10px; border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  table.datatable td {
+    padding: 7px 10px; border-bottom: 1px solid var(--border); white-space: nowrap;
+    font-family: ui-monospace, monospace; font-size: 11.5px;
+  }
+  table.datatable tr:last-child td { border-bottom: none; }
+
+  /* layer 7 */
+  .layer7 {
+    border: 1px solid var(--accent-border); background: var(--accent-soft);
+    border-radius: 12px; padding: 22px 24px; margin-top: 22px;
+  }
+  .layer7-head { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+  .layer7-head .badge {
+    background: var(--accent); color: var(--surface); font-size: 11px; font-weight: 700;
+    padding: 3px 9px; border-radius: 5px; font-family: ui-monospace, monospace;
+  }
+  .layer7 h2 { font-size: 17px; margin: 0; font-weight: 700; }
+  .layer7-sub { color: var(--text-muted); font-size: 12.5px; margin: 6px 0 18px; max-width: 68ch; }
+  .finding { display: grid; grid-template-columns: 28px 1fr; gap: 12px; margin-bottom: 16px; }
+  .finding:last-child { margin-bottom: 0; }
+  .finding-n {
+    width: 26px; height: 26px; border-radius: 50%; background: var(--surface);
+    border: 1.5px solid var(--accent-border); color: var(--accent); font-weight: 700; font-size: 12px;
+    display: flex; align-items: center; justify-content: center; font-family: ui-monospace, monospace;
+  }
+  .finding h3 { font-size: 13.5px; margin: 2px 0 5px; }
+  .finding p { margin: 0; font-size: 13px; color: var(--text); max-width: 74ch; }
+  .finding .conflict {
+    margin-top: 8px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    padding: 10px 12px; font-size: 12px;
+  }
+  .finding .conflict .row { display: flex; justify-content: space-between; padding: 3px 0; }
+  .finding .conflict .row b { font-family: ui-monospace, monospace; }
+  .verdict {
+    margin-top: 4px; background: var(--surface); border: 1.5px solid var(--accent-border);
+    border-radius: 8px; padding: 14px 16px;
+  }
+  .verdict .go { color: var(--tier-auto); font-weight: 700; }
+  .verdict .hold { color: var(--tier-hybrid); font-weight: 700; }
+  .verdict ul { margin: 8px 0 0; padding-left: 18px; font-size: 12.5px; }
+  .verdict li { margin-bottom: 4px; }
+  .verdict code { font-family: ui-monospace, monospace; background: var(--surface-2); padding: 1px 5px; border-radius: 4px; font-size: 11.5px; }
+
+  footer { margin-top: 26px; font-size: 11.5px; color: var(--text-faint); text-align: center; }
+</style>
+
+<div class="wrap">
+  <header>
+    <p class="eyebrow">VNW流程模型 demo &middot; 数据仓库权威源 + 第七层分析结论</p>
+    <h1>L3-IRI &middot; 保司资源整合与深度对接</h1>
+    <p class="subtitle">这是"6模块事实层 + 第7层分析结论"这套流程模型骨架，用真实数据跑一遍的demo画布——不接前端，不是最终架构，只验证内容逻辑站不站得住。</p>
+    <div class="path">
+      <span><b>CAP-L2-1-S3</b> 保司资源整合能力</span>
+      <span class="arrow">&rarr;</span>
+      <span><b>L3-IRI</b>（本流程）</span>
+      <span class="arrow">&rarr;</span>
+      <span><b>VN-INS-03</b> 整合就绪确认书</span>
+      <span class="arrow">&rarr;</span>
+      <span>触发 L3-IBE</span>
+    </div>
+  </header>
+
+  <section class="kpi-strip">
+    <div class="kpi"><div class="num">7</div><div class="lbl">L4活动总数</div></div>
+    <div class="kpi good"><div class="num">4</div><div class="lbl">建议移交AIT</div></div>
+    <div class="kpi warn"><div class="num">3</div><div class="lbl">暂缓移交</div></div>
+    <div class="kpi"><div class="num">5/7</div><div class="lbl">Auto级占比</div></div>
+    <div class="kpi accent"><div class="num">0.15</div><div class="lbl">业务价值权重(未confirm)</div></div>
+    <div class="kpi"><div class="num">2</div><div class="lbl">涉及岗位族</div></div>
+  </section>
+
+  <!-- Panel A -->
+  <div class="panel">
+    <div class="panel-head">
+      <div class="panel-title">面板 A &middot; L3流程叙事(理想态执行路径)<span class="panel-tag">主视图</span></div>
+      <div class="panel-source">来源：<b>蓝图文件</b>(步骤叙事) + <b>dim_process</b>(Tier判断)</div>
+    </div>
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-n">1</div>
+        <div class="flow-body">
+          <div class="l4code">L4-IRI-01</div>
+          <div class="name">权限清单谈判</div>
+          <div class="detail">A族＋Mark确认权限边界 → 输出《权限清单》</div>
+          <div class="flag">Mark 必须介入</div>
+        </div>
+        <div class="tier-chip tier-Hybrid">Hybrid</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-n">2</div>
+        <div class="flow-body">
+          <div class="l4code">L4-IRI-02 / 06</div>
+          <div class="name">资源盘点与对接规范制定</div>
+          <div class="detail">盘点保司可用资源 → 《资源对接清单》；制定《对接技术规范》</div>
+        </div>
+        <div class="tier-chip tier-Auto">Auto</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-n">3</div>
+        <div class="flow-body">
+          <div class="l4code">L4-IRI-03</div>
+          <div class="name">系统与数据团队对接</div>
+          <div class="detail">系统＋数据＋人员三线对接 → 对接完成报告</div>
+          <div class="gate">判断节点① 技术验证未通过 → 退回步骤2</div>
+        </div>
+        <div class="tier-chip tier-Auto">Auto</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-n">4</div>
+        <div class="flow-body">
+          <div class="l4code">L4-IRI-04</div>
+          <div class="name">权限生效与配置</div>
+          <div class="detail">系统自动化配置权限 → 权限生效通知</div>
+          <div class="gate">判断节点② 生效测试未通过 → 退回步骤3</div>
+        </div>
+        <div class="tier-chip tier-Auto">Auto</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-n">5</div>
+        <div class="flow-body">
+          <div class="l4code">L4-IRI-07</div>
+          <div class="name">保司内部培训与人员换手</div>
+          <div class="detail">对保司人员开展培训 → 《培训换手记录》</div>
+        </div>
+        <div class="tier-chip tier-Hybrid">Hybrid</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-n">6</div>
+        <div class="flow-body">
+          <div class="l4code">L4-IRI-05</div>
+          <div class="name">整合就绪确认</div>
+          <div class="detail">各项checklist核验 → 《整合就绪确认书》→ 触发 L3-IBE</div>
+          <div class="flag">⚠ 当前口头确认，无正式签字文件（蓝图自标 P1 治理提升项）</div>
+        </div>
+        <div class="tier-chip tier-Auto">Auto</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Panel B: heatmap -->
+  <div class="panel">
+    <div class="panel-head">
+      <div class="panel-title">面板 B &middot; AI替代性热力图<span class="panel-tag">行=L4活动(CAP-L2-1-S3下) &middot; 列=岗位角色</span></div>
+      <div class="panel-source">来源：<b>dim_process</b>(Tier) + <b>dim_org</b>(岗位/mark_retained) + 蓝图"人介入点"(文件,数据库无L4↔岗位桥接)</div>
+    </div>
+
+    <div class="heat-wrap">
+      <div class="heat-grid">
+        <div class="heat-corner"></div>
+        <div class="heat-col-head">保司交付<span>A族&middot;执行&middot;1人</span></div>
+        <div class="heat-col-head accent-col">保司战略官<span>A族&middot;战略&middot;Mark本人席位</span></div>
+        <div class="heat-col-head">保司关系经理<span>B族&middot;协作&middot;3-5人</span></div>
+
+        <div class="heat-row-head"><span class="mono">L4-IRI-01</span>权限清单谈判</div>
+        <div class="heat-cell empty" title="蓝图未指向此角色"></div>
+        <div class="heat-cell tier-Hybrid-cell" title="Mark必须介入 &middot; Hybrid">Hybrid<span class="heat-icon">⚑</span></div>
+        <div class="heat-cell empty" title="蓝图未指向此角色"></div>
+
+        <div class="heat-row-head"><span class="mono">L4-IRI-02</span>保司资源盘点</div>
+        <div class="heat-cell tier-Auto-cell" title="无需人介入 &middot; Auto">Auto</div>
+        <div class="heat-cell empty"></div>
+        <div class="heat-cell empty"></div>
+
+        <div class="heat-row-head"><span class="mono">L4-IRI-03</span>系统数据团队对接</div>
+        <div class="heat-cell tier-Auto-cell" title="技术协调 &middot; Auto">Auto</div>
+        <div class="heat-cell empty"></div>
+        <div class="heat-cell empty"></div>
+
+        <div class="heat-row-head"><span class="mono">L4-IRI-04</span>权限生效与配置</div>
+        <div class="heat-cell tier-Auto-cell" title="测试验证 &middot; Auto">Auto</div>
+        <div class="heat-cell empty"></div>
+        <div class="heat-cell empty"></div>
+
+        <div class="heat-row-head"><span class="mono">L4-IRI-05</span>整合就绪确认</div>
+        <div class="heat-cell tier-Auto-cell" title="确认(建议签字) &middot; Auto">Auto</div>
+        <div class="heat-cell empty"></div>
+        <div class="heat-cell empty"></div>
+
+        <div class="heat-row-head"><span class="mono">L4-IRI-06</span>保司IT系统深度对接</div>
+        <div class="heat-cell tier-Auto-cell" title="技术判断 &middot; Auto">Auto</div>
+        <div class="heat-cell empty"></div>
+        <div class="heat-cell empty"></div>
+
+        <div class="heat-row-head"><span class="mono">L4-IRI-07</span>保司内部培训与换手</div>
+        <div class="heat-cell tier-Hybrid-cell" title="现场宣讲 &middot; Hybrid">Hybrid</div>
+        <div class="heat-cell empty"></div>
+        <div class="heat-cell empty"></div>
+      </div>
+    </div>
+
+    <div class="heat-legend">
+      <span class="heat-legend-item"><i class="sw tier-Auto-cell"></i>Auto·颜色越深越可全自动</span>
+      <span class="heat-legend-item"><i class="sw tier-Hybrid-cell"></i>Hybrid·需人工判断</span>
+      <span class="heat-legend-item"><i class="sw" style="background:transparent;border:1px dashed var(--border);"></i>空白=蓝图未指向该角色</span>
+      <span class="heat-legend-item">⚑ = 蓝图点名具体个人介入</span>
+    </div>
+    <p class="panel-source" style="margin-top:10px;">诚实说明：<b>dim_process.l4_accountable_family/role 这两个数据库字段实际是空的</b>，此热力图的角色归属来自蓝图文本，不是数据库权威字段。"保司关系经理(B协作)"这一列蓝图里只有笼统的"协作岗位"标签，没有指向任何一条具体L4，如实留空——这一列整体空白本身就是一个值得注意的现状：协作岗位在执行细节上目前没有被拆解到任务级。</p>
+  </div>
+
+  <!-- D / E -->
+  <div class="tri-grid" style="grid-template-columns: repeat(2, 1fr);">
+
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-title">面板 D &middot; AI机会优先级矩阵</div>
+      </div>
+      <div class="quad">
+        <div class="quad-yaxis-label top">可行性 高<span>&#9650;</span></div>
+        <div class="quad-grid">
+          <div class="quad-zone quad-watch">
+            <div class="quad-zone-head"><span class="quad-icon">&#128564;</span>观察区</div>
+            <div class="quad-zone-sub">(高可行+低价值)</div>
+            <div class="quad-zone-action">&rarr; 有资源再做</div>
+          </div>
+          <div class="quad-zone quad-win">
+            <div class="quad-zone-head"><span class="quad-icon">&#128293;</span>速赢区</div>
+            <div class="quad-zone-sub">(高可行+高价值)</div>
+            <div class="quad-zone-action">&rarr; 立即试点</div>
+          </div>
+          <div class="quad-zone quad-hold">
+            <div class="quad-zone-head"><span class="quad-icon">&#10060;</span>暂缓区</div>
+            <div class="quad-zone-sub">(低可行+低价值)</div>
+            <div class="quad-zone-action">&rarr; 暂不投入</div>
+          </div>
+          <div class="quad-zone quad-strategy">
+            <div class="quad-zone-head"><span class="quad-icon">&#11088;</span>战略区</div>
+            <div class="quad-zone-sub">(低可行+高价值)</div>
+            <div class="quad-zone-action">&rarr; 长期投入研发</div>
+          </div>
+          <div class="quad-point" style="left: 16%; bottom: 84%;" title="5条L4：02/03/04/05/06 · 全部Auto">
+            <span class="quad-point-n">5</span>
+          </div>
+          <div class="quad-point quad-point-alt" style="left: 16%; bottom: 34%;" title="2条L4：01/07 · 均为Hybrid">
+            <span class="quad-point-n">2</span>
+          </div>
+        </div>
+        <div class="quad-yaxis-label bottom">可行性 低</div>
+        <div class="quad-xaxis">
+          <span>低价值</span>
+          <span class="quad-xaxis-arrow">业务价值 &rarr;</span>
+          <span>高价值</span>
+        </div>
+      </div>
+      <p class="matrix-note">Y轴(可行性)按每条L4的<b class="mono">dim_process.agentifiability</b>定位(真实、逐条不同)；X轴(业务价值)7条L4共用同一个坐标——因为价值数据只精确到L3级：<b class="mono">bridge_kpi_l3</b>给L3-IRI唯一挂钩的KPI贡献权重0.15，在全部24条L3级权重里排在<b style="color:var(--tier-hybrid)">第12.5百分位</b>(中位数0.4)，即"确实偏低"而不只是"未确认"。5条Auto落在观察区，2条Hybrid落在暂缓区——跟第7层给出的移交建议一致。</p>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-title">面板 E &middot; L4交付物地图</div>
+      </div>
+      <div class="deliv-item"><div><div class="deliv-name">《权限清单》</div><div class="panel-source mono">L4-IRI-01</div></div><div class="deliv-dest">Mark签批存档</div></div>
+      <div class="deliv-item"><div><div class="deliv-name">《资源对接清单》</div><div class="panel-source mono">L4-IRI-02</div></div><div class="deliv-dest">移交执行团队</div></div>
+      <div class="deliv-item"><div><div class="deliv-name">对接完成报告</div><div class="panel-source mono">L4-IRI-03</div></div><div class="deliv-dest">内部存档</div></div>
+      <div class="deliv-item"><div><div class="deliv-name">权限生效通知</div><div class="panel-source mono">L4-IRI-04</div></div><div class="deliv-dest">全员同步</div></div>
+      <div class="deliv-item"><div><div class="deliv-name deliv-flag">《整合就绪确认书》⚠</div><div class="panel-source mono">L4-IRI-05 &middot; 唯一挂价值节点</div></div><div class="deliv-dest">触发L3-IBE</div></div>
+      <div class="deliv-item"><div><div class="deliv-name">《对接技术规范》</div><div class="panel-source mono">L4-IRI-06</div></div><div class="deliv-dest">IT团队执行</div></div>
+      <div class="deliv-item"><div><div class="deliv-name">《培训换手记录》</div><div class="panel-source mono">L4-IRI-07</div></div><div class="deliv-dest">内部存档</div></div>
+    </div>
+  </div>
+
+  <!-- Panel F -->
+  <div class="panel">
+    <details class="drawer">
+      <summary><span class="chevron">&#9656;</span> 面板 F &middot; 标准数据表（dim_process 原始行，点击展开）</summary>
+      <div class="datatable-wrap">
+        <table class="datatable">
+          <thead><tr><th>l4_code</th><th>l4_name</th><th>agentifiability</th><th>l4_accountable_family</th><th>action_nature</th></tr></thead>
+          <tbody>
+            <tr><td>L4-IRI-01</td><td>权限清单谈判</td><td class="tier-Hybrid" style="border-radius:4px;">Hybrid</td><td class="panel-source">(空)</td><td>判断/策略/认知类</td></tr>
+            <tr><td>L4-IRI-02</td><td>保司资源盘点</td><td class="tier-Auto" style="border-radius:4px;">Auto</td><td class="panel-source">(空)</td><td>信息处理/事务类</td></tr>
+            <tr><td>L4-IRI-03</td><td>系统数据团队对接</td><td class="tier-Auto" style="border-radius:4px;">Auto</td><td class="panel-source">(空)</td><td>信息处理/事务类</td></tr>
+            <tr><td>L4-IRI-04</td><td>权限生效与配置</td><td class="tier-Auto" style="border-radius:4px;">Auto</td><td class="panel-source">(空)</td><td>信息处理/事务类</td></tr>
+            <tr><td>L4-IRI-05</td><td>整合就绪确认</td><td class="tier-Auto" style="border-radius:4px;">Auto</td><td class="panel-source">(空)</td><td>信息处理/事务类</td></tr>
+            <tr><td>L4-IRI-06</td><td>保司IT系统深度对接</td><td class="tier-Auto" style="border-radius:4px;">Auto</td><td class="panel-source">(空)</td><td>信息处理/事务类</td></tr>
+            <tr><td>L4-IRI-07</td><td>保司内部培训与换手</td><td class="tier-Hybrid" style="border-radius:4px;">Hybrid</td><td class="panel-source">(空)</td><td>语义复核判定</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </details>
+  </div>
+
+  <!-- Layer 7 -->
+  <section class="layer7">
+    <div class="layer7-head">
+      <span class="badge">第 7 层</span>
+      <h2>分析结论 &mdash; 跨模块交叉核对</h2>
+    </div>
+    <p class="layer7-sub">这一层不是任何单一面板自己会报的内容，是把A/B/D/E/F全部数据交叉比对之后才浮现的判断——目的是回答"接下来该把哪个任务推给AIT"这个问题。</p>
+
+    <div class="finding">
+      <div class="finding-n">1</div>
+      <div>
+        <h3>一致性核查发现两处矛盾</h3>
+        <p>节点 VN-INS-03 声明的 <code class="mono">end_standard</code> 是"签字版"，但面板A的蓝图明确记录当前是"口头确认，无正式签字文件"——节点自证的达标标准和实际执行现状对不上，但 <code class="mono">l3_status</code> 仍显示"正常"。</p>
+        <div class="conflict">
+          <div class="row"><span>更严重的是：数据仓库内部两张表互相矛盾</span><span></span></div>
+          <div class="row"><span class="mono">dim_process.agentifiability</span><b style="color:var(--tier-auto)">6条 Auto/Hybrid（本demo采用）</b></div>
+          <div class="row"><span class="mono">dim_deliverable.agentifiability</span><b style="color:var(--tier-human)">7条全部 Human</b></div>
+          <div class="row"><span>全库368条L4核对</span><b>321条（87%）不一致</b></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-n">2</div>
+      <div>
+        <h3>瓶颈聚焦：不是能力不足，是单点依赖</h3>
+        <p>CAP-L2-1-S3企业能力视角判断是 PARTIAL，但拆开7条L4看，5条已经是Auto，真正卡住的只有 <code class="mono">L4-IRI-01</code> 一个点——且蓝图写明"Mark必须介入"，是具体到一个人的判断依赖，不是整体能力缺失。</p>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-n">3</div>
+      <div>
+        <h3>业务价值信号偏弱，不构成优先理由</h3>
+        <p>唯一挂钩的KPI贡献权重仅0.15且未确认——这条L3不是当前被重点度量的高价值流程。不构成"优先做"的理由，但也不是"不做"的理由：如果试点，选择依据应该是可行性和风险可控，不是业务价值。</p>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-n">4</div>
+      <div>
+        <h3>AIT移交建议</h3>
+        <div class="verdict">
+          <p><span class="go">建议现在移交 →</span> <code>L4-IRI-02</code> <code>L4-IRI-03</code> <code>L4-IRI-04</code> <code>L4-IRI-06</code> ——4条Auto级、无需人工判断介入，作为第一批推进到AIT做自动化搭建设计。</p>
+          <ul>
+            <li><span class="hold">暂不移交</span> <code>L4-IRI-01</code>（权限谈判）——卡在Mark的单点判断，是否值得做"判断人格工程化"分析需先跟Mark本人核实。</li>
+            <li><span class="hold">暂不移交</span> <code>L4-IRI-07</code>（培训换手）——涉及现场宣讲，不适合当前批次。</li>
+            <li><span class="hold">暂不移交</span> <code>L4-IRI-05</code>（整合就绪确认）——蓝图P1治理项（口头确认升级为签字流程）落地之前，自动化一个还没有权威凭证的确认步骤，等于把现有合规风险焊死进流程里。</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>数据来源：process_analytics schema（dim_process / dim_vn / bridge_l3_l2 / dim_org / dim_deliverable / bridge_vn_l4 / bridge_kpi_l3，只读查询）＋ 流程蓝图_L3-IRI_V1.1.md &middot; 2026-07-26</footer>
+</div>
