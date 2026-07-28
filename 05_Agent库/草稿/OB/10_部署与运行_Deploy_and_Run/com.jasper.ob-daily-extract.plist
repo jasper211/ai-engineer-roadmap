@@ -45,8 +45,13 @@
         <key>Minute</key>
         <integer>0</integer>
     </dict>
+    <!-- 2026-07-25：false→true。StartCalendarInterval错过的窗口（电脑关机/
+    睡眠导致凌晨2点没触发）不会自动补跑，只能等下一个2点——RunAtLoad=true
+    让下次登录/重启时launchd重新加载这个job时补跑一次，覆盖"漏了一整天"
+    这个真实风险。代价：每次真正重启/重新登录都会触发一次真实API调用，
+    不是只在"确实漏跑了"时才触发——Jasper已确认接受这个代价。 -->
     <key>RunAtLoad</key>
-    <false/>
+    <true/>
     <key>StandardOutPath</key>
     <string>/tmp/ob-daily-extract.log</string>
     <key>StandardErrorPath</key>

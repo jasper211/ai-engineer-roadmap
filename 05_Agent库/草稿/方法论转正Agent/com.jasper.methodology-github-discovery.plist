@@ -20,8 +20,12 @@
         <key>Minute</key>
         <integer>0</integer>
     </dict>
+    <!-- 2026-07-25：false→true，跟ob-daily-extract同一理由——StartCalendarInterval
+    错过的窗口（电脑关机/睡眠导致周一9点没触发）不会自动补跑，只能等下周一。
+    RunAtLoad=true让下次登录/重启时补跑一次。代价：每次重启/重新登录都会触发
+    一次真实GitHub API+可能的LLM调用，Jasper已确认接受。 -->
     <key>RunAtLoad</key>
-    <false/>
+    <true/>
     <key>StandardOutPath</key>
     <string>/tmp/methodology-github-discovery.log</string>
     <key>StandardErrorPath</key>
