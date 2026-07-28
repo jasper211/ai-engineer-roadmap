@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>L3-IBRD · 流程模型标准测试版</title>
+<style>
+:root{--bg:#f4f2eb;--paper:#fff;--ink:#24231f;--muted:#69675f;--line:#ddd9ce;--orange:#b8631f;--green:#147c5b;--blue:#2f67a5;--amber:#a97612;--grey:#666b75;--red:#b43b32;--shadow:0 8px 25px #24231f0c}
+*{box-sizing:border-box}body{margin:0;padding:26px 30px 60px;background:var(--bg);color:var(--ink);font:14px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}.wrap{max-width:1180px;margin:auto}.mono{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
+header{margin-bottom:18px}.eyebrow{margin:0 0 5px;color:var(--orange);font-size:11px;font-weight:700;letter-spacing:.08em}.title{margin:0;font-size:27px}.sub{max-width:78ch;margin:6px 0;color:var(--muted)}.path{display:flex;gap:7px;flex-wrap:wrap;color:var(--muted);font-size:12px}.path b{color:var(--ink)}
+.banner{margin:12px 0 18px;padding:10px 12px;border:1px solid #b8631f55;border-radius:9px;background:#b8631f12;color:var(--muted);font-size:11.5px}.banner b{color:var(--orange)}
+.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:9px;margin-bottom:12px}.kpi,.panel,.term{background:var(--paper);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow)}.kpi{padding:11px 12px}.kpi strong{display:block;font-size:21px}.kpi span{color:var(--muted);font-size:10.5px}
+.terms{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:17px}.term{padding:8px 10px;color:var(--muted);font-size:10px}.term b{display:block}.auto{color:var(--green)}.hybrid{color:var(--amber)}.aug{color:var(--blue)}.human{color:var(--grey)}
+.panel{padding:17px 19px;margin-bottom:15px}.head{display:flex;justify-content:space-between;gap:12px;align-items:baseline;margin-bottom:12px}.head h2{margin:0;font-size:15px}.source{color:#8b887f;font-size:10.5px}.intro{margin:-3px 0 14px;color:var(--muted);font-size:12px}
+.flow{overflow-x:auto;padding:8px 0}.track{display:flex;align-items:center;gap:8px;min-width:1180px}.step{flex:0 0 133px;min-height:124px;padding:9px;border:1px solid var(--line);border-radius:9px;background:#faf9f5;text-align:center}.step .code{color:#8b887f;font:9px ui-monospace,monospace}.step strong{display:block;margin:5px 0;font-size:11.5px}.step small{display:block;color:var(--muted);font-size:9.5px}.tier{display:inline-block;margin-top:7px;padding:2px 7px;border-radius:999px;font:700 9px ui-monospace,monospace}.tier.auto{background:#147c5b16}.tier.hybrid{background:#a9761218}.tier.aug{background:#2f67a518}.arrow{flex:0 0 22px;color:var(--orange);font-size:21px;text-align:center}.diamond-wrap{flex:0 0 106px;text-align:center}.diamond{width:72px;height:72px;margin:auto;display:grid;place-items:center;border:1px solid var(--amber);background:#a9761218;transform:rotate(45deg)}.diamond span{width:58px;transform:rotate(-45deg);font-size:9.5px;line-height:1.25}.branch{margin-top:13px;color:var(--red);font-size:9px}.flow-note{margin-top:10px;padding:9px 11px;border-left:3px solid var(--amber);background:#a9761212;color:var(--muted);font-size:11px}
+.map{display:grid;grid-template-columns:180px 1fr 210px;gap:12px;align-items:stretch}.cap,.vn{padding:12px;border-radius:9px;display:flex;flex-direction:column;justify-content:center}.cap{border:1px solid #2f67a555;background:#2f67a50d}.vn{border:1px solid #147c5b55;background:#147c5b0d}.vn.risk{border-color:#b43b3266;background:#b43b320d}.cap small,.vn small{color:var(--muted)}.deliveries{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}.delivery{padding:9px;border:1px solid var(--line);border-radius:8px;background:#faf9f5}.delivery-top{display:flex;justify-content:space-between;gap:5px}.delivery strong{font-size:11px}.ability{margin-top:5px;padding-left:6px;border-left:2px solid var(--blue);color:var(--muted);font-size:9.5px}.ai{margin-top:5px;color:var(--orange);font-size:9.5px}.map-side{display:grid;gap:8px}
+.gapbox{margin-top:11px;padding:9px 11px;border:1px dashed var(--red);border-radius:8px;background:#b43b3208;color:var(--muted);font-size:10.5px}.gapbox b{color:var(--red)}
+.board-tools,.matrix-tools{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:9px}.btn,select{border:1px solid var(--line);border-radius:6px;background:#faf9f5;padding:5px 8px;color:var(--ink);font:10.5px inherit}.btn{cursor:pointer}.board{display:grid;grid-template-columns:repeat(4,minmax(210px,1fr));gap:8px;overflow-x:auto}.col{min-height:245px;padding:8px;border:1px solid var(--line);border-radius:8px;background:#f7f6f1}.col.dragover{border-color:var(--orange);background:#b8631f0d}.colhead{display:flex;justify-content:space-between;font-size:11px;font-weight:700}.cards{min-height:205px}.card{margin-top:7px;padding:8px;border:1px solid var(--line);border-radius:7px;background:var(--paper);cursor:grab}.card.changed{border-color:var(--orange)}.card .meta{color:#8b887f;font:9px ui-monospace,monospace}.card strong{display:block;margin:3px 0;font-size:10.5px}.card p{margin:0;color:var(--muted);font-size:9.5px}.card select{width:100%;margin-top:5px;border:0;border-top:1px solid var(--line)}
+.quad{position:relative;display:grid;grid-template:1fr 1fr/1fr 1fr;gap:4px;min-height:520px;border:2px solid #777568;background:#777568;border-radius:9px;overflow:hidden}.zone{padding:12px}.zone strong{font-size:13px}.zone small{display:block;color:var(--muted)}.watch{background:#d9e6f6;color:#24558f}.win{background:#ccebdd;color:#126c50}.hold{background:#e3e4e8;color:#50545e}.strategy{background:#f6e4b8;color:#80580e}.point{position:absolute;width:30px;height:30px;border:2px solid white;border-radius:50%;display:grid;place-items:center;transform:translate(-50%,50%);background:var(--orange);color:white;font:700 10px ui-monospace,monospace;cursor:grab;touch-action:none;box-shadow:0 0 0 1px #777}.point label{position:absolute;top:33px;left:50%;transform:translateX(-50%);min-width:100px;padding:2px 5px;border:1px solid var(--line);border-radius:4px;background:white;color:var(--ink);font:9px sans-serif;text-align:center;pointer-events:none}
+.explain{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin-top:10px}.exp{padding:8px 9px;border:1px solid var(--line);border-radius:7px;background:#faf9f5}.exphead{display:flex;justify-content:space-between;gap:6px}.exphead strong{font-size:10.5px}.badge{border-radius:999px;padding:1px 6px;background:#eee;font-size:9px}.exp p{margin:4px 0 0;color:var(--muted);font-size:9.5px}.exp .action{color:var(--orange);font-weight:700}
+.decision{border:1px solid #147c5b55;background:#147c5b0d}.decision h2{font-size:17px}.decisions{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.dec{padding:10px;border-radius:8px;background:white;border:1px solid var(--line)}.dec b{display:block;margin-bottom:3px}.dec p{margin:0;color:var(--muted);font-size:11px}.quality{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:11px}.quality div{padding:8px;border-radius:7px;background:white;border:1px solid var(--line);font-size:10px}.quality b{display:block}.qbad{color:var(--red)}.qmid{color:var(--amber)}.qgood{color:var(--green)}
+footer{margin-top:20px;color:#8b887f;text-align:center;font-size:10.5px}
+@media(max-width:900px){.kpis{grid-template-columns:repeat(3,1fr)}.terms,.quality{grid-template-columns:repeat(2,1fr)}.map{grid-template-columns:1fr}.deliveries,.explain,.decisions{grid-template-columns:1fr}.quad{min-height:440px}}
+</style>
+</head>
+<body><main class="wrap">
+<header>
+  <p class="eyebrow">VNW · 第二类流程模型测试样本</p>
+  <h1 class="title">L3-IBRD · 合作伙伴需求分析与诊断</h1>
+  <p class="sub">用“多判断点、多价值节点、合规决策型流程”检验当前L3流程模型标准。页面只采用现有结构化资料；没有权威映射的内容明确列为待补项。</p>
+  <div class="path"><b>CAP-L2-2-S1 机构需求判断能力</b><span>→</span><b>L3-IBRD</b><span>→</span><span>尽调记录 / 复盘与决策记录</span><span>→</span><span>渠道合作路径</span></div>
+</header>
+<div class="banner"><b>标准测试说明：</b>库内不存在L3-IBED，本页按L3-IBRD生成。蓝图索引版本V1.4；流程步骤细节由L4名称与现有交付物字段重建，待接入蓝图正文后再做逐节点权威校准。</div>
+
+<section class="kpis">
+  <div class="kpi"><strong>8</strong><span>L4活动</span></div><div class="kpi"><strong>2</strong><span>价值节点</span></div>
+  <div class="kpi"><strong class="auto">4</strong><span>Auto</span></div><div class="kpi"><strong class="hybrid">3</strong><span>Hybrid</span></div>
+  <div class="kpi"><strong class="aug">1</strong><span>Aug</span></div><div class="kpi"><strong class="qbad">1</strong><span>P0熔断价值节点</span></div>
+</section>
+<div class="terms"><div class="term"><b class="auto">Auto · 条件式自动</b>规则和数据完整时可自动执行，异常转人工。</div><div class="term"><b class="hybrid">Hybrid · 人机协同</b>AI执行标准步骤，人负责判断和批准。</div><div class="term"><b class="aug">Aug · AI增强</b>AI提供核查和提示，人主导工作。</div><div class="term"><b>重要口径</b>Tier表示任务生产方式，不表示整个岗位或L2能力被替代。</div></div>
+
+<section class="panel">
+  <div class="head"><h2>面板A · 流程蓝图结构</h2><span class="source">L4：T20_v3.0 · 蓝图索引：V1.4</span></div>
+  <p class="intro">以资格门、合规门和准入门为主线；判断不通过时应停止或转补件，而不是继续自动流转。</p>
+  <div class="flow"><div class="track">
+    <div class="step"><div class="code">L4-IBRD-01</div><strong>资格预审与启动</strong><small>形成预审与启动计划</small><i class="tier auto">Auto</i></div><div class="arrow">→</div>
+    <div class="diamond-wrap"><div class="diamond"><span>满足合作基础条件？</span></div><div class="branch">否 → 终止/补充资料</div></div><div class="arrow">是 →</div>
+    <div class="step"><div class="code">L4-IBRD-02</div><strong>建立沟通机制</strong><small>确认责任人与沟通规则</small><i class="tier hybrid">Hybrid</i></div><div class="arrow">→</div>
+    <div class="step"><div class="code">L4-IBRD-03 / 05</div><strong>尽调与股东穿透</strong><small>执行DD Form与查册</small><i class="tier auto">Auto</i></div><div class="arrow">→</div>
+    <div class="step"><div class="code">L4-IBRD-04</div><strong>牌照核查与确认</strong><small>AI核查，人向保司确认</small><i class="tier aug">Aug</i></div><div class="arrow">→</div>
+    <div class="step"><div class="code">L4-IBRD-06</div><strong>AML三档评级</strong><small>高 / 中 / 低风险</small><i class="tier hybrid">Hybrid</i></div><div class="arrow">→</div>
+    <div class="diamond-wrap"><div class="diamond"><span>风险是否可接受？</span></div><div class="branch">否 → 升级合规/拒绝</div></div><div class="arrow">是 →</div>
+    <div class="step"><div class="code">L4-IBRD-07</div><strong>双路径准入判断</strong><small>决定采用哪类合作路径</small><i class="tier hybrid">Hybrid</i></div><div class="arrow">→</div>
+    <div class="step"><div class="code">L4-IBRD-08</div><strong>年度更新触发</strong><small>到期或事件触发复核</small><i class="tier auto">Auto</i></div>
+  </div></div>
+  <div class="flow-note"><b>待蓝图正文确认：</b>资格门的完整条件、AML各档阈值、双路径的具体名称与准入后的后续L3，现有结构化表没有提供完整定义。</div>
+</section>
+
+<section class="panel">
+  <div class="head"><h2>面板E · 交付物与具体能力地图</h2><span class="source">L2桥接 + L4交付物 + 价值节点</span></div>
+  <p class="intro">L2只作为业务能力域；AI设计落到每项L4所需的具体能力与交付物。</p>
+  <div class="map">
+    <div class="cap"><small>上位能力域</small><b>机构需求判断能力</b><small>不是整体替代对象</small></div>
+    <div class="deliveries">
+      <div class="delivery"><div class="delivery-top"><strong>01 预审启动计划</strong><b class="auto">Auto</b></div><div class="ability">资格条件核验、资料缺项识别</div><div class="ai">AI：自动预审并生成启动清单</div></div>
+      <div class="delivery"><div class="delivery-top"><strong>02 沟通机制</strong><b class="hybrid">Hybrid</b></div><div class="ability">责任识别、协作规则设计</div><div class="ai">AI：建议机制；人确认责任关系</div></div>
+      <div class="delivery"><div class="delivery-top"><strong>03 尽调记录</strong><b class="auto">Auto</b></div><div class="ability">多源调查、证据归集、异常提示</div><div class="ai">AI：执行标准查验与证据包生成</div></div>
+      <div class="delivery"><div class="delivery-top"><strong>04 牌照确认记录</strong><b class="aug">Aug</b></div><div class="ability">牌照核验、权威确认</div><div class="ai">AI：检索比对；人完成保司确认</div></div>
+      <div class="delivery"><div class="delivery-top"><strong>05 DD查册结果</strong><b class="auto">Auto</b></div><div class="ability">股权穿透、关联方识别</div><div class="ai">AI：查册、穿透和风险标记</div></div>
+      <div class="delivery"><div class="delivery-top"><strong>06 AML风险评级</strong><b class="hybrid">Hybrid</b></div><div class="ability">规则评分、合规判断、升级处置</div><div class="ai">AI：建议评级；人批准高风险结论</div></div>
+      <div class="delivery"><div class="delivery-top"><strong>07 渠道准入结论</strong><b class="hybrid">Hybrid</b></div><div class="ability">路径选择、商业与合规权衡</div><div class="ai">AI：形成建议；负责人作出决议</div></div>
+      <div class="delivery"><div class="delivery-top"><strong>08 年度更新记录</strong><b class="auto">Auto</b></div><div class="ability">到期监控、事件触发、差异复核</div><div class="ai">AI：持续监控并发起更新</div></div>
+    </div>
+    <div class="map-side"><div class="vn risk"><small>价值节点 · P0熔断</small><b>VN-IBRD-01</b><span>合作伙伴尽调记录</span><small>Gate：PASS / PARTIAL / FAIL / FAIL</small></div><div class="vn"><small>价值节点 · P1</small><b>VN-IBRD-02</b><span>合作伙伴合作复盘与决策记录</span><small>当前四项Gate均FAIL，且源材料覆盖不足</small></div></div>
+  </div>
+  <div class="gapbox"><b>交付物字段需要治理：</b>L4-03/05/06/07/08在当前表中重复使用一段组合描述。本页为测试展示而进行了逻辑拆分，但正式模型必须由蓝图或业务负责人确认后写入权威数据。</div>
+</section>
+
+<section class="panel">
+  <div class="head"><h2>面板C · AI任务工作坊</h2><span class="source">测试任务拆分 · 会话内调整</span></div>
+  <div class="board-tools"><span id="boardStat" class="source">0项调整</span><button class="btn" id="boardReset">恢复建议</button></div>
+  <div class="board" id="board"></div>
+  <div class="flow-note">工作坊重点不是讨论“岗位是否消失”，而是确认每个尽调任务中：AI做什么、人在哪个质量门负责、异常如何升级。</div>
+</section>
+
+<section class="panel">
+  <div class="head"><h2>面板D · AI机会优先级矩阵</h2><span class="source">逐项理由 + 可拖动共识</span></div>
+  <p class="intro">横轴看对准入质量、风险控制和复用效率的贡献；纵轴看规则清晰度、数据可得性及权威判断依赖。</p>
+  <div class="quad" id="quad"><div class="zone watch"><strong>观察区</strong><small>高可行 / 低价值</small></div><div class="zone win"><strong>速赢区</strong><small>高可行 / 高价值</small></div><div class="zone hold"><strong>暂缓区</strong><small>低可行 / 低价值</small></div><div class="zone strategy"><strong>战略区</strong><small>低可行 / 高价值</small></div><div id="points"></div></div>
+  <div class="matrix-tools"><span id="matrixStat" class="source">拖动L4机会点形成讨论结论</span><button class="btn" id="matrixReset">恢复初始判断</button></div>
+  <div class="explain" id="explain"></div>
+</section>
+
+<section class="panel decision">
+  <div class="head"><h2>负责人决策 · 本轮输出</h2><span class="source">通俗决策版</span></div>
+  <div class="decisions">
+    <div class="dec"><b class="auto">建议先验证</b><p>预审、DD查册与年度更新触发。先验证资料缺项识别、查册效率和更新提醒。</p></div>
+    <div class="dec"><b class="hybrid">需要人保留责任</b><p>牌照确认、AML评级和准入判断。AI可准备证据与建议，但不能替代合规和业务批准。</p></div>
+    <div class="dec"><b class="qbad">先补建再决定</b><p>明确两类价值节点对应哪些L4、补齐AML阈值与双路径规则、拆分重复交付物字段。</p></div>
+  </div>
+  <div class="quality"><div><b class="qgood">流程结构：可测试</b>8个L4可形成主流程与两个判断门。</div><div><b class="qmid">交付物：部分可用</b>5个L4存在重复组合字段。</div><div><b class="qbad">价值节点：待补映射</b>2个节点尚无L4逐项服务关系。</div><div><b class="qmid">AIT移交：局部可行</b>只建议先进入小范围验证，不直接建设完整Agent。</div></div>
+</section>
+<footer>来源：T20 L4自动化Tier评估v3.0、T1节点索引v2.0、T12 Gate评级v4.0、T25熔断清单v2.0、T29 L3-L2桥接v1.0、L3蓝图覆盖清单v1.0 · 2026-07-28</footer>
+</main>
+<script>
+const tiers=[["Human","人工主导"],["Aug","AI增强"],["Hybrid","人机协同"],["Auto","条件式自动"]];
+const tasks=[
+ {id:"T01",l4:"01",name:"核对合作基础条件与资料完整性",tier:"Auto",why:"标准条件可规则化"},
+ {id:"T02",l4:"01",name:"生成预审与流程启动计划",tier:"Auto",why:"模板和输入明确"},
+ {id:"T03",l4:"02",name:"识别项目责任人和沟通频率",tier:"Aug",why:"AI建议，人确认关系"},
+ {id:"T04",l4:"03",name:"收集团队、模式和过往经验",tier:"Auto",why:"结构化采集和缺项检查"},
+ {id:"T05",l4:"04",name:"查询牌照状态并比对",tier:"Auto",why:"可自动检索与比对"},
+ {id:"T06",l4:"04",name:"取得保司权威确认",tier:"Human",why:"外部权威确认不可替代"},
+ {id:"T07",l4:"05",name:"执行DD Form与股东穿透查册",tier:"Auto",why:"标准查册和关系穿透"},
+ {id:"T08",l4:"06",name:"按模板计算AML风险档位",tier:"Auto",why:"阈值明确后可计算"},
+ {id:"T09",l4:"06",name:"复核高风险并决定升级",tier:"Hybrid",why:"AI提示，人承担合规责任"},
+ {id:"T10",l4:"07",name:"生成渠道合作路径建议",tier:"Aug",why:"综合证据形成建议"},
+ {id:"T11",l4:"07",name:"批准准入与合作路径",tier:"Human",why:"商业与合规决策"},
+ {id:"T12",l4:"08",name:"监控到期和重大变更事件",tier:"Auto",why:"时间与事件可自动触发"}
+].map(x=>({...x,current:x.tier}));
+const board=document.getElementById("board"),boardStat=document.getElementById("boardStat");let dragged=null;
+function moveTask(id,tier){const t=tasks.find(x=>x.id===id);if(t){t.current=tier;renderBoard()}}
+function renderBoard(){board.innerHTML=tiers.map(([id,name])=>{const list=tasks.filter(t=>t.current===id);return `<section class="col" data-tier="${id}"><div class="colhead"><span>${name}</span><span>${list.length}</span></div><div class="cards">${list.map(t=>`<article class="card${t.current!==t.tier?" changed":""}" draggable="true" data-id="${t.id}"><div class="meta">L4-IBRD-${t.l4}${t.current!==t.tier?` · 原建议${t.tier}`:""}</div><strong>${t.name}</strong><p>${t.why}</p><select data-move="${t.id}">${tiers.map(([v,n])=>`<option value="${v}"${v===t.current?" selected":""}>${n}</option>`).join("")}</select></article>`).join("")}</div></section>`}).join("");
+ boardStat.textContent=`${tasks.filter(t=>t.current!==t.tier).length}项调整`;
+ board.querySelectorAll(".card").forEach(c=>{c.ondragstart=()=>dragged=c.dataset.id;c.ondragend=()=>dragged=null});
+ board.querySelectorAll(".col").forEach(c=>{c.ondragover=e=>{e.preventDefault();c.classList.add("dragover")};c.ondragleave=()=>c.classList.remove("dragover");c.ondrop=e=>{e.preventDefault();c.classList.remove("dragover");moveTask(dragged,c.dataset.tier)}});
+ board.querySelectorAll("[data-move]").forEach(s=>s.onchange=()=>moveTask(s.dataset.move,s.value));
+}
+document.getElementById("boardReset").onclick=()=>{tasks.forEach(t=>t.current=t.tier);renderBoard()};renderBoard();
+
+const ops=[
+ {id:"01",name:"预审启动",x:54,y:88,v:"能减少无效项目进入尽调。",f:"资格条件和资料清单可规则化。"},
+ {id:"02",name:"沟通机制",x:30,y:55,v:"保障协作但不直接产生准入结论。",f:"责任关系和沟通规则仍需人确认。"},
+ {id:"03",name:"尽调执行",x:74,y:78,v:"直接影响尽调质量和周期。",f:"标准采集可自动，异常仍需升级。"},
+ {id:"04",name:"牌照确认",x:82,y:42,v:"牌照有效是合作准入硬条件。",f:"查询可自动，保司权威确认仍依赖人。"},
+ {id:"05",name:"DD穿透",x:78,y:82,v:"直接识别股权与关联方风险。",f:"查册和关系穿透适合自动处理。"},
+ {id:"06",name:"AML评级",x:90,y:45,v:"直接决定合规风险是否可接受。",f:"缺少完整阈值，且高风险结论需人工批准。"},
+ {id:"07",name:"准入判断",x:92,y:34,v:"决定是否合作及采用哪条路径。",f:"高度依赖商业与合规权衡。"},
+ {id:"08",name:"年度更新",x:58,y:86,v:"防止历史尽调失效，具有持续治理价值。",f:"到期和事件触发可自动监控。"}
+].map(o=>({...o,ix:o.x,iy:o.y}));
+const quad=document.getElementById("quad"),points=document.getElementById("points"),explain=document.getElementById("explain"),matrixStat=document.getElementById("matrixStat");
+function quadrant(o){if(o.x>=50&&o.y>=50)return["速赢区","优先验证"];if(o.x<50&&o.y>=50)return["观察区","低成本辅助"];if(o.x>=50&&o.y<50)return["战略区","先补规则和责任边界"];return["暂缓区","暂不投入"]}
+function renderExp(){explain.innerHTML=ops.map(o=>{const q=quadrant(o);return `<div class="exp"><div class="exphead"><strong>L4-${o.id} ${o.name}</strong><span class="badge">${q[0]}</span></div><p><b>价值：</b>${o.v}</p><p><b>可行性：</b>${o.f}</p><p class="action">建议：${q[1]}</p></div>`}).join("")}
+function renderPoints(){points.innerHTML=ops.map(o=>`<div class="point" data-op="${o.id}" style="left:${o.x}%;bottom:${o.y}%">${o.id}<label>${o.name}</label></div>`).join("");points.querySelectorAll(".point").forEach(p=>p.onpointerdown=e=>{e.preventDefault();p.setPointerCapture(e.pointerId);const o=ops.find(x=>x.id===p.dataset.op);p.onpointermove=m=>{const r=quad.getBoundingClientRect();o.x=Math.max(4,Math.min(96,(m.clientX-r.left)/r.width*100));o.y=Math.max(6,Math.min(94,(r.bottom-m.clientY)/r.height*100));p.style.left=o.x+"%";p.style.bottom=o.y+"%";matrixStat.textContent=`L4-${o.id}已移至${quadrant(o)[0]} · 价值${Math.round(o.x)} / 可行性${Math.round(o.y)}`;renderExp()};p.onpointerup=p.onpointercancel=()=>p.onpointermove=null})}
+document.getElementById("matrixReset").onclick=()=>{ops.forEach(o=>{o.x=o.ix;o.y=o.iy});matrixStat.textContent="已恢复初始判断";renderPoints();renderExp()};renderPoints();renderExp();
+</script>
+</body></html>

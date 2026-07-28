@@ -260,19 +260,23 @@
   .quad-yaxis-label.bottom { margin-top: 4px; }
   .quad-grid {
     position: relative; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr;
-    gap: 2px; aspect-ratio: 1 / 0.92; background: var(--border); border-radius: 8px; overflow: hidden;
-    border: 1px solid var(--border);
+    gap: 4px; aspect-ratio: 1 / 0.92; background: #777568; border-radius: 8px; overflow: hidden;
+    border: 2px solid #777568;
   }
   .quad-zone { background: var(--surface); padding: 10px 11px; display: flex; flex-direction: column; gap: 2px; }
   .quad-zone-head { display: flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 700; }
   .quad-icon { font-size: 13px; }
   .quad-zone-sub { font-size: 10px; color: var(--text-faint); }
   .quad-zone-action { font-size: 10.5px; color: var(--text-muted); margin-top: auto; padding-top: 6px; }
-  .quad-win { background: var(--tier-auto-soft); }
+  .quad-win { background: #ccebdd; box-shadow: inset 0 0 0 1px #1f9d7655; }
   .quad-win .quad-zone-action { color: var(--tier-auto); font-weight: 600; }
-  .quad-watch { background: var(--tier-aug-soft); }
-  .quad-strategy { background: var(--tier-hybrid-soft); }
-  .quad-hold { background: var(--tier-human-soft); }
+  .quad-watch { background: #d9e6f6; box-shadow: inset 0 0 0 1px #3a72b855; }
+  .quad-strategy { background: #f6e4b8; box-shadow: inset 0 0 0 1px #b8821f66; }
+  .quad-hold { background: #e3e4e8; box-shadow: inset 0 0 0 1px #6d728066; }
+  .quad-watch .quad-zone-head { color: #24558f; }
+  .quad-win .quad-zone-head { color: #126c50; }
+  .quad-strategy .quad-zone-head { color: #80580e; }
+  .quad-hold .quad-zone-head { color: #50545e; }
   .quad-point {
     position: absolute; width: 30px; height: 30px; border-radius: 50%;
     background: var(--accent); border: 2.5px solid var(--surface); box-shadow: 0 0 0 1px var(--accent-border);
@@ -288,6 +292,22 @@
   }
   .matrix-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 10px; }
   .matrix-status { color: var(--text-muted); font-size: 10.5px; }
+  .matrix-explanations {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 12px;
+  }
+  .matrix-explanation {
+    border: 1px solid var(--border); border-radius: 8px; padding: 9px 10px; background: var(--surface-2);
+  }
+  .matrix-explanation-head { display: flex; justify-content: space-between; gap: 8px; align-items: center; }
+  .matrix-explanation-head strong { font-size: 11.5px; }
+  .quadrant-badge { border-radius: 999px; padding: 2px 7px; font-size: 9.5px; font-weight: 700; }
+  .quadrant-win { color: #126c50; background: #ccebdd; }
+  .quadrant-watch { color: #24558f; background: #d9e6f6; }
+  .quadrant-strategy { color: #80580e; background: #f6e4b8; }
+  .quadrant-hold { color: #50545e; background: #e3e4e8; }
+  .matrix-reason { margin-top: 5px; color: var(--text-muted); font-size: 10px; line-height: 1.45; }
+  .matrix-reason b { color: var(--text); }
+  .matrix-action { margin-top: 5px; color: var(--accent); font-size: 10px; font-weight: 650; }
   .quad-point-alt { background: var(--tier-hybrid); }
   .quad-point-n { color: var(--surface); font-weight: 700; font-size: 13px; font-family: ui-monospace, monospace; }
   .quad-xaxis {
@@ -376,6 +396,7 @@
   @media (max-width: 920px) {
     .delivery-nodes { grid-template-columns: repeat(2, 1fr); }
     .term-notes { grid-template-columns: repeat(2, 1fr); }
+    .matrix-explanations { grid-template-columns: 1fr; }
   }
   @media (max-width: 560px) {
     .delivery-field { padding: 12px; }
@@ -726,6 +747,7 @@
       <p class="matrix-note">Y轴(可行性)按每条L4的<b class="mono">dim_process.agentifiability</b>定位(真实、逐条不同)；X轴(业务价值)7条L4共用同一个坐标——因为价值数据只精确到L3级：<b class="mono">bridge_kpi_l3</b>给L3-IRI唯一挂钩的KPI贡献权重0.15，在全部24条L3级权重里排在<b style="color:var(--tier-hybrid)">第12.5百分位</b>(中位数0.4)，即"确实偏低"而不只是"未确认"。5条Auto落在观察区，2条Hybrid落在暂缓区——跟第7层给出的移交建议一致。</p>
       <div class="matrix-toolbar"><span id="matrix-status" class="matrix-status">拖动任一L4机会点，形成负责人讨论后的暂定位置</span><button id="matrix-reset" class="workshop-btn" type="button">恢复初始判断</button></div>
       <p class="logic-note"><b>初始判断逻辑：</b>纵轴综合“任务是否规则化、输入是否可获得、是否需要权威判断”；横轴综合“交付物对整合就绪的直接贡献、风险降低和使用频率”。当前缺少正式L4价值评分，页面中的横向差异属于业务假设，必须由负责人拖动确认；移动结果仅用于本次讨论，不写回数据源。</p>
+      <div id="matrix-explanations" class="matrix-explanations" aria-label="各L4机会点位置解释"></div>
     </div>
 
   </div>
@@ -1049,19 +1071,45 @@
   (() => {
     const grid = document.querySelector(".quad-grid");
     const holder = document.getElementById("opportunity-points");
+    const explanations = document.getElementById("matrix-explanations");
     const status = document.getElementById("matrix-status");
     const reset = document.getElementById("matrix-reset");
     if (!grid || !holder) return;
 
     const opportunities = [
-      { id:"01", name:"权限清单", x:34, y:58, color:"#b8821f" },
-      { id:"02", name:"资源清单", x:47, y:83, color:"#1f9d76" },
-      { id:"03", name:"对接报告", x:62, y:76, color:"#1f9d76" },
-      { id:"04", name:"生效通知", x:55, y:88, color:"#1f9d76" },
-      { id:"05", name:"就绪确认", x:82, y:52, color:"#b8821f" },
-      { id:"06", name:"技术规范", x:68, y:81, color:"#1f9d76" },
-      { id:"07", name:"培训换手", x:42, y:46, color:"#b8821f" }
+      { id:"01", name:"权限清单", x:34, y:58, color:"#b8821f", valueReason:"主要是前置保障，对最终运营价值的贡献较间接。", feasibilityReason:"条款抽取和冲突识别可由AI完成，但权限裁决必须由负责人作出。" },
+      { id:"02", name:"资源清单", x:47, y:83, color:"#1f9d76", valueReason:"能减少遗漏、重复沟通，但本身不是最终价值交付物。", feasibilityReason:"数据汇集、分类、去重和缺项检查规则较明确，自动化条件较好。" },
+      { id:"03", name:"对接报告", x:62, y:76, color:"#1f9d76", valueReason:"直接证明系统、数据和人员对接是否完成，是就绪确认的重要证据。", feasibilityReason:"日志和测试证据可自动归集；异常关闭仍需要团队确认。" },
+      { id:"04", name:"生效通知", x:55, y:88, color:"#1f9d76", valueReason:"直接影响使用方能否按时开始工作，价值明确但范围相对单一。", feasibilityReason:"配置状态、测试结果和通知对象均可规则化，是最容易形成闭环的一项。" },
+      { id:"05", name:"就绪确认", x:82, y:38, color:"#b8821f", valueReason:"它是本L3的核心终点，也是触发后续L3-IBE的正式凭证。", feasibilityReason:"当前缺少正式签字、检查清单和异常升级规则，因此价值高但暂不具备自动化条件。" },
+      { id:"06", name:"技术规范", x:68, y:81, color:"#1f9d76", valueReason:"可复用于后续联调和维护，能持续降低对接成本和返工。", feasibilityReason:"接口、安全和系统约束已有结构化来源，适合自动生成并随联调更新。" },
+      { id:"07", name:"培训换手", x:42, y:46, color:"#b8821f", valueReason:"对平稳运营有帮助，但效果依赖人员接受程度，价值不易直接量化。", feasibilityReason:"材料和测验可由AI辅助，现场宣讲、答疑和责任交接仍依赖人。" }
     ].map(item => ({ ...item, initialX:item.x, initialY:item.y }));
+
+    function quadrantFor(item) {
+      const highValue = item.x >= 50;
+      const highFeasibility = item.y >= 50;
+      if (highValue && highFeasibility) return { key:"win", name:"速赢区", action:"优先进入AIT验证" };
+      if (!highValue && highFeasibility) return { key:"watch", name:"观察区", action:"低成本试做或等待业务需求" };
+      if (highValue && !highFeasibility) return { key:"strategy", name:"战略区", action:"先补规则和基础条件" };
+      return { key:"hold", name:"暂缓区", action:"暂不投入，保留人工主导" };
+    }
+
+    function renderExplanations() {
+      explanations.innerHTML = opportunities.map(item => {
+        const quadrant = quadrantFor(item);
+        return `
+          <article class="matrix-explanation">
+            <div class="matrix-explanation-head">
+              <strong>L4-IRI-${item.id} · ${item.name}</strong>
+              <span class="quadrant-badge quadrant-${quadrant.key}">${quadrant.name}</span>
+            </div>
+            <div class="matrix-reason"><b>价值位置：</b>${item.valueReason}</div>
+            <div class="matrix-reason"><b>可行性位置：</b>${item.feasibilityReason}</div>
+            <div class="matrix-action">当前建议：${quadrant.action}</div>
+          </article>`;
+      }).join("");
+    }
 
     function renderPoints() {
       holder.innerHTML = opportunities.map(item => `
@@ -1080,7 +1128,9 @@
             item.y = Math.max(6, Math.min(94, ((rect.bottom - moveEvent.clientY) / rect.height) * 100));
             point.style.left = `${item.x}%`;
             point.style.bottom = `${item.y}%`;
-            status.textContent = `已调整 L4-IRI-${item.id} · ${item.name}（价值 ${Math.round(item.x)} / 可行性 ${Math.round(item.y)}）`;
+            const quadrant = quadrantFor(item);
+            status.textContent = `已调整 L4-IRI-${item.id} · ${item.name} → ${quadrant.name}（价值 ${Math.round(item.x)} / 可行性 ${Math.round(item.y)}）`;
+            renderExplanations();
           };
           const end = () => {
             point.removeEventListener("pointermove", move);
@@ -1097,8 +1147,10 @@
       opportunities.forEach(item => { item.x = item.initialX; item.y = item.initialY; });
       status.textContent = "已恢复初始判断；可继续拖动讨论";
       renderPoints();
+      renderExplanations();
     });
     renderPoints();
+    renderExplanations();
   })();
 </script>
 <script>
