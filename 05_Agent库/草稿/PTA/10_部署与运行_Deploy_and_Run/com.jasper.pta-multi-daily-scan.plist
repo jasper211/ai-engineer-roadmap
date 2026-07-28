@@ -20,17 +20,31 @@
         <string>--notify</string>
     </array>
 
-    <!-- 2026-07-21 Jasper定：调到11:00且排除周末（此前10:00每天）。
-         每周一到周五 11:00（周六日不跑）——StartCalendarInterval 是数组时
-         表示"命中其中任意一条即触发"，用 5 条固定 Weekday（1=周一...5=周五，
-         launchd 里 0/7 都代表周日）+ 同一个 Hour/Minute 实现"仅工作日"。 -->
+    <!-- 2026-07-28 Jasper定：改成对齐北京时间周一至周五11:00，不是本机所在
+         时区(America/Chicago)的11:00——launchd的StartCalendarInterval只认
+         本地挂钟时间，不支持跨时区调度，所以这里用当前芝加哥与北京的真实
+         时差（CDT期间13小时）反推出本地触发时刻：北京周一~周五11:00，
+         分别对应芝加哥本地的周日~周四22:00（提前了一整个日期）。
+         Jasper已确认接受的取舍：每年11月/3月美国夏令时切换时，芝加哥与
+         北京的时差会在13/14小时之间变化，届时这份定时会对应北京时间12:00
+         而不是11:00，需要人工把Hour从22改成21（或反过来）——不做成自动
+         感知时区的包装脚本，简单换算+每半年手动微调一次是Jasper明确选择
+         的方案，见执行记录.md。 -->
     <key>StartCalendarInterval</key>
     <array>
         <dict>
             <key>Weekday</key>
+            <integer>0</integer>
+            <key>Hour</key>
+            <integer>22</integer>
+            <key>Minute</key>
+            <integer>0</integer>
+        </dict>
+        <dict>
+            <key>Weekday</key>
             <integer>1</integer>
             <key>Hour</key>
-            <integer>11</integer>
+            <integer>22</integer>
             <key>Minute</key>
             <integer>0</integer>
         </dict>
@@ -38,7 +52,7 @@
             <key>Weekday</key>
             <integer>2</integer>
             <key>Hour</key>
-            <integer>11</integer>
+            <integer>22</integer>
             <key>Minute</key>
             <integer>0</integer>
         </dict>
@@ -46,7 +60,7 @@
             <key>Weekday</key>
             <integer>3</integer>
             <key>Hour</key>
-            <integer>11</integer>
+            <integer>22</integer>
             <key>Minute</key>
             <integer>0</integer>
         </dict>
@@ -54,15 +68,7 @@
             <key>Weekday</key>
             <integer>4</integer>
             <key>Hour</key>
-            <integer>11</integer>
-            <key>Minute</key>
-            <integer>0</integer>
-        </dict>
-        <dict>
-            <key>Weekday</key>
-            <integer>5</integer>
-            <key>Hour</key>
-            <integer>11</integer>
+            <integer>22</integer>
             <key>Minute</key>
             <integer>0</integer>
         </dict>

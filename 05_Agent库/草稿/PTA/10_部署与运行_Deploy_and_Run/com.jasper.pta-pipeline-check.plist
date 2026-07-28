@@ -25,15 +25,21 @@
     </array>
 
     <!-- 每周五触发，跟章程里"能力整改看板"周五复盘节奏对齐：检测报告产出后
-         周五复盘时直接读这份报告，不用现场现查。Weekday: 6 = 周五
-         （launchd 的 Weekday 用 0/7=周日、1=周一...6=周五）。
-         2026-07-21 Jasper定：9:00调到11:00，跟daily-scan新时间对齐。 -->
+         周五复盘时直接读这份报告，不用现场现查。
+         2026-07-21 Jasper定：9:00调到11:00，跟daily-scan新时间对齐。
+         2026-07-28 Jasper定：发现此前"Weekday: 6 = 周五"的注释是错的——
+         launchd真实约定是0/7=周日、1=周一...6=周六，6其实是周六，导致这条
+         job此前一直在周六触发，不是原定的周五（真实复现：_pipeline_health/
+         下07-25周六有报告、07-24周五没有）。这次一并修正为对齐北京时间：
+         北京周五11:00 = 芝加哥本地周四(Weekday=4)22:00（当前CDT时差13小时，
+         每年11月/3月美国夏令时切换时会漂移1小时，Jasper已确认接受、届时
+         再手动微调，不做自动感知时区的包装脚本）。 -->
     <key>StartCalendarInterval</key>
     <dict>
         <key>Weekday</key>
-        <integer>6</integer>
+        <integer>4</integer>
         <key>Hour</key>
-        <integer>11</integer>
+        <integer>22</integer>
         <key>Minute</key>
         <integer>0</integer>
     </dict>
