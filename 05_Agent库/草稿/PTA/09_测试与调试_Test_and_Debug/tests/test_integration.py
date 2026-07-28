@@ -874,9 +874,17 @@ def test_28_agent_status_detection():
           "每个Agent的status都落在四态定义内，没有出现意外的第五种值",
           f"出现非法状态: {[a['status'] for a in result if a['status'] not in valid_states]}")
 
-    check(by_id["AIT"]["status"] == STATUS_UNBUILT and by_id["方法论转正Agent"]["status"] == STATUS_UNBUILT,
-          "AIT/方法论转正Agent目前都还没有任何代码，正确判定为「未搭建」",
-          f"AIT={by_id['AIT']['status']}, 方法论={by_id['方法论转正Agent']['status']}")
+    # AIT目前只有config.json+需求定义.md（规划性质，非可执行代码），正确判定
+    # 为「未搭建」；方法论转正Agent这次真实排查发现已经有github_discovery.py
+    # +真实装机的launchd任务（2026-07新进展），从「未搭建」升级为「自动」——
+    # agent_registry.json已同步更新code_paths/launchd_labels，不是测试断言
+    # 追不上现实，是现实先变了。
+    check(by_id["AIT"]["status"] == STATUS_UNBUILT,
+          "AIT目前只有规划文档，没有可执行代码，正确判定为「未搭建」",
+          f"AIT={by_id['AIT']['status']}")
+    check(by_id["方法论转正Agent"]["status"] == STATUS_AUTO,
+          "方法论转正Agent已有真实代码+真实launchd任务，正确判定为「自动」",
+          f"方法论转正Agent={by_id['方法论转正Agent']['status']}")
 
     check(len(by_id["OB"]["launchd_jobs"]) == 2,
           "OB的两个真实launchd job都被匹配到（不是笼统的单一状态，能看清具体哪个job的细节）",

@@ -23,6 +23,8 @@ Phase1 已验证的 `extract_signals.py` 已迁入 VNW，并补上新旧 Sheet �
 
 ## 数据底座 → 前端展示
 
-`06_开发技能_Develop_Skills/skills/sync_data_foundation.py` 是目前唯一真正处理业务数据的脚本：一键全量重建 01-04 层产出的 23 张数据表（A 类自动同步 + C 类人工维护 + T22 人工试点），写入两处物理数据底座副本，并额外导出 JSON 到前端 `app_v2/public/data/`。
+`06_开发技能_Develop_Skills/skills/sync_data_foundation.py` 是目前唯一真正处理业务数据的脚本：一键全量重建各数据表，写入两处物理数据底座副本，并额外导出 JSON 到前端 `10_部署与运行_Deploy_and_Run/frontend/public/data/`。
 
-前端（`10_部署与运行_Deploy_and_Run/frontend/`，React+Vite+TS）以 A 类表为现状做展示，读取同步技能导出的 JSON。数据更新流程固定为：源文件变更 → 重跑 `sync_data_foundation.py` → 前端本地 `npm run dev` 立即生效；线上发布仍需单独执行部署动作，不由数据同步脚本自动触发。详见 [执行记录.md](./执行记录.md) 2026-07-25 各条记录。
+前端（React+Vite+TS）读取同步技能导出的 JSON。数据更新流程固定为：源头更新 → 重跑 `sync_data_foundation.py` → 前端本地 `npm run dev` 立即生效；线上发布仍需单独执行部署动作，不由数据同步脚本自动触发。
+
+**权威数据源分级（2026-07-26 拍板，重要）**：公司数据仓库（PostgreSQL，`process_analytics` schema）是标准化的权威数据源，跟 01-05 层文件材料（本项目/OB 知识库背后的原始素材）冲突时以数据仓库为准；数据仓库没有的字段/表，才用文件材料补充。连接参数在本地未提交文件 `06_开发技能_Develop_Skills/skills/db_config_local.py` 里，不进版本库。T1/T12/T20/T25/T26 及新增 T29/T30 已切换为数据仓库权威源，详见 [执行记录.md](./执行记录.md) 2026-07-26 各条记录。

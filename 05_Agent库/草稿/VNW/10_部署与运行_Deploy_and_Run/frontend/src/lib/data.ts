@@ -27,6 +27,9 @@ const TABLE_FILES: Record<string, string> = {
   // D类:人工试点,非自动更新,但仍可浏览
   sop_pilot_classification: '/data/sop_pilot_classification.json',
   flow_context: '/data/flow_context.json',
+  // 2026-07-26新增:数据仓库(process_analytics schema)权威源新表
+  l3_l2_bridge: '/data/l3_l2_bridge.json',
+  org_roles: '/data/org_roles.json',
 };
 const TABLE_NAMES = Object.keys(TABLE_FILES);
 
@@ -130,18 +133,20 @@ export const TABLE_DISPLAY_NAMES: Record<string, { name: string; desc: string }>
   value_stream: { name: 'T9·价值流归属', desc: '节点价值流映射(人工维护)' },
   interview_batches: { name: 'T10·访谈批次', desc: '访谈批次与岗位映射(人工维护)' },
   role_mapping: { name: 'T11·岗位映射', desc: '岗位角色映射' },
-  gate_ratings: { name: 'T12·Gate评级', desc: '节点质量门评级' },
+  gate_ratings: { name: 'T12·Gate评级', desc: '节点质量门评级,数据仓库权威源(dim_vn)' },
   node_review: { name: 'T13·节点复评', desc: '节点复评追踪(人工维护)' },
   domain_progress: { name: 'T14·域进度', desc: '业务域扩展进度' },
   interview_recordings: { name: 'T16·访谈记录', desc: '访谈录音跟踪(人工维护)' },
   report_tracking: { name: 'T17·报告跟踪', desc: '报告发送跟踪(人工维护)' },
   fused_tasks: { name: 'T18·熔断任务分发', desc: '熔断节点补建任务,按域最新版补建清单生成' },
   sop_progress: { name: 'T19·SOP生产进度', desc: '05_SOP全部文件现状,含VN价值节点/TOI-TOB证据/L3流程三种编码体系' },
-  l4_tier: { name: 'T20·L4自动化Tier评估', desc: 'L4级自动化Tier判断+候选Agent归属' },
+  l4_tier: { name: 'T20·L4自动化Tier评估', desc: 'L4级自动化Tier判断,数据仓库权威源(dim_process)' },
   data_audit: { name: 'T21·数据对齐审计', desc: '数据底座自我审计记录,每次同步重新生成' },
   ait_handoff: { name: 'T23·VNW→AIT移交追踪', desc: '节点向AIT移交的状态追踪' },
   deliverable_risk: { name: 'T24·交付物四标签风险分析', desc: 'A类型/B责任/C验证/D授权四标签,目前仅PAY域格式已解析' },
-  fused_status: { name: 'T25·熔断状态清单', desc: '节点熔断/非熔断权威判定,来自熔断节点补建清单' },
-  candidate_agents: { name: 'T26·候选Agent汇总', desc: '30个候选Agent的L4覆盖与Tier分布' },
+  fused_status: { name: 'T25·熔断状态清单', desc: '节点熔断/非熔断权威判定,数据仓库权威源(dim_vn.is_fused)' },
+  candidate_agents: { name: 'T26·Agent规划', desc: '数据仓库dim_agent,1条L4=1个规划中的原子级Agent(跟旧版聚合候选Agent颗粒度不同)' },
   sop_pilot_classification: { name: 'T22·SOP规则人机协同分类', desc: '人工试点分类示例,不自动更新' },
+  l3_l2_bridge: { name: 'T29·L3-L2业务能力桥接', desc: '数据仓库bridge_l3_l2,L3流程归属哪个L2业务能力' },
+  org_roles: { name: 'T30·岗位组织', desc: '数据仓库dim_org,岗位族/编制目标/汇报关系' },
 };

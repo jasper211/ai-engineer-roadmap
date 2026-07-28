@@ -1,28 +1,27 @@
 #!/usr/bin/env python3
 """VNW · 数据底座同步脚本
 
-一键可重复执行:每次01-04源文件(价值节点清单/信号提取基线/访谈产出/规则与GAP产出)
-或L4 Skill封装可行性评估更新后,重新运行本脚本,把前端展示数据底座里的派生表
-(T1/T2/T6/T11/T12/T14/T18/T19/T20/T21/T23/T24/T25/T26)全部按最新源重新生成一遍。
-T9/T13只做孤儿引用校验,不重建内容(它们是人工维护的过程追踪表,owner/phase/blocker
-这类字段无法从源文件机械推导)。T3/T4/T10/T16/T17不在本脚本管理范围内。T22是人工试点
-分类示例,同样不在自动重建范围内(详见build_t21里对应的T21审计条目)。
+一键可重复执行:每次源头更新后,重新运行本脚本,把前端展示数据底座里的派生表全部
+按最新源重新生成一遍。T9/T13只做孤儿引用校验,不重建内容(人工维护的过程追踪表,
+owner/phase/blocker这类字段无法机械推导)。T3/T4/T10/T16/T17不在本脚本管理范围内。
+T22是人工试点分类示例,同样不在自动重建范围内(详见build_t21对应的T21审计条目)。
 
-设计原则(2026-07-25首次落地时定的,后续修改请保持):
-- 幂等:每次都是全量重新生成,不是增量追加。同样的源文件跑两次,结果字节级一致。
-- 不改源文件:01-05五层原始文档、04层规则/GAP清单只读,从不写入。
-- T5/T7(2026-07-25起):直接从04层规则清单/Gap清单拼接重建,不再是"只校验不重写"。
-  T7的sop_field_affected字段(04层原始文件里没有,是后续补充的45条真实值)重建时按gap_id
-  从旧文件读回保留,不会被重建流程清空。
+权威数据源分级(2026-07-26 Jasper拍板,这是本脚本最重要的设计原则,后续修改必须遵守):
+- **数据仓库optional(PostgreSQL,process_analytics schema)是公司标准化的权威数据源**,
+  跟01-05层文件材料冲突时,一律以数据仓库为准。T1/T12/T20/T25/T26以及新增T29/T30
+  已切换为以数据仓库(dim_vn/dim_process/dim_agent/bridge_l3_l2/dim_org等表)为主要来源。
+- **数据仓库没有的字段/表,才继续用01-05层文件材料(项目/OB知识库背后的原始素材)补充**——
+  这些文件材料是"过程产物",对的错的标准的非标的混在一起,不是权威来源,只在数据仓库
+  没覆盖到的地方兜底(例如T1的producer/consumer、T2信号明细、T5/T6/T7、SOP相关表)。
+- 数据仓库连接参数在本地未提交文件`db_config_local.py`里,不进版本库。
+
+设计原则(2026-07-25首次落地,后续修改请保持):
+- 幂等:每次都是全量重新生成,不是增量追加。
+- 不改源文件/不改数据仓库:01-05层文件只读;数据仓库只读(SELECT),从不写入。
 - 同时写两处物理副本(规则分析工作区 + 规则前端设计的独立数据底座),保持已有的双份同步惯例。
 - 03层'规则空白地图'目前只认PAY这种'交付物N：'逐个编号的格式;EQ/HR/INS/PARTNER/TREASURY/FA
   用的是'交付物群(N子产物合并分析)'合并写法,本脚本不解析,T24因此只覆盖PAY,运行时会如实打印这个限制。
-- 03层'熔断节点补建清单'各域自动取最新版本号(PAY用v1.2/FA用v1.1/HR用v1.1/其余域用v1.0),
-  PAY是7列格式、其余7域是5列格式(标签有'负责人'/'负责人岗位'/'当前状态'等出入,已用同义词表对齐),
-  两种格式都已解析进T18,8个域全覆盖。
-- 熔断判定:T1不携带任何熔断/Gate字段(2026-07-25拍板,过程核心产物是03层不是02层)。
-  唯一权威判定在T25——节点出现在'熔断节点补建清单'里即为熔断,这解决了此前发现的
-  KA域矛盾(02层Step2曾把KAEM-02/KASC-01标成非熔断,但03层文件明确写KA全域6节点都熔断)。
+- 03层'熔断节点补建清单'各域自动取最新版本号,已解析进T18,8个域全覆盖。
 - T21审计结果是本次运行的即时快照,不做历史累积;需要看历史变化去查git history或另存副本。
 
 用法: python3 sync_data_foundation.py
@@ -36,6 +35,13 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 import openpyxl
+import psycopg2
+import psycopg2.extras
+
+try:
+    from db_config_local import DB_CONFIG
+except ImportError:
+    DB_CONFIG = None
 
 # ---------------------------------------------------------------------------
 # 路径
@@ -74,7 +80,41 @@ TABLE_SUBDIR = {
     "T10": "C_人工维护_未自动化", "T13": "C_人工维护_未自动化", "T16": "C_人工维护_未自动化",
     "T17": "C_人工维护_未自动化",
     "T22": "D_人工试点_非自动",
+    "T29": "A_自动同步_当前有效", "T30": "A_自动同步_当前有效",
 }
+
+
+# ---------------------------------------------------------------------------
+# 数据仓库连接(2026-07-26新增)——Jasper拍板:process_analytics schema所在的这个
+# PostgreSQL数据库是公司标准化的权威数据源,跟01-05层文件材料冲突时以数据库为准;
+# 数据库没有的字段,才继续用文件材料(01-05层)补充。DB_CONFIG来自本地未提交的
+# db_config_local.py,该文件不进版本库。
+# ---------------------------------------------------------------------------
+def _json_safe(v):
+    """把Postgres返回的date/datetime/Decimal/UUID转成JSON能直接序列化的类型,
+    数值/字符串/布尔/None原样返回。"""
+    import datetime
+    import decimal
+    import uuid
+    if isinstance(v, (datetime.date, datetime.datetime)):
+        return v.isoformat()
+    if isinstance(v, decimal.Decimal):
+        return float(v)
+    if isinstance(v, uuid.UUID):
+        return str(v)
+    return v
+
+
+def db_query(sql: str, params: tuple = ()) -> list[dict]:
+    if DB_CONFIG is None:
+        raise RuntimeError("db_config_local.py不存在或读取失败,无法连接数据仓库")
+    conn = psycopg2.connect(**DB_CONFIG, cursor_factory=psycopg2.extras.RealDictCursor)
+    try:
+        with conn.cursor() as cur:
+            cur.execute(sql, params)
+            return [{k: _json_safe(v) for k, v in row.items()} for row in cur.fetchall()]
+    finally:
+        conn.close()
 
 
 def table_path(base: Path, name: str) -> Path:
@@ -593,70 +633,12 @@ def build_t18_from_remediation_lists():
 # 声明(核实过FA用半角冒号、PARTNER把'熔断节点'叫成'待补入节点'且域内数字自相矛盾,
 # 头部声明跨域写法不统一,不可靠;熔断节点补建清单的收录范围本身就是权威边界)。
 # ---------------------------------------------------------------------------
-FUSED_TYPE_RE = re.compile(r"\*\*熔断类型\*\*：(.*?)(?=\n\n|\Z)", re.S)
-
-
 VN_CODE_RE = re.compile(r"VN-[A-Z0-9]+-\d+")
 
 
-def build_t25_fused_status(new_t1_rows: list[dict], t18_rows: list[dict]):
-    # 熔断集合不能只取t18_rows里成功解析出任务表的节点——2026-07-25核实发现FA域v1.1
-    # 一份文件里混了三种格式(标准任务表/F1-F2-F3访谈更新叙述/无表格的'未变更节点'引用表),
-    # 只有第一种会进t18_rows,导致FOB-02/FPG-01/FPG-02/FOR-02/FTR-01被漏判成非熔断
-    # (T13节点复评追踪交叉核对时发现的)。改为对整份'熔断节点补建清单'原文做VN编码全文扫描,
-    # 该文件按定义只讨论本域熔断节点,扫出来的编码集合天然就是熔断集合,不受内部格式差异影响。
-    fused_ids = set()
-    for domain in DOMAINS:
-        src = latest(GAP_MAP_DIR.parent / "熔断节点补建清单", f"{domain}_熔断节点补建清单_v*.md")
-        if src is None:
-            continue
-        text = src.read_text(encoding="utf-8", errors="replace")
-        blocks = list(NODE_BLOCK_RE.finditer(text))
-        for i, bm in enumerate(blocks):
-            node_id = bm.group(1)
-            block_text = text[bm.end(): blocks[i + 1].start() if i + 1 < len(blocks) else len(text)]
-            # 持续迭代口径：源文档明确标记节点已解锁后，下一次同步自动解除熔断。
-            # 推荐写法：**节点状态**：已解锁（也兼容“解除熔断/已完成”）。
-            state_match = re.search(r"\*\*节点状态\*\*\s*[：:]\s*([^\n]+)", block_text)
-            state = state_match.group(1).strip() if state_match else ""
-            if not any(word in state for word in ("已解锁", "解除熔断", "已完成")):
-                fused_ids.add(node_id)
-    # 已核实的误判:VN-EQ-03只在EQ文件里作为'归属并入VN-EQ-03'这类交叉引用出现(某个真熔断
-    # 节点的补建行动提到要把交付物合并进它),它自己不是熔断节点(核实过EQ规则空白地图'包含
-    # 节点'列表明确把它列为8个通过节点之一)。跟T13交叉核对时发现,人工排除。
-    fused_ids -= {"VN-EQ-03"}
-    node_to_domain = {r["node_id"]: r["domain"] for r in new_t1_rows}
-    node_to_name = {r["node_id"]: r["node_name"] for r in new_t1_rows}
-
-    # 补充抓取'**熔断类型**：'这个bullet(仅EQ/PAY/TREASURY用了这个写法,其余域留空,如实标注)
-    fused_type_by_node = {}
-    for domain in DOMAINS:
-        src = latest(GAP_MAP_DIR.parent / "熔断节点补建清单", f"{domain}_熔断节点补建清单_v*.md")
-        if src is None:
-            continue
-        text = src.read_text(encoding="utf-8", errors="replace")
-        blocks = list(NODE_BLOCK_RE.finditer(text))
-        for i, bm in enumerate(blocks):
-            node_id = bm.group(1)
-            block_text = text[bm.end(): blocks[i + 1].start() if i + 1 < len(blocks) else len(text)]
-            m = FUSED_TYPE_RE.search(block_text)
-            if m:
-                fused_type_by_node[node_id] = m.group(1).strip()
-
-    rows = []
-    for r in new_t1_rows:
-        nid = r["node_id"]
-        is_fused = nid in fused_ids
-        rows.append({
-            "node_id": nid, "node_name": node_to_name.get(nid, ""),
-            "domain": node_to_domain.get(nid, ""),
-            "fused_status": "熔断" if is_fused else "非熔断",
-            "fused_type": fused_type_by_node.get(nid, ""),
-            "source": "03层·熔断节点补建清单(收录=熔断,未收录=非熔断)",
-            "last_updated": TODAY,
-        })
-    fields = ["node_id", "node_name", "domain", "fused_status", "fused_type", "source", "last_updated"]
-    return fields, rows
+# 2026-07-26: build_t25_fused_status(03层熔断节点补建清单全文扫描版)已废弃移除——
+# T25改为直接查process_analytics.dim_vn.is_fused(数据仓库权威源,见build_t12_t25_from_dim_vn)。
+# 跟这版03层文件扫描逻辑对照过KA域6个节点,判断完全一致,数据仓库口径没有引入新矛盾。
 
 
 # ---------------------------------------------------------------------------
@@ -715,58 +697,169 @@ def build_t5_t7():
 # 阶段5: L4 Skill封装可行性评估 → T20
 # ---------------------------------------------------------------------------
 def build_t20():
-    """T20源: L4流程_Skill封装可行性评估(判断依据/物理交付物等字段更细)。
-    'candidate_agent'字段从候选Agent目录_数据表_v3.xlsx按l4_code关联补入——
-    2026-07-25核实过两份文件对全部368条L4的automation_tier判断完全一致(零差异),
-    候选Agent目录多出的是'这条L4归属哪个候选Agent'这一列,直接并进来,不用重复建表。"""
-    src = latest(AGENT_SKILL_DIR, "L4流程_Skill封装可行性评估_确认最终版*.xlsx")
-    if src is None:
-        return ([], []), None
-
-    agent_src = latest(AGENT_SKILL_DIR, "候选Agent目录_数据表_v*.xlsx")
-    l4_to_agent = {}
-    if agent_src is not None:
-        wb_a = openpyxl.load_workbook(agent_src, read_only=True, data_only=True)
-        for r in list(wb_a["L4明细"].iter_rows(values_only=True))[1:]:
-            if r[3]:  # L4编码
-                l4_to_agent[r[3]] = r[6] or ""  # 候选Agent(30个)
-
-    wb = openpyxl.load_workbook(src, read_only=True, data_only=True)
-    ws = wb["L4明细_最终确认版"]
-    rows = list(ws.iter_rows(values_only=True))[1:]
+    """T20(2026-07-26起改为数据仓库权威源): process_analytics.dim_process,
+    取代此前解析'L4流程_Skill封装可行性评估'xlsx的做法。跟文件版对照过L3-IRI这个
+    真实例子,368条L4里automation_tier判断有出入(数据仓库整体更'乐观',更多判Auto)——
+    数据仓库是权威源,直接以它为准,不再跟xlsx对齐。
+    候选Agent字段这次没有并进来:核实过dim_agent(361行,1L4=1个规划中的原子Agent)
+    和dim_process按l3_code+l4_name能对上的只有155/361(43%),关联太弱,不编造这个
+    连接——T26独立建表,不做L4级别的强行关联。agent_d1-d6这套6维打分体系目前
+    在数据仓库里基本是空的(schema设计好了,还没真正打分),如实原样带出,不补造数值。"""
     field_names = [
-        "l1_domain", "business_domain", "l3_code", "l3_process", "l4_code", "l4_activity",
-        "physical_deliverable_ideal", "action_nature", "action_singularity", "final_tier",
-        "judgment_basis", "automation_tier", "funds_safety_hard_gate", "physical_execution_type",
-        "candidate_agent",
+        "l1_code", "l3_code", "l3_name", "l3_domain", "l3_status", "l3_trigger", "l3_exit_condition",
+        "l4_code", "l4_name", "l4_deliverable", "l4_deliverable_type", "l4_accountable_role",
+        "l4_accountable_family", "l5_step", "agentifiability", "agent_human_touchpoint",
+        "agent_d1_input_struct", "agent_d2_rule_clear", "agent_d3_output_verify",
+        "agent_d4_api_reach", "agent_d5_fallback", "agent_d6_compliance", "agent_score_total",
+        "sla_hours", "sla_source", "version", "valid_from", "source_notes",
     ]
-    out_rows = []
+    rows = db_query(f"""
+        SELECT {', '.join(field_names)}
+        FROM process_analytics.dim_process
+        WHERE is_current = true
+        ORDER BY l3_code, l4_code
+    """)
     for r in rows:
-        rec = dict(zip(field_names, ["" if v is None else v for v in r]))
-        rec["candidate_agent"] = l4_to_agent.get(rec["l4_code"], "")
-        out_rows.append(rec)
-    return (field_names, out_rows), src.name
+        for k, v in r.items():
+            if v is None:
+                r[k] = ""
+    return (field_names, rows), "process_analytics.dim_process(数据仓库)"
 
 
 def build_t26_candidate_agents():
-    """T26: 候选Agent组合汇总(30个候选Agent各自的L4覆盖数/Tier分布/定位类型),
-    源头是候选Agent目录_数据表_v3.xlsx的'Agent汇总'sheet。"""
-    src = latest(AGENT_SKILL_DIR, "候选Agent目录_数据表_v*.xlsx")
-    if src is None:
-        return ([], []), None
-    wb = openpyxl.load_workbook(src, read_only=True, data_only=True)
-    rows = list(wb["Agent汇总"].iter_rows(values_only=True))[1:]
+    """T26(2026-07-26起改为数据仓库权威源): process_analytics.dim_agent。
+    注意重大颗粒度变化:原来是30个'聚合候选Agent'(每个覆盖多条L4);数据仓库这边是
+    361行'1个L4=1个原子级规划中Agent',全部agent_status='规划中',没有已上线的。
+    这是两种不同的Agent组织哲学,不是同一份数据的新旧版本,不能把它当作对旧T26的
+    简单替换来理解——旧的'候选Agent聚合'概念目前在数据仓库里没有对应表,如实反映现状。"""
     field_names = [
-        "candidate_agent", "l4_coverage_count", "auto_count", "aug_count", "hybrid_count",
-        "human_count", "hybrid_human_ratio", "positioning_type",
-        "funds_safety_gate_count", "physical_execution_count",
+        "agent_code", "agent_name", "agent_type", "agent_status", "l3_primary",
+        "l4_count_covered", "tech_stack", "platform_path", "owner_position_family",
+        "m4_priority", "go_live_date", "baseline_accuracy", "baseline_throughput",
     ]
-    out_rows = []
+    rows = db_query(f"""
+        SELECT {', '.join(field_names)}
+        FROM process_analytics.dim_agent
+        ORDER BY agent_code
+    """)
     for r in rows:
-        if not r[0]:
+        for k, v in r.items():
+            if v is None:
+                r[k] = ""
+    return (field_names, rows), "process_analytics.dim_agent(数据仓库)"
+
+
+def build_t29_l3_l2_bridge():
+    """T29(新增,2026-07-26): L3↔L2业务能力桥接,源头process_analytics.bridge_l3_l2。
+    此前L2归属只能从L2业务能力详情卡csv的分号拼接字段(l3_codes_architecture)反查,
+    覆盖61/68个L3且是多对多塞进一个字符串字段;这张桥接表是数据仓库里的规范化版本,
+    直接权威,不用再反查字符串。"""
+    field_names = ["l3_code", "l2_code", "l2_name", "l1_code", "l1_name"]
+    rows = db_query(f"SELECT {', '.join(field_names)} FROM process_analytics.bridge_l3_l2 ORDER BY l3_code")
+    return (field_names, rows), "process_analytics.bridge_l3_l2(数据仓库)"
+
+
+def build_t30_org():
+    """T30(新增,2026-07-26): 岗位组织族信息,源头process_analytics.dim_org。
+    此前岗位信息只能从02层信号基线的产出方/消费方自由文本里正则拆分(曾有过把括号
+    说明误拆成角色名的bug),这张表是数据仓库里的规范化版本,含编制目标/汇报关系。"""
+    field_names = [
+        "position_family", "position_family_name", "position_code", "position_name",
+        "position_nature", "ep_count", "headcount_target_min", "headcount_target_max",
+        "mark_retained", "executor_id", "executor_name", "reports_to_family", "is_active",
+    ]
+    rows = db_query(f"SELECT {', '.join(field_names)} FROM process_analytics.dim_org WHERE is_active = true ORDER BY position_family")
+    for r in rows:
+        for k, v in r.items():
+            if v is None:
+                r[k] = ""
+    return (field_names, rows), "process_analytics.dim_org(数据仓库)"
+
+
+def build_t12_t25_from_dim_vn():
+    """T12(Gate评级明细)+T25(熔断状态清单) 2026-07-26起改为数据仓库权威源:
+    process_analytics.dim_vn。之前T12来自02层Step2解析、T25来自03层熔断节点补建清单
+    扫描;两者跟这次查到的dim_vn.is_fused对比过KA域6个节点,判断完全一致(全部True),
+    验证过数据仓库口径没有引入新矛盾。dim_vn共93个vn_id,比文件拼出来的T1(78个)多,
+    多出的15个如实体现在T1合并阶段(见merge_t1_with_dim_vn),这里不重复处理。"""
+    dv_fields = [
+        "vn_id", "vn_name", "l3_code", "gate1_data_linked", "gate2_grounded",
+        "gate3_traceable", "overall_judgment", "is_fused", "priority",
+    ]
+    rows = db_query(f"SELECT {', '.join(dv_fields)} FROM process_analytics.dim_vn ORDER BY vn_id")
+    t12_fields = ["node_id", "node_name", "l3_code", "gate1_status", "gate2_status",
+                  "gate3_status", "overall_judgment", "source"]
+    t25_fields = ["node_id", "node_name", "l3_code", "fused_status", "priority", "source"]
+    t12_rows, t25_rows = [], []
+    for r in rows:
+        t12_rows.append({
+            "node_id": r["vn_id"], "node_name": r["vn_name"], "l3_code": r["l3_code"] or "",
+            "gate1_status": r["gate1_data_linked"] or "", "gate2_status": r["gate2_grounded"] or "",
+            "gate3_status": r["gate3_traceable"] or "", "overall_judgment": r["overall_judgment"] or "",
+            "source": "process_analytics.dim_vn(数据仓库)",
+        })
+        t25_rows.append({
+            "node_id": r["vn_id"], "node_name": r["vn_name"], "l3_code": r["l3_code"] or "",
+            "fused_status": "熔断" if r["is_fused"] else "非熔断",
+            "priority": r["priority"] or "", "source": "process_analytics.dim_vn(数据仓库)",
+        })
+    return (t12_fields, t12_rows), (t25_fields, t25_rows)
+
+
+def merge_t1_with_dim_vn(t1_rows: list[dict], t1_fields: list[str]):
+    """把dim_vn(93个vn_id)的l3_code/l2_code/l2_name/l1_code/vs_code/priority
+    合并进T1(文件拼出来的78个node_id)。冲突以数据仓库为准(覆盖priority);
+    数据仓库有但文件没有的15个节点,作为新行补进T1(文件字段留空,如实标注来源,
+    不编造02层信号数据);文件有但数据仓库没有的节点(本session从05_SOP直接补入
+    T1的6个),数据仓库字段留空,不强行匹配。"""
+    dv_rows = db_query("""
+        SELECT vn_id, vn_name, l3_code, priority, vn_composition, vn_physical_form,
+               vn_start_point, vn_end_point, m_anchor, kpi_anchor
+        FROM process_analytics.dim_vn
+    """)
+    bridge_rows = db_query("SELECT l3_code, l2_code, l2_name, l1_code FROM process_analytics.bridge_l3_l2")
+    l3_to_l2 = {}
+    for b in bridge_rows:
+        l3_to_l2.setdefault(b["l3_code"], []).append(b)
+    dv_by_id = {r["vn_id"]: r for r in dv_rows}
+
+    new_fields = t1_fields + ["l3_code", "l2_code", "l2_name", "l1_code", "vs_code"]
+    existing_ids = {r["node_id"] for r in t1_rows}
+
+    def apply_dw(row: dict, dv: dict):
+        row["l3_code"] = dv["l3_code"] or ""
+        l2_matches = l3_to_l2.get(dv["l3_code"], [])
+        row["l2_code"] = l2_matches[0]["l2_code"] if l2_matches else ""
+        row["l2_name"] = l2_matches[0]["l2_name"] if l2_matches else ""
+        row["l1_code"] = l2_matches[0]["l1_code"] if l2_matches else ""
+        row["vs_code"] = ""  # dim_vn本身没有vs_code非空值的稳定来源,留空不编造
+        if dv["priority"]:
+            row["priority"] = dv["priority"]  # 数据仓库权威,覆盖文件版
+
+    for row in t1_rows:
+        row.setdefault("l3_code", "")
+        row.setdefault("l2_code", "")
+        row.setdefault("l2_name", "")
+        row.setdefault("l1_code", "")
+        row.setdefault("vs_code", "")
+        dv = dv_by_id.get(row["node_id"])
+        if dv:
+            apply_dw(row, dv)
+
+    extra_from_dw = []
+    for vn_id, dv in dv_by_id.items():
+        if vn_id in existing_ids:
             continue
-        out_rows.append(dict(zip(field_names, ["" if v is None else v for v in r])))
-    return (field_names, out_rows), src.name
+        blank_row = {f: "" for f in t1_fields}
+        blank_row["node_id"] = vn_id
+        domain_m = re.match(r"VN-([A-Z]+)-", vn_id)
+        blank_row["domain"] = domain_m.group(1) if domain_m else ""
+        blank_row["node_name"] = dv["vn_name"] or ""
+        blank_row["source_file"] = "process_analytics.dim_vn(数据仓库补充,文件材料未覆盖)"
+        apply_dw(blank_row, dv)
+        extra_from_dw.append(blank_row)
+
+    return new_fields, t1_rows + extra_from_dw, len(extra_from_dw)
 
 
 # ---------------------------------------------------------------------------
@@ -1009,30 +1102,43 @@ def main():
         print(f"  + 05_SOP补充了{len(sop_extra_nodes)}个02层批次没有的节点: "
               f"{[r['node_id'] for r in sop_extra_nodes]}")
 
+    print("\n[1b/8] 用数据仓库(process_analytics.dim_vn/bridge_l3_l2)合并L3/L2归属 + 补充节点 ...")
+    t1_fields_dw, t1_rows_dw, n_extra = merge_t1_with_dim_vn(tables["t1"][1], tables["t1"][0])
+    tables["t1"] = (t1_fields_dw, t1_rows_dw)
+    print(f"  T1并入l3_code/l2_code/l2_name/l1_code字段(数据仓库权威,冲突覆盖priority);"
+          f"数据仓库补充了{n_extra}个文件材料没覆盖的节点,T1现共{len(t1_rows_dw)}行")
+
     print("\n[2/8] 用03层规则空白地图回填T6 + 建T24 ...")
     t6_rows, filled, t24, t24_coverage = enrich_t6_and_build_t24(tables["t6"][1])
     print(f"  T6回填 {filled}/{len(t6_rows)} 行")
     print(f"  T24({len(t24[1])}条,仅PAY格式覆盖) 各域交付物清单回填候选: "
           f"{ {k: v['交付物清单回填候选'] for k, v in t24_coverage.items()} }")
 
-    print("\n[3/8] 用03层熔断节点补建清单(各域取最新版本) 重建T18 + 建T25(熔断状态清单) ...")
+    print("\n[3/8] 用03层熔断节点补建清单(各域取最新版本) 重建T18 ...")
     t18, t18_files, t18_domain_count = build_t18_from_remediation_lists()
     print(f"  用到{len(t18_files)}个域文件: {t18_files}")
     print(f"  T18共{len(t18[1])}条任务, 各域任务数: {t18_domain_count}")
-    t25 = build_t25_fused_status(tables["t1"][1], t18[1])
+
+    print("\n[3b/8] 重建T12(Gate评级)+T25(熔断状态) —— 数据仓库权威源(dim_vn) ...")
+    t12_dw, t25 = build_t12_t25_from_dim_vn()
     fused_n = sum(1 for r in t25[1] if r["fused_status"] == "熔断")
-    print(f"  T25: {fused_n}/{len(t25[1])}个节点判定为熔断 (T1本身已不再携带熔断字段)")
+    print(f"  T12/T25共{len(t25[1])}个节点(数据仓库dim_vn),{fused_n}个判定为熔断")
 
     print("\n[4/8] 重建T5/T7(直接从04层规则清单/Gap清单拼接,不再只校验) ...")
     t5, t7 = build_t5_t7()
     print(f"  T5共{len(t5[1])}条规则  T7共{len(t7[1])}条Gap "
           f"(sop_field_affected保留了{sum(1 for r in t7[1] if r['sop_field_affected'])}条既有值)")
 
-    print("\n[5/8] 重建T20(L4 Skill封装可行性评估+候选Agent归属) + T26(候选Agent汇总) ...")
+    print("\n[5/8] 重建T20(L4自动化Tier) + T26(Agent规划) —— 数据仓库权威源 ...")
     t20, t20_src = build_t20()
-    print(f"  T20源文件: {t20_src}  共{len(t20[1])}条L4")
+    print(f"  T20源: {t20_src}  共{len(t20[1])}条L4")
     t26, t26_src = build_t26_candidate_agents()
-    print(f"  T26源文件: {t26_src}  共{len(t26[1])}个候选Agent")
+    print(f"  T26源: {t26_src}  共{len(t26[1])}行(注意:1L4=1原子Agent,跟旧版30个聚合候选Agent是不同颗粒度)")
+
+    print("\n[5c/8] 新增T29(L3-L2桥接)+T30(岗位组织) —— 数据仓库 ...")
+    t29, t29_src = build_t29_l3_l2_bridge()
+    t30, t30_src = build_t30_org()
+    print(f"  T29共{len(t29[1])}条L3-L2映射  T30共{len(t30[1])}个岗位族")
 
     print("\n[5b/8] 重建T19 —— 直接扫描05_SOP当前全部文件(含TOI/TOB-EVD/L3非VN编码) ...")
     t19 = build_t19_sop_status(t7[1])
@@ -1065,16 +1171,18 @@ def main():
     write_both("T7_缺口清单_全域_v4.2.csv", *t7)
     write_both("T6_交付物清单_全域_v3.1.csv", tables["t6"][0], t6_rows)
     write_both("T11_岗位映射_全域_v3.0.csv", *tables["t11"])
-    write_both("T12_Gate评级明细_全域_v3.0.csv", *tables["t12"])
+    write_both("T12_Gate评级明细_全域_v4.0.csv", *t12_dw)
     write_both("T14_域扩展进度_全域_v2.1.csv", *t14)
     write_both("T18_熔断任务分发_全域_v2.0.csv", *t18)
     write_both("T19_SOP生产进度_全域_v2.0.csv", *t19)
     write_both("T23_VNW_AIT移交追踪_全域_v2.0.csv", *t23)
-    write_both("T25_熔断状态清单_全域_v1.0.csv", *t25)
-    write_both("T20_L4自动化Tier评估_全域_v2.0.csv", *t20)
-    write_both("T26_候选Agent汇总_全域_v1.0.csv", *t26)
+    write_both("T25_熔断状态清单_全域_v2.0.csv", *t25)
+    write_both("T20_L4自动化Tier评估_全域_v3.0.csv", *t20)
+    write_both("T26_Agent规划_全域_v2.0.csv", *t26)
     write_both("T24_交付物四标签风险分析_全域_v1.0.csv", *t24)
     write_both("T21_数据对齐审计_全域_v1.0.csv", *t21)
+    write_both("T29_L3L2业务能力桥接_全域_v1.0.csv", *t29)
+    write_both("T30_岗位组织_全域_v1.0.csv", *t30)
 
     print("\n[附加] 导出JSON给VNW前端(frontend/public/data/) ...")
     built_tables = {
@@ -1084,7 +1192,7 @@ def main():
         "gaps": t7[1],
         "deliverables": t6_rows,
         "role_mapping": tables["t11"][1],
-        "gate_ratings": tables["t12"][1],
+        "gate_ratings": t12_dw[1],
         "domain_progress": t14[1],
         "fused_tasks": t18[1],
         "sop_progress": t19[1],
@@ -1094,6 +1202,8 @@ def main():
         "candidate_agents": t26[1],
         "deliverable_risk": t24[1],
         "data_audit": t21[1],
+        "l3_l2_bridge": t29[1],
+        "org_roles": t30[1],
     }
     exported = export_json_for_frontend(built_tables)
     print(f"  共导出{len(exported)}张表到 {APP_V2_DATA_DIR}")
