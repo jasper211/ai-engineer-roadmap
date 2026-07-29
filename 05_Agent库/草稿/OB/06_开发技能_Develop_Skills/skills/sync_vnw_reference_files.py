@@ -13,16 +13,32 @@
 "人工/机制放入原文，AI只读不改"，但这里是自动同步机制放入，不是Jasper
 手工放入，所以单独建目录，不跟raw/混用。
 
-版本判断：L3流程库是目录镜像，同一L3编码可能有多个历史版本文件（如
-V1.0/V1.1/V1.2），复用`table_reader.py`的`group_latest_versions()`同款
-正则规则，只镜像最新版本，不搬运历史版本进vault。DICT数据字典/D1-D6
-打分表/HR岗位设计文档是单文件镜像，按最新mtime直接覆盖同步。
+版本判断：三种来源类型。
+- `dir_latest_version`：整个目录镜像，同一L3编码可能有多个历史版本文件，
+  复用`table_reader.py`的`group_latest_versions()`只镜像最新版本。
+- `file_latest_version`：单份材料但版本号写在文件名末尾（`..._V3.44.xlsx`
+  这种紧贴扩展名的写法），同目录下按`名称前缀+版本号`匹配同款文件，自动
+  取最大版本号，不需要人工去改这里的文件名。
+- `file`：版本号不在文件名末尾（例如`DICT_..._V2_项目交付.md`、
+  `2026-07-20_68L3岗位族归属设计_v6.1_SUBMITTED.md`——后面还带日期/状态
+  后缀，版本判断跟"文件名前缀"纠缠在一起，自动匹配容易把无关文件误判成
+  "新版本"），只能整份镜像；这批文件出新版本时，**新文件名需要人工加进
+  `VNW_REFERENCE_SOURCES`**，这里不会自动发现，是本机制唯一的人工触点
+  （2026-07-29 Jasper提出的"非白名单文件谁来盯更新"疑问，答案就是这条：
+  内容更新走每日自动同步，但"这份材料存在新版本/换了文件名"这件事，仍然
+  需要维护这些文件的同事或Jasper自己注意到并说一声）。
+
+历史版本清理：`_prune_stale()`在每次同步后，删除manifest里记录过、但本轮
+不再产生的镜像文件（比如L3蓝图V1.0→V1.1后，vault里的V1.0旧文件会被移除，
+不会永久堆积）。只清理这个脚本自己写进manifest的文件，不碰README.md/
+_manifest.json或人工放进这个目录的其他内容。
 
 增量判断：复用`file_diff.py`的`hash_file()`按内容哈希比对，没变化的文件
 不重复写入（vault侧mtime保持不变，git diff也不会出现无意义的改动）。
 """
 
 import json
+import re
 import shutil
 import sys
 from datetime import datetime
@@ -40,23 +56,45 @@ VAULT_DEST_DIR = Path(
 )
 MANIFEST_PATH = VAULT_DEST_DIR / "_manifest.json"
 
-# 每条：(来源, 类型)。dir_latest_version=按group_latest_versions()只取每个
-# 编码的最新版本；file=单文件直接镜像。新增引用源只需要在这里加一条，
-# 不需要改下面的同步逻辑。
+# 每条：(来源, 类型[, 额外参数])。
+# - dir_latest_version：来源=目录，按group_latest_versions()只取每个编码的
+#   最新版本。
+# - file_latest_version：来源=目录，额外参数=文件名前缀（版本号紧跟在
+#   前缀后、扩展名前，如"D1_价值节点清单_V"+"3.44"+".xlsx"），自动匹配
+#   同前缀文件里版本号最大的一份，出新版本不需要改这里。
+# - file：来源=精确文件路径，版本号不在文件名末尾、自动匹配不安全，只能
+#   整份镜像，出新版本需要人工把新文件名加进这里。
 VNW_REFERENCE_SOURCES = [
     (EA_PROJECT_ROOT / "02_过程成果-工作产出/L3流程库", "dir_latest_version"),
     (EA_PROJECT_ROOT / "03_发布成果-交付物/治理规范/DICT_流程数据库数据字典_V2_项目交付.md", "file"),
-    (EA_PROJECT_ROOT / "02_过程成果-工作产出/规则分析（Jasper）/Agent与Skill体系/L4两阶段复核_全量368条_合并版_v1.0.csv", "file"),
-    (EA_PROJECT_ROOT / "HR工作材料/D_EA项目组织优化/2026-07-20_68L3岗位族归属设计_v6.1_SUBMITTED.md", "file"),
-    # 2026-07-29新增(Jasper确认路径)：价值节点(VN)+KPI权威数据，全部是版本号
-    # 直接写死在文件名里的单文件，没有像L3流程库那样的"同编码多版本目录"
-    # 结构，只能"file"整份镜像；出新版本时需要手动把这里的文件名换成新版本。
-    (EA_PROJECT_ROOT / "03_发布成果-交付物/权威数据/D1_价值节点清单_V3.44.xlsx", "file"),
-    (EA_PROJECT_ROOT / "03_发布成果-交付物/权威数据/D2_价值节点_L3映射表_V2.11.csv", "file"),
+    # 2026-07-29新增(Jasper确认路径)：价值节点(VN)+KPI权威数据。
+    (EA_PROJECT_ROOT / "03_发布成果-交付物/权威数据", "file_latest_version", "D1_价值节点清单_V"),
+    (EA_PROJECT_ROOT / "03_发布成果-交付物/权威数据", "file_latest_version", "D2_价值节点_L3映射表_V"),
+    (EA_PROJECT_ROOT / "03_发布成果-交付物/权威数据", "file_latest_version", "kpi_registry_154_v"),
+    (EA_PROJECT_ROOT / "03_发布成果-交付物/权威数据", "file_latest_version", "kpi_crosswalk_154_to_43_v"),
     (EA_PROJECT_ROOT / "03_发布成果-交付物/权威数据/dim_kpi_v3.3_权威层.csv", "file"),
-    (EA_PROJECT_ROOT / "03_发布成果-交付物/权威数据/kpi_registry_154_v2.1.csv", "file"),
-    (EA_PROJECT_ROOT / "03_发布成果-交付物/权威数据/kpi_crosswalk_154_to_43_v2.1.csv", "file"),
+    (EA_PROJECT_ROOT / "02_过程成果-工作产出/规则分析（Jasper）/Agent与Skill体系", "file_latest_version", "L4两阶段复核_全量368条_合并版_v"),
+    (EA_PROJECT_ROOT / "HR工作材料/D_EA项目组织优化/2026-07-20_68L3岗位族归属设计_v6.1_SUBMITTED.md", "file"),
 ]
+
+VERSION_SUFFIX_RE = re.compile(r"^(\d+(?:\.\d+)*)(\.\w+)$")
+
+
+def _latest_by_prefix(dir_path: Path, prefix: str) -> Path | None:
+    """在dir_path里找文件名以prefix开头、prefix后紧跟"版本号+扩展名"的文件，
+    返回版本号最大的一份。跟table_reader.py的group_latest_versions()同一
+    套"版本号紧贴扩展名"假设，只是这里从一个已知前缀出发，不需要在混杂着
+    大量其他文档的`权威数据/`目录里做全目录分组。"""
+    best: tuple[tuple, Path] | None = None
+    for f in Path(dir_path).glob(f"{prefix}*"):
+        rest = f.name[len(prefix):]
+        m = VERSION_SUFFIX_RE.match(rest)
+        if not m:
+            continue
+        ver_tuple = tuple(int(x) for x in m.group(1).split("."))
+        if best is None or ver_tuple > best[0]:
+            best = (ver_tuple, f)
+    return best[1] if best else None
 
 
 def _load_manifest() -> Dict:
@@ -70,11 +108,12 @@ def _save_manifest(manifest: Dict):
     MANIFEST_PATH.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
-def _sync_one_file(src: Path, dest_dir: Path, manifest: Dict, summary: Dict):
+def _sync_one_file(src: Path, dest_dir: Path, manifest: Dict, summary: Dict, produced: set):
     if not src.exists():
         summary["missing"].append(str(src))
         return
     dest = dest_dir / src.name
+    produced.add(dest.name)
     new_hash = hash_file(src)
     old_entry = manifest["files"].get(str(src))
     if old_entry and old_entry.get("hash") == new_hash and dest.exists():
@@ -91,13 +130,36 @@ def _sync_one_file(src: Path, dest_dir: Path, manifest: Dict, summary: Dict):
     summary["changed"].append(f"{action}: {src.name}")
 
 
+def _prune_stale(manifest: Dict, produced: set, summary: Dict, dry_run: bool) -> None:
+    """删除manifest里记录过、但本轮不再产生的镜像文件——版本升级后旧版本
+    不会永久堆积在vault里。只删这个脚本自己写进manifest的文件。"""
+    stale_srcs = [
+        src for src, entry in manifest["files"].items()
+        if Path(entry["dest"]).name not in produced
+    ]
+    for src in stale_srcs:
+        entry = manifest["files"][src]
+        dest_path = VAULT_DEST_DIR / entry["dest"]
+        if dry_run:
+            summary["changed"].append(f"[dry-run会清理旧版本]: {entry['dest']}")
+            continue
+        if dest_path.exists():
+            dest_path.unlink()
+        del manifest["files"][src]
+        summary["changed"].append(f"清理旧版本: {entry['dest']}")
+
+
 def sync_all(dry_run: bool = False) -> Dict:
     manifest = _load_manifest()
     summary = {"changed": [], "unchanged": 0, "missing": [], "dry_run": dry_run}
+    produced: set = set()
 
-    for source, kind in VNW_REFERENCE_SOURCES:
+    for entry in VNW_REFERENCE_SOURCES:
+        source, kind = entry[0], entry[1]
+
         if kind == "file":
             if dry_run:
+                produced.add(source.name)
                 if not source.exists():
                     summary["missing"].append(str(source))
                 else:
@@ -108,7 +170,24 @@ def sync_all(dry_run: bool = False) -> Dict:
                     else:
                         summary["unchanged"] += 1
                 continue
-            _sync_one_file(source, VAULT_DEST_DIR, manifest, summary)
+            _sync_one_file(source, VAULT_DEST_DIR, manifest, summary, produced)
+
+        elif kind == "file_latest_version":
+            prefix = entry[2]
+            target = _latest_by_prefix(source, prefix)
+            if target is None:
+                summary["missing"].append(f"{source}/{prefix}*")
+                continue
+            if dry_run:
+                produced.add(target.name)
+                old_hash = manifest["files"].get(str(target), {}).get("hash")
+                new_hash = hash_file(target)
+                if old_hash != new_hash:
+                    summary["changed"].append(f"[dry-run会更新]: {target.name}")
+                else:
+                    summary["unchanged"] += 1
+                continue
+            _sync_one_file(target, VAULT_DEST_DIR, manifest, summary, produced)
 
         elif kind == "dir_latest_version":
             if not source.exists():
@@ -122,6 +201,7 @@ def sync_all(dry_run: bool = False) -> Dict:
             latest_files = group_latest_versions(all_files)
             for f in latest_files:
                 if dry_run:
+                    produced.add(f.name)
                     old_hash = manifest["files"].get(str(f), {}).get("hash")
                     new_hash = hash_file(f)
                     if old_hash != new_hash:
@@ -129,7 +209,9 @@ def sync_all(dry_run: bool = False) -> Dict:
                     else:
                         summary["unchanged"] += 1
                     continue
-                _sync_one_file(f, VAULT_DEST_DIR, manifest, summary)
+                _sync_one_file(f, VAULT_DEST_DIR, manifest, summary, produced)
+
+    _prune_stale(manifest, produced, summary, dry_run)
 
     if not dry_run:
         _save_manifest(manifest)

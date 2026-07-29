@@ -222,9 +222,34 @@ class L3ModelBuilder:
                 field: add(authoritative(field, row.get(field), "dim_process", code, field))
                 for field in (
                     "l4_name", "l4_deliverable", "l4_deliverable_type",
-                    "agentifiability", "agent_human_touchpoint", *D_FIELDS,
+                    "agentifiability", "agent_human_touchpoint",
                 )
             }
+            d1_d6 = {}
+            supplement = self.d1d6_supplement.get(code)
+            for field in D_FIELDS:
+                db_value = row.get(field)
+                if db_value is not None:
+                    d1_d6[field] = db_value
+                    refs[field] = add(authoritative(field, db_value, "dim_process", code, field))
+                elif supplement is not None:
+                    d1_d6[field] = supplement[field]
+                    refs[field] = add(EvidenceRecord(
+                        field_name=field,
+                        value=supplement[field],
+                        evidence_class=EvidenceClass.SUPPLEMENTAL,
+                        status=EvidenceStatus.ACTIVE,
+                        source=SourceRef(
+                            source_system="EA项目_权威数据",
+                            source_object="L4两阶段复核_全量368条_合并版_v1.0.csv",
+                            source_key=code,
+                            source_field=field,
+                            source_version="v1.0",
+                        ),
+                    ))
+                else:
+                    d1_d6[field] = None
+                    refs[field] = add(authoritative(field, None, "dim_process", code, field))
             l4s.append({
                 "l4_code": code,
                 "l4_name": row.get("l4_name", ""),
@@ -232,7 +257,7 @@ class L3ModelBuilder:
                 "deliverable_type": row.get("l4_deliverable_type", ""),
                 "tier": row.get("agentifiability", ""),
                 "human_touchpoint": row.get("agent_human_touchpoint", ""),
-                "d1_d6": {field: row.get(field) for field in D_FIELDS},
+                "d1_d6": d1_d6,
                 "evidence_refs": refs,
             })
 
