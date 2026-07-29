@@ -21,6 +21,12 @@
           /usr/local/bin/python3 "$AGENT" --extract-project "EA流程架构项目" --max-files 20 --quiet;
           /usr/local/bin/python3 "$AGENT" --extract-project "Jasper AI协同经验引擎" --max-files 20 --quiet;
 
+          # 2026-07-28新增：VNW引用原件同步（原样镜像，不提炼），见
+          # skills/sync_vnw_reference_files.py docstring。跟原子提炼是
+          # 独立的两件事，这里只是顺路复用同一个每日窗口，不共享状态。
+          cd "$OB_DIR/06_开发技能_Develop_Skills/skills";
+          /usr/local/bin/python3 sync_vnw_reference_files.py 2>&1 | tee -a /tmp/ob-vnw-reference-sync.log;
+
           /usr/local/bin/python3 "$OB_DIR/05_集成工具_Integrate_Tools/tools/sync_to_icloud.py";
 
           # commit+push是尽力而为——launchd环境下SSH agent/keychain访问可能跟
