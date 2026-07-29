@@ -121,6 +121,27 @@ class L3ModelSystemTests(unittest.TestCase):
         self.assertEqual(reader.l3_codes, ["L3-A", "L3-B"])
         self.assertEqual(reader.processes("L3-A")[0]["l4_code"], "1")
 
+    def test_blueprint_parser_supports_com_main_chain(self):
+        content = """## 二、关联价值节点
+| VN编码 | VN名称 | 优先级 | 核心交付物 | 关联L4 | 状态 |
+| VN-PAY-01 | 佣金包 | P0 | 《佣金表》 | COM-01 / COM-02 | 熔断 |
+## 三、端到端L4链路
+### 3.1 主链路
+[COM-01] 政策接收 ──→ 《政策库》
+[COM-02] 差异拆解 ──→ 《配置表》
+### 3.2 支链路
+## 五、RACI矩阵
+| L4 | L4名称 | 主责(A) | 执行(R) | 咨询(C) | 知会(I) |
+| COM-01 | 政策接收 | 刘敏然 | Cici | Carrie | Mark |
+"""
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "com.md"
+            path.write_text(content, encoding="utf-8")
+            result = parse_blueprint(path, {"L4-COM-01", "L4-COM-02"})
+        self.assertEqual(len(result["steps"]), 2)
+        self.assertEqual(result["blueprint_value_nodes"][0]["vn_id"], "VN-PAY-01")
+        self.assertEqual(result["raci"][0]["accountable"], "刘敏然")
+
 
 if __name__ == "__main__":
     unittest.main()

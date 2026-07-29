@@ -1,0 +1,354 @@
+<title>L3-EO · 合规基线demo(Gate A)</title>
+<style>
+  :root {
+    --bg: #f7f6f2; --surface: #ffffff; --surface-2: #f0eee7; --border: #ddd8cc;
+    --text: #1c2029; --text-muted: #6d7280; --text-faint: #9a9d8f;
+    --accent: #b8631f; --accent-soft: #b8631f14; --accent-border: #b8631f55;
+    --good: #1f9d76; --good-soft: #1f9d7618;
+    --warn: #b8821f; --warn-soft: #b8821f18;
+    --bad: #b43b32; --bad-soft: #b43b3212;
+    --shadow: 0 1px 2px rgba(20,20,10,0.06), 0 8px 24px rgba(20,20,10,0.05);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #10141c; --surface: #171d29; --surface-2: #1e2635; --border: #2a3345;
+      --text: #e6e9f0; --text-muted: #8b93a7; --text-faint: #5c6479;
+      --accent: #e0a054; --accent-soft: #e0a05420; --accent-border: #e0a05460;
+      --good: #45c9a0; --good-soft: #45c9a022;
+      --warn: #e0a83f; --warn-soft: #e0a83f22;
+      --bad: #e0655a; --bad-soft: #e0655a1e;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 12px 32px rgba(0,0,0,0.35);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #10141c; --surface: #171d29; --surface-2: #1e2635; --border: #2a3345;
+    --text: #e6e9f0; --text-muted: #8b93a7; --text-faint: #5c6479;
+    --accent: #e0a054; --accent-soft: #e0a05420; --accent-border: #e0a05460;
+    --good: #45c9a0; --good-soft: #45c9a022;
+    --warn: #e0a83f; --warn-soft: #e0a83f22;
+    --bad: #e0655a; --bad-soft: #e0655a1e;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 12px 32px rgba(0,0,0,0.35);
+  }
+  :root[data-theme="light"] {
+    --bg: #f7f6f2; --surface: #ffffff; --surface-2: #f0eee7; --border: #ddd8cc;
+    --text: #1c2029; --text-muted: #6d7280; --text-faint: #9a9d8f;
+    --accent: #b8631f; --accent-soft: #b8631f14; --accent-border: #b8631f55;
+    --good: #1f9d76; --good-soft: #1f9d7618;
+    --warn: #b8821f; --warn-soft: #b8821f18;
+    --bad: #b43b32; --bad-soft: #b43b3212;
+    --shadow: 0 1px 2px rgba(20,20,10,0.06), 0 8px 24px rgba(20,20,10,0.05);
+  }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: ui-sans-serif, -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    font-size: 14px; line-height: 1.55; margin: 0; padding: 28px 32px 64px;
+  }
+  .mono { font-family: ui-monospace, "SF Mono", Consolas, monospace; }
+  .wrap { max-width: 1080px; margin: 0 auto; }
+  .compliance-banner {
+    margin-bottom: 16px; padding: 11px 14px; border: 1px solid var(--accent-border);
+    border-radius: 9px; background: var(--accent-soft); color: var(--text-muted); font-size: 12px;
+  }
+  .compliance-banner b { color: var(--accent); }
+  header { margin-bottom: 20px; }
+  .eyebrow { font-size: 11px; letter-spacing: .09em; text-transform: uppercase; color: var(--text-faint); font-weight: 600; margin: 0 0 6px; }
+  h1 { font-size: 25px; font-weight: 700; margin: 0 0 6px; text-wrap: balance; }
+  .subtitle { color: var(--text-muted); font-size: 13px; max-width: 70ch; }
+  .path { margin-top: 9px; display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--text-muted); flex-wrap: wrap; }
+  .path b { color: var(--text); font-weight: 600; }
+  .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; box-shadow: var(--shadow); margin-bottom: 16px; }
+  .panel-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+  .panel-title { display: flex; align-items: center; gap: 8px; font-size: 14.5px; font-weight: 700; }
+  .panel-source { font-size: 11.5px; color: var(--text-faint); }
+  .panel-source b { color: var(--text-muted); font-weight: 600; }
+
+  /* gate badges */
+  .gate-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .gate-card { flex: 1 1 200px; border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; background: var(--surface-2); }
+  .gate-card.pass { border-color: var(--good); background: var(--good-soft); }
+  .gate-head { display: flex; align-items: center; justify-content: space-between; }
+  .gate-name { font-weight: 700; font-size: 13px; }
+  .gate-badge { font: 700 11px ui-monospace, monospace; padding: 2px 8px; border-radius: 999px; }
+  .gate-badge.PASS { background: var(--good); color: var(--surface); }
+  .gate-checks { margin-top: 8px; display: flex; flex-direction: column; gap: 4px; }
+  .gate-check { display: flex; gap: 6px; font-size: 11px; color: var(--text-muted); align-items: baseline; }
+  .gate-check .dot { color: var(--good); font-weight: 700; }
+  .gate-check .rule { font-family: ui-monospace, monospace; color: var(--text-faint); flex-shrink: 0; }
+
+  /* D1-D6 */
+  .l4-grid { display: flex; flex-direction: column; gap: 2px; }
+  .l4-row { display: grid; grid-template-columns: 210px 60px repeat(6, 1fr); gap: 8px; align-items: center; padding: 8px 0; border-bottom: 1px dashed var(--border); }
+  .l4-row:last-child { border-bottom: none; }
+  .l4-row.flagged { background: var(--warn-soft); border-radius: 6px; padding-left: 6px; margin-left: -6px; }
+  .l4-name-cell .l4code { font-family: ui-monospace, monospace; font-size: 10px; color: var(--text-faint); }
+  .l4-name-cell .l4name { font-size: 12.5px; font-weight: 600; }
+  .tier-chip { font-size: 10.5px; font-weight: 700; padding: 2px 8px; border-radius: 999px; text-align: center; font-family: ui-monospace, monospace; }
+  .tier-Auto { color: var(--good); background: var(--good-soft); }
+  .tier-Aug { color: #3a72b8; background: #3a72b818; }
+  .tier-Hybrid { color: var(--warn); background: var(--warn-soft); }
+  .d-cell { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .d-label { font-size: 8.5px; color: var(--text-faint); text-transform: uppercase; letter-spacing: .03em; }
+  .d-bar-track { width: 100%; height: 6px; background: var(--surface-2); border-radius: 3px; overflow: hidden; }
+  .d-bar-fill { height: 100%; background: var(--good); }
+  .d-bar-fill.mid { background: var(--warn); }
+  .d-bar-fill.low { background: var(--bad); }
+  .d-val { font-size: 9.5px; font-family: ui-monospace, monospace; color: var(--text-muted); }
+  .l4-header-row { display: grid; grid-template-columns: 210px 60px repeat(6, 1fr); gap: 8px; margin-bottom: 6px; }
+  .l4-header-row span { font-size: 9.5px; color: var(--text-faint); text-align: center; text-transform: uppercase; letter-spacing: .03em; }
+  .l4-header-row span:first-child, .l4-header-row span:nth-child(2) { text-align: left; }
+  .touchpoint-note { margin-top: 3px; font-size: 10.5px; color: var(--warn); grid-column: 1 / -1; padding-left: 2px; }
+
+  /* VN panel */
+  .vn-card { border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; background: var(--surface-2); }
+  .vn-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .vn-id { font-family: ui-monospace, monospace; font-size: 12px; color: var(--accent); font-weight: 700; }
+  .vn-name { font-size: 14px; font-weight: 700; }
+  .gate-pill { font-size: 10.5px; font-weight: 700; padding: 2px 8px; border-radius: 999px; font-family: ui-monospace, monospace; }
+  .gate-pill.PASS { color: var(--good); background: var(--good-soft); }
+  .gate-pill.PARTIAL { color: var(--warn); background: var(--warn-soft); }
+  .gate-pill.FAIL { color: var(--bad); background: var(--bad-soft); }
+  .vn-meta { margin-top: 8px; display: flex; gap: 14px; flex-wrap: wrap; font-size: 11.5px; color: var(--text-muted); }
+  .coverage-gap { margin-top: 12px; padding: 9px 11px; border-left: 3px solid var(--warn); background: var(--warn-soft); border-radius: 0 8px 8px 0; font-size: 11.5px; color: var(--text-muted); }
+  .coverage-gap b { color: var(--text); }
+
+  /* blueprint honesty panel */
+  .blueprint-status { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border: 1px dashed var(--border); border-radius: 10px; background: var(--surface-2); }
+  .blueprint-status .icon { font-size: 20px; }
+  .blueprint-status .msg { font-size: 12.5px; color: var(--text-muted); }
+  .blueprint-status .msg b { color: var(--text); }
+
+  /* evidence drawer */
+  details.drawer summary { cursor: pointer; list-style: none; display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 14px; }
+  details.drawer summary::-webkit-details-marker { display: none; }
+  .chevron { transition: transform .15s ease; color: var(--text-faint); font-size: 11px; }
+  details.drawer[open] .chevron { transform: rotate(90deg); }
+  .datatable-wrap { overflow-x: auto; margin-top: 12px; }
+  table.datatable { width: 100%; border-collapse: collapse; font-size: 11.5px; }
+  table.datatable th { text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: .04em; color: var(--text-faint); font-weight: 600; padding: 6px 9px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  table.datatable td { padding: 6px 9px; border-bottom: 1px solid var(--border); white-space: nowrap; font-family: ui-monospace, monospace; font-size: 11px; }
+  table.datatable tr:last-child td { border-bottom: none; }
+
+  /* layer7 */
+  .layer7 { border: 1px solid var(--accent-border); background: var(--accent-soft); border-radius: 12px; padding: 20px 22px; margin-top: 20px; }
+  .layer7-head { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+  .layer7-head .badge { background: var(--accent); color: var(--surface); font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 5px; font-family: ui-monospace, monospace; }
+  .layer7 h2 { font-size: 16px; margin: 0; font-weight: 700; }
+  .layer7-sub { color: var(--text-muted); font-size: 12px; margin: 6px 0 16px; max-width: 70ch; }
+  .finding { display: grid; grid-template-columns: 26px 1fr; gap: 12px; margin-bottom: 14px; }
+  .finding:last-child { margin-bottom: 0; }
+  .finding-n { width: 24px; height: 24px; border-radius: 50%; background: var(--surface); border: 1.5px solid var(--accent-border); color: var(--accent); font-weight: 700; font-size: 11px; display: flex; align-items: center; justify-content: center; font-family: ui-monospace, monospace; }
+  .finding h3 { font-size: 13px; margin: 1px 0 4px; }
+  .finding p { margin: 0; font-size: 12.5px; color: var(--text); max-width: 74ch; }
+  .finding .cite { font-size: 10.5px; color: var(--text-faint); margin-top: 3px; }
+
+  .not-fabricated { margin-top: 14px; padding: 10px 12px; border: 1px dashed var(--border); border-radius: 8px; font-size: 11.5px; color: var(--text-muted); }
+  .not-fabricated b { color: var(--text); }
+  footer { margin-top: 24px; font-size: 11px; color: var(--text-faint); text-align: center; }
+</style>
+
+<div class="wrap">
+  <div class="compliance-banner">
+    <b>合规基线demo</b> —— 数据全部来自 <code class="mono">L3ModelBuilder</code> 生成的 <code class="mono">L3-EO.json</code> 快照（只读构建，2026-07-29），每个字段都能追溯到 <code class="mono">evidence_registry</code> 里的具体 evidence_id。没有真实数据支撑的维度（比如"业务价值"打分、L4以下的子任务拆解）本demo选择不展示，不用编造内容填满版面。
+  </div>
+
+  <header>
+    <p class="eyebrow">VNW流程模型 · 全67个L3里唯一通过Gate A的样本</p>
+    <h1>L3-EO · 理财师权益分级与绩效监控</h1>
+    <p class="subtitle">这是目前数据完整度最高的一个L3——D1-D6六维打分全部有值、价值节点已映射、无熔断节点。选它做demo不是因为它最好看，是因为它是唯一一个能在"零编造"前提下把每一格都填满真实数据的样本。</p>
+    <div class="path">
+      <span><b>CAP-L2-5-S6</b> 客户服务优化能力</span>
+      <span>&rarr;</span>
+      <span><b>L3-EO</b>（本流程）</span>
+      <span>&rarr;</span>
+      <span><b>VN-EQ-10</b> 理财师分级清单</span>
+    </div>
+  </header>
+
+  <!-- Gates -->
+  <div class="panel">
+    <div class="panel-head">
+      <div class="panel-title">数据就绪度 · Gate M / E / A</div>
+      <div class="panel-source">来源：<b>L3ModelBuilder.build()</b> 规则引擎判定，非人工打分</div>
+    </div>
+    <div class="gate-row">
+      <div class="gate-card pass">
+        <div class="gate-head"><span class="gate-name">Gate M · 最低完整度</span><span class="gate-badge PASS">PASS</span></div>
+        <div class="gate-checks">
+          <div class="gate-check"><span class="dot">✓</span><span class="rule">M-001</span><span>L4数量=9</span></div>
+          <div class="gate-check"><span class="dot">✓</span><span class="rule">M-002</span><span>有蓝图索引</span></div>
+          <div class="gate-check"><span class="dot">✓</span><span class="rule">M-003</span><span>L4名称完整</span></div>
+        </div>
+      </div>
+      <div class="gate-card pass">
+        <div class="gate-head"><span class="gate-name">Gate E · 证据完整</span><span class="gate-badge PASS">PASS</span></div>
+        <div class="gate-checks">
+          <div class="gate-check"><span class="dot">✓</span><span class="rule">E-001</span><span>Gate M=PASS</span></div>
+          <div class="gate-check"><span class="dot">✓</span><span class="rule">E-002</span><span>交付物完整=9/9</span></div>
+          <div class="gate-check"><span class="dot">✓</span><span class="rule">E-003</span><span>Tier合法</span></div>
+        </div>
+      </div>
+      <div class="gate-card pass">
+        <div class="gate-head"><span class="gate-name">Gate A · 可行动</span><span class="gate-badge PASS">PASS</span></div>
+        <div class="gate-checks">
+          <div class="gate-check"><span class="dot">✓</span><span class="rule">A-001</span><span>Gate E=PASS</span></div>
+          <div class="gate-check"><span class="dot">✓</span><span class="rule">A-002</span><span>D1-D6完整=9/9</span></div>
+          <div class="gate-check"><span class="dot">✓</span><span class="rule">A-003</span><span>价值节点-L4映射=1</span></div>
+          <div class="gate-check"><span class="dot">✓</span><span class="rule">A-004</span><span>无熔断节点</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- L4 + D1-D6 -->
+  <div class="panel">
+    <div class="panel-head">
+      <div class="panel-title">L4活动 &middot; 6维自动化就绪度打分(D1-D6，0-3分)</div>
+      <div class="panel-source">来源：<b>dim_process</b>，逐L4真实评分——不是同一份数据复制7次</div>
+    </div>
+    <div class="l4-header-row">
+      <span>L4活动</span><span>Tier</span>
+      <span>D1输入结构化</span><span>D2规则清晰</span><span>D3产出可验证</span><span>D4接口可达</span><span>D5可回退</span><span>D6合规</span>
+    </div>
+    <div class="l4-grid" id="l4-grid"></div>
+  </div>
+
+  <!-- Value node -->
+  <div class="panel">
+    <div class="panel-head">
+      <div class="panel-title">价值节点</div>
+      <div class="panel-source">来源：<b>dim_vn</b> + <b>bridge_vn_l4</b></div>
+    </div>
+    <div class="vn-card">
+      <div class="vn-head">
+        <span class="vn-id">VN-EQ-10</span>
+        <span class="vn-name">理财师分级清单</span>
+        <span class="gate-pill PARTIAL">综合判定 PARTIAL</span>
+      </div>
+      <div class="vn-meta">
+        <span>Gate①数据关联: <b class="mono">PASS</b></span>
+        <span>Gate②有据可查: <b class="mono">PARTIAL</b></span>
+        <span>Gate③可追溯: <b class="mono">FAIL</b></span>
+        <span>优先级: <b class="mono">P2(待确认)</b></span>
+        <span>熔断: <b class="mono">否</b></span>
+      </div>
+      <div class="coverage-gap"><b>如实标注的覆盖缺口：</b>这个价值节点只挂在 <code class="mono">L4-EO-01</code> 一条活动上；其余8条L4（02~09）在<code class="mono">bridge_vn_l4</code>里没有任何价值节点映射——不代表它们不重要，只是当前数据库还没有把它们的产出登记成正式价值节点，如实体现，不推测补全。</div>
+    </div>
+  </div>
+
+  <!-- Blueprint honesty -->
+  <div class="panel">
+    <div class="panel-head">
+      <div class="panel-title">流程蓝图覆盖</div>
+      <div class="panel-source">来源：<b>L3流程库</b> 文件 + 蓝图解析器</div>
+    </div>
+    <div class="blueprint-status">
+      <span class="icon">📄</span>
+      <div class="msg"><b>流程蓝图_L3-EO_理财师权益分级与绩效监控_V1.0.md</b> —— 索引存在(V1.0)，但正文解析结果是 <code class="mono">INDEX_ONLY</code>（0个步骤/0个判断节点/0条边）。蓝图解析器的原话："正文缺少可确认结构或与当前数据库冲突，禁止生成箭头、决策点和回退关系"。这意味着——<b>连全库里唯一一个数据最完整的L3，它的流程图这一格目前也画不出来</b>，本demo不会为了好看而画一张假流程图。</div>
+    </div>
+  </div>
+
+  <!-- Evidence ledger -->
+  <div class="panel">
+    <details class="drawer">
+      <summary><span class="chevron">&#9656;</span> 证据台账（106条记录，点击展开抽样）</summary>
+      <div class="datatable-wrap">
+        <table class="datatable">
+          <thead><tr><th>evidence_id</th><th>field</th><th>value</th><th>class</th><th>source_object</th><th>source_key</th><th>confidence</th></tr></thead>
+          <tbody id="evidence-body"></tbody>
+        </table>
+      </div>
+    </details>
+  </div>
+
+  <!-- Layer 7 -->
+  <section class="layer7">
+    <div class="layer7-head">
+      <span class="badge">第 7 层</span>
+      <h2>分析结论 &mdash; 只基于以上真实数据交叉比对</h2>
+    </div>
+    <p class="layer7-sub">不做价值/优先级打分（没有对应数据源），只做数据本身支持的推理。</p>
+
+    <div class="finding">
+      <div class="finding-n">1</div>
+      <div>
+        <h3>L4-EO-05是这个L3里唯一的真实瓶颈，且有双重证据印证</h3>
+        <p>其余8条L4的D1-D6打分几乎都是(3,3,3,3,2,2)这个高分模式，唯独<code class="mono">L4-EO-05·规则迭代与基本法对齐</code>是(1,0,0,0,0,2)——规则清晰度、产出可验证性、接口可达性三项都是0分。更关键的是：这也是9条L4里<b>唯一一条数据库里写了`agent_human_touchpoint`备注的活动</b>（"人工执行：规则迭代与基本法对齐"）——两个独立字段互相印证，不是巧合。</p>
+        <p class="cite">证据：dim_process逐字段evidence_id，样本见下方证据台账 L4-EO-05 行</p>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-n">2</div>
+      <div>
+        <h3>L4-EO-09也明显偏弱，但成因不同</h3>
+        <p>《个性化定制》打分(2,1,2,1,1,1)——不像05那样"接近0"，是"全线偏低"，且没有human_touchpoint备注说明具体卡在哪。这条建议先补充定性说明，而不是直接归类为"暂缓"。</p>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-n">3</div>
+      <div>
+        <h3>价值节点覆盖率只有1/9，Gate A的"通过"不等于"全流程都能自动化"</h3>
+        <p>Gate A检查的是"至少有一条VN-L4映射"，这条规则本身没有要求全部L4都挂上价值节点。所以"全库唯一通过Gate A"这句话的真实含义是"数据完整度最高"，不是"已经验证可以整体自动化"——这个区别需要说清楚，避免误读。</p>
+      </div>
+    </div>
+
+    <div class="finding">
+      <div class="finding-n">4</div>
+      <div>
+        <h3>没有业务价值数据，本demo不给"该不该优先做"的结论</h3>
+        <p><code class="mono">kpi_mappings</code>对L3-EO是空的——没有任何KPI贡献权重挂钩。这意味着"AI机会优先级矩阵"这类需要价值轴的分析，在这个L3上现在做不出来，不是没时间做，是没有数据能支撑，如实留白。</p>
+      </div>
+    </div>
+
+    <div class="not-fabricated">
+      <b>本demo没有做的事（对照评估标准逐条自查）：</b>
+      没有画业务价值×可行性矩阵（无KPI数据）；没有把L4拆成更细的子任务（评估模型本身不支持L4以下颗粒度，拆了就是编的）；没有为INDEX_ONLY的蓝图画流程图；没有让任何一个数字看起来比实际数据更精确。
+    </div>
+  </section>
+
+  <footer>数据来源：process_analytics schema（只读，经L3ModelBuilder） &middot; 快照生成于 2026-07-29 &middot; schema_version: vnw.l3-model.v1</footer>
+</div>
+
+<script>
+(() => {
+  const l4s = [
+    {code:"L4-EO-01", name:"业绩数据与分级规则引擎", tier:"Auto", d:[3,3,3,3,2,2], flagged:false},
+    {code:"L4-EO-02", name:"分级公示与申诉", tier:"Hybrid", d:[3,2,3,3,2,2], flagged:false},
+    {code:"L4-EO-03", name:"权益包配置与兑现", tier:"Auto", d:[3,3,3,3,2,2], flagged:false},
+    {code:"L4-EO-04", name:"分级与权益效果监控", tier:"Auto", d:[3,3,3,3,2,2], flagged:false},
+    {code:"L4-EO-05", name:"规则迭代与基本法对齐", tier:"Hybrid", d:[1,0,0,0,0,2], flagged:true, note:"人工执行：规则迭代与基本法对齐（dim_process.agent_human_touchpoint原文）"},
+    {code:"L4-EO-06", name:"新人保底权益", tier:"Auto", d:[3,3,3,3,2,2], flagged:false},
+    {code:"L4-EO-07", name:"团队长带团权益", tier:"Auto", d:[3,3,3,3,2,2], flagged:false},
+    {code:"L4-EO-08", name:"追溯调整", tier:"Aug", d:[3,3,3,3,2,2], flagged:false},
+    {code:"L4-EO-09", name:"个性化定制", tier:"Hybrid", d:[2,1,2,1,1,1], flagged:false},
+  ];
+  const grid = document.getElementById("l4-grid");
+  grid.innerHTML = l4s.map(l4 => `
+    <div class="l4-row${l4.flagged ? " flagged" : ""}">
+      <div class="l4-name-cell"><div class="l4code">${l4.code}</div><div class="l4name">${l4.name}</div></div>
+      <div><span class="tier-chip tier-${l4.tier}">${l4.tier}</span></div>
+      ${l4.d.map(v => {
+        const pct = (v/3)*100;
+        const cls = v >= 3 ? "" : v >= 2 ? "mid" : "low";
+        return `<div class="d-cell"><div class="d-bar-track"><div class="d-bar-fill ${cls}" style="width:${pct}%"></div></div><span class="d-val">${v}/3</span></div>`;
+      }).join("")}
+      ${l4.note ? `<div class="touchpoint-note">⚑ ${l4.note}</div>` : ""}
+    </div>
+  `).join("");
+
+  const evidence = [
+    {id:"EVD-d2ad2a04c3733f934eb0", field:"agentifiability", value:"Auto", cls:"AUTHORITATIVE", obj:"process_analytics.dim_process", key:"L4-EO-01", conf:"HIGH"},
+    {id:"EVD-c85dcffd177b8f5f7589", field:"agentifiability", value:"Hybrid", cls:"AUTHORITATIVE", obj:"process_analytics.dim_process", key:"L4-EO-05", conf:"HIGH"},
+    {id:"EVD-17bb040cefbb8ee97ba9", field:"agent_human_touchpoint", value:"人工执行：规则迭代与基本法对齐", cls:"AUTHORITATIVE", obj:"process_analytics.dim_process", key:"L4-EO-05", conf:"HIGH"},
+    {id:"EVD-01305f1c7f682111da04", field:"agent_d5_fallback", value:"2", cls:"AUTHORITATIVE", obj:"process_analytics.dim_process", key:"L4-EO-08", conf:"HIGH"},
+    {id:"EVD-ebfce6f158eefe6928eb", field:"vn_name", value:"理财师分级清单", cls:"AUTHORITATIVE", obj:"process_analytics.dim_vn", key:"VN-EQ-10", conf:"HIGH"},
+    {id:"EVD-be00b97334652c1bca94", field:"gate3_traceable", value:"FAIL", cls:"AUTHORITATIVE", obj:"process_analytics.dim_vn", key:"VN-EQ-10", conf:"HIGH"},
+    {id:"EVD-c43e0046b6edfc91efe2", field:"is_fused", value:"false", cls:"AUTHORITATIVE", obj:"process_analytics.dim_vn", key:"VN-EQ-10", conf:"HIGH"},
+  ];
+  document.getElementById("evidence-body").innerHTML = evidence.map(e => `
+    <tr><td>${e.id}</td><td>${e.field}</td><td>${e.value}</td><td>${e.cls}</td><td>${e.obj}</td><td>${e.key}</td><td>${e.conf}</td></tr>
+  `).join("");
+})();
+</script>

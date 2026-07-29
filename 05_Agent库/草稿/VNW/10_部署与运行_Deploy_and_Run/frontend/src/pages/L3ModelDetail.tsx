@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router'
-import { ArrowDown, ArrowLeft, Bot, GitBranch, GripVertical, Info, Layers3, LoaderCircle, RotateCcw, Save, ShieldCheck } from 'lucide-react'
+import { ArrowDown, ArrowLeft, Bot, Database, GitBranch, GripVertical, Info, Layers3, LoaderCircle, RotateCcw, Save, ShieldCheck } from 'lucide-react'
 import { loadL3Model, type L3Model } from '../lib/l3Models'
 
 const COLUMNS = [
@@ -16,12 +16,14 @@ function gateTone(status: string) {
   return status === 'PASS' ? 'border-emerald-400/25 bg-emerald-400/10 text-emerald-300' : 'border-amber-400/25 bg-amber-400/10 text-amber-300'
 }
 
-export default function L3ModelDetail() {
-  const { l3Code = '' } = useParams()
+export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}) {
+  const params = useParams()
+  const l3Code = modelCode || params.l3Code || ''
   const [model, setModel] = useState<L3Model | null>(null)
   const [error, setError] = useState('')
   const storageKey = `vnw-workshop-v1:${l3Code}`
   const [session, setSession] = useState<WorkshopState>({ placements: {}, note: '', updatedAt: '', baseSnapshotHash: '' })
+  const [selectedBlueprintNode, setSelectedBlueprintNode] = useState('')
 
   useEffect(() => {
     loadL3Model(l3Code).then(setModel).catch(error => setError(error.message))
@@ -39,6 +41,10 @@ export default function L3ModelDetail() {
   const mappedL4s = useMemo(() => new Set(
     model?.vn_l4_mappings.map(row => String(row.l4_code || '')) ?? []
   ), [model])
+  const supplementalMappedL4s = useMemo(() => new Set(
+    model?.blueprint.blueprint_value_nodes
+      ?.find(node => node.vn_id === selectedBlueprintNode)?.l4_codes ?? []
+  ), [model, selectedBlueprintNode])
 
   function moveCard(code: string, placement: string) {
     setSession(current => ({ ...current, placements: { ...current.placements, [code]: placement } }))
@@ -92,6 +98,33 @@ export default function L3ModelDetail() {
         </div>
       </section>
 
+      {(model.blueprint.blueprint_value_nodes?.length > 0 || model.blueprint.raci?.length > 0) && (
+        <section className="panel p-5">
+          <div className="flex items-center gap-2"><Database className="h-4 w-4 text-accent-warning" /><h2 className="text-sm font-semibold">蓝图补充层：价值节点与执行责任</h2></div>
+          <p className="mt-2 text-xs leading-5 text-text-muted">以下来自蓝图正文，不是 process_analytics 桥接表。数据库缺少对应映射时，系统单独展示但不用于 Gate A。</p>
+          {model.blueprint.blueprint_value_nodes?.length > 0 && (
+            <div className="mt-4 grid gap-3 md:grid-cols-2">
+              {model.blueprint.blueprint_value_nodes.map(node => (
+                <div key={node.vn_id} className="rounded-xl border border-amber-400/20 bg-amber-400/5 p-4">
+                  <div className="flex justify-between gap-3"><span className="font-mono text-xs text-amber-300">{node.vn_id}</span><span className="text-[10px] text-text-muted">蓝图第 {node.source_line} 行</span></div>
+                  <p className="mt-2 text-sm font-medium">{node.vn_name}</p>
+                  <p className="mt-1 text-xs text-text-secondary">{node.deliverable}</p>
+                  <p className="mt-2 text-[11px] text-text-muted">{node.l4_codes.join('、')} · {node.status_text}</p>
+                </div>
+              ))}
+            </div>
+          )}
+          {model.blueprint.raci?.length > 0 && (
+            <div className="mt-4 overflow-x-auto">
+              <table className="w-full text-xs">
+                <thead><tr className="border-b border-border-default text-left text-text-muted"><th className="py-2">L4</th><th>主责 A</th><th>执行 R</th><th>咨询 C</th><th>知会 I</th><th>来源</th></tr></thead>
+                <tbody>{model.blueprint.raci.map(row => <tr key={row.l4_code} className="border-b border-border-default/60"><td className="py-2 font-mono text-accent-primary-light">{row.l4_code}</td><td>{row.accountable}</td><td>{row.responsible}</td><td>{row.consulted}</td><td>{row.informed}</td><td className="text-text-muted">第 {row.source_line} 行</td></tr>)}</tbody>
+              </table>
+            </div>
+          )}
+        </section>
+      )}
+
       <section className="panel p-5">
         <div className="flex items-center gap-2"><GitBranch className="h-4 w-4 text-accent-primary-light" /><h2 className="text-sm font-semibold">实际流程蓝图</h2></div>
         {model.blueprint.structure_status === 'PARSED' ? (
@@ -102,13 +135,23 @@ export default function L3ModelDetail() {
               <span>{model.blueprint.filename}</span>
               {mappedL4s.size > 0 && <span className="rounded bg-violet-400/10 px-2 py-1 text-violet-300">紫色步骤 = 与当前价值节点映射的 L4</span>}
             </div>
+            {mappedL4s.size === 0 && model.blueprint.blueprint_value_nodes?.length > 0 && (
+              <div className="mt-3 flex flex-wrap items-center gap-2">
+                <span className="text-xs text-text-muted">按蓝图补充映射高亮：</span>
+                {model.blueprint.blueprint_value_nodes.map(node => (
+                  <button key={node.vn_id} onClick={() => setSelectedBlueprintNode(current => current === node.vn_id ? '' : node.vn_id)} className={`rounded-lg border px-2.5 py-1.5 text-xs ${selectedBlueprintNode === node.vn_id ? 'border-amber-400/50 bg-amber-400/10 text-amber-200' : 'border-border-default text-text-muted'}`}>{node.vn_id}</button>
+                ))}
+                <span className="text-[10px] text-amber-300">黄色仅代表蓝图陈述，不代表数据库桥接已建立</span>
+              </div>
+            )}
             <div className="mx-auto mt-5 max-w-3xl">
               {model.blueprint.steps.map((step, index) => {
                 const decisions = model.blueprint.decisions.filter(decision => decision.after_step === step.step_id)
                 const highlighted = step.l4_codes.some(code => mappedL4s.has(code))
+                const supplementalHighlight = step.l4_codes.some(code => supplementalMappedL4s.has(code))
                 return (
                   <div key={step.step_id}>
-                    <div className={`rounded-xl border p-4 ${highlighted ? 'border-violet-400/50 bg-violet-400/10' : 'border-border-default bg-bg-surface'}`}>
+                    <div className={`rounded-xl border p-4 ${highlighted ? 'border-violet-400/50 bg-violet-400/10' : supplementalHighlight ? 'border-amber-400/50 bg-amber-400/10' : 'border-border-default bg-bg-surface'}`}>
                       <div className="flex flex-wrap items-center gap-2">
                         <span className="grid h-7 w-7 place-items-center rounded-full bg-accent-primary/15 text-xs font-bold text-accent-primary-light">{step.sequence}</span>
                         <span className="text-sm font-medium text-text-primary">{step.step_name}</span>

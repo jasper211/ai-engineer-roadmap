@@ -119,6 +119,34 @@ class L3ModelBuilder:
                         source_version=blueprint.version,
                     ),
                 ))
+            for node in parsed_blueprint["blueprint_value_nodes"]:
+                node["evidence_ref"] = add(EvidenceRecord(
+                    field_name=f"blueprint.value_nodes.{node['vn_id']}",
+                    value={"vn_name": node["vn_name"], "l4_codes": node["l4_codes"], "status": node["status_text"]},
+                    evidence_class=EvidenceClass.SUPPLEMENTAL,
+                    status=EvidenceStatus.ACTIVE,
+                    source=SourceRef(
+                        source_system="L3流程库",
+                        source_object=blueprint.filename,
+                        source_key=f"line:{node['source_line']}",
+                        source_field="value_node_mapping",
+                        source_version=blueprint.version,
+                    ),
+                ))
+            for row in parsed_blueprint["raci"]:
+                row["evidence_ref"] = add(EvidenceRecord(
+                    field_name=f"blueprint.raci.{row['l4_code']}",
+                    value={key: row[key] for key in ("accountable", "responsible", "consulted", "informed")},
+                    evidence_class=EvidenceClass.SUPPLEMENTAL,
+                    status=EvidenceStatus.ACTIVE,
+                    source=SourceRef(
+                        source_system="L3流程库",
+                        source_object=blueprint.filename,
+                        source_key=f"line:{row['source_line']}",
+                        source_field="raci",
+                        source_version=blueprint.version,
+                    ),
+                ))
 
         l4s = []
         for row in processes:
@@ -216,6 +244,8 @@ class L3ModelBuilder:
                 "steps": parsed_blueprint["steps"] if parsed_blueprint else [],
                 "decisions": parsed_blueprint["decisions"] if parsed_blueprint else [],
                 "edges": parsed_blueprint["edges"] if parsed_blueprint else [],
+                "blueprint_value_nodes": parsed_blueprint["blueprint_value_nodes"] if parsed_blueprint else [],
+                "raci": parsed_blueprint["raci"] if parsed_blueprint else [],
                 "source_path": parsed_blueprint["source_path"] if parsed_blueprint else "",
                 "source_hash": parsed_blueprint["source_hash"] if parsed_blueprint else "",
                 "diagnostics": parsed_blueprint["diagnostics"] if parsed_blueprint else {},

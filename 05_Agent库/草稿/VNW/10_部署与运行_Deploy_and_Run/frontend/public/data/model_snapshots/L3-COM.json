@@ -1,5 +1,85 @@
 {
   "blueprint": {
+    "blueprint_value_nodes": [
+      {
+        "deliverable": "《季度源头佣金表》+《市场佣金表(月)》",
+        "evidence_ref": "EVD-b2528ea214201d8f44ed",
+        "l4_codes": [
+          "L4-COM-01",
+          "L4-COM-02"
+        ],
+        "priority": "P0",
+        "source_line": 30,
+        "status_text": "⚠️ 熔断（源头PDF无OCR / 双轨道SPOF）",
+        "vn_id": "VN-PAY-01",
+        "vn_name": "市场佣金制作产出包"
+      },
+      {
+        "deliverable": "《应收佣金核对表》+《实收佣金对账表》",
+        "evidence_ref": "EVD-c8d3f28212b19fab1829",
+        "l4_codes": [
+          "L4-COM-10",
+          "L4-COM-11"
+        ],
+        "priority": "P0",
+        "source_line": 31,
+        "status_text": "P0（COM-10/11待注册）",
+        "vn_id": "VN-PAY-02",
+        "vn_name": "佣金实收确认表"
+      },
+      {
+        "deliverable": "《应派清单》+《理财师对账单》+《佣金外发凭证》",
+        "evidence_ref": "EVD-c36d31d3ca7c12fc61a0",
+        "l4_codes": [
+          "L4-COM-03",
+          "L4-COM-12"
+        ],
+        "priority": "P0",
+        "source_line": 32,
+        "status_text": "P0",
+        "vn_id": "VN-PAY-03",
+        "vn_name": "应派清单三件套"
+      },
+      {
+        "deliverable": "转介费派发确认台账 + IA规则校验日志",
+        "evidence_ref": "EVD-b5aa35ff37060b0f1e54",
+        "l4_codes": [
+          "L4-COM-03",
+          "L4-COM-14",
+          "L4-COM-15"
+        ],
+        "priority": "P0熔断",
+        "source_line": 33,
+        "status_text": "⚠️ 熔断（COM-14/15待注册 / COM-17排期中）",
+        "vn_id": "VN-PAY-04",
+        "vn_name": "转介费派发确认台账"
+      },
+      {
+        "deliverable": "《增值服务台账》+《服务价值汇总表》(成本+定价孪生)",
+        "evidence_ref": "EVD-b4f5d72a829d3c9da180",
+        "l4_codes": [
+          "L4-COM-03"
+        ],
+        "priority": "P0",
+        "source_line": 34,
+        "status_text": "P0",
+        "vn_id": "VN-PAY-05",
+        "vn_name": "INVOICE/激励结算单"
+      },
+      {
+        "deliverable": "《综合应派清单》（佣金+服务+奖金+股权/分红）",
+        "evidence_ref": "EVD-9643e48944129786fe0e",
+        "l4_codes": [
+          "L4-COM-12",
+          "L4-COM-13"
+        ],
+        "priority": "P0",
+        "source_line": 35,
+        "status_text": "P0（协议参数待中心化）",
+        "vn_id": "VN-PAY-06",
+        "vn_name": "理财师综合应派计算清单"
+      }
+    ],
     "coverage": "INDEXED",
     "decisions": [],
     "diagnostics": {
@@ -14,15 +94,381 @@
         "L4-CVI-02"
       ],
       "missing_in_blueprint": [],
-      "parsed_step_l4_count": 0
+      "parsed_step_l4_count": 10
     },
-    "edges": [],
+    "edges": [
+      {
+        "edge_id": "SEQ-STEP-01-STEP-02",
+        "edge_type": "SEQUENCE",
+        "from": "STEP-01",
+        "label": "",
+        "source_rule": "蓝图显式编号步骤的相邻顺序",
+        "to": "STEP-02"
+      },
+      {
+        "edge_id": "SEQ-STEP-02-STEP-03",
+        "edge_type": "SEQUENCE",
+        "from": "STEP-02",
+        "label": "",
+        "source_rule": "蓝图显式编号步骤的相邻顺序",
+        "to": "STEP-03"
+      },
+      {
+        "edge_id": "SEQ-STEP-03-STEP-04",
+        "edge_type": "SEQUENCE",
+        "from": "STEP-03",
+        "label": "",
+        "source_rule": "蓝图显式编号步骤的相邻顺序",
+        "to": "STEP-04"
+      },
+      {
+        "edge_id": "SEQ-STEP-04-STEP-05",
+        "edge_type": "SEQUENCE",
+        "from": "STEP-04",
+        "label": "",
+        "source_rule": "蓝图显式编号步骤的相邻顺序",
+        "to": "STEP-05"
+      },
+      {
+        "edge_id": "SEQ-STEP-05-STEP-06",
+        "edge_type": "SEQUENCE",
+        "from": "STEP-05",
+        "label": "",
+        "source_rule": "蓝图显式编号步骤的相邻顺序",
+        "to": "STEP-06"
+      },
+      {
+        "edge_id": "SEQ-STEP-06-STEP-07",
+        "edge_type": "SEQUENCE",
+        "from": "STEP-06",
+        "label": "",
+        "source_rule": "蓝图显式编号步骤的相邻顺序",
+        "to": "STEP-07"
+      },
+      {
+        "edge_id": "SEQ-STEP-07-STEP-08",
+        "edge_type": "SEQUENCE",
+        "from": "STEP-07",
+        "label": "",
+        "source_rule": "蓝图显式编号步骤的相邻顺序",
+        "to": "STEP-08"
+      },
+      {
+        "edge_id": "SEQ-STEP-08-STEP-09",
+        "edge_type": "SEQUENCE",
+        "from": "STEP-08",
+        "label": "",
+        "source_rule": "蓝图显式编号步骤的相邻顺序",
+        "to": "STEP-09"
+      },
+      {
+        "edge_id": "SEQ-STEP-09-STEP-10",
+        "edge_type": "SEQUENCE",
+        "from": "STEP-09",
+        "label": "",
+        "source_rule": "蓝图显式编号步骤的相邻顺序",
+        "to": "STEP-10"
+      }
+    ],
     "filename": "流程蓝图_L3-COM_佣金全链路管理_V1.0.md",
-    "note": "正文缺少可确认结构或与当前数据库冲突，禁止生成箭头、决策点和回退关系",
+    "note": "已从蓝图正文解析；步骤顺序边由显式步骤编号派生，判断分支保留原文行号",
+    "raci": [
+      {
+        "accountable": "刘敏然",
+        "consulted": "Carrie",
+        "evidence_ref": "EVD-538949b874820e0d275a",
+        "informed": "Mark",
+        "l4_code": "L4-COM-01",
+        "l4_name": "佣金政策接收与校准",
+        "responsible": "Cici",
+        "source_line": 273
+      },
+      {
+        "accountable": "刘敏然",
+        "consulted": "合规",
+        "evidence_ref": "EVD-3c5b75fa1b8e8b981915",
+        "informed": "Mark",
+        "l4_code": "L4-COM-02",
+        "l4_name": "差异化拆解与验证",
+        "responsible": "JoJo",
+        "source_line": 274
+      },
+      {
+        "accountable": "蔡依娜",
+        "consulted": "Mark",
+        "evidence_ref": "EVD-8e71296ea4edb7d1507d",
+        "informed": "—",
+        "l4_code": "L4-COM-03",
+        "l4_name": "佣金整合与外发",
+        "responsible": "NANA",
+        "source_line": 275
+      },
+      {
+        "accountable": "财务",
+        "consulted": "Mark",
+        "evidence_ref": "EVD-2284307840bd92f8e35d",
+        "informed": "—",
+        "l4_code": "L4-COM-04",
+        "l4_name": "年度预算与规划",
+        "responsible": "财务",
+        "source_line": 276
+      },
+      {
+        "accountable": "中台支持部",
+        "consulted": "蔡依娜",
+        "evidence_ref": "EVD-9b59651d58675ce04a99",
+        "informed": "—",
+        "l4_code": "L4-COM-05",
+        "l4_name": "追溯调整与退保倒扣",
+        "responsible": "中台支持部",
+        "source_line": 277
+      },
+      {
+        "accountable": "中台支持部",
+        "consulted": "财务",
+        "evidence_ref": "EVD-a9405c880607a7a511d1",
+        "informed": "—",
+        "l4_code": "L4-COM-06",
+        "l4_name": "佣金税务处理",
+        "responsible": "中台支持部",
+        "source_line": 278
+      },
+      {
+        "accountable": "中台支持部",
+        "consulted": "Mark",
+        "evidence_ref": "EVD-bfae89c20a2cc41e2aa0",
+        "informed": "—",
+        "l4_code": "L4-COM-07",
+        "l4_name": "佣金争议处理",
+        "responsible": "中台支持部",
+        "source_line": 279
+      },
+      {
+        "accountable": "刘敏然",
+        "consulted": "—",
+        "evidence_ref": "EVD-4fb0223f9ba24ee3b593",
+        "informed": "—",
+        "l4_code": "L4-COM-08",
+        "l4_name": "跨保司佣金整合",
+        "responsible": "Cici / JoJo",
+        "source_line": 280
+      },
+      {
+        "accountable": "中台支持部",
+        "consulted": "Carrie",
+        "evidence_ref": "EVD-5d4cd49c877a41b672c6",
+        "informed": "Mark",
+        "l4_code": "L4-COM-09",
+        "l4_name": "佣金异常检测反欺诈",
+        "responsible": "中台支持部",
+        "source_line": 281
+      },
+      {
+        "accountable": "Cici",
+        "consulted": "娜娜",
+        "evidence_ref": "EVD-ef2b3c2dbac3b37f5e1d",
+        "informed": "—",
+        "l4_code": "L4-COM-10",
+        "l4_name": "保单信息整合与应收核算",
+        "responsible": "Cici / JoJo",
+        "source_line": 282
+      },
+      {
+        "accountable": "财务",
+        "consulted": "蔡依娜",
+        "evidence_ref": "EVD-a439d55fed017277240d",
+        "informed": "—",
+        "l4_code": "L4-COM-11",
+        "l4_name": "银行到账确认与实收对账",
+        "responsible": "财务",
+        "source_line": 283
+      },
+      {
+        "accountable": "蔡依娜",
+        "consulted": "Mark",
+        "evidence_ref": "EVD-e167a1a79d81736a31df",
+        "informed": "—",
+        "l4_code": "L4-COM-12",
+        "l4_name": "应派金额拆分与渠道对账",
+        "responsible": "蔡依娜",
+        "source_line": 284
+      },
+      {
+        "accountable": "财务",
+        "consulted": "蔡依娜",
+        "evidence_ref": "EVD-99cf009a0da4b7c839eb",
+        "informed": "—",
+        "l4_code": "L4-COM-13",
+        "l4_name": "实派清单确认与财务制单",
+        "responsible": "财务",
+        "source_line": 285
+      },
+      {
+        "accountable": "JorJor",
+        "consulted": "财务",
+        "evidence_ref": "EVD-a299261969729f690144",
+        "informed": "—",
+        "l4_code": "L4-COM-14",
+        "l4_name": "财务付款执行",
+        "responsible": "JorJor / NANA / SOSO",
+        "source_line": 286
+      },
+      {
+        "accountable": "各牌照财务",
+        "consulted": "中台支持部",
+        "evidence_ref": "EVD-6a5973bc9a9fa4d0f5b1",
+        "informed": "—",
+        "l4_code": "L4-COM-15",
+        "l4_name": "付款回执归档与台账更新",
+        "responsible": "各牌照财务",
+        "source_line": 287
+      },
+      {
+        "accountable": "JoJo",
+        "consulted": "Carrie",
+        "evidence_ref": "EVD-bcf5aa7bffc2fb290c57",
+        "informed": "—",
+        "l4_code": "L4-COM-16",
+        "l4_name": "佣金数据导入与格式转换",
+        "responsible": "JoJo",
+        "source_line": 288
+      }
+    ],
     "source_hash": "f64292b2e0fb4c019849b0f08fc0fe2ddca73071485248be04ab72dda3433952",
     "source_path": "/Users/a112233/Desktop/流程架构项目_jasper/02_过程成果-工作产出/L3流程库/流程蓝图_L3-COM_佣金全链路管理_V1.0.md",
-    "steps": [],
-    "structure_status": "INDEX_ONLY",
+    "steps": [
+      {
+        "activities": [
+          "[COM-16] 佣金数据导入与格式转换（PDF→Excel，待注册）"
+        ],
+        "evidence_ref": "EVD-880fb0e1c4b31d75c077",
+        "l4_codes": [
+          "L4-COM-16"
+        ],
+        "sequence": 1,
+        "source_line": 49,
+        "step_id": "STEP-01",
+        "step_name": "佣金数据导入与格式转换（PDF→Excel，待注册）"
+      },
+      {
+        "activities": [
+          "[COM-01] 佣金政策接收与校准 ──→ 《标准化政策库》"
+        ],
+        "evidence_ref": "EVD-32c52fbab5cfced0fa62",
+        "l4_codes": [
+          "L4-COM-01"
+        ],
+        "sequence": 2,
+        "source_line": 52,
+        "step_id": "STEP-02",
+        "step_name": "佣金政策接收与校准"
+      },
+      {
+        "activities": [
+          "[COM-02] 差异化拆解与验证 ──→ 《各细分市场配置》"
+        ],
+        "evidence_ref": "EVD-2936ef248ec9414d8f55",
+        "l4_codes": [
+          "L4-COM-02"
+        ],
+        "sequence": 3,
+        "source_line": 55,
+        "step_id": "STEP-03",
+        "step_name": "差异化拆解与验证"
+      },
+      {
+        "activities": [
+          "[COM-10] 保单信息整合与应收核算 ──→ 《应收明细清单》（待注册）"
+        ],
+        "evidence_ref": "EVD-e6e5738ab334d18238bf",
+        "l4_codes": [
+          "L4-COM-10"
+        ],
+        "sequence": 4,
+        "source_line": 58,
+        "step_id": "STEP-04",
+        "step_name": "保单信息整合与应收核算"
+      },
+      {
+        "activities": [
+          "[COM-11] 银行到账确认与实收对账 ──→ 《实收清单》+《差异对照表》（待注册）"
+        ],
+        "evidence_ref": "EVD-541ba265fc3abbb7fec0",
+        "l4_codes": [
+          "L4-COM-11"
+        ],
+        "sequence": 5,
+        "source_line": 62,
+        "step_id": "STEP-05",
+        "step_name": "银行到账确认与实收对账"
+      },
+      {
+        "activities": [
+          "[COM-12] 应派金额拆分与渠道对账 ──→ 《应派清单》+《理财师对账单》（待注册）"
+        ],
+        "evidence_ref": "EVD-acc13810ec34c27931b4",
+        "l4_codes": [
+          "L4-COM-12"
+        ],
+        "sequence": 6,
+        "source_line": 66,
+        "step_id": "STEP-06",
+        "step_name": "应派金额拆分与渠道对账"
+      },
+      {
+        "activities": [
+          "[COM-03] 佣金整合与外发 ──→ 《佣金外发凭证》"
+        ],
+        "evidence_ref": "EVD-be106597fd414993e80f",
+        "l4_codes": [
+          "L4-COM-03"
+        ],
+        "sequence": 7,
+        "source_line": 69,
+        "step_id": "STEP-07",
+        "step_name": "佣金整合与外发"
+      },
+      {
+        "activities": [
+          "[COM-13] 实派清单确认与财务制单 ──→ 《实派执行表》（待注册）"
+        ],
+        "evidence_ref": "EVD-72a15b233148bb2b723b",
+        "l4_codes": [
+          "L4-COM-13"
+        ],
+        "sequence": 8,
+        "source_line": 72,
+        "step_id": "STEP-08",
+        "step_name": "实派清单确认与财务制单"
+      },
+      {
+        "activities": [
+          "[COM-14] 财务付款执行 ──→ 银行转账回执 / 支票存根（待注册）"
+        ],
+        "evidence_ref": "EVD-29a29003b8173e8456da",
+        "l4_codes": [
+          "L4-COM-14"
+        ],
+        "sequence": 9,
+        "source_line": 75,
+        "step_id": "STEP-09",
+        "step_name": "财务付款执行"
+      },
+      {
+        "activities": [
+          "[COM-15] 付款回执归档与台账更新 ──→ 转介费派发确认台账（更新）（待注册）"
+        ],
+        "evidence_ref": "EVD-c7d0fcc506d19b48985b",
+        "l4_codes": [
+          "L4-COM-15"
+        ],
+        "sequence": 10,
+        "source_line": 78,
+        "step_id": "STEP-10",
+        "step_name": "付款回执归档与台账更新"
+      }
+    ],
+    "structure_status": "PARSED",
     "version": "V1.0"
   },
   "evidence_registry": [
@@ -659,6 +1105,29 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-2284307840bd92f8e35d",
+      "field_name": "blueprint.raci.L4-COM-04",
+      "source": {
+        "observed_at": "",
+        "source_field": "raci",
+        "source_key": "line:276",
+        "source_object": "流程蓝图_L3-COM_佣金全链路管理_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "accountable": "财务",
+        "consulted": "Mark",
+        "informed": "—",
+        "responsible": "财务"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
       "evidence_id": "EVD-22865543421348f364c0",
       "field_name": "agent_human_touchpoint",
@@ -763,6 +1232,52 @@
       "status": "ACTIVE",
       "transform_rule": "",
       "value": "收款映射版本管理"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-2936ef248ec9414d8f55",
+      "field_name": "blueprint.steps.STEP-03",
+      "source": {
+        "observed_at": "",
+        "source_field": "step",
+        "source_key": "line:55",
+        "source_object": "流程蓝图_L3-COM_佣金全链路管理_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "l4_codes": [
+          "L4-COM-02"
+        ],
+        "step_name": "差异化拆解与验证"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-29a29003b8173e8456da",
+      "field_name": "blueprint.steps.STEP-09",
+      "source": {
+        "observed_at": "",
+        "source_field": "step",
+        "source_key": "line:75",
+        "source_object": "流程蓝图_L3-COM_佣金全链路管理_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "l4_codes": [
+          "L4-COM-14"
+        ],
+        "step_name": "财务付款执行"
+      }
     },
     {
       "confidence": "HIGH",
@@ -889,6 +1404,29 @@
       "status": "ACTIVE",
       "transform_rule": "",
       "value": "《实派执行表》"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-32c52fbab5cfced0fa62",
+      "field_name": "blueprint.steps.STEP-02",
+      "source": {
+        "observed_at": "",
+        "source_field": "step",
+        "source_key": "line:52",
+        "source_object": "流程蓝图_L3-COM_佣金全链路管理_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "l4_codes": [
+          "L4-COM-01"
+        ],
+        "step_name": "佣金政策接收与校准"
+      }
     },
     {
       "confidence": "HIGH",
@@ -1033,6 +1571,29 @@
       "status": "ACTIVE",
       "transform_rule": "",
       "value": "方案"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-3c5b75fa1b8e8b981915",
+      "field_name": "blueprint.raci.L4-COM-02",
+      "source": {
+        "observed_at": "",
+        "source_field": "raci",
+        "source_key": "line:274",
+        "source_object": "流程蓝图_L3-COM_佣金全链路管理_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "accountable": "刘敏然",
+        "consulted": "合规",
+        "informed": "Mark",
+        "responsible": "JoJo"
+      }
     },
     {
       "confidence": "HIGH",
@@ -1235,6 +1796,29 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-4fb0223f9ba24ee3b593",
+      "field_name": "blueprint.raci.L4-COM-08",
+      "source": {
+        "observed_at": "",
+        "source_field": "raci",
+        "source_key": "line:280",
+        "source_object": "流程蓝图_L3-COM_佣金全链路管理_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "accountable": "刘敏然",
+        "consulted": "—",
+        "informed": "—",
+        "responsible": "Cici / JoJo"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
       "evidence_id": "EVD-4ffa0a47eeca2b9236d4",
       "field_name": "l4_name",
@@ -1343,6 +1927,29 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-538949b874820e0d275a",
+      "field_name": "blueprint.raci.L4-COM-01",
+      "source": {
+        "observed_at": "",
+        "source_field": "raci",
+        "source_key": "line:273",
+        "source_object": "流程蓝图_L3-COM_佣金全链路管理_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "accountable": "刘敏然",
+        "consulted": "Carrie",
+        "informed": "Mark",
+        "responsible": "Cici"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
       "evidence_id": "EVD-5405f73487a8c9c27b30",
       "field_name": "agent_human_touchpoint",
@@ -1357,6 +1964,29 @@
       "status": "ACTIVE",
       "transform_rule": "",
       "value": "人工执行：收款映射版本管理"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-541ba265fc3abbb7fec0",
+      "field_name": "blueprint.steps.STEP-05",
+      "source": {
+        "observed_at": "",
+        "source_field": "step",
+        "source_key": "line:62",
+        "source_object": "流程蓝图_L3-COM_佣金全链路管理_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "l4_codes": [
+          "L4-COM-11"
+        ],
+        "step_name": "银行到账确认与实收对账"
+      }
     },
     {
       "confidence": "HIGH",
@@ -1541,6 +2171,29 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-5d4cd49c877a41b672c6",
+      "field_name": "blueprint.raci.L4-COM-09",
+      "source": {
+        "observed_at": "",
+        "source_field": "raci",
+        "source_key": "line:281",
+        "source_object": "流程蓝图_L3-COM_佣金全链路管理_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "accountable": "中台支持部",
+        "consulted": "Carrie",
+        "informed": "Mark",
+        "responsible": "中台支持部"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
       "evidence_id": "EVD-5fbb5b83848024c94e46",
       "field_name": "agentifiability",
@@ -1649,6 +2302,29 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-6a5973bc9a9fa4d0f5b1",
+      "field_name": "blueprint.raci.L4-COM-15",
+      "source": {
+        "observed_at": "",
+        "source_field": "raci",
+        "source_key": "line:287",
+        "source_object": "流程蓝图_L3-COM_佣金全链路管理_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "accountable": "各牌照财务",
+        "consulted": "中台支持部",
+        "informed": "—",
+        "responsible": "各牌照财务"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
       "evidence_id": "EVD-6ac8ec17f1dfab863439",
       "field_name": "agent_d4_api_reach",
@@ -1681,6 +2357,29 @@
       "status": "ACTIVE",
       "transform_rule": "",
       "value": "应派金额拆分与渠道对账（待注册）"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-72a15b233148bb2b723b",
+      "field_name": "blueprint.steps.STEP-08",
+      "source": {
+        "observed_at": "",
+        "source_field": "step",
+        "source_key": "line:72",
+        "source_object": "流程蓝图_L3-COM_佣金全链路管理_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "l4_codes": [
+          "L4-COM-13"
+        ],
+        "step_name": "实派清单确认与财务制单"
+      }
     },
     {
       "confidence": "HIGH",
@@ -2027,6 +2726,29 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-880fb0e1c4b31d75c077",
+      "field_name": "blueprint.steps.STEP-01",
+      "source": {
+        "observed_at": "",
+        "source_field": "step",
+        "source_key": "line:49",
+        "source_object": "流程蓝图_L3-COM_佣金全链路管理_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "l4_codes": [
+          "L4-COM-16"
+        ],
+        "step_name": "佣金数据导入与格式转换（PDF→Excel，待注册）"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
       "evidence_id": "EVD-890d6931fc7c0f1e3ac2",
       "field_name": "agent_d2_rule_clear",
@@ -2153,6 +2875,29 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-8e71296ea4edb7d1507d",
+      "field_name": "blueprint.raci.L4-COM-03",
+      "source": {
+        "observed_at": "",
+        "source_field": "raci",
+        "source_key": "line:275",
+        "source_object": "流程蓝图_L3-COM_佣金全链路管理_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "accountable": "蔡依娜",
+        "consulted": "Mark",
+        "informed": "—",
+        "responsible": "NANA"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
       "evidence_id": "EVD-8f412c5cea311e6823c2",
       "field_name": "l4_deliverable",
@@ -2261,6 +3006,31 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-9643e48944129786fe0e",
+      "field_name": "blueprint.value_nodes.VN-PAY-06",
+      "source": {
+        "observed_at": "",
+        "source_field": "value_node_mapping",
+        "source_key": "line:35",
+        "source_object": "流程蓝图_L3-COM_佣金全链路管理_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "l4_codes": [
+          "L4-COM-12",
+          "L4-COM-13"
+        ],
+        "status": "P0（协议参数待中心化）",
+        "vn_name": "理财师综合应派计算清单"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
       "evidence_id": "EVD-978b640534fd409082bd",
       "field_name": "l4_name",
@@ -2297,6 +3067,29 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-99cf009a0da4b7c839eb",
+      "field_name": "blueprint.raci.L4-COM-13",
+      "source": {
+        "observed_at": "",
+        "source_field": "raci",
+        "source_key": "line:285",
+        "source_object": "流程蓝图_L3-COM_佣金全链路管理_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "accountable": "财务",
+        "consulted": "蔡依娜",
+        "informed": "—",
+        "responsible": "财务"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
       "evidence_id": "EVD-9a75889be25f5f67f308",
       "field_name": "agent_d5_fallback",
@@ -2311,6 +3104,29 @@
       "status": "MISSING",
       "transform_rule": "",
       "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-9b59651d58675ce04a99",
+      "field_name": "blueprint.raci.L4-COM-05",
+      "source": {
+        "observed_at": "",
+        "source_field": "raci",
+        "source_key": "line:277",
+        "source_object": "流程蓝图_L3-COM_佣金全链路管理_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "accountable": "中台支持部",
+        "consulted": "蔡依娜",
+        "informed": "—",
+        "responsible": "中台支持部"
+      }
     },
     {
       "confidence": "HIGH",
@@ -2477,6 +3293,29 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-a299261969729f690144",
+      "field_name": "blueprint.raci.L4-COM-14",
+      "source": {
+        "observed_at": "",
+        "source_field": "raci",
+        "source_key": "line:286",
+        "source_object": "流程蓝图_L3-COM_佣金全链路管理_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "accountable": "JorJor",
+        "consulted": "财务",
+        "informed": "—",
+        "responsible": "JorJor / NANA / SOSO"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
       "evidence_id": "EVD-a35f267c3a2fa2190f76",
       "field_name": "agent_d1_input_struct",
@@ -2491,6 +3330,29 @@
       "status": "MISSING",
       "transform_rule": "",
       "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-a439d55fed017277240d",
+      "field_name": "blueprint.raci.L4-COM-11",
+      "source": {
+        "observed_at": "",
+        "source_field": "raci",
+        "source_key": "line:283",
+        "source_object": "流程蓝图_L3-COM_佣金全链路管理_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "accountable": "财务",
+        "consulted": "蔡依娜",
+        "informed": "—",
+        "responsible": "财务"
+      }
     },
     {
       "confidence": "HIGH",
@@ -2603,6 +3465,29 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-a9405c880607a7a511d1",
+      "field_name": "blueprint.raci.L4-COM-06",
+      "source": {
+        "observed_at": "",
+        "source_field": "raci",
+        "source_key": "line:278",
+        "source_object": "流程蓝图_L3-COM_佣金全链路管理_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "accountable": "中台支持部",
+        "consulted": "财务",
+        "informed": "—",
+        "responsible": "中台支持部"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
       "evidence_id": "EVD-ab811553717b5f579b9e",
       "field_name": "agent_d2_rule_clear",
@@ -2675,6 +3560,29 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-acc13810ec34c27931b4",
+      "field_name": "blueprint.steps.STEP-06",
+      "source": {
+        "observed_at": "",
+        "source_field": "step",
+        "source_key": "line:66",
+        "source_object": "流程蓝图_L3-COM_佣金全链路管理_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "l4_codes": [
+          "L4-COM-12"
+        ],
+        "step_name": "应派金额拆分与渠道对账"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
       "evidence_id": "EVD-ad5bf8306d1597e0af89",
       "field_name": "l4_deliverable",
@@ -2729,6 +3637,31 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-b2528ea214201d8f44ed",
+      "field_name": "blueprint.value_nodes.VN-PAY-01",
+      "source": {
+        "observed_at": "",
+        "source_field": "value_node_mapping",
+        "source_key": "line:30",
+        "source_object": "流程蓝图_L3-COM_佣金全链路管理_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "l4_codes": [
+          "L4-COM-01",
+          "L4-COM-02"
+        ],
+        "status": "⚠️ 熔断（源头PDF无OCR / 双轨道SPOF）",
+        "vn_name": "市场佣金制作产出包"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
       "evidence_id": "EVD-b2b61df7b18b3c16743c",
       "field_name": "agent_human_touchpoint",
@@ -2747,6 +3680,30 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-b4f5d72a829d3c9da180",
+      "field_name": "blueprint.value_nodes.VN-PAY-05",
+      "source": {
+        "observed_at": "",
+        "source_field": "value_node_mapping",
+        "source_key": "line:34",
+        "source_object": "流程蓝图_L3-COM_佣金全链路管理_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "l4_codes": [
+          "L4-COM-03"
+        ],
+        "status": "P0",
+        "vn_name": "INVOICE/激励结算单"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
       "evidence_id": "EVD-b4fc411c8bedbf568637",
       "field_name": "agent_d5_fallback",
@@ -2761,6 +3718,32 @@
       "status": "MISSING",
       "transform_rule": "",
       "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-b5aa35ff37060b0f1e54",
+      "field_name": "blueprint.value_nodes.VN-PAY-04",
+      "source": {
+        "observed_at": "",
+        "source_field": "value_node_mapping",
+        "source_key": "line:33",
+        "source_object": "流程蓝图_L3-COM_佣金全链路管理_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "l4_codes": [
+          "L4-COM-03",
+          "L4-COM-14",
+          "L4-COM-15"
+        ],
+        "status": "⚠️ 熔断（COM-14/15待注册 / COM-17排期中）",
+        "vn_name": "转介费派发确认台账"
+      }
     },
     {
       "confidence": "HIGH",
@@ -2837,6 +3820,29 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-bcf5aa7bffc2fb290c57",
+      "field_name": "blueprint.raci.L4-COM-16",
+      "source": {
+        "observed_at": "",
+        "source_field": "raci",
+        "source_key": "line:288",
+        "source_object": "流程蓝图_L3-COM_佣金全链路管理_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "accountable": "JoJo",
+        "consulted": "Carrie",
+        "informed": "—",
+        "responsible": "JoJo"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
       "evidence_id": "EVD-bd98e3aa192a734efa63",
       "field_name": "agent_d2_rule_clear",
@@ -2873,6 +3879,29 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-be106597fd414993e80f",
+      "field_name": "blueprint.steps.STEP-07",
+      "source": {
+        "observed_at": "",
+        "source_field": "step",
+        "source_key": "line:69",
+        "source_object": "流程蓝图_L3-COM_佣金全链路管理_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "l4_codes": [
+          "L4-COM-03"
+        ],
+        "step_name": "佣金整合与外发"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
       "evidence_id": "EVD-bec11a94afeb9684cfd6",
       "field_name": "agent_d6_compliance",
@@ -2887,6 +3916,29 @@
       "status": "MISSING",
       "transform_rule": "",
       "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-bfae89c20a2cc41e2aa0",
+      "field_name": "blueprint.raci.L4-COM-07",
+      "source": {
+        "observed_at": "",
+        "source_field": "raci",
+        "source_key": "line:279",
+        "source_object": "流程蓝图_L3-COM_佣金全链路管理_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "accountable": "中台支持部",
+        "consulted": "Mark",
+        "informed": "—",
+        "responsible": "中台支持部"
+      }
     },
     {
       "confidence": "HIGH",
@@ -2927,6 +3979,31 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-c36d31d3ca7c12fc61a0",
+      "field_name": "blueprint.value_nodes.VN-PAY-03",
+      "source": {
+        "observed_at": "",
+        "source_field": "value_node_mapping",
+        "source_key": "line:32",
+        "source_object": "流程蓝图_L3-COM_佣金全链路管理_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "l4_codes": [
+          "L4-COM-03",
+          "L4-COM-12"
+        ],
+        "status": "P0",
+        "vn_name": "应派清单三件套"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
       "evidence_id": "EVD-c49d5805d7bbfb12c704",
       "field_name": "l4_deliverable_type",
@@ -2959,6 +4036,54 @@
       "status": "ACTIVE",
       "transform_rule": "",
       "value": "差异化拆解与验证"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-c7d0fcc506d19b48985b",
+      "field_name": "blueprint.steps.STEP-10",
+      "source": {
+        "observed_at": "",
+        "source_field": "step",
+        "source_key": "line:78",
+        "source_object": "流程蓝图_L3-COM_佣金全链路管理_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "l4_codes": [
+          "L4-COM-15"
+        ],
+        "step_name": "付款回执归档与台账更新"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-c8d3f28212b19fab1829",
+      "field_name": "blueprint.value_nodes.VN-PAY-02",
+      "source": {
+        "observed_at": "",
+        "source_field": "value_node_mapping",
+        "source_key": "line:31",
+        "source_object": "流程蓝图_L3-COM_佣金全链路管理_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "l4_codes": [
+          "L4-COM-10",
+          "L4-COM-11"
+        ],
+        "status": "P0（COM-10/11待注册）",
+        "vn_name": "佣金实收确认表"
+      }
     },
     {
       "confidence": "HIGH",
@@ -3215,6 +4340,29 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-e167a1a79d81736a31df",
+      "field_name": "blueprint.raci.L4-COM-12",
+      "source": {
+        "observed_at": "",
+        "source_field": "raci",
+        "source_key": "line:284",
+        "source_object": "流程蓝图_L3-COM_佣金全链路管理_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "accountable": "蔡依娜",
+        "consulted": "Mark",
+        "informed": "—",
+        "responsible": "蔡依娜"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
       "evidence_id": "EVD-e1d2f431d0f88bfccc67",
       "field_name": "agent_human_touchpoint",
@@ -3301,6 +4449,29 @@
       "status": "MISSING",
       "transform_rule": "",
       "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-e6e5738ab334d18238bf",
+      "field_name": "blueprint.steps.STEP-04",
+      "source": {
+        "observed_at": "",
+        "source_field": "step",
+        "source_key": "line:58",
+        "source_object": "流程蓝图_L3-COM_佣金全链路管理_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "l4_codes": [
+          "L4-COM-10"
+        ],
+        "step_name": "保单信息整合与应收核算"
+      }
     },
     {
       "confidence": "HIGH",
@@ -3409,6 +4580,29 @@
       "status": "ACTIVE",
       "transform_rule": "",
       "value": "IA合规拦截引擎"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-ef2b3c2dbac3b37f5e1d",
+      "field_name": "blueprint.raci.L4-COM-10",
+      "source": {
+        "observed_at": "",
+        "source_field": "raci",
+        "source_key": "line:282",
+        "source_object": "流程蓝图_L3-COM_佣金全链路管理_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "accountable": "Cici",
+        "consulted": "娜娜",
+        "informed": "—",
+        "responsible": "Cici / JoJo"
+      }
     },
     {
       "confidence": "HIGH",

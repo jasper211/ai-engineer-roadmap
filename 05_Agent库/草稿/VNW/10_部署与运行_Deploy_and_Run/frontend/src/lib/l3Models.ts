@@ -72,6 +72,24 @@ export interface L3Model {
       }[]
     }[]
     edges: Record<string, unknown>[]
+    blueprint_value_nodes: {
+      vn_id: string
+      vn_name: string
+      priority: string
+      deliverable: string
+      l4_codes: string[]
+      status_text: string
+      source_line: number
+    }[]
+    raci: {
+      l4_code: string
+      l4_name: string
+      accountable: string
+      responsible: string
+      consulted: string
+      informed: string
+      source_line: number
+    }[]
     diagnostics: {
       db_l4_count?: number
       blueprint_l4_count?: number

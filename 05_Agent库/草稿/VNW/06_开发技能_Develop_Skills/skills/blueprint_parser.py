@@ -54,6 +54,33 @@ def parse_blueprint(path: Path, db_l4_codes: set[str]) -> dict:
             if "执行" in stripped or "→" in stripped:
                 current["activities"].append(stripped.lstrip("└├─ ·"))
 
+    # COM等蓝图使用“[COM-16] 名称”表达显式主链路，不使用Step编号。
+    if not steps:
+        in_main_chain = False
+        chain_sequence = 0
+        for number, line in enumerate(lines, 1):
+            stripped = line.strip()
+            if re.match(r"^###\s*3\.1\s+主链路", stripped):
+                in_main_chain = True
+                continue
+            if in_main_chain and re.match(r"^###\s*3\.[2-9]", stripped):
+                break
+            if not in_main_chain:
+                continue
+            chain_match = re.match(r"^\[(COM-\d+)\]\s*(.+?)(?:──|$)", stripped)
+            if not chain_match:
+                continue
+            chain_sequence += 1
+            short_code = chain_match.group(1)
+            steps.append({
+                "step_id": f"STEP-{chain_sequence:02d}",
+                "sequence": chain_sequence,
+                "step_name": chain_match.group(2).strip(),
+                "l4_codes": [f"L4-{short_code}"],
+                "activities": [stripped],
+                "source_line": number,
+            })
+
     decisions: list[dict] = []
     for index, line in enumerate(lines):
         stripped = line.strip()
@@ -132,11 +159,52 @@ def parse_blueprint(path: Path, db_l4_codes: set[str]) -> dict:
                 })
 
     parsed_l4s = {code for step in steps for code in step["l4_codes"]}
+    all_blueprint_l4s.update(parsed_l4s)
     missing_in_blueprint = sorted(db_l4_codes - all_blueprint_l4s)
     extra_in_blueprint = sorted(all_blueprint_l4s - db_l4_codes)
     structure_status = "PARSED" if steps else "INDEX_ONLY"
     if db_l4_codes and not all_blueprint_l4s:
         structure_status = "CONFLICT"
+
+    blueprint_value_nodes = []
+    for number, line in enumerate(lines, 1):
+        if not re.match(r"^\|\s*VN-[A-Z0-9-]+\s*\|", line):
+            continue
+        cells = [cell.strip() for cell in line.strip("|").split("|")]
+        if len(cells) < 6:
+            continue
+        blueprint_value_nodes.append({
+            "vn_id": cells[0],
+            "vn_name": cells[1],
+            "priority": cells[2].replace("*", ""),
+            "deliverable": cells[3],
+            "l4_codes": [f"L4-{code}" for code in re.findall(r"COM-\d+", cells[4])],
+            "status_text": cells[5],
+            "source_line": number,
+        })
+
+    raci = []
+    in_raci = False
+    for number, line in enumerate(lines, 1):
+        stripped = line.strip()
+        if "RACI矩阵" in stripped and stripped.startswith("##"):
+            in_raci = True
+            continue
+        if in_raci and stripped.startswith("## "):
+            break
+        if not in_raci or not re.match(r"^\|\s*COM-\d+\s*\|", stripped):
+            continue
+        cells = [cell.strip() for cell in stripped.strip("|").split("|")]
+        if len(cells) >= 6:
+            raci.append({
+                "l4_code": f"L4-{cells[0]}",
+                "l4_name": cells[1],
+                "accountable": cells[2],
+                "responsible": cells[3],
+                "consulted": cells[4],
+                "informed": cells[5],
+                "source_line": number,
+            })
 
     return {
         "structure_status": structure_status,
@@ -145,6 +213,8 @@ def parse_blueprint(path: Path, db_l4_codes: set[str]) -> dict:
         "steps": steps if structure_status == "PARSED" else [],
         "decisions": decisions if structure_status == "PARSED" else [],
         "edges": edges if structure_status == "PARSED" else [],
+        "blueprint_value_nodes": blueprint_value_nodes,
+        "raci": raci,
         "diagnostics": {
             "db_l4_count": len(db_l4_codes),
             "blueprint_l4_count": len(all_blueprint_l4s),
