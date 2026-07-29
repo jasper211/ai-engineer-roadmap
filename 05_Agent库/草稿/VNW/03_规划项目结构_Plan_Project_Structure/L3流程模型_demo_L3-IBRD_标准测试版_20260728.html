@@ -18,9 +18,12 @@ header{margin-bottom:18px}.eyebrow{margin:0 0 5px;color:var(--orange);font-size:
 .board-tools,.matrix-tools{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:9px}.btn,select{border:1px solid var(--line);border-radius:6px;background:#faf9f5;padding:5px 8px;color:var(--ink);font:10.5px inherit}.btn{cursor:pointer}.board{display:grid;grid-template-columns:repeat(4,minmax(210px,1fr));gap:8px;overflow-x:auto}.col{min-height:245px;padding:8px;border:1px solid var(--line);border-radius:8px;background:#f7f6f1}.col.dragover{border-color:var(--orange);background:#b8631f0d}.colhead{display:flex;justify-content:space-between;font-size:11px;font-weight:700}.cards{min-height:205px}.card{margin-top:7px;padding:8px;border:1px solid var(--line);border-radius:7px;background:var(--paper);cursor:grab}.card.changed{border-color:var(--orange)}.card .meta{color:#8b887f;font:9px ui-monospace,monospace}.card strong{display:block;margin:3px 0;font-size:10.5px}.card p{margin:0;color:var(--muted);font-size:9.5px}.card select{width:100%;margin-top:5px;border:0;border-top:1px solid var(--line)}
 .quad{position:relative;display:grid;grid-template:1fr 1fr/1fr 1fr;gap:4px;min-height:520px;border:2px solid #777568;background:#777568;border-radius:9px;overflow:hidden}.zone{padding:12px}.zone strong{font-size:13px}.zone small{display:block;color:var(--muted)}.watch{background:#d9e6f6;color:#24558f}.win{background:#ccebdd;color:#126c50}.hold{background:#e3e4e8;color:#50545e}.strategy{background:#f6e4b8;color:#80580e}.point{position:absolute;width:30px;height:30px;border:2px solid white;border-radius:50%;display:grid;place-items:center;transform:translate(-50%,50%);background:var(--orange);color:white;font:700 10px ui-monospace,monospace;cursor:grab;touch-action:none;box-shadow:0 0 0 1px #777}.point label{position:absolute;top:33px;left:50%;transform:translateX(-50%);min-width:100px;padding:2px 5px;border:1px solid var(--line);border-radius:4px;background:white;color:var(--ink);font:9px sans-serif;text-align:center;pointer-events:none}
 .explain{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin-top:10px}.exp{padding:8px 9px;border:1px solid var(--line);border-radius:7px;background:#faf9f5}.exphead{display:flex;justify-content:space-between;gap:6px}.exphead strong{font-size:10.5px}.badge{border-radius:999px;padding:1px 6px;background:#eee;font-size:9px}.exp p{margin:4px 0 0;color:var(--muted);font-size:9.5px}.exp .action{color:var(--orange);font-weight:700}
+.hypothesis{margin-bottom:10px;padding:9px 11px;border:1px dashed var(--amber);border-radius:8px;background:#a9761212;color:var(--muted);font-size:10.5px}.hypothesis b{color:var(--amber)}
+.unclassified{min-height:68px;margin-bottom:9px;padding:8px;border:1px dashed var(--line);border-radius:8px;background:#faf9f5}.unclassified h3{margin:0 0 5px;font-size:11px}.unclassified .qrows{display:flex;gap:6px;flex-wrap:wrap}
+.qlists{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;padding:4px;border:2px solid #777568;border-radius:9px;background:#777568}.qlist{min-height:220px;padding:8px;border:0;border-radius:6px}.qlist[data-zone=watch]{background:#d9e6f6}.qlist[data-zone=win]{background:#ccebdd}.qlist[data-zone=hold]{background:#e3e4e8}.qlist[data-zone=strategy]{background:#f6e4b8}.qlist.over,.unclassified.over{outline:2px solid var(--orange)}.qlisthead{display:flex;justify-content:space-between;font-size:11px;font-weight:700}.qrow{margin-top:6px;padding:7px;border:1px solid var(--line);border-radius:6px;background:white;cursor:grab;min-width:170px}.qrow.changed{border-color:var(--orange)}.qrowtop{display:flex;justify-content:space-between;gap:5px;font-size:10px;font-weight:700}.qrow p{margin:3px 0 0;color:var(--muted);font-size:9px;line-height:1.4}.qrow p b{color:var(--ink)}.qrow .qsuggest{color:var(--orange)}.sourcebadge{color:var(--blue);font-size:8.5px}.assumptionbadge{color:var(--orange);font-size:8.5px}
 .decision{border:1px solid #147c5b55;background:#147c5b0d}.decision h2{font-size:17px}.decisions{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.dec{padding:10px;border-radius:8px;background:white;border:1px solid var(--line)}.dec b{display:block;margin-bottom:3px}.dec p{margin:0;color:var(--muted);font-size:11px}.quality{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:11px}.quality div{padding:8px;border-radius:7px;background:white;border:1px solid var(--line);font-size:10px}.quality b{display:block}.qbad{color:var(--red)}.qmid{color:var(--amber)}.qgood{color:var(--green)}
 footer{margin-top:20px;color:#8b887f;text-align:center;font-size:10.5px}
-@media(max-width:900px){.kpis{grid-template-columns:repeat(3,1fr)}.terms,.quality{grid-template-columns:repeat(2,1fr)}.map{grid-template-columns:1fr}.deliveries,.explain,.decisions{grid-template-columns:1fr}.quad{min-height:440px}}
+@media(max-width:900px){.kpis{grid-template-columns:repeat(3,1fr)}.terms,.quality{grid-template-columns:repeat(2,1fr)}.map{grid-template-columns:1fr}.deliveries,.explain,.decisions,.qlists{grid-template-columns:1fr}.quad{min-height:440px}}
 </style>
 </head>
 <body><main class="wrap">
@@ -84,11 +87,11 @@ footer{margin-top:20px;color:#8b887f;text-align:center;font-size:10.5px}
 </section>
 
 <section class="panel">
-  <div class="head"><h2>面板D · AI机会优先级矩阵</h2><span class="source">逐项理由 + 可拖动共识</span></div>
-  <p class="intro">横轴看对准入质量、风险控制和复用效率的贡献；纵轴看规则清晰度、数据可得性及权威判断依赖。</p>
-  <div class="quad" id="quad"><div class="zone watch"><strong>观察区</strong><small>高可行 / 低价值</small></div><div class="zone win"><strong>速赢区</strong><small>高可行 / 高价值</small></div><div class="zone hold"><strong>暂缓区</strong><small>低可行 / 低价值</small></div><div class="zone strategy"><strong>战略区</strong><small>低可行 / 高价值</small></div><div id="points"></div></div>
-  <div class="matrix-tools"><span id="matrixStat" class="source">拖动L4机会点形成讨论结论</span><button class="btn" id="matrixReset">恢复初始判断</button></div>
-  <div class="explain" id="explain"></div>
+  <div class="head"><h2>面板D · AI机会优先级工作坊</h2><span class="source">象限并列清单 + 每行可拖动</span></div>
+  <div class="hypothesis"><b>当前没有per-L4业务价值数据：</b>数据仓库只有L4的Auto/Hybrid/Aug分级，无法据此判断每项L4的高低价值。因此8项L4全部从“待负责人归类”开始；任何拖入象限的结果都显示为工作坊共识假设，而不是数据仓库判断。</div>
+  <div class="unclassified" id="ibrdUnclassified" data-zone="unclassified"><h3>待负责人归类 · 缺少L4价值依据</h3><div class="qrows"></div></div>
+  <div class="qlists" id="ibrdMatrixLists"></div>
+  <div class="matrix-tools"><span id="matrixStat" class="source">请将每一行拖入讨论后的象限</span><button class="btn" id="matrixReset">全部退回待归类</button></div>
 </section>
 
 <section class="panel decision">
@@ -128,20 +131,29 @@ function renderBoard(){board.innerHTML=tiers.map(([id,name])=>{const list=tasks.
 }
 document.getElementById("boardReset").onclick=()=>{tasks.forEach(t=>t.current=t.tier);renderBoard()};renderBoard();
 
-const ops=[
- {id:"01",name:"预审启动",x:54,y:88,v:"能减少无效项目进入尽调。",f:"资格条件和资料清单可规则化。"},
- {id:"02",name:"沟通机制",x:30,y:55,v:"保障协作但不直接产生准入结论。",f:"责任关系和沟通规则仍需人确认。"},
- {id:"03",name:"尽调执行",x:74,y:78,v:"直接影响尽调质量和周期。",f:"标准采集可自动，异常仍需升级。"},
- {id:"04",name:"牌照确认",x:82,y:42,v:"牌照有效是合作准入硬条件。",f:"查询可自动，保司权威确认仍依赖人。"},
- {id:"05",name:"DD穿透",x:78,y:82,v:"直接识别股权与关联方风险。",f:"查册和关系穿透适合自动处理。"},
- {id:"06",name:"AML评级",x:90,y:45,v:"直接决定合规风险是否可接受。",f:"缺少完整阈值，且高风险结论需人工批准。"},
- {id:"07",name:"准入判断",x:92,y:34,v:"决定是否合作及采用哪条路径。",f:"高度依赖商业与合规权衡。"},
- {id:"08",name:"年度更新",x:58,y:86,v:"防止历史尽调失效，具有持续治理价值。",f:"到期和事件触发可自动监控。"}
-].map(o=>({...o,ix:o.x,iy:o.y}));
-const quad=document.getElementById("quad"),points=document.getElementById("points"),explain=document.getElementById("explain"),matrixStat=document.getElementById("matrixStat");
-function quadrant(o){if(o.x>=50&&o.y>=50)return["速赢区","优先验证"];if(o.x<50&&o.y>=50)return["观察区","低成本辅助"];if(o.x>=50&&o.y<50)return["战略区","先补规则和责任边界"];return["暂缓区","暂不投入"]}
-function renderExp(){explain.innerHTML=ops.map(o=>{const q=quadrant(o);return `<div class="exp"><div class="exphead"><strong>L4-${o.id} ${o.name}</strong><span class="badge">${q[0]}</span></div><p><b>价值：</b>${o.v}</p><p><b>可行性：</b>${o.f}</p><p class="action">建议：${q[1]}</p></div>`}).join("")}
-function renderPoints(){points.innerHTML=ops.map(o=>`<div class="point" data-op="${o.id}" style="left:${o.x}%;bottom:${o.y}%">${o.id}<label>${o.name}</label></div>`).join("");points.querySelectorAll(".point").forEach(p=>p.onpointerdown=e=>{e.preventDefault();p.setPointerCapture(e.pointerId);const o=ops.find(x=>x.id===p.dataset.op);p.onpointermove=m=>{const r=quad.getBoundingClientRect();o.x=Math.max(4,Math.min(96,(m.clientX-r.left)/r.width*100));o.y=Math.max(6,Math.min(94,(r.bottom-m.clientY)/r.height*100));p.style.left=o.x+"%";p.style.bottom=o.y+"%";matrixStat.textContent=`L4-${o.id}已移至${quadrant(o)[0]} · 价值${Math.round(o.x)} / 可行性${Math.round(o.y)}`;renderExp()};p.onpointerup=p.onpointercancel=()=>p.onpointermove=null})}
-document.getElementById("matrixReset").onclick=()=>{ops.forEach(o=>{o.x=o.ix;o.y=o.iy});matrixStat.textContent="已恢复初始判断";renderPoints();renderExp()};renderPoints();renderExp();
+const matrixZones=[["watch","观察区","高可行 / 低价值"],["win","速赢区","高可行 / 高价值"],["hold","暂缓区","低可行 / 低价值"],["strategy","战略区","低可行 / 高价值"]];
+const matrixItems=[
+ {id:"01",name:"预审启动",tier:"Auto",background:"核对合作基础条件和资料完整性，决定是否值得进入正式尽调。",risk:"预审条件尚未在当前表中完整展开。",suggestion:"先补条件清单，再验证自动预审与缺项提示。"},
+ {id:"02",name:"沟通机制",tier:"Hybrid",background:"明确项目责任人、沟通频率和问题升级方式。",risk:"责任关系依赖真实组织协商，不能仅由系统指定。",suggestion:"AI生成机制建议，人确认责任人与升级路径。"},
+ {id:"03",name:"尽调执行",tier:"Auto",background:"收集团队、业务模式、过往经验等合作调查证据。",risk:"现有交付物字段与其他L4重复，权威输出边界不清。",suggestion:"先验证资料采集、缺项检查和证据包生成。"},
+ {id:"04",name:"牌照确认",tier:"Aug",background:"核验牌照状态并取得保司的权威确认。",risk:"查询可以自动，但最终确认来自外部权威主体。",suggestion:"AI负责检索比对，人负责保司确认和留痕。"},
+ {id:"05",name:"DD穿透",tier:"Auto",background:"执行DD Form、股东穿透和关联方查册，发现潜在风险。",risk:"数据源可达性和查册规则仍需实际验证。",suggestion:"适合验证自动查册、关系穿透和异常标记。"},
+ {id:"06",name:"AML评级",tier:"Hybrid",background:"根据调查证据形成高、中、低三档AML风险判断。",risk:"评级阈值未完整结构化，高风险结论涉及合规责任。",suggestion:"先补齐标准模板；AI建议评级，人批准和升级。"},
+ {id:"07",name:"准入判断",tier:"Hybrid",background:"综合商业与合规证据，决定是否准入及采用哪条合作路径。",risk:"双路径具体规则未完整进入当前结构化数据。",suggestion:"AI形成路径建议，负责人保留最终决议。"},
+ {id:"08",name:"年度更新",tier:"Auto",background:"在到期或重大变化时重新触发DD Form和风险复核。",risk:"需要明确触发事件、更新周期和重大变化定义。",suggestion:"规则补齐后适合自动监控与发起更新。"}
+].map(item=>({...item,current:"unclassified"}));
+const matrixLists=document.getElementById("ibrdMatrixLists"),unclassified=document.getElementById("ibrdUnclassified"),matrixStat=document.getElementById("matrixStat");let matrixDragged=null;
+function matrixRow(item){return `<article class="qrow${item.current!=="unclassified"?" changed":""}" draggable="true" data-matrix-id="${item.id}"><div class="qrowtop"><span>L4-IBRD-${item.id} · ${item.name}</span><span class="${item.current==="unclassified"?"sourcebadge":"assumptionbadge"}">${item.current==="unclassified"?`真实Tier：${item.tier}`:"工作坊假设"}</span></div><p><b>数据依据：</b>真实Tier为${item.tier}；缺少per-L4价值数据。</p><p><b>流程背景：</b>${item.background}</p><p><b>风险/限制：</b>${item.risk}</p><p class="qsuggest"><b>当前建议：</b>${item.suggestion}</p>${item.current!=="unclassified"?`<p><b>工作坊共识：</b>负责人将其归入${matrixZones.find(z=>z[0]===item.current)[1]}，不代表数据仓库结论。</p>`:""}</article>`}
+function wireDrop(target){
+ target.ondragover=e=>{e.preventDefault();target.classList.add("over")};target.ondragleave=()=>target.classList.remove("over");
+ target.ondrop=e=>{e.preventDefault();target.classList.remove("over");const item=matrixItems.find(x=>x.id===matrixDragged);if(item){item.current=target.dataset.zone;matrixStat.textContent=item.current==="unclassified"?`L4-IBRD-${item.id}已退回待归类`:`L4-IBRD-${item.id}已归入${matrixZones.find(z=>z[0]===item.current)[1]} · 工作坊共识假设`;renderMatrix()}};
+}
+function renderMatrix(){
+ unclassified.querySelector(".qrows").innerHTML=matrixItems.filter(x=>x.current==="unclassified").map(matrixRow).join("");
+ matrixLists.innerHTML=matrixZones.map(([id,name,sub])=>{const list=matrixItems.filter(x=>x.current===id);return `<section class="qlist" data-zone="${id}"><div class="qlisthead"><span>${name} · ${sub}</span><span>${list.length}</span></div>${list.map(matrixRow).join("")}</section>`}).join("");
+ document.querySelectorAll("[data-matrix-id]").forEach(row=>{row.ondragstart=()=>matrixDragged=row.dataset.matrixId;row.ondragend=()=>matrixDragged=null});
+ wireDrop(unclassified);matrixLists.querySelectorAll(".qlist").forEach(wireDrop);
+}
+document.getElementById("matrixReset").onclick=()=>{matrixItems.forEach(item=>item.current="unclassified");matrixStat.textContent="已全部退回待负责人归类";renderMatrix()};renderMatrix();
 </script>
 </body></html>

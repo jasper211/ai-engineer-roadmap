@@ -292,6 +292,30 @@
   }
   .matrix-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 10px; }
   .matrix-status { color: var(--text-muted); font-size: 10.5px; }
+  .hypothesis-banner {
+    margin-bottom: 10px; padding: 9px 11px; border: 1px dashed var(--tier-hybrid);
+    border-radius: 8px; background: var(--tier-hybrid-soft); color: var(--text-muted); font-size: 11px;
+  }
+  .hypothesis-banner b { color: var(--tier-hybrid); }
+  .quadrant-lists {
+    display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 4px;
+    padding: 4px; border: 2px solid #777568; border-radius: 10px; background: #777568;
+  }
+  .quadrant-list { min-height: 215px; padding: 9px; border: 0; border-radius: 6px; }
+  .quadrant-list[data-zone="watch"] { background: #d9e6f6; }
+  .quadrant-list[data-zone="win"] { background: #ccebdd; }
+  .quadrant-list[data-zone="hold"] { background: #e3e4e8; }
+  .quadrant-list[data-zone="strategy"] { background: #f6e4b8; }
+  .quadrant-list.drag-over { outline: 2px solid var(--accent); outline-offset: -2px; }
+  .quadrant-list-head { display: flex; justify-content: space-between; gap: 6px; margin-bottom: 8px; font-size: 11.5px; font-weight: 700; }
+  .opportunity-row { margin-top: 6px; padding: 8px; border: 1px solid var(--border); border-radius: 7px; background: var(--surface); cursor: grab; }
+  .opportunity-row.changed { border-color: var(--accent); }
+  .opportunity-row-top { display: flex; justify-content: space-between; gap: 5px; font-size: 10.5px; font-weight: 700; }
+  .evidence-tag { color: var(--tier-auto); font: 9px ui-monospace,monospace; }
+  .hypothesis-tag { color: var(--accent); font-size: 9px; }
+  .opportunity-row p { margin: 4px 0 0; color: var(--text-muted); font-size: 9.5px; line-height: 1.4; }
+  .opportunity-row p b { color: var(--text); }
+  .opportunity-suggestion { color: var(--accent) !important; }
   .matrix-explanations {
     display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 12px;
   }
@@ -397,6 +421,7 @@
     .delivery-nodes { grid-template-columns: repeat(2, 1fr); }
     .term-notes { grid-template-columns: repeat(2, 1fr); }
     .matrix-explanations { grid-template-columns: 1fr; }
+    .quadrant-lists { grid-template-columns: 1fr; }
   }
   @media (max-width: 560px) {
     .delivery-field { padding: 12px; }
@@ -712,42 +737,9 @@
       <div class="panel-head">
         <div class="panel-title">面板 D &middot; AI机会优先级矩阵</div>
       </div>
-      <div class="quad">
-        <div class="quad-yaxis-label top">可行性 高<span>&#9650;</span></div>
-        <div class="quad-grid">
-          <div class="quad-zone quad-watch">
-            <div class="quad-zone-head"><span class="quad-icon">&#128564;</span>观察区</div>
-            <div class="quad-zone-sub">(高可行+低价值)</div>
-            <div class="quad-zone-action">&rarr; 有资源再做</div>
-          </div>
-          <div class="quad-zone quad-win">
-            <div class="quad-zone-head"><span class="quad-icon">&#128293;</span>速赢区</div>
-            <div class="quad-zone-sub">(高可行+高价值)</div>
-            <div class="quad-zone-action">&rarr; 立即试点</div>
-          </div>
-          <div class="quad-zone quad-hold">
-            <div class="quad-zone-head"><span class="quad-icon">&#10060;</span>暂缓区</div>
-            <div class="quad-zone-sub">(低可行+低价值)</div>
-            <div class="quad-zone-action">&rarr; 暂不投入</div>
-          </div>
-          <div class="quad-zone quad-strategy">
-            <div class="quad-zone-head"><span class="quad-icon">&#11088;</span>战略区</div>
-            <div class="quad-zone-sub">(低可行+高价值)</div>
-            <div class="quad-zone-action">&rarr; 长期投入研发</div>
-          </div>
-          <div id="opportunity-points"></div>
-        </div>
-        <div class="quad-yaxis-label bottom">可行性 低</div>
-        <div class="quad-xaxis">
-          <span>低价值</span>
-          <span class="quad-xaxis-arrow">业务价值 &rarr;</span>
-          <span>高价值</span>
-        </div>
-      </div>
-      <p class="matrix-note">Y轴(可行性)按每条L4的<b class="mono">dim_process.agentifiability</b>定位(真实、逐条不同)；X轴(业务价值)7条L4共用同一个坐标——因为价值数据只精确到L3级：<b class="mono">bridge_kpi_l3</b>给L3-IRI唯一挂钩的KPI贡献权重0.15，在全部24条L3级权重里排在<b style="color:var(--tier-hybrid)">第12.5百分位</b>(中位数0.4)，即"确实偏低"而不只是"未确认"。5条Auto落在观察区，2条Hybrid落在暂缓区——跟第7层给出的移交建议一致。</p>
-      <div class="matrix-toolbar"><span id="matrix-status" class="matrix-status">拖动任一L4机会点，形成负责人讨论后的暂定位置</span><button id="matrix-reset" class="workshop-btn" type="button">恢复初始判断</button></div>
-      <p class="logic-note"><b>初始判断逻辑：</b>纵轴综合“任务是否规则化、输入是否可获得、是否需要权威判断”；横轴综合“交付物对整合就绪的直接贡献、风险降低和使用频率”。当前缺少正式L4价值评分，页面中的横向差异属于业务假设，必须由负责人拖动确认；移动结果仅用于本次讨论，不写回数据源。</p>
-      <div id="matrix-explanations" class="matrix-explanations" aria-label="各L4机会点位置解释"></div>
+      <div class="hypothesis-banner"><b>数据与共识分开：</b>数据仓库只支持“7项L4共用同一个L3价值信号（0.15）”以及各自的Auto/Hybrid分级。因此初始状态只按这两项真实数据分组，不给L4制造不同坐标。拖动后的象限归属统一标记为“工作坊共识假设”。</div>
+      <div id="matrix-list-board" class="quadrant-lists" aria-label="可拖动的四象限机会清单"></div>
+      <div class="matrix-toolbar"><span id="matrix-list-status" class="matrix-status">初始分组：5项观察区、2项暂缓区</span><button id="matrix-list-reset" class="workshop-btn" type="button">恢复数据初始分组</button></div>
     </div>
 
   </div>
@@ -1151,6 +1143,68 @@
     });
     renderPoints();
     renderExplanations();
+  })();
+</script>
+<script>
+  (() => {
+    const board = document.getElementById("matrix-list-board");
+    if (!board) return;
+    const zones = [
+      { id:"watch", name:"观察区", sub:"高可行 / 低价值" },
+      { id:"win", name:"速赢区", sub:"高可行 / 高价值" },
+      { id:"hold", name:"暂缓区", sub:"低可行 / 低价值" },
+      { id:"strategy", name:"战略区", sub:"低可行 / 高价值" }
+    ];
+    const items = [
+      { id:"01", name:"权限清单", tier:"Hybrid", initial:"hold", background:"确定系统和业务可以使用哪些权限，是全部对接工作的前置边界。", risk:"蓝图明确Mark必须参与最终权限裁决，存在单点判断依赖。", suggestion:"AI准备条款差异与冲突清单，人保留裁决和签批。" },
+      { id:"02", name:"资源清单", tier:"Auto", initial:"watch", background:"汇集保司可用系统、数据、人员及其他资源，为后续联调提供输入。", risk:"主要风险是来源分散、重复和缺项，属于可规则检查的问题。", suggestion:"适合作为第一批AIT验证，关注完整率和缺项识别。" },
+      { id:"03", name:"对接报告", tier:"Auto", initial:"watch", background:"汇总系统、数据和人员三线对接结果，是判断技术验证是否通过的证据。", risk:"日志可自动归集，但异常是否真正关闭仍需责任团队确认。", suggestion:"先自动生成报告和异常列表，保留异常关闭确认。" },
+      { id:"04", name:"生效通知", tier:"Auto", initial:"watch", background:"权限配置和测试通过后，向相关使用方确认何时、对谁、哪些权限已经生效。", risk:"错误通知会导致未授权使用或业务无法启动，需要测试结果作为质量门。", suggestion:"规则明确，适合形成“配置—测试—通知”自动闭环。" },
+      { id:"05", name:"就绪确认", tier:"Auto", initial:"watch", background:"汇集所有前置交付物，形成触发L3-IBE的核心确认凭证。", risk:"数据表标为Auto，但当前仍是口头确认，正式签字和异常升级规则没有落地。", suggestion:"保留真实Tier分组；治理补齐前暂不自动出具确认书。" },
+      { id:"06", name:"技术规范", tier:"Auto", initial:"watch", background:"把接口、安全、数据和系统约束固化为后续对接与维护的共同规范。", risk:"规范可能随联调变化，需要保证版本与实际配置一致。", suggestion:"适合自动生成初稿并根据联调结果持续更新。" },
+      { id:"07", name:"培训换手", tier:"Hybrid", initial:"hold", background:"将系统、权限和操作方式交接给保司人员，证明人员侧具备运营条件。", risk:"现场宣讲、答疑和责任确认依赖真实互动，不能仅凭材料生成判断完成。", suggestion:"AI生成材料和知识检查，人负责培训与最终换手确认。" }
+    ].map(item => ({ ...item, current:item.initial }));
+    const status = document.getElementById("matrix-list-status");
+    let dragged = null;
+    function render() {
+      board.innerHTML = zones.map(zone => {
+        const list = items.filter(item => item.current === zone.id);
+        return `<section class="quadrant-list" data-zone="${zone.id}">
+          <div class="quadrant-list-head"><span>${zone.name}<small> · ${zone.sub}</small></span><span>${list.length}</span></div>
+          ${list.map(item => `<article class="opportunity-row${item.current !== item.initial ? " changed" : ""}" draggable="true" data-id="${item.id}">
+            <div class="opportunity-row-top"><span>L4-IRI-${item.id} · ${item.name}</span><span class="${item.current !== item.initial ? "hypothesis-tag" : "evidence-tag"}">${item.current !== item.initial ? "工作坊假设" : "数据初始分组"}</span></div>
+            <p><b>数据依据：</b>L3共用价值信号0.15；该L4真实Tier为${item.tier}。</p>
+            <p><b>流程背景：</b>${item.background}</p>
+            <p><b>风险/限制：</b>${item.risk}</p>
+            <p class="opportunity-suggestion"><b>当前建议：</b>${item.suggestion}</p>
+            ${item.current !== item.initial ? `<p><b>工作坊共识：</b>从${zones.find(z => z.id === item.initial).name}调整至${zones.find(z => z.id === item.current).name}；不代表数据仓库结论。</p>` : ""}
+          </article>`).join("")}
+        </section>`;
+      }).join("");
+      board.querySelectorAll(".opportunity-row").forEach(row => {
+        row.addEventListener("dragstart", () => { dragged = row.dataset.id; });
+        row.addEventListener("dragend", () => { dragged = null; });
+      });
+      board.querySelectorAll(".quadrant-list").forEach(col => {
+        col.addEventListener("dragover", event => { event.preventDefault(); col.classList.add("drag-over"); });
+        col.addEventListener("dragleave", () => col.classList.remove("drag-over"));
+        col.addEventListener("drop", event => {
+          event.preventDefault(); col.classList.remove("drag-over");
+          const item = items.find(entry => entry.id === dragged);
+          if (item) {
+            item.current = col.dataset.zone;
+            status.textContent = `L4-IRI-${item.id}已调整为${zones.find(z => z.id === item.current).name}；当前为工作坊共识假设`;
+            render();
+          }
+        });
+      });
+    }
+    document.getElementById("matrix-list-reset").addEventListener("click", () => {
+      items.forEach(item => { item.current = item.initial; });
+      status.textContent = "已恢复数据初始分组：5项观察区、2项暂缓区";
+      render();
+    });
+    render();
   })();
 </script>
 <script>
