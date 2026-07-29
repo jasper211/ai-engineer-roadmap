@@ -13,7 +13,7 @@ const COLUMNS = [
 type WorkshopState = { placements: Record<string, string>; note: string; updatedAt: string; baseSnapshotHash: string }
 
 function gateTone(status: string) {
-  return status === 'PASS' ? 'border-emerald-400/25 bg-emerald-400/10 text-emerald-300' : 'border-amber-400/25 bg-amber-400/10 text-amber-300'
+  return status === 'PASS' ? 'border-emerald-400/25 bg-emerald-400/10 text-emerald-700' : 'border-amber-400/25 bg-amber-400/10 text-amber-700'
 }
 
 export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}) {
@@ -87,10 +87,10 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
           className="flex flex-wrap items-start justify-between gap-4 rounded-2xl border border-violet-400/25 bg-violet-400/5 p-5 transition hover:bg-violet-400/10"
         >
           <div className="min-w-0 flex-1">
-            <p className="eyebrow text-violet-300">已有完整深度 Demo</p>
+            <p className="eyebrow text-violet-700">已有完整深度 Demo</p>
             <p className="mt-1 text-sm text-text-secondary">下面是这份模型快照自动生成的骨架视图；{model.l3_code} 已经做过按标准模板评审通过的完整版本（叙事、任务卡工作坊、优先级矩阵、交付物地图），建议直接看那份。</p>
           </div>
-          <span className="flex shrink-0 items-center gap-1 text-xs font-medium text-violet-300">打开完整 Demo <ExternalLink className="h-4 w-4" /></span>
+          <span className="flex shrink-0 items-center gap-1 text-xs font-medium text-violet-700">打开完整 Demo <ExternalLink className="h-4 w-4" /></span>
         </a>
       )}
 
@@ -103,7 +103,7 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
               <div className="mt-2 space-y-2">
                 {model.gates[gate].checks.map(check => (
                   <div key={check.rule_id} className="flex gap-2 text-xs">
-                    <span className={check.passed ? 'text-emerald-300' : 'text-amber-300'}>{check.passed ? '✓' : '!'}</span>
+                    <span className={check.passed ? 'text-emerald-700' : 'text-amber-700'}>{check.passed ? '✓' : '!'}</span>
                     <span className="text-text-secondary">{check.detail}</span>
                   </div>
                 ))}
@@ -121,7 +121,7 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
             <div className="mt-4 grid gap-3 md:grid-cols-2">
               {model.blueprint.blueprint_value_nodes.map(node => (
                 <div key={node.vn_id} className="rounded-xl border border-amber-400/20 bg-amber-400/5 p-4">
-                  <div className="flex justify-between gap-3"><span className="font-mono text-xs text-amber-300">{node.vn_id}</span><span className="text-[10px] text-text-muted">蓝图第 {node.source_line} 行</span></div>
+                  <div className="flex justify-between gap-3"><span className="font-mono text-xs text-amber-700">{node.vn_id}</span><span className="text-[10px] text-text-muted">蓝图第 {node.source_line} 行</span></div>
                   <p className="mt-2 text-sm font-medium">{node.vn_name}</p>
                   <p className="mt-1 text-xs text-text-secondary">{node.deliverable}</p>
                   <p className="mt-2 text-[11px] text-text-muted">{node.l4_codes.join('、')} · {node.status_text}</p>
@@ -148,15 +148,15 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
               <span>正文解析：{model.blueprint.steps.length} 步 · {model.blueprint.decisions.length} 个判断点</span>
               <span>·</span>
               <span>{model.blueprint.filename}</span>
-              {mappedL4s.size > 0 && <span className="rounded bg-violet-400/10 px-2 py-1 text-violet-300">紫色步骤 = 与当前价值节点映射的 L4</span>}
+              {mappedL4s.size > 0 && <span className="rounded bg-violet-400/10 px-2 py-1 text-violet-700">紫色步骤 = 与当前价值节点映射的 L4</span>}
             </div>
             {mappedL4s.size === 0 && model.blueprint.blueprint_value_nodes?.length > 0 && (
               <div className="mt-3 flex flex-wrap items-center gap-2">
                 <span className="text-xs text-text-muted">按蓝图补充映射高亮：</span>
                 {model.blueprint.blueprint_value_nodes.map(node => (
-                  <button key={node.vn_id} onClick={() => setSelectedBlueprintNode(current => current === node.vn_id ? '' : node.vn_id)} className={`rounded-lg border px-2.5 py-1.5 text-xs ${selectedBlueprintNode === node.vn_id ? 'border-amber-400/50 bg-amber-400/10 text-amber-200' : 'border-border-default text-text-muted'}`}>{node.vn_id}</button>
+                  <button key={node.vn_id} onClick={() => setSelectedBlueprintNode(current => current === node.vn_id ? '' : node.vn_id)} className={`rounded-lg border px-2.5 py-1.5 text-xs ${selectedBlueprintNode === node.vn_id ? 'border-amber-400/50 bg-amber-400/10 text-amber-800' : 'border-border-default text-text-muted'}`}>{node.vn_id}</button>
                 ))}
-                <span className="text-[10px] text-amber-300">黄色仅代表蓝图陈述，不代表数据库桥接已建立</span>
+                <span className="text-[10px] text-amber-700">黄色仅代表蓝图陈述，不代表数据库桥接已建立</span>
               </div>
             )}
             <div className="mx-auto mt-5 max-w-3xl">
@@ -179,7 +179,7 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
                     </div>
                     {decisions.map(decision => (
                       <div key={decision.decision_id} className="my-3 rounded-xl border border-amber-400/35 bg-amber-400/5 p-4">
-                        <p className="text-center text-sm font-medium text-amber-200">◇ {decision.question}？</p>
+                        <p className="text-center text-sm font-medium text-amber-800">◇ {decision.question}？</p>
                         <div className="mt-3 grid gap-2 sm:grid-cols-2">
                           {decision.branches.map((branch, branchIndex) => (
                             <div key={`${branch.label}-${branchIndex}`} className={`rounded-lg border px-3 py-2 text-xs ${branch.is_return ? 'border-rose-400/30 bg-rose-400/5' : 'border-border-default bg-bg-surface'}`}>
@@ -200,7 +200,7 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
           </>
         ) : (
           <div className="mt-4 rounded-xl border border-amber-400/25 bg-amber-400/5 p-4">
-            <p className="text-sm font-medium text-amber-200">当前不生成流程图：{model.blueprint.structure_status}</p>
+            <p className="text-sm font-medium text-amber-800">当前不生成流程图：{model.blueprint.structure_status}</p>
             <p className="mt-1 text-xs leading-5 text-text-secondary">{model.blueprint.note}</p>
             {Boolean(model.blueprint.diagnostics?.missing_in_blueprint?.length) && (
               <p className="mt-2 text-xs text-text-muted">数据库存在但蓝图未覆盖：{model.blueprint.diagnostics.missing_in_blueprint?.join('、')}</p>
@@ -236,7 +236,7 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
           </div>
         </div>
         {session.baseSnapshotHash && session.baseSnapshotHash !== model.snapshot_hash && (
-          <div className="mt-4 rounded-xl border border-rose-400/30 bg-rose-400/5 p-3 text-xs text-rose-200">
+          <div className="mt-4 rounded-xl border border-rose-400/30 bg-rose-400/5 p-3 text-xs text-rose-800">
             这份本机工作坊草稿基于旧模型快照。系统不会自动合并；请先对照新数据，再保存为当前版本或恢复数据库位置。
           </div>
         )}
@@ -249,7 +249,7 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
                 {cards.filter(card => card.placement === column.id).map(card => (
                   <article key={card.l4_code} draggable onDragStart={event => event.dataTransfer.setData('text/l4', card.l4_code)} className="cursor-grab rounded-lg border border-border-default bg-bg-elevated p-3 active:cursor-grabbing">
                     <div className="flex gap-2"><GripVertical className="mt-0.5 h-4 w-4 shrink-0 text-text-muted" /><div><p className="text-xs font-medium text-text-primary">{card.deliverable || card.l4_name}</p><p className="mt-1 font-mono text-[10px] text-text-muted">{card.l4_code}</p></div></div>
-                    {card.changed && <p className="mt-2 rounded bg-violet-400/10 px-2 py-1 text-[10px] text-violet-300">工作坊共识假设 · 数据库原位置：{card.tier}</p>}
+                    {card.changed && <p className="mt-2 rounded bg-violet-400/10 px-2 py-1 text-[10px] text-violet-700">工作坊共识假设 · 数据库原位置：{card.tier}</p>}
                     <select aria-label={`调整 ${card.l4_code} 的工作坊位置`} value={card.placement} onChange={event => moveCard(card.l4_code, event.target.value)} className="mt-2 w-full rounded border border-border-default bg-bg-surface px-2 py-1 text-[10px] text-text-secondary lg:hidden">
                       {COLUMNS.map(option => <option key={option.id} value={option.id}>{option.label}</option>)}
                     </select>
@@ -266,7 +266,7 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
         {session.updatedAt && <p className="mt-2 text-[11px] text-text-muted">本机最后保存：{new Date(session.updatedAt).toLocaleString()}</p>}
       </section>
 
-      <div className="flex items-start gap-2 rounded-xl border border-sky-400/20 bg-sky-400/5 p-4 text-xs text-sky-200">
+      <div className="flex items-start gap-2 rounded-xl border border-sky-400/20 bg-sky-400/5 p-4 text-xs text-sky-800">
         <Info className="mt-0.5 h-4 w-4 shrink-0" />
         <span>本页业务事实来自 process_analytics 快照，共 {model.evidence_registry.length} 条字段证据。浏览器保存内容属于 CONSENSUS 层，不参与 Gate 自动判断。</span>
       </div>

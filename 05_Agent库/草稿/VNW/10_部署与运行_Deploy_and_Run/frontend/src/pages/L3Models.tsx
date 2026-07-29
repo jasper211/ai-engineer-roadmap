@@ -6,7 +6,7 @@ import { loadModelIndex, type ModelIndex, type ModelIndexItem } from '../lib/l3M
 function Gate({ name, status }: { name: string; status: string }) {
   const pass = status === 'PASS'
   return (
-    <span className={`rounded-md border px-2 py-1 font-mono text-[11px] ${pass ? 'border-emerald-400/25 bg-emerald-400/10 text-emerald-300' : 'border-amber-400/25 bg-amber-400/10 text-amber-300'}`}>
+    <span className={`rounded-md border px-2 py-1 font-mono text-[11px] ${pass ? 'border-emerald-400/25 bg-emerald-400/10 text-emerald-700' : 'border-amber-400/25 bg-amber-400/10 text-amber-700'}`}>
       {name} · {status}
     </span>
   )
@@ -26,11 +26,11 @@ function ModelCard({ model }: { model: ModelIndexItem }) {
         </div>
         <div className="flex flex-col items-end gap-1.5">
           {model.has_demo && (
-            <span className="flex items-center gap-1 rounded-full bg-violet-400/10 px-2.5 py-1 text-[11px] font-medium text-violet-300">
+            <span className="flex items-center gap-1 rounded-full bg-violet-400/10 px-2.5 py-1 text-[11px] font-medium text-violet-700">
               <Star className="h-3 w-3" /> 完整 Demo
             </span>
           )}
-          <span className={`rounded-full px-2.5 py-1 text-[11px] font-medium ${ready ? 'bg-emerald-400/10 text-emerald-300' : 'bg-amber-400/10 text-amber-300'}`}>
+          <span className={`rounded-full px-2.5 py-1 text-[11px] font-medium ${ready ? 'bg-emerald-400/10 text-emerald-700' : 'bg-amber-400/10 text-amber-700'}`}>
             {ready ? '可进入模型' : '待补数据'}
           </span>
         </div>
@@ -45,7 +45,7 @@ function ModelCard({ model }: { model: ModelIndexItem }) {
         <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
       </div>
       {!ready && model.gap_reasons.length > 0 && (
-        <p className="mt-2 line-clamp-2 text-xs text-amber-200/80">首要缺口：{model.gap_reasons[0]}</p>
+        <p className="mt-2 line-clamp-2 text-xs text-amber-800/80">首要缺口：{model.gap_reasons[0]}</p>
       )}
     </Link>
   )
@@ -87,10 +87,10 @@ export default function L3Models() {
 
       {featuredDemo && (
         <Link to={`/models/${featuredDemo.l3_code}`} className="block rounded-2xl border border-violet-400/25 bg-violet-400/5 p-5 transition hover:bg-violet-400/10">
-          <p className="eyebrow text-violet-300">已有评审通过的完整 Demo</p>
+          <p className="eyebrow text-violet-700">已有评审通过的完整 Demo</p>
           <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
             <div><p className="text-lg font-semibold text-text-primary">{featuredDemo.l3_code} · {featuredDemo.l3_name}</p><p className="mt-1 text-xs text-text-secondary">已按标准模板做出叙事、任务卡工作坊、优先级矩阵、交付物地图的完整版本，可直接作为其他 L3 出 demo 的参照样本。</p></div>
-            <span className="flex items-center gap-1 text-xs text-violet-300">查看模型 <ArrowRight className="h-4 w-4" /></span>
+            <span className="flex items-center gap-1 text-xs text-violet-700">查看模型 <ArrowRight className="h-4 w-4" /></span>
           </div>
         </Link>
       )}
@@ -99,16 +99,16 @@ export default function L3Models() {
         <button onClick={() => setView('all')} className={`flex items-center gap-2 rounded-xl px-4 py-3 text-sm ${view === 'all' ? 'bg-accent-primary/10 text-accent-primary-light' : 'text-text-secondary hover:bg-bg-surface'}`}>
           全部 L3 <strong>{groups.all.length}</strong>
         </button>
-        <button onClick={() => setView('ready')} className={`flex items-center gap-2 rounded-xl px-4 py-3 text-sm ${view === 'ready' ? 'bg-emerald-400/10 text-emerald-300' : 'text-text-secondary hover:bg-bg-surface'}`}>
+        <button onClick={() => setView('ready')} className={`flex items-center gap-2 rounded-xl px-4 py-3 text-sm ${view === 'ready' ? 'bg-emerald-400/10 text-emerald-700' : 'text-text-secondary hover:bg-bg-surface'}`}>
           <CheckCircle2 className="h-4 w-4" /> 可移交 AIT <strong>{groups.ready.length}</strong>
         </button>
-        <button onClick={() => setView('evaluable')} className={`flex items-center gap-2 rounded-xl px-4 py-3 text-sm ${view === 'evaluable' ? 'bg-sky-400/10 text-sky-300' : 'text-text-secondary hover:bg-bg-surface'}`}>
+        <button onClick={() => setView('evaluable')} className={`flex items-center gap-2 rounded-xl px-4 py-3 text-sm ${view === 'evaluable' ? 'bg-sky-400/10 text-sky-700' : 'text-text-secondary hover:bg-bg-surface'}`}>
           可评估、待补后移交 <strong>{groups.evaluable.length}</strong>
         </button>
-        <button onClick={() => setView('missing')} className={`flex items-center gap-2 rounded-xl px-4 py-3 text-sm ${view === 'missing' ? 'bg-amber-400/10 text-amber-300' : 'text-text-secondary hover:bg-bg-surface'}`}>
+        <button onClick={() => setView('missing')} className={`flex items-center gap-2 rounded-xl px-4 py-3 text-sm ${view === 'missing' ? 'bg-amber-400/10 text-amber-700' : 'text-text-secondary hover:bg-bg-surface'}`}>
           <AlertTriangle className="h-4 w-4" /> 数据不足待补 <strong>{groups.missing.length}</strong>
         </button>
-        <button onClick={() => setView('demo')} className={`flex items-center gap-2 rounded-xl px-4 py-3 text-sm ${view === 'demo' ? 'bg-violet-400/10 text-violet-300' : 'text-text-secondary hover:bg-bg-surface'}`}>
+        <button onClick={() => setView('demo')} className={`flex items-center gap-2 rounded-xl px-4 py-3 text-sm ${view === 'demo' ? 'bg-violet-400/10 text-violet-700' : 'text-text-secondary hover:bg-bg-surface'}`}>
           <Star className="h-4 w-4" /> 已有完整 Demo <strong>{groups.demo.length}</strong>
         </button>
         <div className="ml-auto flex items-center gap-2 px-3 text-[11px] text-text-muted"><Database className="h-3.5 w-3.5" /> {data.source_policy}</div>

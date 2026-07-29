@@ -102,7 +102,7 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
   return (
     <>
-      <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 border-r border-border-default bg-bg-elevated/95 backdrop-blur-xl lg:block">
+      <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 border-r border-border-default bg-white/95 shadow-[6px_0_24px_rgba(30,51,84,.05)] backdrop-blur-xl lg:block">
         <Navigation />
       </aside>
 
@@ -127,7 +127,7 @@ export default function Navbar() {
 
       {mobileOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
-          <button aria-label="关闭导航" className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setMobileOpen(false)} />
+        <button aria-label="关闭导航" className="absolute inset-0 bg-slate-900/25 backdrop-blur-sm" onClick={() => setMobileOpen(false)} />
           <aside className="absolute inset-y-0 left-0 w-[min(86vw,320px)] border-r border-border-default bg-bg-elevated shadow-2xl">
             <button aria-label="关闭导航" onClick={() => setMobileOpen(false)} className="absolute right-3 top-3 z-10 rounded-lg p-2 text-text-muted hover:bg-bg-surface">
               <X className="h-5 w-5" />

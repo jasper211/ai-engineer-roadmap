@@ -22,6 +22,7 @@ export default function App() {
       <Route path="/" element={<BriefLayout><L3Models /></BriefLayout>} />
       <Route path="/brief" element={<BriefLayout><L3Models /></BriefLayout>} />
       <Route path="/models" element={<BriefLayout><L3Models /></BriefLayout>} />
+      <Route path="/models/L3-COM" element={<BriefLayout><L3ComDemo /></BriefLayout>} />
       <Route path="/models/:l3Code" element={<BriefLayout><L3ModelDetail /></BriefLayout>} />
       {/* 2026-07-26:单L3手工demo,验证五维流程模型概念,故意不接入任何导航菜单,只能直接访问URL */}
       <Route path="/demo/l3-iri" element={<BriefLayout><L3Demo /></BriefLayout>} />
