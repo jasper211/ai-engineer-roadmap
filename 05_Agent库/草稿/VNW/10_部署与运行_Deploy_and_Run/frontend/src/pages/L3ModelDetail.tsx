@@ -84,9 +84,9 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
           href={`/demos/${encodeURIComponent(model.demo_file)}`}
           target="_blank"
           rel="noreferrer"
-          className="flex items-center justify-between rounded-2xl border border-violet-400/25 bg-violet-400/5 p-5 transition hover:bg-violet-400/10"
+          className="flex flex-wrap items-start justify-between gap-4 rounded-2xl border border-violet-400/25 bg-violet-400/5 p-5 transition hover:bg-violet-400/10"
         >
-          <div>
+          <div className="min-w-0 flex-1">
             <p className="eyebrow text-violet-300">已有完整深度 Demo</p>
             <p className="mt-1 text-sm text-text-secondary">下面是这份模型快照自动生成的骨架视图；{model.l3_code} 已经做过按标准模板评审通过的完整版本（叙事、任务卡工作坊、优先级矩阵、交付物地图），建议直接看那份。</p>
           </div>

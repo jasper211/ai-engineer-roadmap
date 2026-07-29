@@ -1,16 +1,14 @@
 import { useState } from 'react'
 import { NavLink, Link } from 'react-router'
 import {
-  Activity, AlertTriangle, Bot, ChevronRight, Database, ExternalLink, GitBranch,
-  HeartPulse, LayoutDashboard, Menu, Network, Table2, Users, X,
+  Activity, AlertTriangle, ChevronRight, ExternalLink, GitBranch,
+  Menu, Network, Table2, Users, X,
 } from 'lucide-react'
 
 const groups = [
   {
     label: '总览',
     items: [
-      { path: '/', label: '治理驾驶舱', icon: LayoutDashboard },
-      { path: '/workflow', label: '闭环工作流', icon: GitBranch },
       { path: '/domains', label: '业务域进度', icon: Activity },
     ],
   },
@@ -20,14 +18,12 @@ const groups = [
       { path: '/nodes', label: '价值节点', icon: Network },
       { path: '/gaps-actions', label: 'Gap 与行动', icon: AlertTriangle },
       { path: '/interview-sop', label: '访谈与 SOP', icon: Users },
-      { path: '/agent-readiness', label: 'Agent 就绪度', icon: Bot },
     ],
   },
   {
     label: '数据治理',
     items: [
       { path: '/tables', label: '数据表中心', icon: Table2 },
-      { path: '/data-health', label: '数据健康', icon: HeartPulse },
     ],
   },
 ]

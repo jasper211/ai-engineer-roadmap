@@ -74,7 +74,7 @@ export default function L3Models() {
 
   const current = groups[view].filter(model => `${model.l3_code}${model.l3_name}`.toLowerCase().includes(query.toLowerCase()))
   const parsedCount = data.models.filter(model => model.blueprint_structure_status === 'PARSED').length
-  const recommended = groups.ready[0]
+  const featuredDemo = groups.demo[0]
   return (
     <div className="space-y-6">
       <div>
@@ -85,12 +85,12 @@ export default function L3Models() {
         </p>
       </div>
 
-      {recommended && (
-        <Link to={`/models/${recommended.l3_code}`} className="block rounded-2xl border border-emerald-400/25 bg-emerald-400/5 p-5 transition hover:bg-emerald-400/10">
-          <p className="eyebrow text-emerald-300">系统推荐 · 当前唯一通过 Gate A</p>
+      {featuredDemo && (
+        <Link to={`/models/${featuredDemo.l3_code}`} className="block rounded-2xl border border-violet-400/25 bg-violet-400/5 p-5 transition hover:bg-violet-400/10">
+          <p className="eyebrow text-violet-300">已有评审通过的完整 Demo</p>
           <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
-            <div><p className="text-lg font-semibold text-text-primary">{recommended.l3_code} · {recommended.l3_name}</p><p className="mt-1 text-xs text-text-secondary">{recommended.l4_count} 个 L4 的 D1-D6 与价值节点映射满足当前移交门槛，建议作为首个 AIT 设计样本。</p></div>
-            <span className="flex items-center gap-1 text-xs text-emerald-300">查看模型 <ArrowRight className="h-4 w-4" /></span>
+            <div><p className="text-lg font-semibold text-text-primary">{featuredDemo.l3_code} · {featuredDemo.l3_name}</p><p className="mt-1 text-xs text-text-secondary">已按标准模板做出叙事、任务卡工作坊、优先级矩阵、交付物地图的完整版本，可直接作为其他 L3 出 demo 的参照样本。</p></div>
+            <span className="flex items-center gap-1 text-xs text-violet-300">查看模型 <ArrowRight className="h-4 w-4" /></span>
           </div>
         </Link>
       )}

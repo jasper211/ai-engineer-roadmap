@@ -1,16 +1,12 @@
 import { Routes, Route } from 'react-router'
 import Layout from './components/Layout'
 import BriefLayout from './components/BriefLayout'
-import Home from './pages/Home'
-import Workflow from './pages/Workflow'
 import Nodes from './pages/Nodes'
 import NodeDetail from './pages/NodeDetail'
 import Tables from './pages/Tables'
 import Domains from './pages/Domains'
 import GapsActions from './pages/GapsActions'
 import InterviewSOP from './pages/InterviewSOP'
-import AgentReadiness from './pages/AgentReadiness'
-import DataHealth from './pages/DataHealth'
 import L3Demo from './pages/L3Demo'
 import L3Models from './pages/L3Models'
 import L3ModelDetail from './pages/L3ModelDetail'
@@ -33,16 +29,18 @@ export default function App() {
       <Route path="*" element={
         <Layout>
           <Routes>
-            <Route path="/internal" element={<Home />} />
-            <Route path="/workflow" element={<Workflow />} />
+            {/* 2026-07-29:Jasper裁定删除治理驾驶舱(已被机会台V2取代)/闭环工作流
+                (纯静态无数据)/Agent就绪度(与机会台重复)/数据健康(无独立价值)。
+                /internal改为落到业务域进度(Domains,Jasper个人规则分析V1-V5
+                进度跟踪)，其余VN锚点分析工具(价值节点/Gap与行动/访谈SOP)
+                和数据表中心保留不动。 */}
+            <Route path="/internal" element={<Domains />} />
             <Route path="/nodes" element={<Nodes />} />
             <Route path="/node/:nodeId" element={<NodeDetail />} />
             <Route path="/tables" element={<Tables />} />
             <Route path="/domains" element={<Domains />} />
             <Route path="/gaps-actions" element={<GapsActions />} />
             <Route path="/interview-sop" element={<InterviewSOP />} />
-            <Route path="/agent-readiness" element={<AgentReadiness />} />
-            <Route path="/data-health" element={<DataHealth />} />
           </Routes>
         </Layout>
       } />
