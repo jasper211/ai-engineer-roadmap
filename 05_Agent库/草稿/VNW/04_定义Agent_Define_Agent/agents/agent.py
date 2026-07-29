@@ -28,6 +28,10 @@ def parse_args():
     parser.add_argument("--domain", default=None, help="域编码；ALL表示全域")
     parser.add_argument("--force", action="store_true", help="忽略指纹，强制重新生成")
     parser.add_argument("--status", action="store_true", help="仅显示配置和最近状态")
+    parser.add_argument("--build-model-snapshots", action="store_true", help="只读构建L3流程模型基础快照")
+    parser.add_argument("--build-all-model-snapshots", action="store_true", help="批量只读构建数据库中的全部L3模型")
+    parser.add_argument("--l3-code", action="append", help="要构建的L3编码；可重复传入")
+    parser.add_argument("--blueprint-index", type=Path, help="L3蓝图覆盖清单CSV")
     return parser.parse_args()
 
 
@@ -38,6 +42,30 @@ def main() -> int:
     state = workspace.load()
     if args.status:
         print(json.dumps({"agent_id": settings["agent_id"], "version": settings["version"], "workspace": str(workspace.root), "tracked_files": len(state.get("files", {})), "last_run": state.get("runs", [])[-1:]}, ensure_ascii=False, indent=2))
+        return 0
+    if args.build_model_snapshots or args.build_all_model_snapshots:
+        from skills.l3_model_builder import L3ModelBuilder, load_blueprint_index
+        from skills.sync_data_foundation import db_query
+        from tools.postgres_reader import BulkPostgresL3Reader, PostgresL3Reader
+
+        default_index = (
+            AGENT_ROOT / "07_接入记忆_Integrate_Memory/data_foundation/"
+            "E_待评估/L3蓝图覆盖清单_v1.0.csv"
+        )
+        if args.build_all_model_snapshots:
+            reader = BulkPostgresL3Reader.from_query(db_query)
+            codes = reader.l3_codes
+        else:
+            reader = PostgresL3Reader(db_query)
+            codes = args.l3_code or ["L3-IRI", "L3-IBRD", "L3-IBEC", "L3-EO"]
+        blueprint_dir = Path("/Users/a112233/Desktop/流程架构项目_jasper/02_过程成果-工作产出/L3流程库")
+        builder = L3ModelBuilder(
+            reader,
+            load_blueprint_index(args.blueprint_index or default_index),
+            blueprint_dir=blueprint_dir,
+        )
+        results = builder.build_and_write(codes, workspace.root / "model_snapshots")
+        print(json.dumps({"status": "built", "snapshots": results}, ensure_ascii=False, indent=2))
         return 0
     watch_dirs = [item.resolve() for item in (args.watch_dir or [])]
     if not watch_dirs:

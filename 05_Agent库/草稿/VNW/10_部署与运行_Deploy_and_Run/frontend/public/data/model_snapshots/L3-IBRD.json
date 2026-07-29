@@ -1,0 +1,2436 @@
+{
+  "blueprint": {
+    "coverage": "INDEXED",
+    "decisions": [
+      {
+        "after_step": "STEP-01",
+        "branches": [
+          {
+            "is_return": false,
+            "label": "通过",
+            "source_line": 109,
+            "target_l4": "",
+            "target_step": "STEP-02",
+            "target_text": "Step 2牌照核查与保司确认"
+          },
+          {
+            "is_return": false,
+            "label": "不通过",
+            "source_line": 110,
+            "target_l4": "",
+            "target_step": "",
+            "target_text": "终止流程，记录原因，进入观察池"
+          }
+        ],
+        "decision_id": "Q1",
+        "evidence_ref": "EVD-8b8f67a1f96815c0fb67",
+        "question": "机构是否通过资格预审",
+        "source_line": 106
+      },
+      {
+        "after_step": "STEP-07",
+        "branches": [
+          {
+            "is_return": false,
+            "label": "低风险",
+            "source_line": 115,
+            "target_l4": "",
+            "target_step": "",
+            "target_text": "推进至L3-NG谈判"
+          },
+          {
+            "is_return": false,
+            "label": "中风险",
+            "source_line": 116,
+            "target_l4": "",
+            "target_step": "",
+            "target_text": "附条件推进，标注风险项至谈判底稿"
+          },
+          {
+            "is_return": false,
+            "label": "高风险",
+            "source_line": 117,
+            "target_l4": "",
+            "target_step": "",
+            "target_text": "暂停，上报C族负责人决策"
+          }
+        ],
+        "decision_id": "Q2",
+        "evidence_ref": "EVD-54a0fa2740eb8b810d6b",
+        "question": "尽职调查结论",
+        "source_line": 112
+      }
+    ],
+    "diagnostics": {
+      "blueprint_l4_count": 10,
+      "db_l4_count": 8,
+      "extra_in_blueprint": [
+        "L4-IBPCR-01",
+        "L4-IBRD-09"
+      ],
+      "missing_in_blueprint": [],
+      "parsed_step_l4_count": 8
+    },
+    "edges": [
+      {
+        "edge_id": "SEQ-STEP-01-STEP-02",
+        "edge_type": "SEQUENCE",
+        "from": "STEP-01",
+        "label": "",
+        "source_rule": "蓝图显式编号步骤的相邻顺序",
+        "to": "STEP-02"
+      },
+      {
+        "edge_id": "SEQ-STEP-02-STEP-03",
+        "edge_type": "SEQUENCE",
+        "from": "STEP-02",
+        "label": "",
+        "source_rule": "蓝图显式编号步骤的相邻顺序",
+        "to": "STEP-03"
+      },
+      {
+        "edge_id": "SEQ-STEP-03-STEP-04",
+        "edge_type": "SEQUENCE",
+        "from": "STEP-03",
+        "label": "",
+        "source_rule": "蓝图显式编号步骤的相邻顺序",
+        "to": "STEP-04"
+      },
+      {
+        "edge_id": "SEQ-STEP-04-STEP-05",
+        "edge_type": "SEQUENCE",
+        "from": "STEP-04",
+        "label": "",
+        "source_rule": "蓝图显式编号步骤的相邻顺序",
+        "to": "STEP-05"
+      },
+      {
+        "edge_id": "SEQ-STEP-05-STEP-06",
+        "edge_type": "SEQUENCE",
+        "from": "STEP-05",
+        "label": "",
+        "source_rule": "蓝图显式编号步骤的相邻顺序",
+        "to": "STEP-06"
+      },
+      {
+        "edge_id": "SEQ-STEP-06-STEP-07",
+        "edge_type": "SEQUENCE",
+        "from": "STEP-06",
+        "label": "",
+        "source_rule": "蓝图显式编号步骤的相邻顺序",
+        "to": "STEP-07"
+      },
+      {
+        "edge_id": "SEQ-STEP-07-STEP-08",
+        "edge_type": "SEQUENCE",
+        "from": "STEP-07",
+        "label": "",
+        "source_rule": "蓝图显式编号步骤的相邻顺序",
+        "to": "STEP-08"
+      },
+      {
+        "edge_id": "Q1-8",
+        "edge_type": "DECISION",
+        "from": "Q1",
+        "label": "通过",
+        "source_rule": "蓝图第109行显式分支",
+        "to": "STEP-02"
+      }
+    ],
+    "filename": "流程蓝图_L3-IBRD_合作伙伴需求分析与诊断_V1.4.md",
+    "note": "已从蓝图正文解析；步骤顺序边由显式步骤编号派生，判断分支保留原文行号",
+    "source_hash": "beb27d51eb944c6dfbf154d03c7cb7820fb486aee09e4cd22b8b72a482131624",
+    "source_path": "/Users/a112233/Desktop/流程架构项目_jasper/02_过程成果-工作产出/L3流程库/流程蓝图_L3-IBRD_合作伙伴需求分析与诊断_V1.4.md",
+    "steps": [
+      {
+        "activities": [
+          "L4-IBRD-01 合作资格预审与流程启动 → 《合作资格预审与流程启动计划》(Aug)"
+        ],
+        "evidence_ref": "EVD-5a4888926a9611d55c03",
+        "l4_codes": [
+          "L4-IBRD-01"
+        ],
+        "sequence": 1,
+        "source_line": 55,
+        "step_id": "STEP-01",
+        "step_name": "合作资格预审与流程启动"
+      },
+      {
+        "activities": [
+          "L4-IBRD-07 双路径渠道准入判断 → 《渠道合作路径推荐手册》含场景决策树"
+        ],
+        "evidence_ref": "EVD-20e7708aaf9ca7a1e9c8",
+        "l4_codes": [
+          "L4-IBRD-07"
+        ],
+        "sequence": 2,
+        "source_line": 61,
+        "step_id": "STEP-02",
+        "step_name": "双路径渠道准入判断（待注册）"
+      },
+      {
+        "activities": [
+          "L4-IBRD-04 牌照核查与保司确认 → 《牌照核查与保司确认记录》(Human)"
+        ],
+        "evidence_ref": "EVD-0bd1f6d218ac9e7c102f",
+        "l4_codes": [
+          "L4-IBRD-04"
+        ],
+        "sequence": 3,
+        "source_line": 68,
+        "step_id": "STEP-03",
+        "step_name": "牌照核查与保司确认"
+      },
+      {
+        "activities": [
+          "L4-IBRD-05 DD Form执行与股东穿透查册 → 《同行渠道DD查册SOP》含费用标准与预算"
+        ],
+        "evidence_ref": "EVD-7364d272380007096a7b",
+        "l4_codes": [
+          "L4-IBRD-05"
+        ],
+        "sequence": 4,
+        "source_line": 72,
+        "step_id": "STEP-04",
+        "step_name": "DD Form执行与股东穿透查册（待注册）"
+      },
+      {
+        "activities": [
+          "L4-IBRD-06 AML风险评估与三档评级 → 《AML风险评估标准模板》含评级依据说明"
+        ],
+        "evidence_ref": "EVD-be0a8a3c6b3d22b2ca95",
+        "l4_codes": [
+          "L4-IBRD-06"
+        ],
+        "sequence": 5,
+        "source_line": 79,
+        "step_id": "STEP-05",
+        "step_name": "AML风险评估与三档评级（待注册）"
+      },
+      {
+        "activities": [
+          "L4-IBRD-02 项目沟通机制建立 → 《项目沟通机制建立》(Auto)"
+        ],
+        "evidence_ref": "EVD-536754bbbad4f56f11f4",
+        "l4_codes": [
+          "L4-IBRD-02"
+        ],
+        "sequence": 6,
+        "source_line": 84,
+        "step_id": "STEP-06",
+        "step_name": "项目沟通机制建立"
+      },
+      {
+        "activities": [
+          "L4-IBRD-03 尽职调查执行 → 《尽职调查执行记录》(Aug)"
+        ],
+        "evidence_ref": "EVD-985e477d2c6405a91055",
+        "l4_codes": [
+          "L4-IBRD-03"
+        ],
+        "sequence": 7,
+        "source_line": 88,
+        "step_id": "STEP-07",
+        "step_name": "尽职调查执行"
+      },
+      {
+        "activities": [
+          "L4-IBRD-08 DD Form年度更新触发 → 《渠道DD年度更新流程》含更新触发日历"
+        ],
+        "evidence_ref": "EVD-ced009c2b3be7fbdcc6d",
+        "l4_codes": [
+          "L4-IBRD-08"
+        ],
+        "sequence": 8,
+        "source_line": 96,
+        "step_id": "STEP-08",
+        "step_name": "DD Form年度更新触发（周期性，待注册）"
+      }
+    ],
+    "structure_status": "PARSED",
+    "version": "V1.4"
+  },
+  "evidence_registry": [
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-0129489fe2164a5187c0",
+      "field_name": "agentifiability",
+      "source": {
+        "observed_at": "",
+        "source_field": "agentifiability",
+        "source_key": "L4-IBRD-02",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "Hybrid"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-06e977497655e6b67ac2",
+      "field_name": "agent_d1_input_struct",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d1_input_struct",
+        "source_key": "L4-IBRD-01",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-08bb0b9062df10daf463",
+      "field_name": "l4_deliverable_type",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_deliverable_type",
+        "source_key": "L4-IBRD-04",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "数据表"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-09d051f9dcfdc6b9a110",
+      "field_name": "agent_d5_fallback",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d5_fallback",
+        "source_key": "L4-IBRD-05",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-0b35fa70686630a3acbb",
+      "field_name": "agent_d5_fallback",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d5_fallback",
+        "source_key": "L4-IBRD-07",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-0bd1f6d218ac9e7c102f",
+      "field_name": "blueprint.steps.STEP-03",
+      "source": {
+        "observed_at": "",
+        "source_field": "step",
+        "source_key": "line:68",
+        "source_object": "流程蓝图_L3-IBRD_合作伙伴需求分析与诊断_V1.4.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.4"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "l4_codes": [
+          "L4-IBRD-04"
+        ],
+        "step_name": "牌照核查与保司确认"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-0c6098116ef9360f90c8",
+      "field_name": "agent_d5_fallback",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d5_fallback",
+        "source_key": "L4-IBRD-02",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-0cb80873eba50ae7b8ff",
+      "field_name": "l4_deliverable_type",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_deliverable_type",
+        "source_key": "L4-IBRD-08",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "方案"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-0e9e208addc032c767e7",
+      "field_name": "agentifiability",
+      "source": {
+        "observed_at": "",
+        "source_field": "agentifiability",
+        "source_key": "L4-IBRD-01",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "Auto"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-1a5bf09609c57786ddab",
+      "field_name": "l4_deliverable",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_deliverable",
+        "source_key": "L4-IBRD-07",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "牌照核查结果+保司Alice确认+团队配置+业务模式+过往经验。P0: 批次8确认存在SLHK登记表未纳入流程库；合同后置根因为内商务岗位缺失；IT系统bug；V1.4新增：《同行渠道DD查册SOP》+《AML风险评估标准模板》（高/中/低三档）+《渠道合作路径推荐手册》+《渠道DD年度更新流程》"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-1bfd91a92c9891554632",
+      "field_name": "agent_d6_compliance",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d6_compliance",
+        "source_key": "L4-IBRD-01",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-1c13ce9ee2fc69d2c371",
+      "field_name": "agent_d4_api_reach",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d4_api_reach",
+        "source_key": "L4-IBRD-02",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-1fee0d110a84c2ca4bdc",
+      "field_name": "agent_d6_compliance",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d6_compliance",
+        "source_key": "L4-IBRD-06",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-20e7708aaf9ca7a1e9c8",
+      "field_name": "blueprint.steps.STEP-02",
+      "source": {
+        "observed_at": "",
+        "source_field": "step",
+        "source_key": "line:61",
+        "source_object": "流程蓝图_L3-IBRD_合作伙伴需求分析与诊断_V1.4.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.4"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "l4_codes": [
+          "L4-IBRD-07"
+        ],
+        "step_name": "双路径渠道准入判断（待注册）"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-26124d9ec95287e4babd",
+      "field_name": "agent_d2_rule_clear",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d2_rule_clear",
+        "source_key": "L4-IBRD-04",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-2666d5c50935fa6ce859",
+      "field_name": "agent_d2_rule_clear",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d2_rule_clear",
+        "source_key": "L4-IBRD-01",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-29c40292a174097735bf",
+      "field_name": "agent_d3_output_verify",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d3_output_verify",
+        "source_key": "L4-IBRD-08",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-2d903d77b865fe3f9e3c",
+      "field_name": "agent_d1_input_struct",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d1_input_struct",
+        "source_key": "L4-IBRD-06",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-2ef16053e6a9a46fa01b",
+      "field_name": "agent_human_touchpoint",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_human_touchpoint",
+        "source_key": "L4-IBRD-02",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-2fdbb31e05d4b2c4258e",
+      "field_name": "l4_deliverable",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_deliverable",
+        "source_key": "L4-IBRD-04",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "《牌照核查与保司确认记录》"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-37b648eda66722fb9522",
+      "field_name": "agentifiability",
+      "source": {
+        "observed_at": "",
+        "source_field": "agentifiability",
+        "source_key": "L4-IBRD-03",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "Auto"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-3a84053740bce9642da8",
+      "field_name": "agent_d3_output_verify",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d3_output_verify",
+        "source_key": "L4-IBRD-04",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-3c90384ae2e5a260d436",
+      "field_name": "agent_d6_compliance",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d6_compliance",
+        "source_key": "L4-IBRD-04",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-3f58b9ce7c1712720a2f",
+      "field_name": "l4_name",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_name",
+        "source_key": "L4-IBRD-02",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "项目沟通机制建立"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-42987378aa376b7288e4",
+      "field_name": "l4_deliverable_type",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_deliverable_type",
+        "source_key": "L4-IBRD-06",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "方案"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-44b6430797d6a94099c0",
+      "field_name": "agent_d6_compliance",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d6_compliance",
+        "source_key": "L4-IBRD-08",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-489d4f68e616eb319314",
+      "field_name": "agent_d1_input_struct",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d1_input_struct",
+        "source_key": "L4-IBRD-07",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-49929a6d268523a3407e",
+      "field_name": "l4_name",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_name",
+        "source_key": "L4-IBRD-06",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "AML风险评估与三档评级"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-49f4ae583faac6c7b49f",
+      "field_name": "agentifiability",
+      "source": {
+        "observed_at": "",
+        "source_field": "agentifiability",
+        "source_key": "L4-IBRD-07",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "Hybrid"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-4abc2f785090bbcff739",
+      "field_name": "l4_name",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_name",
+        "source_key": "L4-IBRD-04",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "牌照核查与保司确认"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-50cc300fc93f91201230",
+      "field_name": "agent_d4_api_reach",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d4_api_reach",
+        "source_key": "L4-IBRD-01",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-51fc3eb837d4a7af190c",
+      "field_name": "agentifiability",
+      "source": {
+        "observed_at": "",
+        "source_field": "agentifiability",
+        "source_key": "L4-IBRD-08",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "Auto"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-532e01dd4806b6eca9f5",
+      "field_name": "agent_d5_fallback",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d5_fallback",
+        "source_key": "L4-IBRD-06",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-536754bbbad4f56f11f4",
+      "field_name": "blueprint.steps.STEP-06",
+      "source": {
+        "observed_at": "",
+        "source_field": "step",
+        "source_key": "line:84",
+        "source_object": "流程蓝图_L3-IBRD_合作伙伴需求分析与诊断_V1.4.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.4"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "l4_codes": [
+          "L4-IBRD-02"
+        ],
+        "step_name": "项目沟通机制建立"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-54a0fa2740eb8b810d6b",
+      "field_name": "blueprint.decisions.Q2",
+      "source": {
+        "observed_at": "",
+        "source_field": "decision",
+        "source_key": "line:112",
+        "source_object": "流程蓝图_L3-IBRD_合作伙伴需求分析与诊断_V1.4.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.4"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "branches": [
+          {
+            "is_return": false,
+            "label": "低风险",
+            "source_line": 115,
+            "target_l4": "",
+            "target_step": "",
+            "target_text": "推进至L3-NG谈判"
+          },
+          {
+            "is_return": false,
+            "label": "中风险",
+            "source_line": 116,
+            "target_l4": "",
+            "target_step": "",
+            "target_text": "附条件推进，标注风险项至谈判底稿"
+          },
+          {
+            "is_return": false,
+            "label": "高风险",
+            "source_line": 117,
+            "target_l4": "",
+            "target_step": "",
+            "target_text": "暂停，上报C族负责人决策"
+          }
+        ],
+        "question": "尽职调查结论"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-5a4888926a9611d55c03",
+      "field_name": "blueprint.steps.STEP-01",
+      "source": {
+        "observed_at": "",
+        "source_field": "step",
+        "source_key": "line:55",
+        "source_object": "流程蓝图_L3-IBRD_合作伙伴需求分析与诊断_V1.4.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.4"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "l4_codes": [
+          "L4-IBRD-01"
+        ],
+        "step_name": "合作资格预审与流程启动"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-5b3644cdca900a4cf001",
+      "field_name": "agentifiability",
+      "source": {
+        "observed_at": "",
+        "source_field": "agentifiability",
+        "source_key": "L4-IBRD-04",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "Aug"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-5ba2753a12e280c9ced7",
+      "field_name": "l4_name",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_name",
+        "source_key": "L4-IBRD-07",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "双路径渠道准入判断"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-5e95d50db90b55504e25",
+      "field_name": "l4_deliverable",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_deliverable",
+        "source_key": "L4-IBRD-02",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "《项目沟通机制建立》"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-62117e09aaed339c5fbc",
+      "field_name": "agent_d1_input_struct",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d1_input_struct",
+        "source_key": "L4-IBRD-05",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-629217e364a6f62dee04",
+      "field_name": "agent_d5_fallback",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d5_fallback",
+        "source_key": "L4-IBRD-01",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-6d7f0cbca9e59edc315f",
+      "field_name": "agent_d6_compliance",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d6_compliance",
+        "source_key": "L4-IBRD-02",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-6e24f621258b2cf648fd",
+      "field_name": "agent_d4_api_reach",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d4_api_reach",
+        "source_key": "L4-IBRD-07",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-6f1a004ffd5e448b0603",
+      "field_name": "agent_d3_output_verify",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d3_output_verify",
+        "source_key": "L4-IBRD-05",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-70c8d3806e6277fa35a6",
+      "field_name": "agentifiability",
+      "source": {
+        "observed_at": "",
+        "source_field": "agentifiability",
+        "source_key": "L4-IBRD-06",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "Hybrid"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-7364d272380007096a7b",
+      "field_name": "blueprint.steps.STEP-04",
+      "source": {
+        "observed_at": "",
+        "source_field": "step",
+        "source_key": "line:72",
+        "source_object": "流程蓝图_L3-IBRD_合作伙伴需求分析与诊断_V1.4.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.4"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "l4_codes": [
+          "L4-IBRD-05"
+        ],
+        "step_name": "DD Form执行与股东穿透查册（待注册）"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-7646abfc25ae440f2fb4",
+      "field_name": "agent_human_touchpoint",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_human_touchpoint",
+        "source_key": "L4-IBRD-07",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "人工执行：双路径渠道准入判断"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-7670e8dd8bfb7e4b5519",
+      "field_name": "agent_d4_api_reach",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d4_api_reach",
+        "source_key": "L4-IBRD-06",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-77d0f28b8f15ec2e89c6",
+      "field_name": "l4_deliverable_type",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_deliverable_type",
+        "source_key": "L4-IBRD-01",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "方案"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-7958d37be6a34cd4333e",
+      "field_name": "agent_d6_compliance",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d6_compliance",
+        "source_key": "L4-IBRD-05",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-7cb2fe76a3540fdbb657",
+      "field_name": "l4_deliverable",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_deliverable",
+        "source_key": "L4-IBRD-03",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "牌照核查结果+保司Alice确认+团队配置+业务模式+过往经验。P0: 批次8确认存在SLHK登记表未纳入流程库；合同后置根因为内商务岗位缺失；IT系统bug；V1.4新增：《同行渠道DD查册SOP》+《AML风险评估标准模板》（高/中/低三档）+《渠道合作路径推荐手册》+《渠道DD年度更新流程》"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-7ce453ef9034ac305d9e",
+      "field_name": "l4_deliverable",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_deliverable",
+        "source_key": "L4-IBRD-08",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "牌照核查结果+保司Alice确认+团队配置+业务模式+过往经验。P0: 批次8确认存在SLHK登记表未纳入流程库；合同后置根因为内商务岗位缺失；IT系统bug；V1.4新增：《同行渠道DD查册SOP》+《AML风险评估标准模板》（高/中/低三档）+《渠道合作路径推荐手册》+《渠道DD年度更新流程》"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-7db6496b092b77132e03",
+      "field_name": "agent_d2_rule_clear",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d2_rule_clear",
+        "source_key": "L4-IBRD-05",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-7f7b51e59adab26466fe",
+      "field_name": "agent_d2_rule_clear",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d2_rule_clear",
+        "source_key": "L4-IBRD-03",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-889cce439bf1291b476d",
+      "field_name": "agentifiability",
+      "source": {
+        "observed_at": "",
+        "source_field": "agentifiability",
+        "source_key": "L4-IBRD-05",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "Auto"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-89ad8c2b49e1612fa8e4",
+      "field_name": "l4_deliverable_type",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_deliverable_type",
+        "source_key": "L4-IBRD-03",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "数据表"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-8a685e97095d922eba51",
+      "field_name": "agent_human_touchpoint",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_human_touchpoint",
+        "source_key": "L4-IBRD-08",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-8b8f67a1f96815c0fb67",
+      "field_name": "blueprint.decisions.Q1",
+      "source": {
+        "observed_at": "",
+        "source_field": "decision",
+        "source_key": "line:106",
+        "source_object": "流程蓝图_L3-IBRD_合作伙伴需求分析与诊断_V1.4.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.4"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "branches": [
+          {
+            "is_return": false,
+            "label": "通过",
+            "source_line": 109,
+            "target_l4": "",
+            "target_step": "STEP-02",
+            "target_text": "Step 2牌照核查与保司确认"
+          },
+          {
+            "is_return": false,
+            "label": "不通过",
+            "source_line": 110,
+            "target_l4": "",
+            "target_step": "",
+            "target_text": "终止流程，记录原因，进入观察池"
+          }
+        ],
+        "question": "机构是否通过资格预审"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-8fcd18a264a9a2dd101e",
+      "field_name": "agent_d6_compliance",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d6_compliance",
+        "source_key": "L4-IBRD-07",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-962a3227d6fb2a3826ba",
+      "field_name": "agent_d1_input_struct",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d1_input_struct",
+        "source_key": "L4-IBRD-04",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-969413349d81da1264d1",
+      "field_name": "agent_d3_output_verify",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d3_output_verify",
+        "source_key": "L4-IBRD-07",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-985e477d2c6405a91055",
+      "field_name": "blueprint.steps.STEP-07",
+      "source": {
+        "observed_at": "",
+        "source_field": "step",
+        "source_key": "line:88",
+        "source_object": "流程蓝图_L3-IBRD_合作伙伴需求分析与诊断_V1.4.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.4"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "l4_codes": [
+          "L4-IBRD-03"
+        ],
+        "step_name": "尽职调查执行"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-99b1077cbdf5a9365dbc",
+      "field_name": "agent_d3_output_verify",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d3_output_verify",
+        "source_key": "L4-IBRD-06",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-99c7cacfd7f14e7b7d58",
+      "field_name": "agent_d4_api_reach",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d4_api_reach",
+        "source_key": "L4-IBRD-05",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-99c8b5ecbcb1922a325f",
+      "field_name": "agent_d2_rule_clear",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d2_rule_clear",
+        "source_key": "L4-IBRD-08",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-9b699167c25cc0fc2320",
+      "field_name": "agent_human_touchpoint",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_human_touchpoint",
+        "source_key": "L4-IBRD-05",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "人工执行：DD Form执行与股东穿透查册"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-a2b80aa59e7fdfbc5239",
+      "field_name": "agent_d4_api_reach",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d4_api_reach",
+        "source_key": "L4-IBRD-03",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-a48c301808a3f0fd0e02",
+      "field_name": "agent_d4_api_reach",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d4_api_reach",
+        "source_key": "L4-IBRD-04",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-aae70d28db211a10238b",
+      "field_name": "agent_human_touchpoint",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_human_touchpoint",
+        "source_key": "L4-IBRD-01",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-af4ef8dac830daa02cf7",
+      "field_name": "agent_human_touchpoint",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_human_touchpoint",
+        "source_key": "L4-IBRD-04",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "人工执行：牌照核查与保司确认"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-b24293a948d327b3a72f",
+      "field_name": "agent_d2_rule_clear",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d2_rule_clear",
+        "source_key": "L4-IBRD-07",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-be0a8a3c6b3d22b2ca95",
+      "field_name": "blueprint.steps.STEP-05",
+      "source": {
+        "observed_at": "",
+        "source_field": "step",
+        "source_key": "line:79",
+        "source_object": "流程蓝图_L3-IBRD_合作伙伴需求分析与诊断_V1.4.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.4"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "l4_codes": [
+          "L4-IBRD-06"
+        ],
+        "step_name": "AML风险评估与三档评级（待注册）"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-bf850e2929656fb58d34",
+      "field_name": "agent_d5_fallback",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d5_fallback",
+        "source_key": "L4-IBRD-08",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-c101d47479a9cae1485d",
+      "field_name": "l4_name",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_name",
+        "source_key": "L4-IBRD-03",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "尽职调查执行"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-c8091c8a6312ae8dfd09",
+      "field_name": "agent_human_touchpoint",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_human_touchpoint",
+        "source_key": "L4-IBRD-06",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-c99760162a4ecc6615c7",
+      "field_name": "agent_d3_output_verify",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d3_output_verify",
+        "source_key": "L4-IBRD-03",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-ca9ecb3052e1573f752a",
+      "field_name": "agent_d5_fallback",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d5_fallback",
+        "source_key": "L4-IBRD-04",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-cd5fdec96d21c164853d",
+      "field_name": "agent_d5_fallback",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d5_fallback",
+        "source_key": "L4-IBRD-03",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-ced009c2b3be7fbdcc6d",
+      "field_name": "blueprint.steps.STEP-08",
+      "source": {
+        "observed_at": "",
+        "source_field": "step",
+        "source_key": "line:96",
+        "source_object": "流程蓝图_L3-IBRD_合作伙伴需求分析与诊断_V1.4.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.4"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "l4_codes": [
+          "L4-IBRD-08"
+        ],
+        "step_name": "DD Form年度更新触发（周期性，待注册）"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-cffd6927eb520c0530f7",
+      "field_name": "agent_d3_output_verify",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d3_output_verify",
+        "source_key": "L4-IBRD-01",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-d073da7d33c30ddc199a",
+      "field_name": "agent_d2_rule_clear",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d2_rule_clear",
+        "source_key": "L4-IBRD-02",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-d198c7b507b9fdb883fb",
+      "field_name": "l4_name",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_name",
+        "source_key": "L4-IBRD-05",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "DD Form执行与股东穿透查册"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-d25f80745fab5e81cd42",
+      "field_name": "agent_d1_input_struct",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d1_input_struct",
+        "source_key": "L4-IBRD-03",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-d9c7a4c05c08b17ba31d",
+      "field_name": "l4_deliverable",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_deliverable",
+        "source_key": "L4-IBRD-06",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "牌照核查结果+保司Alice确认+团队配置+业务模式+过往经验。P0: 批次8确认存在SLHK登记表未纳入流程库；合同后置根因为内商务岗位缺失；IT系统bug；V1.4新增：《同行渠道DD查册SOP》+《AML风险评估标准模板》（高/中/低三档）+《渠道合作路径推荐手册》+《渠道DD年度更新流程》"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-dc960b7d2c23f1d64164",
+      "field_name": "agent_human_touchpoint",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_human_touchpoint",
+        "source_key": "L4-IBRD-03",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-dce7a525fde8db89a707",
+      "field_name": "agent_d3_output_verify",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d3_output_verify",
+        "source_key": "L4-IBRD-02",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-df1fa7a2356072132a51",
+      "field_name": "l4_deliverable_type",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_deliverable_type",
+        "source_key": "L4-IBRD-07",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "决议"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-e3c2fddfb8c294d38d41",
+      "field_name": "agent_d1_input_struct",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d1_input_struct",
+        "source_key": "L4-IBRD-08",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-e68e02f0d632ba2944ea",
+      "field_name": "l4_deliverable_type",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_deliverable_type",
+        "source_key": "L4-IBRD-05",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "方案"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-e9fc20f9fc84989cf431",
+      "field_name": "l4_deliverable",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_deliverable",
+        "source_key": "L4-IBRD-05",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "牌照核查结果+保司Alice确认+团队配置+业务模式+过往经验。P0: 批次8确认存在SLHK登记表未纳入流程库；合同后置根因为内商务岗位缺失；IT系统bug；V1.4新增：《同行渠道DD查册SOP》+《AML风险评估标准模板》（高/中/低三档）+《渠道合作路径推荐手册》+《渠道DD年度更新流程》"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-ec219ab327719508ffe0",
+      "field_name": "l4_name",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_name",
+        "source_key": "L4-IBRD-08",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "DD Form年度更新触发"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-ec4508cb154ef7e2e855",
+      "field_name": "l4_name",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_name",
+        "source_key": "L4-IBRD-01",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "合作资格预审与流程启动"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-ed8181916283b5b07219",
+      "field_name": "agent_d4_api_reach",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d4_api_reach",
+        "source_key": "L4-IBRD-08",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-edbeb6a8081e87720457",
+      "field_name": "l4_deliverable",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_deliverable",
+        "source_key": "L4-IBRD-01",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "《合作资格预审与流程启动计划》"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-eecb5babe0e6235555d0",
+      "field_name": "agent_d6_compliance",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d6_compliance",
+        "source_key": "L4-IBRD-03",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-efee8b2d6b287ad3d8e2",
+      "field_name": "agent_d2_rule_clear",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d2_rule_clear",
+        "source_key": "L4-IBRD-06",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-f903e72fc1611d2c5a7c",
+      "field_name": "l4_deliverable_type",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_deliverable_type",
+        "source_key": "L4-IBRD-02",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "方案"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-fadf2bb0a607bcfbd29a",
+      "field_name": "agent_d1_input_struct",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d1_input_struct",
+        "source_key": "L4-IBRD-02",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    }
+  ],
+  "gates": {
+    "A": {
+      "checks": [
+        {
+          "detail": "Gate E=PASS",
+          "passed": true,
+          "rule_id": "A-001"
+        },
+        {
+          "detail": "D1-D6完整=0/8",
+          "passed": false,
+          "rule_id": "A-002"
+        },
+        {
+          "detail": "价值节点-L4映射=0",
+          "passed": false,
+          "rule_id": "A-003"
+        },
+        {
+          "detail": "存在熔断或无价值节点",
+          "passed": false,
+          "rule_id": "A-004"
+        }
+      ],
+      "status": "BLOCKED"
+    },
+    "E": {
+      "checks": [
+        {
+          "detail": "Gate M=PASS",
+          "passed": true,
+          "rule_id": "E-001"
+        },
+        {
+          "detail": "交付物完整=8/8",
+          "passed": true,
+          "rule_id": "E-002"
+        },
+        {
+          "detail": "Tier合法",
+          "passed": true,
+          "rule_id": "E-003"
+        }
+      ],
+      "status": "PASS"
+    },
+    "M": {
+      "checks": [
+        {
+          "detail": "L4数量=8",
+          "passed": true,
+          "rule_id": "M-001"
+        },
+        {
+          "detail": "流程蓝图_L3-IBRD_合作伙伴需求分析与诊断_V1.4.md",
+          "passed": true,
+          "rule_id": "M-002"
+        },
+        {
+          "detail": "L4名称完整",
+          "passed": true,
+          "rule_id": "M-003"
+        }
+      ],
+      "status": "PASS"
+    }
+  },
+  "kpi_mappings": [],
+  "l2_capabilities": [
+    {
+      "l2_code": "CAP-L2-2-S1",
+      "l2_name": "机构需求判断能力",
+      "l3_code": "L3-IBRD"
+    }
+  ],
+  "l3_code": "L3-IBRD",
+  "l3_name": "合作伙伴需求分析与诊断",
+  "l4s": [
+    {
+      "d1_d6": {
+        "agent_d1_input_struct": null,
+        "agent_d2_rule_clear": null,
+        "agent_d3_output_verify": null,
+        "agent_d4_api_reach": null,
+        "agent_d5_fallback": null,
+        "agent_d6_compliance": null
+      },
+      "deliverable": "《合作资格预审与流程启动计划》",
+      "deliverable_type": "方案",
+      "evidence_refs": {
+        "agent_d1_input_struct": "EVD-06e977497655e6b67ac2",
+        "agent_d2_rule_clear": "EVD-2666d5c50935fa6ce859",
+        "agent_d3_output_verify": "EVD-cffd6927eb520c0530f7",
+        "agent_d4_api_reach": "EVD-50cc300fc93f91201230",
+        "agent_d5_fallback": "EVD-629217e364a6f62dee04",
+        "agent_d6_compliance": "EVD-1bfd91a92c9891554632",
+        "agent_human_touchpoint": "EVD-aae70d28db211a10238b",
+        "agentifiability": "EVD-0e9e208addc032c767e7",
+        "l4_deliverable": "EVD-edbeb6a8081e87720457",
+        "l4_deliverable_type": "EVD-77d0f28b8f15ec2e89c6",
+        "l4_name": "EVD-ec4508cb154ef7e2e855"
+      },
+      "human_touchpoint": null,
+      "l4_code": "L4-IBRD-01",
+      "l4_name": "合作资格预审与流程启动",
+      "tier": "Auto"
+    },
+    {
+      "d1_d6": {
+        "agent_d1_input_struct": null,
+        "agent_d2_rule_clear": null,
+        "agent_d3_output_verify": null,
+        "agent_d4_api_reach": null,
+        "agent_d5_fallback": null,
+        "agent_d6_compliance": null
+      },
+      "deliverable": "《项目沟通机制建立》",
+      "deliverable_type": "方案",
+      "evidence_refs": {
+        "agent_d1_input_struct": "EVD-fadf2bb0a607bcfbd29a",
+        "agent_d2_rule_clear": "EVD-d073da7d33c30ddc199a",
+        "agent_d3_output_verify": "EVD-dce7a525fde8db89a707",
+        "agent_d4_api_reach": "EVD-1c13ce9ee2fc69d2c371",
+        "agent_d5_fallback": "EVD-0c6098116ef9360f90c8",
+        "agent_d6_compliance": "EVD-6d7f0cbca9e59edc315f",
+        "agent_human_touchpoint": "EVD-2ef16053e6a9a46fa01b",
+        "agentifiability": "EVD-0129489fe2164a5187c0",
+        "l4_deliverable": "EVD-5e95d50db90b55504e25",
+        "l4_deliverable_type": "EVD-f903e72fc1611d2c5a7c",
+        "l4_name": "EVD-3f58b9ce7c1712720a2f"
+      },
+      "human_touchpoint": null,
+      "l4_code": "L4-IBRD-02",
+      "l4_name": "项目沟通机制建立",
+      "tier": "Hybrid"
+    },
+    {
+      "d1_d6": {
+        "agent_d1_input_struct": null,
+        "agent_d2_rule_clear": null,
+        "agent_d3_output_verify": null,
+        "agent_d4_api_reach": null,
+        "agent_d5_fallback": null,
+        "agent_d6_compliance": null
+      },
+      "deliverable": "牌照核查结果+保司Alice确认+团队配置+业务模式+过往经验。P0: 批次8确认存在SLHK登记表未纳入流程库；合同后置根因为内商务岗位缺失；IT系统bug；V1.4新增：《同行渠道DD查册SOP》+《AML风险评估标准模板》（高/中/低三档）+《渠道合作路径推荐手册》+《渠道DD年度更新流程》",
+      "deliverable_type": "数据表",
+      "evidence_refs": {
+        "agent_d1_input_struct": "EVD-d25f80745fab5e81cd42",
+        "agent_d2_rule_clear": "EVD-7f7b51e59adab26466fe",
+        "agent_d3_output_verify": "EVD-c99760162a4ecc6615c7",
+        "agent_d4_api_reach": "EVD-a2b80aa59e7fdfbc5239",
+        "agent_d5_fallback": "EVD-cd5fdec96d21c164853d",
+        "agent_d6_compliance": "EVD-eecb5babe0e6235555d0",
+        "agent_human_touchpoint": "EVD-dc960b7d2c23f1d64164",
+        "agentifiability": "EVD-37b648eda66722fb9522",
+        "l4_deliverable": "EVD-7cb2fe76a3540fdbb657",
+        "l4_deliverable_type": "EVD-89ad8c2b49e1612fa8e4",
+        "l4_name": "EVD-c101d47479a9cae1485d"
+      },
+      "human_touchpoint": null,
+      "l4_code": "L4-IBRD-03",
+      "l4_name": "尽职调查执行",
+      "tier": "Auto"
+    },
+    {
+      "d1_d6": {
+        "agent_d1_input_struct": null,
+        "agent_d2_rule_clear": null,
+        "agent_d3_output_verify": null,
+        "agent_d4_api_reach": null,
+        "agent_d5_fallback": null,
+        "agent_d6_compliance": null
+      },
+      "deliverable": "《牌照核查与保司确认记录》",
+      "deliverable_type": "数据表",
+      "evidence_refs": {
+        "agent_d1_input_struct": "EVD-962a3227d6fb2a3826ba",
+        "agent_d2_rule_clear": "EVD-26124d9ec95287e4babd",
+        "agent_d3_output_verify": "EVD-3a84053740bce9642da8",
+        "agent_d4_api_reach": "EVD-a48c301808a3f0fd0e02",
+        "agent_d5_fallback": "EVD-ca9ecb3052e1573f752a",
+        "agent_d6_compliance": "EVD-3c90384ae2e5a260d436",
+        "agent_human_touchpoint": "EVD-af4ef8dac830daa02cf7",
+        "agentifiability": "EVD-5b3644cdca900a4cf001",
+        "l4_deliverable": "EVD-2fdbb31e05d4b2c4258e",
+        "l4_deliverable_type": "EVD-08bb0b9062df10daf463",
+        "l4_name": "EVD-4abc2f785090bbcff739"
+      },
+      "human_touchpoint": "人工执行：牌照核查与保司确认",
+      "l4_code": "L4-IBRD-04",
+      "l4_name": "牌照核查与保司确认",
+      "tier": "Aug"
+    },
+    {
+      "d1_d6": {
+        "agent_d1_input_struct": null,
+        "agent_d2_rule_clear": null,
+        "agent_d3_output_verify": null,
+        "agent_d4_api_reach": null,
+        "agent_d5_fallback": null,
+        "agent_d6_compliance": null
+      },
+      "deliverable": "牌照核查结果+保司Alice确认+团队配置+业务模式+过往经验。P0: 批次8确认存在SLHK登记表未纳入流程库；合同后置根因为内商务岗位缺失；IT系统bug；V1.4新增：《同行渠道DD查册SOP》+《AML风险评估标准模板》（高/中/低三档）+《渠道合作路径推荐手册》+《渠道DD年度更新流程》",
+      "deliverable_type": "方案",
+      "evidence_refs": {
+        "agent_d1_input_struct": "EVD-62117e09aaed339c5fbc",
+        "agent_d2_rule_clear": "EVD-7db6496b092b77132e03",
+        "agent_d3_output_verify": "EVD-6f1a004ffd5e448b0603",
+        "agent_d4_api_reach": "EVD-99c7cacfd7f14e7b7d58",
+        "agent_d5_fallback": "EVD-09d051f9dcfdc6b9a110",
+        "agent_d6_compliance": "EVD-7958d37be6a34cd4333e",
+        "agent_human_touchpoint": "EVD-9b699167c25cc0fc2320",
+        "agentifiability": "EVD-889cce439bf1291b476d",
+        "l4_deliverable": "EVD-e9fc20f9fc84989cf431",
+        "l4_deliverable_type": "EVD-e68e02f0d632ba2944ea",
+        "l4_name": "EVD-d198c7b507b9fdb883fb"
+      },
+      "human_touchpoint": "人工执行：DD Form执行与股东穿透查册",
+      "l4_code": "L4-IBRD-05",
+      "l4_name": "DD Form执行与股东穿透查册",
+      "tier": "Auto"
+    },
+    {
+      "d1_d6": {
+        "agent_d1_input_struct": null,
+        "agent_d2_rule_clear": null,
+        "agent_d3_output_verify": null,
+        "agent_d4_api_reach": null,
+        "agent_d5_fallback": null,
+        "agent_d6_compliance": null
+      },
+      "deliverable": "牌照核查结果+保司Alice确认+团队配置+业务模式+过往经验。P0: 批次8确认存在SLHK登记表未纳入流程库；合同后置根因为内商务岗位缺失；IT系统bug；V1.4新增：《同行渠道DD查册SOP》+《AML风险评估标准模板》（高/中/低三档）+《渠道合作路径推荐手册》+《渠道DD年度更新流程》",
+      "deliverable_type": "方案",
+      "evidence_refs": {
+        "agent_d1_input_struct": "EVD-2d903d77b865fe3f9e3c",
+        "agent_d2_rule_clear": "EVD-efee8b2d6b287ad3d8e2",
+        "agent_d3_output_verify": "EVD-99b1077cbdf5a9365dbc",
+        "agent_d4_api_reach": "EVD-7670e8dd8bfb7e4b5519",
+        "agent_d5_fallback": "EVD-532e01dd4806b6eca9f5",
+        "agent_d6_compliance": "EVD-1fee0d110a84c2ca4bdc",
+        "agent_human_touchpoint": "EVD-c8091c8a6312ae8dfd09",
+        "agentifiability": "EVD-70c8d3806e6277fa35a6",
+        "l4_deliverable": "EVD-d9c7a4c05c08b17ba31d",
+        "l4_deliverable_type": "EVD-42987378aa376b7288e4",
+        "l4_name": "EVD-49929a6d268523a3407e"
+      },
+      "human_touchpoint": null,
+      "l4_code": "L4-IBRD-06",
+      "l4_name": "AML风险评估与三档评级",
+      "tier": "Hybrid"
+    },
+    {
+      "d1_d6": {
+        "agent_d1_input_struct": null,
+        "agent_d2_rule_clear": null,
+        "agent_d3_output_verify": null,
+        "agent_d4_api_reach": null,
+        "agent_d5_fallback": null,
+        "agent_d6_compliance": null
+      },
+      "deliverable": "牌照核查结果+保司Alice确认+团队配置+业务模式+过往经验。P0: 批次8确认存在SLHK登记表未纳入流程库；合同后置根因为内商务岗位缺失；IT系统bug；V1.4新增：《同行渠道DD查册SOP》+《AML风险评估标准模板》（高/中/低三档）+《渠道合作路径推荐手册》+《渠道DD年度更新流程》",
+      "deliverable_type": "决议",
+      "evidence_refs": {
+        "agent_d1_input_struct": "EVD-489d4f68e616eb319314",
+        "agent_d2_rule_clear": "EVD-b24293a948d327b3a72f",
+        "agent_d3_output_verify": "EVD-969413349d81da1264d1",
+        "agent_d4_api_reach": "EVD-6e24f621258b2cf648fd",
+        "agent_d5_fallback": "EVD-0b35fa70686630a3acbb",
+        "agent_d6_compliance": "EVD-8fcd18a264a9a2dd101e",
+        "agent_human_touchpoint": "EVD-7646abfc25ae440f2fb4",
+        "agentifiability": "EVD-49f4ae583faac6c7b49f",
+        "l4_deliverable": "EVD-1a5bf09609c57786ddab",
+        "l4_deliverable_type": "EVD-df1fa7a2356072132a51",
+        "l4_name": "EVD-5ba2753a12e280c9ced7"
+      },
+      "human_touchpoint": "人工执行：双路径渠道准入判断",
+      "l4_code": "L4-IBRD-07",
+      "l4_name": "双路径渠道准入判断",
+      "tier": "Hybrid"
+    },
+    {
+      "d1_d6": {
+        "agent_d1_input_struct": null,
+        "agent_d2_rule_clear": null,
+        "agent_d3_output_verify": null,
+        "agent_d4_api_reach": null,
+        "agent_d5_fallback": null,
+        "agent_d6_compliance": null
+      },
+      "deliverable": "牌照核查结果+保司Alice确认+团队配置+业务模式+过往经验。P0: 批次8确认存在SLHK登记表未纳入流程库；合同后置根因为内商务岗位缺失；IT系统bug；V1.4新增：《同行渠道DD查册SOP》+《AML风险评估标准模板》（高/中/低三档）+《渠道合作路径推荐手册》+《渠道DD年度更新流程》",
+      "deliverable_type": "方案",
+      "evidence_refs": {
+        "agent_d1_input_struct": "EVD-e3c2fddfb8c294d38d41",
+        "agent_d2_rule_clear": "EVD-99c8b5ecbcb1922a325f",
+        "agent_d3_output_verify": "EVD-29c40292a174097735bf",
+        "agent_d4_api_reach": "EVD-ed8181916283b5b07219",
+        "agent_d5_fallback": "EVD-bf850e2929656fb58d34",
+        "agent_d6_compliance": "EVD-44b6430797d6a94099c0",
+        "agent_human_touchpoint": "EVD-8a685e97095d922eba51",
+        "agentifiability": "EVD-51fc3eb837d4a7af190c",
+        "l4_deliverable": "EVD-7ce453ef9034ac305d9e",
+        "l4_deliverable_type": "EVD-0cb80873eba50ae7b8ff",
+        "l4_name": "EVD-ec219ab327719508ffe0"
+      },
+      "human_touchpoint": null,
+      "l4_code": "L4-IBRD-08",
+      "l4_name": "DD Form年度更新触发",
+      "tier": "Auto"
+    }
+  ],
+  "schema_version": "vnw.l3-model.v1",
+  "source_policy": {
+    "consensus_separate": true,
+    "database_authority": "process_analytics",
+    "reverse_writeback": false,
+    "supplemental_requires_active": true
+  },
+  "supplemental_evidence_refs": [],
+  "value_nodes": [],
+  "value_stream_mappings": [
+    {
+      "l3_code": "L3-IBRD",
+      "stage_code": "S1",
+      "vs_code": "VS-2",
+      "vs_name": "机构合作伙伴旅程"
+    }
+  ],
+  "vn_l4_mappings": []
+}

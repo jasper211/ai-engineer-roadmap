@@ -41,7 +41,10 @@ import psycopg2.extras
 try:
     from db_config_local import DB_CONFIG
 except ImportError:
-    DB_CONFIG = None
+    try:
+        from .db_config_local import DB_CONFIG
+    except ImportError:
+        DB_CONFIG = None
 
 # ---------------------------------------------------------------------------
 # 路径

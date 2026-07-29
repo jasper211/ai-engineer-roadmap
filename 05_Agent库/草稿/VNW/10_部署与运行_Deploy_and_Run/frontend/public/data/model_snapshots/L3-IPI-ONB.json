@@ -1,0 +1,2352 @@
+{
+  "blueprint": {
+    "coverage": "INDEXED",
+    "decisions": [
+      {
+        "after_step": "STEP-01",
+        "branches": [
+          {
+            "is_return": false,
+            "label": "通过",
+            "source_line": 46,
+            "target_l4": "",
+            "target_step": "STEP-02",
+            "target_text": "步骤2"
+          },
+          {
+            "is_return": true,
+            "label": "未通过",
+            "source_line": 47,
+            "target_l4": "",
+            "target_step": "",
+            "target_text": "返回G族修正规则配置"
+          },
+          {
+            "is_return": false,
+            "label": "执行L4-IPI-03：规则路由将产品匹配至各业务线",
+            "source_line": 50,
+            "target_l4": "",
+            "target_step": "",
+            "target_text": "输出《匹配表》"
+          },
+          {
+            "is_return": false,
+            "label": "执行L4-IPI-11：F族搭配权益方案",
+            "source_line": 51,
+            "target_l4": "",
+            "target_step": "",
+            "target_text": "输出《组合方案》"
+          }
+        ],
+        "decision_id": "Q1",
+        "evidence_ref": "EVD-f44a0bb6dab3ed6d0dce",
+        "question": "佣金规则沙箱测试是否通过",
+        "source_line": 45
+      },
+      {
+        "after_step": "STEP-03",
+        "branches": [
+          {
+            "is_return": false,
+            "label": "达标",
+            "source_line": 57,
+            "target_l4": "",
+            "target_step": "STEP-04",
+            "target_text": "步骤4"
+          },
+          {
+            "is_return": true,
+            "label": "未达标",
+            "source_line": 58,
+            "target_l4": "L4-IPI-09",
+            "target_step": "",
+            "target_text": "修复问题后重新测试（执行L4-IPI-09异常处置）"
+          },
+          {
+            "is_return": false,
+            "label": "执行L4-IPI-05：自动化发布",
+            "source_line": 61,
+            "target_l4": "",
+            "target_step": "",
+            "target_text": "输出上架通知"
+          },
+          {
+            "is_return": false,
+            "label": "执行L4-IPI-06：版本管理归档",
+            "source_line": 62,
+            "target_l4": "",
+            "target_step": "",
+            "target_text": "输出《版本变更记录》（Auto）"
+          },
+          {
+            "is_return": false,
+            "label": "",
+            "source_line": 63,
+            "target_l4": "",
+            "target_step": "",
+            "target_text": "上架完成，移交L3-IPI-Ops"
+          }
+        ],
+        "decision_id": "Q2",
+        "evidence_ref": "EVD-1ae89cb71351453e1fbb",
+        "question": "试运行结果是否达标",
+        "source_line": 56
+      }
+    ],
+    "diagnostics": {
+      "blueprint_l4_count": 10,
+      "db_l4_count": 8,
+      "extra_in_blueprint": [
+        "L4-IPI-07",
+        "L4-IPI-08"
+      ],
+      "missing_in_blueprint": [],
+      "parsed_step_l4_count": 8
+    },
+    "edges": [
+      {
+        "edge_id": "SEQ-STEP-01-STEP-02",
+        "edge_type": "SEQUENCE",
+        "from": "STEP-01",
+        "label": "",
+        "source_rule": "蓝图显式编号步骤的相邻顺序",
+        "to": "STEP-02"
+      },
+      {
+        "edge_id": "SEQ-STEP-02-STEP-03",
+        "edge_type": "SEQUENCE",
+        "from": "STEP-02",
+        "label": "",
+        "source_rule": "蓝图显式编号步骤的相邻顺序",
+        "to": "STEP-03"
+      },
+      {
+        "edge_id": "SEQ-STEP-03-STEP-04",
+        "edge_type": "SEQUENCE",
+        "from": "STEP-03",
+        "label": "",
+        "source_rule": "蓝图显式编号步骤的相邻顺序",
+        "to": "STEP-04"
+      },
+      {
+        "edge_id": "Q1-4",
+        "edge_type": "DECISION",
+        "from": "Q1",
+        "label": "通过",
+        "source_rule": "蓝图第46行显式分支",
+        "to": "STEP-02"
+      },
+      {
+        "edge_id": "Q2-5",
+        "edge_type": "DECISION",
+        "from": "Q2",
+        "label": "达标",
+        "source_rule": "蓝图第57行显式分支",
+        "to": "STEP-04"
+      },
+      {
+        "edge_id": "Q2-6",
+        "edge_type": "RETURN",
+        "from": "Q2",
+        "label": "未达标",
+        "source_rule": "蓝图第58行显式分支",
+        "to": "L4-IPI-09"
+      }
+    ],
+    "filename": "流程蓝图_L3-IPI-Onb_产品上架_V1.0.md",
+    "note": "已从蓝图正文解析；步骤顺序边由显式步骤编号派生，判断分支保留原文行号",
+    "source_hash": "9750787d05dba0347405c6aad924966db082cf3cd7c4dadff13b75b721f7a245",
+    "source_path": "/Users/a112233/Desktop/流程架构项目_jasper/02_过程成果-工作产出/L3流程库/流程蓝图_L3-IPI-Onb_产品上架_V1.0.md",
+    "steps": [
+      {
+        "activities": [
+          "执行L4-IPI-01：结构化录入产品库 → 输出产品库条目（Auto）",
+          "执行L4-IPI-02：佣金规则部署到规则引擎 → 输出佣金规则部署（Auto）"
+        ],
+        "evidence_ref": "EVD-2abb55b6129855d692c1",
+        "l4_codes": [
+          "L4-IPI-01",
+          "L4-IPI-02"
+        ],
+        "sequence": 1,
+        "source_line": 41,
+        "step_id": "STEP-01",
+        "step_name": "产品元数据录入与佣金配置"
+      },
+      {
+        "activities": [
+          "执行L4-IPI-03：规则路由将产品匹配至各业务线 → 输出《匹配表》",
+          "执行L4-IPI-11：F族搭配权益方案 → 输出《组合方案》"
+        ],
+        "evidence_ref": "EVD-e760de2991a2302d650e",
+        "l4_codes": [
+          "L4-IPI-03",
+          "L4-IPI-11"
+        ],
+        "sequence": 2,
+        "source_line": 49,
+        "step_id": "STEP-02",
+        "step_name": "资源匹配与分发"
+      },
+      {
+        "activities": [
+          "执行L4-IPI-04：小范围测试 + 数据监控 → 输出《试运行报告》",
+          "未达标 → 修复问题后重新测试（执行L4-IPI-09异常处置）"
+        ],
+        "evidence_ref": "EVD-35ba313850fc19e9bac4",
+        "l4_codes": [
+          "L4-IPI-04",
+          "L4-IPI-09"
+        ],
+        "sequence": 3,
+        "source_line": 53,
+        "step_id": "STEP-03",
+        "step_name": "试运行与小范围测试"
+      },
+      {
+        "activities": [
+          "执行L4-IPI-05：自动化发布 → 输出上架通知",
+          "执行L4-IPI-06：版本管理归档 → 输出《版本变更记录》（Auto）"
+        ],
+        "evidence_ref": "EVD-900f65f4097498f23f85",
+        "l4_codes": [
+          "L4-IPI-05",
+          "L4-IPI-06"
+        ],
+        "sequence": 4,
+        "source_line": 60,
+        "step_id": "STEP-04",
+        "step_name": "全面上架与发布"
+      }
+    ],
+    "structure_status": "PARSED",
+    "version": "V1.0"
+  },
+  "evidence_registry": [
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-03727b72020c0e4feb6b",
+      "field_name": "agent_d2_rule_clear",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d2_rule_clear",
+        "source_key": "L4-IPI-06",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-09c76663aefe57d38e06",
+      "field_name": "agent_d5_fallback",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d5_fallback",
+        "source_key": "L4-IPI-01",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-0d5ae3a06435504cdd5a",
+      "field_name": "l4_deliverable_type",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_deliverable_type",
+        "source_key": "L4-IPI-11",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "方案"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-0fb33f656fa502163286",
+      "field_name": "agent_human_touchpoint",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_human_touchpoint",
+        "source_key": "L4-IPI-06",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "人工执行：产品版本管理"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-0fdc3515670863a7fb64",
+      "field_name": "l4_deliverable",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_deliverable",
+        "source_key": "L4-IPI-06",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "《Portfolio分析报告》"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-15149152a84814aa7a86",
+      "field_name": "agent_d2_rule_clear",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d2_rule_clear",
+        "source_key": "L4-IPI-11",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-172f4c3e29fa6aca060f",
+      "field_name": "agent_d6_compliance",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d6_compliance",
+        "source_key": "L4-IPI-06",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-19031d1366c6ab3ccce9",
+      "field_name": "l4_deliverable_type",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_deliverable_type",
+        "source_key": "L4-IPI-02",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "方案"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-1ae89cb71351453e1fbb",
+      "field_name": "blueprint.decisions.Q2",
+      "source": {
+        "observed_at": "",
+        "source_field": "decision",
+        "source_key": "line:56",
+        "source_object": "流程蓝图_L3-IPI-Onb_产品上架_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "branches": [
+          {
+            "is_return": false,
+            "label": "达标",
+            "source_line": 57,
+            "target_l4": "",
+            "target_step": "STEP-04",
+            "target_text": "步骤4"
+          },
+          {
+            "is_return": true,
+            "label": "未达标",
+            "source_line": 58,
+            "target_l4": "L4-IPI-09",
+            "target_step": "",
+            "target_text": "修复问题后重新测试（执行L4-IPI-09异常处置）"
+          },
+          {
+            "is_return": false,
+            "label": "执行L4-IPI-05：自动化发布",
+            "source_line": 61,
+            "target_l4": "",
+            "target_step": "",
+            "target_text": "输出上架通知"
+          },
+          {
+            "is_return": false,
+            "label": "执行L4-IPI-06：版本管理归档",
+            "source_line": 62,
+            "target_l4": "",
+            "target_step": "",
+            "target_text": "输出《版本变更记录》（Auto）"
+          },
+          {
+            "is_return": false,
+            "label": "",
+            "source_line": 63,
+            "target_l4": "",
+            "target_step": "",
+            "target_text": "上架完成，移交L3-IPI-Ops"
+          }
+        ],
+        "question": "试运行结果是否达标"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-1c06730b849b10c07ffc",
+      "field_name": "agent_d6_compliance",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d6_compliance",
+        "source_key": "L4-IPI-05",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-27493ae95e09a65973f4",
+      "field_name": "agent_d5_fallback",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d5_fallback",
+        "source_key": "L4-IPI-11",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-27cff33b2bb29c5a37e1",
+      "field_name": "l4_name",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_name",
+        "source_key": "L4-IPI-11",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "产品与权益搭配运营"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-27dc70b6b453e4244321",
+      "field_name": "l4_name",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_name",
+        "source_key": "L4-IPI-05",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "全面上架与发布"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-2a18e60fad1479c7a74a",
+      "field_name": "l4_deliverable_type",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_deliverable_type",
+        "source_key": "L4-IPI-06",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "数据表"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-2abb55b6129855d692c1",
+      "field_name": "blueprint.steps.STEP-01",
+      "source": {
+        "observed_at": "",
+        "source_field": "step",
+        "source_key": "line:41",
+        "source_object": "流程蓝图_L3-IPI-Onb_产品上架_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "l4_codes": [
+          "L4-IPI-01",
+          "L4-IPI-02"
+        ],
+        "step_name": "产品元数据录入与佣金配置"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-32e7372af7efff9c98fc",
+      "field_name": "agent_human_touchpoint",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_human_touchpoint",
+        "source_key": "L4-IPI-05",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "人工执行：全面上架与发布"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-35ba313850fc19e9bac4",
+      "field_name": "blueprint.steps.STEP-03",
+      "source": {
+        "observed_at": "",
+        "source_field": "step",
+        "source_key": "line:53",
+        "source_object": "流程蓝图_L3-IPI-Onb_产品上架_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "l4_codes": [
+          "L4-IPI-04",
+          "L4-IPI-09"
+        ],
+        "step_name": "试运行与小范围测试"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-3640f781a51915876557",
+      "field_name": "agent_d3_output_verify",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d3_output_verify",
+        "source_key": "L4-IPI-04",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-37f1dc753919122a6f44",
+      "field_name": "agent_d4_api_reach",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d4_api_reach",
+        "source_key": "L4-IPI-09",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-3a828407b0e6c2a54453",
+      "field_name": "agentifiability",
+      "source": {
+        "observed_at": "",
+        "source_field": "agentifiability",
+        "source_key": "L4-IPI-01",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "Auto"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-3ad64a7ea5821a601166",
+      "field_name": "agent_d2_rule_clear",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d2_rule_clear",
+        "source_key": "L4-IPI-02",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-3c0147251898421fcf9a",
+      "field_name": "agent_d2_rule_clear",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d2_rule_clear",
+        "source_key": "L4-IPI-03",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-3cd9e9f735c9bd44e39e",
+      "field_name": "agent_d1_input_struct",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d1_input_struct",
+        "source_key": "L4-IPI-04",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-41bd893bca38b3fedf23",
+      "field_name": "l4_name",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_name",
+        "source_key": "L4-IPI-04",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "试运行与小范围测试"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-43113cafb9563021686a",
+      "field_name": "agent_d1_input_struct",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d1_input_struct",
+        "source_key": "L4-IPI-02",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-4342d864925cf1323be0",
+      "field_name": "agent_d6_compliance",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d6_compliance",
+        "source_key": "L4-IPI-04",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-44e3c3403d23926c17f4",
+      "field_name": "agent_d1_input_struct",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d1_input_struct",
+        "source_key": "L4-IPI-11",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-4a3e9cd66006c96c922e",
+      "field_name": "agent_d4_api_reach",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d4_api_reach",
+        "source_key": "L4-IPI-03",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-545de980a1f8d8e9d376",
+      "field_name": "agent_d1_input_struct",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d1_input_struct",
+        "source_key": "L4-IPI-06",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-58342c18d937264a5297",
+      "field_name": "agentifiability",
+      "source": {
+        "observed_at": "",
+        "source_field": "agentifiability",
+        "source_key": "L4-IPI-05",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "Auto"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-592b75fdf102a4749a36",
+      "field_name": "agent_d4_api_reach",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d4_api_reach",
+        "source_key": "L4-IPI-06",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-5c3bd885c198268ccf89",
+      "field_name": "agent_d4_api_reach",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d4_api_reach",
+        "source_key": "L4-IPI-02",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-5fa927dac061f78e6692",
+      "field_name": "agentifiability",
+      "source": {
+        "observed_at": "",
+        "source_field": "agentifiability",
+        "source_key": "L4-IPI-02",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "Auto"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-608e80ea947d495021b0",
+      "field_name": "l4_name",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_name",
+        "source_key": "L4-IPI-03",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "资源匹配至业务线"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-609b8bb39f83251b53bb",
+      "field_name": "agent_d6_compliance",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d6_compliance",
+        "source_key": "L4-IPI-09",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-66638a3ddd4cc4de131d",
+      "field_name": "agent_human_touchpoint",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_human_touchpoint",
+        "source_key": "L4-IPI-03",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "人工执行：资源匹配至业务线"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-6b89ad37d07eddedd03d",
+      "field_name": "agent_d6_compliance",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d6_compliance",
+        "source_key": "L4-IPI-02",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-6d09c1b1f6ddbfc9a6ab",
+      "field_name": "agent_d5_fallback",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d5_fallback",
+        "source_key": "L4-IPI-06",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-6d42bdd6b24282b17d73",
+      "field_name": "agentifiability",
+      "source": {
+        "observed_at": "",
+        "source_field": "agentifiability",
+        "source_key": "L4-IPI-11",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "Hybrid"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-799e031e432f77335b87",
+      "field_name": "agent_d3_output_verify",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d3_output_verify",
+        "source_key": "L4-IPI-03",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-7c58bf384b452d304a82",
+      "field_name": "l4_name",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_name",
+        "source_key": "L4-IPI-02",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "佣金政策拆解配置"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-7cc70d7ced5376bf06ae",
+      "field_name": "l4_deliverable_type",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_deliverable_type",
+        "source_key": "L4-IPI-09",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "数据表"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-7cc96304f418bc92506d",
+      "field_name": "agent_d1_input_struct",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d1_input_struct",
+        "source_key": "L4-IPI-01",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-7deaf909b0a877b24a27",
+      "field_name": "agent_d5_fallback",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d5_fallback",
+        "source_key": "L4-IPI-05",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-7f344c8dbb82cdb363c0",
+      "field_name": "agent_d5_fallback",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d5_fallback",
+        "source_key": "L4-IPI-03",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-7f63283d068ab9f25ad5",
+      "field_name": "agentifiability",
+      "source": {
+        "observed_at": "",
+        "source_field": "agentifiability",
+        "source_key": "L4-IPI-06",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "Auto"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-8ea11035ca31f641b185",
+      "field_name": "agent_d6_compliance",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d6_compliance",
+        "source_key": "L4-IPI-01",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-900f65f4097498f23f85",
+      "field_name": "blueprint.steps.STEP-04",
+      "source": {
+        "observed_at": "",
+        "source_field": "step",
+        "source_key": "line:60",
+        "source_object": "流程蓝图_L3-IPI-Onb_产品上架_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "l4_codes": [
+          "L4-IPI-05",
+          "L4-IPI-06"
+        ],
+        "step_name": "全面上架与发布"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-9364b7c8aa9e590e896e",
+      "field_name": "agent_d3_output_verify",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d3_output_verify",
+        "source_key": "L4-IPI-06",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-95a4aa659fc18ce69748",
+      "field_name": "l4_name",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_name",
+        "source_key": "L4-IPI-01",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "产品元数据录入配置"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-95d9b5a2751e8fcd5125",
+      "field_name": "agent_d1_input_struct",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d1_input_struct",
+        "source_key": "L4-IPI-05",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-a15c57019a4f60ab0975",
+      "field_name": "agent_d2_rule_clear",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d2_rule_clear",
+        "source_key": "L4-IPI-01",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-a16f6234695c7425b9e7",
+      "field_name": "agent_human_touchpoint",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_human_touchpoint",
+        "source_key": "L4-IPI-01",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "人工执行：产品元数据录入配置"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-a18fa1539861115550c9",
+      "field_name": "agent_d4_api_reach",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d4_api_reach",
+        "source_key": "L4-IPI-01",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-a72723f8781b632b05d1",
+      "field_name": "agent_d1_input_struct",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d1_input_struct",
+        "source_key": "L4-IPI-03",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-a9010028c709b49f57b7",
+      "field_name": "l4_name",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_name",
+        "source_key": "L4-IPI-09",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "产品异常事件处置"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-a9ee5f3846f42598f505",
+      "field_name": "l4_deliverable",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_deliverable",
+        "source_key": "L4-IPI-05",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "《Portfolio分析报告》"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-af8972a9f27ba2cd2e21",
+      "field_name": "agent_d1_input_struct",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d1_input_struct",
+        "source_key": "L4-IPI-09",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-b1766a5b93568d70dd34",
+      "field_name": "agent_d6_compliance",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d6_compliance",
+        "source_key": "L4-IPI-11",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-b3004e5da3f99ca1eb2a",
+      "field_name": "agent_human_touchpoint",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_human_touchpoint",
+        "source_key": "L4-IPI-04",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "人工执行：试运行与小范围测试"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-b7eb2c677173d9c40e2d",
+      "field_name": "agent_d6_compliance",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d6_compliance",
+        "source_key": "L4-IPI-03",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-ba1d0f8ed4d36ad778dd",
+      "field_name": "agent_d3_output_verify",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d3_output_verify",
+        "source_key": "L4-IPI-05",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-bb657f8f977cf5d6b892",
+      "field_name": "l4_deliverable",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_deliverable",
+        "source_key": "L4-IPI-02",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "《Portfolio分析报告》"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-bc4f8fc4748d16dd70db",
+      "field_name": "agent_d4_api_reach",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d4_api_reach",
+        "source_key": "L4-IPI-04",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-c2c8530fbbbb9955f674",
+      "field_name": "agent_human_touchpoint",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_human_touchpoint",
+        "source_key": "L4-IPI-09",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "人工执行：产品异常事件处置"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-c49c51f295b04e320be7",
+      "field_name": "agent_d2_rule_clear",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d2_rule_clear",
+        "source_key": "L4-IPI-05",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-c69ea77986a97c5a10f1",
+      "field_name": "agent_d5_fallback",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d5_fallback",
+        "source_key": "L4-IPI-02",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-c6acf780fdc1e4ba8289",
+      "field_name": "l4_deliverable",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_deliverable",
+        "source_key": "L4-IPI-11",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "《Portfolio分析报告》"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-c95329a3f73d5bfcf2c9",
+      "field_name": "l4_deliverable",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_deliverable",
+        "source_key": "L4-IPI-01",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "《Portfolio分析报告》"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-cce6d25c4c07be97bfaa",
+      "field_name": "l4_deliverable_type",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_deliverable_type",
+        "source_key": "L4-IPI-05",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "方案"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-cee4123c2242e8bf4648",
+      "field_name": "agentifiability",
+      "source": {
+        "observed_at": "",
+        "source_field": "agentifiability",
+        "source_key": "L4-IPI-04",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "Aug"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-d120d77ec4e8e4e44a79",
+      "field_name": "agentifiability",
+      "source": {
+        "observed_at": "",
+        "source_field": "agentifiability",
+        "source_key": "L4-IPI-09",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "Hybrid"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-d8a1ec82b106521b18ea",
+      "field_name": "agent_d3_output_verify",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d3_output_verify",
+        "source_key": "L4-IPI-01",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-d95f63c021a07c24a446",
+      "field_name": "agent_d4_api_reach",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d4_api_reach",
+        "source_key": "L4-IPI-11",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-daaad984f1354c0230f3",
+      "field_name": "agent_d5_fallback",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d5_fallback",
+        "source_key": "L4-IPI-04",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-db4c1af3aba6c52570c2",
+      "field_name": "l4_deliverable",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_deliverable",
+        "source_key": "L4-IPI-09",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "《Portfolio分析报告》"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-db93dba946dca7cbf21f",
+      "field_name": "l4_deliverable",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_deliverable",
+        "source_key": "L4-IPI-04",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "《Portfolio分析报告》"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-dc6bf30a63ce50c29070",
+      "field_name": "agent_human_touchpoint",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_human_touchpoint",
+        "source_key": "L4-IPI-11",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "人工执行：产品与权益搭配运营"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-dd8b24673e230c088666",
+      "field_name": "agent_d2_rule_clear",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d2_rule_clear",
+        "source_key": "L4-IPI-09",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-dd980a6560f8fc17bada",
+      "field_name": "agent_d2_rule_clear",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d2_rule_clear",
+        "source_key": "L4-IPI-04",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-de0a19a0098952e8c0ea",
+      "field_name": "l4_deliverable",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_deliverable",
+        "source_key": "L4-IPI-03",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "《Portfolio分析报告》"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-e750752d3726cdc999c5",
+      "field_name": "l4_deliverable_type",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_deliverable_type",
+        "source_key": "L4-IPI-01",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "方案"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-e760de2991a2302d650e",
+      "field_name": "blueprint.steps.STEP-02",
+      "source": {
+        "observed_at": "",
+        "source_field": "step",
+        "source_key": "line:49",
+        "source_object": "流程蓝图_L3-IPI-Onb_产品上架_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "l4_codes": [
+          "L4-IPI-03",
+          "L4-IPI-11"
+        ],
+        "step_name": "资源匹配与分发"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-e8099b7625936ac4ea77",
+      "field_name": "agent_human_touchpoint",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_human_touchpoint",
+        "source_key": "L4-IPI-02",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "人工执行：佣金政策拆解配置"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-e9458dd1d92afc93ddfd",
+      "field_name": "agent_d3_output_verify",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d3_output_verify",
+        "source_key": "L4-IPI-02",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-e9a701cf6dc5aa8cfd16",
+      "field_name": "agent_d3_output_verify",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d3_output_verify",
+        "source_key": "L4-IPI-11",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-e9cd6ee33ee9abd09bb8",
+      "field_name": "l4_deliverable_type",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_deliverable_type",
+        "source_key": "L4-IPI-03",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "数据表"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-ec5cc0f37625c041de04",
+      "field_name": "l4_name",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_name",
+        "source_key": "L4-IPI-06",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "产品版本管理"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-f11efa46eb65444d6976",
+      "field_name": "agentifiability",
+      "source": {
+        "observed_at": "",
+        "source_field": "agentifiability",
+        "source_key": "L4-IPI-03",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "Hybrid"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-f388902e1fa869f86af5",
+      "field_name": "agent_d5_fallback",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d5_fallback",
+        "source_key": "L4-IPI-09",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-f44a0bb6dab3ed6d0dce",
+      "field_name": "blueprint.decisions.Q1",
+      "source": {
+        "observed_at": "",
+        "source_field": "decision",
+        "source_key": "line:45",
+        "source_object": "流程蓝图_L3-IPI-Onb_产品上架_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "branches": [
+          {
+            "is_return": false,
+            "label": "通过",
+            "source_line": 46,
+            "target_l4": "",
+            "target_step": "STEP-02",
+            "target_text": "步骤2"
+          },
+          {
+            "is_return": true,
+            "label": "未通过",
+            "source_line": 47,
+            "target_l4": "",
+            "target_step": "",
+            "target_text": "返回G族修正规则配置"
+          },
+          {
+            "is_return": false,
+            "label": "执行L4-IPI-03：规则路由将产品匹配至各业务线",
+            "source_line": 50,
+            "target_l4": "",
+            "target_step": "",
+            "target_text": "输出《匹配表》"
+          },
+          {
+            "is_return": false,
+            "label": "执行L4-IPI-11：F族搭配权益方案",
+            "source_line": 51,
+            "target_l4": "",
+            "target_step": "",
+            "target_text": "输出《组合方案》"
+          }
+        ],
+        "question": "佣金规则沙箱测试是否通过"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-f99ff9a49c7edd44bfd9",
+      "field_name": "agent_d4_api_reach",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d4_api_reach",
+        "source_key": "L4-IPI-05",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-fa1234bf9ac8289c87a4",
+      "field_name": "agent_d3_output_verify",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d3_output_verify",
+        "source_key": "L4-IPI-09",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-fb46d09b02df5fce4dac",
+      "field_name": "l4_deliverable_type",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_deliverable_type",
+        "source_key": "L4-IPI-04",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "报告"
+    }
+  ],
+  "gates": {
+    "A": {
+      "checks": [
+        {
+          "detail": "Gate E=PASS",
+          "passed": true,
+          "rule_id": "A-001"
+        },
+        {
+          "detail": "D1-D6完整=0/8",
+          "passed": false,
+          "rule_id": "A-002"
+        },
+        {
+          "detail": "价值节点-L4映射=0",
+          "passed": false,
+          "rule_id": "A-003"
+        },
+        {
+          "detail": "存在熔断或无价值节点",
+          "passed": false,
+          "rule_id": "A-004"
+        }
+      ],
+      "status": "BLOCKED"
+    },
+    "E": {
+      "checks": [
+        {
+          "detail": "Gate M=PASS",
+          "passed": true,
+          "rule_id": "E-001"
+        },
+        {
+          "detail": "交付物完整=8/8",
+          "passed": true,
+          "rule_id": "E-002"
+        },
+        {
+          "detail": "Tier合法",
+          "passed": true,
+          "rule_id": "E-003"
+        }
+      ],
+      "status": "PASS"
+    },
+    "M": {
+      "checks": [
+        {
+          "detail": "L4数量=8",
+          "passed": true,
+          "rule_id": "M-001"
+        },
+        {
+          "detail": "流程蓝图_L3-IPI-Onb_产品上架_V1.0.md",
+          "passed": true,
+          "rule_id": "M-002"
+        },
+        {
+          "detail": "L4名称完整",
+          "passed": true,
+          "rule_id": "M-003"
+        }
+      ],
+      "status": "PASS"
+    }
+  },
+  "kpi_mappings": [],
+  "l2_capabilities": [
+    {
+      "l2_code": "CAP-L2-1-S5",
+      "l2_name": "保司产品运营能力",
+      "l3_code": "L3-IPI-ONB"
+    }
+  ],
+  "l3_code": "L3-IPI-ONB",
+  "l3_name": "产品上架（拆分后）",
+  "l4s": [
+    {
+      "d1_d6": {
+        "agent_d1_input_struct": null,
+        "agent_d2_rule_clear": null,
+        "agent_d3_output_verify": null,
+        "agent_d4_api_reach": null,
+        "agent_d5_fallback": null,
+        "agent_d6_compliance": null
+      },
+      "deliverable": "《Portfolio分析报告》",
+      "deliverable_type": "方案",
+      "evidence_refs": {
+        "agent_d1_input_struct": "EVD-7cc96304f418bc92506d",
+        "agent_d2_rule_clear": "EVD-a15c57019a4f60ab0975",
+        "agent_d3_output_verify": "EVD-d8a1ec82b106521b18ea",
+        "agent_d4_api_reach": "EVD-a18fa1539861115550c9",
+        "agent_d5_fallback": "EVD-09c76663aefe57d38e06",
+        "agent_d6_compliance": "EVD-8ea11035ca31f641b185",
+        "agent_human_touchpoint": "EVD-a16f6234695c7425b9e7",
+        "agentifiability": "EVD-3a828407b0e6c2a54453",
+        "l4_deliverable": "EVD-c95329a3f73d5bfcf2c9",
+        "l4_deliverable_type": "EVD-e750752d3726cdc999c5",
+        "l4_name": "EVD-95a4aa659fc18ce69748"
+      },
+      "human_touchpoint": "人工执行：产品元数据录入配置",
+      "l4_code": "L4-IPI-01",
+      "l4_name": "产品元数据录入配置",
+      "tier": "Auto"
+    },
+    {
+      "d1_d6": {
+        "agent_d1_input_struct": null,
+        "agent_d2_rule_clear": null,
+        "agent_d3_output_verify": null,
+        "agent_d4_api_reach": null,
+        "agent_d5_fallback": null,
+        "agent_d6_compliance": null
+      },
+      "deliverable": "《Portfolio分析报告》",
+      "deliverable_type": "方案",
+      "evidence_refs": {
+        "agent_d1_input_struct": "EVD-43113cafb9563021686a",
+        "agent_d2_rule_clear": "EVD-3ad64a7ea5821a601166",
+        "agent_d3_output_verify": "EVD-e9458dd1d92afc93ddfd",
+        "agent_d4_api_reach": "EVD-5c3bd885c198268ccf89",
+        "agent_d5_fallback": "EVD-c69ea77986a97c5a10f1",
+        "agent_d6_compliance": "EVD-6b89ad37d07eddedd03d",
+        "agent_human_touchpoint": "EVD-e8099b7625936ac4ea77",
+        "agentifiability": "EVD-5fa927dac061f78e6692",
+        "l4_deliverable": "EVD-bb657f8f977cf5d6b892",
+        "l4_deliverable_type": "EVD-19031d1366c6ab3ccce9",
+        "l4_name": "EVD-7c58bf384b452d304a82"
+      },
+      "human_touchpoint": "人工执行：佣金政策拆解配置",
+      "l4_code": "L4-IPI-02",
+      "l4_name": "佣金政策拆解配置",
+      "tier": "Auto"
+    },
+    {
+      "d1_d6": {
+        "agent_d1_input_struct": null,
+        "agent_d2_rule_clear": null,
+        "agent_d3_output_verify": null,
+        "agent_d4_api_reach": null,
+        "agent_d5_fallback": null,
+        "agent_d6_compliance": null
+      },
+      "deliverable": "《Portfolio分析报告》",
+      "deliverable_type": "数据表",
+      "evidence_refs": {
+        "agent_d1_input_struct": "EVD-a72723f8781b632b05d1",
+        "agent_d2_rule_clear": "EVD-3c0147251898421fcf9a",
+        "agent_d3_output_verify": "EVD-799e031e432f77335b87",
+        "agent_d4_api_reach": "EVD-4a3e9cd66006c96c922e",
+        "agent_d5_fallback": "EVD-7f344c8dbb82cdb363c0",
+        "agent_d6_compliance": "EVD-b7eb2c677173d9c40e2d",
+        "agent_human_touchpoint": "EVD-66638a3ddd4cc4de131d",
+        "agentifiability": "EVD-f11efa46eb65444d6976",
+        "l4_deliverable": "EVD-de0a19a0098952e8c0ea",
+        "l4_deliverable_type": "EVD-e9cd6ee33ee9abd09bb8",
+        "l4_name": "EVD-608e80ea947d495021b0"
+      },
+      "human_touchpoint": "人工执行：资源匹配至业务线",
+      "l4_code": "L4-IPI-03",
+      "l4_name": "资源匹配至业务线",
+      "tier": "Hybrid"
+    },
+    {
+      "d1_d6": {
+        "agent_d1_input_struct": null,
+        "agent_d2_rule_clear": null,
+        "agent_d3_output_verify": null,
+        "agent_d4_api_reach": null,
+        "agent_d5_fallback": null,
+        "agent_d6_compliance": null
+      },
+      "deliverable": "《Portfolio分析报告》",
+      "deliverable_type": "报告",
+      "evidence_refs": {
+        "agent_d1_input_struct": "EVD-3cd9e9f735c9bd44e39e",
+        "agent_d2_rule_clear": "EVD-dd980a6560f8fc17bada",
+        "agent_d3_output_verify": "EVD-3640f781a51915876557",
+        "agent_d4_api_reach": "EVD-bc4f8fc4748d16dd70db",
+        "agent_d5_fallback": "EVD-daaad984f1354c0230f3",
+        "agent_d6_compliance": "EVD-4342d864925cf1323be0",
+        "agent_human_touchpoint": "EVD-b3004e5da3f99ca1eb2a",
+        "agentifiability": "EVD-cee4123c2242e8bf4648",
+        "l4_deliverable": "EVD-db93dba946dca7cbf21f",
+        "l4_deliverable_type": "EVD-fb46d09b02df5fce4dac",
+        "l4_name": "EVD-41bd893bca38b3fedf23"
+      },
+      "human_touchpoint": "人工执行：试运行与小范围测试",
+      "l4_code": "L4-IPI-04",
+      "l4_name": "试运行与小范围测试",
+      "tier": "Aug"
+    },
+    {
+      "d1_d6": {
+        "agent_d1_input_struct": null,
+        "agent_d2_rule_clear": null,
+        "agent_d3_output_verify": null,
+        "agent_d4_api_reach": null,
+        "agent_d5_fallback": null,
+        "agent_d6_compliance": null
+      },
+      "deliverable": "《Portfolio分析报告》",
+      "deliverable_type": "方案",
+      "evidence_refs": {
+        "agent_d1_input_struct": "EVD-95d9b5a2751e8fcd5125",
+        "agent_d2_rule_clear": "EVD-c49c51f295b04e320be7",
+        "agent_d3_output_verify": "EVD-ba1d0f8ed4d36ad778dd",
+        "agent_d4_api_reach": "EVD-f99ff9a49c7edd44bfd9",
+        "agent_d5_fallback": "EVD-7deaf909b0a877b24a27",
+        "agent_d6_compliance": "EVD-1c06730b849b10c07ffc",
+        "agent_human_touchpoint": "EVD-32e7372af7efff9c98fc",
+        "agentifiability": "EVD-58342c18d937264a5297",
+        "l4_deliverable": "EVD-a9ee5f3846f42598f505",
+        "l4_deliverable_type": "EVD-cce6d25c4c07be97bfaa",
+        "l4_name": "EVD-27dc70b6b453e4244321"
+      },
+      "human_touchpoint": "人工执行：全面上架与发布",
+      "l4_code": "L4-IPI-05",
+      "l4_name": "全面上架与发布",
+      "tier": "Auto"
+    },
+    {
+      "d1_d6": {
+        "agent_d1_input_struct": null,
+        "agent_d2_rule_clear": null,
+        "agent_d3_output_verify": null,
+        "agent_d4_api_reach": null,
+        "agent_d5_fallback": null,
+        "agent_d6_compliance": null
+      },
+      "deliverable": "《Portfolio分析报告》",
+      "deliverable_type": "数据表",
+      "evidence_refs": {
+        "agent_d1_input_struct": "EVD-545de980a1f8d8e9d376",
+        "agent_d2_rule_clear": "EVD-03727b72020c0e4feb6b",
+        "agent_d3_output_verify": "EVD-9364b7c8aa9e590e896e",
+        "agent_d4_api_reach": "EVD-592b75fdf102a4749a36",
+        "agent_d5_fallback": "EVD-6d09c1b1f6ddbfc9a6ab",
+        "agent_d6_compliance": "EVD-172f4c3e29fa6aca060f",
+        "agent_human_touchpoint": "EVD-0fb33f656fa502163286",
+        "agentifiability": "EVD-7f63283d068ab9f25ad5",
+        "l4_deliverable": "EVD-0fdc3515670863a7fb64",
+        "l4_deliverable_type": "EVD-2a18e60fad1479c7a74a",
+        "l4_name": "EVD-ec5cc0f37625c041de04"
+      },
+      "human_touchpoint": "人工执行：产品版本管理",
+      "l4_code": "L4-IPI-06",
+      "l4_name": "产品版本管理",
+      "tier": "Auto"
+    },
+    {
+      "d1_d6": {
+        "agent_d1_input_struct": null,
+        "agent_d2_rule_clear": null,
+        "agent_d3_output_verify": null,
+        "agent_d4_api_reach": null,
+        "agent_d5_fallback": null,
+        "agent_d6_compliance": null
+      },
+      "deliverable": "《Portfolio分析报告》",
+      "deliverable_type": "数据表",
+      "evidence_refs": {
+        "agent_d1_input_struct": "EVD-af8972a9f27ba2cd2e21",
+        "agent_d2_rule_clear": "EVD-dd8b24673e230c088666",
+        "agent_d3_output_verify": "EVD-fa1234bf9ac8289c87a4",
+        "agent_d4_api_reach": "EVD-37f1dc753919122a6f44",
+        "agent_d5_fallback": "EVD-f388902e1fa869f86af5",
+        "agent_d6_compliance": "EVD-609b8bb39f83251b53bb",
+        "agent_human_touchpoint": "EVD-c2c8530fbbbb9955f674",
+        "agentifiability": "EVD-d120d77ec4e8e4e44a79",
+        "l4_deliverable": "EVD-db4c1af3aba6c52570c2",
+        "l4_deliverable_type": "EVD-7cc70d7ced5376bf06ae",
+        "l4_name": "EVD-a9010028c709b49f57b7"
+      },
+      "human_touchpoint": "人工执行：产品异常事件处置",
+      "l4_code": "L4-IPI-09",
+      "l4_name": "产品异常事件处置",
+      "tier": "Hybrid"
+    },
+    {
+      "d1_d6": {
+        "agent_d1_input_struct": null,
+        "agent_d2_rule_clear": null,
+        "agent_d3_output_verify": null,
+        "agent_d4_api_reach": null,
+        "agent_d5_fallback": null,
+        "agent_d6_compliance": null
+      },
+      "deliverable": "《Portfolio分析报告》",
+      "deliverable_type": "方案",
+      "evidence_refs": {
+        "agent_d1_input_struct": "EVD-44e3c3403d23926c17f4",
+        "agent_d2_rule_clear": "EVD-15149152a84814aa7a86",
+        "agent_d3_output_verify": "EVD-e9a701cf6dc5aa8cfd16",
+        "agent_d4_api_reach": "EVD-d95f63c021a07c24a446",
+        "agent_d5_fallback": "EVD-27493ae95e09a65973f4",
+        "agent_d6_compliance": "EVD-b1766a5b93568d70dd34",
+        "agent_human_touchpoint": "EVD-dc6bf30a63ce50c29070",
+        "agentifiability": "EVD-6d42bdd6b24282b17d73",
+        "l4_deliverable": "EVD-c6acf780fdc1e4ba8289",
+        "l4_deliverable_type": "EVD-0d5ae3a06435504cdd5a",
+        "l4_name": "EVD-27cff33b2bb29c5a37e1"
+      },
+      "human_touchpoint": "人工执行：产品与权益搭配运营",
+      "l4_code": "L4-IPI-11",
+      "l4_name": "产品与权益搭配运营",
+      "tier": "Hybrid"
+    }
+  ],
+  "schema_version": "vnw.l3-model.v1",
+  "source_policy": {
+    "consensus_separate": true,
+    "database_authority": "process_analytics",
+    "reverse_writeback": false,
+    "supplemental_requires_active": true
+  },
+  "supplemental_evidence_refs": [],
+  "value_nodes": [],
+  "value_stream_mappings": [
+    {
+      "l3_code": "L3-IPI-ONB",
+      "stage_code": "S5",
+      "vs_code": "VS-1",
+      "vs_name": "保司资源投放旅程"
+    }
+  ],
+  "vn_l4_mappings": []
+}

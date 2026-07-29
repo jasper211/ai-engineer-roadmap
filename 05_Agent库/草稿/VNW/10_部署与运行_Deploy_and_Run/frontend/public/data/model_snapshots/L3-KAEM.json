@@ -1,0 +1,1661 @@
+{
+  "blueprint": {
+    "coverage": "INDEXED",
+    "decisions": [
+      {
+        "after_step": "STEP-01",
+        "branches": [
+          {
+            "is_return": false,
+            "label": "已具备（理解产品+有出单意向）",
+            "source_line": 91,
+            "target_l4": "",
+            "target_step": "STEP-02",
+            "target_text": "Step 2资讯配发"
+          },
+          {
+            "is_return": false,
+            "label": "尚未具备",
+            "source_line": 92,
+            "target_l4": "",
+            "target_step": "STEP-01",
+            "target_text": "安排补充培训，延续Step 1"
+          }
+        ],
+        "decision_id": "Q1",
+        "evidence_ref": "EVD-5f257782499e621c3766",
+        "question": "KA是否已完成基础培训并具备出单能力",
+        "source_line": 88
+      },
+      {
+        "after_step": "STEP-03",
+        "branches": [
+          {
+            "is_return": false,
+            "label": "已达基准（出单或有明确计划）",
+            "source_line": 97,
+            "target_l4": "",
+            "target_step": "STEP-04",
+            "target_text": "Step 4效果评估，纳入L3-KAGA持续跟踪"
+          },
+          {
+            "is_return": false,
+            "label": "尚未达基准",
+            "source_line": 98,
+            "target_l4": "",
+            "target_step": "",
+            "target_text": "持续赋能，加强培训/资料支持"
+          }
+        ],
+        "decision_id": "Q2",
+        "evidence_ref": "EVD-c3440c3ad9922aabc28e",
+        "question": "KA赋能是否达到出单所需基准",
+        "source_line": 94
+      }
+    ],
+    "diagnostics": {
+      "blueprint_l4_count": 4,
+      "db_l4_count": 4,
+      "extra_in_blueprint": [],
+      "missing_in_blueprint": [],
+      "parsed_step_l4_count": 4
+    },
+    "edges": [
+      {
+        "edge_id": "SEQ-STEP-01-STEP-02",
+        "edge_type": "SEQUENCE",
+        "from": "STEP-01",
+        "label": "",
+        "source_rule": "蓝图显式编号步骤的相邻顺序",
+        "to": "STEP-02"
+      },
+      {
+        "edge_id": "SEQ-STEP-02-STEP-03",
+        "edge_type": "SEQUENCE",
+        "from": "STEP-02",
+        "label": "",
+        "source_rule": "蓝图显式编号步骤的相邻顺序",
+        "to": "STEP-03"
+      },
+      {
+        "edge_id": "SEQ-STEP-03-STEP-04",
+        "edge_type": "SEQUENCE",
+        "from": "STEP-03",
+        "label": "",
+        "source_rule": "蓝图显式编号步骤的相邻顺序",
+        "to": "STEP-04"
+      },
+      {
+        "edge_id": "Q1-4",
+        "edge_type": "DECISION",
+        "from": "Q1",
+        "label": "已具备（理解产品+有出单意向）",
+        "source_rule": "蓝图第91行显式分支",
+        "to": "STEP-02"
+      },
+      {
+        "edge_id": "Q1-5",
+        "edge_type": "DECISION",
+        "from": "Q1",
+        "label": "尚未具备",
+        "source_rule": "蓝图第92行显式分支",
+        "to": "STEP-01"
+      },
+      {
+        "edge_id": "Q2-6",
+        "edge_type": "DECISION",
+        "from": "Q2",
+        "label": "已达基准（出单或有明确计划）",
+        "source_rule": "蓝图第97行显式分支",
+        "to": "STEP-04"
+      }
+    ],
+    "filename": "流程蓝图_L3-KAEM_KA赋能_V1.1.md",
+    "note": "已从蓝图正文解析；步骤顺序边由显式步骤编号派生，判断分支保留原文行号",
+    "source_hash": "9de42d409803d823768a6e803a155f400b884bcea6866a28e5ee50bb322c2039",
+    "source_path": "/Users/a112233/Desktop/流程架构项目_jasper/02_过程成果-工作产出/L3流程库/流程蓝图_L3-KAEM_KA赋能_V1.1.md",
+    "steps": [
+      {
+        "activities": [
+          "L4-KAEM-01 KA培训计划制定与执行 → 《培训记录》(Human)"
+        ],
+        "evidence_ref": "EVD-fb9d0ed72cb4c8ea006e",
+        "l4_codes": [
+          "L4-KAEM-01"
+        ],
+        "sequence": 1,
+        "source_line": 56,
+        "step_id": "STEP-01",
+        "step_name": "培训计划制定与执行"
+      },
+      {
+        "activities": [
+          "L4-KAEM-02 资讯权益配发 → 《资讯配发记录》(Human+System)"
+        ],
+        "evidence_ref": "EVD-31005be0382bba9d848c",
+        "l4_codes": [
+          "L4-KAEM-02"
+        ],
+        "sequence": 2,
+        "source_line": 65,
+        "step_id": "STEP-02",
+        "step_name": "资讯权益配发"
+      },
+      {
+        "activities": [
+          "L4-KAEM-03 销售资料包更新发放 → 《资料发放记录》(Human)"
+        ],
+        "evidence_ref": "EVD-cc50cd0005fe2b80368d",
+        "l4_codes": [
+          "L4-KAEM-03"
+        ],
+        "sequence": 3,
+        "source_line": 71,
+        "step_id": "STEP-03",
+        "step_name": "销售资料包更新发放"
+      },
+      {
+        "activities": [
+          "L4-KAEM-04 赋能效果评估与持续跟进 → 《赋能效果评估》(Human)"
+        ],
+        "evidence_ref": "EVD-b8f198c5b483b639f036",
+        "l4_codes": [
+          "L4-KAEM-04"
+        ],
+        "sequence": 4,
+        "source_line": 78,
+        "step_id": "STEP-04",
+        "step_name": "赋能效果评估与持续跟进"
+      }
+    ],
+    "structure_status": "PARSED",
+    "version": "V1.1"
+  },
+  "evidence_registry": [
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-08c803792192e02902dc",
+      "field_name": "agentifiability",
+      "source": {
+        "observed_at": "",
+        "source_field": "agentifiability",
+        "source_key": "L4-KAEM-01",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "Auto"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-091afb87eced04511b78",
+      "field_name": "agent_d5_fallback",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d5_fallback",
+        "source_key": "L4-KAEM-04",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-09c8b390990963571ef9",
+      "field_name": "overall_judgment",
+      "source": {
+        "observed_at": "",
+        "source_field": "overall_judgment",
+        "source_key": "VN-KAEM-02",
+        "source_object": "process_analytics.dim_vn",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "FAIL"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-0a0dda32a2719118451e",
+      "field_name": "agent_d2_rule_clear",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d2_rule_clear",
+        "source_key": "L4-KAEM-04",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-0b03836aa88b891bb524",
+      "field_name": "agent_d3_output_verify",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d3_output_verify",
+        "source_key": "L4-KAEM-02",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-13b7f5dcb71e96409254",
+      "field_name": "vn_name",
+      "source": {
+        "observed_at": "",
+        "source_field": "vn_name",
+        "source_key": "VN-KAEM-01",
+        "source_object": "process_analytics.dim_vn",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "KA培训完成记录"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-1edc0bd08db6f259bba8",
+      "field_name": "l4_deliverable_type",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_deliverable_type",
+        "source_key": "L4-KAEM-02",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "数据表"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-1f38da8412614628183e",
+      "field_name": "l4_name",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_name",
+        "source_key": "L4-KAEM-04",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "赋能效果评估与持续跟进"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-23d282be4906f6e5113f",
+      "field_name": "is_fused",
+      "source": {
+        "observed_at": "",
+        "source_field": "is_fused",
+        "source_key": "VN-KAEM-01",
+        "source_object": "process_analytics.dim_vn",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": true
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-2490eaedb58fb8e15f2c",
+      "field_name": "l4_deliverable",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_deliverable",
+        "source_key": "L4-KAEM-01",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "《培训记录》"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-2f6039a341fa3043e705",
+      "field_name": "agent_d5_fallback",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d5_fallback",
+        "source_key": "L4-KAEM-02",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-31005be0382bba9d848c",
+      "field_name": "blueprint.steps.STEP-02",
+      "source": {
+        "observed_at": "",
+        "source_field": "step",
+        "source_key": "line:65",
+        "source_object": "流程蓝图_L3-KAEM_KA赋能_V1.1.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.1"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "l4_codes": [
+          "L4-KAEM-02"
+        ],
+        "step_name": "资讯权益配发"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-3109093e4f871967099f",
+      "field_name": "l4_deliverable",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_deliverable",
+        "source_key": "L4-KAEM-04",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "《赋能效果评估》"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-353a416d5f3230dfc1c3",
+      "field_name": "gate3_traceable",
+      "source": {
+        "observed_at": "",
+        "source_field": "gate3_traceable",
+        "source_key": "VN-KAEM-02",
+        "source_object": "process_analytics.dim_vn",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "FAIL"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-35b1a246db8c702b1535",
+      "field_name": "agent_human_touchpoint",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_human_touchpoint",
+        "source_key": "L4-KAEM-02",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "人工执行：提供销售培训"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-374c894b34618c318a35",
+      "field_name": "l4_deliverable",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_deliverable",
+        "source_key": "L4-KAEM-02",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "Excel/邮件记录。P1: 批次8确认无标准化模板；系统不行，纯手工操作；培训同行发起多，KA发起少"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-3cb75d42eaacf48f49b0",
+      "field_name": "agent_d2_rule_clear",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d2_rule_clear",
+        "source_key": "L4-KAEM-02",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-43ff7b1024f56ac5ecef",
+      "field_name": "agent_d4_api_reach",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d4_api_reach",
+        "source_key": "L4-KAEM-01",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-45f38e7043d539e2b3c0",
+      "field_name": "is_fused",
+      "source": {
+        "observed_at": "",
+        "source_field": "is_fused",
+        "source_key": "VN-KAEM-02",
+        "source_object": "process_analytics.dim_vn",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": true
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-47b14080307b6cb7025e",
+      "field_name": "overall_judgment",
+      "source": {
+        "observed_at": "",
+        "source_field": "overall_judgment",
+        "source_key": "VN-KAEM-01",
+        "source_object": "process_analytics.dim_vn",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "FAIL"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-4ef1a917be12b1039758",
+      "field_name": "l4_deliverable",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_deliverable",
+        "source_key": "L4-KAEM-03",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "RW权益系统数据记录 + Excel台账。P1: 批次8确认核销形式化；系统不行，纯手工；MoMo→马原媛→杜永平口头传递；人手算权益激励金然后修正数据；影响签约/开户/赋能全流程"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-5174390606ef5b8cda5c",
+      "field_name": "agent_d6_compliance",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d6_compliance",
+        "source_key": "L4-KAEM-02",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-561a29b60ba928c95f02",
+      "field_name": "vn_name",
+      "source": {
+        "observed_at": "",
+        "source_field": "vn_name",
+        "source_key": "VN-KAEM-02",
+        "source_object": "process_analytics.dim_vn",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "KA资讯发放核销记录"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-587661924c828a6ce2db",
+      "field_name": "agent_d4_api_reach",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d4_api_reach",
+        "source_key": "L4-KAEM-04",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-5e11ea5fe62afdbf2624",
+      "field_name": "agent_human_touchpoint",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_human_touchpoint",
+        "source_key": "L4-KAEM-03",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "人工执行：KA营销资源支持"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-5f257782499e621c3766",
+      "field_name": "blueprint.decisions.Q1",
+      "source": {
+        "observed_at": "",
+        "source_field": "decision",
+        "source_key": "line:88",
+        "source_object": "流程蓝图_L3-KAEM_KA赋能_V1.1.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.1"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "branches": [
+          {
+            "is_return": false,
+            "label": "已具备（理解产品+有出单意向）",
+            "source_line": 91,
+            "target_l4": "",
+            "target_step": "STEP-02",
+            "target_text": "Step 2资讯配发"
+          },
+          {
+            "is_return": false,
+            "label": "尚未具备",
+            "source_line": 92,
+            "target_l4": "",
+            "target_step": "STEP-01",
+            "target_text": "安排补充培训，延续Step 1"
+          }
+        ],
+        "question": "KA是否已完成基础培训并具备出单能力"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-632de60243346d4c7c61",
+      "field_name": "agent_d1_input_struct",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d1_input_struct",
+        "source_key": "L4-KAEM-01",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-63a353e437abbc74e162",
+      "field_name": "agent_d6_compliance",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d6_compliance",
+        "source_key": "L4-KAEM-03",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-700e3d2f104fad550e71",
+      "field_name": "agentifiability",
+      "source": {
+        "observed_at": "",
+        "source_field": "agentifiability",
+        "source_key": "L4-KAEM-04",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "Hybrid"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-75f3d61a57811d04dff0",
+      "field_name": "l4_name",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_name",
+        "source_key": "L4-KAEM-01",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "KA培训计划制定与执行"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-79a0e6d466c8e314fa40",
+      "field_name": "agent_d4_api_reach",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d4_api_reach",
+        "source_key": "L4-KAEM-02",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-7a18536cd87b3262b2e2",
+      "field_name": "agent_d3_output_verify",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d3_output_verify",
+        "source_key": "L4-KAEM-04",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-853082c66a824d02c428",
+      "field_name": "agent_d4_api_reach",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d4_api_reach",
+        "source_key": "L4-KAEM-03",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-9a1ac4d60cfaa7865d1b",
+      "field_name": "agent_d1_input_struct",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d1_input_struct",
+        "source_key": "L4-KAEM-02",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-9b21b71b0dd79de8844a",
+      "field_name": "l4_deliverable_type",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_deliverable_type",
+        "source_key": "L4-KAEM-01",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "数据表"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-9e463b9c18ddfe9e14d7",
+      "field_name": "agent_d3_output_verify",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d3_output_verify",
+        "source_key": "L4-KAEM-03",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-9f4ff37cb8598cc50b32",
+      "field_name": "l4_name",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_name",
+        "source_key": "L4-KAEM-03",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "KA营销资源支持"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-a682a5b2a44ff23dc21a",
+      "field_name": "gate1_data_linked",
+      "source": {
+        "observed_at": "",
+        "source_field": "gate1_data_linked",
+        "source_key": "VN-KAEM-01",
+        "source_object": "process_analytics.dim_vn",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "PARTIAL"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-aac1c4736d7c3960040c",
+      "field_name": "gate2_grounded",
+      "source": {
+        "observed_at": "",
+        "source_field": "gate2_grounded",
+        "source_key": "VN-KAEM-01",
+        "source_object": "process_analytics.dim_vn",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "FAIL"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-aedcded1607fa0c5ff5f",
+      "field_name": "agent_d6_compliance",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d6_compliance",
+        "source_key": "L4-KAEM-01",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-b2ce9088dae6bb22e29a",
+      "field_name": "agent_d6_compliance",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d6_compliance",
+        "source_key": "L4-KAEM-04",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-b8b1eec9cfe593c6286b",
+      "field_name": "priority",
+      "source": {
+        "observed_at": "",
+        "source_field": "priority",
+        "source_key": "VN-KAEM-01",
+        "source_object": "process_analytics.dim_vn",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "P1"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-b8f198c5b483b639f036",
+      "field_name": "blueprint.steps.STEP-04",
+      "source": {
+        "observed_at": "",
+        "source_field": "step",
+        "source_key": "line:78",
+        "source_object": "流程蓝图_L3-KAEM_KA赋能_V1.1.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.1"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "l4_codes": [
+          "L4-KAEM-04"
+        ],
+        "step_name": "赋能效果评估与持续跟进"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-bea01593ce3623ad0229",
+      "field_name": "priority",
+      "source": {
+        "observed_at": "",
+        "source_field": "priority",
+        "source_key": "VN-KAEM-02",
+        "source_object": "process_analytics.dim_vn",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "P1"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-bffd14c66673f7179f65",
+      "field_name": "l4_deliverable_type",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_deliverable_type",
+        "source_key": "L4-KAEM-04",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "方案"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-c2a574c321bdb5eb5d9b",
+      "field_name": "agent_d3_output_verify",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d3_output_verify",
+        "source_key": "L4-KAEM-01",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-c3440c3ad9922aabc28e",
+      "field_name": "blueprint.decisions.Q2",
+      "source": {
+        "observed_at": "",
+        "source_field": "decision",
+        "source_key": "line:94",
+        "source_object": "流程蓝图_L3-KAEM_KA赋能_V1.1.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.1"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "branches": [
+          {
+            "is_return": false,
+            "label": "已达基准（出单或有明确计划）",
+            "source_line": 97,
+            "target_l4": "",
+            "target_step": "STEP-04",
+            "target_text": "Step 4效果评估，纳入L3-KAGA持续跟踪"
+          },
+          {
+            "is_return": false,
+            "label": "尚未达基准",
+            "source_line": 98,
+            "target_l4": "",
+            "target_step": "",
+            "target_text": "持续赋能，加强培训/资料支持"
+          }
+        ],
+        "question": "KA赋能是否达到出单所需基准"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-c7a21a7ff6b273102efe",
+      "field_name": "agent_d5_fallback",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d5_fallback",
+        "source_key": "L4-KAEM-03",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-c8962a6203c8407f7ff2",
+      "field_name": "agent_d1_input_struct",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d1_input_struct",
+        "source_key": "L4-KAEM-03",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-cc50cd0005fe2b80368d",
+      "field_name": "blueprint.steps.STEP-03",
+      "source": {
+        "observed_at": "",
+        "source_field": "step",
+        "source_key": "line:71",
+        "source_object": "流程蓝图_L3-KAEM_KA赋能_V1.1.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.1"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "l4_codes": [
+          "L4-KAEM-03"
+        ],
+        "step_name": "销售资料包更新发放"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-cc6fabe42c732ec5799d",
+      "field_name": "gate3_traceable",
+      "source": {
+        "observed_at": "",
+        "source_field": "gate3_traceable",
+        "source_key": "VN-KAEM-01",
+        "source_object": "process_analytics.dim_vn",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "FAIL"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-cde24dedb051dd5491dc",
+      "field_name": "l4_deliverable_type",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_deliverable_type",
+        "source_key": "L4-KAEM-03",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "数据表"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-da3150ad18a43545d0c3",
+      "field_name": "agentifiability",
+      "source": {
+        "observed_at": "",
+        "source_field": "agentifiability",
+        "source_key": "L4-KAEM-03",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "Hybrid"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-de5466dda874a7a544c2",
+      "field_name": "l4_name",
+      "source": {
+        "observed_at": "",
+        "source_field": "l4_name",
+        "source_key": "L4-KAEM-02",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "提供销售培训"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-e93c13384da74d37eecc",
+      "field_name": "agentifiability",
+      "source": {
+        "observed_at": "",
+        "source_field": "agentifiability",
+        "source_key": "L4-KAEM-02",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "Hybrid"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-ed7b4178d933bed2c0df",
+      "field_name": "gate2_grounded",
+      "source": {
+        "observed_at": "",
+        "source_field": "gate2_grounded",
+        "source_key": "VN-KAEM-02",
+        "source_object": "process_analytics.dim_vn",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "PARTIAL"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-ef87592d44c486846e18",
+      "field_name": "agent_d2_rule_clear",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d2_rule_clear",
+        "source_key": "L4-KAEM-03",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-efa778177044a99cef66",
+      "field_name": "agent_d5_fallback",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d5_fallback",
+        "source_key": "L4-KAEM-01",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-f0ab96630430c4fffd03",
+      "field_name": "agent_human_touchpoint",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_human_touchpoint",
+        "source_key": "L4-KAEM-01",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "人工执行：KA培训计划制定与执行"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-f238e917ca7acc527f72",
+      "field_name": "agent_d2_rule_clear",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d2_rule_clear",
+        "source_key": "L4-KAEM-01",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-f721bf103d280b1b3abc",
+      "field_name": "agent_d1_input_struct",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d1_input_struct",
+        "source_key": "L4-KAEM-04",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "MISSING",
+      "transform_rule": "",
+      "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-fb9d0ed72cb4c8ea006e",
+      "field_name": "blueprint.steps.STEP-01",
+      "source": {
+        "observed_at": "",
+        "source_field": "step",
+        "source_key": "line:56",
+        "source_object": "流程蓝图_L3-KAEM_KA赋能_V1.1.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.1"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "l4_codes": [
+          "L4-KAEM-01"
+        ],
+        "step_name": "培训计划制定与执行"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-fee33ab06e83d0dbd2fa",
+      "field_name": "agent_human_touchpoint",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_human_touchpoint",
+        "source_key": "L4-KAEM-04",
+        "source_object": "process_analytics.dim_process",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "人工执行：赋能效果评估与持续跟进"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "AUTHORITATIVE",
+      "evidence_id": "EVD-ff444c0db947d49b0066",
+      "field_name": "gate1_data_linked",
+      "source": {
+        "observed_at": "",
+        "source_field": "gate1_data_linked",
+        "source_key": "VN-KAEM-02",
+        "source_object": "process_analytics.dim_vn",
+        "source_system": "PostgreSQL",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": "PASS"
+    }
+  ],
+  "gates": {
+    "A": {
+      "checks": [
+        {
+          "detail": "Gate E=PASS",
+          "passed": true,
+          "rule_id": "A-001"
+        },
+        {
+          "detail": "D1-D6完整=0/4",
+          "passed": false,
+          "rule_id": "A-002"
+        },
+        {
+          "detail": "价值节点-L4映射=2",
+          "passed": true,
+          "rule_id": "A-003"
+        },
+        {
+          "detail": "存在熔断或无价值节点",
+          "passed": false,
+          "rule_id": "A-004"
+        }
+      ],
+      "status": "BLOCKED"
+    },
+    "E": {
+      "checks": [
+        {
+          "detail": "Gate M=PASS",
+          "passed": true,
+          "rule_id": "E-001"
+        },
+        {
+          "detail": "交付物完整=4/4",
+          "passed": true,
+          "rule_id": "E-002"
+        },
+        {
+          "detail": "Tier合法",
+          "passed": true,
+          "rule_id": "E-003"
+        }
+      ],
+      "status": "PASS"
+    },
+    "M": {
+      "checks": [
+        {
+          "detail": "L4数量=4",
+          "passed": true,
+          "rule_id": "M-001"
+        },
+        {
+          "detail": "流程蓝图_L3-KAEM_KA赋能_V1.1.md",
+          "passed": true,
+          "rule_id": "M-002"
+        },
+        {
+          "detail": "L4名称完整",
+          "passed": true,
+          "rule_id": "M-003"
+        }
+      ],
+      "status": "PASS"
+    }
+  },
+  "kpi_mappings": [
+    {
+      "contribution_weight": 1.0,
+      "kpi_code": "T03",
+      "kpi_name": "KA赋能动作完成率",
+      "l3_code": "L3-KAEM",
+      "row_status": "draft",
+      "weight_confirmed": "pending"
+    }
+  ],
+  "l2_capabilities": [
+    {
+      "l2_code": "CAP-L2-3-S4",
+      "l2_name": "KA销售赋能能力",
+      "l3_code": "L3-KAEM"
+    },
+    {
+      "l2_code": "CAP-L2-3-S5",
+      "l2_name": "KA培训交付能力",
+      "l3_code": "L3-KAEM"
+    }
+  ],
+  "l3_code": "L3-KAEM",
+  "l3_name": "KA赋能",
+  "l4s": [
+    {
+      "d1_d6": {
+        "agent_d1_input_struct": null,
+        "agent_d2_rule_clear": null,
+        "agent_d3_output_verify": null,
+        "agent_d4_api_reach": null,
+        "agent_d5_fallback": null,
+        "agent_d6_compliance": null
+      },
+      "deliverable": "《培训记录》",
+      "deliverable_type": "数据表",
+      "evidence_refs": {
+        "agent_d1_input_struct": "EVD-632de60243346d4c7c61",
+        "agent_d2_rule_clear": "EVD-f238e917ca7acc527f72",
+        "agent_d3_output_verify": "EVD-c2a574c321bdb5eb5d9b",
+        "agent_d4_api_reach": "EVD-43ff7b1024f56ac5ecef",
+        "agent_d5_fallback": "EVD-efa778177044a99cef66",
+        "agent_d6_compliance": "EVD-aedcded1607fa0c5ff5f",
+        "agent_human_touchpoint": "EVD-f0ab96630430c4fffd03",
+        "agentifiability": "EVD-08c803792192e02902dc",
+        "l4_deliverable": "EVD-2490eaedb58fb8e15f2c",
+        "l4_deliverable_type": "EVD-9b21b71b0dd79de8844a",
+        "l4_name": "EVD-75f3d61a57811d04dff0"
+      },
+      "human_touchpoint": "人工执行：KA培训计划制定与执行",
+      "l4_code": "L4-KAEM-01",
+      "l4_name": "KA培训计划制定与执行",
+      "tier": "Auto"
+    },
+    {
+      "d1_d6": {
+        "agent_d1_input_struct": null,
+        "agent_d2_rule_clear": null,
+        "agent_d3_output_verify": null,
+        "agent_d4_api_reach": null,
+        "agent_d5_fallback": null,
+        "agent_d6_compliance": null
+      },
+      "deliverable": "Excel/邮件记录。P1: 批次8确认无标准化模板；系统不行，纯手工操作；培训同行发起多，KA发起少",
+      "deliverable_type": "数据表",
+      "evidence_refs": {
+        "agent_d1_input_struct": "EVD-9a1ac4d60cfaa7865d1b",
+        "agent_d2_rule_clear": "EVD-3cb75d42eaacf48f49b0",
+        "agent_d3_output_verify": "EVD-0b03836aa88b891bb524",
+        "agent_d4_api_reach": "EVD-79a0e6d466c8e314fa40",
+        "agent_d5_fallback": "EVD-2f6039a341fa3043e705",
+        "agent_d6_compliance": "EVD-5174390606ef5b8cda5c",
+        "agent_human_touchpoint": "EVD-35b1a246db8c702b1535",
+        "agentifiability": "EVD-e93c13384da74d37eecc",
+        "l4_deliverable": "EVD-374c894b34618c318a35",
+        "l4_deliverable_type": "EVD-1edc0bd08db6f259bba8",
+        "l4_name": "EVD-de5466dda874a7a544c2"
+      },
+      "human_touchpoint": "人工执行：提供销售培训",
+      "l4_code": "L4-KAEM-02",
+      "l4_name": "提供销售培训",
+      "tier": "Hybrid"
+    },
+    {
+      "d1_d6": {
+        "agent_d1_input_struct": null,
+        "agent_d2_rule_clear": null,
+        "agent_d3_output_verify": null,
+        "agent_d4_api_reach": null,
+        "agent_d5_fallback": null,
+        "agent_d6_compliance": null
+      },
+      "deliverable": "RW权益系统数据记录 + Excel台账。P1: 批次8确认核销形式化；系统不行，纯手工；MoMo→马原媛→杜永平口头传递；人手算权益激励金然后修正数据；影响签约/开户/赋能全流程",
+      "deliverable_type": "数据表",
+      "evidence_refs": {
+        "agent_d1_input_struct": "EVD-c8962a6203c8407f7ff2",
+        "agent_d2_rule_clear": "EVD-ef87592d44c486846e18",
+        "agent_d3_output_verify": "EVD-9e463b9c18ddfe9e14d7",
+        "agent_d4_api_reach": "EVD-853082c66a824d02c428",
+        "agent_d5_fallback": "EVD-c7a21a7ff6b273102efe",
+        "agent_d6_compliance": "EVD-63a353e437abbc74e162",
+        "agent_human_touchpoint": "EVD-5e11ea5fe62afdbf2624",
+        "agentifiability": "EVD-da3150ad18a43545d0c3",
+        "l4_deliverable": "EVD-4ef1a917be12b1039758",
+        "l4_deliverable_type": "EVD-cde24dedb051dd5491dc",
+        "l4_name": "EVD-9f4ff37cb8598cc50b32"
+      },
+      "human_touchpoint": "人工执行：KA营销资源支持",
+      "l4_code": "L4-KAEM-03",
+      "l4_name": "KA营销资源支持",
+      "tier": "Hybrid"
+    },
+    {
+      "d1_d6": {
+        "agent_d1_input_struct": null,
+        "agent_d2_rule_clear": null,
+        "agent_d3_output_verify": null,
+        "agent_d4_api_reach": null,
+        "agent_d5_fallback": null,
+        "agent_d6_compliance": null
+      },
+      "deliverable": "《赋能效果评估》",
+      "deliverable_type": "方案",
+      "evidence_refs": {
+        "agent_d1_input_struct": "EVD-f721bf103d280b1b3abc",
+        "agent_d2_rule_clear": "EVD-0a0dda32a2719118451e",
+        "agent_d3_output_verify": "EVD-7a18536cd87b3262b2e2",
+        "agent_d4_api_reach": "EVD-587661924c828a6ce2db",
+        "agent_d5_fallback": "EVD-091afb87eced04511b78",
+        "agent_d6_compliance": "EVD-b2ce9088dae6bb22e29a",
+        "agent_human_touchpoint": "EVD-fee33ab06e83d0dbd2fa",
+        "agentifiability": "EVD-700e3d2f104fad550e71",
+        "l4_deliverable": "EVD-3109093e4f871967099f",
+        "l4_deliverable_type": "EVD-bffd14c66673f7179f65",
+        "l4_name": "EVD-1f38da8412614628183e"
+      },
+      "human_touchpoint": "人工执行：赋能效果评估与持续跟进",
+      "l4_code": "L4-KAEM-04",
+      "l4_name": "赋能效果评估与持续跟进",
+      "tier": "Hybrid"
+    }
+  ],
+  "schema_version": "vnw.l3-model.v1",
+  "source_policy": {
+    "consensus_separate": true,
+    "database_authority": "process_analytics",
+    "reverse_writeback": false,
+    "supplemental_requires_active": true
+  },
+  "supplemental_evidence_refs": [],
+  "value_nodes": [
+    {
+      "evidence_refs": {
+        "gate1_data_linked": "EVD-a682a5b2a44ff23dc21a",
+        "gate2_grounded": "EVD-aac1c4736d7c3960040c",
+        "gate3_traceable": "EVD-cc6fabe42c732ec5799d",
+        "is_fused": "EVD-23d282be4906f6e5113f",
+        "overall_judgment": "EVD-47b14080307b6cb7025e",
+        "priority": "EVD-b8b1eec9cfe593c6286b",
+        "vn_name": "EVD-13b7f5dcb71e96409254"
+      },
+      "is_fused": true,
+      "overall_judgment": "FAIL",
+      "priority": "P1",
+      "vn_id": "VN-KAEM-01",
+      "vn_name": "KA培训完成记录"
+    },
+    {
+      "evidence_refs": {
+        "gate1_data_linked": "EVD-ff444c0db947d49b0066",
+        "gate2_grounded": "EVD-ed7b4178d933bed2c0df",
+        "gate3_traceable": "EVD-353a416d5f3230dfc1c3",
+        "is_fused": "EVD-45f38e7043d539e2b3c0",
+        "overall_judgment": "EVD-09c8b390990963571ef9",
+        "priority": "EVD-bea01593ce3623ad0229",
+        "vn_name": "EVD-561a29b60ba928c95f02"
+      },
+      "is_fused": true,
+      "overall_judgment": "FAIL",
+      "priority": "P1",
+      "vn_id": "VN-KAEM-02",
+      "vn_name": "KA资讯发放核销记录"
+    }
+  ],
+  "value_stream_mappings": [
+    {
+      "l3_code": "L3-KAEM",
+      "stage_code": "S5",
+      "vs_code": "VS-3",
+      "vs_name": "KA上架旅程"
+    }
+  ],
+  "vn_l4_mappings": [
+    {
+      "l3_code": "L3-KAEM",
+      "l4_code": "L4-KAEM-02",
+      "mapping_status": "direct",
+      "vn_id": "VN-KAEM-01"
+    },
+    {
+      "l3_code": "L3-KAEM",
+      "l4_code": "L4-KAEM-03",
+      "mapping_status": "direct",
+      "vn_id": "VN-KAEM-02"
+    }
+  ]
+}
