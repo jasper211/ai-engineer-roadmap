@@ -48,6 +48,14 @@ VNW_REFERENCE_SOURCES = [
     (EA_PROJECT_ROOT / "03_发布成果-交付物/治理规范/DICT_流程数据库数据字典_V2_项目交付.md", "file"),
     (EA_PROJECT_ROOT / "02_过程成果-工作产出/规则分析（Jasper）/Agent与Skill体系/L4两阶段复核_全量368条_合并版_v1.0.csv", "file"),
     (EA_PROJECT_ROOT / "HR工作材料/D_EA项目组织优化/2026-07-20_68L3岗位族归属设计_v6.1_SUBMITTED.md", "file"),
+    # 2026-07-29新增(Jasper确认路径)：价值节点(VN)+KPI权威数据，全部是版本号
+    # 直接写死在文件名里的单文件，没有像L3流程库那样的"同编码多版本目录"
+    # 结构，只能"file"整份镜像；出新版本时需要手动把这里的文件名换成新版本。
+    (EA_PROJECT_ROOT / "03_发布成果-交付物/权威数据/D1_价值节点清单_V3.44.xlsx", "file"),
+    (EA_PROJECT_ROOT / "03_发布成果-交付物/权威数据/D2_价值节点_L3映射表_V2.11.csv", "file"),
+    (EA_PROJECT_ROOT / "03_发布成果-交付物/权威数据/dim_kpi_v3.3_权威层.csv", "file"),
+    (EA_PROJECT_ROOT / "03_发布成果-交付物/权威数据/kpi_registry_154_v2.1.csv", "file"),
+    (EA_PROJECT_ROOT / "03_发布成果-交付物/权威数据/kpi_crosswalk_154_to_43_v2.1.csv", "file"),
 ]
 
 
