@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import shutil
 import sys
 from pathlib import Path
 
@@ -14,6 +15,15 @@ for relative in ("05_集成工具_Integrate_Tools", "06_开发技能_Develop_Ski
 
 from memory.workspace import Workspace
 from skills.minimum_loop import run
+
+# 2026-07-29:哪些L3已经有独立的深度demo(按COM标准测试版模板)。只收录
+# 经Jasper确认符合当前标准的版本——L3-EO/IRI/IBRD在这之前也各出过一版
+# demo，但那些是标准定下来之前的探索版本，没有按COM这版模板重做过，
+# 不放进来，避免机会台里显示"已有demo"却打开一份不符合当前标准的旧版本。
+DEMO_REGISTRY = {
+    "L3-COM": "L3流程模型_demo_L3-COM_标准测试版_20260728.html",
+}
+DEMO_SOURCE_DIR = AGENT_ROOT / "03_规划项目结构_Plan_Project_Structure"
 
 
 def load_settings() -> dict:
@@ -33,6 +43,31 @@ def parse_args():
     parser.add_argument("--l3-code", action="append", help="要构建的L3编码；可重复传入")
     parser.add_argument("--blueprint-index", type=Path, help="L3蓝图覆盖清单CSV")
     return parser.parse_args()
+
+
+def _sync_to_frontend(snapshot_dir: Path) -> dict:
+    """把model_snapshots和已注册的demo文件拷进frontend/public，供L3Models/
+    L3ModelDetail用fetch读取。之前这一步是Codex手动做的一次性拷贝，导致
+    public里的index.json停在7月26号的旧快照(Gate A=1)，7月29号这次D1-D6/
+    蓝图判定修好之后前端却读不到——加进主流程，每次构建快照都自动同步，
+    不再依赖有人记得手动拷。"""
+    frontend_data_dir = AGENT_ROOT / "10_部署与运行_Deploy_and_Run/frontend/public/data/model_snapshots"
+    if frontend_data_dir.exists():
+        shutil.rmtree(frontend_data_dir)
+    shutil.copytree(snapshot_dir, frontend_data_dir)
+
+    demo_dest_dir = AGENT_ROOT / "10_部署与运行_Deploy_and_Run/frontend/public/demos"
+    demo_dest_dir.mkdir(parents=True, exist_ok=True)
+    copied_demos = []
+    missing_demos = []
+    for l3_code, filename in DEMO_REGISTRY.items():
+        src = DEMO_SOURCE_DIR / filename
+        if src.exists():
+            shutil.copy2(src, demo_dest_dir / filename)
+            copied_demos.append(filename)
+        else:
+            missing_demos.append(filename)
+    return {"snapshot_files_synced": True, "demos_synced": copied_demos, "demos_missing": missing_demos}
 
 
 def main() -> int:
@@ -78,9 +113,12 @@ def main() -> int:
             blueprint_index,
             blueprint_dir=blueprint_dir,
             d1d6_supplement=d1d6_supplement,
+            demo_registry=DEMO_REGISTRY,
         )
-        results = builder.build_and_write(codes, workspace.root / "model_snapshots")
-        print(json.dumps({"status": "built", "snapshots": results}, ensure_ascii=False, indent=2))
+        snapshot_dir = workspace.root / "model_snapshots"
+        results = builder.build_and_write(codes, snapshot_dir)
+        frontend_sync = _sync_to_frontend(snapshot_dir)
+        print(json.dumps({"status": "built", "snapshots": results, "frontend_sync": frontend_sync}, ensure_ascii=False, indent=2))
         return 0
     watch_dirs = [item.resolve() for item in (args.watch_dir or [])]
     if not watch_dirs:

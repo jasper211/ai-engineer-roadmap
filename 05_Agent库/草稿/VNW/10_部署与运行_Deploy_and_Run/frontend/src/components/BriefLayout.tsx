@@ -1,5 +1,5 @@
 import { Link } from 'react-router'
-import { Bot, GitBranch, Network, Settings2 } from 'lucide-react'
+import { GitBranch, Settings2 } from 'lucide-react'
 
 export default function BriefLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -12,22 +12,10 @@ export default function BriefLayout({ children }: { children: React.ReactNode })
             </div>
             <div>
               <p className="font-heading text-sm font-bold text-text-primary">VNW · AI 化机会台</p>
-              <p className="text-[11px] text-text-muted">从业务交付物到 AIT 设计</p>
+              <p className="text-[11px] text-text-muted">从 L3 流程模型到 AIT 设计</p>
             </div>
           </Link>
           <div className="flex items-center gap-2">
-            <Link
-              to="/models"
-              className="flex items-center gap-1.5 rounded-md border border-accent-primary/40 bg-accent-primary/10 px-3 py-1.5 text-xs text-accent-primary-light hover:bg-accent-primary/15"
-            >
-              <Network className="h-3.5 w-3.5" /> L3 流程模型
-            </Link>
-            <Link
-              to="/brief/automation"
-              className="flex items-center gap-1.5 rounded-md border border-border-default px-3 py-1.5 text-xs text-text-muted hover:text-text-secondary"
-            >
-              <Bot className="h-3.5 w-3.5" /> 自动化全景(L4级)
-            </Link>
             <Link
               to="/internal"
               className="flex items-center gap-1.5 rounded-md border border-border-default px-3 py-1.5 text-xs text-text-muted hover:text-text-secondary"

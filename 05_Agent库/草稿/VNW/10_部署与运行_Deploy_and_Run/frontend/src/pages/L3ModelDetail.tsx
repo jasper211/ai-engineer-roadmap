@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router'
-import { ArrowDown, ArrowLeft, Bot, Database, GitBranch, GripVertical, Info, Layers3, LoaderCircle, RotateCcw, Save, ShieldCheck } from 'lucide-react'
+import { ArrowDown, ArrowLeft, Bot, Database, ExternalLink, GitBranch, GripVertical, Info, Layers3, LoaderCircle, RotateCcw, Save, ShieldCheck } from 'lucide-react'
 import { loadL3Model, type L3Model } from '../lib/l3Models'
 
 const COLUMNS = [
@@ -78,6 +78,21 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
           {(['M', 'E', 'A'] as const).map(gate => <span key={gate} className={`rounded-lg border px-3 py-2 font-mono text-xs ${gateTone(model.gates[gate].status)}`}>Gate {gate} · {model.gates[gate].status}</span>)}
         </div>
       </div>
+
+      {model.has_demo && (
+        <a
+          href={`/demos/${encodeURIComponent(model.demo_file)}`}
+          target="_blank"
+          rel="noreferrer"
+          className="flex items-center justify-between rounded-2xl border border-violet-400/25 bg-violet-400/5 p-5 transition hover:bg-violet-400/10"
+        >
+          <div>
+            <p className="eyebrow text-violet-300">已有完整深度 Demo</p>
+            <p className="mt-1 text-sm text-text-secondary">下面是这份模型快照自动生成的骨架视图；{model.l3_code} 已经做过按标准模板评审通过的完整版本（叙事、任务卡工作坊、优先级矩阵、交付物地图），建议直接看那份。</p>
+          </div>
+          <span className="flex shrink-0 items-center gap-1 text-xs font-medium text-violet-300">打开完整 Demo <ExternalLink className="h-4 w-4" /></span>
+        </a>
+      )}
 
       <section className="panel p-5">
         <div className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-accent-primary-light" /><h2 className="text-sm font-semibold">为什么处于这个 Gate</h2></div>

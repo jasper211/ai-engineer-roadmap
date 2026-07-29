@@ -11,9 +11,6 @@ import GapsActions from './pages/GapsActions'
 import InterviewSOP from './pages/InterviewSOP'
 import AgentReadiness from './pages/AgentReadiness'
 import DataHealth from './pages/DataHealth'
-import BriefHome from './pages/BriefHome'
-import BriefNodeDetail from './pages/BriefNodeDetail'
-import BriefAutomation from './pages/BriefAutomation'
 import L3Demo from './pages/L3Demo'
 import L3Models from './pages/L3Models'
 import L3ModelDetail from './pages/L3ModelDetail'
@@ -22,15 +19,17 @@ import L3ComDemo from './pages/L3ComDemo'
 export default function App() {
   return (
     <Routes>
-      <Route path="/brief" element={<BriefLayout><BriefHome /></BriefLayout>} />
-      <Route path="/brief/node/:nodeId" element={<BriefLayout><BriefNodeDetail /></BriefLayout>} />
-      <Route path="/brief/automation" element={<BriefLayout><BriefAutomation /></BriefLayout>} />
+      {/* 2026-07-29:机会台锚点从价值节点改为L3流程模型,全貌层直接用L3Models,
+          详情层用L3ModelDetail(自带Gate/D1-D6/蓝图+已有demo的跳转入口)。
+          旧的价值节点锚点页面(BriefHome/BriefNodeDetail/BriefAutomation)
+          已删除,不保留兼容路由。 */}
+      <Route path="/" element={<BriefLayout><L3Models /></BriefLayout>} />
+      <Route path="/brief" element={<BriefLayout><L3Models /></BriefLayout>} />
       <Route path="/models" element={<BriefLayout><L3Models /></BriefLayout>} />
       <Route path="/models/:l3Code" element={<BriefLayout><L3ModelDetail /></BriefLayout>} />
       {/* 2026-07-26:单L3手工demo,验证五维流程模型概念,故意不接入任何导航菜单,只能直接访问URL */}
       <Route path="/demo/l3-iri" element={<BriefLayout><L3Demo /></BriefLayout>} />
       <Route path="/demo/l3-com" element={<BriefLayout><L3ComDemo /></BriefLayout>} />
-      <Route path="/" element={<BriefLayout><BriefHome /></BriefLayout>} />
       <Route path="*" element={
         <Layout>
           <Routes>

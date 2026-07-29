@@ -47,8 +47,7 @@ class PostgresL3Reader:
                               vn.gate3_traceable
                  FROM process_analytics.dim_vn vn
                  JOIN process_analytics.bridge_vn_l4 b ON b.vn_id = vn.vn_id
-                 JOIN process_analytics.dim_process p ON p.l4_code = b.l4_code
-                WHERE p.l3_code = %s
+                WHERE b.l3_code = %s
                 ORDER BY vn.vn_id""",
             l3_code,
         )
@@ -57,8 +56,7 @@ class PostgresL3Reader:
         return self._read(
             """SELECT b.vn_id, b.l4_code, b.mapping_status
                  FROM process_analytics.bridge_vn_l4 b
-                 JOIN process_analytics.dim_process p ON p.l4_code = b.l4_code
-                WHERE p.l3_code = %s
+                WHERE b.l3_code = %s
                 ORDER BY b.vn_id, b.l4_code""",
             l3_code,
         )
@@ -118,17 +116,15 @@ class BulkPostgresL3Reader:
                  FROM process_analytics.dim_process
                 WHERE COALESCE(is_current, TRUE)
                 ORDER BY l3_code, l4_code""",
-            "value_nodes": """SELECT DISTINCT p.l3_code, vn.vn_id, vn.vn_name,
+            "value_nodes": """SELECT DISTINCT b.l3_code, vn.vn_id, vn.vn_name,
                       vn.overall_judgment, vn.is_fused, vn.priority,
                       vn.gate1_data_linked, vn.gate2_grounded, vn.gate3_traceable
                  FROM process_analytics.dim_vn vn
                  JOIN process_analytics.bridge_vn_l4 b ON b.vn_id = vn.vn_id
-                 JOIN process_analytics.dim_process p ON p.l4_code = b.l4_code
-                ORDER BY p.l3_code, vn.vn_id""",
-            "mappings": """SELECT p.l3_code, b.vn_id, b.l4_code, b.mapping_status
+                ORDER BY b.l3_code, vn.vn_id""",
+            "mappings": """SELECT b.l3_code, b.vn_id, b.l4_code, b.mapping_status
                  FROM process_analytics.bridge_vn_l4 b
-                 JOIN process_analytics.dim_process p ON p.l4_code = b.l4_code
-                ORDER BY p.l3_code, b.vn_id, b.l4_code""",
+                ORDER BY b.l3_code, b.vn_id, b.l4_code""",
             "l2s": """SELECT l3_code, l2_code, l2_name
                  FROM process_analytics.bridge_l3_l2
                 ORDER BY l3_code, l2_code""",

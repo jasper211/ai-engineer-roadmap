@@ -1,71 +1,360 @@
 {
   "blueprint": {
-    "coverage": "MISSING",
-    "decisions": [],
-    "diagnostics": {},
-    "edges": [],
-    "filename": "",
-    "note": "正文缺少可确认结构或与当前数据库冲突，禁止生成箭头、决策点和回退关系",
-    "source_hash": "",
-    "source_path": "",
-    "steps": [],
-    "structure_status": "UNAVAILABLE",
-    "version": ""
+    "blueprint_value_nodes": [
+      {
+        "deliverable": "KPI字典文档（Word/Excel）+ 系统配置规范 + 承诺书扫描件",
+        "evidence_ref": "EVD-3c4f400e49f16e8adc59",
+        "l4_codes": [],
+        "priority": "顶层目标（KPI-01）+ 平衡计分卡框架（KPI-02）+ KPI定义文档（KPI-03）+ 目标值设定文档（KPI-04）+ 各部门承诺书（KPI-05）",
+        "source_line": 255,
+        "status_text": "所有部门完成KPI承诺并系统配置完成",
+        "vn_id": "VN-SMPS-06",
+        "vn_name": "市场进入KPI体系与目标值文档"
+      },
+      {
+        "deliverable": "KPI字典文档（Word/Excel）+ 系统配置规范 + 承诺书扫描件",
+        "evidence_ref": "EVD-2170dc74fba59c9a6ac8",
+        "l4_codes": [],
+        "priority": "顶层目标（KPI-01）+ 平衡计分卡框架（KPI-02）+ KPI定义文档（KPI-03）+ 目标值设定文档（KPI-04）+ 各部门承诺书（KPI-05）",
+        "source_line": 338,
+        "status_text": "所有部门完成KPI承诺并系统配置完成",
+        "vn_id": "VN-SMPS-06",
+        "vn_name": "市场进入KPI体系与目标值文档"
+      }
+    ],
+    "coverage": "INDEXED",
+    "decisions": [
+      {
+        "after_step": "STEP-06",
+        "branches": [
+          {
+            "is_return": false,
+            "label": "战略方向明确",
+            "source_line": 195,
+            "target_l4": "",
+            "target_step": "STEP-02",
+            "target_text": "进入 Step 2：平衡计分卡框架设计"
+          },
+          {
+            "is_return": false,
+            "label": "战略不清",
+            "source_line": 196,
+            "target_l4": "",
+            "target_step": "",
+            "target_text": "回退 L3-MED（业务模型方案）补充战略输入"
+          }
+        ],
+        "decision_id": "Q1",
+        "evidence_ref": "EVD-5ffd5f37ef9499582664",
+        "question": "战略方向是否明确？（Step 1 后）",
+        "source_line": 191
+      },
+      {
+        "after_step": "STEP-06",
+        "branches": [
+          {
+            "is_return": false,
+            "label": "已覆盖",
+            "source_line": 202,
+            "target_l4": "",
+            "target_step": "STEP-03",
+            "target_text": "进入 Step 3：KPI指标定义"
+          },
+          {
+            "is_return": false,
+            "label": "有缺口",
+            "source_line": 203,
+            "target_l4": "",
+            "target_step": "STEP-02",
+            "target_text": "补充遗漏维度的关键成功因素，重走 Step 2"
+          }
+        ],
+        "decision_id": "Q2",
+        "evidence_ref": "EVD-988a8d0d101737e62e57",
+        "question": "四维度框架是否覆盖所有价值流？（Step 2 后）",
+        "source_line": 198
+      },
+      {
+        "after_step": "STEP-06",
+        "branches": [
+          {
+            "is_return": false,
+            "label": "已达成共识",
+            "source_line": 209,
+            "target_l4": "",
+            "target_step": "STEP-05",
+            "target_text": "进入 Step 5：部门承诺书签署"
+          },
+          {
+            "is_return": true,
+            "label": "有分歧",
+            "source_line": 210,
+            "target_l4": "",
+            "target_step": "STEP-04",
+            "target_text": "回退 Step 4 重新校准，必要时提交 Mark 裁定"
+          }
+        ],
+        "decision_id": "Q3",
+        "evidence_ref": "EVD-944623ba7b46d3f5140a",
+        "question": "目标值是否达成部门共识？（Step 4 后）",
+        "source_line": 205
+      },
+      {
+        "after_step": "STEP-06",
+        "branches": [
+          {
+            "is_return": false,
+            "label": "已书面签署",
+            "source_line": 216,
+            "target_l4": "",
+            "target_step": "STEP-06",
+            "target_text": "进入 Step 6：系统集成与BI配置"
+          },
+          {
+            "is_return": false,
+            "label": "仅口头确认",
+            "source_line": 217,
+            "target_l4": "",
+            "target_step": "STEP-06",
+            "target_text": "补充书面签署后再进入 Step 6"
+          }
+        ],
+        "decision_id": "Q4",
+        "evidence_ref": "EVD-9727249abd8bda6f627f",
+        "question": "承诺是否有书面留痕？（Step 5 后）",
+        "source_line": 212
+      }
+    ],
+    "diagnostics": {
+      "blueprint_l4_count": 6,
+      "db_l4_count": 6,
+      "extra_in_blueprint": [],
+      "missing_in_blueprint": [],
+      "parsed_step_l4_count": 6
+    },
+    "edges": [
+      {
+        "edge_id": "SEQ-STEP-01-STEP-02",
+        "edge_type": "SEQUENCE",
+        "from": "STEP-01",
+        "label": "",
+        "source_rule": "蓝图显式编号步骤的相邻顺序",
+        "to": "STEP-02"
+      },
+      {
+        "edge_id": "SEQ-STEP-02-STEP-03",
+        "edge_type": "SEQUENCE",
+        "from": "STEP-02",
+        "label": "",
+        "source_rule": "蓝图显式编号步骤的相邻顺序",
+        "to": "STEP-03"
+      },
+      {
+        "edge_id": "SEQ-STEP-03-STEP-04",
+        "edge_type": "SEQUENCE",
+        "from": "STEP-03",
+        "label": "",
+        "source_rule": "蓝图显式编号步骤的相邻顺序",
+        "to": "STEP-04"
+      },
+      {
+        "edge_id": "SEQ-STEP-04-STEP-05",
+        "edge_type": "SEQUENCE",
+        "from": "STEP-04",
+        "label": "",
+        "source_rule": "蓝图显式编号步骤的相邻顺序",
+        "to": "STEP-05"
+      },
+      {
+        "edge_id": "SEQ-STEP-05-STEP-06",
+        "edge_type": "SEQUENCE",
+        "from": "STEP-05",
+        "label": "",
+        "source_rule": "蓝图显式编号步骤的相邻顺序",
+        "to": "STEP-06"
+      },
+      {
+        "edge_id": "Q1-6",
+        "edge_type": "DECISION",
+        "from": "Q1",
+        "label": "战略方向明确",
+        "source_rule": "蓝图第195行显式分支",
+        "to": "STEP-02"
+      },
+      {
+        "edge_id": "Q2-7",
+        "edge_type": "DECISION",
+        "from": "Q2",
+        "label": "已覆盖",
+        "source_rule": "蓝图第202行显式分支",
+        "to": "STEP-03"
+      },
+      {
+        "edge_id": "Q2-8",
+        "edge_type": "DECISION",
+        "from": "Q2",
+        "label": "有缺口",
+        "source_rule": "蓝图第203行显式分支",
+        "to": "STEP-02"
+      },
+      {
+        "edge_id": "Q3-9",
+        "edge_type": "DECISION",
+        "from": "Q3",
+        "label": "已达成共识",
+        "source_rule": "蓝图第209行显式分支",
+        "to": "STEP-05"
+      },
+      {
+        "edge_id": "Q3-10",
+        "edge_type": "RETURN",
+        "from": "Q3",
+        "label": "有分歧",
+        "source_rule": "蓝图第210行显式分支",
+        "to": "STEP-04"
+      },
+      {
+        "edge_id": "Q4-11",
+        "edge_type": "DECISION",
+        "from": "Q4",
+        "label": "已书面签署",
+        "source_rule": "蓝图第216行显式分支",
+        "to": "STEP-06"
+      },
+      {
+        "edge_id": "Q4-12",
+        "edge_type": "DECISION",
+        "from": "Q4",
+        "label": "仅口头确认",
+        "source_rule": "蓝图第217行显式分支",
+        "to": "STEP-06"
+      }
+    ],
+    "filename": "流程蓝图_L3-KPI_战略目标与绩效体系建立流程_V1.0.md",
+    "note": "已从蓝图正文解析；步骤顺序边由显式步骤编号派生，判断分支保留原文行号",
+    "raci": [],
+    "source_hash": "57a40e77011c78d5f83e5813499e64c252ce2e8dd9b7a0478450f9eba0c6a2a8",
+    "source_path": "/Users/a112233/Desktop/流程架构项目_jasper/02_过程成果-工作产出/L3流程库/流程蓝图_L3-KPI_战略目标与绩效体系建立流程_V1.0.md",
+    "steps": [
+      {
+        "activities": [
+          "L4-KPI-01 公司战略解码与顶层目标确认 → 《顶层目标说明》(Human)"
+        ],
+        "evidence_ref": "EVD-68a184d00500139eea36",
+        "l4_codes": [
+          "L4-KPI-01"
+        ],
+        "sequence": 1,
+        "source_line": 47,
+        "step_id": "STEP-01",
+        "step_name": "公司战略解码"
+      },
+      {
+        "activities": [
+          "L4-KPI-02 平衡计分卡框架设计 → 《平衡计分卡框架》(Human)"
+        ],
+        "evidence_ref": "EVD-20bafc2a12ea5f17c542",
+        "l4_codes": [
+          "L4-KPI-02"
+        ],
+        "sequence": 2,
+        "source_line": 56,
+        "step_id": "STEP-02",
+        "step_name": "平衡计分卡框架设计"
+      },
+      {
+        "activities": [
+          "L4-KPI-03 KPI指标定义与文档化 → 《KPI定义文档》(Human)"
+        ],
+        "evidence_ref": "EVD-389fa5c80002ad070218",
+        "l4_codes": [
+          "L4-KPI-03"
+        ],
+        "sequence": 3,
+        "source_line": 65,
+        "step_id": "STEP-03",
+        "step_name": "KPI指标定义"
+      },
+      {
+        "activities": [
+          "L4-KPI-04 目标值设定与校准 → 《目标值设定文档》(Human)"
+        ],
+        "evidence_ref": "EVD-32dd2f23dc13011ca628",
+        "l4_codes": [
+          "L4-KPI-04"
+        ],
+        "sequence": 4,
+        "source_line": 73,
+        "step_id": "STEP-04",
+        "step_name": "目标值设定与校准"
+      },
+      {
+        "activities": [
+          "L4-KPI-05 部门承诺书签署与确认 → 《各部门承诺书》(Human)"
+        ],
+        "evidence_ref": "EVD-3810789e6b2a3d774105",
+        "l4_codes": [
+          "L4-KPI-05"
+        ],
+        "sequence": 5,
+        "source_line": 82,
+        "step_id": "STEP-05",
+        "step_name": "部门承诺书签署"
+      },
+      {
+        "activities": [
+          "L4-KPI-06 KPI体系系统集成与BI配置 → 《系统配置规范》(Aug/Human)"
+        ],
+        "evidence_ref": "EVD-efa22971c9463211601d",
+        "l4_codes": [
+          "L4-KPI-06"
+        ],
+        "sequence": 6,
+        "source_line": 91,
+        "step_id": "STEP-06",
+        "step_name": "系统集成与BI配置"
+      }
+    ],
+    "structure_status": "PARSED",
+    "version": "V1.0"
   },
+  "demo_file": "",
   "evidence_registry": [
     {
       "confidence": "HIGH",
       "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-088f2d9236f01b8def33",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-040ad2b1544c8d08f8a4",
       "field_name": "agent_d4_api_reach",
       "source": {
         "observed_at": "",
         "source_field": "agent_d4_api_reach",
-        "source_key": "L4-KPI-04",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
+        "source_key": "L4-KPI-05",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
       },
-      "status": "MISSING",
+      "status": "ACTIVE",
       "transform_rule": "",
-      "value": null
+      "value": 1
     },
     {
       "confidence": "HIGH",
       "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-08952780d49cd12bb372",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-048bfbf2a7a1e863caa1",
       "field_name": "agent_d2_rule_clear",
       "source": {
         "observed_at": "",
         "source_field": "agent_d2_rule_clear",
-        "source_key": "L4-KPI-04",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
-      },
-      "status": "MISSING",
-      "transform_rule": "",
-      "value": null
-    },
-    {
-      "confidence": "HIGH",
-      "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-09c5401da85b740382a1",
-      "field_name": "agent_d6_compliance",
-      "source": {
-        "observed_at": "",
-        "source_field": "agent_d6_compliance",
         "source_key": "L4-KPI-03",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
       },
-      "status": "MISSING",
+      "status": "ACTIVE",
       "transform_rule": "",
-      "value": null
+      "value": 1
     },
     {
       "confidence": "HIGH",
@@ -88,6 +377,24 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-0a2b461b2ea769b411fb",
+      "field_name": "agent_d4_api_reach",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d4_api_reach",
+        "source_key": "L4-KPI-06",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": 2
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
       "evidence_id": "EVD-13606d4429f006580f69",
       "field_name": "l4_deliverable",
@@ -106,38 +413,119 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-1537fb8f20f2b12ffc78",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-14d1933a898de127e0d7",
       "field_name": "agent_d1_input_struct",
       "source": {
         "observed_at": "",
         "source_field": "agent_d1_input_struct",
-        "source_key": "L4-KPI-05",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
+        "source_key": "L4-KPI-02",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
       },
-      "status": "MISSING",
+      "status": "ACTIVE",
       "transform_rule": "",
-      "value": null
+      "value": 1
     },
     {
       "confidence": "HIGH",
       "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-1e2336831bf76d8f24ed",
-      "field_name": "agent_d5_fallback",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-14eef7e12b2ce4a0a9a0",
+      "field_name": "agent_d6_compliance",
       "source": {
         "observed_at": "",
-        "source_field": "agent_d5_fallback",
+        "source_field": "agent_d6_compliance",
         "source_key": "L4-KPI-02",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
       },
-      "status": "MISSING",
+      "status": "ACTIVE",
       "transform_rule": "",
-      "value": null
+      "value": 1
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-17233f4fe38f4297bf46",
+      "field_name": "agent_d3_output_verify",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d3_output_verify",
+        "source_key": "L4-KPI-01",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": 1
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-1e14c2530c9e0279edcd",
+      "field_name": "agent_d3_output_verify",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d3_output_verify",
+        "source_key": "L4-KPI-06",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": 2
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-20bafc2a12ea5f17c542",
+      "field_name": "blueprint.steps.STEP-02",
+      "source": {
+        "observed_at": "",
+        "source_field": "step",
+        "source_key": "line:56",
+        "source_object": "流程蓝图_L3-KPI_战略目标与绩效体系建立流程_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "l4_codes": [
+          "L4-KPI-02"
+        ],
+        "step_name": "平衡计分卡框架设计"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-2170dc74fba59c9a6ac8",
+      "field_name": "blueprint.value_nodes.VN-SMPS-06",
+      "source": {
+        "observed_at": "",
+        "source_field": "value_node_mapping",
+        "source_key": "line:338",
+        "source_object": "流程蓝图_L3-KPI_战略目标与绩效体系建立流程_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "l4_codes": [],
+        "status": "所有部门完成KPI承诺并系统配置完成",
+        "vn_name": "市场进入KPI体系与目标值文档"
+      }
     },
     {
       "confidence": "HIGH",
@@ -160,92 +548,197 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-23acc8304019d7e7baef",
-      "field_name": "agent_d3_output_verify",
-      "source": {
-        "observed_at": "",
-        "source_field": "agent_d3_output_verify",
-        "source_key": "L4-KPI-01",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
-      },
-      "status": "MISSING",
-      "transform_rule": "",
-      "value": null
-    },
-    {
-      "confidence": "HIGH",
-      "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-2810913e18c58660c836",
-      "field_name": "agent_d1_input_struct",
-      "source": {
-        "observed_at": "",
-        "source_field": "agent_d1_input_struct",
-        "source_key": "L4-KPI-02",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
-      },
-      "status": "MISSING",
-      "transform_rule": "",
-      "value": null
-    },
-    {
-      "confidence": "HIGH",
-      "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-299c32013a695e4781e1",
-      "field_name": "agent_d5_fallback",
-      "source": {
-        "observed_at": "",
-        "source_field": "agent_d5_fallback",
-        "source_key": "L4-KPI-01",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
-      },
-      "status": "MISSING",
-      "transform_rule": "",
-      "value": null
-    },
-    {
-      "confidence": "HIGH",
-      "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-3163a612dbbb318d134b",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-2254b59073cfcfb5b367",
       "field_name": "agent_d4_api_reach",
       "source": {
         "observed_at": "",
         "source_field": "agent_d4_api_reach",
         "source_key": "L4-KPI-02",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
       },
-      "status": "MISSING",
+      "status": "ACTIVE",
       "transform_rule": "",
-      "value": null
+      "value": 1
     },
     {
       "confidence": "HIGH",
       "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-332a2bc51844c8290ce5",
-      "field_name": "agent_d6_compliance",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-24a7cbbe5c1cb4700649",
+      "field_name": "agent_d2_rule_clear",
       "source": {
         "observed_at": "",
-        "source_field": "agent_d6_compliance",
-        "source_key": "L4-KPI-05",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
+        "source_field": "agent_d2_rule_clear",
+        "source_key": "L4-KPI-02",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
       },
-      "status": "MISSING",
+      "status": "ACTIVE",
       "transform_rule": "",
-      "value": null
+      "value": 1
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-2992c41795180f29fd20",
+      "field_name": "agent_d4_api_reach",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d4_api_reach",
+        "source_key": "L4-KPI-01",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": 0
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-2b38aa288ee17351fab0",
+      "field_name": "agent_d3_output_verify",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d3_output_verify",
+        "source_key": "L4-KPI-02",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": 1
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-2e8b42ebc6f53571374b",
+      "field_name": "agent_d5_fallback",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d5_fallback",
+        "source_key": "L4-KPI-05",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": 1
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-2f081e27d58baa740bb2",
+      "field_name": "agent_d4_api_reach",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d4_api_reach",
+        "source_key": "L4-KPI-04",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": 1
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-32dd2f23dc13011ca628",
+      "field_name": "blueprint.steps.STEP-04",
+      "source": {
+        "observed_at": "",
+        "source_field": "step",
+        "source_key": "line:73",
+        "source_object": "流程蓝图_L3-KPI_战略目标与绩效体系建立流程_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "l4_codes": [
+          "L4-KPI-04"
+        ],
+        "step_name": "目标值设定与校准"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-35cf4b9dd95b9c330e77",
+      "field_name": "agent_d3_output_verify",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d3_output_verify",
+        "source_key": "L4-KPI-03",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": 2
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-3810789e6b2a3d774105",
+      "field_name": "blueprint.steps.STEP-05",
+      "source": {
+        "observed_at": "",
+        "source_field": "step",
+        "source_key": "line:82",
+        "source_object": "流程蓝图_L3-KPI_战略目标与绩效体系建立流程_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "l4_codes": [
+          "L4-KPI-05"
+        ],
+        "step_name": "部门承诺书签署"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-389fa5c80002ad070218",
+      "field_name": "blueprint.steps.STEP-03",
+      "source": {
+        "observed_at": "",
+        "source_field": "step",
+        "source_key": "line:65",
+        "source_object": "流程蓝图_L3-KPI_战略目标与绩效体系建立流程_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "l4_codes": [
+          "L4-KPI-03"
+        ],
+        "step_name": "KPI指标定义"
+      }
     },
     {
       "confidence": "HIGH",
@@ -286,20 +779,42 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-4067929126e1ca89ca29",
-      "field_name": "agent_d5_fallback",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-3c20ce44fc04fafbd06c",
+      "field_name": "agent_d3_output_verify",
       "source": {
         "observed_at": "",
-        "source_field": "agent_d5_fallback",
-        "source_key": "L4-KPI-05",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
+        "source_field": "agent_d3_output_verify",
+        "source_key": "L4-KPI-04",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
       },
-      "status": "MISSING",
+      "status": "ACTIVE",
       "transform_rule": "",
-      "value": null
+      "value": 2
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-3c4f400e49f16e8adc59",
+      "field_name": "blueprint.value_nodes.VN-SMPS-06",
+      "source": {
+        "observed_at": "",
+        "source_field": "value_node_mapping",
+        "source_key": "line:255",
+        "source_object": "流程蓝图_L3-KPI_战略目标与绩效体系建立流程_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "l4_codes": [],
+        "status": "所有部门完成KPI承诺并系统配置完成",
+        "vn_name": "市场进入KPI体系与目标值文档"
+      }
     },
     {
       "confidence": "HIGH",
@@ -323,84 +838,12 @@
       "confidence": "HIGH",
       "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-418f9e43eec0d12afe24",
-      "field_name": "agent_d6_compliance",
-      "source": {
-        "observed_at": "",
-        "source_field": "agent_d6_compliance",
-        "source_key": "L4-KPI-06",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
-      },
-      "status": "MISSING",
-      "transform_rule": "",
-      "value": null
-    },
-    {
-      "confidence": "HIGH",
-      "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-4681f85bf51cde482cc2",
-      "field_name": "agent_d1_input_struct",
-      "source": {
-        "observed_at": "",
-        "source_field": "agent_d1_input_struct",
-        "source_key": "L4-KPI-06",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
-      },
-      "status": "MISSING",
-      "transform_rule": "",
-      "value": null
-    },
-    {
-      "confidence": "HIGH",
-      "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
       "evidence_id": "EVD-4999ba5e54a54fd5e08a",
       "field_name": "agent_human_touchpoint",
       "source": {
         "observed_at": "",
         "source_field": "agent_human_touchpoint",
         "source_key": "L4-KPI-06",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
-      },
-      "status": "MISSING",
-      "transform_rule": "",
-      "value": null
-    },
-    {
-      "confidence": "HIGH",
-      "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-49fde2aaa2142355f2e5",
-      "field_name": "agent_d5_fallback",
-      "source": {
-        "observed_at": "",
-        "source_field": "agent_d5_fallback",
-        "source_key": "L4-KPI-04",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
-      },
-      "status": "MISSING",
-      "transform_rule": "",
-      "value": null
-    },
-    {
-      "confidence": "HIGH",
-      "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-4a21363a8cfac2f206f2",
-      "field_name": "agent_d6_compliance",
-      "source": {
-        "observed_at": "",
-        "source_field": "agent_d6_compliance",
-        "source_key": "L4-KPI-02",
         "source_object": "process_analytics.dim_process",
         "source_system": "PostgreSQL",
         "source_version": ""
@@ -430,20 +873,20 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-54e6c8384498c246b51a",
-      "field_name": "agent_d5_fallback",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-58975b96260f3fa80287",
+      "field_name": "agent_d1_input_struct",
       "source": {
         "observed_at": "",
-        "source_field": "agent_d5_fallback",
-        "source_key": "L4-KPI-06",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
+        "source_field": "agent_d1_input_struct",
+        "source_key": "L4-KPI-01",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
       },
-      "status": "MISSING",
+      "status": "ACTIVE",
       "transform_rule": "",
-      "value": null
+      "value": 1
     },
     {
       "confidence": "HIGH",
@@ -466,20 +909,20 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-5a7a652c761300fb80dd",
-      "field_name": "agent_d2_rule_clear",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-5aa52660e62d2c1e9a1a",
+      "field_name": "agent_d1_input_struct",
       "source": {
         "observed_at": "",
-        "source_field": "agent_d2_rule_clear",
-        "source_key": "L4-KPI-02",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
+        "source_field": "agent_d1_input_struct",
+        "source_key": "L4-KPI-06",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
       },
-      "status": "MISSING",
+      "status": "ACTIVE",
       "transform_rule": "",
-      "value": null
+      "value": 2
     },
     {
       "confidence": "HIGH",
@@ -502,20 +945,117 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-5f13d084c0322eac0608",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-5e488c38403d0850f3ef",
       "field_name": "agent_d3_output_verify",
       "source": {
         "observed_at": "",
         "source_field": "agent_d3_output_verify",
-        "source_key": "L4-KPI-03",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
+        "source_key": "L4-KPI-05",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
       },
-      "status": "MISSING",
+      "status": "ACTIVE",
       "transform_rule": "",
-      "value": null
+      "value": 2
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-5ffd5f37ef9499582664",
+      "field_name": "blueprint.decisions.Q1",
+      "source": {
+        "observed_at": "",
+        "source_field": "decision",
+        "source_key": "line:191",
+        "source_object": "流程蓝图_L3-KPI_战略目标与绩效体系建立流程_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "branches": [
+          {
+            "is_return": false,
+            "label": "战略方向明确",
+            "source_line": 195,
+            "target_l4": "",
+            "target_step": "STEP-02",
+            "target_text": "进入 Step 2：平衡计分卡框架设计"
+          },
+          {
+            "is_return": false,
+            "label": "战略不清",
+            "source_line": 196,
+            "target_l4": "",
+            "target_step": "",
+            "target_text": "回退 L3-MED（业务模型方案）补充战略输入"
+          }
+        ],
+        "question": "战略方向是否明确？（Step 1 后）"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-6189be8431c583374c3a",
+      "field_name": "agent_d6_compliance",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d6_compliance",
+        "source_key": "L4-KPI-03",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": 1
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-68a184d00500139eea36",
+      "field_name": "blueprint.steps.STEP-01",
+      "source": {
+        "observed_at": "",
+        "source_field": "step",
+        "source_key": "line:47",
+        "source_object": "流程蓝图_L3-KPI_战略目标与绩效体系建立流程_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "l4_codes": [
+          "L4-KPI-01"
+        ],
+        "step_name": "公司战略解码"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-69c8dd289dba59547553",
+      "field_name": "agent_d5_fallback",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d5_fallback",
+        "source_key": "L4-KPI-01",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": 0
     },
     {
       "confidence": "HIGH",
@@ -556,20 +1096,20 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-6fc9b304ad47f92204bd",
-      "field_name": "agent_d4_api_reach",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-6c8c3d6d7be15b1f0c26",
+      "field_name": "agent_d5_fallback",
       "source": {
         "observed_at": "",
-        "source_field": "agent_d4_api_reach",
-        "source_key": "L4-KPI-03",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
+        "source_field": "agent_d5_fallback",
+        "source_key": "L4-KPI-02",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
       },
-      "status": "MISSING",
+      "status": "ACTIVE",
       "transform_rule": "",
-      "value": null
+      "value": 1
     },
     {
       "confidence": "HIGH",
@@ -646,6 +1186,24 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-78aaefc996602e01d7b1",
+      "field_name": "agent_d2_rule_clear",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d2_rule_clear",
+        "source_key": "L4-KPI-04",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": 1
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
       "evidence_id": "EVD-79bbc469aad8281748a4",
       "field_name": "l4_deliverable_type",
@@ -664,20 +1222,20 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-7dcb8ef646f4a8418b67",
-      "field_name": "agent_d2_rule_clear",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-7af9cf927d49b11761e2",
+      "field_name": "agent_d4_api_reach",
       "source": {
         "observed_at": "",
-        "source_field": "agent_d2_rule_clear",
-        "source_key": "L4-KPI-05",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
+        "source_field": "agent_d4_api_reach",
+        "source_key": "L4-KPI-03",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
       },
-      "status": "MISSING",
+      "status": "ACTIVE",
       "transform_rule": "",
-      "value": null
+      "value": 1
     },
     {
       "confidence": "HIGH",
@@ -700,6 +1258,24 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-851579065a489e77993d",
+      "field_name": "agent_d2_rule_clear",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d2_rule_clear",
+        "source_key": "L4-KPI-06",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": 2
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
       "evidence_id": "EVD-8b5ae87bcf4f9e03f20b",
       "field_name": "agentifiability",
@@ -714,6 +1290,24 @@
       "status": "ACTIVE",
       "transform_rule": "",
       "value": "Hybrid"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-8d849493f3452f05fc63",
+      "field_name": "agent_d1_input_struct",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d1_input_struct",
+        "source_key": "L4-KPI-03",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": 2
     },
     {
       "confidence": "HIGH",
@@ -754,56 +1348,152 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-9d50e600c3cad1ba9cbd",
-      "field_name": "agent_d3_output_verify",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-944623ba7b46d3f5140a",
+      "field_name": "blueprint.decisions.Q3",
       "source": {
         "observed_at": "",
-        "source_field": "agent_d3_output_verify",
-        "source_key": "L4-KPI-05",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
+        "source_field": "decision",
+        "source_key": "line:205",
+        "source_object": "流程蓝图_L3-KPI_战略目标与绩效体系建立流程_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
       },
-      "status": "MISSING",
+      "status": "ACTIVE",
       "transform_rule": "",
-      "value": null
+      "value": {
+        "branches": [
+          {
+            "is_return": false,
+            "label": "已达成共识",
+            "source_line": 209,
+            "target_l4": "",
+            "target_step": "STEP-05",
+            "target_text": "进入 Step 5：部门承诺书签署"
+          },
+          {
+            "is_return": true,
+            "label": "有分歧",
+            "source_line": 210,
+            "target_l4": "",
+            "target_step": "STEP-04",
+            "target_text": "回退 Step 4 重新校准，必要时提交 Mark 裁定"
+          }
+        ],
+        "question": "目标值是否达成部门共识？（Step 4 后）"
+      }
     },
     {
       "confidence": "HIGH",
       "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-9db35f7376f425c0db39",
-      "field_name": "agent_d3_output_verify",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-94d1d22aba6a768e37a2",
+      "field_name": "agent_d2_rule_clear",
       "source": {
         "observed_at": "",
-        "source_field": "agent_d3_output_verify",
-        "source_key": "L4-KPI-04",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
+        "source_field": "agent_d2_rule_clear",
+        "source_key": "L4-KPI-01",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
       },
-      "status": "MISSING",
+      "status": "ACTIVE",
       "transform_rule": "",
-      "value": null
+      "value": 1
     },
     {
       "confidence": "HIGH",
       "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-a27889702153a13fdb0b",
-      "field_name": "agent_d4_api_reach",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-9727249abd8bda6f627f",
+      "field_name": "blueprint.decisions.Q4",
       "source": {
         "observed_at": "",
-        "source_field": "agent_d4_api_reach",
+        "source_field": "decision",
+        "source_key": "line:212",
+        "source_object": "流程蓝图_L3-KPI_战略目标与绩效体系建立流程_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "branches": [
+          {
+            "is_return": false,
+            "label": "已书面签署",
+            "source_line": 216,
+            "target_l4": "",
+            "target_step": "STEP-06",
+            "target_text": "进入 Step 6：系统集成与BI配置"
+          },
+          {
+            "is_return": false,
+            "label": "仅口头确认",
+            "source_line": 217,
+            "target_l4": "",
+            "target_step": "STEP-06",
+            "target_text": "补充书面签署后再进入 Step 6"
+          }
+        ],
+        "question": "承诺是否有书面留痕？（Step 5 后）"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-988a8d0d101737e62e57",
+      "field_name": "blueprint.decisions.Q2",
+      "source": {
+        "observed_at": "",
+        "source_field": "decision",
+        "source_key": "line:198",
+        "source_object": "流程蓝图_L3-KPI_战略目标与绩效体系建立流程_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "branches": [
+          {
+            "is_return": false,
+            "label": "已覆盖",
+            "source_line": 202,
+            "target_l4": "",
+            "target_step": "STEP-03",
+            "target_text": "进入 Step 3：KPI指标定义"
+          },
+          {
+            "is_return": false,
+            "label": "有缺口",
+            "source_line": 203,
+            "target_l4": "",
+            "target_step": "STEP-02",
+            "target_text": "补充遗漏维度的关键成功因素，重走 Step 2"
+          }
+        ],
+        "question": "四维度框架是否覆盖所有价值流？（Step 2 后）"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-9c514bbb63f4e0e50a8b",
+      "field_name": "agent_d6_compliance",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d6_compliance",
         "source_key": "L4-KPI-06",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
       },
-      "status": "MISSING",
+      "status": "ACTIVE",
       "transform_rule": "",
-      "value": null
+      "value": 1
     },
     {
       "confidence": "HIGH",
@@ -844,74 +1534,38 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-a8be6de1e665abe16814",
-      "field_name": "agent_d4_api_reach",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-abc3b1077505b39cf7f2",
+      "field_name": "agent_d5_fallback",
       "source": {
         "observed_at": "",
-        "source_field": "agent_d4_api_reach",
-        "source_key": "L4-KPI-05",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
+        "source_field": "agent_d5_fallback",
+        "source_key": "L4-KPI-04",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
       },
-      "status": "MISSING",
+      "status": "ACTIVE",
       "transform_rule": "",
-      "value": null
+      "value": 1
     },
     {
       "confidence": "HIGH",
       "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-ac9a6c5440c0d75fd7a6",
-      "field_name": "agent_d1_input_struct",
-      "source": {
-        "observed_at": "",
-        "source_field": "agent_d1_input_struct",
-        "source_key": "L4-KPI-03",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
-      },
-      "status": "MISSING",
-      "transform_rule": "",
-      "value": null
-    },
-    {
-      "confidence": "HIGH",
-      "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-aca5ce9978747395f9f8",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-b02987ebdf3cb022c745",
       "field_name": "agent_d6_compliance",
       "source": {
         "observed_at": "",
         "source_field": "agent_d6_compliance",
-        "source_key": "L4-KPI-01",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
+        "source_key": "L4-KPI-05",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
       },
-      "status": "MISSING",
+      "status": "ACTIVE",
       "transform_rule": "",
-      "value": null
-    },
-    {
-      "confidence": "HIGH",
-      "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-b0a3d498598bf583f48c",
-      "field_name": "agent_d2_rule_clear",
-      "source": {
-        "observed_at": "",
-        "source_field": "agent_d2_rule_clear",
-        "source_key": "L4-KPI-01",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
-      },
-      "status": "MISSING",
-      "transform_rule": "",
-      "value": null
+      "value": 2
     },
     {
       "confidence": "HIGH",
@@ -970,20 +1624,20 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-b669c11f648ac234ab3c",
-      "field_name": "agent_d3_output_verify",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-b7607a46096a7ae9113c",
+      "field_name": "agent_d6_compliance",
       "source": {
         "observed_at": "",
-        "source_field": "agent_d3_output_verify",
-        "source_key": "L4-KPI-06",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
+        "source_field": "agent_d6_compliance",
+        "source_key": "L4-KPI-04",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
       },
-      "status": "MISSING",
+      "status": "ACTIVE",
       "transform_rule": "",
-      "value": null
+      "value": 1
     },
     {
       "confidence": "HIGH",
@@ -1006,20 +1660,38 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-b8c27bceb108982c6de8",
-      "field_name": "agent_d1_input_struct",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-bd5152e17d0e579000d3",
+      "field_name": "agent_d5_fallback",
       "source": {
         "observed_at": "",
-        "source_field": "agent_d1_input_struct",
-        "source_key": "L4-KPI-01",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
+        "source_field": "agent_d5_fallback",
+        "source_key": "L4-KPI-06",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
       },
-      "status": "MISSING",
+      "status": "ACTIVE",
       "transform_rule": "",
-      "value": null
+      "value": 1
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-bd795cc6f1bd78090aef",
+      "field_name": "agent_d5_fallback",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d5_fallback",
+        "source_key": "L4-KPI-03",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": 1
     },
     {
       "confidence": "HIGH",
@@ -1078,6 +1750,24 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-c36dd3a1c8d8add6f34a",
+      "field_name": "agent_d1_input_struct",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d1_input_struct",
+        "source_key": "L4-KPI-04",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": 2
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
       "evidence_id": "EVD-c415955d61e0de3069a2",
       "field_name": "priority",
@@ -1096,56 +1786,20 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-c9fdb1764e46ef3e1f6e",
-      "field_name": "agent_d4_api_reach",
-      "source": {
-        "observed_at": "",
-        "source_field": "agent_d4_api_reach",
-        "source_key": "L4-KPI-01",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
-      },
-      "status": "MISSING",
-      "transform_rule": "",
-      "value": null
-    },
-    {
-      "confidence": "HIGH",
-      "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-d26a14c5950829a793c5",
-      "field_name": "agent_d3_output_verify",
-      "source": {
-        "observed_at": "",
-        "source_field": "agent_d3_output_verify",
-        "source_key": "L4-KPI-02",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
-      },
-      "status": "MISSING",
-      "transform_rule": "",
-      "value": null
-    },
-    {
-      "confidence": "HIGH",
-      "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-d34432e1e5e96ecf3ba4",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-c71d9ca5947d1c144a02",
       "field_name": "agent_d2_rule_clear",
       "source": {
         "observed_at": "",
         "source_field": "agent_d2_rule_clear",
-        "source_key": "L4-KPI-03",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
+        "source_key": "L4-KPI-05",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
       },
-      "status": "MISSING",
+      "status": "ACTIVE",
       "transform_rule": "",
-      "value": null
+      "value": 2
     },
     {
       "confidence": "HIGH",
@@ -1169,24 +1823,6 @@
       "confidence": "HIGH",
       "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-d594478517ede047d3d6",
-      "field_name": "agent_d6_compliance",
-      "source": {
-        "observed_at": "",
-        "source_field": "agent_d6_compliance",
-        "source_key": "L4-KPI-04",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
-      },
-      "status": "MISSING",
-      "transform_rule": "",
-      "value": null
-    },
-    {
-      "confidence": "HIGH",
-      "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
       "evidence_id": "EVD-d72dcc171b8da739f2d0",
       "field_name": "l4_deliverable_type",
       "source": {
@@ -1204,38 +1840,38 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-d94f16bbb9401eebae30",
-      "field_name": "agent_d1_input_struct",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-e1f9725c86d3bc32d916",
+      "field_name": "agent_d6_compliance",
       "source": {
         "observed_at": "",
-        "source_field": "agent_d1_input_struct",
-        "source_key": "L4-KPI-04",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
+        "source_field": "agent_d6_compliance",
+        "source_key": "L4-KPI-01",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
       },
-      "status": "MISSING",
+      "status": "ACTIVE",
       "transform_rule": "",
-      "value": null
+      "value": 1
     },
     {
       "confidence": "HIGH",
       "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-e43f32e8c7d45b033ae1",
-      "field_name": "agent_d5_fallback",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-e8e98ccd955dae395d5d",
+      "field_name": "agent_d1_input_struct",
       "source": {
         "observed_at": "",
-        "source_field": "agent_d5_fallback",
-        "source_key": "L4-KPI-03",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
+        "source_field": "agent_d1_input_struct",
+        "source_key": "L4-KPI-05",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
       },
-      "status": "MISSING",
+      "status": "ACTIVE",
       "transform_rule": "",
-      "value": null
+      "value": 2
     },
     {
       "confidence": "HIGH",
@@ -1276,6 +1912,29 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-efa22971c9463211601d",
+      "field_name": "blueprint.steps.STEP-06",
+      "source": {
+        "observed_at": "",
+        "source_field": "step",
+        "source_key": "line:91",
+        "source_object": "流程蓝图_L3-KPI_战略目标与绩效体系建立流程_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "l4_codes": [
+          "L4-KPI-06"
+        ],
+        "step_name": "系统集成与BI配置"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
       "evidence_id": "EVD-f67132d9a172a2b2af49",
       "field_name": "agent_human_touchpoint",
@@ -1290,24 +1949,6 @@
       "status": "ACTIVE",
       "transform_rule": "",
       "value": "人工执行：公司战略解码与顶层目标确认"
-    },
-    {
-      "confidence": "HIGH",
-      "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-fa7def85db5638207769",
-      "field_name": "agent_d2_rule_clear",
-      "source": {
-        "observed_at": "",
-        "source_field": "agent_d2_rule_clear",
-        "source_key": "L4-KPI-06",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
-      },
-      "status": "MISSING",
-      "transform_rule": "",
-      "value": null
     },
     {
       "confidence": "HIGH",
@@ -1332,13 +1973,13 @@
     "A": {
       "checks": [
         {
-          "detail": "Gate E=PARTIAL",
-          "passed": false,
+          "detail": "Gate E=PASS",
+          "passed": true,
           "rule_id": "A-001"
         },
         {
-          "detail": "D1-D6完整=0/6",
-          "passed": false,
+          "detail": "D1-D6完整=6/6",
+          "passed": true,
           "rule_id": "A-002"
         },
         {
@@ -1352,13 +1993,13 @@
           "rule_id": "A-004"
         }
       ],
-      "status": "BLOCKED"
+      "status": "PASS"
     },
     "E": {
       "checks": [
         {
-          "detail": "Gate M=PARTIAL",
-          "passed": false,
+          "detail": "Gate M=PASS",
+          "passed": true,
           "rule_id": "E-001"
         },
         {
@@ -1372,7 +2013,7 @@
           "rule_id": "E-003"
         }
       ],
-      "status": "PARTIAL"
+      "status": "PASS"
     },
     "M": {
       "checks": [
@@ -1382,8 +2023,8 @@
           "rule_id": "M-001"
         },
         {
-          "detail": "缺少蓝图索引",
-          "passed": false,
+          "detail": "流程蓝图_L3-KPI_战略目标与绩效体系建立流程_V1.0.md",
+          "passed": true,
           "rule_id": "M-002"
         },
         {
@@ -1392,14 +2033,15 @@
           "rule_id": "M-003"
         }
       ],
-      "status": "PARTIAL"
+      "status": "PASS"
     }
   },
+  "has_demo": false,
   "kpi_mappings": [],
   "l2_capabilities": [
     {
-      "l2_code": "CAP-L2-1-S1",
-      "l2_name": "保司机会判断能力",
+      "l2_code": "L2-01.2",
+      "l2_name": "资源解决方案设计",
       "l3_code": "L3-KPI"
     }
   ],
@@ -1408,22 +2050,22 @@
   "l4s": [
     {
       "d1_d6": {
-        "agent_d1_input_struct": null,
-        "agent_d2_rule_clear": null,
-        "agent_d3_output_verify": null,
-        "agent_d4_api_reach": null,
-        "agent_d5_fallback": null,
-        "agent_d6_compliance": null
+        "agent_d1_input_struct": 1,
+        "agent_d2_rule_clear": 1,
+        "agent_d3_output_verify": 1,
+        "agent_d4_api_reach": 0,
+        "agent_d5_fallback": 0,
+        "agent_d6_compliance": 1
       },
       "deliverable": "《顶层目标说明》",
       "deliverable_type": "方案",
       "evidence_refs": {
-        "agent_d1_input_struct": "EVD-b8c27bceb108982c6de8",
-        "agent_d2_rule_clear": "EVD-b0a3d498598bf583f48c",
-        "agent_d3_output_verify": "EVD-23acc8304019d7e7baef",
-        "agent_d4_api_reach": "EVD-c9fdb1764e46ef3e1f6e",
-        "agent_d5_fallback": "EVD-299c32013a695e4781e1",
-        "agent_d6_compliance": "EVD-aca5ce9978747395f9f8",
+        "agent_d1_input_struct": "EVD-58975b96260f3fa80287",
+        "agent_d2_rule_clear": "EVD-94d1d22aba6a768e37a2",
+        "agent_d3_output_verify": "EVD-17233f4fe38f4297bf46",
+        "agent_d4_api_reach": "EVD-2992c41795180f29fd20",
+        "agent_d5_fallback": "EVD-69c8dd289dba59547553",
+        "agent_d6_compliance": "EVD-e1f9725c86d3bc32d916",
         "agent_human_touchpoint": "EVD-f67132d9a172a2b2af49",
         "agentifiability": "EVD-b7b70dd8620fa220307c",
         "l4_deliverable": "EVD-09d22d441e3bad9e0295",
@@ -1437,22 +2079,22 @@
     },
     {
       "d1_d6": {
-        "agent_d1_input_struct": null,
-        "agent_d2_rule_clear": null,
-        "agent_d3_output_verify": null,
-        "agent_d4_api_reach": null,
-        "agent_d5_fallback": null,
-        "agent_d6_compliance": null
+        "agent_d1_input_struct": 1,
+        "agent_d2_rule_clear": 1,
+        "agent_d3_output_verify": 1,
+        "agent_d4_api_reach": 1,
+        "agent_d5_fallback": 1,
+        "agent_d6_compliance": 1
       },
       "deliverable": "《平衡计分卡框架》",
       "deliverable_type": "方案",
       "evidence_refs": {
-        "agent_d1_input_struct": "EVD-2810913e18c58660c836",
-        "agent_d2_rule_clear": "EVD-5a7a652c761300fb80dd",
-        "agent_d3_output_verify": "EVD-d26a14c5950829a793c5",
-        "agent_d4_api_reach": "EVD-3163a612dbbb318d134b",
-        "agent_d5_fallback": "EVD-1e2336831bf76d8f24ed",
-        "agent_d6_compliance": "EVD-4a21363a8cfac2f206f2",
+        "agent_d1_input_struct": "EVD-14d1933a898de127e0d7",
+        "agent_d2_rule_clear": "EVD-24a7cbbe5c1cb4700649",
+        "agent_d3_output_verify": "EVD-2b38aa288ee17351fab0",
+        "agent_d4_api_reach": "EVD-2254b59073cfcfb5b367",
+        "agent_d5_fallback": "EVD-6c8c3d6d7be15b1f0c26",
+        "agent_d6_compliance": "EVD-14eef7e12b2ce4a0a9a0",
         "agent_human_touchpoint": "EVD-40d127604061251b3cee",
         "agentifiability": "EVD-8b5ae87bcf4f9e03f20b",
         "l4_deliverable": "EVD-13606d4429f006580f69",
@@ -1466,22 +2108,22 @@
     },
     {
       "d1_d6": {
-        "agent_d1_input_struct": null,
-        "agent_d2_rule_clear": null,
-        "agent_d3_output_verify": null,
-        "agent_d4_api_reach": null,
-        "agent_d5_fallback": null,
-        "agent_d6_compliance": null
+        "agent_d1_input_struct": 2,
+        "agent_d2_rule_clear": 1,
+        "agent_d3_output_verify": 2,
+        "agent_d4_api_reach": 1,
+        "agent_d5_fallback": 1,
+        "agent_d6_compliance": 1
       },
       "deliverable": "《KPI定义文档》",
       "deliverable_type": "方案",
       "evidence_refs": {
-        "agent_d1_input_struct": "EVD-ac9a6c5440c0d75fd7a6",
-        "agent_d2_rule_clear": "EVD-d34432e1e5e96ecf3ba4",
-        "agent_d3_output_verify": "EVD-5f13d084c0322eac0608",
-        "agent_d4_api_reach": "EVD-6fc9b304ad47f92204bd",
-        "agent_d5_fallback": "EVD-e43f32e8c7d45b033ae1",
-        "agent_d6_compliance": "EVD-09c5401da85b740382a1",
+        "agent_d1_input_struct": "EVD-8d849493f3452f05fc63",
+        "agent_d2_rule_clear": "EVD-048bfbf2a7a1e863caa1",
+        "agent_d3_output_verify": "EVD-35cf4b9dd95b9c330e77",
+        "agent_d4_api_reach": "EVD-7af9cf927d49b11761e2",
+        "agent_d5_fallback": "EVD-bd795cc6f1bd78090aef",
+        "agent_d6_compliance": "EVD-6189be8431c583374c3a",
         "agent_human_touchpoint": "EVD-82920ccadb73d576adad",
         "agentifiability": "EVD-77d024638da1b169f451",
         "l4_deliverable": "EVD-8f36668d2c61d4d3a813",
@@ -1495,22 +2137,22 @@
     },
     {
       "d1_d6": {
-        "agent_d1_input_struct": null,
-        "agent_d2_rule_clear": null,
-        "agent_d3_output_verify": null,
-        "agent_d4_api_reach": null,
-        "agent_d5_fallback": null,
-        "agent_d6_compliance": null
+        "agent_d1_input_struct": 2,
+        "agent_d2_rule_clear": 1,
+        "agent_d3_output_verify": 2,
+        "agent_d4_api_reach": 1,
+        "agent_d5_fallback": 1,
+        "agent_d6_compliance": 1
       },
       "deliverable": "《目标值设定文档》",
       "deliverable_type": "方案",
       "evidence_refs": {
-        "agent_d1_input_struct": "EVD-d94f16bbb9401eebae30",
-        "agent_d2_rule_clear": "EVD-08952780d49cd12bb372",
-        "agent_d3_output_verify": "EVD-9db35f7376f425c0db39",
-        "agent_d4_api_reach": "EVD-088f2d9236f01b8def33",
-        "agent_d5_fallback": "EVD-49fde2aaa2142355f2e5",
-        "agent_d6_compliance": "EVD-d594478517ede047d3d6",
+        "agent_d1_input_struct": "EVD-c36dd3a1c8d8add6f34a",
+        "agent_d2_rule_clear": "EVD-78aaefc996602e01d7b1",
+        "agent_d3_output_verify": "EVD-3c20ce44fc04fafbd06c",
+        "agent_d4_api_reach": "EVD-2f081e27d58baa740bb2",
+        "agent_d5_fallback": "EVD-abc3b1077505b39cf7f2",
+        "agent_d6_compliance": "EVD-b7607a46096a7ae9113c",
         "agent_human_touchpoint": "EVD-b3f35ef05603e1f7a489",
         "agentifiability": "EVD-74f68d4a549cc6a359a0",
         "l4_deliverable": "EVD-a4b897c79198215b9a35",
@@ -1524,22 +2166,22 @@
     },
     {
       "d1_d6": {
-        "agent_d1_input_struct": null,
-        "agent_d2_rule_clear": null,
-        "agent_d3_output_verify": null,
-        "agent_d4_api_reach": null,
-        "agent_d5_fallback": null,
-        "agent_d6_compliance": null
+        "agent_d1_input_struct": 2,
+        "agent_d2_rule_clear": 2,
+        "agent_d3_output_verify": 2,
+        "agent_d4_api_reach": 1,
+        "agent_d5_fallback": 1,
+        "agent_d6_compliance": 2
       },
       "deliverable": "《各部门承诺书》",
       "deliverable_type": "决议",
       "evidence_refs": {
-        "agent_d1_input_struct": "EVD-1537fb8f20f2b12ffc78",
-        "agent_d2_rule_clear": "EVD-7dcb8ef646f4a8418b67",
-        "agent_d3_output_verify": "EVD-9d50e600c3cad1ba9cbd",
-        "agent_d4_api_reach": "EVD-a8be6de1e665abe16814",
-        "agent_d5_fallback": "EVD-4067929126e1ca89ca29",
-        "agent_d6_compliance": "EVD-332a2bc51844c8290ce5",
+        "agent_d1_input_struct": "EVD-e8e98ccd955dae395d5d",
+        "agent_d2_rule_clear": "EVD-c71d9ca5947d1c144a02",
+        "agent_d3_output_verify": "EVD-5e488c38403d0850f3ef",
+        "agent_d4_api_reach": "EVD-040ad2b1544c8d08f8a4",
+        "agent_d5_fallback": "EVD-2e8b42ebc6f53571374b",
+        "agent_d6_compliance": "EVD-b02987ebdf3cb022c745",
         "agent_human_touchpoint": "EVD-399f634384f8dd3b30ef",
         "agentifiability": "EVD-bdc427ed8ce78bb6ba9e",
         "l4_deliverable": "EVD-b440fa80e98b2bbe611b",
@@ -1553,22 +2195,22 @@
     },
     {
       "d1_d6": {
-        "agent_d1_input_struct": null,
-        "agent_d2_rule_clear": null,
-        "agent_d3_output_verify": null,
-        "agent_d4_api_reach": null,
-        "agent_d5_fallback": null,
-        "agent_d6_compliance": null
+        "agent_d1_input_struct": 2,
+        "agent_d2_rule_clear": 2,
+        "agent_d3_output_verify": 2,
+        "agent_d4_api_reach": 2,
+        "agent_d5_fallback": 1,
+        "agent_d6_compliance": 1
       },
       "deliverable": "《系统配置规范》",
       "deliverable_type": "数据表",
       "evidence_refs": {
-        "agent_d1_input_struct": "EVD-4681f85bf51cde482cc2",
-        "agent_d2_rule_clear": "EVD-fa7def85db5638207769",
-        "agent_d3_output_verify": "EVD-b669c11f648ac234ab3c",
-        "agent_d4_api_reach": "EVD-a27889702153a13fdb0b",
-        "agent_d5_fallback": "EVD-54e6c8384498c246b51a",
-        "agent_d6_compliance": "EVD-418f9e43eec0d12afe24",
+        "agent_d1_input_struct": "EVD-5aa52660e62d2c1e9a1a",
+        "agent_d2_rule_clear": "EVD-851579065a489e77993d",
+        "agent_d3_output_verify": "EVD-1e14c2530c9e0279edcd",
+        "agent_d4_api_reach": "EVD-0a2b461b2ea769b411fb",
+        "agent_d5_fallback": "EVD-bd5152e17d0e579000d3",
+        "agent_d6_compliance": "EVD-9c514bbb63f4e0e50a8b",
         "agent_human_touchpoint": "EVD-4999ba5e54a54fd5e08a",
         "agentifiability": "EVD-fb3f479fab958ef6116b",
         "l4_deliverable": "EVD-75945a384cbecec56ada",

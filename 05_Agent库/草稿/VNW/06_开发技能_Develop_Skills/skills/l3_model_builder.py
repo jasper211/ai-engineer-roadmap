@@ -129,11 +129,13 @@ class L3ModelBuilder:
         blueprint_index: dict[str, BlueprintIndex],
         blueprint_dir: Path | None = None,
         d1d6_supplement: dict[str, dict[str, int]] | None = None,
+        demo_registry: dict[str, str] | None = None,
     ):
         self.reader = reader
         self.blueprint_index = blueprint_index
         self.blueprint_dir = blueprint_dir
         self.d1d6_supplement = d1d6_supplement or {}
+        self.demo_registry = demo_registry or {}
 
     def build(self, l3_code: str, supplemental: list[EvidenceRecord] | None = None) -> dict:
         processes = self.reader.processes(l3_code)
@@ -322,6 +324,8 @@ class L3ModelBuilder:
             "schema_version": self.schema_version,
             "l3_code": l3_code,
             "l3_name": l3_name,
+            "has_demo": l3_code in self.demo_registry,
+            "demo_file": self.demo_registry.get(l3_code, ""),
             "source_policy": {
                 "database_authority": "process_analytics",
                 "supplemental_requires_active": True,
@@ -364,7 +368,10 @@ class L3ModelBuilder:
         return model
 
     def build_and_write(
-        self, l3_codes: list[str], output_dir: Path, supplemental_by_l3: dict[str, list[EvidenceRecord]] | None = None
+        self,
+        l3_codes: list[str],
+        output_dir: Path,
+        supplemental_by_l3: dict[str, list[EvidenceRecord]] | None = None,
     ) -> list[dict]:
         results = []
         models = []
@@ -388,6 +395,7 @@ class L3ModelBuilder:
                 {
                     "l3_code": model["l3_code"],
                     "l3_name": model["l3_name"],
+                    "l2_capabilities": [row["l2_name"] for row in model["l2_capabilities"]],
                     "l4_count": len(model["l4s"]),
                     "value_node_count": len(model["value_nodes"]),
                     "blueprint_coverage": model["blueprint"]["coverage"],
@@ -408,6 +416,8 @@ class L3ModelBuilder:
                     ],
                     "blueprint_structure_status": model["blueprint"]["structure_status"],
                     "snapshot_file": f"{model['l3_code']}.json",
+                    "has_demo": model.get("has_demo", False),
+                    "demo_file": model.get("demo_file", ""),
                 }
                 for model in sorted(indexed_models.values(), key=lambda item: item["l3_code"])
             ],

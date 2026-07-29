@@ -3,6 +3,7 @@ export type GateStatus = 'PASS' | 'PARTIAL' | 'FAIL' | 'BLOCKED'
 export interface ModelIndexItem {
   l3_code: string
   l3_name: string
+  l2_capabilities: string[]
   l4_count: number
   value_node_count: number
   blueprint_coverage: 'INDEXED' | 'MISSING'
@@ -13,6 +14,8 @@ export interface ModelIndexItem {
   gap_reasons: string[]
   blueprint_structure_status: 'PARSED' | 'INDEX_ONLY' | 'CONFLICT' | 'UNAVAILABLE'
   snapshot_file: string
+  has_demo: boolean
+  demo_file: string
 }
 
 export interface ModelIndex {
@@ -43,6 +46,8 @@ export interface L3Model {
   schema_version: string
   l3_code: string
   l3_name: string
+  has_demo: boolean
+  demo_file: string
   source_policy: Record<string, unknown>
   blueprint: {
     coverage: string

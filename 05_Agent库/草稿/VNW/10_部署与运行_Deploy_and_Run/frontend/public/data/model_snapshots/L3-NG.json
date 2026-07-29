@@ -1,17 +1,64 @@
 {
   "blueprint": {
-    "coverage": "MISSING",
+    "blueprint_value_nodes": [],
+    "coverage": "INDEXED",
     "decisions": [],
-    "diagnostics": {},
-    "edges": [],
-    "filename": "",
-    "note": "正文缺少可确认结构或与当前数据库冲突，禁止生成箭头、决策点和回退关系",
-    "source_hash": "",
-    "source_path": "",
-    "steps": [],
-    "structure_status": "UNAVAILABLE",
-    "version": ""
+    "diagnostics": {
+      "blueprint_l4_count": 3,
+      "db_l4_count": 2,
+      "extra_in_blueprint": [
+        "L4-IBRD-09"
+      ],
+      "missing_in_blueprint": [],
+      "parsed_step_l4_count": 2
+    },
+    "edges": [
+      {
+        "edge_id": "SEQ-STEP-01-STEP-02",
+        "edge_type": "SEQUENCE",
+        "from": "STEP-01",
+        "label": "",
+        "source_rule": "蓝图显式编号步骤的相邻顺序",
+        "to": "STEP-02"
+      }
+    ],
+    "filename": "流程蓝图_L3-NG_商务谈判与合同制定流程_V1.0.md",
+    "note": "已从蓝图正文解析；步骤顺序边由显式步骤编号派生，判断分支保留原文行号",
+    "raci": [],
+    "source_hash": "9b17b484189e0c07e22ea5d0f82d832226850c9b815de9ef8c5c0651a546e321",
+    "source_path": "/Users/a112233/Desktop/流程架构项目_jasper/02_过程成果-工作产出/L3流程库/流程蓝图_L3-NG_商务谈判与合同制定流程_V1.0.md",
+    "steps": [
+      {
+        "activities": [
+          "L4-NG-01 → 《合同谈判纪要》+《法律审核意见》(Aug)"
+        ],
+        "evidence_ref": "EVD-e64e34b437bed4496324",
+        "l4_codes": [
+          "L4-NG-01"
+        ],
+        "sequence": 1,
+        "source_line": 47,
+        "step_id": "STEP-01",
+        "step_name": "合同谈判与法律审核"
+      },
+      {
+        "activities": [
+          "L4-NG-02 → 《合同终稿》+ 签署文件/协议(Auto)"
+        ],
+        "evidence_ref": "EVD-c946003c1a04b5953427",
+        "l4_codes": [
+          "L4-NG-02"
+        ],
+        "sequence": 2,
+        "source_line": 53,
+        "step_id": "STEP-02",
+        "step_name": "合同签署与信息同步"
+      }
+    ],
+    "structure_status": "PARSED",
+    "version": "V1.0"
   },
+  "demo_file": "",
   "evidence_registry": [
     {
       "confidence": "HIGH",
@@ -53,24 +100,6 @@
       "confidence": "HIGH",
       "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-0eed419da2e15f25179b",
-      "field_name": "agent_d5_fallback",
-      "source": {
-        "observed_at": "",
-        "source_field": "agent_d5_fallback",
-        "source_key": "L4-NG-01",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
-      },
-      "status": "MISSING",
-      "transform_rule": "",
-      "value": null
-    },
-    {
-      "confidence": "HIGH",
-      "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
       "evidence_id": "EVD-137ff9deac3ceabc7464",
       "field_name": "l4_deliverable",
       "source": {
@@ -84,6 +113,24 @@
       "status": "ACTIVE",
       "transform_rule": "",
       "value": "合同/协议文件"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-2b65b1be6c6c59b7ee2b",
+      "field_name": "agent_d1_input_struct",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d1_input_struct",
+        "source_key": "L4-NG-02",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": 2
     },
     {
       "confidence": "HIGH",
@@ -102,24 +149,6 @@
       "status": "ACTIVE",
       "transform_rule": "",
       "value": "合同"
-    },
-    {
-      "confidence": "HIGH",
-      "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-3deb1c8fa227740cc1c2",
-      "field_name": "agent_d4_api_reach",
-      "source": {
-        "observed_at": "",
-        "source_field": "agent_d4_api_reach",
-        "source_key": "L4-NG-02",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
-      },
-      "status": "MISSING",
-      "transform_rule": "",
-      "value": null
     },
     {
       "confidence": "HIGH",
@@ -160,6 +189,42 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-52d8f57d99fd91cd3d38",
+      "field_name": "agent_d4_api_reach",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d4_api_reach",
+        "source_key": "L4-NG-02",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": 1
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-52ff531e24933e6affb9",
+      "field_name": "agent_d2_rule_clear",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d2_rule_clear",
+        "source_key": "L4-NG-01",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": 1
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
       "evidence_id": "EVD-578bfa40213e84084d28",
       "field_name": "l4_deliverable",
@@ -174,6 +239,24 @@
       "status": "ACTIVE",
       "transform_rule": "",
       "value": "《合同终稿》"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-70106863df6b58edf966",
+      "field_name": "agent_d3_output_verify",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d3_output_verify",
+        "source_key": "L4-NG-01",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": 2
     },
     {
       "confidence": "HIGH",
@@ -196,30 +279,30 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-7a8451cce7f6c3ed0a2b",
+      "field_name": "agent_d6_compliance",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d6_compliance",
+        "source_key": "L4-NG-01",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": 1
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
       "evidence_id": "EVD-8351caf184092bd0bf87",
       "field_name": "agent_human_touchpoint",
       "source": {
         "observed_at": "",
         "source_field": "agent_human_touchpoint",
-        "source_key": "L4-NG-02",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
-      },
-      "status": "MISSING",
-      "transform_rule": "",
-      "value": null
-    },
-    {
-      "confidence": "HIGH",
-      "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-9b1a08772a646bfb5e77",
-      "field_name": "agent_d6_compliance",
-      "source": {
-        "observed_at": "",
-        "source_field": "agent_d6_compliance",
         "source_key": "L4-NG-02",
         "source_object": "process_analytics.dim_process",
         "source_system": "PostgreSQL",
@@ -250,56 +333,56 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-9c9a75b9d79a69265a0b",
-      "field_name": "agent_d6_compliance",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-9ebb679ced4e64f57a07",
+      "field_name": "agent_d4_api_reach",
       "source": {
         "observed_at": "",
-        "source_field": "agent_d6_compliance",
+        "source_field": "agent_d4_api_reach",
         "source_key": "L4-NG-01",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
       },
-      "status": "MISSING",
+      "status": "ACTIVE",
       "transform_rule": "",
-      "value": null
+      "value": 1
     },
     {
       "confidence": "HIGH",
       "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-9e58c79feda17ddb1b9c",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-a6f8a25872166a550e4b",
+      "field_name": "agent_d1_input_struct",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d1_input_struct",
+        "source_key": "L4-NG-01",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": 2
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-b4a56abc14f465a1bbfa",
       "field_name": "agent_d5_fallback",
       "source": {
         "observed_at": "",
         "source_field": "agent_d5_fallback",
-        "source_key": "L4-NG-02",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
-      },
-      "status": "MISSING",
-      "transform_rule": "",
-      "value": null
-    },
-    {
-      "confidence": "HIGH",
-      "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-a12fa9f571c2d065acb5",
-      "field_name": "agent_d2_rule_clear",
-      "source": {
-        "observed_at": "",
-        "source_field": "agent_d2_rule_clear",
         "source_key": "L4-NG-01",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
       },
-      "status": "MISSING",
+      "status": "ACTIVE",
       "transform_rule": "",
-      "value": null
+      "value": 1
     },
     {
       "confidence": "HIGH",
@@ -322,56 +405,61 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-bc9efba916cccf160a72",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-c946003c1a04b5953427",
+      "field_name": "blueprint.steps.STEP-02",
+      "source": {
+        "observed_at": "",
+        "source_field": "step",
+        "source_key": "line:53",
+        "source_object": "流程蓝图_L3-NG_商务谈判与合同制定流程_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "l4_codes": [
+          "L4-NG-02"
+        ],
+        "step_name": "合同签署与信息同步"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-d3009a0c31727f32f365",
       "field_name": "agent_d3_output_verify",
       "source": {
         "observed_at": "",
         "source_field": "agent_d3_output_verify",
-        "source_key": "L4-NG-01",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
-      },
-      "status": "MISSING",
-      "transform_rule": "",
-      "value": null
-    },
-    {
-      "confidence": "HIGH",
-      "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-cbea91b22044754ad42e",
-      "field_name": "agent_d1_input_struct",
-      "source": {
-        "observed_at": "",
-        "source_field": "agent_d1_input_struct",
-        "source_key": "L4-NG-01",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
-      },
-      "status": "MISSING",
-      "transform_rule": "",
-      "value": null
-    },
-    {
-      "confidence": "HIGH",
-      "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-d3a82586379fe81818a9",
-      "field_name": "agent_d2_rule_clear",
-      "source": {
-        "observed_at": "",
-        "source_field": "agent_d2_rule_clear",
         "source_key": "L4-NG-02",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
       },
-      "status": "MISSING",
+      "status": "ACTIVE",
       "transform_rule": "",
-      "value": null
+      "value": 2
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-da52ec6d47fde634d1ae",
+      "field_name": "agent_d6_compliance",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d6_compliance",
+        "source_key": "L4-NG-02",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": 1
     },
     {
       "confidence": "HIGH",
@@ -412,38 +500,61 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-e6b8638ef50c713455cf",
-      "field_name": "agent_d1_input_struct",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-e64e34b437bed4496324",
+      "field_name": "blueprint.steps.STEP-01",
       "source": {
         "observed_at": "",
-        "source_field": "agent_d1_input_struct",
-        "source_key": "L4-NG-02",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
+        "source_field": "step",
+        "source_key": "line:47",
+        "source_object": "流程蓝图_L3-NG_商务谈判与合同制定流程_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
       },
-      "status": "MISSING",
+      "status": "ACTIVE",
       "transform_rule": "",
-      "value": null
+      "value": {
+        "l4_codes": [
+          "L4-NG-01"
+        ],
+        "step_name": "合同谈判与法律审核"
+      }
     },
     {
       "confidence": "HIGH",
       "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-f35aba6e7c54c2634a31",
-      "field_name": "agent_d3_output_verify",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-edb7be22d5f3491172a9",
+      "field_name": "agent_d5_fallback",
       "source": {
         "observed_at": "",
-        "source_field": "agent_d3_output_verify",
+        "source_field": "agent_d5_fallback",
         "source_key": "L4-NG-02",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
       },
-      "status": "MISSING",
+      "status": "ACTIVE",
       "transform_rule": "",
-      "value": null
+      "value": 1
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-f11731221e1c3d84f173",
+      "field_name": "agent_d2_rule_clear",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d2_rule_clear",
+        "source_key": "L4-NG-02",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": 1
     },
     {
       "confidence": "HIGH",
@@ -462,24 +573,6 @@
       "status": "ACTIVE",
       "transform_rule": "",
       "value": "Hybrid"
-    },
-    {
-      "confidence": "HIGH",
-      "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-f84d824d4164d3a67ef5",
-      "field_name": "agent_d4_api_reach",
-      "source": {
-        "observed_at": "",
-        "source_field": "agent_d4_api_reach",
-        "source_key": "L4-NG-01",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
-      },
-      "status": "MISSING",
-      "transform_rule": "",
-      "value": null
     },
     {
       "confidence": "HIGH",
@@ -540,13 +633,13 @@
     "A": {
       "checks": [
         {
-          "detail": "Gate E=PARTIAL",
-          "passed": false,
+          "detail": "Gate E=PASS",
+          "passed": true,
           "rule_id": "A-001"
         },
         {
-          "detail": "D1-D6完整=0/2",
-          "passed": false,
+          "detail": "D1-D6完整=2/2",
+          "passed": true,
           "rule_id": "A-002"
         },
         {
@@ -560,13 +653,13 @@
           "rule_id": "A-004"
         }
       ],
-      "status": "BLOCKED"
+      "status": "PASS"
     },
     "E": {
       "checks": [
         {
-          "detail": "Gate M=PARTIAL",
-          "passed": false,
+          "detail": "Gate M=PASS",
+          "passed": true,
           "rule_id": "E-001"
         },
         {
@@ -580,7 +673,7 @@
           "rule_id": "E-003"
         }
       ],
-      "status": "PARTIAL"
+      "status": "PASS"
     },
     "M": {
       "checks": [
@@ -590,8 +683,8 @@
           "rule_id": "M-001"
         },
         {
-          "detail": "缺少蓝图索引",
-          "passed": false,
+          "detail": "流程蓝图_L3-NG_商务谈判与合同制定流程_V1.0.md",
+          "passed": true,
           "rule_id": "M-002"
         },
         {
@@ -600,14 +693,15 @@
           "rule_id": "M-003"
         }
       ],
-      "status": "PARTIAL"
+      "status": "PASS"
     }
   },
+  "has_demo": false,
   "kpi_mappings": [],
   "l2_capabilities": [
     {
-      "l2_code": "CAP-L2-2-S2",
-      "l2_name": "机构合作签约能力",
+      "l2_code": "L2-02.3",
+      "l2_name": "市场深度运营",
       "l3_code": "L3-NG"
     }
   ],
@@ -616,22 +710,22 @@
   "l4s": [
     {
       "d1_d6": {
-        "agent_d1_input_struct": null,
-        "agent_d2_rule_clear": null,
-        "agent_d3_output_verify": null,
-        "agent_d4_api_reach": null,
-        "agent_d5_fallback": null,
-        "agent_d6_compliance": null
+        "agent_d1_input_struct": 2,
+        "agent_d2_rule_clear": 1,
+        "agent_d3_output_verify": 2,
+        "agent_d4_api_reach": 1,
+        "agent_d5_fallback": 1,
+        "agent_d6_compliance": 1
       },
       "deliverable": "《合同终稿》",
       "deliverable_type": "合同",
       "evidence_refs": {
-        "agent_d1_input_struct": "EVD-cbea91b22044754ad42e",
-        "agent_d2_rule_clear": "EVD-a12fa9f571c2d065acb5",
-        "agent_d3_output_verify": "EVD-bc9efba916cccf160a72",
-        "agent_d4_api_reach": "EVD-f84d824d4164d3a67ef5",
-        "agent_d5_fallback": "EVD-0eed419da2e15f25179b",
-        "agent_d6_compliance": "EVD-9c9a75b9d79a69265a0b",
+        "agent_d1_input_struct": "EVD-a6f8a25872166a550e4b",
+        "agent_d2_rule_clear": "EVD-52ff531e24933e6affb9",
+        "agent_d3_output_verify": "EVD-70106863df6b58edf966",
+        "agent_d4_api_reach": "EVD-9ebb679ced4e64f57a07",
+        "agent_d5_fallback": "EVD-b4a56abc14f465a1bbfa",
+        "agent_d6_compliance": "EVD-7a8451cce7f6c3ed0a2b",
         "agent_human_touchpoint": "EVD-fb25e88033c9c997b7ac",
         "agentifiability": "EVD-f7a414a64a86976c3a9a",
         "l4_deliverable": "EVD-578bfa40213e84084d28",
@@ -645,22 +739,22 @@
     },
     {
       "d1_d6": {
-        "agent_d1_input_struct": null,
-        "agent_d2_rule_clear": null,
-        "agent_d3_output_verify": null,
-        "agent_d4_api_reach": null,
-        "agent_d5_fallback": null,
-        "agent_d6_compliance": null
+        "agent_d1_input_struct": 2,
+        "agent_d2_rule_clear": 1,
+        "agent_d3_output_verify": 2,
+        "agent_d4_api_reach": 1,
+        "agent_d5_fallback": 1,
+        "agent_d6_compliance": 1
       },
       "deliverable": "合同/协议文件",
       "deliverable_type": "合同",
       "evidence_refs": {
-        "agent_d1_input_struct": "EVD-e6b8638ef50c713455cf",
-        "agent_d2_rule_clear": "EVD-d3a82586379fe81818a9",
-        "agent_d3_output_verify": "EVD-f35aba6e7c54c2634a31",
-        "agent_d4_api_reach": "EVD-3deb1c8fa227740cc1c2",
-        "agent_d5_fallback": "EVD-9e58c79feda17ddb1b9c",
-        "agent_d6_compliance": "EVD-9b1a08772a646bfb5e77",
+        "agent_d1_input_struct": "EVD-2b65b1be6c6c59b7ee2b",
+        "agent_d2_rule_clear": "EVD-f11731221e1c3d84f173",
+        "agent_d3_output_verify": "EVD-d3009a0c31727f32f365",
+        "agent_d4_api_reach": "EVD-52d8f57d99fd91cd3d38",
+        "agent_d5_fallback": "EVD-edb7be22d5f3491172a9",
+        "agent_d6_compliance": "EVD-da52ec6d47fde634d1ae",
         "agent_human_touchpoint": "EVD-8351caf184092bd0bf87",
         "agentifiability": "EVD-4531e33af58d82504e7d",
         "l4_deliverable": "EVD-137ff9deac3ceabc7464",

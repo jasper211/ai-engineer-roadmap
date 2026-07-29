@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router'
-import { AlertTriangle, ArrowRight, CheckCircle2, Database, GitBranch, LoaderCircle, Search } from 'lucide-react'
+import { AlertTriangle, ArrowRight, CheckCircle2, Database, GitBranch, LoaderCircle, Search, Star } from 'lucide-react'
 import { loadModelIndex, type ModelIndex, type ModelIndexItem } from '../lib/l3Models'
 
 function Gate({ name, status }: { name: string; status: string }) {
@@ -20,10 +20,20 @@ function ModelCard({ model }: { model: ModelIndexItem }) {
         <div>
           <p className="font-mono text-xs text-accent-primary-light">{model.l3_code}</p>
           <h2 className="mt-1 text-base font-semibold text-text-primary">{model.l3_name}</h2>
+          {model.l2_capabilities.length > 0 && (
+            <p className="mt-1 text-[11px] text-text-muted">{model.l2_capabilities.join('、')}</p>
+          )}
         </div>
-        <span className={`rounded-full px-2.5 py-1 text-[11px] font-medium ${ready ? 'bg-emerald-400/10 text-emerald-300' : 'bg-amber-400/10 text-amber-300'}`}>
-          {ready ? '可进入模型' : '待补数据'}
-        </span>
+        <div className="flex flex-col items-end gap-1.5">
+          {model.has_demo && (
+            <span className="flex items-center gap-1 rounded-full bg-violet-400/10 px-2.5 py-1 text-[11px] font-medium text-violet-300">
+              <Star className="h-3 w-3" /> 完整 Demo
+            </span>
+          )}
+          <span className={`rounded-full px-2.5 py-1 text-[11px] font-medium ${ready ? 'bg-emerald-400/10 text-emerald-300' : 'bg-amber-400/10 text-amber-300'}`}>
+            {ready ? '可进入模型' : '待补数据'}
+          </span>
+        </div>
       </div>
       <div className="mt-4 flex flex-wrap gap-2">
         <Gate name="M" status={model.gates.M} />
@@ -44,7 +54,7 @@ function ModelCard({ model }: { model: ModelIndexItem }) {
 export default function L3Models() {
   const [data, setData] = useState<ModelIndex | null>(null)
   const [error, setError] = useState('')
-  const [view, setView] = useState<'all' | 'ready' | 'evaluable' | 'missing'>('all')
+  const [view, setView] = useState<'all' | 'ready' | 'evaluable' | 'missing' | 'demo'>('all')
   const [query, setQuery] = useState('')
 
   useEffect(() => {
@@ -56,6 +66,7 @@ export default function L3Models() {
     ready: data?.models.filter(item => item.classification === 'MODEL_READY') ?? [],
     evaluable: data?.models.filter(item => item.highest_gate === 'E') ?? [],
     missing: data?.models.filter(item => item.classification === 'NEEDS_DATA') ?? [],
+    demo: data?.models.filter(item => item.has_demo) ?? [],
   }), [data])
 
   if (error) return <div className="panel p-5 text-sm text-accent-danger">{error}</div>
@@ -96,6 +107,9 @@ export default function L3Models() {
         </button>
         <button onClick={() => setView('missing')} className={`flex items-center gap-2 rounded-xl px-4 py-3 text-sm ${view === 'missing' ? 'bg-amber-400/10 text-amber-300' : 'text-text-secondary hover:bg-bg-surface'}`}>
           <AlertTriangle className="h-4 w-4" /> 数据不足待补 <strong>{groups.missing.length}</strong>
+        </button>
+        <button onClick={() => setView('demo')} className={`flex items-center gap-2 rounded-xl px-4 py-3 text-sm ${view === 'demo' ? 'bg-violet-400/10 text-violet-300' : 'text-text-secondary hover:bg-bg-surface'}`}>
+          <Star className="h-4 w-4" /> 已有完整 Demo <strong>{groups.demo.length}</strong>
         </button>
         <div className="ml-auto flex items-center gap-2 px-3 text-[11px] text-text-muted"><Database className="h-3.5 w-3.5" /> {data.source_policy}</div>
       </div>

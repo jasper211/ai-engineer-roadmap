@@ -1,161 +1,365 @@
 {
   "blueprint": {
+    "blueprint_value_nodes": [],
     "coverage": "INDEXED",
-    "decisions": [],
-    "diagnostics": {},
-    "edges": [],
-    "filename": "流程蓝图_L3-URD_联合运营需求诊断_V1.2.md",
-    "note": "正文缺少可确认结构或与当前数据库冲突，禁止生成箭头、决策点和回退关系",
-    "source_hash": "",
-    "source_path": "",
-    "steps": [],
-    "structure_status": "INDEX_ONLY",
-    "version": "V1.2"
+    "decisions": [
+      {
+        "after_step": "STEP-01",
+        "branches": [
+          {
+            "is_return": false,
+            "label": "无冲突",
+            "source_line": 97,
+            "target_l4": "",
+            "target_step": "STEP-02",
+            "target_text": "Step 2需求初筛"
+          },
+          {
+            "is_return": false,
+            "label": "存在重复",
+            "source_line": 98,
+            "target_l4": "",
+            "target_step": "",
+            "target_text": "上报C族负责人，协调处理后继续"
+          },
+          {
+            "is_return": false,
+            "label": "存在冲突",
+            "source_line": 99,
+            "target_l4": "",
+            "target_step": "",
+            "target_text": "暂停，等待决策"
+          }
+        ],
+        "decision_id": "Q1",
+        "evidence_ref": "EVD-6a431dd6bc470f863841",
+        "question": "是否存在重复机构或冲突",
+        "source_line": 94
+      },
+      {
+        "after_step": "STEP-04",
+        "branches": [
+          {
+            "is_return": false,
+            "label": "高匹配（≥70分）",
+            "source_line": 104,
+            "target_l4": "",
+            "target_step": "STEP-05",
+            "target_text": "Step 5完整诊断报告 → 推进至L3-URF"
+          },
+          {
+            "is_return": false,
+            "label": "中匹配（50-70分）",
+            "source_line": 105,
+            "target_l4": "",
+            "target_step": "",
+            "target_text": "附条件推进，标注风险项"
+          },
+          {
+            "is_return": false,
+            "label": "低匹配（<50分）",
+            "source_line": 106,
+            "target_l4": "",
+            "target_step": "",
+            "target_text": "暂停，进入观察池"
+          }
+        ],
+        "decision_id": "Q2",
+        "evidence_ref": "EVD-7a6cf76e96ce6788ba2c",
+        "question": "战略匹配度是否达标",
+        "source_line": 101
+      }
+    ],
+    "diagnostics": {
+      "blueprint_l4_count": 6,
+      "db_l4_count": 6,
+      "extra_in_blueprint": [],
+      "missing_in_blueprint": [],
+      "parsed_step_l4_count": 6
+    },
+    "edges": [
+      {
+        "edge_id": "SEQ-STEP-01-STEP-02",
+        "edge_type": "SEQUENCE",
+        "from": "STEP-01",
+        "label": "",
+        "source_rule": "蓝图显式编号步骤的相邻顺序",
+        "to": "STEP-02"
+      },
+      {
+        "edge_id": "SEQ-STEP-02-STEP-03",
+        "edge_type": "SEQUENCE",
+        "from": "STEP-02",
+        "label": "",
+        "source_rule": "蓝图显式编号步骤的相邻顺序",
+        "to": "STEP-03"
+      },
+      {
+        "edge_id": "SEQ-STEP-03-STEP-04",
+        "edge_type": "SEQUENCE",
+        "from": "STEP-03",
+        "label": "",
+        "source_rule": "蓝图显式编号步骤的相邻顺序",
+        "to": "STEP-04"
+      },
+      {
+        "edge_id": "SEQ-STEP-04-STEP-05",
+        "edge_type": "SEQUENCE",
+        "from": "STEP-04",
+        "label": "",
+        "source_rule": "蓝图显式编号步骤的相邻顺序",
+        "to": "STEP-05"
+      },
+      {
+        "edge_id": "SEQ-STEP-05-STEP-06",
+        "edge_type": "SEQUENCE",
+        "from": "STEP-05",
+        "label": "",
+        "source_rule": "蓝图显式编号步骤的相邻顺序",
+        "to": "STEP-06"
+      },
+      {
+        "edge_id": "Q1-6",
+        "edge_type": "DECISION",
+        "from": "Q1",
+        "label": "无冲突",
+        "source_rule": "蓝图第97行显式分支",
+        "to": "STEP-02"
+      },
+      {
+        "edge_id": "Q2-7",
+        "edge_type": "DECISION",
+        "from": "Q2",
+        "label": "高匹配（≥70分）",
+        "source_rule": "蓝图第104行显式分支",
+        "to": "STEP-05"
+      }
+    ],
+    "filename": "流程蓝图_L3-URD_联合运营需求诊断_V1.3.md",
+    "note": "已从蓝图正文解析；步骤顺序边由显式步骤编号派生，判断分支保留原文行号",
+    "raci": [],
+    "source_hash": "e8166d92ebe2dd3dca250c3db444b4b6fad74dcc656f9956ced84f352faabb82",
+    "source_path": "/Users/a112233/Desktop/流程架构项目_jasper/02_过程成果-工作产出/L3流程库/流程蓝图_L3-URD_联合运营需求诊断_V1.3.md",
+    "steps": [
+      {
+        "activities": [
+          "L4-URD-01 业务现状调研与分析 → 《重复机构检查报告》(Aug)【缺失】"
+        ],
+        "evidence_ref": "EVD-14c4ca83a21f245b0383",
+        "l4_codes": [
+          "L4-URD-01"
+        ],
+        "sequence": 1,
+        "source_line": 67,
+        "step_id": "STEP-01",
+        "step_name": "业务现状调研与分析"
+      },
+      {
+        "activities": [
+          "L4-URD-02 需求初筛 → 《数字化成熟度报告》(Aug)【缺失】"
+        ],
+        "evidence_ref": "EVD-660b09bf255e86d4de00",
+        "l4_codes": [
+          "L4-URD-02"
+        ],
+        "sequence": 2,
+        "source_line": 72,
+        "step_id": "STEP-02",
+        "step_name": "需求初筛"
+      },
+      {
+        "activities": [
+          "L4-URD-03 初步商机规模预测 → 《商机规模预测》(Auto)【缺失】"
+        ],
+        "evidence_ref": "EVD-6e58eb0d15f4146b4e46",
+        "l4_codes": [
+          "L4-URD-03"
+        ],
+        "sequence": 3,
+        "source_line": 75,
+        "step_id": "STEP-03",
+        "step_name": "初步商机规模预测"
+      },
+      {
+        "activities": [
+          "L4-URD-04 机构战略匹配度评估 → 《战略匹配度评分》(Aug)【缺失】"
+        ],
+        "evidence_ref": "EVD-f681c4328f5ca1f4536b",
+        "l4_codes": [
+          "L4-URD-04"
+        ],
+        "sequence": 4,
+        "source_line": 78,
+        "step_id": "STEP-04",
+        "step_name": "机构战略匹配度评估"
+      },
+      {
+        "activities": [
+          "L4-URD-05 联合运营需求诊断 → 《需求诊断报告》(Aug)【缺失】"
+        ],
+        "evidence_ref": "EVD-0341c96411cbcc3a0a13",
+        "l4_codes": [
+          "L4-URD-05"
+        ],
+        "sequence": 5,
+        "source_line": 83,
+        "step_id": "STEP-05",
+        "step_name": "联合运营需求诊断"
+      },
+      {
+        "activities": [
+          "L4-URD-06 合规风险评估 → 《合规尽调报告》+《合规风险评估报告》(Aug)【新建·源自L3-UCR】"
+        ],
+        "evidence_ref": "EVD-9f2dc80cf93ff5b2344d",
+        "l4_codes": [
+          "L4-URD-06"
+        ],
+        "sequence": 6,
+        "source_line": 86,
+        "step_id": "STEP-06",
+        "step_name": "合规风险评估 🆕"
+      }
+    ],
+    "structure_status": "PARSED",
+    "version": "V1.3"
   },
+  "demo_file": "",
   "evidence_registry": [
     {
       "confidence": "HIGH",
       "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-012f159b06776e8a76bd",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-0341c96411cbcc3a0a13",
+      "field_name": "blueprint.steps.STEP-05",
+      "source": {
+        "observed_at": "",
+        "source_field": "step",
+        "source_key": "line:83",
+        "source_object": "流程蓝图_L3-URD_联合运营需求诊断_V1.3.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.3"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "l4_codes": [
+          "L4-URD-05"
+        ],
+        "step_name": "联合运营需求诊断"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-0b50661f03420be22c43",
+      "field_name": "agent_d2_rule_clear",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d2_rule_clear",
+        "source_key": "L4-URD-01",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": 1
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-0c7d406982881da3eb92",
       "field_name": "agent_d3_output_verify",
       "source": {
         "observed_at": "",
         "source_field": "agent_d3_output_verify",
-        "source_key": "L4-URD-05",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
+        "source_key": "L4-URD-02",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
       },
-      "status": "MISSING",
+      "status": "ACTIVE",
       "transform_rule": "",
-      "value": null
+      "value": 2
     },
     {
       "confidence": "HIGH",
       "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-01f6a36723d71df9603a",
-      "field_name": "agent_d5_fallback",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-104aafed36640d8fc74d",
+      "field_name": "agent_d4_api_reach",
       "source": {
         "observed_at": "",
-        "source_field": "agent_d5_fallback",
-        "source_key": "L4-URD-03",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
+        "source_field": "agent_d4_api_reach",
+        "source_key": "L4-URD-01",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
       },
-      "status": "MISSING",
+      "status": "ACTIVE",
       "transform_rule": "",
-      "value": null
+      "value": 1
     },
     {
       "confidence": "HIGH",
       "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-0664a22f05ed502d5a0a",
-      "field_name": "agent_d5_fallback",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-14c4ca83a21f245b0383",
+      "field_name": "blueprint.steps.STEP-01",
       "source": {
         "observed_at": "",
-        "source_field": "agent_d5_fallback",
-        "source_key": "L4-URD-05",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
+        "source_field": "step",
+        "source_key": "line:67",
+        "source_object": "流程蓝图_L3-URD_联合运营需求诊断_V1.3.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.3"
       },
-      "status": "MISSING",
+      "status": "ACTIVE",
       "transform_rule": "",
-      "value": null
+      "value": {
+        "l4_codes": [
+          "L4-URD-01"
+        ],
+        "step_name": "业务现状调研与分析"
+      }
     },
     {
       "confidence": "HIGH",
       "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-0715a4f4d753d0de6007",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-16284c36257657c01569",
       "field_name": "agent_d1_input_struct",
       "source": {
         "observed_at": "",
         "source_field": "agent_d1_input_struct",
-        "source_key": "L4-URD-04",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
+        "source_key": "L4-URD-02",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
       },
-      "status": "MISSING",
+      "status": "ACTIVE",
       "transform_rule": "",
-      "value": null
+      "value": 2
     },
     {
       "confidence": "HIGH",
       "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-0a8adb1242e7f8e1256f",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-1ac9db266d0ee5bdb7c2",
       "field_name": "agent_d3_output_verify",
       "source": {
         "observed_at": "",
         "source_field": "agent_d3_output_verify",
-        "source_key": "L4-URD-01",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
+        "source_key": "L4-URD-05",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
       },
-      "status": "MISSING",
+      "status": "ACTIVE",
       "transform_rule": "",
-      "value": null
-    },
-    {
-      "confidence": "HIGH",
-      "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-0da011fceb2f8334a2d7",
-      "field_name": "agent_d2_rule_clear",
-      "source": {
-        "observed_at": "",
-        "source_field": "agent_d2_rule_clear",
-        "source_key": "L4-URD-02",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
-      },
-      "status": "MISSING",
-      "transform_rule": "",
-      "value": null
-    },
-    {
-      "confidence": "HIGH",
-      "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-13c18de792aabb9fdf99",
-      "field_name": "agent_d2_rule_clear",
-      "source": {
-        "observed_at": "",
-        "source_field": "agent_d2_rule_clear",
-        "source_key": "L4-URD-04",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
-      },
-      "status": "MISSING",
-      "transform_rule": "",
-      "value": null
-    },
-    {
-      "confidence": "HIGH",
-      "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-18829342777453410427",
-      "field_name": "agent_d6_compliance",
-      "source": {
-        "observed_at": "",
-        "source_field": "agent_d6_compliance",
-        "source_key": "L4-URD-03",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
-      },
-      "status": "MISSING",
-      "transform_rule": "",
-      "value": null
+      "value": 2
     },
     {
       "confidence": "HIGH",
@@ -304,6 +508,24 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-2a6c5c3848ec25c32cc6",
+      "field_name": "agent_d5_fallback",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d5_fallback",
+        "source_key": "L4-URD-05",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": 1
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
       "evidence_id": "EVD-2ba0f68a0351ade99d24",
       "field_name": "l4_deliverable",
@@ -322,20 +544,20 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-349265e1d11428cc5af4",
-      "field_name": "agent_d1_input_struct",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-2c3a6a470d06ff62aab0",
+      "field_name": "agent_d4_api_reach",
       "source": {
         "observed_at": "",
-        "source_field": "agent_d1_input_struct",
-        "source_key": "L4-URD-03",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
+        "source_field": "agent_d4_api_reach",
+        "source_key": "L4-URD-02",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
       },
-      "status": "MISSING",
+      "status": "ACTIVE",
       "transform_rule": "",
-      "value": null
+      "value": 1
     },
     {
       "confidence": "HIGH",
@@ -358,20 +580,38 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-3878ff4f7dd9e54fa44f",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-37efb1fbae93039762e8",
       "field_name": "agent_d5_fallback",
       "source": {
         "observed_at": "",
         "source_field": "agent_d5_fallback",
         "source_key": "L4-URD-02",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
       },
-      "status": "MISSING",
+      "status": "ACTIVE",
       "transform_rule": "",
-      "value": null
+      "value": 1
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-4062fb024f36c049b3d4",
+      "field_name": "agent_d5_fallback",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d5_fallback",
+        "source_key": "L4-URD-03",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": 1
     },
     {
       "confidence": "HIGH",
@@ -394,6 +634,78 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-432939b9ec09893f1344",
+      "field_name": "agent_d2_rule_clear",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d2_rule_clear",
+        "source_key": "L4-URD-02",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": 1
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-44c8e1b71ebede50ca20",
+      "field_name": "agent_d4_api_reach",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d4_api_reach",
+        "source_key": "L4-URD-03",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": 2
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-49ce34c0f39b4f2d3cd4",
+      "field_name": "agent_d1_input_struct",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d1_input_struct",
+        "source_key": "L4-URD-04",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": 2
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-4fc61b9cd3ecaec52d67",
+      "field_name": "agent_d1_input_struct",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d1_input_struct",
+        "source_key": "L4-URD-03",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": 2
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
       "evidence_id": "EVD-509eb49f051d437acde3",
       "field_name": "agent_d3_output_verify",
@@ -408,6 +720,42 @@
       "status": "MISSING",
       "transform_rule": "",
       "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-533b1e7f15d3091aede8",
+      "field_name": "agent_d6_compliance",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d6_compliance",
+        "source_key": "L4-URD-01",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": 1
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-55f256465751d8e1d001",
+      "field_name": "agent_d2_rule_clear",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d2_rule_clear",
+        "source_key": "L4-URD-04",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": 1
     },
     {
       "confidence": "HIGH",
@@ -484,20 +832,107 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-6ada067d07f526e4afa4",
-      "field_name": "agent_d6_compliance",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-5ce13025055aa1e24c6c",
+      "field_name": "agent_d4_api_reach",
       "source": {
         "observed_at": "",
-        "source_field": "agent_d6_compliance",
-        "source_key": "L4-URD-02",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
+        "source_field": "agent_d4_api_reach",
+        "source_key": "L4-URD-04",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
       },
-      "status": "MISSING",
+      "status": "ACTIVE",
       "transform_rule": "",
-      "value": null
+      "value": 1
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-660b09bf255e86d4de00",
+      "field_name": "blueprint.steps.STEP-02",
+      "source": {
+        "observed_at": "",
+        "source_field": "step",
+        "source_key": "line:72",
+        "source_object": "流程蓝图_L3-URD_联合运营需求诊断_V1.3.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.3"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "l4_codes": [
+          "L4-URD-02"
+        ],
+        "step_name": "需求初筛"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-6667c6c4fcf566258b22",
+      "field_name": "agent_d5_fallback",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d5_fallback",
+        "source_key": "L4-URD-01",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": 1
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-6a431dd6bc470f863841",
+      "field_name": "blueprint.decisions.Q1",
+      "source": {
+        "observed_at": "",
+        "source_field": "decision",
+        "source_key": "line:94",
+        "source_object": "流程蓝图_L3-URD_联合运营需求诊断_V1.3.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.3"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "branches": [
+          {
+            "is_return": false,
+            "label": "无冲突",
+            "source_line": 97,
+            "target_l4": "",
+            "target_step": "STEP-02",
+            "target_text": "Step 2需求初筛"
+          },
+          {
+            "is_return": false,
+            "label": "存在重复",
+            "source_line": 98,
+            "target_l4": "",
+            "target_step": "",
+            "target_text": "上报C族负责人，协调处理后继续"
+          },
+          {
+            "is_return": false,
+            "label": "存在冲突",
+            "source_line": 99,
+            "target_l4": "",
+            "target_step": "",
+            "target_text": "暂停，等待决策"
+          }
+        ],
+        "question": "是否存在重复机构或冲突"
+      }
     },
     {
       "confidence": "HIGH",
@@ -520,20 +955,25 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-70910a5427d3353b6246",
-      "field_name": "agent_d3_output_verify",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-6e58eb0d15f4146b4e46",
+      "field_name": "blueprint.steps.STEP-03",
       "source": {
         "observed_at": "",
-        "source_field": "agent_d3_output_verify",
-        "source_key": "L4-URD-02",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
+        "source_field": "step",
+        "source_key": "line:75",
+        "source_object": "流程蓝图_L3-URD_联合运营需求诊断_V1.3.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.3"
       },
-      "status": "MISSING",
+      "status": "ACTIVE",
       "transform_rule": "",
-      "value": null
+      "value": {
+        "l4_codes": [
+          "L4-URD-03"
+        ],
+        "step_name": "初步商机规模预测"
+      }
     },
     {
       "confidence": "HIGH",
@@ -646,20 +1086,84 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-7b991ad64720ef1514dd",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-7a6cf76e96ce6788ba2c",
+      "field_name": "blueprint.decisions.Q2",
+      "source": {
+        "observed_at": "",
+        "source_field": "decision",
+        "source_key": "line:101",
+        "source_object": "流程蓝图_L3-URD_联合运营需求诊断_V1.3.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.3"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "branches": [
+          {
+            "is_return": false,
+            "label": "高匹配（≥70分）",
+            "source_line": 104,
+            "target_l4": "",
+            "target_step": "STEP-05",
+            "target_text": "Step 5完整诊断报告 → 推进至L3-URF"
+          },
+          {
+            "is_return": false,
+            "label": "中匹配（50-70分）",
+            "source_line": 105,
+            "target_l4": "",
+            "target_step": "",
+            "target_text": "附条件推进，标注风险项"
+          },
+          {
+            "is_return": false,
+            "label": "低匹配（<50分）",
+            "source_line": 106,
+            "target_l4": "",
+            "target_step": "",
+            "target_text": "暂停，进入观察池"
+          }
+        ],
+        "question": "战略匹配度是否达标"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-7bd6418634bc662013ad",
       "field_name": "agent_d6_compliance",
       "source": {
         "observed_at": "",
         "source_field": "agent_d6_compliance",
         "source_key": "L4-URD-04",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
       },
-      "status": "MISSING",
+      "status": "ACTIVE",
       "transform_rule": "",
-      "value": null
+      "value": 1
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-8783d0276fd4323ae782",
+      "field_name": "agent_d5_fallback",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d5_fallback",
+        "source_key": "L4-URD-04",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": 1
     },
     {
       "confidence": "HIGH",
@@ -700,6 +1204,42 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-915a575d500db9c66945",
+      "field_name": "agent_d2_rule_clear",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d2_rule_clear",
+        "source_key": "L4-URD-05",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": 1
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-94e94325473d4d5d3d5a",
+      "field_name": "agent_d1_input_struct",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d1_input_struct",
+        "source_key": "L4-URD-05",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": 2
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
       "evidence_id": "EVD-95f1a992b2357ce6f523",
       "field_name": "agentifiability",
@@ -714,24 +1254,6 @@
       "status": "ACTIVE",
       "transform_rule": "",
       "value": "Hybrid"
-    },
-    {
-      "confidence": "HIGH",
-      "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-987f1d5dc195ad2add83",
-      "field_name": "agent_d6_compliance",
-      "source": {
-        "observed_at": "",
-        "source_field": "agent_d6_compliance",
-        "source_key": "L4-URD-05",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
-      },
-      "status": "MISSING",
-      "transform_rule": "",
-      "value": null
     },
     {
       "confidence": "HIGH",
@@ -772,6 +1294,29 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-9f2dc80cf93ff5b2344d",
+      "field_name": "blueprint.steps.STEP-06",
+      "source": {
+        "observed_at": "",
+        "source_field": "step",
+        "source_key": "line:86",
+        "source_object": "流程蓝图_L3-URD_联合运营需求诊断_V1.3.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.3"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "l4_codes": [
+          "L4-URD-06"
+        ],
+        "step_name": "合规风险评估 🆕"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
       "evidence_id": "EVD-a0ef047919fe69c4b031",
       "field_name": "priority",
@@ -790,56 +1335,20 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-a18a9ae340d0e71748bf",
-      "field_name": "agent_d4_api_reach",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-a945c1247a4189f88c3f",
+      "field_name": "agent_d6_compliance",
       "source": {
         "observed_at": "",
-        "source_field": "agent_d4_api_reach",
-        "source_key": "L4-URD-04",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
+        "source_field": "agent_d6_compliance",
+        "source_key": "L4-URD-02",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
       },
-      "status": "MISSING",
+      "status": "ACTIVE",
       "transform_rule": "",
-      "value": null
-    },
-    {
-      "confidence": "HIGH",
-      "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-a71964efcbbf4b25068c",
-      "field_name": "agent_d4_api_reach",
-      "source": {
-        "observed_at": "",
-        "source_field": "agent_d4_api_reach",
-        "source_key": "L4-URD-03",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
-      },
-      "status": "MISSING",
-      "transform_rule": "",
-      "value": null
-    },
-    {
-      "confidence": "HIGH",
-      "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-a9b7c3b3b5a1ad7c6238",
-      "field_name": "agent_d5_fallback",
-      "source": {
-        "observed_at": "",
-        "source_field": "agent_d5_fallback",
-        "source_key": "L4-URD-01",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
-      },
-      "status": "MISSING",
-      "transform_rule": "",
-      "value": null
+      "value": 1
     },
     {
       "confidence": "HIGH",
@@ -863,24 +1372,6 @@
       "confidence": "HIGH",
       "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-aa83f9017a37170e75e1",
-      "field_name": "agent_d6_compliance",
-      "source": {
-        "observed_at": "",
-        "source_field": "agent_d6_compliance",
-        "source_key": "L4-URD-01",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
-      },
-      "status": "MISSING",
-      "transform_rule": "",
-      "value": null
-    },
-    {
-      "confidence": "HIGH",
-      "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
       "evidence_id": "EVD-abb8a313b01055d37ec5",
       "field_name": "gate2_grounded",
       "source": {
@@ -894,24 +1385,6 @@
       "status": "ACTIVE",
       "transform_rule": "",
       "value": "FAIL"
-    },
-    {
-      "confidence": "HIGH",
-      "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-afe9220e8978f8038227",
-      "field_name": "agent_d3_output_verify",
-      "source": {
-        "observed_at": "",
-        "source_field": "agent_d3_output_verify",
-        "source_key": "L4-URD-04",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
-      },
-      "status": "MISSING",
-      "transform_rule": "",
-      "value": null
     },
     {
       "confidence": "HIGH",
@@ -1006,20 +1479,20 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-bafa4e17c2330eab4c07",
-      "field_name": "agent_d4_api_reach",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-bb6bc58042dcbb78b29a",
+      "field_name": "agent_d3_output_verify",
       "source": {
         "observed_at": "",
-        "source_field": "agent_d4_api_reach",
-        "source_key": "L4-URD-01",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
+        "source_field": "agent_d3_output_verify",
+        "source_key": "L4-URD-03",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
       },
-      "status": "MISSING",
+      "status": "ACTIVE",
       "transform_rule": "",
-      "value": null
+      "value": 2
     },
     {
       "confidence": "HIGH",
@@ -1038,6 +1511,24 @@
       "status": "ACTIVE",
       "transform_rule": "",
       "value": "机构战略匹配度评估"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-bece930764ac61ebdb15",
+      "field_name": "agent_d3_output_verify",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d3_output_verify",
+        "source_key": "L4-URD-01",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": 2
     },
     {
       "confidence": "HIGH",
@@ -1061,24 +1552,6 @@
       "confidence": "HIGH",
       "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-c29deaa023d618ebd9dd",
-      "field_name": "agent_d1_input_struct",
-      "source": {
-        "observed_at": "",
-        "source_field": "agent_d1_input_struct",
-        "source_key": "L4-URD-01",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
-      },
-      "status": "MISSING",
-      "transform_rule": "",
-      "value": null
-    },
-    {
-      "confidence": "HIGH",
-      "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
       "evidence_id": "EVD-c62848e88b7996e6175e",
       "field_name": "l4_deliverable",
       "source": {
@@ -1096,56 +1569,38 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-caf497981cc0c058b414",
-      "field_name": "agent_d2_rule_clear",
-      "source": {
-        "observed_at": "",
-        "source_field": "agent_d2_rule_clear",
-        "source_key": "L4-URD-01",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
-      },
-      "status": "MISSING",
-      "transform_rule": "",
-      "value": null
-    },
-    {
-      "confidence": "HIGH",
-      "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-cf4234f8343c84313bbc",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-c650cdf6ed2aaacb15f4",
       "field_name": "agent_d1_input_struct",
       "source": {
         "observed_at": "",
         "source_field": "agent_d1_input_struct",
-        "source_key": "L4-URD-02",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
+        "source_key": "L4-URD-01",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
       },
-      "status": "MISSING",
+      "status": "ACTIVE",
       "transform_rule": "",
-      "value": null
+      "value": 2
     },
     {
       "confidence": "HIGH",
       "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-d1b5699133aad3fa39cb",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-ce7cd71d596c60ca4870",
       "field_name": "agent_d4_api_reach",
       "source": {
         "observed_at": "",
         "source_field": "agent_d4_api_reach",
         "source_key": "L4-URD-05",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
       },
-      "status": "MISSING",
+      "status": "ACTIVE",
       "transform_rule": "",
-      "value": null
+      "value": 1
     },
     {
       "confidence": "HIGH",
@@ -1168,20 +1623,38 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-d64e7ec90872b13b993f",
-      "field_name": "agent_d4_api_reach",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-d294e800c669bd867dde",
+      "field_name": "agent_d6_compliance",
       "source": {
         "observed_at": "",
-        "source_field": "agent_d4_api_reach",
-        "source_key": "L4-URD-02",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
+        "source_field": "agent_d6_compliance",
+        "source_key": "L4-URD-03",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
       },
-      "status": "MISSING",
+      "status": "ACTIVE",
       "transform_rule": "",
-      "value": null
+      "value": 2
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-d60b5d040827e938e5e9",
+      "field_name": "agent_d2_rule_clear",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d2_rule_clear",
+        "source_key": "L4-URD-03",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": 2
     },
     {
       "confidence": "HIGH",
@@ -1240,6 +1713,24 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-e0cc894ace7315f91584",
+      "field_name": "agent_d6_compliance",
+      "source": {
+        "observed_at": "",
+        "source_field": "agent_d6_compliance",
+        "source_key": "L4-URD-05",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": 1
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
       "evidence_id": "EVD-ec9a61cce935c3ed9870",
       "field_name": "priority",
@@ -1294,38 +1785,20 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-f4f23a5250e3ff8f1c9f",
-      "field_name": "agent_d2_rule_clear",
-      "source": {
-        "observed_at": "",
-        "source_field": "agent_d2_rule_clear",
-        "source_key": "L4-URD-03",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
-      },
-      "status": "MISSING",
-      "transform_rule": "",
-      "value": null
-    },
-    {
-      "confidence": "HIGH",
-      "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-f5091b1fafe72ebac43b",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-f4f5d101e8ee1cfd70ab",
       "field_name": "agent_d3_output_verify",
       "source": {
         "observed_at": "",
         "source_field": "agent_d3_output_verify",
-        "source_key": "L4-URD-03",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
+        "source_key": "L4-URD-04",
+        "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
       },
-      "status": "MISSING",
+      "status": "ACTIVE",
       "transform_rule": "",
-      "value": null
+      "value": 2
     },
     {
       "confidence": "HIGH",
@@ -1366,6 +1839,29 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-f681c4328f5ca1f4536b",
+      "field_name": "blueprint.steps.STEP-04",
+      "source": {
+        "observed_at": "",
+        "source_field": "step",
+        "source_key": "line:78",
+        "source_object": "流程蓝图_L3-URD_联合运营需求诊断_V1.3.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.3"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "l4_codes": [
+          "L4-URD-04"
+        ],
+        "step_name": "机构战略匹配度评估"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
       "evidence_id": "EVD-f685099bbf53ff6181c3",
       "field_name": "l4_name",
@@ -1385,24 +1881,6 @@
       "confidence": "HIGH",
       "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-f6d0aec075bad0756e4c",
-      "field_name": "agent_d5_fallback",
-      "source": {
-        "observed_at": "",
-        "source_field": "agent_d5_fallback",
-        "source_key": "L4-URD-04",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
-      },
-      "status": "MISSING",
-      "transform_rule": "",
-      "value": null
-    },
-    {
-      "confidence": "HIGH",
-      "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
       "evidence_id": "EVD-f78458385701732be65f",
       "field_name": "agentifiability",
       "source": {
@@ -1416,42 +1894,6 @@
       "status": "ACTIVE",
       "transform_rule": "",
       "value": "Hybrid"
-    },
-    {
-      "confidence": "HIGH",
-      "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-fe9961e512380016cc50",
-      "field_name": "agent_d1_input_struct",
-      "source": {
-        "observed_at": "",
-        "source_field": "agent_d1_input_struct",
-        "source_key": "L4-URD-05",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
-      },
-      "status": "MISSING",
-      "transform_rule": "",
-      "value": null
-    },
-    {
-      "confidence": "HIGH",
-      "conflict_note": "",
-      "evidence_class": "AUTHORITATIVE",
-      "evidence_id": "EVD-fed8c9eb499a3461e64e",
-      "field_name": "agent_d2_rule_clear",
-      "source": {
-        "observed_at": "",
-        "source_field": "agent_d2_rule_clear",
-        "source_key": "L4-URD-05",
-        "source_object": "process_analytics.dim_process",
-        "source_system": "PostgreSQL",
-        "source_version": ""
-      },
-      "status": "MISSING",
-      "transform_rule": "",
-      "value": null
     }
   ],
   "gates": {
@@ -1463,7 +1905,7 @@
           "rule_id": "A-001"
         },
         {
-          "detail": "D1-D6完整=0/6",
+          "detail": "D1-D6完整=5/6",
           "passed": false,
           "rule_id": "A-002"
         },
@@ -1508,7 +1950,7 @@
           "rule_id": "M-001"
         },
         {
-          "detail": "流程蓝图_L3-URD_联合运营需求诊断_V1.2.md",
+          "detail": "流程蓝图_L3-URD_联合运营需求诊断_V1.3.md",
           "passed": true,
           "rule_id": "M-002"
         },
@@ -1521,6 +1963,7 @@
       "status": "PASS"
     }
   },
+  "has_demo": false,
   "kpi_mappings": [
     {
       "contribution_weight": 0.4,
@@ -1533,8 +1976,8 @@
   ],
   "l2_capabilities": [
     {
-      "l2_code": "CAP-L2-2-S1",
-      "l2_name": "机构需求判断能力",
+      "l2_code": "L2-04.1",
+      "l2_name": "合作伙伴能力评估",
       "l3_code": "L3-URD"
     }
   ],
@@ -1543,22 +1986,22 @@
   "l4s": [
     {
       "d1_d6": {
-        "agent_d1_input_struct": null,
-        "agent_d2_rule_clear": null,
-        "agent_d3_output_verify": null,
-        "agent_d4_api_reach": null,
-        "agent_d5_fallback": null,
-        "agent_d6_compliance": null
+        "agent_d1_input_struct": 2,
+        "agent_d2_rule_clear": 1,
+        "agent_d3_output_verify": 2,
+        "agent_d4_api_reach": 1,
+        "agent_d5_fallback": 1,
+        "agent_d6_compliance": 1
       },
       "deliverable": "《重复机构检查报告》",
       "deliverable_type": "报告",
       "evidence_refs": {
-        "agent_d1_input_struct": "EVD-c29deaa023d618ebd9dd",
-        "agent_d2_rule_clear": "EVD-caf497981cc0c058b414",
-        "agent_d3_output_verify": "EVD-0a8adb1242e7f8e1256f",
-        "agent_d4_api_reach": "EVD-bafa4e17c2330eab4c07",
-        "agent_d5_fallback": "EVD-a9b7c3b3b5a1ad7c6238",
-        "agent_d6_compliance": "EVD-aa83f9017a37170e75e1",
+        "agent_d1_input_struct": "EVD-c650cdf6ed2aaacb15f4",
+        "agent_d2_rule_clear": "EVD-0b50661f03420be22c43",
+        "agent_d3_output_verify": "EVD-bece930764ac61ebdb15",
+        "agent_d4_api_reach": "EVD-104aafed36640d8fc74d",
+        "agent_d5_fallback": "EVD-6667c6c4fcf566258b22",
+        "agent_d6_compliance": "EVD-533b1e7f15d3091aede8",
         "agent_human_touchpoint": "EVD-79718e592769269fba0c",
         "agentifiability": "EVD-25e094922200c9645b9e",
         "l4_deliverable": "EVD-c62848e88b7996e6175e",
@@ -1572,22 +2015,22 @@
     },
     {
       "d1_d6": {
-        "agent_d1_input_struct": null,
-        "agent_d2_rule_clear": null,
-        "agent_d3_output_verify": null,
-        "agent_d4_api_reach": null,
-        "agent_d5_fallback": null,
-        "agent_d6_compliance": null
+        "agent_d1_input_struct": 2,
+        "agent_d2_rule_clear": 1,
+        "agent_d3_output_verify": 2,
+        "agent_d4_api_reach": 1,
+        "agent_d5_fallback": 1,
+        "agent_d6_compliance": 1
       },
       "deliverable": "《数字化成熟度报告》",
       "deliverable_type": "报告",
       "evidence_refs": {
-        "agent_d1_input_struct": "EVD-cf4234f8343c84313bbc",
-        "agent_d2_rule_clear": "EVD-0da011fceb2f8334a2d7",
-        "agent_d3_output_verify": "EVD-70910a5427d3353b6246",
-        "agent_d4_api_reach": "EVD-d64e7ec90872b13b993f",
-        "agent_d5_fallback": "EVD-3878ff4f7dd9e54fa44f",
-        "agent_d6_compliance": "EVD-6ada067d07f526e4afa4",
+        "agent_d1_input_struct": "EVD-16284c36257657c01569",
+        "agent_d2_rule_clear": "EVD-432939b9ec09893f1344",
+        "agent_d3_output_verify": "EVD-0c7d406982881da3eb92",
+        "agent_d4_api_reach": "EVD-2c3a6a470d06ff62aab0",
+        "agent_d5_fallback": "EVD-37efb1fbae93039762e8",
+        "agent_d6_compliance": "EVD-a945c1247a4189f88c3f",
         "agent_human_touchpoint": "EVD-6dcc48c0024f97b3bba1",
         "agentifiability": "EVD-dfc3b8c7757fed88a0de",
         "l4_deliverable": "EVD-f5637b6f1de9dda04621",
@@ -1601,22 +2044,22 @@
     },
     {
       "d1_d6": {
-        "agent_d1_input_struct": null,
-        "agent_d2_rule_clear": null,
-        "agent_d3_output_verify": null,
-        "agent_d4_api_reach": null,
-        "agent_d5_fallback": null,
-        "agent_d6_compliance": null
+        "agent_d1_input_struct": 2,
+        "agent_d2_rule_clear": 2,
+        "agent_d3_output_verify": 2,
+        "agent_d4_api_reach": 2,
+        "agent_d5_fallback": 1,
+        "agent_d6_compliance": 2
       },
       "deliverable": "《商机规模预测》",
       "deliverable_type": "方案",
       "evidence_refs": {
-        "agent_d1_input_struct": "EVD-349265e1d11428cc5af4",
-        "agent_d2_rule_clear": "EVD-f4f23a5250e3ff8f1c9f",
-        "agent_d3_output_verify": "EVD-f5091b1fafe72ebac43b",
-        "agent_d4_api_reach": "EVD-a71964efcbbf4b25068c",
-        "agent_d5_fallback": "EVD-01f6a36723d71df9603a",
-        "agent_d6_compliance": "EVD-18829342777453410427",
+        "agent_d1_input_struct": "EVD-4fc61b9cd3ecaec52d67",
+        "agent_d2_rule_clear": "EVD-d60b5d040827e938e5e9",
+        "agent_d3_output_verify": "EVD-bb6bc58042dcbb78b29a",
+        "agent_d4_api_reach": "EVD-44c8e1b71ebede50ca20",
+        "agent_d5_fallback": "EVD-4062fb024f36c049b3d4",
+        "agent_d6_compliance": "EVD-d294e800c669bd867dde",
         "agent_human_touchpoint": "EVD-b9e48e71855a78477ba4",
         "agentifiability": "EVD-58994775f59954f73fe8",
         "l4_deliverable": "EVD-c15badfcd31949294778",
@@ -1630,22 +2073,22 @@
     },
     {
       "d1_d6": {
-        "agent_d1_input_struct": null,
-        "agent_d2_rule_clear": null,
-        "agent_d3_output_verify": null,
-        "agent_d4_api_reach": null,
-        "agent_d5_fallback": null,
-        "agent_d6_compliance": null
+        "agent_d1_input_struct": 2,
+        "agent_d2_rule_clear": 1,
+        "agent_d3_output_verify": 2,
+        "agent_d4_api_reach": 1,
+        "agent_d5_fallback": 1,
+        "agent_d6_compliance": 1
       },
       "deliverable": "《战略匹配度评分》",
       "deliverable_type": "方案",
       "evidence_refs": {
-        "agent_d1_input_struct": "EVD-0715a4f4d753d0de6007",
-        "agent_d2_rule_clear": "EVD-13c18de792aabb9fdf99",
-        "agent_d3_output_verify": "EVD-afe9220e8978f8038227",
-        "agent_d4_api_reach": "EVD-a18a9ae340d0e71748bf",
-        "agent_d5_fallback": "EVD-f6d0aec075bad0756e4c",
-        "agent_d6_compliance": "EVD-7b991ad64720ef1514dd",
+        "agent_d1_input_struct": "EVD-49ce34c0f39b4f2d3cd4",
+        "agent_d2_rule_clear": "EVD-55f256465751d8e1d001",
+        "agent_d3_output_verify": "EVD-f4f5d101e8ee1cfd70ab",
+        "agent_d4_api_reach": "EVD-5ce13025055aa1e24c6c",
+        "agent_d5_fallback": "EVD-8783d0276fd4323ae782",
+        "agent_d6_compliance": "EVD-7bd6418634bc662013ad",
         "agent_human_touchpoint": "EVD-373f54f943489ffa5295",
         "agentifiability": "EVD-f78458385701732be65f",
         "l4_deliverable": "EVD-ba4c322b57a1329ce60e",
@@ -1659,22 +2102,22 @@
     },
     {
       "d1_d6": {
-        "agent_d1_input_struct": null,
-        "agent_d2_rule_clear": null,
-        "agent_d3_output_verify": null,
-        "agent_d4_api_reach": null,
-        "agent_d5_fallback": null,
-        "agent_d6_compliance": null
+        "agent_d1_input_struct": 2,
+        "agent_d2_rule_clear": 1,
+        "agent_d3_output_verify": 2,
+        "agent_d4_api_reach": 1,
+        "agent_d5_fallback": 1,
+        "agent_d6_compliance": 1
       },
       "deliverable": "《重复机构检查报告》+《数字化成熟度报告》+《商机规模预测》+《战略匹配度评分》。P1熔断: 批次8确认联合运营判断需长期合作后才能识别，无前置诊断标准",
       "deliverable_type": "报告",
       "evidence_refs": {
-        "agent_d1_input_struct": "EVD-fe9961e512380016cc50",
-        "agent_d2_rule_clear": "EVD-fed8c9eb499a3461e64e",
-        "agent_d3_output_verify": "EVD-012f159b06776e8a76bd",
-        "agent_d4_api_reach": "EVD-d1b5699133aad3fa39cb",
-        "agent_d5_fallback": "EVD-0664a22f05ed502d5a0a",
-        "agent_d6_compliance": "EVD-987f1d5dc195ad2add83",
+        "agent_d1_input_struct": "EVD-94e94325473d4d5d3d5a",
+        "agent_d2_rule_clear": "EVD-915a575d500db9c66945",
+        "agent_d3_output_verify": "EVD-1ac9db266d0ee5bdb7c2",
+        "agent_d4_api_reach": "EVD-ce7cd71d596c60ca4870",
+        "agent_d5_fallback": "EVD-2a6c5c3848ec25c32cc6",
+        "agent_d6_compliance": "EVD-e0cc894ace7315f91584",
         "agent_human_touchpoint": "EVD-70e4aa66bd71e39f6abf",
         "agentifiability": "EVD-1f2d40257cb7d4271214",
         "l4_deliverable": "EVD-224451d6a307e1efb242",
