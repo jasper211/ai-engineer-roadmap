@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>L3-COM · 佣金全链路管理 · IRI结构版</title>
+<style>
+:root{--bg:#f7f6f2;--surface:#fff;--surface2:#f0eee7;--border:#ddd8cc;--text:#1c2029;--muted:#6d7280;--faint:#9a9d8f;--accent:#b8631f;--accentSoft:#b8631f14;--auto:#1f9d76;--aug:#3a72b8;--hybrid:#b8821f;--human:#b44b4b;--shadow:0 1px 2px #14140a0f,0 8px 24px #14140a0d}
+:root[data-theme=dark]{--bg:#10141c;--surface:#171d29;--surface2:#1e2635;--border:#2a3345;--text:#e6e9f0;--muted:#8b93a7;--faint:#5c6479;--accent:#e0a054;--accentSoft:#e0a05420;--auto:#45c9a0;--aug:#5b93d9;--hybrid:#e0a83f;--human:#e27777;--shadow:0 12px 32px #0006}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;padding:28px 32px 64px;background:var(--bg);color:var(--text);font:14px/1.55 ui-sans-serif,-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}.wrap{max-width:1180px;margin:auto}.mono{font-family:ui-monospace,"SF Mono",Consolas,monospace}.version{padding:9px 12px;border:1px solid color-mix(in srgb,var(--accent) 35%,var(--border));border-radius:9px;background:var(--accentSoft);color:var(--muted);font-size:11.5px}.version b{color:var(--accent)}header{margin:22px 0}.eyebrow{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);font-weight:600}h1{font-size:27px;margin:5px 0}.subtitle{max-width:76ch;color:var(--muted)}.path{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px;color:var(--muted);font-size:12px}.path b{color:var(--text)}.arrow{color:var(--faint)}
+.views{position:sticky;top:8px;z-index:20;display:flex;align-items:center;gap:7px;padding:8px;margin-bottom:18px;border:1px solid var(--border);border-radius:10px;background:color-mix(in srgb,var(--surface) 92%,transparent);box-shadow:var(--shadow);backdrop-filter:blur(10px)}button,select{font:inherit}.view-btn,.btn{border:1px solid var(--border);border-radius:7px;padding:6px 10px;background:var(--surface2);color:var(--muted);cursor:pointer}.view-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}.theme-btn{margin-left:auto}
+.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin:20px 0}.kpi{padding:13px 14px;border:1px solid var(--border);border-radius:10px;background:var(--surface);box-shadow:var(--shadow)}.kpi b{display:block;font:600 21px ui-monospace;color:var(--text)}.kpi span{font-size:11px;color:var(--muted)}.kpi.good b{color:var(--auto)}.kpi.warn b{color:var(--hybrid)}.kpi.risk b{color:var(--human)}.terms{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0 0 20px}.term{padding:9px 10px;border:1px solid var(--border);border-radius:8px;background:var(--surface);font-size:10.5px;color:var(--muted)}.term b{display:block;font-size:11px}
+.panel{padding:18px 20px;margin-bottom:16px;border:1px solid var(--border);border-radius:12px;background:var(--surface);box-shadow:var(--shadow)}.panel-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:14px}.panel-title{display:flex;align-items:center;gap:8px;font-size:14.5px;font-weight:700}.tag{padding:2px 7px;border:1px solid var(--border);border-radius:5px;background:var(--surface2);color:var(--faint);font-size:10px;text-transform:uppercase}.source{font-size:11px;color:var(--faint)}.logic{padding:8px 10px;margin:0 0 12px;border-left:3px solid var(--hybrid);border-radius:0 7px 7px 0;background:color-mix(in srgb,var(--hybrid) 10%,transparent);color:var(--muted);font-size:11px}
+.tier{display:inline-block;padding:3px 8px;border-radius:999px;font:700 10px ui-monospace}.Auto{color:var(--auto);background:color-mix(in srgb,var(--auto) 12%,transparent)}.Aug{color:var(--aug);background:color-mix(in srgb,var(--aug) 12%,transparent)}.Hybrid{color:var(--hybrid);background:color-mix(in srgb,var(--hybrid) 12%,transparent)}.Human{color:var(--human);background:color-mix(in srgb,var(--human) 12%,transparent)}
+.blueprint{overflow-x:auto;padding:8px 3px}.track{display:flex;align-items:center;min-width:1600px;gap:8px}.flow-node{flex:0 0 142px;min-height:128px;padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--surface2);text-align:center}.flow-node .code{color:var(--faint);font:9px ui-monospace}.flow-node strong{display:block;margin:5px 0;font-size:12px}.flow-node p{margin:0 0 7px;color:var(--muted);font-size:10px}.flow-arrow{flex:0 0 22px;text-align:center;color:var(--accent);font-size:20px}.validation{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.validation div{padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);font-size:11px}.validation .gate{border-color:color-mix(in srgb,var(--human) 50%,var(--border));background:color-mix(in srgb,var(--human) 8%,var(--surface))}
+.heat-wrap{overflow:auto}.heat{display:grid;grid-template-columns:230px repeat(4,minmax(130px,1fr));min-width:820px;border:1px solid var(--border);border-radius:8px;overflow:hidden}.heat>*{padding:8px;border-right:1px solid var(--border);border-bottom:1px solid var(--border)}.heat .head{background:var(--surface2);font-size:11px;font-weight:700}.heat .row{font-size:10px}.heat .row b{display:block;font-size:11px}.heat .cell{text-align:center;font-size:10px}.heat .empty{background:color-mix(in srgb,var(--surface2) 50%,transparent);color:var(--faint)}.heat .control{background:color-mix(in srgb,var(--hybrid) 12%,transparent);color:var(--hybrid)}.heat .hard{background:color-mix(in srgb,var(--human) 12%,transparent);color:var(--human);font-weight:700}
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:10px 0}.toolbar-left,.toolbar-right{display:flex;gap:8px;align-items:center}.stat{font-size:11px;color:var(--muted)}.kanban{display:grid;grid-template-columns:repeat(4,minmax(210px,1fr));gap:9px;overflow-x:auto}.column{min-height:240px;padding:8px;border:1px solid var(--border);border-radius:9px;background:var(--surface2)}.column h3{display:flex;justify-content:space-between;margin:0;font-size:11px}.card{padding:8px;margin-top:7px;border:1px solid var(--border);border-radius:7px;background:var(--surface);cursor:grab}.card.changed{border-color:var(--accent);box-shadow:0 0 0 1px var(--accentSoft)}.card .meta{font:9px ui-monospace;color:var(--faint)}.card strong{display:block;margin:3px 0;font-size:11px}.card p{margin:2px 0;color:var(--muted);font-size:9.5px}.card select{width:100%;margin-top:5px;border:0;border-top:1px solid var(--border);padding-top:5px;background:transparent;color:var(--text)}
+.quadrants{display:grid;grid-template-columns:repeat(2,1fr);gap:4px;padding:4px;border:2px solid #777568;border-radius:9px;background:#777568}.quad{min-height:220px;padding:8px;border-radius:6px}.q1{background:#ccebdd}.q2{background:#f6e4b8}.q3{background:#d9e6f6}.q4{background:#e3e4e8}:root[data-theme=dark] .quad{filter:brightness(.55)}.quad h3{margin:0;font-size:11px;color:#26303b}.qcard{padding:7px;margin-top:6px;border:1px solid #c8c8c0;border-radius:6px;background:#fff;color:#202632;cursor:grab}.qcard.changed{border-color:#b8631f}.qcard b{font-size:10px}.qcard p{margin:3px 0;font-size:9px;color:#68717c}
+.delivery-map{display:grid;grid-template-columns:180px 16px 1fr 16px 210px;align-items:stretch}.map-side{padding:12px;border:1px solid var(--border);border-radius:9px;background:var(--surface2)}.map-side .kicker,.hub .kicker{font-size:9px;color:var(--faint);text-transform:uppercase}.map-side strong{display:block;margin:5px 0;font-size:12px}.map-side p{font-size:10px;color:var(--muted)}.map-link{align-self:center;border-top:2px solid var(--accent)}.field{padding:12px;border:1px solid var(--border);border-radius:12px}.hub{padding:12px;text-align:center;border:1px solid color-mix(in srgb,var(--accent) 40%,var(--border));border-radius:9px;background:var(--accentSoft)}.hub strong{display:block}.delivery-nodes{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.delivery-node{padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--surface2)}.delivery-node.core{border-color:color-mix(in srgb,var(--accent) 45%,var(--border))}.delivery-node.risk{border-color:color-mix(in srgb,var(--human) 50%,var(--border))}.node-top{display:flex;justify-content:space-between}.node-code{font:9px ui-monospace;color:var(--faint)}.node-name{margin:5px 0;font-weight:700;font-size:11px}.node-cap,.node-ai,.node-quality{margin-top:5px;font-size:9.5px;color:var(--muted)}.node-ai{color:var(--aug)}.vn-list{display:grid;gap:7px}.vn{padding:8px;border:1px solid var(--border);border-radius:7px;background:var(--surface)}.vn.fused{border-color:var(--human)}.vn b{display:block;font-size:10px}.vn span{font-size:9px;color:var(--muted)}
+details summary{cursor:pointer;font-weight:700}.table-wrap{overflow:auto;margin-top:12px}table{width:100%;border-collapse:collapse;font-size:10px}th,td{padding:7px;border-bottom:1px solid var(--border);text-align:left;vertical-align:top}th{color:var(--muted)}.layer7{padding:22px;margin-top:18px;border:1px solid color-mix(in srgb,var(--accent) 45%,var(--border));border-radius:12px;background:var(--surface);box-shadow:var(--shadow)}.layer7 h2{margin:4px 0}.finding{display:grid;grid-template-columns:28px 1fr;gap:10px;padding:12px 0;border-bottom:1px solid var(--border)}.finding:last-child{border:0}.finding-n{width:25px;height:25px;display:grid;place-items:center;border-radius:50%;background:var(--accent);color:#fff;font-weight:700}.finding h3{margin:0;font-size:13px}.finding p{margin:3px 0;color:var(--muted);font-size:11px}footer{text-align:center;padding:22px;color:var(--faint);font-size:10px}
+[data-view-only]{display:none}body[data-view=business] [data-panel=C],body[data-view=business] [data-panel=D],body[data-view=business] [data-panel=B],body[data-view=business] [data-panel=F]{display:none}body[data-view=workshop] [data-panel=A],body[data-view=workshop] [data-panel=B],body[data-view=workshop] [data-panel=E],body[data-view=workshop] [data-panel=F],body[data-view=workshop] .layer7{display:none}
+@media(max-width:920px){body{padding:18px 14px}.kpis{grid-template-columns:repeat(3,1fr)}.terms{grid-template-columns:repeat(2,1fr)}.delivery-map{grid-template-columns:1fr}.map-link{height:14px;border-top:0;border-left:2px solid var(--accent);justify-self:center}.delivery-nodes{grid-template-columns:repeat(2,1fr)}}@media(max-width:600px){.kpis,.terms,.delivery-nodes,.validation,.quadrants{grid-template-columns:1fr}.panel-head{display:block}}
+</style>
+</head>
+<body data-view="analysis">
+<div class="wrap">
+  <div class="version"><b>IRI结构版</b> · 采用IRI的阅读顺序、受众切换、热力图、工作坊和交付物地图；事实内容来自COM最新证据快照。</div>
+  <header>
+    <div class="eyebrow">VNW流程模型 demo · 数据库事实 + 正式复核 + 新版引用源 + 工作坊共识</div>
+    <h1>L3-COM · 佣金全链路管理</h1>
+    <p class="subtitle">围绕佣金政策、核算、对账、实派、付款、归档与合规拦截，重塑18项L4交付物的生产逻辑；不把AI能力等同于替代整个岗位或L2能力。</p>
+    <div class="path"><span><b>JF-07</b> 佣金合规族</span><span class="arrow">→</span><span>无直接L2 · 横切支撑</span><span class="arrow">→</span><span><b>L3-COM</b></span><span class="arrow">→</span><span>5个PAY价值节点 · 2个熔断</span></div>
+  </header>
+  <nav class="views"><span class="source">受众视图</span><button class="view-btn" data-view="business">业务负责人</button><button class="view-btn" data-view="workshop">工作坊</button><button class="view-btn active" data-view="analysis">分析全景</button><button class="btn theme-btn" id="theme">深色</button></nav>
+  <section class="kpis">
+    <div class="kpi"><b>18</b><span>L4活动总数</span></div><div class="kpi good"><b>18/18</b><span>D1-D6已复核</span></div>
+    <div class="kpi"><b>4/10/4</b><span>Auto/Aug/Hybrid</span></div><div class="kpi risk"><b>2</b><span>熔断价值节点</span></div>
+    <div class="kpi warn"><b>11</b><span>VN级KPI</span></div><div class="kpi risk"><b>M✓ E✓ A×</b><span>Gate状态</span></div>
+  </section>
+  <section class="terms"><div class="term"><b class="Human">Human</b>关键判断、资金安全或最终责任由人完成。</div><div class="term"><b class="Aug">Aug</b>AI识别、提示或起草，人负责确认。</div><div class="term"><b class="Hybrid">Hybrid</b>AI执行标准段，人处理判断与例外。</div><div class="term"><b class="Auto">Auto</b>输入、规则和质量门满足后条件式自动。</div></section>
+
+  <section class="panel" data-panel="A">
+    <div class="panel-head"><div class="panel-title">面板 A · L3流程叙事 <span class="tag">主视图</span></div><div class="source">流程蓝图COM V1.0 + 368条复核表</div></div>
+    <div class="logic">蓝图未显式给出判断菱形，本版不编造决策点。政策校准子链由“保司佣金政策更新事件”触发；COM-07/09/17作为支链和控制点保留。</div>
+    <div class="blueprint"><div class="track" id="flow"></div></div>
+    <div class="validation"><div><b>一级 · COM-11</b><br>自动对账与差异对照</div><div class="gate"><b>二级 · COM-13</b><br>资金安全人工签字，不得自动放行</div><div><b>三级 · COM-17</b><br>合规角色独立评估</div></div>
+  </section>
+
+  <section class="panel" data-panel="B">
+    <div class="panel-head"><div class="panel-title">面板 B · 人工控制点与AI协作地图 <span class="tag">热力图</span></div><div class="source">岗位族v6.1 + 蓝图RACI + 正式复核</div></div>
+    <p class="logic">JF-07只提供L3级岗位归属，没有逐L4岗位绑定。热力图中的A/R来自蓝图材料，强制关卡和核心介入点来自368条复核表。</p>
+    <div class="heat-wrap"><div class="heat" id="heat"></div></div>
+  </section>
+
+  <section class="panel" data-panel="C">
+    <div class="panel-head"><div class="panel-title">面板 C · AI任务卡片工作坊 <span class="tag">Workshop Kanban</span></div><div class="source">初始位置=正式复核Tier · 调整=本地共识</div></div>
+    <p class="logic">每张卡是一项L4交付物任务，不在没有来源时继续拆细。橙色边框表示工作坊判断与正式复核不同。</p>
+    <div class="toolbar"><div class="toolbar-left"><label class="stat">按交付物筛选</label><select id="filter"><option value="all">全部L4</option></select></div><div class="toolbar-right"><span id="task-stat" class="stat"></span><button class="btn" id="task-reset">恢复正式复核</button></div></div>
+    <div class="kanban" id="kanban"></div>
+  </section>
+
+  <section class="panel" data-panel="D">
+    <div class="panel-head"><div class="panel-title">面板 D · AI机会优先级矩阵</div><div class="source">D1-D6支持可行性 · 逐L4业务价值仍缺失</div></div>
+    <p class="logic">没有逐L4价值数据，因此18项初始统一进入“待补价值评估”，不制造虚假坐标。拖动后只代表工作坊共识假设。</p>
+    <div class="quadrants" id="quadrants"></div>
+    <div class="toolbar"><span id="matrix-stat" class="stat"></span><button class="btn" id="matrix-reset">恢复待补价值评估</button></div>
+  </section>
+
+  <section class="panel" data-panel="E">
+    <div class="panel-head"><div class="panel-title">面板 E · L4交付物地图 <span class="tag">Delivery Map</span></div><div class="source">数据库L4 + 正式复核 + D1/D2新版VN</div></div>
+    <p class="logic">岗位族v6.1明确JF-07是横切支撑且无直接L2。AI设计落在每个L4交付物的具体生产、检查和控制逻辑上。</p>
+    <div class="delivery-map">
+      <div class="map-side"><div class="kicker">上游归属</div><strong>JF-07 · 佣金合规族</strong><p>佣金管理与合规岗承接；在岗5人。无直接L2，不补造大能力名称。</p></div><div class="map-link"></div>
+      <div class="field"><div class="hub"><div class="kicker">中心目标 · L3-COM</div><strong>形成可核算、可对账、可实派、可追溯且合规的佣金闭环</strong></div><div class="delivery-nodes" id="deliveries"></div></div><div class="map-link"></div>
+      <div class="map-side"><div class="kicker">向后服务 · 价值节点</div><div class="vn-list" id="vns"></div></div>
+    </div>
+  </section>
+
+  <section class="panel" data-panel="F"><details><summary>面板 F · SSOT、正式复核与输入证据（点击展开）</summary><div class="table-wrap"><table><thead><tr><th>L4</th><th>交付物</th><th>数据库Tier</th><th>复核Tier</th><th>D1-D6 / 总分</th><th>控制/冲突</th></tr></thead><tbody id="raw"></tbody></table></div><p class="logic">数据库COM的VN-L4桥接仍为0；页面中的5个VN关系来自D1 V3.44/D2 V2.11引用源。低优先级输入没有覆盖数据库原值。</p></details></section>
+
+  <section class="layer7">
+    <span class="tag">负责人决策</span><h2>L3-COM · 本轮需要决定什么</h2>
+    <div class="finding"><div class="finding-n">1</div><div><h3>先解除两个熔断</h3><p>VN-PAY-04需完成IA规则代码化、回执统一归档和阈值监控；VN-PAY-06需完成四类协议参数中心化。未解除前不进入AIT正式移交。</p></div></div>
+    <div class="finding"><div class="finding-n">2</div><div><h3>先验证政策校准和自动对账子链</h3><p>建议从COM-16→01→02和COM-11开始小范围验证，观察输入标准化、差异识别、对账效率和输出准确性。</p></div></div>
+    <div class="finding"><div class="finding-n">3</div><div><h3>资金与合规责任不可绕过</h3><p>COM-13、COM-14保留资金安全人工关卡，COM-17保持独立合规评估；AI只准备证据、校验规则和生成草稿。</p></div></div>
+    <div class="finding"><div class="finding-n">4</div><div><h3>补齐两项SSOT结构</h3><p>D1/D2已有5个VN引用但数据库桥接为0；岗位族只有L3级归属。需要补VN-L4桥接和逐L4责任岗位，再决定Gate A。</p></div></div>
+  </section>
+  <footer>数据库dim_process（18条）· L4两阶段复核v1.0（COM 18条）· 岗位族v6.1 · D1 V3.44 · D2 V2.11 · KPI registry/crosswalk v2.1 · 蓝图COM V1.0 · 2026-07-29</footer>
+</div>
+<script>
+const L=[
+["01","佣金政策接收与校准","《标准化政策库》","Auto","Aug",[2,2,2,2,2,2],12,"专业审批",1,0,""],
+["02","差异化拆解与验证","《各细分市场配置》","Auto","Aug",[2,2,2,2,2,2],12,"专业审批",1,0,""],
+["03","佣金整合与外发","《佣金外发凭证》","Auto","Auto",[3,3,3,3,2,2],16,"复盘优化/异常介入",1,0,""],
+["04","年度预算与规划","《年度预算与规划》","Hybrid","Hybrid",[2,1,1,1,1,1],7,"战略决策",1,0,""],
+["05","追溯调整与退保倒扣","《追溯调整与退保倒扣记录》","Aug","Auto",[3,3,3,3,2,2],16,"异常介入",1,0,""],
+["06","佣金税务处理","《佣金税务处理记录》","Auto","Auto",[3,3,3,3,2,2],16,"合规签字",1,0,"语义偏常规签字，建议复核是否降Aug"],
+["07","佣金争议处理","《佣金争议处理记录》","Hybrid","Hybrid",[2,0,1,1,1,1],6,"跨部门协调/专业审批",1,0,"D2否决权"],
+["08","跨保司佣金整合","《跨保司佣金整合记录》","Auto","Aug",[2,2,2,2,2,2],12,"专业审批",1,0,""],
+["09","佣金异常检测反欺诈","《佣金异常检测反欺诈记录》","Aug","Auto",[3,3,3,3,2,2],16,"异常介入",1,0,""],
+["10","保单信息整合与应收核算","《应收明细清单》","Auto","Aug",[2,3,2,2,1,1],11,"无明显判断成分",0,0,""],
+["11","银行到账确认与实收对账","《实收清单》+《差异对照表》","Auto","Aug",[2,2,2,2,1,1],10,"异常介入",1,0,"一级自动对账评估"],
+["12","应派金额拆分与渠道对账","《应派清单》+《理财师对账单》","Auto","Aug",[2,3,2,2,1,1],11,"无明显判断成分",0,0,""],
+["13","实派清单确认与财务制单","《实派执行表》","Auto","Aug",[2,2,2,1,1,2],10,"专业审批",1,1,"资金安全强制人工关卡"],
+["14","财务付款执行","银行转账回执/支票存根","Auto","Aug",[2,2,3,2,1,2],12,"专业审批/资金安全",1,1,"资金安全强制人工关卡"],
+["15","付款回执归档与台账更新","《转介费派发确认台账》","Auto","Hybrid",[2,2,2,1,1,1],9,"无明显判断成分",0,0,""],
+["16","佣金数据导入与格式转换","结构化佣金数据表","Auto","Aug",[2,2,2,2,1,1],10,"无明显判断成分",0,0,"可能按保司拆分Skill"],
+["17","IA合规拦截引擎","Excel+回执PDF+IA规则日志","Aug","Aug",[3,2,2,2,2,3],14,"合规签字",1,0,"三级合规独立评估"],
+["18","收款映射版本管理","《收款映射版本管理记录》","Auto","Hybrid",[2,1,2,1,1,1],8,"专业审批",1,0,""]
+].map(x=>({code:"L4-COM-"+x[0],name:x[1],deliverable:x[2],db:x[3],tier:x[4],d:x[5],score:x[6],type:x[7],core:!!x[8],money:!!x[9],note:x[10]}));
+const chain=["16","01","02","10","11","12","03","13","14","15"].map(n=>"L4-COM-"+n);
+const roles={"01":["刘敏然","Cici"],"02":["刘敏然","JoJo"],"03":["蔡依娜","NANA"],"04":["财务","财务"],"05":["中台支持部","中台支持部"],"06":["中台支持部","中台支持部"],"07":["中台支持部","中台支持部"],"08":["刘敏然","Cici/JoJo"],"09":["中台支持部","中台支持部"],"10":["中台支持部","Cici/JoJo/娜娜"],"11":["财务","财务"],"12":["蔡依娜","蔡依娜"],"13":["财务","财务"],"14":["财务","JorJor/NANA/SOSO"],"15":["财务","各牌照财务"],"16":["中台支持部","JoJo"]};
+const V=[
+["VN-PAY-01","市场佣金制作产出包","01/02","PARTIAL",0,"佣金回收周期；口径准确率"],["VN-PAY-02","佣金实收确认表","10/11","PARTIAL",0,"对账差异率；对账时效"],["VN-PAY-03","应派清单三件套","03/12","PARTIAL",0,"应派准确率；争议关闭周期"],["VN-PAY-04","转介费派发确认台账","03/14/15/17","FAIL",1,"非持牌≤50%；同行支付≤88%；实派时效"],["VN-PAY-06","理财师综合应派计算清单","03+协议参数","FAIL",1,"理财师NPS；一次通过率"]];
+const by=Object.fromEntries(L.map(x=>[x.code,x]));
+flow.innerHTML=chain.map((c,i)=>{const x=by[c];return `<div class="flow-node"><div class="code">${x.code}</div><strong>${x.name}</strong><p>${x.deliverable}</p><span class="tier ${x.tier}">${x.tier}</span></div>${i<chain.length-1?'<div class="flow-arrow">→</div>':''}`}).join("");
+const heatHead=["<div class='head'></div>","<div class='head'>主责A<br><small>蓝图补充</small></div>","<div class='head'>执行R<br><small>蓝图补充</small></div>","<div class='head'>核心介入<br><small>正式复核</small></div>","<div class='head'>资金/合规关卡<br><small>正式复核</small></div>"].join("");
+heat.innerHTML=heatHead+L.map(x=>{const r=roles[x.code.slice(-2)]||["未绑定","未绑定"];return `<div class="row"><span class="mono">${x.code}</span><b>${x.name}</b></div><div class="cell ${r[0]==="未绑定"?"empty":"control"}">${r[0]}</div><div class="cell ${r[1]==="未绑定"?"empty":"control"}">${r[1]}</div><div class="cell ${x.core?"control":"empty"}">${x.core?x.type:"非核心"}</div><div class="cell ${x.money||x.code.endsWith("17")?"hard":"empty"}">${x.money?"资金强制":x.code.endsWith("17")?"合规独立":"—"}</div>`}).join("");
+const capability=x=>x.type.includes("战略")?"预算判断、情景分析、负责人裁决":x.type.includes("合规")?"规则校验、证据留痕、合规复核":x.type.includes("异常")?"差异识别、异常分类、升级闭环":x.type.includes("专业")?"规则执行、质量检查、专业审批":"多源整理、格式转换、结果核对";
+deliveries.innerHTML=L.map(x=>`<div class="delivery-node ${x.core?"core":""} ${x.money?"risk":""}"><div class="node-top"><span class="node-code">${x.code}</span><span class="tier ${x.tier}">${x.tier}</span></div><div class="node-name">${x.deliverable}</div><div class="node-cap"><b>具体能力：</b>${capability(x)}</div><div class="node-ai"><b>✦ AI重塑：</b>${x.tier==="Auto"?"条件满足后自动生成并校验":x.tier==="Aug"?"AI识别、起草和检查，人确认":x.tier==="Hybrid"?"AI执行标准段，人处理判断与例外":"人工主导"}</div><div class="node-quality">质量锚点：D1-D6 ${x.d.join("/")} · ${x.score}/18${x.note?" · "+x.note:""}</div></div>`).join("");
+vns.innerHTML=V.map(x=>`<div class="vn ${x[4]?"fused":""}"><b>${x[0]} · ${x[1]}</b><span>${x[3]}${x[4]?" · 熔断":""} · L4 ${x[2]}<br>KPI：${x[5]}</span></div>`).join("");
+raw.innerHTML=L.map(x=>`<tr><td>${x.code}<br>${x.name}</td><td>${x.deliverable}</td><td><span class="tier ${x.db}">${x.db}</span></td><td><span class="tier ${x.tier}">${x.tier}</span></td><td>${x.d.join("/")} · ${x.score}/18</td><td>${x.money?"资金强制；":""}${x.note||"—"}${x.db!==x.tier?"<br><b>Tier冲突</b>":""}</td></tr>`).join("");
+const cols=[["Human","人工主导"],["Hybrid","人机协同"],["Aug","AI增强"],["Auto","条件式自动"]],keyC="vnw:l3-model:iri-style:L3-COM:C",keyD="vnw:l3-model:iri-style:L3-COM:D";
+const load=(k,d)=>{try{return {...d,...JSON.parse(localStorage.getItem(k)||"{}")}}catch{return d}},base=Object.fromEntries(L.map(x=>[x.code,x.tier])),state=load(keyC,base);
+L.forEach(x=>filter.insertAdjacentHTML("beforeend",`<option value="${x.code}">${x.code} · ${x.deliverable}</option>`));
+function cards(){kanban.innerHTML=cols.map(c=>`<div class="column" data-col="${c[0]}"><h3><span>${c[1]}</span><span>${L.filter(x=>state[x.code]===c[0]).length}</span></h3></div>`).join("");L.filter(x=>filter.value==="all"||filter.value===x.code).forEach(x=>{const el=document.createElement("article");el.className="card"+(state[x.code]!==x.tier?" changed":"");el.draggable=true;el.dataset.id=x.code;el.innerHTML=`<div class="meta">${x.code} · 复核${x.tier}/数据库${x.db}</div><strong>${x.deliverable}</strong><p>${x.type} · ${x.score}/18${x.money?" · 资金强制":""}</p><select>${cols.map(c=>`<option value="${c[0]}" ${state[x.code]===c[0]?"selected":""}>${c[1]}</option>`).join("")}</select>`;el.querySelector("select").onchange=e=>{state[x.code]=e.target.value;localStorage.setItem(keyC,JSON.stringify(state));cards()};el.ondragstart=e=>e.dataTransfer.setData("text/plain",x.code);kanban.querySelector(`[data-col="${state[x.code]}"]`).append(el)});kanban.querySelectorAll(".column").forEach(c=>{c.ondragover=e=>e.preventDefault();c.ondrop=e=>{state[e.dataTransfer.getData("text/plain")]=c.dataset.col;localStorage.setItem(keyC,JSON.stringify(state));cards()}});taskStat.textContent=`${L.filter(x=>state[x.code]!==x.tier).length}项工作坊调整 · 已本地保存`}
+filter.onchange=cards;taskReset.onclick=()=>{L.forEach(x=>state[x.code]=x.tier);localStorage.removeItem(keyC);cards()};cards();
+const qdefs=[["q1","高价值·易实施"],["q2","高价值·需治理"],["q3","待补价值评估"],["q4","暂缓"]],qbase=Object.fromEntries(L.map(x=>[x.code,"q3"])),qs=load(keyD,qbase);
+function qsRender(){quadrants.innerHTML=qdefs.map(q=>`<div class="quad ${q[0]}" data-q="${q[0]}"><h3>${q[1]}</h3></div>`).join("");L.forEach(x=>{const el=document.createElement("article");el.className="qcard"+(qs[x.code]!=="q3"?" changed":"");el.draggable=true;el.dataset.id=x.code;el.innerHTML=`<b>${x.code} · ${x.deliverable}</b><p>${qs[x.code]==="q3"?"价值待补":"工作坊假设"} · 可行性${x.score}/18 · ${x.tier}</p><p>${x.type}${x.note?" · "+x.note:""}</p>`;el.ondragstart=e=>e.dataTransfer.setData("text/plain",x.code);quadrants.querySelector(`[data-q="${qs[x.code]}"]`).append(el)});quadrants.querySelectorAll(".quad").forEach(q=>{q.ondragover=e=>e.preventDefault();q.ondrop=e=>{qs[e.dataTransfer.getData("text/plain")]=q.dataset.q;localStorage.setItem(keyD,JSON.stringify(qs));qsRender()}});matrixStat.textContent=`${L.filter(x=>qs[x.code]!=="q3").length}项工作坊调整 · 已本地保存`}
+matrixReset.onclick=()=>{L.forEach(x=>qs[x.code]="q3");localStorage.removeItem(keyD);qsRender()};qsRender();
+document.querySelectorAll(".view-btn").forEach(b=>b.onclick=()=>{document.body.dataset.view=b.dataset.view;document.querySelectorAll(".view-btn").forEach(x=>x.classList.toggle("active",x===b))});
+theme.onclick=()=>{const dark=document.documentElement.dataset.theme!=="dark";document.documentElement.dataset.theme=dark?"dark":"light";theme.textContent=dark?"浅色":"深色"};
+</script>
+</body>
+</html>

@@ -51,6 +51,71 @@ def load_blueprint_index(path: Path) -> dict[str, BlueprintIndex]:
     return result
 
 
+BLUEPRINT_FILENAME_RE = re.compile(r"^流程蓝图_([A-Za-z0-9\-]+)_(.+)_V([\d.]+)\.md$")
+
+
+def load_blueprint_index_from_dir(dir_path: Path) -> dict[str, BlueprintIndex]:
+    """按实际磁盘文件判定蓝图覆盖，取代手工维护的`L3蓝图覆盖清单_v1.0.csv`。
+
+    2026-07-29核实：该CSV索引67个L3里有18个缺失记录，但其中16个蓝图文件
+    实际存在——索引本身过期，不是内容缺口。直接扫描`blueprint_dir`（EA项目
+    真实L3流程库目录）按文件名解析编码/名称/版本，同编码多版本时只取最大
+    版本号，天然不会过期。
+    """
+    groups: dict[str, tuple[tuple, BlueprintIndex]] = {}
+    for f in Path(dir_path).glob("流程蓝图_*.md"):
+        m = BLUEPRINT_FILENAME_RE.match(f.name)
+        if not m:
+            continue
+        code = m.group(1).upper()
+        name = m.group(2)
+        version = m.group(3)
+        ver_tuple = tuple(int(x) for x in version.split("."))
+        entry = BlueprintIndex(l3_code=code, l3_name=name, version=f"V{version}", filename=f.name)
+        existing = groups.get(code)
+        if existing is None or ver_tuple > existing[0]:
+            groups[code] = (ver_tuple, entry)
+    return {code: entry for code, (_, entry) in groups.items()}
+
+
+D1D6_CSV_FIELD_MAP = {
+    "agent_d1_input_struct": "D1_输入结构化",
+    "agent_d2_rule_clear": "D2_规则清晰",
+    "agent_d3_output_verify": "D3_输出可验",
+    "agent_d4_api_reach": "D4_API可达",
+    "agent_d5_fallback": "D5_降级可用",
+    "agent_d6_compliance": "D6_合规可编码",
+}
+
+
+def load_d1d6_supplement(csv_path: Path) -> dict[str, dict[str, int]]:
+    """加载`L4两阶段复核_全量368条_合并版_v1.0.csv`，按l4_code建索引。
+
+    2026-07-29核实：`dim_process`里366条L4只有35条有D1-D6分数，此前误判为
+    "只做了6个L3的评分"；实际这份CSV对368条L4全部打了分。数据库缺的是
+    同步，不是打分工作本身。仅当一行6个维度全部有值时才收录，避免半截
+    数据混进补充证据。
+    """
+    result = {}
+    with Path(csv_path).open(encoding="utf-8-sig") as file:
+        for row in csv.DictReader(file):
+            l4_code = row.get("L4编码", "").strip()
+            if not l4_code:
+                continue
+            values = {}
+            complete = True
+            for db_field, csv_col in D1D6_CSV_FIELD_MAP.items():
+                raw = row.get(csv_col, "").strip()
+                if raw.isdigit():
+                    values[db_field] = int(raw)
+                else:
+                    complete = False
+                    break
+            if complete:
+                result[l4_code] = values
+    return result
+
+
 def gate_result(status: str, checks: list[dict]) -> dict:
     return {"status": status, "checks": checks}
 
@@ -63,10 +128,12 @@ class L3ModelBuilder:
         reader: PostgresL3Reader,
         blueprint_index: dict[str, BlueprintIndex],
         blueprint_dir: Path | None = None,
+        d1d6_supplement: dict[str, dict[str, int]] | None = None,
     ):
         self.reader = reader
         self.blueprint_index = blueprint_index
         self.blueprint_dir = blueprint_dir
+        self.d1d6_supplement = d1d6_supplement or {}
 
     def build(self, l3_code: str, supplemental: list[EvidenceRecord] | None = None) -> dict:
         processes = self.reader.processes(l3_code)
