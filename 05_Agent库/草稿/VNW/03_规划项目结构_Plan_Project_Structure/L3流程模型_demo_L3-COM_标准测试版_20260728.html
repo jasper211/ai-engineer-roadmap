@@ -11,23 +11,23 @@
 table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{color:var(--muted);font-weight:600}.scroll{overflow:auto}
 .kanban,.quadrants{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.column,.quad{min-height:170px;padding:10px;border:1px solid var(--line);border-radius:10px;background:#f8fafc}.column h3,.quad h3{font-size:12px;margin:0 0 8px}.card{background:#fff;border:1px solid var(--line);border-radius:8px;padding:9px;margin:7px 0;cursor:grab}.card.changed{border-color:var(--amber);box-shadow:0 0 0 1px #f2d28f}.card b{font-size:12px}.card small{display:block;color:var(--muted)}select,button{border:1px solid var(--line);background:#fff;border-radius:7px;padding:6px 8px;color:var(--ink)}
 .quadrants{grid-template-columns:repeat(2,1fr)}.quad{min-height:210px}.q1{background:#edf9f4}.q2{background:#eef4ff}.q3{background:#fff8e8}.q4{background:#fff0f0}
-.delivery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.delivery{border:1px solid var(--line);border-radius:10px;padding:11px}.delivery .top{display:flex;justify-content:space-between}.delivery p{font-size:12px;color:var(--muted);margin:7px 0 0}.mapline{text-align:center;padding:10px;color:var(--muted)}details summary{cursor:pointer;font-weight:700}.findings{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.finding{border-left:3px solid var(--blue);padding:10px 12px;background:#f8f9fc;border-radius:7px}.finding b{display:block;margin-bottom:4px}.legend-db{color:var(--blue)}.legend-bp{color:var(--amber)}footer{text-align:center;color:var(--muted);font-size:11px;padding:18px}
+.delivery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.delivery{border:1px solid var(--line);border-radius:10px;padding:11px}.delivery .top{display:flex;justify-content:space-between}.delivery p{font-size:12px;color:var(--muted);margin:7px 0 0}.mapline{text-align:center;padding:10px;color:var(--muted)}details summary{cursor:pointer;font-weight:700}.findings{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.finding{border-left:3px solid var(--blue);padding:10px 12px;background:#f8f9fc;border-radius:7px}.finding b{display:block;margin-bottom:4px}.legend-db{color:var(--blue)}.legend-bp{color:var(--amber)}footer{text-align:center;color:var(--muted);font-size:11px;padding:18px}.validation-chain{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:12px}.validation-node{border:1px solid var(--line);border-radius:9px;padding:9px 12px;background:#fff}.validation-node.human{border-color:#d99191;background:#fff3f3}.ob-strip{margin-top:10px;padding:10px;border:1px solid #cdbfe8;background:#f7f3ff;border-radius:9px;color:#5e4594;font-size:12px}.evidence-list{columns:2;column-gap:28px;font-size:12px;color:var(--muted)}.evidence-list li{break-inside:avoid;margin-bottom:6px}
 @media(max-width:900px){.kanban,.delivery-grid{grid-template-columns:1fr 1fr}.wrap{padding:14px}}@media(max-width:620px){.kanban,.quadrants,.delivery-grid,.findings{grid-template-columns:1fr}.head{display:block}}
 </style>
 </head>
 <body>
 <div class="wrap">
   <section class="banner">
-    <div class="eyebrow">VNW流程模型 demo · 与 IRI V2 / IBRD 标准测试版同结构</div>
+    <div class="eyebrow">VNW流程模型 demo · 与 IRI V2 / IBRD 标准测试版同结构 · OB vault校准版</div>
     <h1>L3-COM · 佣金全链路管理</h1>
-    <p>单 L3 验证版。<span class="legend-db">蓝色信息来自 process_analytics 权威库</span>；<span class="legend-bp">黄色信息来自流程蓝图补充层</span>。两层不互相覆盖。</p>
+    <p>单 L3 验证版。<span class="legend-db">蓝色信息来自 process_analytics 权威库</span>；<span class="legend-bp">黄色信息来自流程蓝图</span>；紫色为OB知识库补充层。新增的368条两阶段复核表作为“评估层”单列，不覆盖数据库原值。</p>
     <div class="path"><span class="pill">L2能力：数据库暂无桥接</span><span>→</span><span class="pill">L3-COM</span><span>→</span><span class="pill">蓝图陈述6个PAY价值节点</span><span>→</span><span class="pill">数据库VN-L4桥接=0</span></div>
   </section>
 
   <section class="kpis">
     <div class="kpi"><b>18</b>数据库 L4</div><div class="kpi"><b>10</b>蓝图主链步骤</div>
-    <div class="kpi"><b>13 / 3 / 2</b>Auto / Aug / Hybrid</div><div class="kpi"><b>0 / 18</b>D1-D6完整</div>
-    <div class="kpi"><b>0</b>数据库 VN-L4 映射</div><div class="kpi"><b>M✓ E✓ A×</b>Gate 状态</div>
+    <div class="kpi"><b>4 / 10 / 4</b>复核 Auto / Aug / Hybrid</div><div class="kpi"><b>18 / 18</b>D1-D6已复核</div>
+    <div class="kpi"><b>0</b>数据库 VN-L4 映射</div><div class="kpi"><b>M✓ E✓ A×</b>Gate 状态</div><div class="kpi"><b>专家型</b>Orchestrator（OB定稿）</div>
   </section>
   <section class="terms">
     <div class="term"><b class="Human">Human</b> 人工主导并保留最终责任</div><div class="term"><b class="Hybrid">Hybrid</b> AI执行标准段，人处理判断与例外</div>
@@ -35,34 +35,40 @@ table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:8px;borde
   </section>
 
   <section class="panel">
-    <div class="head"><h2>面板 A · L3流程叙事（理想态执行路径）</h2><span class="source">蓝图 V1.0 第49–78行 + dim_process Tier</span></div>
+    <div class="head"><h2>面板 A · L3流程叙事（理想态执行路径）</h2><span class="source">蓝图 V1.0 第49–78行 + 两阶段复核表</span></div>
+    <div class="ob-strip"><b>OB新增触发规则：</b>政策校准子链 COM-16→COM-01→COM-02 由“保司佣金政策更新事件”触发，不是周期调度。来源：政策校准子链触发.md，02_定稿，HIGH，状态生效。</div>
     <div id="flow" class="flow"></div>
     <div class="warning">蓝图没有显式判断菱形，因此本面板不增加决策点或回退线。COM-07争议处理、COM-09异常检测、COM-17合规拦截属于支链/控制点，不能擅自改画成主链判断。</div>
+    <div class="validation-chain"><div class="validation-node"><b>一级 · COM-11</b><br>自动对账 / 差异对照</div><span>→</span><div class="validation-node human"><b>二级 · COM-13</b><br>人工强制签字 · 不得自动放行</div><span>→</span><div class="validation-node"><b>三级 · COM-17</b><br>合规独立评估</div></div>
+    <div class="ob-strip">来源：三级串联验证链.md，02_定稿，HIGH，状态生效。两阶段复核表已将 COM-13 调整为 Aug，并明确“资金安全强制人工关卡”；数据库仍为 Auto。两套原值均保留，当前展示以复核建议作为工作坊起点。</div>
   </section>
 
   <section class="panel">
-    <div class="head"><h2>面板 B · 人工控制点与AI协作地图</h2><span class="source">Tier=dim_process；责任=蓝图RACI第276行起（补充层）</span></div>
+    <div class="head"><h2>面板 B · 人工控制点与AI协作地图</h2><span class="source">数据库Tier + 两阶段复核建议；责任=蓝图RACI</span></div>
     <div class="note">责任关系来自蓝图，不是数据库 L4↔岗位桥接。COM-17/18未出现在该RACI表中，保持空白。</div>
-    <div class="scroll"><table><thead><tr><th>L4</th><th>活动</th><th>数据库Tier</th><th>主责 A（蓝图）</th><th>执行 R（蓝图）</th><th>人工介入点（数据库）</th></tr></thead><tbody id="raci-body"></tbody></table></div>
+    <div class="scroll"><table><thead><tr><th>L4</th><th>活动</th><th>数据库Tier</th><th>复核Tier</th><th>主责 A（蓝图）</th><th>执行 R（蓝图）</th><th>复核介入类型</th><th>控制/备注</th></tr></thead><tbody id="raci-body"></tbody></table></div>
   </section>
 
   <section class="panel">
     <div class="head"><h2>面板 C · AI任务卡片工作坊</h2><span class="source">初始卡=L4交付任务，不伪造更细任务</span></div>
-    <p class="note">当前可靠颗粒度只到 L4。可拖动或下拉调整 AI 分工；橙框代表工作坊意见与数据库 Tier 不同，刷新或重置恢复。</p>
+    <p class="note">初始位置采用368条两阶段复核表的推导Tier；卡片同时保留数据库Tier。可拖动或下拉调整 AI 分工；橙框仅表示工作坊意见偏离复核建议。</p>
     <div class="toolbar"><label>筛选交付物 <select id="filter"><option value="all">全部</option></select></label><span id="task-stat">0项调整</span><button id="task-reset">重置</button></div>
     <div id="kanban" class="kanban"></div>
+    <div class="ob-strip"><b>新增设计卡：</b>COM-16可能需要按保司分别构建Skill（MEDIUM推测）；COM-11生成与金额平衡校验拆成生成器/评估器；COM-13增加资金安全人工签字；COM-17由合规角色独立评估。未声明置信度的规则仍需工作坊确认。</div>
   </section>
 
   <section class="panel">
-    <div class="head"><h2>面板 D · AI机会优先级矩阵</h2><span class="source">无per-L4价值/可行性坐标，统一初始位置</span></div>
-    <div class="warning">数据库只有 Tier，没有 per-L4 业务价值、投入或风险分数，且 D1-D6 全空。因此18项初始统一放在“待补评估”，不编造差异化坐标；拖动后仅代表工作坊共识。</div>
+    <div class="head"><h2>面板 D · AI机会优先级矩阵</h2><span class="source">D1-D6可行性已复核；per-L4业务价值仍缺失</span></div>
+    <div class="warning">两阶段复核表补齐了18项 D1-D6，可解释“实现条件”；但没有逐L4业务价值评分，仍不足以生成真实二维坐标。因此初始统一放在“待补价值评估”，卡片展示六维分数与介入背景；拖动后仅代表工作坊共识。</div>
+    <div class="ob-strip"><b>“值得建”不等于“现在可移交”：</b>OB定稿材料判定佣金Agent整体值得建；逐L4复核显示4项Auto、10项Aug、4项Hybrid，但VN桥接仍缺失。复核Tier回答建议协作模式，不等同于上线放行。</div>
     <div id="quadrants" class="quadrants"></div>
-    <div class="toolbar"><span id="matrix-stat">初始：18项待补评估</span><button id="matrix-reset">恢复初始位置</button></div>
+    <div class="toolbar"><span id="matrix-stat">初始：18项待补价值评估</span><button id="matrix-reset">恢复初始位置</button></div>
   </section>
 
   <section class="panel">
-    <div class="head"><h2>面板 E · L4交付物地图（Delivery Map）</h2><span class="source">L4/交付物/Tier=dim_process；价值节点=蓝图补充层</span></div>
+    <div class="head"><h2>面板 E · L4交付物地图（Delivery Map）</h2><span class="source">L4/交付物=数据库；AI方式/D1-D6=两阶段复核表</span></div>
     <div class="note">L2能力桥接为空，因此不补造能力名称。中心目标采用数据库 L3 名称；外层交付物来自数据库；向后服务的6个节点只作为蓝图陈述展示。</div>
+    <div class="ob-strip"><b>Agent定位：</b>L3-COM是G族JF-07佣金合规族下属的专家型Orchestrator，覆盖18条L4（主链10、支链8）。因此应编排多个Skill和控制关卡，而不是一次生成全部交付物。</div>
     <div class="mapline">L2：待补桥接 → <b>L3-COM · 佣金全链路管理</b> → 18项L4交付物 → 蓝图陈述的6个PAY价值节点</div>
     <div id="delivery-grid" class="delivery-grid"></div>
     <h3>蓝图补充层价值节点</h3>
@@ -71,42 +77,44 @@ table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:8px;borde
 
   <section class="panel">
     <details><summary>面板 F · 标准数据表与SSOT差异（点击展开）</summary>
-      <div class="scroll"><table><thead><tr><th>l4_code</th><th>l4_name</th><th>deliverable</th><th>Tier</th><th>D1-D6</th><th>VN桥接</th></tr></thead><tbody id="raw-body"></tbody></table></div>
+      <div class="scroll"><table><thead><tr><th>l4_code</th><th>l4_name</th><th>deliverable</th><th>数据库Tier</th><th>复核Tier</th><th>D1-D6 / 总分</th><th>VN桥接</th></tr></thead><tbody id="raw-body"></tbody></table></div>
       <div class="warning">蓝图还出现 L4-CBD-01/02、L4-CMU-01/02、L4-CVI-01/02 六个历史归并编码；它们不在当前数据库 L3-COM 的18个L4集合中，因此不进入交付物地图。</div>
+      <h3>本轮采用的OB补充证据</h3>
+      <ul class="evidence-list"><li><b>L4两阶段复核_全量368条_合并版_v1.0.csv · COM 18/18条</b></li><li>佣金Agent定位.md · 02_定稿 · HIGH · 生效</li><li>COM-03位置修正.md · 02_定稿 · HIGH · 生效</li><li>三级串联验证链.md · 02_定稿 · HIGH · 生效</li><li>值得建判定通过.md · 02_定稿 · HIGH · 生效</li><li>政策校准子链触发.md · 02_定稿 · HIGH · 生效</li><li>COM-16按保司分Skill.md · 02_定稿 · MEDIUM · 生效</li><li>COM-11自动对账评估器分离.md · 02_定稿 · confidence未声明</li><li>COM-17合规独立评估者.md · 02_定稿 · confidence未声明</li></ul>
     </details>
   </section>
 
   <section class="decision-box" style="padding:18px">
     <div class="head"><h2>负责人决策 · 本轮只决定 COM 下一步</h2><span class="source">不扩展为全量系统结论</span></div>
     <div class="findings">
-      <div class="finding"><b>1 · 先确认SSOT差异</b>蓝图有6个PAY节点映射，数据库桥接为0。需确定是否应同步至 bridge_vn_l4，确认前不得作为权威映射。</div>
-      <div class="finding"><b>2 · 暂不移交AIT</b>18个L4的D1-D6全部为空；Tier可作为讨论起点，但不足以证明输入、规则、验证、接口、兜底和合规均已准备。</div>
-      <div class="finding"><b>3 · 可先验证主链数据</b>优先核对COM-16→01→02→10→11→12→03→13→14→15这10步的真实执行顺序、责任人和交付物是否仍有效。</div>
-      <div class="finding"><b>4 · 工作坊只产出假设</b>面板C/D的拖动结果不写回数据库；确认后再形成D1-D6补评任务和桥接补建任务。</div>
+      <div class="finding"><b>1 · 采用复核后的COM-13控制</b>两阶段复核已给出Aug并标记资金安全强制人工关卡，与OB三级验证链一致；下一步只需决定何时同步数据库当前Auto原值。</div>
+      <div class="finding"><b>2 · 先确认SSOT差异</b>蓝图有6个PAY节点映射，数据库桥接为0。需确定是否同步至 bridge_vn_l4，确认前不得作为权威映射。</div>
+      <div class="finding"><b>3 · D1-D6已补齐，价值仍待确认</b>18项六维复核已完成，可用于解释可行性；但逐L4业务价值、成本和风险收益仍未形成SSOT，面板D不生成假坐标。</div>
+      <div class="finding"><b>4 · 确认三级验证链</b>请确认COM-11自动对账、COM-13人工签字、COM-17合规独立评估是否作为Agent不可绕过的验收基线。</div>
     </div>
   </section>
-  <footer>数据库快照：process_analytics.dim_process（L3-COM，18行）· 蓝图：流程蓝图_L3-COM_佣金全链路管理_V1.0.md · 文件SHA-256 f64292b2… · 2026-07-28</footer>
+  <footer>数据库快照：process_analytics.dim_process（L3-COM，18行）· 复核：L4两阶段复核_全量368条_合并版_v1.0.csv（COM 18行）· 蓝图：流程蓝图_L3-COM_佣金全链路管理_V1.0.md · OB补充：EA流程架构项目/Jasper AI协同经验引擎 · 2026-07-29</footer>
 </div>
 <script>
 const l4s=[
-["L4-COM-01","佣金政策接收与校准","《标准化政策库》","Auto",""],
-["L4-COM-02","差异化拆解与验证","《各细分市场配置》","Auto",""],
-["L4-COM-03","佣金整合与外发","《佣金外发凭证》","Auto",""],
-["L4-COM-04","年度预算与规划","《年度预算与规划》","Hybrid","人工执行：年度预算与规划"],
-["L4-COM-05","追溯调整与退保倒扣","《追溯调整与退保倒扣记录》","Aug","人工执行：追溯调整与退保倒扣"],
-["L4-COM-06","佣金税务处理","《佣金税务处理记录》","Auto","人工执行：佣金税务处理"],
-["L4-COM-07","佣金争议处理","《佣金争议处理记录》","Hybrid","人工执行：佣金争议处理"],
-["L4-COM-08","跨保司佣金整合","《跨保司佣金整合记录》","Auto","人工执行：跨保司佣金整合"],
-["L4-COM-09","佣金异常检测反欺诈","《佣金异常检测反欺诈记录》","Aug","人工执行：佣金异常检测反欺诈"],
-["L4-COM-10","保单信息整合与应收核算（待注册）","《应收明细清单》","Auto","人工执行：保单信息整合与应收核算（待注册）"],
-["L4-COM-11","银行到账确认与实收对账（待注册）","《实收清单》 + 《差异对照表》","Auto","人工执行：银行到账确认与实收对账（待注册）"],
-["L4-COM-12","应派金额拆分与渠道对账（待注册）","《应派清单》 + 《理财师对账单》","Auto",""],
-["L4-COM-13","实派清单确认与财务制单（待注册）","《实派执行表》","Auto","人工执行：实派清单确认与财务制单（待注册）"],
-["L4-COM-14","财务付款执行（待注册）","银行转账回执 / 支票存根","Auto","人工执行：财务付款执行（待注册）"],
-["L4-COM-15","付款回执归档与台账更新（待注册）","《转介费派发确认台账》","Auto","人工执行：付款回执归档与台账更新（待注册）"],
-["L4-COM-16","佣金数据导入与格式转换（待注册）","结构化佣金数据表","Auto","人工执行：佣金数据导入与格式转换（待注册）"],
-["L4-COM-17","IA合规拦截引擎","Excel + 回执PDF + IA规则校验日志","Aug","人工执行：IA合规拦截引擎"],
-["L4-COM-18","收款映射版本管理","《收款映射版本管理记录》","Auto","人工执行：收款映射版本管理"]
+["L4-COM-01","佣金政策接收与校准","《标准化政策库》","Auto","Aug",[2,2,2,2,2,2],12,"专业审批","是","",""],
+["L4-COM-02","差异化拆解与验证","《各细分市场配置》","Auto","Aug",[2,2,2,2,2,2],12,"专业审批","是","",""],
+["L4-COM-03","佣金整合与外发","《佣金外发凭证》","Auto","Auto",[3,3,3,3,2,2],16,"复盘优化/异常介入","是","",""],
+["L4-COM-04","年度预算与规划","《年度预算与规划》","Hybrid","Hybrid",[2,1,1,1,1,1],7,"战略决策","是","",""],
+["L4-COM-05","追溯调整与退保倒扣","《追溯调整与退保倒扣记录》","Aug","Auto",[3,3,3,3,2,2],16,"异常介入","是","",""],
+["L4-COM-06","佣金税务处理","《佣金税务处理记录》","Auto","Auto",[3,3,3,3,2,2],16,"合规签字（待复核：异常vs常规）","是","","旧版标Auto但语义偏常规签字，建议复核是否应降为Aug"],
+["L4-COM-07","佣金争议处理","《佣金争议处理记录》","Hybrid","Hybrid",[2,0,1,1,1,1],6,"跨部门协调/专业审批","是","","D2否决权已体现"],
+["L4-COM-08","跨保司佣金整合","《跨保司佣金整合记录》","Auto","Aug",[2,2,2,2,2,2],12,"专业审批","是","",""],
+["L4-COM-09","佣金异常检测反欺诈","《佣金异常检测反欺诈记录》","Aug","Auto",[3,3,3,3,2,2],16,"异常介入","是","",""],
+["L4-COM-10","保单信息整合与应收核算（待注册）","《应收明细清单》","Auto","Aug",[2,3,2,2,1,1],11,"无明显判断成分","否","",""],
+["L4-COM-11","银行到账确认与实收对账（待注册）","《实收清单》 + 《差异对照表》","Auto","Aug",[2,2,2,2,1,1],10,"异常介入","是","",""],
+["L4-COM-12","应派金额拆分与渠道对账（待注册）","《应派清单》 + 《理财师对账单》","Auto","Aug",[2,3,2,2,1,1],11,"无明显判断成分","否","",""],
+["L4-COM-13","实派清单确认与财务制单（待注册）","《实派执行表》","Auto","Aug",[2,2,2,1,1,2],10,"专业审批","是","是","资金安全强制人工关卡"],
+["L4-COM-14","财务付款执行（待注册）","银行转账回执 / 支票存根","Auto","Aug",[2,2,3,2,1,2],12,"专业审批/资金安全","是","是","资金安全强制人工关卡"],
+["L4-COM-15","付款回执归档与台账更新（待注册）","《转介费派发确认台账》","Auto","Hybrid",[2,2,2,1,1,1],9,"无明显判断成分","否","",""],
+["L4-COM-16","佣金数据导入与格式转换（待注册）","结构化佣金数据表（供COM-01使用）","Auto","Aug",[2,2,2,2,1,1],10,"无明显判断成分","否","",""],
+["L4-COM-17","IA合规拦截引擎","Excel + 回执PDF（批量）+ IA规则校验日志","Aug","Aug",[3,2,2,2,2,3],14,"合规签字","是","",""],
+["L4-COM-18","收款映射版本管理","《收款映射版本管理记录》","Auto","Hybrid",[2,1,2,1,1,1],8,"专业审批","是","",""]
 ];
 const chain=["L4-COM-16","L4-COM-01","L4-COM-02","L4-COM-10","L4-COM-11","L4-COM-12","L4-COM-03","L4-COM-13","L4-COM-14","L4-COM-15"];
 const raci={
@@ -116,24 +124,25 @@ const raci={
 "L4-COM-10":["中台支持部","Cici / JoJo / 娜娜","财务","—"],"L4-COM-11":["财务","财务","中台支持部","—"],"L4-COM-12":["蔡依娜","蔡依娜","财务 / 合规","Mark"],
 "L4-COM-13":["财务","财务","蔡依娜","—"],"L4-COM-14":["财务","JorJor / NANA / SOSO","—","—"],"L4-COM-15":["财务","各牌照财务","—","—"],"L4-COM-16":["中台支持部","JoJo","IT","—"]
 };
+const obControls={"L4-COM-11":"一级：自动对账评估","L4-COM-13":"二级：Human gate，不得自动放行","L4-COM-16":"可能按保司拆分Skill（MEDIUM）","L4-COM-17":"三级：合规独立评估"};
 const vns=[
 ["VN-PAY-01","市场佣金制作产出包","COM-01 / COM-02","熔断"],["VN-PAY-02","佣金实收确认表","COM-10 / COM-11","P0"],
 ["VN-PAY-03","应派清单三件套","COM-03 / COM-12","P0"],["VN-PAY-04","转介费派发确认台账","COM-03 / COM-14 / COM-15","P0熔断"],
 ["VN-PAY-05","INVOICE/激励结算单","COM-03","P0"],["VN-PAY-06","理财师综合应派计算清单","COM-12 / COM-13","P0"]
 ];
 const byCode=Object.fromEntries(l4s.map(x=>[x[0],x]));
-document.querySelector("#flow").innerHTML=chain.map((c,i)=>{const x=byCode[c];return `<div class="step"><span class="code">${c}</span><strong>${x[1]}</strong><span>${x[2]}</span><br><em class="tier ${x[3]}">${x[3]}</em></div>${i<chain.length-1?'<div class="arrow">→</div>':''}`}).join("");
-document.querySelector("#raci-body").innerHTML=l4s.map(x=>{const r=raci[x[0]]||["（蓝图未列）","（蓝图未列）","—","—"];return `<tr><td>${x[0]}</td><td>${x[1]}</td><td><span class="tier ${x[3]}">${x[3]}</span></td><td>${r[0]}</td><td>${r[1]}</td><td>${x[4]||"（空）"}</td></tr>`}).join("");
-document.querySelector("#delivery-grid").innerHTML=l4s.map(x=>`<div class="delivery"><div class="top"><b>${x[0]}</b><span class="tier ${x[3]}">${x[3]}</span></div><strong>${x[2]}</strong><p>${x[1]}</p><p>D1-D6：未评估</p></div>`).join("");
+document.querySelector("#flow").innerHTML=chain.map((c,i)=>{const x=byCode[c];return `<div class="step"><span class="code">${c}</span><strong>${x[1]}</strong><span>${x[2]}</span><br><em class="tier ${x[4]}">${x[4]}</em></div>${i<chain.length-1?'<div class="arrow">→</div>':''}`}).join("");
+document.querySelector("#raci-body").innerHTML=l4s.map(x=>{const r=raci[x[0]]||["（蓝图未列）","（蓝图未列）","—","—"];const control=[x[9]==="是"?"资金安全强制关卡":"",x[10],obControls[x[0]]].filter(Boolean).join("；")||"—";return `<tr><td>${x[0]}</td><td>${x[1]}</td><td><span class="tier ${x[3]}">${x[3]}</span></td><td><span class="tier ${x[4]}">${x[4]}</span></td><td>${r[0]}</td><td>${r[1]}</td><td>${x[7]}${x[8]==="是"?" · 核心介入点":""}</td><td>${control}</td></tr>`}).join("");
+document.querySelector("#delivery-grid").innerHTML=l4s.map(x=>`<div class="delivery"><div class="top"><b>${x[0]}</b><span class="tier ${x[4]}">${x[4]}</span></div><strong>${x[2]}</strong><p>${x[1]}</p><p>D1-D6：${x[5].join("/")} · 总分 ${x[6]}/18</p><p>${x[7]}${x[9]==="是"?" · 资金安全人工关卡":""}</p></div>`).join("");
 document.querySelector("#vn-grid").innerHTML=vns.map(x=>`<div class="delivery" style="border-color:#e7ca8b"><div class="top"><b>${x[0]}</b><span class="tier Hybrid">蓝图补充</span></div><strong>${x[1]}</strong><p>关联L4：${x[2]}</p><p>${x[3]} · 数据库桥接未建立</p></div>`).join("");
-document.querySelector("#raw-body").innerHTML=l4s.map(x=>`<tr><td>${x[0]}</td><td>${x[1]}</td><td>${x[2]}</td><td>${x[3]}</td><td>0/6</td><td>0</td></tr>`).join("");
+document.querySelector("#raw-body").innerHTML=l4s.map(x=>`<tr><td>${x[0]}</td><td>${x[1]}</td><td>${x[2]}</td><td>${x[3]}</td><td>${x[4]}</td><td>${x[5].join("/")} · ${x[6]}/18</td><td>0</td></tr>`).join("");
 const cols=[["Human","暂不替代"],["Hybrid","人机协同"],["Aug","AI增强"],["Auto","可完全自动"]];
-const state=Object.fromEntries(l4s.map(x=>[x[0],x[3]]));const filter=document.querySelector("#filter");
+const state=Object.fromEntries(l4s.map(x=>[x[0],x[4]]));const filter=document.querySelector("#filter");
 l4s.forEach(x=>filter.insertAdjacentHTML("beforeend",`<option value="${x[0]}">${x[0]} · ${x[2]}</option>`));
-function renderCards(){const board=document.querySelector("#kanban");board.innerHTML=cols.map(c=>`<div class="column" data-col="${c[0]}"><h3>${c[1]}</h3></div>`).join("");l4s.filter(x=>filter.value==="all"||filter.value===x[0]).forEach(x=>{const el=document.createElement("div");el.className="card"+(state[x[0]]!==x[3]?" changed":"");el.draggable=true;el.dataset.id=x[0];el.innerHTML=`<b>${x[2]}</b><small>${x[0]} · 数据库建议 ${x[3]}</small><select>${cols.map(c=>`<option value="${c[0]}" ${state[x[0]]===c[0]?"selected":""}>${c[1]}</option>`).join("")}</select>`;el.querySelector("select").onchange=e=>{state[x[0]]=e.target.value;renderCards()};el.ondragstart=e=>e.dataTransfer.setData("text/plain",x[0]);board.querySelector(`[data-col="${state[x[0]]}"]`).append(el)});board.querySelectorAll(".column").forEach(c=>{c.ondragover=e=>e.preventDefault();c.ondrop=e=>{state[e.dataTransfer.getData("text/plain")]=c.dataset.col;renderCards()}});document.querySelector("#task-stat").textContent=`${l4s.filter(x=>state[x[0]]!==x[3]).length}项调整`}
-filter.onchange=renderCards;document.querySelector("#task-reset").onclick=()=>{l4s.forEach(x=>state[x[0]]=x[3]);renderCards()};renderCards();
-const qdefs=[["q1","高价值·易实施"],["q2","高价值·需治理"],["q3","待补评估"],["q4","暂缓"]],qstate=Object.fromEntries(l4s.map(x=>[x[0],"q3"]));
-function renderQ(){const board=document.querySelector("#quadrants");board.innerHTML=qdefs.map(q=>`<div class="quad ${q[0]}" data-q="${q[0]}"><h3>${q[1]}</h3></div>`).join("");l4s.forEach(x=>{const el=document.createElement("div");el.className="card"+(qstate[x[0]]!=="q3"?" changed":"");el.draggable=true;el.dataset.id=x[0];el.innerHTML=`<b>${x[0]} · ${x[2]}</b><small>${qstate[x[0]]==="q3"?"D1-D6与价值坐标缺失":"工作坊共识假设"}</small>`;el.ondragstart=e=>e.dataTransfer.setData("text/plain",x[0]);board.querySelector(`[data-q="${qstate[x[0]]}"]`).append(el)});board.querySelectorAll(".quad").forEach(q=>{q.ondragover=e=>e.preventDefault();q.ondrop=e=>{qstate[e.dataTransfer.getData("text/plain")]=q.dataset.q;renderQ()}});document.querySelector("#matrix-stat").textContent=`${l4s.filter(x=>qstate[x[0]]!=="q3").length}项工作坊调整`}
+function renderCards(){const board=document.querySelector("#kanban");board.innerHTML=cols.map(c=>`<div class="column" data-col="${c[0]}"><h3>${c[1]}</h3></div>`).join("");l4s.filter(x=>filter.value==="all"||filter.value===x[0]).forEach(x=>{const el=document.createElement("div");el.className="card"+(state[x[0]]!==x[4]?" changed":"");el.draggable=true;el.dataset.id=x[0];el.innerHTML=`<b>${x[2]}</b><small>${x[0]} · 复核 ${x[4]} / 数据库 ${x[3]}</small><small>${x[7]} · D1-D6 ${x[5].join("/")}</small><select>${cols.map(c=>`<option value="${c[0]}" ${state[x[0]]===c[0]?"selected":""}>${c[1]}</option>`).join("")}</select>`;el.querySelector("select").onchange=e=>{state[x[0]]=e.target.value;renderCards()};el.ondragstart=e=>e.dataTransfer.setData("text/plain",x[0]);board.querySelector(`[data-col="${state[x[0]]}"]`).append(el)});board.querySelectorAll(".column").forEach(c=>{c.ondragover=e=>e.preventDefault();c.ondrop=e=>{state[e.dataTransfer.getData("text/plain")]=c.dataset.col;renderCards()}});document.querySelector("#task-stat").textContent=`${l4s.filter(x=>state[x[0]]!==x[4]).length}项调整`}
+filter.onchange=renderCards;document.querySelector("#task-reset").onclick=()=>{l4s.forEach(x=>state[x[0]]=x[4]);renderCards()};renderCards();
+const qdefs=[["q1","高价值·易实施"],["q2","高价值·需治理"],["q3","待补价值评估"],["q4","暂缓"]],qstate=Object.fromEntries(l4s.map(x=>[x[0],"q3"]));
+function renderQ(){const board=document.querySelector("#quadrants");board.innerHTML=qdefs.map(q=>`<div class="quad ${q[0]}" data-q="${q[0]}"><h3>${q[1]}</h3></div>`).join("");l4s.forEach(x=>{const el=document.createElement("div");el.className="card"+(qstate[x[0]]!=="q3"?" changed":"");el.draggable=true;el.dataset.id=x[0];el.innerHTML=`<b>${x[0]} · ${x[2]}</b><small>${qstate[x[0]]==="q3"?"业务价值坐标待补":"工作坊共识假设"} · 可行性 ${x[6]}/18 · ${x[4]}</small><small>${x[7]}${x[10]?" · "+x[10]:""}</small>`;el.ondragstart=e=>e.dataTransfer.setData("text/plain",x[0]);board.querySelector(`[data-q="${qstate[x[0]]}"]`).append(el)});board.querySelectorAll(".quad").forEach(q=>{q.ondragover=e=>e.preventDefault();q.ondrop=e=>{qstate[e.dataTransfer.getData("text/plain")]=q.dataset.q;renderQ()}});document.querySelector("#matrix-stat").textContent=`${l4s.filter(x=>qstate[x[0]]!=="q3").length}项工作坊调整`}
 document.querySelector("#matrix-reset").onclick=()=>{l4s.forEach(x=>qstate[x[0]]="q3");renderQ()};renderQ();
 </script>
 </body></html>
