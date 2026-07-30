@@ -6,6 +6,8 @@
 from __future__ import annotations
 
 from collections import defaultdict
+import hashlib
+import json
 
 
 ANALYSIS_SCHEMA_VERSION = "vnw.l3-analysis.v1"
@@ -24,6 +26,20 @@ REQUIRED_L4_FIELDS = (
     "risks_limits",
     "current_recommendation",
 )
+
+
+ANALYSIS_INPUT_FIELDS = (
+    "l3_code", "l3_name", "source_policy", "blueprint", "l2_capabilities",
+    "l4s", "value_nodes", "vn_l4_mappings", "kpi_mappings",
+    "value_stream_mappings", "gates", "model_readiness", "evidence_registry",
+)
+
+
+def analysis_input_hash(snapshot: dict) -> str:
+    """只对模型允许读取的事实与准入信息做Hash，不包含分析结果和生成时间。"""
+    payload = {field: snapshot.get(field) for field in ANALYSIS_INPUT_FIELDS}
+    encoded = json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(encoded.encode("utf-8")).hexdigest()
 
 
 def build_analysis_envelope(

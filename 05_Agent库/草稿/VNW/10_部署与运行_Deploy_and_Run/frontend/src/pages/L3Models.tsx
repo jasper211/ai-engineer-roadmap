@@ -5,17 +5,28 @@ import { loadDeliverableAudit, loadModelIndex, type DeliverableAudit, type Model
 
 function Gate({ name, status }: { name: string; status: string }) {
   const pass = status === 'PASS'
+  const conditional = status === 'CONDITIONAL'
   return (
-    <span className={`rounded-md border px-2 py-1 font-mono text-[11px] ${pass ? 'border-emerald-400/25 bg-emerald-400/10 text-emerald-700' : 'border-amber-400/25 bg-amber-400/10 text-amber-700'}`}>
+    <span className={`rounded-md border px-2 py-1 font-mono text-[11px] ${pass ? 'border-emerald-400/25 bg-emerald-400/10 text-emerald-700' : conditional ? 'border-sky-400/25 bg-sky-400/10 text-sky-700' : 'border-amber-400/25 bg-amber-400/10 text-amber-700'}`}>
       {name} · {status}
     </span>
   )
 }
 
 function ModelCard({ model, quality }: { model: ModelIndexItem; quality?: { mixed: number; repeated: number } }) {
-  const ready = model.classification === 'MODEL_READY'
-  return (
-    <Link to={`/models/${model.l3_code}`} className="group panel block p-5 transition hover:border-border-hover hover:-translate-y-0.5">
+  const full = model.classification === 'FULL_MODEL'
+  const limited = model.classification === 'LIMITED_MODEL'
+  const productionLabels: Record<ModelIndexItem['production_status'], { label: string; tone: string }> = {
+    READY_TO_RUN: { label: '待运行统一分析', tone: 'bg-blue-50 text-blue-700' },
+    RUN_PREPARED: { label: '运行包已准备', tone: 'bg-cyan-50 text-cyan-700' },
+    ANALYSIS_CURRENT: { label: '分析与当前输入一致', tone: 'bg-emerald-50 text-emerald-700' },
+    ANALYSIS_INPUT_CHANGED: { label: '输入已变化·待重跑', tone: 'bg-rose-50 text-rose-700' },
+    REVIEWED_BASELINE: { label: '历史评审基线', tone: 'bg-violet-50 text-violet-700' },
+    BLOCKED_INPUT: { label: '输入未达准入', tone: 'bg-slate-100 text-slate-600' },
+  }
+  const production = productionLabels[model.production_status]
+  const content = (
+    <>
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="font-mono text-xs text-accent-primary-light">{model.l3_code}</p>
@@ -30,9 +41,10 @@ function ModelCard({ model, quality }: { model: ModelIndexItem; quality?: { mixe
               <Star className="h-3 w-3" /> 完整 Demo
             </span>
           )}
-          <span className={`rounded-full px-2.5 py-1 text-[11px] font-medium ${ready ? 'bg-emerald-400/10 text-emerald-700' : 'bg-amber-400/10 text-amber-700'}`}>
-            {ready ? '可进入模型' : '待补数据'}
+          <span className={`rounded-full px-2.5 py-1 text-[11px] font-medium ${full ? 'bg-emerald-400/10 text-emerald-700' : limited ? 'bg-sky-400/10 text-sky-700' : 'bg-amber-400/10 text-amber-700'}`}>
+            {full ? '可生成完整模型' : limited ? '可生成带缺口模型' : '待补后生成'}
           </span>
+          <span className={`rounded-full px-2.5 py-1 text-[11px] font-medium ${production.tone}`}>{production.label}</span>
           {Boolean(quality && quality.mixed > 0) && <span className="rounded-full bg-rose-50 px-2.5 py-1 text-[11px] font-medium text-rose-700">交付物待治理 {quality?.mixed}</span>}
           {Boolean(quality && quality.repeated > 0) && <span className="rounded-full bg-amber-50 px-2.5 py-1 text-[11px] font-medium text-amber-700">重复值待核实 {quality?.repeated}</span>}
         </div>
@@ -44,13 +56,20 @@ function ModelCard({ model, quality }: { model: ModelIndexItem; quality?: { mixe
       </div>
       <div className="mt-4 flex items-center justify-between border-t border-border-default pt-3 text-xs text-text-muted">
         <span>{model.l4_count} 个 L4 · {model.value_node_count} 个价值节点 · 蓝图 {model.blueprint_version || '缺失'}</span>
-        <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
+        {model.model_generation_allowed ? <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" /> : <span>模型入口已关闭</span>}
       </div>
-      {!ready && model.gap_reasons.length > 0 && (
+      <p className="mt-2 text-[11px] text-text-muted">
+        SOP {model.readiness_coverage.sop_count}份 · 规则 {model.readiness_coverage.rule_count}条 ·
+        任务覆盖 {model.readiness_coverage.task.covered}/{model.readiness_coverage.task.total}
+      </p>
+      {!full && model.gap_reasons.length > 0 && (
         <p className="mt-2 line-clamp-2 text-xs text-amber-800/80">首要缺口：{model.gap_reasons[0]}</p>
       )}
-    </Link>
+    </>
   )
+  return model.model_generation_allowed
+    ? <Link to={`/models/${model.l3_code}`} className="group panel block p-5 transition hover:border-border-hover hover:-translate-y-0.5">{content}</Link>
+    : <div className="panel p-5 opacity-90">{content}</div>
 }
 
 export default function L3Models() {
@@ -79,9 +98,9 @@ export default function L3Models() {
 
   const groups = useMemo(() => ({
     all: data?.models ?? [],
-    ready: data?.models.filter(item => item.classification === 'MODEL_READY') ?? [],
-    evaluable: data?.models.filter(item => item.highest_gate === 'E') ?? [],
-    missing: data?.models.filter(item => item.classification === 'NEEDS_DATA') ?? [],
+    ready: data?.models.filter(item => item.classification === 'FULL_MODEL') ?? [],
+    evaluable: data?.models.filter(item => item.classification === 'LIMITED_MODEL') ?? [],
+    missing: data?.models.filter(item => item.classification === 'WAITING_INPUT') ?? [],
     demo: data?.models.filter(item => item.has_demo) ?? [],
     quality: data?.models.filter(item => Boolean(qualityByL3[item.l3_code])) ?? [],
   }), [data, qualityByL3])
@@ -112,18 +131,36 @@ export default function L3Models() {
         </Link>
       )}
 
+      {(data.prepared_batch.length > 0 || data.recommended_batch.length > 0) && (
+        <section className="panel p-5">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div><p className="eyebrow">统一分析生产队列</p><h2 className="mt-1 text-base font-semibold">{data.prepared_batch.length > 0 ? '首批运行包已准备' : '下一批统一分析建议'}</h2></div>
+            <span className="text-xs text-text-muted">只生成运行包，不自动发布模型结论</span>
+          </div>
+          <div className="mt-4 grid gap-3 md:grid-cols-3">
+            {(data.prepared_batch.length > 0 ? data.prepared_batch : data.recommended_batch).map((item, index) => (
+              <div key={item.l3_code} className="rounded-xl border border-blue-200 bg-blue-50/60 p-4">
+                <p className="font-mono text-xs text-blue-700">{data.prepared_batch.length > 0 ? '已准备' : `优先级 ${index + 1}`} · {item.l3_code}</p>
+                <p className="mt-1 font-semibold">{item.l3_name}</p>
+                <p className="mt-2 text-xs text-text-muted">{item.l4_count}个L4 · {item.classification === 'FULL_MODEL' ? '完整输入' : '带明确缺口'}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
       <div className="panel flex flex-wrap items-center gap-3 p-3">
         <button onClick={() => setView('all')} className={`flex items-center gap-2 rounded-xl px-4 py-3 text-sm ${view === 'all' ? 'bg-accent-primary/10 text-accent-primary-light' : 'text-text-secondary hover:bg-bg-surface'}`}>
           全部 L3 <strong>{groups.all.length}</strong>
         </button>
         <button onClick={() => setView('ready')} className={`flex items-center gap-2 rounded-xl px-4 py-3 text-sm ${view === 'ready' ? 'bg-emerald-400/10 text-emerald-700' : 'text-text-secondary hover:bg-bg-surface'}`}>
-          <CheckCircle2 className="h-4 w-4" /> 可移交 AIT <strong>{groups.ready.length}</strong>
+          <CheckCircle2 className="h-4 w-4" /> 可生成完整模型 <strong>{groups.ready.length}</strong>
         </button>
         <button onClick={() => setView('evaluable')} className={`flex items-center gap-2 rounded-xl px-4 py-3 text-sm ${view === 'evaluable' ? 'bg-sky-400/10 text-sky-700' : 'text-text-secondary hover:bg-bg-surface'}`}>
-          可评估、待补后移交 <strong>{groups.evaluable.length}</strong>
+          可生成带缺口模型 <strong>{groups.evaluable.length}</strong>
         </button>
         <button onClick={() => setView('missing')} className={`flex items-center gap-2 rounded-xl px-4 py-3 text-sm ${view === 'missing' ? 'bg-amber-400/10 text-amber-700' : 'text-text-secondary hover:bg-bg-surface'}`}>
-          <AlertTriangle className="h-4 w-4" /> 数据不足待补 <strong>{groups.missing.length}</strong>
+          <AlertTriangle className="h-4 w-4" /> 待补后生成 <strong>{groups.missing.length}</strong>
         </button>
         <button onClick={() => setView('demo')} className={`flex items-center gap-2 rounded-xl px-4 py-3 text-sm ${view === 'demo' ? 'bg-violet-400/10 text-violet-700' : 'text-text-secondary hover:bg-bg-surface'}`}>
           <Star className="h-4 w-4" /> 已有完整 Demo <strong>{groups.demo.length}</strong>
@@ -138,8 +175,8 @@ export default function L3Models() {
         {[
           ['数据库 L3', data.models.length, '权威库当前有效集合'],
           ['可解析蓝图', parsedCount, '已有步骤或判断结构'],
-          ['可评估', groups.evaluable.length + groups.ready.length, '至少通过 Gate E'],
-          ['可移交 AIT', groups.ready.length, '通过 Gate A'],
+          ['允许生成模型', groups.evaluable.length + groups.ready.length, '通过模型准入门'],
+          ['完整模型', groups.ready.length, '证据达到完整门槛'],
           ['交付物疑点', audit?.finding_count ?? 0, `涉及 ${audit?.affected_l3_count ?? 0} 个 L3`],
         ].map(([label, value, note]) => (
           <div key={String(label)} className="panel p-4"><p className="eyebrow">{label}</p><p className="mt-2 metric-value">{value}</p><p className="mt-1 text-[11px] text-text-muted">{note}</p></div>

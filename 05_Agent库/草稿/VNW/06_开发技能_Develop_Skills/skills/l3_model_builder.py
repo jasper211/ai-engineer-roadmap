@@ -11,7 +11,7 @@ from tools.evidence import EvidenceClass, EvidenceRecord, EvidenceStatus, Source
 from tools.postgres_reader import PostgresL3Reader
 from tools.snapshot_writer import write_snapshot
 from skills.blueprint_parser import parse_blueprint
-from skills.l3_analysis_contract import build_analysis_envelope, validate_analysis_package
+from skills.l3_analysis_contract import analysis_input_hash, build_analysis_envelope, validate_analysis_package
 
 VALID_TIERS = {"Human", "Aug", "Hybrid", "Auto"}
 D_FIELDS = (
@@ -129,6 +129,59 @@ def load_analysis_packages(dir_path: Path) -> dict[str, dict]:
     return result
 
 
+def load_sop_records(csv_path: Path, sop_dir: Path) -> list[dict]:
+    """读取SOP生产清单，并只保留能够定位到真实文件的记录。"""
+    result = []
+    with Path(csv_path).open(encoding="utf-8-sig") as file:
+        for row in csv.DictReader(file):
+            filename = row.get("sop_file", "").strip()
+            source_path = Path(sop_dir) / filename
+            if not filename or not source_path.exists():
+                continue
+            content = source_path.read_text(encoding="utf-8")
+            result.append({
+                **row,
+                "source_path": str(source_path),
+                "l4_codes": sorted(set(re.findall(r"\bL4-[A-Z0-9]+(?:-[A-Z0-9]+)+\b", content, flags=re.I))),
+            })
+    return result
+
+
+def load_rule_records(csv_path: Path) -> list[dict]:
+    """读取当前有效规则清单；空规则动作不作为建模依据。"""
+    with Path(csv_path).open(encoding="utf-8-sig") as file:
+        return [
+            row for row in csv.DictReader(file)
+            if row.get("rule_id", "").strip()
+            and row.get("node_id", "").strip()
+            and row.get("rule_action", "").strip()
+        ]
+
+
+def load_prepared_analysis_codes(dir_path: Path) -> set[str]:
+    """识别已准备或模型已返回但尚未发布的运行包，防止重复推荐。"""
+    result = set()
+    for request_path in Path(dir_path).glob("*/request.json"):
+        request = json.loads(request_path.read_text(encoding="utf-8"))
+        if request.get("status") in {"PREPARED", "MODEL_RETURNED"}:
+            result.add(request.get("l3_code", ""))
+    return set(filter(None, result))
+
+
+def expand_l4_mapping(raw_code: str, valid_codes: set[str]) -> set[str]:
+    """展开`L4-COM-01/02`一类桥接值，只返回当前L3的真实L4编码。"""
+    raw = (raw_code or "").strip().upper()
+    if raw in valid_codes:
+        return {raw}
+    parts = raw.split("/")
+    if len(parts) <= 1:
+        return set()
+    first = parts[0]
+    prefix = first.rsplit("-", 1)[0] + "-"
+    candidates = {first, *(part if part.startswith("L4-") else prefix + part for part in parts[1:])}
+    return candidates & valid_codes
+
+
 def gate_result(status: str, checks: list[dict]) -> dict:
     return {"status": status, "checks": checks}
 
@@ -144,6 +197,9 @@ class L3ModelBuilder:
         d1d6_supplement: dict[str, dict[str, int]] | None = None,
         demo_registry: dict[str, str] | None = None,
         analysis_packages: dict[str, dict] | None = None,
+        sop_records: list[dict] | None = None,
+        rule_records: list[dict] | None = None,
+        prepared_analysis_codes: set[str] | None = None,
     ):
         self.reader = reader
         self.blueprint_index = blueprint_index
@@ -151,6 +207,9 @@ class L3ModelBuilder:
         self.d1d6_supplement = d1d6_supplement or {}
         self.demo_registry = demo_registry or {}
         self.analysis_packages = analysis_packages or {}
+        self.sop_records = sop_records or []
+        self.rule_records = rule_records or []
+        self.prepared_analysis_codes = prepared_analysis_codes or set()
 
     def build(self, l3_code: str, supplemental: list[EvidenceRecord] | None = None) -> dict:
         processes = self.reader.processes(l3_code)
@@ -303,31 +362,119 @@ class L3ModelBuilder:
                     raise ValueError("supplemental参数只接受SUPPLEMENTAL证据")
                 add(record)
 
+        l4_codes = {item["l4_code"] for item in l4s}
+        vn_ids = {item["vn_id"] for item in vn_items}
+        linked_sops = [
+            row for row in self.sop_records
+            if l3_code in " ".join(str(value) for value in row.values())
+            or row.get("sop_ref", "") in vn_ids
+        ]
+        linked_rules = [row for row in self.rule_records if row.get("node_id", "") in vn_ids]
+        for row in linked_sops:
+            row["evidence_ref"] = add(EvidenceRecord(
+                field_name=f"readiness.sop.{row.get('sop_ref', '')}",
+                value={"title": row.get("sop_title", ""), "file": row.get("sop_file", "")},
+                evidence_class=EvidenceClass.SUPPLEMENTAL,
+                status=EvidenceStatus.ACTIVE,
+                source=SourceRef(
+                    source_system="VNW数据基础",
+                    source_object="T19_SOP生产进度_全域_v2.0.csv",
+                    source_key=row.get("sop_ref", ""),
+                    source_field="sop_file",
+                    source_version=row.get("sop_version", ""),
+                ),
+            ))
+        for row in linked_rules:
+            row["evidence_ref"] = add(EvidenceRecord(
+                field_name=f"readiness.rule.{row.get('rule_id', '')}",
+                value={
+                    "name": row.get("rule_name", ""),
+                    "action": row.get("rule_action", ""),
+                    "standard": row.get("rule_standard", ""),
+                },
+                evidence_class=EvidenceClass.SUPPLEMENTAL,
+                status=EvidenceStatus.ACTIVE,
+                source=SourceRef(
+                    source_system="VNW数据基础",
+                    source_object="T5_规则清单_全域_v3.0.csv",
+                    source_key=row.get("rule_id", ""),
+                    source_field="rule_action",
+                    source_version=row.get("version", ""),
+                ),
+            ))
+
         has_l4 = bool(l4s)
         names_complete = has_l4 and all(item["l4_name"] for item in l4s)
-        has_blueprint = blueprint is not None
-        gate_m_checks = [
-            {"rule_id": "M-001", "passed": has_l4, "detail": f"L4数量={len(l4s)}"},
-            {"rule_id": "M-002", "passed": has_blueprint, "detail": blueprint.filename if blueprint else "缺少蓝图索引"},
-            {"rule_id": "M-003", "passed": names_complete, "detail": "L4名称完整" if names_complete else "L4名称缺失"},
-        ]
-        gate_m = "PASS" if all(c["passed"] for c in gate_m_checks) else ("PARTIAL" if has_l4 else "FAIL")
-
-        deliverables_complete = has_l4 and all(item["deliverable"] for item in l4s)
-        tiers_valid = has_l4 and all(item["tier"] in VALID_TIERS for item in l4s)
-        gate_e_checks = [
-            {"rule_id": "E-001", "passed": gate_m == "PASS", "detail": f"Gate M={gate_m}"},
-            {"rule_id": "E-002", "passed": deliverables_complete, "detail": f"交付物完整={sum(bool(x['deliverable']) for x in l4s)}/{len(l4s)}"},
-            {"rule_id": "E-003", "passed": tiers_valid, "detail": "Tier合法" if tiers_valid else "Tier缺失或非法"},
-        ]
-        gate_e = "PASS" if all(c["passed"] for c in gate_e_checks) else ("PARTIAL" if has_l4 else "FAIL")
-
+        blueprint_parsed = bool(parsed_blueprint and parsed_blueprint["structure_status"] == "PARSED" and parsed_blueprint["steps"])
+        has_sop = bool(linked_sops)
+        has_rules = bool(linked_rules)
+        deliverable_count = sum(bool(item["deliverable"]) for item in l4s)
+        deliverable_ratio = deliverable_count / len(l4s) if l4s else 0
         d_complete_count = sum(all(item["d1_d6"][field] is not None for field in D_FIELDS) for item in l4s)
         d_complete = has_l4 and d_complete_count == len(l4s)
+        gate_m_checks = [
+            {"rule_id": "M-001", "passed": has_l4, "detail": f"L4数量={len(l4s)}"},
+            {"rule_id": "M-002", "passed": blueprint_parsed, "detail": blueprint.filename if blueprint_parsed else "缺少可解析流程蓝图"},
+            {"rule_id": "M-003", "passed": names_complete, "detail": "L4名称完整" if names_complete else "L4名称缺失"},
+            {"rule_id": "M-004", "passed": deliverable_ratio >= 0.7, "detail": f"交付物完整={deliverable_count}/{len(l4s)}（最低门槛70%）"},
+            {"rule_id": "M-005", "passed": d_complete, "detail": f"D1-D6完整={d_complete_count}/{len(l4s)}"},
+        ]
+        gate_m = "PASS" if all(c["passed"] for c in gate_m_checks) else "BLOCKED"
+
+        tiers_valid = has_l4 and all(item["tier"] in VALID_TIERS for item in l4s)
+        blueprint_task_l4s = {
+            code for step in (parsed_blueprint or {}).get("steps", [])
+            for code in step.get("l4_codes", []) if code in l4_codes
+        }
+        sop_task_l4s = {
+            code for row in linked_sops for code in row.get("l4_codes", [])
+            if code in l4_codes
+        }
+        analysis_candidate = self.analysis_packages.get(l3_code)
+        analyzed_task_l4s = {
+            task.get("l4_code", "") for task in (analysis_candidate or {}).get("tasks", [])
+            if task.get("evidence_refs") and task.get("l4_code") in l4_codes
+        }
+        task_l4s = blueprint_task_l4s | sop_task_l4s | analyzed_task_l4s
+        task_ratio = len(task_l4s) / len(l4s) if l4s else 0
+        mapped_by_vn: dict[str, set[str]] = {}
+        for mapping in mappings:
+            mapped_by_vn.setdefault(mapping.get("vn_id", ""), set()).update(
+                expand_l4_mapping(mapping.get("l4_code", ""), l4_codes)
+            )
+        rule_l4s = {
+            code for row in linked_rules for code in mapped_by_vn.get(row.get("node_id", ""), set())
+        }
+        critical_vns = {
+            item["vn_id"] for item in vn_items
+            if item.get("is_fused") is True or str(item.get("priority", "")).upper() in {"P0", "HIGH"}
+        }
+        critical_l4s = {code for vn_id in critical_vns for code in mapped_by_vn.get(vn_id, set())}
+        critical_covered = not critical_l4s or critical_l4s <= task_l4s
+        gate_e_checks = [
+            {"rule_id": "E-001", "passed": gate_m == "PASS", "detail": f"Gate M={gate_m}"},
+            {"rule_id": "E-002", "passed": deliverable_ratio >= 0.9, "detail": f"交付物完整={deliverable_count}/{len(l4s)}（完整门槛90%）"},
+            {"rule_id": "E-003", "passed": tiers_valid, "detail": "Tier合法" if tiers_valid else "Tier缺失或非法"},
+            {"rule_id": "E-004", "passed": task_ratio >= 0.8, "detail": f"可追溯任务覆盖={len(task_l4s)}/{len(l4s)}（完整门槛80%）"},
+            {"rule_id": "E-005", "passed": critical_covered, "detail": f"关键L4任务覆盖={len(critical_l4s & task_l4s)}/{len(critical_l4s)}"},
+            {"rule_id": "E-006", "passed": bool(mappings), "detail": f"价值节点-L4映射={len(mappings)}"},
+            {"rule_id": "E-007", "passed": bool(rule_l4s), "detail": f"规则可定位L4={len(rule_l4s)}/{len(l4s)}"},
+            {"rule_id": "E-008", "passed": has_sop, "detail": f"SOP/任务执行材料={len(linked_sops)}份" if has_sop else "缺少SOP草稿或同等任务执行材料（不阻断建模）"},
+            {"rule_id": "E-009", "passed": has_rules, "detail": f"有效规则={len(linked_rules)}条" if has_rules else "缺少可关联的规则记录（不阻断建模）"},
+        ]
+        minimum_evidence = (
+            gate_m == "PASS"
+        )
+        gate_e = (
+            "PASS" if all(c["passed"] for c in gate_e_checks)
+            else "CONDITIONAL" if minimum_evidence
+            else "BLOCKED"
+        )
+
         mapping_complete = bool(mappings)
         not_fused = bool(nodes) and all(row.get("is_fused") is False for row in nodes)
         gate_a_checks = [
-            {"rule_id": "A-001", "passed": gate_e == "PASS", "detail": f"Gate E={gate_e}"},
+            {"rule_id": "A-001", "passed": gate_e in {"PASS", "CONDITIONAL"}, "detail": f"Gate E={gate_e}"},
             {"rule_id": "A-002", "passed": d_complete, "detail": f"D1-D6完整={d_complete_count}/{len(l4s)}"},
             {"rule_id": "A-003", "passed": mapping_complete, "detail": f"价值节点-L4映射={len(mappings)}"},
             {"rule_id": "A-004", "passed": not_fused, "detail": "无熔断节点" if not_fused else "存在熔断或无价值节点"},
@@ -377,10 +524,43 @@ class L3ModelBuilder:
                 "E": gate_result(gate_e, gate_e_checks),
                 "A": gate_result(gate_a, gate_a_checks),
             },
+            "model_readiness": {
+                "status": (
+                    "FULL_MODEL" if gate_m == "PASS" and gate_e == "PASS"
+                    else "LIMITED_MODEL" if gate_m == "PASS" and gate_e == "CONDITIONAL"
+                    else "WAITING_INPUT"
+                ),
+                "model_generation_allowed": gate_m == "PASS" and gate_e in {"PASS", "CONDITIONAL"},
+                "thresholds": {
+                    "deliverable_full": 0.9,
+                    "deliverable_minimum": 0.7,
+                    "task_full": 0.8,
+                    "task_minimum": 0.6,
+                    "critical_l4_required": 1.0,
+                },
+                "coverage": {
+                    "sop_count": len(linked_sops),
+                    "rule_count": len(linked_rules),
+                    "deliverable": {"covered": deliverable_count, "total": len(l4s)},
+                    "task": {"covered": len(task_l4s), "total": len(l4s)},
+                    "rule_l4": {"covered": len(rule_l4s), "total": len(l4s)},
+                    "critical_task": {"covered": len(critical_l4s & task_l4s), "total": len(critical_l4s)},
+                },
+                "linked_sources": {
+                    "sops": [
+                        {"ref": row.get("sop_ref", ""), "file": row.get("sop_file", ""), "evidence_ref": row.get("evidence_ref", "")}
+                        for row in linked_sops
+                    ],
+                    "rules": [
+                        {"rule_id": row.get("rule_id", ""), "node_id": row.get("node_id", ""), "name": row.get("rule_name", ""), "evidence_ref": row.get("evidence_ref", "")}
+                        for row in linked_rules
+                    ],
+                },
+            },
             "evidence_registry": sorted(evidence.values(), key=lambda item: item["evidence_id"]),
             "supplemental_evidence_refs": [record.evidence_id for record in (supplemental or [])],
         }
-        model["analysis"] = self.analysis_packages.get(l3_code) or build_analysis_envelope(
+        model["analysis"] = analysis_candidate or build_analysis_envelope(
             l3_code=l3_code, l4s=l4s, blueprint=model["blueprint"], evidence_ids=set(evidence),
         )
         validate_analysis_package(
@@ -388,6 +568,7 @@ class L3ModelBuilder:
             evidence_ids=set(evidence),
             l4_codes={item["l4_code"] for item in l4s},
         )
+        model["analysis_input_hash"] = analysis_input_hash(model)
         return model
 
     def build_and_write(
@@ -424,10 +605,23 @@ class L3ModelBuilder:
                     "blueprint_coverage": model["blueprint"]["coverage"],
                     "blueprint_version": model["blueprint"]["version"],
                     "gates": {key: value["status"] for key, value in model["gates"].items()},
-                    "classification": "MODEL_READY" if model["gates"]["A"]["status"] == "PASS" else "NEEDS_DATA",
+                    "classification": model["model_readiness"]["status"],
+                    "model_generation_allowed": model["model_readiness"]["model_generation_allowed"],
+                    "readiness_coverage": model["model_readiness"]["coverage"],
+                    "analysis_status": model["analysis"]["analysis_status"],
+                    "analysis_input_hash": model.get("analysis_input_hash", ""),
+                    "analysis_run_input_hash": (model["analysis"].get("model_run") or {}).get("input_snapshot_hash", ""),
+                    "production_status": (
+                        "BLOCKED_INPUT" if not model["model_readiness"]["model_generation_allowed"]
+                        else "RUN_PREPARED" if model["l3_code"] in self.prepared_analysis_codes and model["analysis"]["analysis_status"] == "PENDING_MODEL"
+                        else "READY_TO_RUN" if model["analysis"]["analysis_status"] == "PENDING_MODEL"
+                        else "REVIEWED_BASELINE" if model["analysis"]["analysis_status"] == "REVIEWED" and not (model["analysis"].get("model_run") or {}).get("input_snapshot_hash")
+                        else "ANALYSIS_CURRENT" if (model["analysis"].get("model_run") or {}).get("input_snapshot_hash") == model.get("analysis_input_hash", "")
+                        else "ANALYSIS_INPUT_CHANGED"
+                    ),
                     "highest_gate": (
                         "A" if model["gates"]["A"]["status"] == "PASS"
-                        else "E" if model["gates"]["E"]["status"] == "PASS"
+                        else "E" if model["gates"]["E"]["status"] in {"PASS", "CONDITIONAL"}
                         else "M" if model["gates"]["M"]["status"] == "PASS"
                         else "NONE"
                     ),
@@ -445,6 +639,30 @@ class L3ModelBuilder:
                 for model in sorted(indexed_models.values(), key=lambda item: item["l3_code"])
             ],
         }
+        production_order = sorted(
+            (
+                item for item in index["models"]
+                if item["production_status"] == "READY_TO_RUN"
+            ),
+            key=lambda item: (
+                0 if item["classification"] == "FULL_MODEL" else 1,
+                len(item["gap_reasons"]),
+                item["l4_count"],
+                item["l3_code"],
+            ),
+        )
+        index["production_summary"] = {
+            status: sum(item["production_status"] == status for item in index["models"])
+            for status in ("READY_TO_RUN", "RUN_PREPARED", "ANALYSIS_CURRENT", "ANALYSIS_INPUT_CHANGED", "REVIEWED_BASELINE", "BLOCKED_INPUT")
+        }
+        index["recommended_batch"] = [
+            {"l3_code": item["l3_code"], "l3_name": item["l3_name"], "classification": item["classification"], "l4_count": item["l4_count"]}
+            for item in production_order[:3]
+        ]
+        index["prepared_batch"] = [
+            {"l3_code": item["l3_code"], "l3_name": item["l3_name"], "classification": item["classification"], "l4_count": item["l4_count"]}
+            for item in index["models"] if item["production_status"] == "RUN_PREPARED"
+        ]
         output_dir.mkdir(parents=True, exist_ok=True)
         (output_dir / "index.json").write_text(
             json.dumps(index, ensure_ascii=False, indent=2, sort_keys=True) + "\n",

@@ -259,7 +259,7 @@
     "schema_version": "vnw.l3-analysis.v1",
     "source_scope": {
       "database": "process_analytics",
-      "evidence_count": 118,
+      "evidence_count": 120,
       "knowledge": "ACTIVE supplemental evidence only"
     },
     "tasks": [
@@ -361,6 +361,7 @@
       }
     ]
   },
+  "analysis_input_hash": "3c4beb6ddf636051fef0244103fb43c386f970e78124e9bb2d0d7b94260f49ac",
   "blueprint": {
     "blueprint_value_nodes": [],
     "coverage": "INDEXED",
@@ -1026,6 +1027,28 @@
       "confidence": "HIGH",
       "conflict_note": "",
       "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-3b07bd078418ed3141d1",
+      "field_name": "readiness.rule.PAY-R074",
+      "source": {
+        "observed_at": "",
+        "source_field": "rule_action",
+        "source_key": "PAY-R074",
+        "source_object": "T5_规则清单_全域_v3.0.csv",
+        "source_system": "VNW数据基础",
+        "source_version": "v1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "action": "全年采用固定汇率USD:HKD=7.8进行验算，不对照市场实时汇率",
+        "name": "永明固定汇率7.8规则",
+        "standard": "对永明账单直接用7.8核算，与其他保司区分使用不同汇率规则"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
       "evidence_id": "EVD-3ba90d4fa031ad04fb11",
       "field_name": "blueprint.steps.STEP-07",
       "source": {
@@ -1639,6 +1662,28 @@
           "L4-CFM-05"
         ],
         "step_name": "🟡 资金池归集监控（P1，完全缺失）"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-7512ac99ac07a5089104",
+      "field_name": "readiness.rule.PAY-R075",
+      "source": {
+        "observed_at": "",
+        "source_field": "rule_action",
+        "source_key": "PAY-R075",
+        "source_object": "T5_规则清单_全域_v3.0.csv",
+        "source_system": "VNW数据基础",
+        "source_version": "v1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "action": "以其对账单上实时显示的汇率为准，不对照固定汇率",
+        "name": "其他保司即时汇率获取规则",
+        "standard": "汇率取自对账单原文，计算与其一致"
       }
     },
     {
@@ -2777,7 +2822,7 @@
     "A": {
       "checks": [
         {
-          "detail": "Gate E=PASS",
+          "detail": "Gate E=CONDITIONAL",
           "passed": true,
           "rule_id": "A-001"
         },
@@ -2807,7 +2852,7 @@
           "rule_id": "E-001"
         },
         {
-          "detail": "交付物完整=8/8",
+          "detail": "交付物完整=8/8（完整门槛90%）",
           "passed": true,
           "rule_id": "E-002"
         },
@@ -2815,9 +2860,39 @@
           "detail": "Tier合法",
           "passed": true,
           "rule_id": "E-003"
+        },
+        {
+          "detail": "可追溯任务覆盖=8/8（完整门槛80%）",
+          "passed": true,
+          "rule_id": "E-004"
+        },
+        {
+          "detail": "关键L4任务覆盖=8/8",
+          "passed": true,
+          "rule_id": "E-005"
+        },
+        {
+          "detail": "价值节点-L4映射=10",
+          "passed": true,
+          "rule_id": "E-006"
+        },
+        {
+          "detail": "规则可定位L4=1/8",
+          "passed": true,
+          "rule_id": "E-007"
+        },
+        {
+          "detail": "缺少SOP草稿或同等任务执行材料（不阻断建模）",
+          "passed": false,
+          "rule_id": "E-008"
+        },
+        {
+          "detail": "有效规则=2条",
+          "passed": true,
+          "rule_id": "E-009"
         }
       ],
-      "status": "PASS"
+      "status": "CONDITIONAL"
     },
     "M": {
       "checks": [
@@ -2835,6 +2910,16 @@
           "detail": "L4名称完整",
           "passed": true,
           "rule_id": "M-003"
+        },
+        {
+          "detail": "交付物完整=8/8（最低门槛70%）",
+          "passed": true,
+          "rule_id": "M-004"
+        },
+        {
+          "detail": "D1-D6完整=8/8",
+          "passed": true,
+          "rule_id": "M-005"
         }
       ],
       "status": "PASS"
@@ -3085,6 +3170,54 @@
       "tier": "Auto"
     }
   ],
+  "model_readiness": {
+    "coverage": {
+      "critical_task": {
+        "covered": 8,
+        "total": 8
+      },
+      "deliverable": {
+        "covered": 8,
+        "total": 8
+      },
+      "rule_count": 2,
+      "rule_l4": {
+        "covered": 1,
+        "total": 8
+      },
+      "sop_count": 0,
+      "task": {
+        "covered": 8,
+        "total": 8
+      }
+    },
+    "linked_sources": {
+      "rules": [
+        {
+          "evidence_ref": "EVD-3b07bd078418ed3141d1",
+          "name": "永明固定汇率7.8规则",
+          "node_id": "VN-PAY-09",
+          "rule_id": "PAY-R074"
+        },
+        {
+          "evidence_ref": "EVD-7512ac99ac07a5089104",
+          "name": "其他保司即时汇率获取规则",
+          "node_id": "VN-PAY-09",
+          "rule_id": "PAY-R075"
+        }
+      ],
+      "sops": []
+    },
+    "model_generation_allowed": true,
+    "status": "LIMITED_MODEL",
+    "thresholds": {
+      "critical_l4_required": 1.0,
+      "deliverable_full": 0.9,
+      "deliverable_minimum": 0.7,
+      "task_full": 0.8,
+      "task_minimum": 0.6
+    }
+  },
   "schema_version": "vnw.l3-model.v1",
   "source_policy": {
     "consensus_separate": true,

@@ -139,7 +139,7 @@
     "schema_version": "vnw.l3-analysis.v1",
     "source_scope": {
       "database": "process_analytics",
-      "evidence_count": 56,
+      "evidence_count": 57,
       "knowledge": "ACTIVE supplemental evidence only"
     },
     "tasks": [
@@ -193,6 +193,7 @@
       }
     ]
   },
+  "analysis_input_hash": "94459666126f87e01ed00544922a50cc7595d9ab35f2b4953de581dea82b1088",
   "blueprint": {
     "blueprint_value_nodes": [],
     "coverage": "INDEXED",
@@ -1122,6 +1123,27 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-b59eeb9db18648b3c82d",
+      "field_name": "readiness.sop.VN-FTR-01",
+      "source": {
+        "observed_at": "",
+        "source_field": "sop_file",
+        "source_key": "VN-FTR-01",
+        "source_object": "T19_SOP生产进度_全域_v2.0.csv",
+        "source_system": "VNW数据基础",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "file": "SOP_VN-FTR-01_培训课程体系含配套工具_v0.1.md",
+        "title": "VN-FTR-01 · 培训课程体系（含配套工具） v0.1"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
       "evidence_id": "EVD-bb8096a010f5462ac233",
       "field_name": "l4_name",
@@ -1381,7 +1403,7 @@
     "A": {
       "checks": [
         {
-          "detail": "Gate E=PASS",
+          "detail": "Gate E=CONDITIONAL",
           "passed": true,
           "rule_id": "A-001"
         },
@@ -1411,7 +1433,7 @@
           "rule_id": "E-001"
         },
         {
-          "detail": "交付物完整=4/4",
+          "detail": "交付物完整=4/4（完整门槛90%）",
           "passed": true,
           "rule_id": "E-002"
         },
@@ -1419,9 +1441,39 @@
           "detail": "Tier合法",
           "passed": true,
           "rule_id": "E-003"
+        },
+        {
+          "detail": "可追溯任务覆盖=4/4（完整门槛80%）",
+          "passed": true,
+          "rule_id": "E-004"
+        },
+        {
+          "detail": "关键L4任务覆盖=4/4",
+          "passed": true,
+          "rule_id": "E-005"
+        },
+        {
+          "detail": "价值节点-L4映射=4",
+          "passed": true,
+          "rule_id": "E-006"
+        },
+        {
+          "detail": "规则可定位L4=0/4",
+          "passed": false,
+          "rule_id": "E-007"
+        },
+        {
+          "detail": "SOP/任务执行材料=1份",
+          "passed": true,
+          "rule_id": "E-008"
+        },
+        {
+          "detail": "缺少可关联的规则记录（不阻断建模）",
+          "passed": false,
+          "rule_id": "E-009"
         }
       ],
-      "status": "PASS"
+      "status": "CONDITIONAL"
     },
     "M": {
       "checks": [
@@ -1439,6 +1491,16 @@
           "detail": "L4名称完整",
           "passed": true,
           "rule_id": "M-003"
+        },
+        {
+          "detail": "交付物完整=4/4（最低门槛70%）",
+          "passed": true,
+          "rule_id": "M-004"
+        },
+        {
+          "detail": "D1-D6完整=4/4",
+          "passed": true,
+          "rule_id": "M-005"
         }
       ],
       "status": "PASS"
@@ -1573,6 +1635,47 @@
       "tier": "Hybrid"
     }
   ],
+  "model_readiness": {
+    "coverage": {
+      "critical_task": {
+        "covered": 4,
+        "total": 4
+      },
+      "deliverable": {
+        "covered": 4,
+        "total": 4
+      },
+      "rule_count": 0,
+      "rule_l4": {
+        "covered": 0,
+        "total": 4
+      },
+      "sop_count": 1,
+      "task": {
+        "covered": 4,
+        "total": 4
+      }
+    },
+    "linked_sources": {
+      "rules": [],
+      "sops": [
+        {
+          "evidence_ref": "EVD-b59eeb9db18648b3c82d",
+          "file": "SOP_VN-FTR-01_培训课程体系含配套工具_v0.1.md",
+          "ref": "VN-FTR-01"
+        }
+      ]
+    },
+    "model_generation_allowed": true,
+    "status": "LIMITED_MODEL",
+    "thresholds": {
+      "critical_l4_required": 1.0,
+      "deliverable_full": 0.9,
+      "deliverable_minimum": 0.7,
+      "task_full": 0.8,
+      "task_minimum": 0.6
+    }
+  },
   "schema_version": "vnw.l3-model.v1",
   "source_policy": {
     "consensus_separate": true,

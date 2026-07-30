@@ -4,7 +4,7 @@
 
 ## 这是什么
 
-抓取香港保险业监管局（IA）官网的一般/长期业务季度保费统计，标准化为长表格式，写入本地存储。demo 阶段只做 **2023Q1~2024Q2**——这是官网实测确认的唯一还有结构化 Excel 数据的窗口，2024Q3 起官网因风险为本资本制度（RBC）实施改为年度新闻稿+PDF附件，留作下一批单独处理。
+解析香港保险业监管局（IA）**长期业务**季度保费统计（2023Q1~2026Q1，共13期），标准化为长表格式，写入本地存储。数据来源是 Jasper **人工下载**的 13 份官网原始 Excel（放在 `07_接入记忆_Integrate_Memory/raw_data/`），demo 从解析本地文件开始，不做自动抓取——一般业务因官网 2024Q3 起已断更（无结构化数据可抓），本次不做；自动化抓取和一般业务处理都留到下一版本。
 
 不做增量抓取、不做定时调度、不做分析层摘要、不做前端展示、不做云端部署——这些是 demo 验证通过之后的下一版本目标。详见 [需求定义.md](01_初始化项目_Initialize_Project/需求定义.md)。
 
@@ -19,17 +19,18 @@ HKIA/
 ├── 03_规划项目结构_Plan_Project_Structure/  流程设计.md
 ├── 04_定义Agent_Define_Agent/
 │   └── agents/agent.py + agent.yaml       主入口 + Agent身份声明
-├── 05_集成工具_Integrate_Tools/
-│   └── tools/browser_fetcher.py           Playwright 封装（纯技术层）
+├── 05_集成工具_Integrate_Tools/            （本版本暂不需要，browser_fetcher留到下一版本自动化抓取时再开发）
 ├── 06_开发技能_Develop_Skills/
-│   └── skills/report_discovery.py         报表发现+抓取
-│   └── skills/excel_parser.py             一般/长期业务双引擎解析
-│   └── skills/normalizer.py               标准化+YTD标注+中文翻译
+│   └── skills/report_discovery.py         本地文件发现+完整性校验
+│   └── skills/excel_parser.py             .xls/.xlsx双引擎解析
+│   └── skills/normalizer.py               标准化+YTD标注
 ├── 07_接入记忆_Integrate_Memory/
+│   └── raw_data/                          人工放置的13份原始Excel（见该目录README）
 │   └── memory/workspace.py                本地SQLite读写 + 专属工作区隔离
 ├── 08_设计提示词_Design_Prompts/           （本版本demo暂无LLM调用，留空）
 ├── 09_测试与调试_Test_and_Debug/
 │   └── tests/test_integration.py
+│   └── tests/probe_download_reliability.py （下一版本自动化抓取验证用，本demo不需要跑）
 ├── 10_部署与运行_Deploy_and_Run/           （demo阶段不做调度上线，留空）
 └── 11_监控与优化_Monitor_and_Optimize/     （demo阶段不做，留空）
 ```
@@ -43,5 +44,6 @@ python3 09_测试与调试_Test_and_Debug/tests/test_integration.py
 
 ## 关联文档
 
-- [需求定义.md](01_初始化项目_Initialize_Project/需求定义.md) — 含官网真实实测发现（文件命名不统一、YTD累计口径、2024Q3断更、Cloudflare防护）
-- [流程设计.md](03_规划项目结构_Plan_Project_Structure/流程设计.md) — L3-HKIA-01~04 端到端流程
+- [需求定义.md](01_初始化项目_Initialize_Project/需求定义.md) — 含官网真实实测发现（文件命名不统一、YTD累计口径、一般业务断更但长期业务未断更的纠正、Cloudflare防护）
+- [流程设计.md](03_规划项目结构_Plan_Project_Structure/流程设计.md) — L3-HKIA-01~03 端到端流程
+- [raw_data/README.md](07_接入记忆_Integrate_Memory/raw_data/README.md) — 13份原始文件的期待清单

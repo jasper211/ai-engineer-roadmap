@@ -109,7 +109,7 @@
     "schema_version": "vnw.l3-analysis.v1",
     "source_scope": {
       "database": "process_analytics",
-      "evidence_count": 36,
+      "evidence_count": 37,
       "knowledge": "ACTIVE supplemental evidence only"
     },
     "tasks": [
@@ -151,6 +151,7 @@
       }
     ]
   },
+  "analysis_input_hash": "0b02c5a4b469e15036295d1cc97d388ef44f18a4e67d1e600988155e16f8ac55",
   "blueprint": {
     "blueprint_value_nodes": [],
     "coverage": "INDEXED",
@@ -790,6 +791,27 @@
       "confidence": "HIGH",
       "conflict_note": "",
       "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-c7e1d9d0437f23629306",
+      "field_name": "readiness.sop.L3-SVC-SPO",
+      "source": {
+        "observed_at": "",
+        "source_field": "sop_file",
+        "source_key": "L3-SVC-SPO",
+        "source_object": "T19_SOP生产进度_全域_v2.0.csv",
+        "source_system": "VNW数据基础",
+        "source_version": "v0.1"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "file": "SOP_L3-SVC-SPO_服务执行与异常处理_v0.1.md",
+        "title": "：L3-SVC / L3-SPO 服务执行与异常处理"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
       "evidence_id": "EVD-d378ccf572966895f6d1",
       "field_name": "agent_d3_output_verify",
       "source": {
@@ -899,7 +921,7 @@
     "A": {
       "checks": [
         {
-          "detail": "Gate E=PASS",
+          "detail": "Gate E=CONDITIONAL",
           "passed": true,
           "rule_id": "A-001"
         },
@@ -929,7 +951,7 @@
           "rule_id": "E-001"
         },
         {
-          "detail": "交付物完整=3/3",
+          "detail": "交付物完整=3/3（完整门槛90%）",
           "passed": true,
           "rule_id": "E-002"
         },
@@ -937,9 +959,39 @@
           "detail": "Tier合法",
           "passed": true,
           "rule_id": "E-003"
+        },
+        {
+          "detail": "可追溯任务覆盖=3/3（完整门槛80%）",
+          "passed": true,
+          "rule_id": "E-004"
+        },
+        {
+          "detail": "关键L4任务覆盖=0/0",
+          "passed": true,
+          "rule_id": "E-005"
+        },
+        {
+          "detail": "价值节点-L4映射=0",
+          "passed": false,
+          "rule_id": "E-006"
+        },
+        {
+          "detail": "规则可定位L4=0/3",
+          "passed": false,
+          "rule_id": "E-007"
+        },
+        {
+          "detail": "SOP/任务执行材料=1份",
+          "passed": true,
+          "rule_id": "E-008"
+        },
+        {
+          "detail": "缺少可关联的规则记录（不阻断建模）",
+          "passed": false,
+          "rule_id": "E-009"
         }
       ],
-      "status": "PASS"
+      "status": "CONDITIONAL"
     },
     "M": {
       "checks": [
@@ -957,6 +1009,16 @@
           "detail": "L4名称完整",
           "passed": true,
           "rule_id": "M-003"
+        },
+        {
+          "detail": "交付物完整=3/3（最低门槛70%）",
+          "passed": true,
+          "rule_id": "M-004"
+        },
+        {
+          "detail": "D1-D6完整=3/3",
+          "passed": true,
+          "rule_id": "M-005"
         }
       ],
       "status": "PASS"
@@ -1071,6 +1133,47 @@
       "tier": "Auto"
     }
   ],
+  "model_readiness": {
+    "coverage": {
+      "critical_task": {
+        "covered": 0,
+        "total": 0
+      },
+      "deliverable": {
+        "covered": 3,
+        "total": 3
+      },
+      "rule_count": 0,
+      "rule_l4": {
+        "covered": 0,
+        "total": 3
+      },
+      "sop_count": 1,
+      "task": {
+        "covered": 3,
+        "total": 3
+      }
+    },
+    "linked_sources": {
+      "rules": [],
+      "sops": [
+        {
+          "evidence_ref": "EVD-c7e1d9d0437f23629306",
+          "file": "SOP_L3-SVC-SPO_服务执行与异常处理_v0.1.md",
+          "ref": "L3-SVC-SPO"
+        }
+      ]
+    },
+    "model_generation_allowed": true,
+    "status": "LIMITED_MODEL",
+    "thresholds": {
+      "critical_l4_required": 1.0,
+      "deliverable_full": 0.9,
+      "deliverable_minimum": 0.7,
+      "task_full": 0.8,
+      "task_minimum": 0.6
+    }
+  },
   "schema_version": "vnw.l3-model.v1",
   "source_policy": {
     "consensus_separate": true,

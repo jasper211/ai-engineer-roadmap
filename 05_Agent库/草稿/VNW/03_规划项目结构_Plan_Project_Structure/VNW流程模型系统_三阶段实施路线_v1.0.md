@@ -107,5 +107,10 @@
 - COM、IRI、IBRD、BAM已使用同一React组件；旧HTML只作历史归档；
 - COM、IRI、IBRD、BAM已有通过统一契约校验的深度分析包；
 - 统一分析执行器已实现`prepare → run/import → validate → publish`；
-- IRR、KPI、JOPD已生成首批冻结事实Hash的模型运行包，待模型执行；
+- IRR、KPI、JOPD已完成首批统一模型执行、契约校验、分析包发布与系统快照重建；
+- IRR返回13条可校验任务；
+- KPI、JOPD已通过模块级修复补齐任务与负责人决策：KPI覆盖6/6个L4、6条任务、1条决策；JOPD覆盖5/5个L4、5条任务、1条决策；
+- 模块修复会锁定事实快照与现有分析包Hash，仅替换`tasks`和`decision_drafts`，原`l4_analysis`与`priority_drafts`冻结保留，并在合并前生成可恢复备份；
+- 执行器已兼容模型`output_contract`包装，并拒绝无L4定位的控制链和不完整决策草稿；
+- 面板B已统一支持结构化控制门与转人工条件，避免对象被错误显示为`[object Object]`；
 - 交付物质量审计已覆盖67个L3，并接入模型清单筛选。

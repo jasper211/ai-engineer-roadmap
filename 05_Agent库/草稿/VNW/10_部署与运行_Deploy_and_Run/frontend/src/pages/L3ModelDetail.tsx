@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router'
-import { ArrowLeft, ArrowRight, Bot, GitBranch, GripVertical, Info, Layers3, LoaderCircle, RotateCcw, Save, ShieldCheck } from 'lucide-react'
+import { AlertTriangle, ArrowLeft, ArrowRight, Bot, GitBranch, GripVertical, Info, Layers3, LoaderCircle, RotateCcw, Save, ShieldCheck } from 'lucide-react'
 import { loadL3Model, type L3Model } from '../lib/l3Models'
 
 const COLUMNS = [
@@ -42,6 +42,21 @@ function roleTone(role: string) {
   if (role.startsWith('控制')) return 'border-rose-200 bg-rose-50/70'
   if (role.startsWith('支撑')) return 'border-amber-200 bg-amber-50/70'
   return 'border-border-default bg-bg-surface'
+}
+
+function readableList(value: unknown) {
+  if (!Array.isArray(value) || value.length === 0) return '待补'
+  const texts = value.map(item => {
+    if (typeof item === 'string' || typeof item === 'number') return String(item)
+    if (!item || typeof item !== 'object') return ''
+    const record = item as Record<string, unknown>
+    const label = record.description || record.label || record.name || record.title || record.condition
+    const id = record.decision_id || record.gate_id || record.id
+    if (label && id) return `${String(id)} · ${String(label)}`
+    if (label) return String(label)
+    return ''
+  }).filter(Boolean)
+  return texts.length ? texts.join('；') : '待补'
 }
 
 function deliverableQuality(rawDeliverable: string, sameValueCount: number) {
@@ -95,7 +110,9 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
           tier: task.suggested_tier,
           source_type: task.source_type,
         }))
-      : model.l4s.map(l4 => ({ ...l4, card_id: l4.l4_code, source_type: 'DATABASE_L4' }))
+      : model.analysis.analysis_status === 'PENDING_MODEL'
+        ? model.l4s.map(l4 => ({ ...l4, card_id: l4.l4_code, source_type: 'DATABASE_L4' }))
+        : []
     return base.map(card => ({
       ...card,
       placement: session.placements[card.card_id] || card.tier,
@@ -151,6 +168,33 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
 
   if (error) return <div className="panel p-5 text-sm text-accent-danger">{error}</div>
   if (!model) return <div className="flex min-h-64 items-center justify-center text-text-muted"><LoaderCircle className="mr-2 h-5 w-5 animate-spin" />正在读取模型证据</div>
+  if (!model.model_readiness.model_generation_allowed) {
+    const gaps = (['M', 'E'] as const).flatMap(gate =>
+      model.gates[gate].checks.filter(check => !check.passed).map(check => check.detail)
+    )
+    return (
+      <div className="space-y-6">
+        <Link to="/models" className="inline-flex items-center gap-2 text-xs text-text-muted hover:text-text-primary"><ArrowLeft className="h-4 w-4" />返回模型清单</Link>
+        <section className="rounded-2xl border border-amber-300 bg-amber-50 p-6">
+          <p className="font-mono text-xs text-amber-700">{model.l3_code}</p>
+          <h1 className="mt-1 font-heading text-2xl font-bold">{model.l3_name}</h1>
+          <div className="mt-4 flex items-center gap-2 text-amber-800"><AlertTriangle className="h-5 w-5" /><strong>待补后生成 · 当前不产出流程模型和AI分析</strong></div>
+          <p className="mt-2 text-sm leading-6 text-text-secondary">基础结构或任务证据尚未达到最低准入门槛。系统只展示补建事项，不使用模板或模型推测填充。</p>
+        </section>
+        <section className="panel p-5">
+          <h2 className="text-sm font-semibold">需要补充的输入</h2>
+          <div className="mt-4 grid gap-3 md:grid-cols-2">
+            {gaps.map((gap, index) => <div key={`${gap}-${index}`} className="rounded-xl border border-amber-200 bg-amber-50/60 p-3 text-sm text-amber-900">{gap}</div>)}
+          </div>
+          <p className="mt-4 text-xs text-text-muted">
+            当前已定位：SOP {model.model_readiness.coverage.sop_count}份 · 规则 {model.model_readiness.coverage.rule_count}条 ·
+            交付物 {model.model_readiness.coverage.deliverable.covered}/{model.model_readiness.coverage.deliverable.total} ·
+            可追溯任务 {model.model_readiness.coverage.task.covered}/{model.model_readiness.coverage.task.total}
+          </p>
+        </section>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-6">
@@ -246,15 +290,15 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
                 ))}
               </div>
             )}
-            {Boolean(model.analysis.control_chain?.length) && (
+            {Boolean(model.analysis.control_chain?.some(item => Boolean(item?.l4_code && item?.label))) && (
               <div className="mt-4">
                 <div className="flex flex-wrap items-center justify-center gap-2">
-                  {model.analysis.control_chain?.map((item, index) => <div key={item.l4_code} className="flex items-center gap-2">
+                  {model.analysis.control_chain?.filter(item => Boolean(item?.l4_code && item?.label)).map((item, index, controls) => <div key={item.l4_code} className="flex items-center gap-2">
                     <div className={`rounded-xl border px-4 py-3 ${item.tone === 'critical' ? 'border-rose-300 bg-rose-50' : 'border-slate-200 bg-white'}`}>
-                      <p className="text-xs font-bold text-text-primary">{item.level} · {item.l4_code.replace('L4-', '')}</p>
+                      <p className="text-xs font-bold text-text-primary">{item.level || '控制点'} · {String(item.l4_code).replace('L4-', '')}</p>
                       <p className="mt-1 text-xs text-text-secondary">{item.label}</p>
                     </div>
-                    {index < (model.analysis.control_chain?.length || 0) - 1 && <ArrowRight className="h-4 w-4 text-slate-500" />}
+                    {index < controls.length - 1 && <ArrowRight className="h-4 w-4 text-slate-500" />}
                   </div>)}
                 </div>
               </div>
@@ -357,6 +401,12 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
           </div>
         )}
 
+        {cards.length === 0 ? (
+          <div className="mt-4 rounded-xl border border-dashed border-amber-300 bg-amber-50 p-5">
+            <p className="text-sm font-medium text-amber-800">逐任务分析缺失</p>
+            <p className="mt-1 text-xs leading-5 text-text-secondary">模型没有返回通过证据与结构校验的任务拆分。系统不会用L4活动卡片冒充任务；需重新运行任务模块或补充可拆分的蓝图/规则输入。</p>
+          </div>
+        ) : (
         <div className="mt-4 grid gap-3 lg:grid-cols-4">
           {COLUMNS.map(column => (
             <div key={column.id} onDragOver={event => event.preventDefault()} onDrop={event => moveCard(event.dataTransfer.getData('text/card'), column.id)} className={`min-h-48 rounded-xl border p-3 ${column.color}`}>
@@ -376,6 +426,7 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
             </div>
           ))}
         </div>
+        )}
 
         <label className="mt-4 block text-xs text-text-secondary">本次讨论结论
           <textarea value={session.note} onChange={event => setSession(current => ({ ...current, note: event.target.value }))} placeholder="只记录负责人确认的结论、待验证事项和责任人；保存后仅留在当前浏览器。" className="mt-2 min-h-24 w-full rounded-xl border border-border-default bg-bg-surface p-3 text-sm text-text-primary placeholder:text-text-muted" />
@@ -397,7 +448,7 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
               <thead><tr className="border-b border-border-default text-left text-text-muted"><th className="py-2">L4</th><th>AI负责</th><th>人负责</th><th>何时转人工</th><th>不可绕过控制门</th></tr></thead>
               <tbody>{model.analysis.l4_analysis.map((item, index) => {
                 const row = item as Record<string, unknown>
-                return <tr key={String(row.l4_code || index)} className="border-b border-border-default/70 align-top"><td className="py-3 font-mono text-accent-primary">{String(row.l4_code || '')}</td><td>{String(row.ai_responsibility || '待补')}</td><td>{String(row.human_responsibility || '待补')}</td><td>{Array.isArray(row.handoff_triggers) ? row.handoff_triggers.join('；') : '待补'}</td><td>{Array.isArray(row.control_gates) ? row.control_gates.join('；') : '待补'}</td></tr>
+                return <tr key={String(row.l4_code || index)} className="border-b border-border-default/70 align-top"><td className="py-3 font-mono text-accent-primary">{String(row.l4_code || '')}</td><td>{String(row.ai_responsibility || '待补')}</td><td>{String(row.human_responsibility || '待补')}</td><td>{readableList(row.handoff_triggers)}</td><td>{readableList(row.control_gates)}</td></tr>
               })}</tbody>
             </table>
           </div>

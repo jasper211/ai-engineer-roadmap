@@ -139,7 +139,7 @@
     "schema_version": "vnw.l3-analysis.v1",
     "source_scope": {
       "database": "process_analytics",
-      "evidence_count": 57,
+      "evidence_count": 58,
       "knowledge": "ACTIVE supplemental evidence only"
     },
     "tasks": [
@@ -193,6 +193,7 @@
       }
     ]
   },
+  "analysis_input_hash": "47de26b4a25d3f38142f1359f66850702c317c5b9a5e94c873a2687e0ff0e370",
   "blueprint": {
     "blueprint_value_nodes": [],
     "coverage": "INDEXED",
@@ -738,6 +739,27 @@
           "L4-FLM-03"
         ],
         "step_name": "候选人初步接触"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-5dd7ec87d54853c7b9e2",
+      "field_name": "readiness.sop.VN-FLM-01",
+      "source": {
+        "observed_at": "",
+        "source_field": "sop_file",
+        "source_key": "VN-FLM-01",
+        "source_object": "T19_SOP生产进度_全域_v2.0.csv",
+        "source_system": "VNW数据基础",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "file": "SOP_VN-FLM-01_招募计划与执行记录_v0.1.md",
+        "title": "VN-FLM-01 · 招募计划与执行记录 v0.1"
       }
     },
     {
@@ -1446,7 +1468,7 @@
     "A": {
       "checks": [
         {
-          "detail": "Gate E=PASS",
+          "detail": "Gate E=CONDITIONAL",
           "passed": true,
           "rule_id": "A-001"
         },
@@ -1476,7 +1498,7 @@
           "rule_id": "E-001"
         },
         {
-          "detail": "交付物完整=4/4",
+          "detail": "交付物完整=4/4（完整门槛90%）",
           "passed": true,
           "rule_id": "E-002"
         },
@@ -1484,9 +1506,39 @@
           "detail": "Tier合法",
           "passed": true,
           "rule_id": "E-003"
+        },
+        {
+          "detail": "可追溯任务覆盖=4/4（完整门槛80%）",
+          "passed": true,
+          "rule_id": "E-004"
+        },
+        {
+          "detail": "关键L4任务覆盖=1/1",
+          "passed": true,
+          "rule_id": "E-005"
+        },
+        {
+          "detail": "价值节点-L4映射=1",
+          "passed": true,
+          "rule_id": "E-006"
+        },
+        {
+          "detail": "规则可定位L4=0/4",
+          "passed": false,
+          "rule_id": "E-007"
+        },
+        {
+          "detail": "SOP/任务执行材料=1份",
+          "passed": true,
+          "rule_id": "E-008"
+        },
+        {
+          "detail": "缺少可关联的规则记录（不阻断建模）",
+          "passed": false,
+          "rule_id": "E-009"
         }
       ],
-      "status": "PASS"
+      "status": "CONDITIONAL"
     },
     "M": {
       "checks": [
@@ -1504,6 +1556,16 @@
           "detail": "L4名称完整",
           "passed": true,
           "rule_id": "M-003"
+        },
+        {
+          "detail": "交付物完整=4/4（最低门槛70%）",
+          "passed": true,
+          "rule_id": "M-004"
+        },
+        {
+          "detail": "D1-D6完整=4/4",
+          "passed": true,
+          "rule_id": "M-005"
         }
       ],
       "status": "PASS"
@@ -1638,6 +1700,47 @@
       "tier": "Hybrid"
     }
   ],
+  "model_readiness": {
+    "coverage": {
+      "critical_task": {
+        "covered": 1,
+        "total": 1
+      },
+      "deliverable": {
+        "covered": 4,
+        "total": 4
+      },
+      "rule_count": 0,
+      "rule_l4": {
+        "covered": 0,
+        "total": 4
+      },
+      "sop_count": 1,
+      "task": {
+        "covered": 4,
+        "total": 4
+      }
+    },
+    "linked_sources": {
+      "rules": [],
+      "sops": [
+        {
+          "evidence_ref": "EVD-5dd7ec87d54853c7b9e2",
+          "file": "SOP_VN-FLM-01_招募计划与执行记录_v0.1.md",
+          "ref": "VN-FLM-01"
+        }
+      ]
+    },
+    "model_generation_allowed": true,
+    "status": "LIMITED_MODEL",
+    "thresholds": {
+      "critical_l4_required": 1.0,
+      "deliverable_full": 0.9,
+      "deliverable_minimum": 0.7,
+      "task_full": 0.8,
+      "task_minimum": 0.6
+    }
+  },
   "schema_version": "vnw.l3-model.v1",
   "source_policy": {
     "consensus_separate": true,

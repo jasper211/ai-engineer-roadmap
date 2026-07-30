@@ -139,7 +139,7 @@
     "schema_version": "vnw.l3-analysis.v1",
     "source_scope": {
       "database": "process_analytics",
-      "evidence_count": 63,
+      "evidence_count": 65,
       "knowledge": "ACTIVE supplemental evidence only"
     },
     "tasks": [
@@ -193,6 +193,7 @@
       }
     ]
   },
+  "analysis_input_hash": "c80dd01037f836754d164073fbc5df6a073fe2d6c585d3345b731734ffb4a99a",
   "blueprint": {
     "blueprint_value_nodes": [],
     "coverage": "INDEXED",
@@ -958,6 +959,27 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-8319071e097bd06907d4",
+      "field_name": "readiness.sop.VN-FOB-02",
+      "source": {
+        "observed_at": "",
+        "source_field": "sop_file",
+        "source_key": "VN-FOB-02",
+        "source_object": "T19_SOP生产进度_全域_v2.0.csv",
+        "source_system": "VNW数据基础",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "file": "SOP_VN-FOB-02_新人90天培养计划_v0.1.md",
+        "title": "VN-FOB-02 · 新人90天培养计划 v0.1"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
       "evidence_id": "EVD-86189d90bef8b46bc56c",
       "field_name": "is_fused",
@@ -990,6 +1012,27 @@
       "status": "ACTIVE",
       "transform_rule": "",
       "value": 2
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-88a572e72a575fd651cd",
+      "field_name": "readiness.sop.VN-FOB-01",
+      "source": {
+        "observed_at": "",
+        "source_field": "sop_file",
+        "source_key": "VN-FOB-01",
+        "source_object": "T19_SOP生产进度_全域_v2.0.csv",
+        "source_system": "VNW数据基础",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "file": "SOP_VN-FOB-01_转介协议及附属协议签署版_v0.1.md",
+        "title": "VN-FOB-01 · 转介协议及附属协议签署版 v0.1"
+      }
     },
     {
       "confidence": "HIGH",
@@ -1507,7 +1550,7 @@
     "A": {
       "checks": [
         {
-          "detail": "Gate E=PASS",
+          "detail": "Gate E=CONDITIONAL",
           "passed": true,
           "rule_id": "A-001"
         },
@@ -1537,7 +1580,7 @@
           "rule_id": "E-001"
         },
         {
-          "detail": "交付物完整=4/4",
+          "detail": "交付物完整=4/4（完整门槛90%）",
           "passed": true,
           "rule_id": "E-002"
         },
@@ -1545,9 +1588,39 @@
           "detail": "Tier合法",
           "passed": true,
           "rule_id": "E-003"
+        },
+        {
+          "detail": "可追溯任务覆盖=4/4（完整门槛80%）",
+          "passed": true,
+          "rule_id": "E-004"
+        },
+        {
+          "detail": "关键L4任务覆盖=3/3",
+          "passed": true,
+          "rule_id": "E-005"
+        },
+        {
+          "detail": "价值节点-L4映射=3",
+          "passed": true,
+          "rule_id": "E-006"
+        },
+        {
+          "detail": "规则可定位L4=0/4",
+          "passed": false,
+          "rule_id": "E-007"
+        },
+        {
+          "detail": "SOP/任务执行材料=2份",
+          "passed": true,
+          "rule_id": "E-008"
+        },
+        {
+          "detail": "缺少可关联的规则记录（不阻断建模）",
+          "passed": false,
+          "rule_id": "E-009"
         }
       ],
-      "status": "PASS"
+      "status": "CONDITIONAL"
     },
     "M": {
       "checks": [
@@ -1565,6 +1638,16 @@
           "detail": "L4名称完整",
           "passed": true,
           "rule_id": "M-003"
+        },
+        {
+          "detail": "交付物完整=4/4（最低门槛70%）",
+          "passed": true,
+          "rule_id": "M-004"
+        },
+        {
+          "detail": "D1-D6完整=4/4",
+          "passed": true,
+          "rule_id": "M-005"
         }
       ],
       "status": "PASS"
@@ -1699,6 +1782,52 @@
       "tier": "Auto"
     }
   ],
+  "model_readiness": {
+    "coverage": {
+      "critical_task": {
+        "covered": 3,
+        "total": 3
+      },
+      "deliverable": {
+        "covered": 4,
+        "total": 4
+      },
+      "rule_count": 0,
+      "rule_l4": {
+        "covered": 0,
+        "total": 4
+      },
+      "sop_count": 2,
+      "task": {
+        "covered": 4,
+        "total": 4
+      }
+    },
+    "linked_sources": {
+      "rules": [],
+      "sops": [
+        {
+          "evidence_ref": "EVD-88a572e72a575fd651cd",
+          "file": "SOP_VN-FOB-01_转介协议及附属协议签署版_v0.1.md",
+          "ref": "VN-FOB-01"
+        },
+        {
+          "evidence_ref": "EVD-8319071e097bd06907d4",
+          "file": "SOP_VN-FOB-02_新人90天培养计划_v0.1.md",
+          "ref": "VN-FOB-02"
+        }
+      ]
+    },
+    "model_generation_allowed": true,
+    "status": "LIMITED_MODEL",
+    "thresholds": {
+      "critical_l4_required": 1.0,
+      "deliverable_full": 0.9,
+      "deliverable_minimum": 0.7,
+      "task_full": 0.8,
+      "task_minimum": 0.6
+    }
+  },
   "schema_version": "vnw.l3-model.v1",
   "source_policy": {
     "consensus_separate": true,

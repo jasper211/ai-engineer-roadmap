@@ -5,6 +5,7 @@ import hashlib
 import json
 import os
 import re
+import shutil
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -12,6 +13,7 @@ from skills.l3_analysis_contract import (
     ANALYSIS_SCHEMA_VERSION,
     ANALYSIS_STANDARD_ID,
     REQUIRED_L4_FIELDS,
+    analysis_input_hash,
     validate_analysis_package,
 )
 from tools.llm_client import DEFAULT_MODEL, call_json_model
@@ -114,15 +116,33 @@ def normalize_model_package(package: dict, fact_pack: dict) -> dict:
         missing.append(f"负责人决策草稿结构不合格，已拒绝{rejected_decisions}条")
     if not normalized_tasks:
         missing.append("模型未返回可校验的逐任务拆分")
+    raw_control_chain = package.get("control_chain", [])
+    package["control_chain"] = [
+        item for item in raw_control_chain
+        if isinstance(item, dict) and item.get("l4_code") and item.get("label")
+    ]
+    rejected_controls = len(raw_control_chain) - len(package["control_chain"]) if isinstance(raw_control_chain, list) else 0
+    if rejected_controls:
+        missing.append(f"控制链缺少L4定位，已拒绝{rejected_controls}条")
     package["missing_analysis"] = list(dict.fromkeys(filter(None, missing)))
     package.setdefault("source_scope", {
         "database": "process_analytics",
         "knowledge": "ACTIVE supplemental evidence only",
         "evidence_count": len(fact_pack["evidence_registry"]),
     })
-    package.setdefault("control_chain", [])
     package.setdefault("rejected_task_sources", [])
     return package
+
+
+TASK_FIELDS = {
+    "task_id", "l4_code", "task_name", "source_type", "evidence_refs",
+    "analysis_status", "suggested_tier", "tier_rationale",
+}
+DECISION_FIELDS = {
+    "priority", "task_ids", "title", "pilot_scope", "human_boundary",
+    "evidence_refs", "analysis_status",
+}
+VALID_TIERS = {"Human", "Aug", "Hybrid", "Auto"}
 
 
 class L3AnalysisRunner:
@@ -136,7 +156,7 @@ class L3AnalysisRunner:
         return {
             "l3_code": snapshot["l3_code"],
             "l3_name": snapshot["l3_name"],
-            "snapshot_hash": canonical_hash(snapshot),
+            "snapshot_hash": analysis_input_hash(snapshot),
             "source_policy": snapshot.get("source_policy", {}),
             "gates": snapshot.get("gates", {}),
             "l2_capabilities": snapshot.get("l2_capabilities", []),
@@ -190,6 +210,9 @@ class L3AnalysisRunner:
 
     def prepare(self, snapshot_path: Path) -> Path:
         snapshot = json.loads(Path(snapshot_path).read_text(encoding="utf-8"))
+        readiness = snapshot.get("model_readiness", {})
+        if readiness and not readiness.get("model_generation_allowed", False):
+            raise ValueError(f"{snapshot['l3_code']}未通过模型准入，不生成分析运行包")
         fact_pack = self._fact_pack(snapshot)
         run_id = f"{snapshot['l3_code']}_{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}_{fact_pack['snapshot_hash'][:10]}"
         run_dir = self.run_root / run_id
@@ -211,6 +234,79 @@ class L3AnalysisRunner:
         }
         (run_dir / "request.json").write_text(json.dumps(request, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         (run_dir / "system_prompt.md").write_text(system_prompt, encoding="utf-8")
+        (run_dir / "user_payload.json").write_text(json.dumps(user_payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        return run_dir
+
+    def prepare_repair(self, snapshot_path: Path, package_path: Path) -> Path:
+        """准备只补任务与决策的运行包；已发布L4分析与优先级保持冻结。"""
+        snapshot_path = Path(snapshot_path)
+        package_path = Path(package_path)
+        snapshot = json.loads(snapshot_path.read_text(encoding="utf-8"))
+        readiness = snapshot.get("model_readiness", {})
+        if readiness and not readiness.get("model_generation_allowed", False):
+            raise ValueError(f"{snapshot['l3_code']}未通过模型准入，不执行分析修复")
+        current_package = json.loads(package_path.read_text(encoding="utf-8"))
+        fact_pack = self._fact_pack(snapshot)
+        package_hash = canonical_hash(current_package)
+        run_id = (
+            f"{snapshot['l3_code']}_REPAIR_"
+            f"{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}_"
+            f"{fact_pack['snapshot_hash'][:10]}"
+        )
+        run_dir = self.run_root / run_id
+        run_dir.mkdir(parents=True, exist_ok=False)
+        request = {
+            "run_id": run_id,
+            "run_type": "MODULE_REPAIR",
+            "repair_modules": ["tasks", "decision_drafts"],
+            "status": "PREPARED",
+            "l3_code": snapshot["l3_code"],
+            "input_snapshot_path": str(snapshot_path.resolve()),
+            "input_snapshot_hash": fact_pack["snapshot_hash"],
+            "current_package_path": str(package_path.resolve()),
+            "current_package_hash": package_hash,
+            "analysis_standard_id": ANALYSIS_STANDARD_ID,
+            "prepared_at": datetime.now(timezone.utc).isoformat(),
+        }
+        output_contract = {
+            "tasks": [{
+                "task_id": "L4-XXX-01-M01",
+                "l4_code": "L4-XXX-01",
+                "task_name": "具体、可执行的日常工作步骤",
+                "source_type": "MODEL_DECOMPOSITION_FROM_L4",
+                "evidence_refs": ["当前fact_pack中真实存在的evidence_id"],
+                "analysis_status": "MODEL_DRAFT",
+                "suggested_tier": "Human|Aug|Hybrid|Auto",
+                "tier_rationale": "基于证据说明AI与人的任务边界",
+            }],
+            "decision_drafts": [{
+                "priority": 1,
+                "task_ids": ["必须引用上方真实task_id"],
+                "title": "负责人需要拍板的具体试点",
+                "pilot_scope": "最小试点范围与可观察产出",
+                "human_boundary": "不可交给AI的判断、审批或控制门",
+                "evidence_refs": ["当前fact_pack中真实存在的evidence_id"],
+                "analysis_status": "MODEL_DRAFT",
+            }],
+        }
+        user_payload = {
+            "instruction": (
+                "这是模块修复，不得重写已冻结的l4_analysis或priority_drafts。"
+                "只返回顶层tasks与decision_drafts，不要用output_contract包裹。"
+                "每个L4至少拆出1个来自事实包的具体工作任务；任务须覆盖全部L4。"
+                "所有evidence_refs必须是fact_pack中真实evidence_id且不能为空。"
+                "decision_drafts至少1条，只能引用本次tasks中的task_id。"
+                "证据不支持的细节不得补造。"
+            ),
+            "repair_output_contract": output_contract,
+            "frozen_analysis": {
+                "l4_analysis": current_package.get("l4_analysis", []),
+                "priority_drafts": current_package.get("priority_drafts", []),
+            },
+            "fact_pack": fact_pack,
+        }
+        (run_dir / "request.json").write_text(json.dumps(request, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        (run_dir / "system_prompt.md").write_text(self.prompt_path.read_text(encoding="utf-8"), encoding="utf-8")
         (run_dir / "user_payload.json").write_text(json.dumps(user_payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         return run_dir
 
@@ -238,10 +334,12 @@ class L3AnalysisRunner:
         request = json.loads((run_dir / "request.json").read_text(encoding="utf-8"))
         payload = json.loads((run_dir / "user_payload.json").read_text(encoding="utf-8"))
         fact_pack = payload["fact_pack"]
-        current_hash = canonical_hash(json.loads(Path(request["input_snapshot_path"]).read_text(encoding="utf-8")))
+        current_hash = analysis_input_hash(json.loads(Path(request["input_snapshot_path"]).read_text(encoding="utf-8")))
         if current_hash != request["input_snapshot_hash"]:
             raise ValueError("事实快照已变化，禁止发布基于旧输入的分析")
         response_file = Path(response_path) if response_path else run_dir / "response.raw.json"
+        if request.get("run_type") == "MODULE_REPAIR":
+            return self._validate_and_merge_repair(run_dir, request, fact_pack, response_file)
         package = _json_from_text(response_file.read_text(encoding="utf-8"))
         package = normalize_model_package(package, fact_pack)
         package["schema_version"] = ANALYSIS_SCHEMA_VERSION
@@ -283,3 +381,107 @@ class L3AnalysisRunner:
         request.update({"status": "PUBLISHED", "published_path": str(output), "published_at": datetime.now(timezone.utc).isoformat()})
         (run_dir / "request.json").write_text(json.dumps(request, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         return output
+
+    def _validate_and_merge_repair(
+        self, run_dir: Path, request: dict, fact_pack: dict, response_file: Path
+    ) -> Path:
+        package_path = Path(request["current_package_path"])
+        current_package = json.loads(package_path.read_text(encoding="utf-8"))
+        if canonical_hash(current_package) != request["current_package_hash"]:
+            raise ValueError("现有分析包已变化，禁止合并基于旧版本的修复")
+
+        repaired = _json_from_text(response_file.read_text(encoding="utf-8"))
+        tasks = repaired.get("tasks")
+        decisions = repaired.get("decision_drafts")
+        if not isinstance(tasks, list) or not isinstance(decisions, list):
+            raise ValueError("修复输出必须包含tasks与decision_drafts数组")
+
+        evidence_ids = {item["evidence_id"] for item in fact_pack["evidence_registry"]}
+        l4_codes = {item["l4_code"] for item in fact_pack["l4s"]}
+        task_ids: set[str] = set()
+        covered_l4s: set[str] = set()
+        for task in tasks:
+            if not isinstance(task, dict) or not TASK_FIELDS <= set(task):
+                raise ValueError("修复任务字段不完整")
+            if task["l4_code"] not in l4_codes:
+                raise ValueError(f"修复任务跨出当前L3：{task.get('task_id')}")
+            if not task["task_id"] or task["task_id"] in task_ids:
+                raise ValueError(f"修复任务ID为空或重复：{task.get('task_id')}")
+            refs = task.get("evidence_refs") or []
+            if not refs or set(refs) - evidence_ids:
+                raise ValueError(f"修复任务缺少有效证据：{task['task_id']}")
+            if task.get("suggested_tier") not in VALID_TIERS:
+                raise ValueError(f"修复任务Tier不合法：{task['task_id']}")
+            if not task.get("task_name") or not task.get("tier_rationale"):
+                raise ValueError(f"修复任务内容不完整：{task['task_id']}")
+            task["analysis_status"] = "MODEL_DRAFT"
+            task_ids.add(task["task_id"])
+            covered_l4s.add(task["l4_code"])
+        if covered_l4s != l4_codes:
+            missing = sorted(l4_codes - covered_l4s)
+            raise ValueError(f"修复任务未覆盖全部L4：{missing}")
+
+        if not decisions:
+            raise ValueError("修复输出至少需要1条负责人决策")
+        for decision in decisions:
+            if not isinstance(decision, dict) or not DECISION_FIELDS <= set(decision):
+                raise ValueError("负责人决策字段不完整")
+            if not decision.get("task_ids") or not set(decision["task_ids"]) <= task_ids:
+                raise ValueError(f"负责人决策引用未知任务：{decision.get('title')}")
+            refs = decision.get("evidence_refs") or []
+            if not refs or set(refs) - evidence_ids:
+                raise ValueError(f"负责人决策缺少有效证据：{decision.get('title')}")
+            if not all(decision.get(field) for field in ("title", "pilot_scope", "human_boundary")):
+                raise ValueError("负责人决策内容不完整")
+            decision["analysis_status"] = "MODEL_DRAFT"
+
+        merged = dict(current_package)
+        merged["tasks"] = tasks
+        merged["decision_drafts"] = decisions
+        # 只清理由本次修复已解决的缺失项，其他数据不足提示原样保留。
+        merged["missing_analysis"] = [
+            item for item in current_package.get("missing_analysis", [])
+            if not any(marker in str(item) for marker in (
+                "负责人决策草稿结构不合格",
+                "模型未返回可校验的逐任务拆分",
+                "逐任务分析缺失",
+                "任务级负责人决策建议",
+            ))
+        ]
+        merged.setdefault("repair_history", []).append({
+            "run_id": request["run_id"],
+            "modules": request["repair_modules"],
+            "model": request.get("model", "external-import"),
+            "repaired_at": request.get("returned_at") or datetime.now(timezone.utc).isoformat(),
+            "input_snapshot_hash": request["input_snapshot_hash"],
+            "previous_package_hash": request["current_package_hash"],
+            "task_count": len(tasks),
+            "decision_count": len(decisions),
+        })
+        validate_analysis_package(merged, evidence_ids, l4_codes)
+
+        timestamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+        backup = package_path.with_name(f"{package_path.name}.before-repair.{timestamp}.bak")
+        shutil.copy2(package_path, backup)
+        package_path.write_text(json.dumps(merged, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        validation = {
+            "status": "VALIDATED_AND_MERGED",
+            "run_type": "MODULE_REPAIR",
+            "l3_code": request["l3_code"],
+            "validated_at": datetime.now(timezone.utc).isoformat(),
+            "preserved_modules": ["l4_analysis", "priority_drafts"],
+            "repaired_modules": request["repair_modules"],
+            "l4_coverage": sorted(covered_l4s),
+            "task_count": len(tasks),
+            "decision_count": len(decisions),
+            "backup_path": str(backup),
+        }
+        (run_dir / "validation.json").write_text(json.dumps(validation, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        request.update({
+            "status": "PUBLISHED",
+            "published_path": str(package_path),
+            "backup_path": str(backup),
+            "published_at": datetime.now(timezone.utc).isoformat(),
+        })
+        (run_dir / "request.json").write_text(json.dumps(request, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        return package_path

@@ -229,7 +229,7 @@
     "schema_version": "vnw.l3-analysis.v1",
     "source_scope": {
       "database": "process_analytics",
-      "evidence_count": 98,
+      "evidence_count": 100,
       "knowledge": "ACTIVE supplemental evidence only"
     },
     "tasks": [
@@ -319,6 +319,7 @@
       }
     ]
   },
+  "analysis_input_hash": "c659fac006bb654d3b3effdb9bef78800880164f00cce41454c9d077ad4339ce",
   "blueprint": {
     "blueprint_value_nodes": [],
     "coverage": "INDEXED",
@@ -833,6 +834,28 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-37bf083836a248c64c6c",
+      "field_name": "readiness.rule.HR-R004",
+      "source": {
+        "observed_at": "",
+        "source_field": "rule_action",
+        "source_key": "HR-R004",
+        "source_object": "T5_规则清单_全域_v3.0.csv",
+        "source_system": "VNW数据基础",
+        "source_version": "v1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "action": "1.将当期绩效考核结果（部门、人员、考核周期、结果/分数）汇总到一张Excel历史表中；2.员工进行晋升或调薪评估时，回顾此历史表，查看最近几期绩效表现作为决策参考",
+        "name": "绩效考核结果存档与晋调薪应用",
+        "standard": "绩效结果准确录入历史表，可供追溯"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
       "evidence_id": "EVD-3bc87c36a2e0946416ef",
       "field_name": "agentifiability",
@@ -1032,6 +1055,27 @@
       "status": "ACTIVE",
       "transform_rule": "",
       "value": 2
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-5133ea748af6f8dffa78",
+      "field_name": "readiness.sop.VN-HR-04",
+      "source": {
+        "observed_at": "",
+        "source_field": "sop_file",
+        "source_key": "VN-HR-04",
+        "source_object": "T19_SOP生产进度_全域_v2.0.csv",
+        "source_system": "VNW数据基础",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "file": "SOP_VN-HR-04_绩效考核结果存档与晋调薪_v0.1.md",
+        "title": "VN-HR-04 · 绩效考核结果存档与晋调薪应用 v0.1"
+      }
     },
     {
       "confidence": "HIGH",
@@ -2317,7 +2361,7 @@
           "rule_id": "E-001"
         },
         {
-          "detail": "交付物完整=7/7",
+          "detail": "交付物完整=7/7（完整门槛90%）",
           "passed": true,
           "rule_id": "E-002"
         },
@@ -2325,6 +2369,36 @@
           "detail": "Tier合法",
           "passed": true,
           "rule_id": "E-003"
+        },
+        {
+          "detail": "可追溯任务覆盖=7/7（完整门槛80%）",
+          "passed": true,
+          "rule_id": "E-004"
+        },
+        {
+          "detail": "关键L4任务覆盖=7/7",
+          "passed": true,
+          "rule_id": "E-005"
+        },
+        {
+          "detail": "价值节点-L4映射=7",
+          "passed": true,
+          "rule_id": "E-006"
+        },
+        {
+          "detail": "规则可定位L4=6/7",
+          "passed": true,
+          "rule_id": "E-007"
+        },
+        {
+          "detail": "SOP/任务执行材料=1份",
+          "passed": true,
+          "rule_id": "E-008"
+        },
+        {
+          "detail": "有效规则=1条",
+          "passed": true,
+          "rule_id": "E-009"
         }
       ],
       "status": "PASS"
@@ -2345,6 +2419,16 @@
           "detail": "L4名称完整",
           "passed": true,
           "rule_id": "M-003"
+        },
+        {
+          "detail": "交付物完整=7/7（最低门槛70%）",
+          "passed": true,
+          "rule_id": "M-004"
+        },
+        {
+          "detail": "D1-D6完整=7/7",
+          "passed": true,
+          "rule_id": "M-005"
         }
       ],
       "status": "PASS"
@@ -2566,6 +2650,54 @@
       "tier": "Hybrid"
     }
   ],
+  "model_readiness": {
+    "coverage": {
+      "critical_task": {
+        "covered": 7,
+        "total": 7
+      },
+      "deliverable": {
+        "covered": 7,
+        "total": 7
+      },
+      "rule_count": 1,
+      "rule_l4": {
+        "covered": 6,
+        "total": 7
+      },
+      "sop_count": 1,
+      "task": {
+        "covered": 7,
+        "total": 7
+      }
+    },
+    "linked_sources": {
+      "rules": [
+        {
+          "evidence_ref": "EVD-37bf083836a248c64c6c",
+          "name": "绩效考核结果存档与晋调薪应用",
+          "node_id": "VN-HR-04",
+          "rule_id": "HR-R004"
+        }
+      ],
+      "sops": [
+        {
+          "evidence_ref": "EVD-5133ea748af6f8dffa78",
+          "file": "SOP_VN-HR-04_绩效考核结果存档与晋调薪_v0.1.md",
+          "ref": "VN-HR-04"
+        }
+      ]
+    },
+    "model_generation_allowed": true,
+    "status": "FULL_MODEL",
+    "thresholds": {
+      "critical_l4_required": 1.0,
+      "deliverable_full": 0.9,
+      "deliverable_minimum": 0.7,
+      "task_full": 0.8,
+      "task_minimum": 0.6
+    }
+  },
   "schema_version": "vnw.l3-model.v1",
   "source_policy": {
     "consensus_separate": true,

@@ -114,6 +114,7 @@
     },
     "tasks": []
   },
+  "analysis_input_hash": "a931b0672b5332901f00bd1f92faf67bfbe991905314294f1729ff007a5faf71",
   "blueprint": {
     "blueprint_value_nodes": [
       {
@@ -872,8 +873,8 @@
     "A": {
       "checks": [
         {
-          "detail": "Gate E=PASS",
-          "passed": true,
+          "detail": "Gate E=BLOCKED",
+          "passed": false,
           "rule_id": "A-001"
         },
         {
@@ -892,17 +893,17 @@
           "rule_id": "A-004"
         }
       ],
-      "status": "PASS"
+      "status": "BLOCKED"
     },
     "E": {
       "checks": [
         {
-          "detail": "Gate M=PASS",
-          "passed": true,
+          "detail": "Gate M=BLOCKED",
+          "passed": false,
           "rule_id": "E-001"
         },
         {
-          "detail": "交付物完整=3/3",
+          "detail": "交付物完整=3/3（完整门槛90%）",
           "passed": true,
           "rule_id": "E-002"
         },
@@ -910,9 +911,39 @@
           "detail": "Tier合法",
           "passed": true,
           "rule_id": "E-003"
+        },
+        {
+          "detail": "可追溯任务覆盖=0/3（完整门槛80%）",
+          "passed": false,
+          "rule_id": "E-004"
+        },
+        {
+          "detail": "关键L4任务覆盖=0/0",
+          "passed": true,
+          "rule_id": "E-005"
+        },
+        {
+          "detail": "价值节点-L4映射=1",
+          "passed": true,
+          "rule_id": "E-006"
+        },
+        {
+          "detail": "规则可定位L4=0/3",
+          "passed": false,
+          "rule_id": "E-007"
+        },
+        {
+          "detail": "缺少SOP草稿或同等任务执行材料（不阻断建模）",
+          "passed": false,
+          "rule_id": "E-008"
+        },
+        {
+          "detail": "缺少可关联的规则记录（不阻断建模）",
+          "passed": false,
+          "rule_id": "E-009"
         }
       ],
-      "status": "PASS"
+      "status": "BLOCKED"
     },
     "M": {
       "checks": [
@@ -922,17 +953,27 @@
           "rule_id": "M-001"
         },
         {
-          "detail": "流程蓝图_L3-SRE_战略风险评价流程_V1.1.md",
-          "passed": true,
+          "detail": "缺少可解析流程蓝图",
+          "passed": false,
           "rule_id": "M-002"
         },
         {
           "detail": "L4名称完整",
           "passed": true,
           "rule_id": "M-003"
+        },
+        {
+          "detail": "交付物完整=3/3（最低门槛70%）",
+          "passed": true,
+          "rule_id": "M-004"
+        },
+        {
+          "detail": "D1-D6完整=3/3",
+          "passed": true,
+          "rule_id": "M-005"
         }
       ],
-      "status": "PASS"
+      "status": "BLOCKED"
     }
   },
   "has_demo": false,
@@ -1035,6 +1076,41 @@
       "tier": "Auto"
     }
   ],
+  "model_readiness": {
+    "coverage": {
+      "critical_task": {
+        "covered": 0,
+        "total": 0
+      },
+      "deliverable": {
+        "covered": 3,
+        "total": 3
+      },
+      "rule_count": 0,
+      "rule_l4": {
+        "covered": 0,
+        "total": 3
+      },
+      "sop_count": 0,
+      "task": {
+        "covered": 0,
+        "total": 3
+      }
+    },
+    "linked_sources": {
+      "rules": [],
+      "sops": []
+    },
+    "model_generation_allowed": false,
+    "status": "WAITING_INPUT",
+    "thresholds": {
+      "critical_l4_required": 1.0,
+      "deliverable_full": 0.9,
+      "deliverable_minimum": 0.7,
+      "task_full": 0.8,
+      "task_minimum": 0.6
+    }
+  },
   "schema_version": "vnw.l3-model.v1",
   "source_policy": {
     "consensus_separate": true,

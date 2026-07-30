@@ -1,0 +1,65 @@
+{
+  "tasks": [
+    {
+      "task_id": "L4-JOPD-01-M01",
+      "l4_code": "L4-JOPD-01",
+      "task_name": "编制《联合运营项目启动确认单》，涵盖团队名单、会议纪要、组织架构确认",
+      "source_type": "MODEL_DECOMPOSITION_FROM_L4",
+      "evidence_refs": ["EVD-ed47f86cfd9eb3c12f49"],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "D1结构化输入2、D2规则清晰2使AI可生成草稿，但D6合规性1、D4 API可达1、D5回退策略1，需人工审核团队名单与合规检查"
+    },
+    {
+      "task_id": "L4-JOPD-02-M01",
+      "l4_code": "L4-JOPD-02",
+      "task_name": "收集市场数据并进行分析，编写《联合运营业务方案与市场分析报告》初稿",
+      "source_type": "MODEL_DECOMPOSITION_FROM_L4",
+      "evidence_refs": ["EVD-56a3fc99a83eace7d9ff"],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "D2规则清晰度1、D4 API可达1，业务目标与合作模式模糊，需要专家指导AI生成，并审核最终方案"
+    },
+    {
+      "task_id": "L4-JOPD-03-M01",
+      "l4_code": "L4-JOPD-03",
+      "task_name": "执行系统配置、品牌物料打包和LMS路径设置，输出《系统与品牌物料就绪确认包》",
+      "source_type": "MODEL_DECOMPOSITION_FROM_L4",
+      "evidence_refs": ["EVD-048e2ede84f99ba0ba9a"],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "D2规则清晰2、D4 API可达2支持高度自动化，但D5回退1、D6合规1要求人工确认系统安全与品牌物料合规"
+    },
+    {
+      "task_id": "L4-JOPD-04-M01",
+      "l4_code": "L4-JOPD-04",
+      "task_name": "整理岗位说明书、确认招聘到岗状态与薪酬结构，组装《人力资源就绪包》",
+      "source_type": "MODEL_DECOMPOSITION_FROM_L4",
+      "evidence_refs": ["EVD-2b9080c2676acb9309cc"],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "D1结构化输入2、D3输出验证2支持自动生成文档与跟踪，但D2规则清晰1、D4 API可达1使得薪酬确认和关键岗位招聘需人工决策"
+    },
+    {
+      "task_id": "L4-JOPD-05-M01",
+      "l4_code": "L4-JOPD-05",
+      "task_name": "收集产品资料、生成一页通与研究报告初稿，打包《知识资产交付包》",
+      "source_type": "MODEL_DECOMPOSITION_FROM_L4",
+      "evidence_refs": ["EVD-81049692fc954746e4ab"],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "D2规则清晰2、D4 API可达2允许AI自动化生成内容，但D5回退1、D6合规1要求对法发布内容进行人工审批"
+    }
+  ],
+  "decision_drafts": [
+    {
+      "priority": 1,
+      "task_ids": ["L4-JOPD-03-M01"],
+      "title": "试点L4-JOPD-03系统与品牌物料就绪的全流程自动化",
+      "pilot_scope": "在最近一个联合运营项目中，让AI端到端执行系统检查、物料生成和LMS配置，人类仅对系统安全配置和品牌物料输出进行审批",
+      "human_boundary": "系统配置变更前需人工安全审查；对外品牌物料需合规审批",
+      "evidence_refs": ["EVD-b7070d946da0e60bff69", "EVD-895f3448d9c3a88347b1"],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ]
+}

@@ -43,6 +43,7 @@ def parse_args():
     parser.add_argument("--l3-code", action="append", help="要构建的L3编码；可重复传入")
     parser.add_argument("--blueprint-index", type=Path, help="L3蓝图覆盖清单CSV")
     parser.add_argument("--prepare-l3-analysis", action="append", help="从现有快照准备统一模型运行包；可重复传入L3编码")
+    parser.add_argument("--prepare-analysis-repair", action="append", help="为已有分析包准备任务与负责人决策模块修复；可重复传入L3编码")
     parser.add_argument("--run-analysis-dir", type=Path, help="调用模型运行指定分析运行包并校验发布")
     parser.add_argument("--import-analysis-output", type=Path, help="导入外部模型JSON；需同时提供--run-analysis-dir")
     parser.add_argument("--analysis-model", help="覆盖配置中的模型名称")
@@ -82,7 +83,7 @@ def main() -> int:
     if args.status:
         print(json.dumps({"agent_id": settings["agent_id"], "version": settings["version"], "workspace": str(workspace.root), "tracked_files": len(state.get("files", {})), "last_run": state.get("runs", [])[-1:]}, ensure_ascii=False, indent=2))
         return 0
-    if args.prepare_l3_analysis or args.run_analysis_dir or args.import_analysis_output:
+    if args.prepare_l3_analysis or args.prepare_analysis_repair or args.run_analysis_dir or args.import_analysis_output:
         from skills.l3_analysis_runner import L3AnalysisRunner
 
         runner = L3AnalysisRunner(AGENT_ROOT)
@@ -97,6 +98,20 @@ def main() -> int:
                 run_dir = runner.prepare(snapshot_path)
                 prepared.append({"l3_code": normalized, "run_dir": str(run_dir), "status": "PREPARED"})
             print(json.dumps({"status": "prepared", "runs": prepared}, ensure_ascii=False, indent=2))
+            return 0
+        if args.prepare_analysis_repair:
+            snapshot_dir = AGENT_ROOT / "10_部署与运行_Deploy_and_Run/frontend/public/data/model_snapshots"
+            package_dir = AGENT_ROOT / "07_接入记忆_Integrate_Memory/analysis_packages"
+            prepared = []
+            for code in args.prepare_analysis_repair:
+                normalized = code.upper() if code.upper().startswith("L3-") else f"L3-{code.upper()}"
+                snapshot_path = snapshot_dir / f"{normalized}.json"
+                package_path = package_dir / f"{normalized}.model.json"
+                if not snapshot_path.exists() or not package_path.exists():
+                    raise FileNotFoundError(f"缺少快照或现有分析包：{normalized}")
+                run_dir = runner.prepare_repair(snapshot_path, package_path)
+                prepared.append({"l3_code": normalized, "run_dir": str(run_dir), "status": "PREPARED"})
+            print(json.dumps({"status": "repair_prepared", "runs": prepared}, ensure_ascii=False, indent=2))
             return 0
         if args.import_analysis_output and not args.run_analysis_dir:
             parser_error = "--import-analysis-output必须与--run-analysis-dir同时使用"
@@ -114,6 +129,9 @@ def main() -> int:
             load_blueprint_index_from_dir,
             load_d1d6_supplement,
             load_analysis_packages,
+            load_rule_records,
+            load_sop_records,
+            load_prepared_analysis_codes,
         )
         from skills.sync_data_foundation import db_query
         from tools.postgres_reader import BulkPostgresL3Reader, PostgresL3Reader
@@ -138,6 +156,10 @@ def main() -> int:
             "EA流程架构项目/_VNW引用原件/L4两阶段复核_全量368条_合并版_v1.0.csv"
         )
         d1d6_supplement = load_d1d6_supplement(d1d6_csv) if d1d6_csv.exists() else {}
+        foundation_dir = AGENT_ROOT / "07_接入记忆_Integrate_Memory/data_foundation/A_自动同步_当前有效"
+        sop_csv = foundation_dir / "T19_SOP生产进度_全域_v2.0.csv"
+        rule_csv = foundation_dir / "T5_规则清单_全域_v3.0.csv"
+        sop_dir = Path("/Users/a112233/Desktop/流程架构项目_jasper/02_过程成果-工作产出/规则分析（Jasper）/05_SOP")
         builder = L3ModelBuilder(
             reader,
             blueprint_index,
@@ -146,6 +168,11 @@ def main() -> int:
             demo_registry=DEMO_REGISTRY,
             analysis_packages=load_analysis_packages(
                 AGENT_ROOT / "07_接入记忆_Integrate_Memory/analysis_packages"
+            ),
+            sop_records=load_sop_records(sop_csv, sop_dir) if sop_csv.exists() and sop_dir.exists() else [],
+            rule_records=load_rule_records(rule_csv) if rule_csv.exists() else [],
+            prepared_analysis_codes=load_prepared_analysis_codes(
+                AGENT_ROOT / "07_接入记忆_Integrate_Memory/analysis_runs"
             ),
         )
         snapshot_dir = workspace.root / "model_snapshots"

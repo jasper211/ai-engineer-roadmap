@@ -1,14 +1,13 @@
 agent_id: HKIA
 name: 香港保监局（IA）行业数据自动化分析 Agent
-version: 0.1.0
+version: 0.2.0
 status: 草稿
 entrypoint: agent.py
 capabilities:
-  - discover_quarterly_report_download_links
-  - fetch_report_files_via_browser
-  - parse_general_and_long_term_business_excel
+  - discover_local_raw_files_with_completeness_check  # 扫描raw_data/，对照13期清单报缺失
+  - parse_long_term_business_excel  # .xls(老版)+.xlsx(新版)双引擎，按真实扩展名分流
   - normalize_to_long_table_with_ytd_annotation
   - persist_to_local_sqlite
 boundaries:
-  included: 2023Q1~2024Q2一般/长期业务季度保费统计的抓取、解析、标准化、本地存储；一次性全量跑一遍demo
-  deferred: 增量去重、定时调度、2024Q3至今的年度新闻稿解析、同环比/LLM摘要分析层、前端展示、云端存储
+  included: 长期业务季度保费统计2023Q1~2026Q1共13期，从本地已放置文件解析、标准化、本地存储；一次性全量跑一遍demo
+  deferred: 自动化抓取（Playwright，待下一版本本机验证）、一般业务（已断更，需另设计非结构化解析）、增量去重、定时调度、同环比/LLM摘要分析层、前端展示、云端存储

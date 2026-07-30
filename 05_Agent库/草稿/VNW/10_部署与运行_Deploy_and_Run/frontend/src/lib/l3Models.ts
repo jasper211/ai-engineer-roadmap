@@ -1,4 +1,4 @@
-export type GateStatus = 'PASS' | 'PARTIAL' | 'FAIL' | 'BLOCKED'
+export type GateStatus = 'PASS' | 'CONDITIONAL' | 'PARTIAL' | 'FAIL' | 'BLOCKED'
 
 export interface ModelIndexItem {
   l3_code: string
@@ -9,7 +9,20 @@ export interface ModelIndexItem {
   blueprint_coverage: 'INDEXED' | 'MISSING'
   blueprint_version: string
   gates: { M: GateStatus; E: GateStatus; A: GateStatus }
-  classification: 'MODEL_READY' | 'NEEDS_DATA'
+  classification: 'FULL_MODEL' | 'LIMITED_MODEL' | 'WAITING_INPUT'
+  model_generation_allowed: boolean
+  readiness_coverage: {
+    sop_count: number
+    rule_count: number
+    deliverable: { covered: number; total: number }
+    task: { covered: number; total: number }
+    rule_l4: { covered: number; total: number }
+    critical_task: { covered: number; total: number }
+  }
+  analysis_status: 'PENDING_MODEL' | 'MODEL_DRAFT' | 'REVIEWED'
+  analysis_input_hash: string
+  analysis_run_input_hash: string
+  production_status: 'READY_TO_RUN' | 'RUN_PREPARED' | 'ANALYSIS_CURRENT' | 'ANALYSIS_INPUT_CHANGED' | 'REVIEWED_BASELINE' | 'BLOCKED_INPUT'
   highest_gate: 'A' | 'E' | 'M' | 'NONE'
   gap_reasons: string[]
   blueprint_structure_status: 'PARSED' | 'INDEX_ONLY' | 'CONFLICT' | 'UNAVAILABLE'
@@ -22,6 +35,14 @@ export interface ModelIndex {
   schema_version: string
   source_policy: string
   models: ModelIndexItem[]
+  production_summary: Record<ModelIndexItem['production_status'], number>
+  recommended_batch: {
+    l3_code: string
+    l3_name: string
+    classification: ModelIndexItem['classification']
+    l4_count: number
+  }[]
+  prepared_batch: ModelIndex['recommended_batch']
 }
 
 export interface DeliverableAuditFinding {
@@ -130,6 +151,15 @@ export interface L3Model {
   kpi_mappings: Record<string, unknown>[]
   value_stream_mappings: Record<string, unknown>[]
   gates: Record<'M' | 'E' | 'A', { status: GateStatus; checks: GateCheck[] }>
+  model_readiness: {
+    status: 'FULL_MODEL' | 'LIMITED_MODEL' | 'WAITING_INPUT'
+    model_generation_allowed: boolean
+    coverage: ModelIndexItem['readiness_coverage']
+    linked_sources: {
+      sops: { ref: string; file: string; evidence_ref: string }[]
+      rules: { rule_id: string; node_id: string; name: string; evidence_ref: string }[]
+    }
+  }
   evidence_registry: Record<string, unknown>[]
   analysis: {
     schema_version: string

@@ -457,6 +457,7 @@
       }
     ]
   },
+  "analysis_input_hash": "abd14260022fb9b00c6512c002915ef86949d91350b32906963106989f674ed9",
   "blueprint": {
     "blueprint_value_nodes": [],
     "coverage": "INDEXED",
@@ -2485,7 +2486,7 @@
     "A": {
       "checks": [
         {
-          "detail": "Gate E=PASS",
+          "detail": "Gate E=CONDITIONAL",
           "passed": true,
           "rule_id": "A-001"
         },
@@ -2515,7 +2516,7 @@
           "rule_id": "E-001"
         },
         {
-          "detail": "交付物完整=8/8",
+          "detail": "交付物完整=8/8（完整门槛90%）",
           "passed": true,
           "rule_id": "E-002"
         },
@@ -2523,9 +2524,39 @@
           "detail": "Tier合法",
           "passed": true,
           "rule_id": "E-003"
+        },
+        {
+          "detail": "可追溯任务覆盖=8/8（完整门槛80%）",
+          "passed": true,
+          "rule_id": "E-004"
+        },
+        {
+          "detail": "关键L4任务覆盖=0/0",
+          "passed": true,
+          "rule_id": "E-005"
+        },
+        {
+          "detail": "价值节点-L4映射=0",
+          "passed": false,
+          "rule_id": "E-006"
+        },
+        {
+          "detail": "规则可定位L4=0/8",
+          "passed": false,
+          "rule_id": "E-007"
+        },
+        {
+          "detail": "缺少SOP草稿或同等任务执行材料（不阻断建模）",
+          "passed": false,
+          "rule_id": "E-008"
+        },
+        {
+          "detail": "缺少可关联的规则记录（不阻断建模）",
+          "passed": false,
+          "rule_id": "E-009"
         }
       ],
-      "status": "PASS"
+      "status": "CONDITIONAL"
     },
     "M": {
       "checks": [
@@ -2543,6 +2574,16 @@
           "detail": "L4名称完整",
           "passed": true,
           "rule_id": "M-003"
+        },
+        {
+          "detail": "交付物完整=8/8（最低门槛70%）",
+          "passed": true,
+          "rule_id": "M-004"
+        },
+        {
+          "detail": "D1-D6完整=8/8",
+          "passed": true,
+          "rule_id": "M-005"
         }
       ],
       "status": "PASS"
@@ -2793,6 +2834,41 @@
       "tier": "Hybrid"
     }
   ],
+  "model_readiness": {
+    "coverage": {
+      "critical_task": {
+        "covered": 0,
+        "total": 0
+      },
+      "deliverable": {
+        "covered": 8,
+        "total": 8
+      },
+      "rule_count": 0,
+      "rule_l4": {
+        "covered": 0,
+        "total": 8
+      },
+      "sop_count": 0,
+      "task": {
+        "covered": 8,
+        "total": 8
+      }
+    },
+    "linked_sources": {
+      "rules": [],
+      "sops": []
+    },
+    "model_generation_allowed": true,
+    "status": "LIMITED_MODEL",
+    "thresholds": {
+      "critical_l4_required": 1.0,
+      "deliverable_full": 0.9,
+      "deliverable_minimum": 0.7,
+      "task_full": 0.8,
+      "task_minimum": 0.6
+    }
+  },
   "schema_version": "vnw.l3-model.v1",
   "source_policy": {
     "consensus_separate": true,

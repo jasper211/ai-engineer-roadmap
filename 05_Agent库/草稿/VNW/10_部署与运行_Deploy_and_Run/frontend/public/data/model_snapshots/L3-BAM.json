@@ -2435,6 +2435,7 @@
       }
     ]
   },
+  "analysis_input_hash": "05caebb91243066f47ad8ec37c0d1a29d75ee64de7c12ff71216ed234b2bfdf0",
   "blueprint": {
     "blueprint_value_nodes": [],
     "coverage": "INDEXED",
@@ -5320,7 +5321,7 @@
     "A": {
       "checks": [
         {
-          "detail": "Gate E=PASS",
+          "detail": "Gate E=CONDITIONAL",
           "passed": true,
           "rule_id": "A-001"
         },
@@ -5350,7 +5351,7 @@
           "rule_id": "E-001"
         },
         {
-          "detail": "交付物完整=11/11",
+          "detail": "交付物完整=11/11（完整门槛90%）",
           "passed": true,
           "rule_id": "E-002"
         },
@@ -5358,9 +5359,39 @@
           "detail": "Tier合法",
           "passed": true,
           "rule_id": "E-003"
+        },
+        {
+          "detail": "可追溯任务覆盖=11/11（完整门槛80%）",
+          "passed": true,
+          "rule_id": "E-004"
+        },
+        {
+          "detail": "关键L4任务覆盖=11/11",
+          "passed": true,
+          "rule_id": "E-005"
+        },
+        {
+          "detail": "价值节点-L4映射=13",
+          "passed": true,
+          "rule_id": "E-006"
+        },
+        {
+          "detail": "规则可定位L4=0/11",
+          "passed": false,
+          "rule_id": "E-007"
+        },
+        {
+          "detail": "缺少SOP草稿或同等任务执行材料（不阻断建模）",
+          "passed": false,
+          "rule_id": "E-008"
+        },
+        {
+          "detail": "缺少可关联的规则记录（不阻断建模）",
+          "passed": false,
+          "rule_id": "E-009"
         }
       ],
-      "status": "PASS"
+      "status": "CONDITIONAL"
     },
     "M": {
       "checks": [
@@ -5378,6 +5409,16 @@
           "detail": "L4名称完整",
           "passed": true,
           "rule_id": "M-003"
+        },
+        {
+          "detail": "交付物完整=11/11（最低门槛70%）",
+          "passed": true,
+          "rule_id": "M-004"
+        },
+        {
+          "detail": "D1-D6完整=11/11",
+          "passed": true,
+          "rule_id": "M-005"
         }
       ],
       "status": "PASS"
@@ -5715,6 +5756,41 @@
       "tier": "Auto"
     }
   ],
+  "model_readiness": {
+    "coverage": {
+      "critical_task": {
+        "covered": 11,
+        "total": 11
+      },
+      "deliverable": {
+        "covered": 11,
+        "total": 11
+      },
+      "rule_count": 0,
+      "rule_l4": {
+        "covered": 0,
+        "total": 11
+      },
+      "sop_count": 0,
+      "task": {
+        "covered": 11,
+        "total": 11
+      }
+    },
+    "linked_sources": {
+      "rules": [],
+      "sops": []
+    },
+    "model_generation_allowed": true,
+    "status": "LIMITED_MODEL",
+    "thresholds": {
+      "critical_l4_required": 1.0,
+      "deliverable_full": 0.9,
+      "deliverable_minimum": 0.7,
+      "task_full": 0.8,
+      "task_minimum": 0.6
+    }
+  },
   "schema_version": "vnw.l3-model.v1",
   "source_policy": {
     "consensus_separate": true,
@@ -5760,66 +5836,79 @@
   "value_stream_mappings": [],
   "vn_l4_mappings": [
     {
+      "l3_code": "L3-BAM",
       "l4_code": "L4-BAM-01",
       "mapping_status": "direct",
       "vn_id": "VN-BAM-01"
     },
     {
+      "l3_code": "L3-BAM",
       "l4_code": "L4-BAM-02",
       "mapping_status": "direct",
       "vn_id": "VN-BAM-01"
     },
     {
+      "l3_code": "L3-BAM",
       "l4_code": "L4-BAM-03",
       "mapping_status": "direct",
       "vn_id": "VN-BAM-01"
     },
     {
+      "l3_code": "L3-BAM",
       "l4_code": "L4-BAM-04",
       "mapping_status": "direct",
       "vn_id": "VN-BAM-01"
     },
     {
+      "l3_code": "L3-BAM",
       "l4_code": "L4-BAM-05",
       "mapping_status": "direct",
       "vn_id": "VN-BAM-01"
     },
     {
+      "l3_code": "L3-BAM",
       "l4_code": "L4-BAM-06",
       "mapping_status": "direct",
       "vn_id": "VN-BAM-01"
     },
     {
+      "l3_code": "L3-BAM",
       "l4_code": "L4-BAM-07",
       "mapping_status": "direct",
       "vn_id": "VN-BAM-01"
     },
     {
+      "l3_code": "L3-BAM",
       "l4_code": "L4-BAM-08",
       "mapping_status": "direct",
       "vn_id": "VN-BAM-01"
     },
     {
+      "l3_code": "L3-BAM",
       "l4_code": "L4-BAM-09",
       "mapping_status": "direct",
       "vn_id": "VN-BAM-01"
     },
     {
+      "l3_code": "L3-BAM",
       "l4_code": "L4-BAM-10",
       "mapping_status": "direct",
       "vn_id": "VN-BAM-01"
     },
     {
+      "l3_code": "L3-BAM",
       "l4_code": "L4-BAM-11",
       "mapping_status": "direct",
       "vn_id": "VN-BAM-01"
     },
     {
+      "l3_code": "L3-BAM",
       "l4_code": "L4-BAM-01",
       "mapping_status": "direct",
       "vn_id": "VN-BAM-02"
     },
     {
+      "l3_code": "L3-BAM",
       "l4_code": "L4-BAM-03",
       "mapping_status": "direct",
       "vn_id": "VN-BAM-02"

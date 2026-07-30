@@ -109,7 +109,7 @@
     "schema_version": "vnw.l3-analysis.v1",
     "source_scope": {
       "database": "process_analytics",
-      "evidence_count": 57,
+      "evidence_count": 61,
       "knowledge": "ACTIVE supplemental evidence only"
     },
     "tasks": [
@@ -151,6 +151,7 @@
       }
     ]
   },
+  "analysis_input_hash": "6d5c3b9083aa01e24118661b794e701ce2e0a8a582821c02653a9ec3ee488aa9",
   "blueprint": {
     "blueprint_value_nodes": [],
     "coverage": "INDEXED",
@@ -342,6 +343,27 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-12aaadc2e6d8a225ea4b",
+      "field_name": "readiness.sop.VN-HR-03",
+      "source": {
+        "observed_at": "",
+        "source_field": "sop_file",
+        "source_key": "VN-HR-03",
+        "source_object": "T19_SOP生产进度_全域_v2.0.csv",
+        "source_system": "VNW数据基础",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "file": "SOP_VN-HR-03_员工劳动合同归档内地_v0.1.md",
+        "title": "VN-HR-03 · 员工劳动合同归档（内地） v0.1"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
       "evidence_id": "EVD-155f58c3a6ef30373ecb",
       "field_name": "vn_name",
@@ -523,6 +545,27 @@
       "status": "ACTIVE",
       "transform_rule": "",
       "value": "方案"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-2d12ee459ceb9b4f48bd",
+      "field_name": "readiness.sop.VN-HR-11",
+      "source": {
+        "observed_at": "",
+        "source_field": "sop_file",
+        "source_key": "VN-HR-11",
+        "source_object": "T19_SOP生产进度_全域_v2.0.csv",
+        "source_system": "VNW数据基础",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "file": "SOP_VN-HR-11_人工成本报表_v0.1.md",
+        "title": "VN-HR-11 · 人工成本报表 v0.1"
+      }
     },
     {
       "confidence": "HIGH",
@@ -743,6 +786,27 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-600ff51d39d1bf105f0b",
+      "field_name": "readiness.sop.VN-HR-12",
+      "source": {
+        "observed_at": "",
+        "source_field": "sop_file",
+        "source_key": "VN-HR-12",
+        "source_object": "T19_SOP生产进度_全域_v2.0.csv",
+        "source_system": "VNW数据基础",
+        "source_version": ""
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "file": "SOP_VN-HR-12_人员归属表_v0.1.md",
+        "title": "VN-HR-12 · 人员归属表 v0.1"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
       "evidence_id": "EVD-6762779009e18e65adb7",
       "field_name": "overall_judgment",
@@ -793,6 +857,28 @@
       "status": "ACTIVE",
       "transform_rule": "",
       "value": "PARTIAL"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-7b70677c330b821dac3a",
+      "field_name": "readiness.rule.HR-R003",
+      "source": {
+        "observed_at": "",
+        "source_field": "rule_action",
+        "source_key": "HR-R003",
+        "source_object": "T5_规则清单_全域_v3.0.csv",
+        "source_system": "VNW数据基础",
+        "source_version": "v1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "action": "1.内地员工劳动合同由刘丽（音）负责；2.新签合同先做临时存放；3.定期梳理临时存放合同；4.完成梳理后扫描生成电子扫描件并归档；5.纸质版合同原件在单独指定地点存放",
+        "name": "员工劳动合同归档（内地）",
+        "standard": "每份内地员工劳动合同都有对应的电子扫描件和妥善存放的纸质原件"
+      }
     },
     {
       "confidence": "HIGH",
@@ -1307,7 +1393,7 @@
           "rule_id": "E-001"
         },
         {
-          "detail": "交付物完整=3/3",
+          "detail": "交付物完整=3/3（完整门槛90%）",
           "passed": true,
           "rule_id": "E-002"
         },
@@ -1315,6 +1401,36 @@
           "detail": "Tier合法",
           "passed": true,
           "rule_id": "E-003"
+        },
+        {
+          "detail": "可追溯任务覆盖=3/3（完整门槛80%）",
+          "passed": true,
+          "rule_id": "E-004"
+        },
+        {
+          "detail": "关键L4任务覆盖=0/0",
+          "passed": true,
+          "rule_id": "E-005"
+        },
+        {
+          "detail": "价值节点-L4映射=5",
+          "passed": true,
+          "rule_id": "E-006"
+        },
+        {
+          "detail": "规则可定位L4=3/3",
+          "passed": true,
+          "rule_id": "E-007"
+        },
+        {
+          "detail": "SOP/任务执行材料=3份",
+          "passed": true,
+          "rule_id": "E-008"
+        },
+        {
+          "detail": "有效规则=1条",
+          "passed": true,
+          "rule_id": "E-009"
         }
       ],
       "status": "PASS"
@@ -1335,6 +1451,16 @@
           "detail": "L4名称完整",
           "passed": true,
           "rule_id": "M-003"
+        },
+        {
+          "detail": "交付物完整=3/3（最低门槛70%）",
+          "passed": true,
+          "rule_id": "M-004"
+        },
+        {
+          "detail": "D1-D6完整=3/3",
+          "passed": true,
+          "rule_id": "M-005"
         }
       ],
       "status": "PASS"
@@ -1440,6 +1566,64 @@
       "tier": "Aug"
     }
   ],
+  "model_readiness": {
+    "coverage": {
+      "critical_task": {
+        "covered": 0,
+        "total": 0
+      },
+      "deliverable": {
+        "covered": 3,
+        "total": 3
+      },
+      "rule_count": 1,
+      "rule_l4": {
+        "covered": 3,
+        "total": 3
+      },
+      "sop_count": 3,
+      "task": {
+        "covered": 3,
+        "total": 3
+      }
+    },
+    "linked_sources": {
+      "rules": [
+        {
+          "evidence_ref": "EVD-7b70677c330b821dac3a",
+          "name": "员工劳动合同归档（内地）",
+          "node_id": "VN-HR-03",
+          "rule_id": "HR-R003"
+        }
+      ],
+      "sops": [
+        {
+          "evidence_ref": "EVD-12aaadc2e6d8a225ea4b",
+          "file": "SOP_VN-HR-03_员工劳动合同归档内地_v0.1.md",
+          "ref": "VN-HR-03"
+        },
+        {
+          "evidence_ref": "EVD-2d12ee459ceb9b4f48bd",
+          "file": "SOP_VN-HR-11_人工成本报表_v0.1.md",
+          "ref": "VN-HR-11"
+        },
+        {
+          "evidence_ref": "EVD-600ff51d39d1bf105f0b",
+          "file": "SOP_VN-HR-12_人员归属表_v0.1.md",
+          "ref": "VN-HR-12"
+        }
+      ]
+    },
+    "model_generation_allowed": true,
+    "status": "FULL_MODEL",
+    "thresholds": {
+      "critical_l4_required": 1.0,
+      "deliverable_full": 0.9,
+      "deliverable_minimum": 0.7,
+      "task_full": 0.8,
+      "task_minimum": 0.6
+    }
+  },
   "schema_version": "vnw.l3-model.v1",
   "source_policy": {
     "consensus_separate": true,

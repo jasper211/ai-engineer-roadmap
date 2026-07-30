@@ -1,171 +1,474 @@
 {
   "analysis": {
     "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
-    "analysis_status": "PENDING_MODEL",
-    "decision_drafts": [],
-    "generation_mode": "EVIDENCE_ONLY_BOOTSTRAP",
+    "analysis_status": "MODEL_DRAFT",
+    "control_chain": [
+      {
+        "control_gate": "启动确认单审批后进入方案设计",
+        "from_step": "STEP-01",
+        "to_step": "STEP-02"
+      },
+      {
+        "control_gate": "业务方案审批后启动系统与物料准备",
+        "from_step": "STEP-02",
+        "to_step": "STEP-03"
+      },
+      {
+        "control_gate": "系统与物料就绪检查通过后开始人力资源配置",
+        "from_step": "STEP-03",
+        "to_step": "STEP-04"
+      },
+      {
+        "control_gate": "人力资源就绪后交付知识资产",
+        "from_step": "STEP-04",
+        "to_step": "STEP-05"
+      }
+    ],
+    "decision_drafts": [
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [
+          "EVD-b7070d946da0e60bff69",
+          "EVD-895f3448d9c3a88347b1"
+        ],
+        "human_boundary": "系统配置变更前需人工安全审查；对外品牌物料需合规审批",
+        "pilot_scope": "在最近一个联合运营项目中，让AI端到端执行系统检查、物料生成和LMS配置，人类仅对系统安全配置和品牌物料输出进行审批",
+        "priority": 1,
+        "task_ids": [
+          "L4-JOPD-03-M01"
+        ],
+        "title": "试点L4-JOPD-03系统与品牌物料就绪的全流程自动化"
+      }
+    ],
+    "generation_mode": "UNIFIED_MODEL",
     "l4_analysis": [
       {
-        "ai_reshape": "",
-        "ai_responsibility": "",
-        "analysis_status": "PENDING_MODEL",
-        "confidence": "UNASSESSED",
-        "control_gates": [],
-        "current_recommendation": "",
-        "data_basis": [],
+        "ai_reshape": "AI可自动生成启动确认单模板，填充基础项目信息，但需人工审核团队名单和架构",
+        "ai_responsibility": "自动生成文档草稿，集成已知数据",
+        "analysis_status": "MODEL_DRAFT",
+        "confidence": "MODEL_DRAFT",
+        "control_gates": [
+          "人工审批启动确认单（合规性要求）"
+        ],
+        "current_recommendation": "保持Auto tier，加强人工审核控制，尤其是团队名单和合规检查",
+        "data_basis": [
+          "EVD-ed47f86cfd9eb3c12f49 交付物内容包含团队名单、架构等",
+          "EVD-dfd1740ac604e4668402 D3双验证机制",
+          "EVD-6d2c16a02f621c983759 D6合规性低"
+        ],
+        "database_tier": "Auto",
         "deliverable_role": "",
         "evidence_refs": [
+          "EVD-ed47f86cfd9eb3c12f49",
           "EVD-01edc63bef7368fe3c32",
-          "EVD-064774f5520321c132ef",
+          "EVD-df9ec58c634c7b661206",
           "EVD-30f017595d1dde5851f8",
-          "EVD-326eadf9cf84ba22987f",
           "EVD-34112655c1bb1c0cf80f",
+          "EVD-cd3593a2737e19e97481",
+          "EVD-dfd1740ac604e4668402",
+          "EVD-064774f5520321c132ef",
           "EVD-4132b96e7080ff393ed7",
           "EVD-6d2c16a02f621c983759",
-          "EVD-cd3593a2737e19e97481",
-          "EVD-df9ec58c634c7b661206",
-          "EVD-dfd1740ac604e4668402",
-          "EVD-ed47f86cfd9eb3c12f49"
+          "EVD-326eadf9cf84ba22987f",
+          "EVD-06c33b13af325e597e08"
         ],
         "handoff_triggers": [],
-        "human_responsibility": "",
+        "human_responsibility": "审核团队组建名单、会议纪要关键决策，确认组织架构",
         "l4_code": "L4-JOPD-01",
-        "process_context": "",
-        "quality_anchor": "",
-        "risks_limits": [],
-        "specific_capabilities": []
+        "process_context": "联合运营项目交付的第一步，确保项目团队和架构就绪",
+        "quadrant": "",
+        "quality_anchor": "双重输出验证（D3=2），确保文档准确性",
+        "recommended_tier": "Auto（需增强人工 gate）",
+        "risks_limits": [
+          "API可达性低（D4=1），系统集成受限",
+          "回退策略有限（D5=1），异常处理能力不足"
+        ],
+        "specific_capabilities": [
+          "项目启动确认单生成",
+          "团队组建名单整理",
+          "启动会议纪要记录",
+          "组织架构确认"
+        ]
       },
       {
-        "ai_reshape": "",
-        "ai_responsibility": "",
-        "analysis_status": "PENDING_MODEL",
-        "confidence": "UNASSESSED",
-        "control_gates": [],
-        "current_recommendation": "",
-        "data_basis": [],
+        "ai_reshape": "AI可辅助生成市场分析和预测模型，但业务目标和合作模式需人工决策",
+        "ai_responsibility": "市场数据收集、分析、预测模型生成",
+        "analysis_status": "MODEL_DRAFT",
+        "confidence": "MODEL_DRAFT",
+        "control_gates": [
+          "人工审批业务方案（战略决策）"
+        ],
+        "current_recommendation": "保持Hybrid tier，强化业务专家对核心决策的把控",
+        "data_basis": [
+          "EVD-56a3fc99a83eace7d9ff 交付物包含业务目标与合作模式",
+          "EVD-feb56c4ce19c9591de71 D3双验证",
+          "EVD-0900066577bdc8b701ff D2规则清晰度低"
+        ],
+        "database_tier": "Hybrid",
         "deliverable_role": "",
         "evidence_refs": [
-          "EVD-0900066577bdc8b701ff",
-          "EVD-145a7daf2462e5dcffab",
-          "EVD-1e10fbfd8abdf3778a71",
-          "EVD-40a8c8230069adf4f6c1",
-          "EVD-4a06ad9582826b1f436e",
           "EVD-56a3fc99a83eace7d9ff",
-          "EVD-63c72f382c4766f9efd9",
-          "EVD-a272511d5305c8119448",
+          "EVD-4a06ad9582826b1f436e",
           "EVD-c31760c2a99cd7e289ad",
+          "EVD-145a7daf2462e5dcffab",
+          "EVD-40a8c8230069adf4f6c1",
+          "EVD-0900066577bdc8b701ff",
+          "EVD-feb56c4ce19c9591de71",
+          "EVD-1e10fbfd8abdf3778a71",
+          "EVD-a272511d5305c8119448",
+          "EVD-63c72f382c4766f9efd9",
           "EVD-f21e6612103a21c743ca",
-          "EVD-feb56c4ce19c9591de71"
+          "EVD-0fd051c99de03857cbd9"
         ],
         "handoff_triggers": [],
-        "human_responsibility": "",
+        "human_responsibility": "确定业务目标、合作模式，审核方案合理性",
         "l4_code": "L4-JOPD-02",
-        "process_context": "",
-        "quality_anchor": "",
-        "risks_limits": [],
-        "specific_capabilities": []
+        "process_context": "项目启动后的方案设计阶段，为运营提供业务框架",
+        "quadrant": "",
+        "quality_anchor": "双重输出验证（D3=2），确保报告质量",
+        "recommended_tier": "Hybrid",
+        "risks_limits": [
+          "D2规则清晰度低（1），业务规则可能模糊，影响AI决策边界",
+          "D4 API可达性低（1），外部市场数据获取受限"
+        ],
+        "specific_capabilities": [
+          "业务目标设定",
+          "合作模式分析",
+          "市场数据采集与分析",
+          "业绩预测"
+        ]
       },
       {
-        "ai_reshape": "",
-        "ai_responsibility": "",
-        "analysis_status": "PENDING_MODEL",
-        "confidence": "UNASSESSED",
-        "control_gates": [],
-        "current_recommendation": "",
-        "data_basis": [],
+        "ai_reshape": "AI可自动执行系统配置检查和物料生成，LMS路径自动配置，高自动化可行性",
+        "ai_responsibility": "自动系统配置确认，物料生成，LMS设置",
+        "analysis_status": "MODEL_DRAFT",
+        "confidence": "MODEL_DRAFT",
+        "control_gates": [
+          "品牌物料合规审核",
+          "系统配置安全审查"
+        ],
+        "current_recommendation": "保持Auto tier，但增加配置变更的人工确认 gate",
+        "data_basis": [
+          "EVD-048e2ede84f99ba0ba9a 交付物包含系统配置与物料",
+          "EVD-14a377199fb024a5cfa2 D3双验证",
+          "EVD-895f3448d9c3a88347b1 D4高API可达"
+        ],
+        "database_tier": "Auto",
         "deliverable_role": "",
         "evidence_refs": [
           "EVD-048e2ede84f99ba0ba9a",
-          "EVD-14a377199fb024a5cfa2",
-          "EVD-1d8dd0b3d8d76106c3df",
-          "EVD-3a9eb5b3663332fc2286",
           "EVD-43d5a4831ec32a35ec24",
-          "EVD-895f3448d9c3a88347b1",
           "EVD-a9dd1db7108dff67e7fd",
-          "EVD-b7070d946da0e60bff69",
+          "EVD-1d8dd0b3d8d76106c3df",
+          "EVD-cd2d84fee949d3434aa0",
           "EVD-bd1c6d15b52573cccc33",
+          "EVD-14a377199fb024a5cfa2",
+          "EVD-895f3448d9c3a88347b1",
+          "EVD-3a9eb5b3663332fc2286",
+          "EVD-b7070d946da0e60bff69",
           "EVD-cc7eb25357ff8a46603c",
-          "EVD-cd2d84fee949d3434aa0"
+          "EVD-54d8beec9ba24226b55a"
         ],
         "handoff_triggers": [],
-        "human_responsibility": "",
+        "human_responsibility": "品牌物料审核，系统配置最终确认（安全合规）",
         "l4_code": "L4-JOPD-03",
-        "process_context": "",
-        "quality_anchor": "",
-        "risks_limits": [],
-        "specific_capabilities": []
+        "process_context": "方案确定后的技术准备阶段，确保系统和品牌资产就绪",
+        "quadrant": "",
+        "quality_anchor": "双重验证（D3=2），高API可达（D4=2），规则清晰（D2=2）",
+        "recommended_tier": "Auto（需增加人工确认点）",
+        "risks_limits": [
+          "D5回退策略有限（1），配置错误恢复能力弱"
+        ],
+        "specific_capabilities": [
+          "系统配置确认",
+          "品牌物料打包",
+          "LMS培训路径配置"
+        ]
       },
       {
-        "ai_reshape": "",
-        "ai_responsibility": "",
-        "analysis_status": "PENDING_MODEL",
-        "confidence": "UNASSESSED",
-        "control_gates": [],
-        "current_recommendation": "",
-        "data_basis": [],
+        "ai_reshape": "AI可生成岗位说明书模板，跟踪招聘进度，但薪酬结构需人工确认",
+        "ai_responsibility": "岗位说明书生成，培训完成状态跟踪",
+        "analysis_status": "MODEL_DRAFT",
+        "confidence": "MODEL_DRAFT",
+        "control_gates": [
+          "薪酬结构审批（财务与合规）",
+          "关键岗位招聘到岗确认"
+        ],
+        "current_recommendation": "保持Auto tier，但加强HR对招聘和薪酬的审核",
+        "data_basis": [
+          "EVD-2b9080c2676acb9309cc 交付物包含薪酬、招聘等",
+          "EVD-88002a8051f97a8d6522 D3双验证",
+          "EVD-9c5a2b59a713a1984e14 D2规则清晰度低"
+        ],
+        "database_tier": "Auto",
         "deliverable_role": "",
         "evidence_refs": [
-          "EVD-09cd6dd370e1cea583b9",
-          "EVD-20b7d81fdde4210158f2",
           "EVD-2b9080c2676acb9309cc",
+          "EVD-09cd6dd370e1cea583b9",
           "EVD-439cc98dfa4ee43cce46",
           "EVD-541c9d3d0f12efca60f1",
-          "EVD-5754b10f8b9f1d31b66a",
-          "EVD-75860553b79e0eec8086",
-          "EVD-835446ae38f4b594f6d6",
+          "EVD-20b7d81fdde4210158f2",
+          "EVD-9c5a2b59a713a1984e14",
           "EVD-88002a8051f97a8d6522",
           "EVD-916fb7d33063793a6e46",
-          "EVD-9c5a2b59a713a1984e14"
+          "EVD-75860553b79e0eec8086",
+          "EVD-835446ae38f4b594f6d6",
+          "EVD-5754b10f8b9f1d31b66a",
+          "EVD-2591a1baad15de6b6e23"
         ],
         "handoff_triggers": [],
-        "human_responsibility": "",
+        "human_responsibility": "关键岗位招聘决策，薪酬结构审批，培训效果评估",
         "l4_code": "L4-JOPD-04",
-        "process_context": "",
-        "quality_anchor": "",
-        "risks_limits": [],
-        "specific_capabilities": []
+        "process_context": "确保运营团队到位，薪酬与培训就绪，为项目执行提供人力保障",
+        "quadrant": "",
+        "quality_anchor": "双重输出验证（D3=2），确保人力资源信息准确",
+        "recommended_tier": "Auto（需增强HR审核）",
+        "risks_limits": [
+          "D2规则清晰度低（1），岗位要求和薪酬规则可能不明确",
+          "D4 API可达性低（1），招聘系统集成受限"
+        ],
+        "specific_capabilities": [
+          "岗位说明书生成",
+          "招聘到岗确认",
+          "薪酬结构确认",
+          "培训完成声明"
+        ]
       },
       {
-        "ai_reshape": "",
-        "ai_responsibility": "",
-        "analysis_status": "PENDING_MODEL",
-        "confidence": "UNASSESSED",
-        "control_gates": [],
-        "current_recommendation": "",
-        "data_basis": [],
+        "ai_reshape": "AI可自动整理产品资料，生成标准一页通模板，撰写研究报告初稿，但深度分析和营销策略需人工",
+        "ai_responsibility": "资料整合，一页通生成，研究报告初稿，培训PPT模板",
+        "analysis_status": "MODEL_DRAFT",
+        "confidence": "MODEL_DRAFT",
+        "control_gates": [
+          "对外发布内容审批（品牌与合规）"
+        ],
+        "current_recommendation": "保持Auto tier，但对发布内容增加人工审批 gate",
+        "data_basis": [
+          "EVD-81049692fc954746e4ab 交付物包含多种知识资产",
+          "EVD-8d9602543a8b40ecb98b D3双验证",
+          "EVD-ed3ff63701b8f86a10fd D2规则清晰"
+        ],
+        "database_tier": "Auto",
         "deliverable_role": "",
         "evidence_refs": [
-          "EVD-10aeebc47b64127787fa",
-          "EVD-380a0ad7d779fa8de31b",
-          "EVD-4eadc81511ec9bea576f",
           "EVD-81049692fc954746e4ab",
-          "EVD-8d9602543a8b40ecb98b",
-          "EVD-9d17e25d2294a4d5a12d",
+          "EVD-380a0ad7d779fa8de31b",
+          "EVD-10aeebc47b64127787fa",
+          "EVD-4eadc81511ec9bea576f",
           "EVD-adfabaa528df4c3ac6ba",
+          "EVD-ed3ff63701b8f86a10fd",
+          "EVD-8d9602543a8b40ecb98b",
           "EVD-b81b99719ddda6aae755",
-          "EVD-bdbf6f25a8ddde2cb2eb",
+          "EVD-9d17e25d2294a4d5a12d",
           "EVD-e7178a12755f21793dff",
-          "EVD-ed3ff63701b8f86a10fd"
+          "EVD-bdbf6f25a8ddde2cb2eb",
+          "EVD-ed4df2c48ffa205c13f5"
         ],
         "handoff_triggers": [],
-        "human_responsibility": "",
+        "human_responsibility": "深度研究报告审核，营销策略制定，对外发布内容审批",
         "l4_code": "L4-JOPD-05",
-        "process_context": "",
-        "quality_anchor": "",
-        "risks_limits": [],
-        "specific_capabilities": []
+        "process_context": "项目收尾阶段，交付运营所需全部知识资产",
+        "quadrant": "",
+        "quality_anchor": "双重验证（D3=2），高API可达（D4=2），规则清晰（D2=2）",
+        "recommended_tier": "Auto（需增加内容审批）",
+        "risks_limits": [
+          "D5回退策略有限（1），错误内容可能已发布"
+        ],
+        "specific_capabilities": [
+          "产品资料整理",
+          "一页通生成",
+          "深度研究报告撰写",
+          "营销包准备",
+          "培训PPT制作"
+        ]
       }
     ],
     "missing_analysis": [
-      "逐L4交付物与具体能力分析",
-      "逐任务AI分工分析",
-      "逐L4人机协作与控制分析",
-      "逐L4优先级四维分析",
-      "任务级负责人决策建议"
+      "L4-JOPD-01 · handoff_triggers · 无证据定义转人工条件",
+      "L4-JOPD-02 · handoff_triggers · 无证据定义转人工条件",
+      "L4-JOPD-03 · handoff_triggers · 无证据定义转人工条件",
+      "L4-JOPD-04 · handoff_triggers · 无证据定义转人工条件",
+      "L4-JOPD-05 · handoff_triggers · 无证据定义转人工条件",
+      "L4-JOPD-01 · deliverable_role · 交付物角色未在事实包中明确",
+      "L4-JOPD-02 · deliverable_role · 交付物角色未在事实包中明确",
+      "L4-JOPD-03 · deliverable_role · 交付物角色未在事实包中明确",
+      "L4-JOPD-04 · deliverable_role · 交付物角色未在事实包中明确",
+      "L4-JOPD-05 · deliverable_role · 交付物角色未在事实包中明确",
+      "所有L4 · quadrant · 象限分类未在事实包中提供"
     ],
-    "model_run": null,
-    "priority_drafts": [],
+    "model_run": {
+      "generated_at": "2026-07-30T04:12:59.753059+00:00",
+      "input_snapshot_hash": "e3afe772ee7cbad0d8ff8940b1732d6c88960be1fd923b48edc2f21a2292c40d",
+      "model_name": "deepseek-v4-pro",
+      "model_version": "deepseek-v4-pro",
+      "prompt_version": "VNW-L3-COM-GOLD-v1.0"
+    },
+    "priority_drafts": [
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "current_recommendation": "保持Auto tier，加强人工审核控制，尤其是团队名单和合规检查",
+        "data_basis": [
+          "EVD-ed47f86cfd9eb3c12f49 交付物内容包含团队名单、架构等",
+          "EVD-dfd1740ac604e4668402 D3双验证机制",
+          "EVD-6d2c16a02f621c983759 D6合规性低"
+        ],
+        "evidence_refs": [
+          "EVD-ed47f86cfd9eb3c12f49",
+          "EVD-01edc63bef7368fe3c32",
+          "EVD-df9ec58c634c7b661206",
+          "EVD-30f017595d1dde5851f8",
+          "EVD-34112655c1bb1c0cf80f",
+          "EVD-cd3593a2737e19e97481",
+          "EVD-dfd1740ac604e4668402",
+          "EVD-064774f5520321c132ef",
+          "EVD-4132b96e7080ff393ed7",
+          "EVD-6d2c16a02f621c983759",
+          "EVD-326eadf9cf84ba22987f",
+          "EVD-06c33b13af325e597e08"
+        ],
+        "l4_code": "L4-JOPD-01",
+        "process_context": "联合运营项目交付的第一步，确保项目团队和架构就绪",
+        "quadrant": "unclassified",
+        "risks_limits": [
+          "API可达性低（D4=1），系统集成受限",
+          "回退策略有限（D5=1），异常处理能力不足"
+        ]
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "current_recommendation": "保持Hybrid tier，强化业务专家对核心决策的把控",
+        "data_basis": [
+          "EVD-56a3fc99a83eace7d9ff 交付物包含业务目标与合作模式",
+          "EVD-feb56c4ce19c9591de71 D3双验证",
+          "EVD-0900066577bdc8b701ff D2规则清晰度低"
+        ],
+        "evidence_refs": [
+          "EVD-56a3fc99a83eace7d9ff",
+          "EVD-4a06ad9582826b1f436e",
+          "EVD-c31760c2a99cd7e289ad",
+          "EVD-145a7daf2462e5dcffab",
+          "EVD-40a8c8230069adf4f6c1",
+          "EVD-0900066577bdc8b701ff",
+          "EVD-feb56c4ce19c9591de71",
+          "EVD-1e10fbfd8abdf3778a71",
+          "EVD-a272511d5305c8119448",
+          "EVD-63c72f382c4766f9efd9",
+          "EVD-f21e6612103a21c743ca",
+          "EVD-0fd051c99de03857cbd9"
+        ],
+        "l4_code": "L4-JOPD-02",
+        "process_context": "项目启动后的方案设计阶段，为运营提供业务框架",
+        "quadrant": "unclassified",
+        "risks_limits": [
+          "D2规则清晰度低（1），业务规则可能模糊，影响AI决策边界",
+          "D4 API可达性低（1），外部市场数据获取受限"
+        ]
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "current_recommendation": "保持Auto tier，但增加配置变更的人工确认 gate",
+        "data_basis": [
+          "EVD-048e2ede84f99ba0ba9a 交付物包含系统配置与物料",
+          "EVD-14a377199fb024a5cfa2 D3双验证",
+          "EVD-895f3448d9c3a88347b1 D4高API可达"
+        ],
+        "evidence_refs": [
+          "EVD-048e2ede84f99ba0ba9a",
+          "EVD-43d5a4831ec32a35ec24",
+          "EVD-a9dd1db7108dff67e7fd",
+          "EVD-1d8dd0b3d8d76106c3df",
+          "EVD-cd2d84fee949d3434aa0",
+          "EVD-bd1c6d15b52573cccc33",
+          "EVD-14a377199fb024a5cfa2",
+          "EVD-895f3448d9c3a88347b1",
+          "EVD-3a9eb5b3663332fc2286",
+          "EVD-b7070d946da0e60bff69",
+          "EVD-cc7eb25357ff8a46603c",
+          "EVD-54d8beec9ba24226b55a"
+        ],
+        "l4_code": "L4-JOPD-03",
+        "process_context": "方案确定后的技术准备阶段，确保系统和品牌资产就绪",
+        "quadrant": "unclassified",
+        "risks_limits": [
+          "D5回退策略有限（1），配置错误恢复能力弱"
+        ]
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "current_recommendation": "保持Auto tier，但加强HR对招聘和薪酬的审核",
+        "data_basis": [
+          "EVD-2b9080c2676acb9309cc 交付物包含薪酬、招聘等",
+          "EVD-88002a8051f97a8d6522 D3双验证",
+          "EVD-9c5a2b59a713a1984e14 D2规则清晰度低"
+        ],
+        "evidence_refs": [
+          "EVD-2b9080c2676acb9309cc",
+          "EVD-09cd6dd370e1cea583b9",
+          "EVD-439cc98dfa4ee43cce46",
+          "EVD-541c9d3d0f12efca60f1",
+          "EVD-20b7d81fdde4210158f2",
+          "EVD-9c5a2b59a713a1984e14",
+          "EVD-88002a8051f97a8d6522",
+          "EVD-916fb7d33063793a6e46",
+          "EVD-75860553b79e0eec8086",
+          "EVD-835446ae38f4b594f6d6",
+          "EVD-5754b10f8b9f1d31b66a",
+          "EVD-2591a1baad15de6b6e23"
+        ],
+        "l4_code": "L4-JOPD-04",
+        "process_context": "确保运营团队到位，薪酬与培训就绪，为项目执行提供人力保障",
+        "quadrant": "unclassified",
+        "risks_limits": [
+          "D2规则清晰度低（1），岗位要求和薪酬规则可能不明确",
+          "D4 API可达性低（1），招聘系统集成受限"
+        ]
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "current_recommendation": "保持Auto tier，但对发布内容增加人工审批 gate",
+        "data_basis": [
+          "EVD-81049692fc954746e4ab 交付物包含多种知识资产",
+          "EVD-8d9602543a8b40ecb98b D3双验证",
+          "EVD-ed3ff63701b8f86a10fd D2规则清晰"
+        ],
+        "evidence_refs": [
+          "EVD-81049692fc954746e4ab",
+          "EVD-380a0ad7d779fa8de31b",
+          "EVD-10aeebc47b64127787fa",
+          "EVD-4eadc81511ec9bea576f",
+          "EVD-adfabaa528df4c3ac6ba",
+          "EVD-ed3ff63701b8f86a10fd",
+          "EVD-8d9602543a8b40ecb98b",
+          "EVD-b81b99719ddda6aae755",
+          "EVD-9d17e25d2294a4d5a12d",
+          "EVD-e7178a12755f21793dff",
+          "EVD-bdbf6f25a8ddde2cb2eb",
+          "EVD-ed4df2c48ffa205c13f5"
+        ],
+        "l4_code": "L4-JOPD-05",
+        "process_context": "项目收尾阶段，交付运营所需全部知识资产",
+        "quadrant": "unclassified",
+        "risks_limits": [
+          "D5回退策略有限（1），错误内容可能已发布"
+        ]
+      }
+    ],
     "rejected_task_sources": [],
+    "repair_history": [
+      {
+        "decision_count": 1,
+        "input_snapshot_hash": "b5c806870184e44dfce66bf007e19fa70d45179d2a06ead46a63818525596eed",
+        "model": "deepseek-v4-pro",
+        "modules": [
+          "tasks",
+          "decision_drafts"
+        ],
+        "previous_package_hash": "ee2eaa9044fbfd2f7c03bc68a6f8799cc2ea940d5746dbd6eb26e1023bee6518",
+        "repaired_at": "2026-07-30T04:26:32.440789+00:00",
+        "run_id": "L3-JOPD_REPAIR_20260730T042338Z_b5c8068701",
+        "task_count": 5
+      }
+    ],
     "schema_version": "vnw.l3-analysis.v1",
     "source_scope": {
       "database": "process_analytics",
@@ -174,67 +477,68 @@
     },
     "tasks": [
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-06c33b13af325e597e08"
+          "EVD-ed47f86cfd9eb3c12f49"
         ],
         "l4_code": "L4-JOPD-01",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-JOPD-01-T01",
-        "task_name": "L4-JOPD-01 → 《联合运营项目启动确认单》(Aug)",
-        "tier_rationale": ""
+        "source_type": "MODEL_DECOMPOSITION_FROM_L4",
+        "suggested_tier": "Auto",
+        "task_id": "L4-JOPD-01-M01",
+        "task_name": "编制《联合运营项目启动确认单》，涵盖团队名单、会议纪要、组织架构确认",
+        "tier_rationale": "D1结构化输入2、D2规则清晰2使AI可生成草稿，但D6合规性1、D4 API可达1、D5回退策略1，需人工审核团队名单与合规检查"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-0fd051c99de03857cbd9"
+          "EVD-56a3fc99a83eace7d9ff"
         ],
         "l4_code": "L4-JOPD-02",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-JOPD-02-T01",
-        "task_name": "L4-JOPD-02 → 《联合运营业务方案与市场分析报告》(Aug)",
-        "tier_rationale": ""
+        "source_type": "MODEL_DECOMPOSITION_FROM_L4",
+        "suggested_tier": "Hybrid",
+        "task_id": "L4-JOPD-02-M01",
+        "task_name": "收集市场数据并进行分析，编写《联合运营业务方案与市场分析报告》初稿",
+        "tier_rationale": "D2规则清晰度1、D4 API可达1，业务目标与合作模式模糊，需要专家指导AI生成，并审核最终方案"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-54d8beec9ba24226b55a"
+          "EVD-048e2ede84f99ba0ba9a"
         ],
         "l4_code": "L4-JOPD-03",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-JOPD-03-T01",
-        "task_name": "L4-JOPD-03 → 《系统与品牌物料就绪确认包》(Aug)",
-        "tier_rationale": ""
+        "source_type": "MODEL_DECOMPOSITION_FROM_L4",
+        "suggested_tier": "Auto",
+        "task_id": "L4-JOPD-03-M01",
+        "task_name": "执行系统配置、品牌物料打包和LMS路径设置，输出《系统与品牌物料就绪确认包》",
+        "tier_rationale": "D2规则清晰2、D4 API可达2支持高度自动化，但D5回退1、D6合规1要求人工确认系统安全与品牌物料合规"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-2591a1baad15de6b6e23"
+          "EVD-2b9080c2676acb9309cc"
         ],
         "l4_code": "L4-JOPD-04",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-JOPD-04-T01",
-        "task_name": "L4-JOPD-04 → 《人力资源就绪包》(Aug)",
-        "tier_rationale": ""
+        "source_type": "MODEL_DECOMPOSITION_FROM_L4",
+        "suggested_tier": "Auto",
+        "task_id": "L4-JOPD-04-M01",
+        "task_name": "整理岗位说明书、确认招聘到岗状态与薪酬结构，组装《人力资源就绪包》",
+        "tier_rationale": "D1结构化输入2、D3输出验证2支持自动生成文档与跟踪，但D2规则清晰1、D4 API可达1使得薪酬确认和关键岗位招聘需人工决策"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-ed4df2c48ffa205c13f5"
+          "EVD-81049692fc954746e4ab"
         ],
         "l4_code": "L4-JOPD-05",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-JOPD-05-T01",
-        "task_name": "L4-JOPD-05 → 《知识资产交付包》(Aug)",
-        "tier_rationale": ""
+        "source_type": "MODEL_DECOMPOSITION_FROM_L4",
+        "suggested_tier": "Auto",
+        "task_id": "L4-JOPD-05-M01",
+        "task_name": "收集产品资料、生成一页通与研究报告初稿，打包《知识资产交付包》",
+        "tier_rationale": "D2规则清晰2、D4 API可达2允许AI自动化生成内容，但D5回退1、D6合规1要求对法发布内容进行人工审批"
       }
     ]
   },
+  "analysis_input_hash": "8af36c5e6705be674a73d5fb5dfee47b16d42c3b66bf47098d8964a52e002ef1",
   "blueprint": {
     "blueprint_value_nodes": [],
     "coverage": "INDEXED",
@@ -1593,7 +1897,7 @@
     "A": {
       "checks": [
         {
-          "detail": "Gate E=PASS",
+          "detail": "Gate E=CONDITIONAL",
           "passed": true,
           "rule_id": "A-001"
         },
@@ -1623,7 +1927,7 @@
           "rule_id": "E-001"
         },
         {
-          "detail": "交付物完整=5/5",
+          "detail": "交付物完整=5/5（完整门槛90%）",
           "passed": true,
           "rule_id": "E-002"
         },
@@ -1631,9 +1935,39 @@
           "detail": "Tier合法",
           "passed": true,
           "rule_id": "E-003"
+        },
+        {
+          "detail": "可追溯任务覆盖=5/5（完整门槛80%）",
+          "passed": true,
+          "rule_id": "E-004"
+        },
+        {
+          "detail": "关键L4任务覆盖=0/0",
+          "passed": true,
+          "rule_id": "E-005"
+        },
+        {
+          "detail": "价值节点-L4映射=5",
+          "passed": true,
+          "rule_id": "E-006"
+        },
+        {
+          "detail": "规则可定位L4=0/5",
+          "passed": false,
+          "rule_id": "E-007"
+        },
+        {
+          "detail": "缺少SOP草稿或同等任务执行材料（不阻断建模）",
+          "passed": false,
+          "rule_id": "E-008"
+        },
+        {
+          "detail": "缺少可关联的规则记录（不阻断建模）",
+          "passed": false,
+          "rule_id": "E-009"
         }
       ],
-      "status": "PASS"
+      "status": "CONDITIONAL"
     },
     "M": {
       "checks": [
@@ -1651,6 +1985,16 @@
           "detail": "L4名称完整",
           "passed": true,
           "rule_id": "M-003"
+        },
+        {
+          "detail": "交付物完整=5/5（最低门槛70%）",
+          "passed": true,
+          "rule_id": "M-004"
+        },
+        {
+          "detail": "D1-D6完整=5/5",
+          "passed": true,
+          "rule_id": "M-005"
         }
       ],
       "status": "PASS"
@@ -1814,6 +2158,41 @@
       "tier": "Auto"
     }
   ],
+  "model_readiness": {
+    "coverage": {
+      "critical_task": {
+        "covered": 0,
+        "total": 0
+      },
+      "deliverable": {
+        "covered": 5,
+        "total": 5
+      },
+      "rule_count": 0,
+      "rule_l4": {
+        "covered": 0,
+        "total": 5
+      },
+      "sop_count": 0,
+      "task": {
+        "covered": 5,
+        "total": 5
+      }
+    },
+    "linked_sources": {
+      "rules": [],
+      "sops": []
+    },
+    "model_generation_allowed": true,
+    "status": "LIMITED_MODEL",
+    "thresholds": {
+      "critical_l4_required": 1.0,
+      "deliverable_full": 0.9,
+      "deliverable_minimum": 0.7,
+      "task_full": 0.8,
+      "task_minimum": 0.6
+    }
+  },
   "schema_version": "vnw.l3-model.v1",
   "source_policy": {
     "consensus_separate": true,
