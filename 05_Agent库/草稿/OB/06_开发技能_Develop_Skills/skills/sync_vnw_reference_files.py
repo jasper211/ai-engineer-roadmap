@@ -35,6 +35,16 @@ _manifest.json或人工放进这个目录的其他内容。
 
 增量判断：复用`file_diff.py`的`hash_file()`按内容哈希比对，没变化的文件
 不重复写入（vault侧mtime保持不变，git diff也不会出现无意义的改动）。
+
+xlsx源文件（2026-07-29新增）：`obsidian-mcp-server`的索引器（vault.mjs）
+只认纯文本格式（.md/.csv/.txt），.xlsx是二进制zip格式，按utf-8读会是
+乱码，原样镜像进vault对检索工具等于不存在（这个坑是真实踩过的——CSV
+之前也踩过一次同类问题，那次是索引器完全没收录.csv扩展名；这次.xlsx
+是另一层问题：就算索引器认这个扩展名，utf-8硬读二进制文件本身就是错的，
+不能用同一个办法解决）。所以.xlsx源文件会**额外**生成一份纯文本镜像
+（同名+.md后缀，逐sheet转成markdown表格，用openpyxl机械读取单元格值，
+不做任何总结/过滤/LLM调用），原始.xlsx本身也照常镜像（保留"原件"，
+Obsidian能直接打开预览/下载）。两个文件都进`_manifest.json`。
 """
 
 import json
@@ -47,8 +57,31 @@ from typing import Dict, List
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "05_集成工具_Integrate_Tools"))
 
+import openpyxl
+
 from tools.file_diff import hash_file
 from tools.table_reader import group_latest_versions
+
+
+def _xlsx_to_markdown_text(xlsx_path: Path) -> str:
+    """逐sheet把单元格值机械转成markdown表格，不做表头探测/元信息sheet
+    过滤这类"面向LLM提炼"的智能处理（那是table_reader.py的职责，服务的是
+    不同目的）——这里的唯一目标是让内容变成能被全文/语义检索到的纯文本，
+    多余的智能反而增加"转换出错、内容跟原文件对不上"的风险。"""
+    wb = openpyxl.load_workbook(xlsx_path, data_only=True)
+    parts = [f"# {xlsx_path.stem}\n",
+             f"> 本文件由`sync_vnw_reference_files.py`从同名`.xlsx`原件机械转换生成，"
+             f"仅用于让内容可被检索——完整格式/公式/样式以`.xlsx`原件为准，不要把本文件"
+             f"当成权威版本编辑。\n"]
+    for sheet_name in wb.sheetnames:
+        ws = wb[sheet_name]
+        parts.append(f"\n## Sheet: {sheet_name}\n")
+        for row in ws.iter_rows(values_only=True):
+            if all(c is None for c in row):
+                continue
+            cells = ["" if c is None else str(c) for c in row]
+            parts.append("| " + " | ".join(cells) + " |")
+    return "\n".join(parts) + "\n"
 
 EA_PROJECT_ROOT = Path("/Users/a112233/Desktop/流程架构项目_jasper")
 VAULT_DEST_DIR = Path(
@@ -75,6 +108,10 @@ VNW_REFERENCE_SOURCES = [
     (EA_PROJECT_ROOT / "03_发布成果-交付物/权威数据/dim_kpi_v3.3_权威层.csv", "file"),
     (EA_PROJECT_ROOT / "02_过程成果-工作产出/规则分析（Jasper）/Agent与Skill体系", "file_latest_version", "L4两阶段复核_全量368条_合并版_v"),
     (EA_PROJECT_ROOT / "HR工作材料/D_EA项目组织优化/2026-07-20_68L3岗位族归属设计_v6.1_SUBMITTED.md", "file"),
+    # 2026-07-29新增：D1-D6 Skill封装可行性评估。同目录下还有"最终版"/"理想化版"/
+    # "确认最终版"（无版本号）三份不同标签的文件，不是这份的旧版本，prefix精确到
+    # "确认最终版_v"只匹配这一支，不会误收其他三份。
+    (EA_PROJECT_ROOT / "02_过程成果-工作产出/规则分析（Jasper）/Agent与Skill体系", "file_latest_version", "L4流程_Skill封装可行性评估_确认最终版_v"),
 ]
 
 VERSION_SUFFIX_RE = re.compile(r"^(\d+(?:\.\d+)*)(\.\w+)$")
@@ -116,18 +153,47 @@ def _sync_one_file(src: Path, dest_dir: Path, manifest: Dict, summary: Dict, pro
     produced.add(dest.name)
     new_hash = hash_file(src)
     old_entry = manifest["files"].get(str(src))
-    if old_entry and old_entry.get("hash") == new_hash and dest.exists():
+    if not (old_entry and old_entry.get("hash") == new_hash and dest.exists()):
+        dest_dir.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(src, dest)
+        manifest["files"][str(src)] = {
+            "dest": str(dest.relative_to(VAULT_DEST_DIR)),
+            "hash": new_hash,
+            "synced_at": datetime.now().isoformat(),
+        }
+        action = "更新" if old_entry else "新增"
+        summary["changed"].append(f"{action}: {src.name}")
+    else:
+        summary["unchanged"] += 1
+
+    if src.suffix.lower() == ".xlsx":
+        _sync_xlsx_text_mirror(src, dest_dir, manifest, summary, produced)
+
+
+def _sync_xlsx_text_mirror(src: Path, dest_dir: Path, manifest: Dict, summary: Dict, produced: set):
+    """xlsx原件之外，额外生成/更新同名.md纯文本镜像，供索引器检索
+    （见模块docstring"xlsx源文件"一节）。manifest key跟原件区分（加`::md`
+    后缀），避免两条记录互相覆盖。"""
+    md_name = src.stem + ".md"
+    dest = dest_dir / md_name
+    produced.add(md_name)
+    manifest_key = f"{src}::md"
+    src_hash = hash_file(src)  # 转换内容完全由源xlsx决定，源没变就不用重新转换
+    old_entry = manifest["files"].get(manifest_key)
+    if old_entry and old_entry.get("source_hash") == src_hash and dest.exists():
         summary["unchanged"] += 1
         return
+    text = _xlsx_to_markdown_text(src)
     dest_dir.mkdir(parents=True, exist_ok=True)
-    shutil.copy2(src, dest)
-    manifest["files"][str(src)] = {
+    dest.write_text(text, encoding="utf-8")
+    manifest["files"][manifest_key] = {
         "dest": str(dest.relative_to(VAULT_DEST_DIR)),
-        "hash": new_hash,
+        "source_hash": src_hash,
         "synced_at": datetime.now().isoformat(),
+        "note": f"由 {src.name} 机械转换生成，非独立原件",
     }
     action = "更新" if old_entry else "新增"
-    summary["changed"].append(f"{action}: {src.name}")
+    summary["changed"].append(f"{action}(xlsx文本镜像): {md_name}")
 
 
 def _prune_stale(manifest: Dict, produced: set, summary: Dict, dry_run: bool) -> None:
