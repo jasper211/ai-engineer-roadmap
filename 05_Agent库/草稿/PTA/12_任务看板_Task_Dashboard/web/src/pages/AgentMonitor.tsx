@@ -4,11 +4,16 @@ import { AgentStatusBadge } from '../components/AgentStatusBadge'
 
 function JobRow({ job }: { job: LaunchdJob }) {
   return (
-    <div className="flex items-center justify-between text-xs py-1">
-      <span className="font-mono text-text-secondary">{job.label}</span>
-      <span className={job.healthy ? 'text-accent-success' : 'text-accent-danger'}>
-        {job.pid ? `运行中 (pid ${job.pid})` : `退出码 ${job.last_exit_code}`}
-      </span>
+    <div className="py-1">
+      <div className="flex items-center justify-between text-xs">
+        <span className="font-mono text-text-secondary">{job.label}</span>
+        <span className={job.healthy ? 'text-accent-success' : 'text-accent-danger'}>
+          {job.pid ? `运行中 (pid ${job.pid})` : `退出码 ${job.last_exit_code}`}
+        </span>
+      </div>
+      {job.note && (
+        <p className="mt-0.5 text-[11px] text-accent-warning">⚠️ {job.note}</p>
+      )}
     </div>
   )
 }

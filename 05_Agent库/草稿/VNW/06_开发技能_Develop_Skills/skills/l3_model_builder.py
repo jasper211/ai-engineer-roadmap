@@ -89,7 +89,12 @@ D1D6_CSV_FIELD_MAP = {
 }
 
 
-def load_d1d6_supplement(csv_path: Path) -> dict[str, dict[str, int]]:
+def d1d6_name_key(l3_code: str, l4_name: str) -> str:
+    """历史L4编码迁移时使用的保守桥接键：同一L3 + 完全相同的L4名称。"""
+    return f"NAME::{l3_code.strip().upper()}::{l4_name.strip()}"
+
+
+def load_d1d6_supplement(csv_path: Path) -> dict[str, dict]:
     """加载`L4两阶段复核_全量368条_合并版_v1.0.csv`，按l4_code建索引。
 
     2026-07-29核实：`dim_process`里366条L4只有35条有D1-D6分数，此前误判为
@@ -97,7 +102,8 @@ def load_d1d6_supplement(csv_path: Path) -> dict[str, dict[str, int]]:
     同步，不是打分工作本身。仅当一行6个维度全部有值时才收录，避免半截
     数据混进补充证据。
     """
-    result = {}
+    result: dict[str, dict] = {}
+    name_candidates: dict[str, list[dict]] = {}
     with Path(csv_path).open(encoding="utf-8-sig") as file:
         for row in csv.DictReader(file):
             l4_code = row.get("L4编码", "").strip()
@@ -113,7 +119,16 @@ def load_d1d6_supplement(csv_path: Path) -> dict[str, dict[str, int]]:
                     complete = False
                     break
             if complete:
+                values["_source_l4_code"] = l4_code
                 result[l4_code] = values
+                l3_code = row.get("L3编码", "").strip().upper()
+                l4_name = row.get("L4名称", "").strip()
+                if l3_code and l4_name:
+                    name_candidates.setdefault(d1d6_name_key(l3_code, l4_name), []).append(values)
+    # 只为名称在同一L3内唯一的记录建立别名索引，避免同名交付物误连。
+    for key, candidates in name_candidates.items():
+        if len(candidates) == 1:
+            result[key] = candidates[0]
     return result
 
 
@@ -194,7 +209,7 @@ class L3ModelBuilder:
         reader: PostgresL3Reader,
         blueprint_index: dict[str, BlueprintIndex],
         blueprint_dir: Path | None = None,
-        d1d6_supplement: dict[str, dict[str, int]] | None = None,
+        d1d6_supplement: dict[str, dict] | None = None,
         demo_registry: dict[str, str] | None = None,
         analysis_packages: dict[str, dict] | None = None,
         sop_records: list[dict] | None = None,
@@ -303,6 +318,10 @@ class L3ModelBuilder:
             }
             d1_d6 = {}
             supplement = self.d1d6_supplement.get(code)
+            if supplement is None:
+                supplement = self.d1d6_supplement.get(
+                    d1d6_name_key(l3_code, row.get("l4_name", ""))
+                )
             for field in D_FIELDS:
                 db_value = row.get(field)
                 if db_value is not None:
@@ -318,7 +337,7 @@ class L3ModelBuilder:
                         source=SourceRef(
                             source_system="EA项目_权威数据",
                             source_object="L4两阶段复核_全量368条_合并版_v1.0.csv",
-                            source_key=code,
+                            source_key=supplement.get("_source_l4_code", code),
                             source_field=field,
                             source_version="v1.0",
                         ),

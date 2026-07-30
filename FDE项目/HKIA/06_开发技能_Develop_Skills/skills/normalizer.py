@@ -54,7 +54,12 @@ class Normalizer:
         schema_version = parsed["schema_version"]
 
         rows = []
-        for table_type, key in (("new_business", "new_business"), ("in_force", "in_force")):
+        table_keys = (
+            ("new_business", "new_business"),
+            ("in_force", "in_force"),
+            ("new_business_by_insurer", "new_business_by_insurer"),
+        )
+        for table_type, key in table_keys:
             for rec in parsed[key]:
                 metric_name, unit = _split_unit(rec["metric_name"])
                 rows.append(NormalizedRow(

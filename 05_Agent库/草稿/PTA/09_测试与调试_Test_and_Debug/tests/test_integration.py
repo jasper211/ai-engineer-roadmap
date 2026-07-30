@@ -29,6 +29,7 @@ Test 12 用 stub 替换 `daily_sensing.call_deepseek`，不依赖真实网络/AP
 """
 
 import json
+import plistlib
 import shutil
 import subprocess
 import sys
@@ -56,6 +57,7 @@ from skills.daily_sensing import (DailySensor, SuggestedTask, DailyBriefing, lis
 from skills.pipeline_health import summarize_latest_report, drift_detail_from_latest_report
 from skills.agent_status import (detect_all_agent_statuses, STATUS_AUTO, STATUS_MANUAL,
                                   STATUS_UNBUILT, STATUS_DEAD)
+import skills.agent_status as agent_status
 from skills.rule_based_task_scan import RuleBasedScanner
 import skills.document_task_discovery as document_task_discovery
 from skills.document_task_discovery import DocumentDiscoverer
@@ -895,6 +897,63 @@ def test_28_agent_status_detection():
           f"has_code判定错误: PTA={by_id['PTA']['has_code']}, VNW={by_id['VNW']['has_code']}")
 
 
+def test_39_crash_vs_benign_nonzero_exit(tmp_dir: Path):
+    print("\n[Test 39] agent_status区分「真崩溃」和「非0退出码但无崩溃痕迹」")
+    print("-" * 60)
+    # 真实教训复现：OB的--sync-check脚本设计是"6项健康检查里有1项不达标就
+    # sys.exit(1)"，包括"工作区有未提交改动，主动跳过pull避免冲突"这种完全
+    # 正常的场景——这类非0退出码不该被判定成"死的"。用真实的
+    # ~/Library/LaunchAgents/结构造两个fixture plist+stderr文件，分别验证
+    # "有Traceback→不健康"和"无Traceback→健康"两个方向，不能只验证真实OB
+    # 当前恰好没崩溃这一个方向（那样测不出"如果真崩溃了它还能不能测出来"）。
+    fake_launch_agents = tmp_dir / "fake_launch_agents"
+    fake_launch_agents.mkdir(parents=True, exist_ok=True)
+    original_dir = agent_status.LAUNCH_AGENTS_DIR
+    agent_status.LAUNCH_AGENTS_DIR = fake_launch_agents
+    try:
+        # 场景1：真崩溃——stderr里有真实Traceback
+        crash_err = tmp_dir / "crash_job.err"
+        crash_err.write_text(
+            "Traceback (most recent call last):\n"
+            '  File "agent.py", line 10, in <module>\nNameError: name \'x\' is not defined\n',
+            encoding="utf-8")
+        (fake_launch_agents / "com.test.crash-job.plist").write_bytes(
+            plistlib.dumps({"Label": "com.test.crash-job", "StandardErrorPath": str(crash_err)}))
+        check(agent_status._recent_stderr_has_crash("com.test.crash-job") is True,
+              "stderr里有真实Traceback时，正确识别为真崩溃",
+              "有Traceback的场景没有被识别为崩溃")
+
+        # 场景2：非0退出码但无崩溃痕迹——复现OB的"合理跳过"场景
+        benign_err = tmp_dir / "benign_job.err"
+        benign_err.write_text("0:290: execution error: 该命令退出时状态为非零。 (1)\n", encoding="utf-8")
+        (fake_launch_agents / "com.test.benign-job.plist").write_bytes(
+            plistlib.dumps({"Label": "com.test.benign-job", "StandardErrorPath": str(benign_err)}))
+        check(agent_status._recent_stderr_has_crash("com.test.benign-job") is False,
+              "非0退出码但stderr里没有Traceback时，正确识别为「没有崩溃证据」",
+              "无Traceback的场景被误判为崩溃")
+
+        # 场景3：找不到stderr路径——保守返回None（调用方据此维持"不健康"判定，
+        # 不会把"找不到证据"误当成"证明健康"）
+        check(agent_status._recent_stderr_has_crash("com.test.does-not-exist") is None,
+              "找不到对应plist时返回None（证据不足，不等于健康），调用方据此保守判定",
+              "找不到plist时应该返回None")
+    finally:
+        agent_status.LAUNCH_AGENTS_DIR = original_dir
+
+    # 场景4：用真实OB数据验证端到端效果——ob-sync-agent当前exit_code=1，
+    # 但这是"2个文件未提交、主动跳过pull"的合理场景，不是崩溃，整个OB应该
+    # 被判定为"自动"而不是"死的"（这是本次要修的真实bug本身）。
+    result = detect_all_agent_statuses()
+    by_id = {a["agent_id"]: a for a in result}
+    ob_jobs = {j["label"]: j for j in by_id["OB"]["launchd_jobs"]}
+    if "com.jasper.ob-sync-agent" in ob_jobs and ob_jobs["com.jasper.ob-sync-agent"]["last_exit_code"] != 0:
+        check(ob_jobs["com.jasper.ob-sync-agent"]["healthy"] is True and ob_jobs["com.jasper.ob-sync-agent"]["note"],
+              "真实ob-sync-agent非0退出码但无崩溃痕迹时，被正确判定为健康且带解释性note",
+              f"ob-sync-agent应判定为健康但结果不对: {ob_jobs['com.jasper.ob-sync-agent']}")
+    else:
+        print("  (本机ob-sync-agent当前退出码是0或job不存在，跳过这条端到端断言，前3个场景已覆盖核心逻辑)")
+
+
 def test_29_skill_usage_summary_and_agent_monitor_endpoint(tmp_dir: Path):
     print("\n[Test 29] memory.workspace.load_skill_usage_summary 聚合 + /api/agent-monitor 冒烟")
     print("-" * 60)
@@ -1444,6 +1503,7 @@ def main():
         test_36_execution_preparation_dry_run_and_approval(tmp_dir)
         test_37_command_center_file_ssot_is_complete(tmp_dir)
         test_38_daily_scan_per_project_system_prompt(tmp_dir)
+        test_39_crash_vs_benign_nonzero_exit(tmp_dir)
     finally:
         shutil.rmtree(tmp_dir, ignore_errors=True)
         # Test 7/13 通过 subprocess 调用 agent.py，其专属工作区落在 memory.workspace 的
@@ -1460,7 +1520,7 @@ def main():
             print(f"  - {f}")
         return 1
 
-    print("PTA 集成测试完成：38/38 通过")
+    print("PTA 集成测试完成：39/39 通过")
     print("=" * 60)
     return 0
 

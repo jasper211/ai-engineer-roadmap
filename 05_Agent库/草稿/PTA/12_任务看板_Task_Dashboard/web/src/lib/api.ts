@@ -162,6 +162,7 @@ export interface LaunchdJob {
   pid: string | null
   last_exit_code: number | null
   healthy: boolean
+  note?: string
 }
 
 export type AgentStatusValue = '自动' | '人工' | '未搭建' | '死的'

@@ -11,20 +11,37 @@
 四态判定全部基于确定性检查（launchctl真实退出码 + 代码路径真实存在性），不做
 猜测：
 - 自动：匹配到至少一个launchd job，且所有匹配job最近一次退出码都是0（或当前
-  仍在运行中）
-- 死的：匹配到launchd job，但至少一个最近一次退出码非0——本该自动运行却在
-  失败，这是唯一需要人工介入排查的状态
+  仍在运行中，或非0但stderr里查无崩溃痕迹——见下）
+- 死的：匹配到launchd job，至少一个最近一次退出码非0，且stderr里能找到真实
+  崩溃证据（Traceback）——本该自动运行却在失败，这是唯一需要人工介入排查的状态
 - 人工：一个launchd job都没匹配到，但code_paths里至少一条真实存在——有人在
   手动跑
 - 未搭建：launchd job和code_paths都为空/都不存在
+
+真实教训（2026-07-30）：OB的`--sync-check`脚本设计是"6项健康检查里只要有1项不是
+✅就`sys.exit(1)`"——包括"工作区有未提交改动，主动跳过pull避免冲突"这种完全
+正常、非破坏性的场景。这类脚本的非0退出码≠崩溃，只看exit_code会把"跑完了、
+如实报告了一个真实待办事项"误判成"死的"。修复：退出码非0时，进一步检查该
+job的stderr日志（从对应~/Library/LaunchAgents/*.plist的StandardErrorPath读取）
+最近内容里有没有真实Python Traceback——没有就不算"死的"，只是exit_code非0，
+仍判定为健康，只是在launchd_jobs明细里附一条note说明"非0退出码但无崩溃痕迹"。
+找不到stderr路径/文件不存在时，保守起见仍按"非0=不健康"处理（没有证据反驳
+比误判成"死的"更安全——判定这里的初衷本来就是"宁可多提醒，不可漏报真实故障"）。
 
 跟pipeline_health同样的原则：本技能只查证据、不做"要不要修"的判断。
 """
 
 import json
+import plistlib
 import subprocess
 from pathlib import Path
 from typing import Dict, List, Optional
+
+LAUNCH_AGENTS_DIR = Path.home() / "Library" / "LaunchAgents"
+CRASH_MARKER = "Traceback (most recent call last)"
+STDERR_TAIL_BYTES = 20_000  # 只看文件末尾这么多字节，足够覆盖最近一次运行的完整
+                             # traceback（几十行），又不会在err文件累积到几十MB
+                             # 时整份读入内存
 
 AGENT_REGISTRY_PATH = (
     Path(__file__).resolve().parent.parent.parent / "02_配置项目_Configure_Project" / "agent_registry.json"
@@ -85,6 +102,40 @@ def _resolve_code_path(relative_path: str) -> Path:
     return JASPER_DOCS_ROOT / relative_path
 
 
+def _stderr_path_for_label(label: str) -> Optional[Path]:
+    """从已安装的plist里读StandardErrorPath——不在registry里硬编码这条路径，
+    plist本身就是唯一真源，硬编码一份容易在plist改了之后悄悄脱节（这个教训
+    在pipeline-check的Weekday off-by-one上已经真实踩过一次）。"""
+    plist_path = LAUNCH_AGENTS_DIR / f"{label}.plist"
+    if not plist_path.exists():
+        return None
+    try:
+        with plist_path.open("rb") as f:
+            data = plistlib.load(f)
+    except (OSError, ValueError):
+        return None
+    err_path = data.get("StandardErrorPath")
+    return Path(err_path) if err_path else None
+
+
+def _recent_stderr_has_crash(label: str) -> Optional[bool]:
+    """True=stderr最近内容里找到了真实Python Traceback（真崩溃）；
+    False=stderr存在但最近内容里没有；None=找不到stderr路径/文件不存在/
+    读取失败（证据不足，调用方按"保守判定为不健康"处理，不是"判定为健康"）。"""
+    err_path = _stderr_path_for_label(label)
+    if err_path is None or not err_path.exists():
+        return None
+    try:
+        with err_path.open("rb") as f:
+            f.seek(0, 2)
+            size = f.tell()
+            f.seek(max(0, size - STDERR_TAIL_BYTES))
+            tail = f.read().decode("utf-8", errors="ignore")
+    except OSError:
+        return None
+    return CRASH_MARKER in tail
+
+
 def detect_all_agent_statuses() -> List[dict]:
     """返回全部已登记agent的真实状态列表，每项：
     {agent_id, display_name, description, status, launchd_jobs, has_code}
@@ -109,11 +160,22 @@ def detect_all_agent_statuses() -> List[dict]:
                 continue
             exit_code = job["last_exit_code"]
             healthy = job["pid"] is not None or exit_code == 0
+            note = ""
+            if not healthy:
+                # 退出码非0——先别急着判"死的"，查一下stderr里有没有真实
+                # Traceback。找不到证据(None)时保守维持healthy=False（宁可
+                # 多提醒也不漏报真实故障）；明确查到没有traceback(False)时
+                # 才翻正，这是本次要修的"OB健康检查非0退出码≠崩溃"这个问题。
+                crashed = _recent_stderr_has_crash(label)
+                if crashed is False:
+                    healthy = True
+                    note = "退出码非0，但stderr近期无崩溃痕迹（无Traceback）——可能是脚本自身设计的告警退出（比如健康检查里有一项不达标就非0退出），不代表任务真的崩溃"
             launchd_jobs.append({
                 "label": label,
                 "pid": job["pid"],
                 "last_exit_code": exit_code,
                 "healthy": healthy,
+                "note": note,
             })
 
         if launchd_jobs:

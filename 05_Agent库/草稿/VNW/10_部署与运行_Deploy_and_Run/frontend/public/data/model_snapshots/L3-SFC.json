@@ -109,12 +109,12 @@
     "schema_version": "vnw.l3-analysis.v1",
     "source_scope": {
       "database": "process_analytics",
-      "evidence_count": 33,
+      "evidence_count": 36,
       "knowledge": "ACTIVE supplemental evidence only"
     },
     "tasks": []
   },
-  "analysis_input_hash": "6f1ee9660273ec40a5cba03932bc7ebe20fc62942ca68f221bc7186a384f626f",
+  "analysis_input_hash": "8bd2e0c68d39c806e7e932ef8bb9e19db0f661ade1c674344794d18d092b40ab",
   "blueprint": {
     "blueprint_value_nodes": [],
     "coverage": "INDEXED",
@@ -129,16 +129,68 @@
         "L4-SFC-03"
       ],
       "parsed_step_l4_count": 0,
-      "retired_l4s_ignored": []
+      "retired_l4s_ignored": [],
+      "unmapped_step_count": 3
     },
-    "edges": [],
+    "edges": [
+      {
+        "edge_id": "SEQ-STEP-01-STEP-02",
+        "edge_type": "SEQUENCE",
+        "from": "STEP-01",
+        "label": "",
+        "source_rule": "蓝图显式编号步骤的相邻顺序",
+        "to": "STEP-02"
+      },
+      {
+        "edge_id": "SEQ-STEP-02-STEP-03",
+        "edge_type": "SEQUENCE",
+        "from": "STEP-02",
+        "label": "",
+        "source_rule": "蓝图显式编号步骤的相邻顺序",
+        "to": "STEP-03"
+      }
+    ],
     "filename": "流程蓝图_L3-SFC_策略可行性评估与沟通流程_V1.0.md",
-    "note": "正文缺少可确认结构或与当前数据库冲突，禁止生成箭头、决策点和回退关系",
+    "note": "已从蓝图正文解析；步骤顺序边由显式步骤编号派生，判断分支保留原文行号",
     "raci": [],
     "source_hash": "7bff3f2d4b5bf4d52d18784a1abb5bd78c3359ca9902c8f250f3b62fbdaf62d1",
     "source_path": "/Users/a112233/Desktop/流程架构项目_jasper/02_过程成果-工作产出/L3流程库/流程蓝图_L3-SFC_策略可行性评估与沟通流程_V1.0.md",
-    "steps": [],
-    "structure_status": "CONFLICT",
+    "steps": [
+      {
+        "activities": [
+          "策略可行性评审（含财务/法务/交付能力评审）"
+        ],
+        "evidence_ref": "EVD-dad39760a685cb347b69",
+        "l4_codes": [],
+        "sequence": 1,
+        "source_line": 20,
+        "step_id": "STEP-01",
+        "step_name": "策略可行性评审（含财务/法务/交付能力评审）"
+      },
+      {
+        "activities": [
+          "关键相关方沟通（向执行层分发）"
+        ],
+        "evidence_ref": "EVD-b2648ac5dc20fe090343",
+        "l4_codes": [],
+        "sequence": 2,
+        "source_line": 20,
+        "step_id": "STEP-02",
+        "step_name": "关键相关方沟通（向执行层分发）"
+      },
+      {
+        "activities": [
+          "形成执行层承诺与反馈闭环"
+        ],
+        "evidence_ref": "EVD-6105e7b2906a14095989",
+        "l4_codes": [],
+        "sequence": 3,
+        "source_line": 20,
+        "step_id": "STEP-03",
+        "step_name": "形成执行层承诺与反馈闭环"
+      }
+    ],
+    "structure_status": "PARSED",
     "version": "V1.0"
   },
   "demo_file": "",
@@ -380,6 +432,27 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-6105e7b2906a14095989",
+      "field_name": "blueprint.steps.STEP-03",
+      "source": {
+        "observed_at": "",
+        "source_field": "step",
+        "source_key": "line:20",
+        "source_object": "流程蓝图_L3-SFC_策略可行性评估与沟通流程_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "l4_codes": [],
+        "step_name": "形成执行层承诺与反馈闭环"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
       "evidence_id": "EVD-67eb5b8610c4545332b7",
       "field_name": "agent_d6_compliance",
@@ -538,6 +611,27 @@
       "status": "ACTIVE",
       "transform_rule": "",
       "value": "《策略评估与优化报告》"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-b2648ac5dc20fe090343",
+      "field_name": "blueprint.steps.STEP-02",
+      "source": {
+        "observed_at": "",
+        "source_field": "step",
+        "source_key": "line:20",
+        "source_object": "流程蓝图_L3-SFC_策略可行性评估与沟通流程_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "l4_codes": [],
+        "step_name": "关键相关方沟通（向执行层分发）"
+      }
     },
     {
       "confidence": "HIGH",
@@ -704,6 +798,27 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-dad39760a685cb347b69",
+      "field_name": "blueprint.steps.STEP-01",
+      "source": {
+        "observed_at": "",
+        "source_field": "step",
+        "source_key": "line:20",
+        "source_object": "流程蓝图_L3-SFC_策略可行性评估与沟通流程_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "l4_codes": [],
+        "step_name": "策略可行性评审（含财务/法务/交付能力评审）"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
       "evidence_id": "EVD-e0d746aedfb433bdbab0",
       "field_name": "agent_d1_input_struct",
@@ -742,8 +857,8 @@
     "A": {
       "checks": [
         {
-          "detail": "Gate E=BLOCKED",
-          "passed": false,
+          "detail": "Gate E=CONDITIONAL",
+          "passed": true,
           "rule_id": "A-001"
         },
         {
@@ -767,8 +882,8 @@
     "E": {
       "checks": [
         {
-          "detail": "Gate M=BLOCKED",
-          "passed": false,
+          "detail": "Gate M=PASS",
+          "passed": true,
           "rule_id": "E-001"
         },
         {
@@ -812,7 +927,7 @@
           "rule_id": "E-009"
         }
       ],
-      "status": "BLOCKED"
+      "status": "CONDITIONAL"
     },
     "M": {
       "checks": [
@@ -822,8 +937,8 @@
           "rule_id": "M-001"
         },
         {
-          "detail": "缺少可解析流程蓝图",
-          "passed": false,
+          "detail": "流程蓝图_L3-SFC_策略可行性评估与沟通流程_V1.0.md",
+          "passed": true,
           "rule_id": "M-002"
         },
         {
@@ -842,7 +957,7 @@
           "rule_id": "M-005"
         }
       ],
-      "status": "BLOCKED"
+      "status": "PASS"
     }
   },
   "has_demo": false,
@@ -970,8 +1085,8 @@
       "rules": [],
       "sops": []
     },
-    "model_generation_allowed": false,
-    "status": "WAITING_INPUT",
+    "model_generation_allowed": true,
+    "status": "LIMITED_MODEL",
     "thresholds": {
       "critical_l4_required": 1.0,
       "deliverable_full": 0.9,

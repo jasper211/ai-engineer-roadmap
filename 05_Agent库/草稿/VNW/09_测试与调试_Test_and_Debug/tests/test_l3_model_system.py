@@ -10,7 +10,7 @@ VNW_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(VNW_ROOT / "05_集成工具_Integrate_Tools"))
 sys.path.insert(0, str(VNW_ROOT / "06_开发技能_Develop_Skills"))
 
-from skills.l3_model_builder import BlueprintIndex, L3ModelBuilder  # noqa: E402
+from skills.l3_model_builder import BlueprintIndex, L3ModelBuilder, d1d6_name_key  # noqa: E402
 from skills.l3_analysis_contract import ANALYSIS_STANDARD_ID, analysis_input_hash, validate_analysis_package  # noqa: E402
 from skills.l3_analysis_runner import L3AnalysisRunner, _json_from_text, normalize_model_package  # noqa: E402
 from skills.blueprint_parser import parse_blueprint  # noqa: E402
@@ -90,6 +90,23 @@ class L3ModelSystemTests(unittest.TestCase):
     def test_gate_a_requires_d_and_mapping(self):
         self.assertEqual(self.qualified_builder(False, False).build("L3-T")["gates"]["A"]["status"], "BLOCKED")
         self.assertEqual(self.qualified_builder(True, True).build("L3-T")["gates"]["A"]["status"], "PASS")
+
+    def test_d1d6_legacy_code_bridges_only_by_exact_l3_and_l4_name(self):
+        builder = self.qualified_builder(complete_d=False)
+        builder.d1d6_supplement = {
+            d1d6_name_key("L3-T", "形成测试交付物"): {
+                **{field: 2 for field in (
+                    "agent_d1_input_struct", "agent_d2_rule_clear", "agent_d3_output_verify",
+                    "agent_d4_api_reach", "agent_d5_fallback", "agent_d6_compliance",
+                )},
+                "_source_l4_code": "L4-LEGACY-01",
+            }
+        }
+        model = builder.build("L3-T")
+        self.assertEqual(model["l4s"][0]["d1_d6"]["agent_d1_input_struct"], 2)
+        evidence_id = model["l4s"][0]["evidence_refs"]["agent_d1_input_struct"]
+        evidence = next(item for item in model["evidence_registry"] if item["evidence_id"] == evidence_id)
+        self.assertEqual(evidence["source"]["source_key"], "L4-LEGACY-01")
 
     def test_model_readiness_blocks_unparsed_blueprint(self):
         model = self.builder().build("L3-T")
@@ -211,6 +228,46 @@ class L3ModelSystemTests(unittest.TestCase):
         self.assertEqual(result["steps"][0]["activities"], ["查询即将到期合作伙伴", "生成到期清单"])
         self.assertEqual(result["diagnostics"]["extra_in_blueprint"], [])
         self.assertIn("L4-CRR-01", result["diagnostics"]["retired_l4s_ignored"])
+
+    def test_blueprint_parser_supports_short_l4_heading_only_with_db_match(self):
+        content = """# 流程蓝图
+### CPM-01 监控准备
+| 步骤 | 活动 |
+|---|---|
+| 1 | 汇总监控指标 |
+
+### CPM-99 历史占位
+| 步骤 | 活动 |
+|---|---|
+| 1 | 不应进入模型 |
+"""
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "blueprint.md"
+            path.write_text(content, encoding="utf-8")
+            result = parse_blueprint(path, {"L4-CPM-01"})
+        self.assertEqual(result["structure_status"], "PARSED")
+        self.assertEqual(len(result["steps"]), 1)
+        self.assertEqual(result["steps"][0]["l4_codes"], ["L4-CPM-01"])
+        self.assertEqual(result["steps"][0]["activities"], ["汇总监控指标"])
+
+    def test_blueprint_parser_supports_numbered_flow_without_inventing_l4_mapping(self):
+        content = """# 流程蓝图
+## §1 流程概览
+1. 策略可行性评审 → 2. 关键相关方沟通 → 3. 形成执行层承诺
+
+附录：L4-SFC-01、L4-SFC-02、L4-SFC-03
+"""
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "blueprint.md"
+            path.write_text(content, encoding="utf-8")
+            result = parse_blueprint(path, {"L4-SFC-01", "L4-SFC-02", "L4-SFC-03"})
+        self.assertEqual(result["structure_status"], "PARSED")
+        self.assertEqual([step["step_name"] for step in result["steps"]], [
+            "策略可行性评审", "关键相关方沟通", "形成执行层承诺",
+        ])
+        self.assertTrue(all(step["l4_codes"] == [] for step in result["steps"]))
+        self.assertEqual(result["diagnostics"]["unmapped_step_count"], 3)
+        self.assertEqual(result["diagnostics"]["parsed_step_l4_count"], 0)
 
     def test_analysis_runner_prepares_auditable_bundle(self):
         with tempfile.TemporaryDirectory() as tmp:

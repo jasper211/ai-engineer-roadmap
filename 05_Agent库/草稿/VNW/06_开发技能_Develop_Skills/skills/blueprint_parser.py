@@ -11,7 +11,8 @@ STEP_ZH = re.compile(r"^步骤\s*(\d+)[：:]\s*(.+?)\s*$")
 L4_RE = re.compile(r"L4-[A-Za-z0-9-]+")
 DECISION_INLINE = re.compile(r"【判断节点\s*(\d+)】\s*(.+?)[？?]?\s*$")
 DECISION_HEADING = re.compile(r"^###\s*(Q\d+)[：:]\s*(.+?)(?:（Step\s*(\d+)后）)?\s*$", re.I)
-L4_HEADING = re.compile(r"^###\s+(L4-[A-Za-z0-9-]+)\s+(.+?)\s*$", re.I)
+L4_HEADING = re.compile(r"^###\s+((?:L4-)?[A-Za-z][A-Za-z0-9]*(?:-[A-Za-z0-9]+)*-\d+)\s+(.+?)\s*$", re.I)
+NUMBERED_FLOW_ITEM = re.compile(r"(?:^|→)\s*(\d+)[.、]\s*([^→]+?)(?=\s*→\s*\d+[.、]|$)")
 RETIRED_CONTEXT = re.compile(r"废弃|删除|原L4|历史|不再使用|已移除")
 
 
@@ -91,6 +92,7 @@ def parse_blueprint(path: Path, db_l4_codes: set[str]) -> dict:
             })
 
     # CRR等蓝图以三级L4标题划分阶段，并把任务写在Markdown步骤表格中。
+    # 同时兼容CPM-01这类省略“L4-”前缀的标题，但必须能与数据库L4精确匹配。
     # 一个L4形成一个流程阶段，表格的每行活动保留为任务拆分依据。
     if not steps:
         table_sequence = 0
@@ -100,7 +102,8 @@ def parse_blueprint(path: Path, db_l4_codes: set[str]) -> dict:
             if not heading:
                 index += 1
                 continue
-            l4_code = heading.group(1).upper()
+            heading_code = heading.group(1).upper()
+            l4_code = heading_code if heading_code.startswith("L4-") else f"L4-{heading_code}"
             if l4_code not in db_l4_codes:
                 index += 1
                 continue
@@ -129,6 +132,28 @@ def parse_blueprint(path: Path, db_l4_codes: set[str]) -> dict:
                     "source_line": index + 1,
                 })
             index = max(cursor, index + 1)
+
+    # SFC等蓝图只显式给出编号阶段链路，尚未给出阶段与L4的对应关系。
+    # 可据此形成“待完善模型”的流程骨架，但绝不按名称相似度猜测L4映射。
+    if not steps:
+        for number, line in enumerate(lines, 1):
+            stripped = line.strip()
+            if "→" not in stripped:
+                continue
+            items = list(NUMBERED_FLOW_ITEM.finditer(stripped))
+            if len(items) < 2:
+                continue
+            for sequence, item in enumerate(items, 1):
+                step_name = item.group(2).strip().rstrip("。；;")
+                steps.append({
+                    "step_id": f"STEP-{sequence:02d}",
+                    "sequence": sequence,
+                    "step_name": step_name,
+                    "l4_codes": [],
+                    "activities": [step_name],
+                    "source_line": number,
+                })
+            break
 
     decisions: list[dict] = []
     for index, line in enumerate(lines):
@@ -212,7 +237,7 @@ def parse_blueprint(path: Path, db_l4_codes: set[str]) -> dict:
     missing_in_blueprint = sorted(db_l4_codes - all_blueprint_l4s)
     extra_in_blueprint = sorted(all_blueprint_l4s - db_l4_codes)
     structure_status = "PARSED" if steps else "INDEX_ONLY"
-    if db_l4_codes and not all_blueprint_l4s:
+    if db_l4_codes and not all_blueprint_l4s and not steps:
         structure_status = "CONFLICT"
 
     blueprint_value_nodes = []
@@ -268,6 +293,7 @@ def parse_blueprint(path: Path, db_l4_codes: set[str]) -> dict:
             "db_l4_count": len(db_l4_codes),
             "blueprint_l4_count": len(all_blueprint_l4s),
             "parsed_step_l4_count": len(parsed_l4s),
+            "unmapped_step_count": sum(1 for step in steps if not step["l4_codes"]),
             "missing_in_blueprint": missing_in_blueprint,
             "extra_in_blueprint": extra_in_blueprint,
             "retired_l4s_ignored": sorted(retired_l4s - db_l4_codes),
