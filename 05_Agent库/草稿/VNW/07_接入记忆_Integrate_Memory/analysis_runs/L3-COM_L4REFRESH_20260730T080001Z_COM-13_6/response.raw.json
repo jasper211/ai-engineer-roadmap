@@ -1,0 +1,311 @@
+{
+  "l4_analysis": [
+    {
+      "l4_code": "L4-COM-13",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-f56e3e5e4460944b57c3",
+        "EVD-63e85adbaed8cf1cb73f",
+        "EVD-b2378f17e900298cd11b",
+        "EVD-f36aac0188905f484a25",
+        "EVD-7d44496d6b115bd28ae2",
+        "EVD-60f79b59800e9eec496c",
+        "EVD-3a6911dfa7ea38795bed",
+        "EVD-a919472a15a154172eb5",
+        "EVD-317c89464705bc50f14c",
+        "EVD-03c56812c3c8bb8da317",
+        "EVD-0e96f1628f3e8709028b",
+        "EVD-daac64dc6d0589a282d6"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "控制交付物",
+      "specific_capabilities": [
+        "实派确认",
+        "财务制单",
+        "资金安全签字"
+      ],
+      "ai_reshape": "AI检查实派清单并生成财务制单草稿；资金放行必须人工签字",
+      "quality_anchor": "实派与应派一致，制单字段完整，签字人和时间可追溯",
+      "ai_responsibility": "检查实派与应派一致性、生成财务制单草稿",
+      "human_responsibility": "审核实派清单并签字放行",
+      "handoff_triggers": [
+        "金额异常",
+        "主体不符",
+        "证据缺失"
+      ],
+      "control_gates": [
+        "资金安全人工签字，不得自动放行"
+      ],
+      "data_basis": [
+        "数据库Tier=Auto",
+        "D1-D6=2/2/2/1/1/2",
+        "总分=10/18"
+      ],
+      "process_context": "外发后确认实派并制单，是三级验证链资金关卡",
+      "risks_limits": [
+        "数据库Auto与复核Aug冲突",
+        "资金安全必须人工签字"
+      ],
+      "current_recommendation": "治理后推进且锁定Human gate",
+      "database_tier": "Auto",
+      "recommended_tier": "Aug",
+      "quadrant": "q2"
+    },
+    {
+      "l4_code": "L4-COM-14",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-59abf8b56d53f621ac64",
+        "EVD-e9a38d46d3ccfefcd527",
+        "EVD-e1e1ab9aebf3b917b688",
+        "EVD-df0798bf507041e2be75",
+        "EVD-aec414916abcccc6f23f",
+        "EVD-7f8d74fa57ebec11ba9c",
+        "EVD-01a0aa37b5efe6e15039",
+        "EVD-d3a0a474acddb209c272",
+        "EVD-23c3c12fa3296c207c07",
+        "EVD-a5c8ef47be835b5d0e78",
+        "EVD-08ea8bfb3fd19609a4e8",
+        "EVD-5eeb02716a617ab995d8"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "价值交付物",
+      "specific_capabilities": [
+        "付款指令校验",
+        "执行控制",
+        "回执采集"
+      ],
+      "ai_reshape": "AI校验付款指令并采集回执；实际资金执行与授权由财务完成",
+      "quality_anchor": "付款审批一致、收款主体正确、每笔付款均有银行回执",
+      "ai_responsibility": "校验付款指令、授权和收款主体，采集回执",
+      "human_responsibility": "执行实际付款并处理银行异常",
+      "handoff_triggers": [
+        "授权不符",
+        "主体异常",
+        "银行拒绝"
+      ],
+      "control_gates": [
+        "付款执行人工授权"
+      ],
+      "data_basis": [
+        "数据库Tier=Auto",
+        "D1-D6=2/2/3/2/1/2",
+        "总分=12/18"
+      ],
+      "process_context": "执行付款并产生银行回执，直接发生资金外流",
+      "risks_limits": [
+        "必须满足授权",
+        "收款主体和回执要求，不适合无人放行"
+      ],
+      "current_recommendation": "治理后推进，执行保留人工",
+      "database_tier": "Auto",
+      "recommended_tier": "Aug",
+      "quadrant": "q2"
+    },
+    {
+      "l4_code": "L4-COM-15",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-43b4880d5bab22bad99f",
+        "EVD-e255cf62493f682ab1ed",
+        "EVD-b91c1f880c952fb22cc5",
+        "EVD-e8db7fb325dd2f9a28bd",
+        "EVD-a354625fc527f7724658",
+        "EVD-f021af257717f4c79472",
+        "EVD-b6ff41404204ee483cef",
+        "EVD-4b4adba2a6dddd8b740d",
+        "EVD-ad5bf8306d1597e0af89",
+        "EVD-215eb6ce03d378e797d5",
+        "EVD-430504958c7c05297502",
+        "EVD-5ec40c24900f3656e553"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "价值交付物",
+      "specific_capabilities": [
+        "回执归档",
+        "台账关联",
+        "状态更新"
+      ],
+      "ai_reshape": "自动识别和归档回执，关联付款记录并更新派发台账",
+      "quality_anchor": "回执与付款一一对应，归档完整，台账余额与状态一致",
+      "ai_responsibility": "识别回执、关联付款记录并生成台账更新草稿",
+      "human_responsibility": "确认异常回执和正式发布台账",
+      "handoff_triggers": [
+        "无法关联",
+        "重复回执",
+        "金额状态不一致"
+      ],
+      "control_gates": [
+        "正式台账发布确认"
+      ],
+      "data_basis": [
+        "数据库Tier=Auto",
+        "D1-D6=2/2/2/1/1/1",
+        "总分=9/18"
+      ],
+      "process_context": "付款后归档回执并更新台账，支撑审计追溯",
+      "risks_limits": [
+        "待注册",
+        "回执与付款、台账的唯一关联规则需补齐"
+      ],
+      "current_recommendation": "补数据后推进",
+      "database_tier": "Auto",
+      "recommended_tier": "Hybrid",
+      "quadrant": "q3"
+    },
+    {
+      "l4_code": "L4-COM-16",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-8cb4c8123e1b9917ba9b",
+        "EVD-1cfb1a8e906e2492a9af",
+        "EVD-cafecc0a73dabf0f4df0",
+        "EVD-2293cf368ee67a95718a",
+        "EVD-c5000f561af18b420f47",
+        "EVD-954be25187c2222208e0",
+        "EVD-a293c64ecc525cfbd44b",
+        "EVD-0f4b8785b3d94e797142",
+        "EVD-ac2e625d0fbe9fe7b68b",
+        "EVD-220778ebeb1268db81ca",
+        "EVD-0987c3b342d7db96945a",
+        "EVD-423a91a9ba3b12e49919"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "支撑交付物",
+      "specific_capabilities": [
+        "格式识别",
+        "字段抽取",
+        "结构转换",
+        "质量检查"
+      ],
+      "ai_reshape": "按保司识别PDF/Excel结构并转为标准数据，输出异常字段",
+      "quality_anchor": "字段完整率和解析准确率达标，原件/转换版本可追溯",
+      "ai_responsibility": "识别保司格式、抽取字段、转换标准数据并检查质量",
+      "human_responsibility": "处理异常字段和确认转换结果",
+      "handoff_triggers": [
+        "解析低置信",
+        "格式新变体",
+        "字段缺失"
+      ],
+      "control_gates": [
+        "输入质量验收"
+      ],
+      "data_basis": [
+        "数据库Tier=Auto",
+        "D1-D6=2/2/2/2/1/1",
+        "总分=10/18"
+      ],
+      "process_context": "主链最前端，把各保司原件转成COM-01可用结构",
+      "risks_limits": [
+        "不同保司格式差异大，需按保司拆Skill并设解析质量门"
+      ],
+      "current_recommendation": "补样本后试点",
+      "database_tier": "Auto",
+      "recommended_tier": "Aug",
+      "quadrant": "q3"
+    },
+    {
+      "l4_code": "L4-COM-17",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-7c22c7e4aa517e34e81a",
+        "EVD-257c8632e61e7357fd01",
+        "EVD-e739885d54e56dbf953c",
+        "EVD-2e3dcedd25661e003d13",
+        "EVD-117937c62f104a75e763",
+        "EVD-4a26392ef18a4b2a8d55",
+        "EVD-8733c6ceae0b3e6151b9",
+        "EVD-ef4717e50362b6009d74",
+        "EVD-489bf09af150e8695eea",
+        "EVD-ba68da992058dcd7ed03",
+        "EVD-ec66c41eae8d633e691e",
+        "EVD-3ee89cf0f3df6f8960c5"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "控制交付物",
+      "specific_capabilities": [
+        "IA阈值计算",
+        "硬拦截",
+        "日志留痕",
+        "独立复核"
+      ],
+      "ai_reshape": "自动计算非持牌与同行支付阈值并阻断失败批次；合规独立签字",
+      "quality_anchor": "阈值版本有效，失败不可绕过，拦截与复核日志完整",
+      "ai_responsibility": "计算IA阈值、硬拦截失败批次并生成日志",
+      "human_responsibility": "独立复核规则命中并裁定例外",
+      "handoff_triggers": [
+        "非持牌/同行支付阈值失败",
+        "规则冲突"
+      ],
+      "control_gates": [
+        "合规独立签字",
+        "失败不可绕过"
+      ],
+      "data_basis": [
+        "数据库Tier=Aug",
+        "D1-D6=3/2/2/2/2/3",
+        "总分=14/18"
+      ],
+      "process_context": "COM-12/03前硬拦截IA红线，是三级验证链第三关",
+      "risks_limits": [
+        "当前熔断源之一",
+        "阈值代码化、不可绕过和独立复核必须落地"
+      ],
+      "current_recommendation": "治理后优先建设",
+      "database_tier": "Aug",
+      "recommended_tier": "Aug",
+      "quadrant": "q2"
+    },
+    {
+      "l4_code": "L4-COM-18",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-5f39424d4f20a7719d11",
+        "EVD-681466f715b8e4b8dab8",
+        "EVD-f7619b7c46d2b58d245c",
+        "EVD-5538ec73df1f69987cc2",
+        "EVD-ad37a18edfd1f0b91c90",
+        "EVD-8f34564993de44c826a4",
+        "EVD-5405f73487a8c9c27b30",
+        "EVD-9831fa72d19c7c828a6b",
+        "EVD-8a669b19730217a592c4",
+        "EVD-4cb683d60ed5a1b280a0",
+        "EVD-289e80743e5aeb623ac5",
+        "EVD-2136ee5f7dfbc737a297"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "支撑交付物",
+      "specific_capabilities": [
+        "映射版本",
+        "变更审批",
+        "生效期和回滚管理"
+      ],
+      "ai_reshape": "AI比较映射差异并生成变更影响清单；人审批冻结版本",
+      "quality_anchor": "版本唯一、生效期明确、变更有审批、旧版本可回滚",
+      "ai_responsibility": "比较映射版本、生成变更影响和回滚建议",
+      "human_responsibility": "审批、冻结并发布有效映射",
+      "handoff_triggers": [
+        "生效期重叠",
+        "主体变化",
+        "无审批依据"
+      ],
+      "control_gates": [
+        "映射版本发布审批"
+      ],
+      "data_basis": [
+        "数据库Tier=Auto",
+        "D1-D6=2/1/2/1/1/1",
+        "总分=8/18"
+      ],
+      "process_context": "与COM-12并行维护收款主体和协议映射版本",
+      "risks_limits": [
+        "当前候选待裁定",
+        "D2/D4偏低且缺正式版本管理机制"
+      ],
+      "current_recommendation": "补规则后推进",
+      "database_tier": "Auto",
+      "recommended_tier": "Hybrid",
+      "quadrant": "q3"
+    }
+  ]
+}

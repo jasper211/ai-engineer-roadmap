@@ -35,6 +35,16 @@ ANALYSIS_INPUT_FIELDS = (
 )
 
 
+def eligible_analysis_evidence_ids(evidence_registry) -> set[str]:
+    """分析模型不得引用工作坊共识或未验证证据；缺失事实仍可作为缺口证据。"""
+    items = evidence_registry.values() if isinstance(evidence_registry, dict) else evidence_registry
+    return {
+        item["evidence_id"] for item in items
+        if item.get("evidence_class") != "CONSENSUS"
+        and item.get("status") != "UNVERIFIED"
+    }
+
+
 def analysis_input_hash(snapshot: dict) -> str:
     """只对模型允许读取的事实与准入信息做Hash，不包含分析结果和生成时间。"""
     payload = {field: snapshot.get(field) for field in ANALYSIS_INPUT_FIELDS}

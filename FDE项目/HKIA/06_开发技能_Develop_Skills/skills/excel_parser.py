@@ -27,7 +27,6 @@ import pandas as pd
 
 LABEL_COLS = 2  # 列0/1是行标签，列2起才是指标数值
 GRAND_TOTAL_TEXTS = {"總額", "市場總額"}  # 头条表用"總額"，按公司拆分表用"市場總額"
-HEADER_ANCHOR_TEXTS = {"業務種類", "Type of Business", "Name of Insurer", "保險公司名稱"}
 
 NB_CANDIDATES = {
     "exact": [("Form HKLQ1-1", "pre_rbc")],
@@ -38,7 +37,10 @@ IF_CANDIDATES = {
     "regex": [(r"LT QR \(IF\)$", "post_rbc")],
 }
 NB_BY_INSURER_CANDIDATES = {
-    "exact": [("Table L1", "pre_rbc"), ("Table L1", "post_rbc")],
+    # sheet名"Table L1"新旧制度都一样，跟"Form HKLQ1-1" vs "Form LT QR (NB)"
+    # 不同——这张表本身分不出schema，直接沿用已经从头条表判定出来的
+    # schema_version，不独立猜测（用 None 占位，调用方不使用这个值）。
+    "exact": [("Table L1", None)],
     "regex": [],
 }
 
@@ -85,18 +87,6 @@ def _find_sheet(sheet_names: list, candidates: dict) -> "tuple[str, str]":
     raise SheetNotFoundError(f"找不到匹配的sheet，实际sheet列表: {sheet_names}")
 
 
-def _find_header_anchor_row(df: pd.DataFrame, sheet_label: str) -> int:
-    """找表头区最后一行——"類別/業務種類"（头条表）或"Name of Insurer/
-    保險公司名稱"（按公司拆分表）任一列出现即认定。不用"第一个数字出现的行"
-    来判定，因为按公司拆分表里没有业务的保险公司显示占位符"-"（字符串，不是
-    空值），会把"-"占位数据行误判成表头的一部分。"""
-    for r in range(df.shape[0]):
-        for c in range(LABEL_COLS):
-            if _clean_zh(df.iloc[r, c]) in HEADER_ANCHOR_TEXTS:
-                return r
-    raise SheetStructureError(f"[{sheet_label}] 找不到表头锚点，表格结构跟预期不符")
-
-
 def _build_metric_names(df: pd.DataFrame, header_rows: list, n_cols: int) -> dict:
     """构建每列的复合指标名：同一行内空白格只在"上一级分组边界"没变的前提下才
     继承左边格子的文字（forward-fill），避免跨越更高层表头已经划开的分组边界
@@ -120,13 +110,31 @@ def _build_metric_names(df: pd.DataFrame, header_rows: list, n_cols: int) -> dic
     return {c: "/".join(parts) if parts else f"col{c}" for c, parts in prefixes.items()}
 
 
+def _find_first_data_row(df: pd.DataFrame, sheet_label: str) -> int:
+    """表头区行数在新旧制度、不同表格类型之间都不一样（"業務種類"/"Name of
+    Insurer"锚点行之后，有的紧接着就是数据，有的还有2~3行细分表头才到数据），
+    不能靠"锚点行+1"或固定行号锁定。真正稳妥的信号是：第一个"看起来像数据"的
+    单元格——要么是真数字，要么是按公司拆分表里"没有业务"的占位符"-"（这是
+    字符串，不是空值，不能用isna()判断，也不能靠"锚点+1"这种位置假设，因为
+    这个占位符经常紧跟在表头锚点后面的头几家保险公司身上）。表头行本身的
+    文字（"整付保費"、"(千港元)"等）都不是数字也不是"-"，不会被误判。"""
+    n_rows, n_cols = df.shape
+    for r in range(n_rows):
+        for c in range(LABEL_COLS, n_cols):
+            v = df.iloc[r, c]
+            if isinstance(v, (int, float)) and not pd.isna(v):
+                return r
+            if isinstance(v, str) and v.strip() == "-":
+                return r
+    raise SheetStructureError(f"[{sheet_label}] 找不到任何数据行，表格结构跟预期不符")
+
+
 def _parse_headline_grid(df: pd.DataFrame, sheet_label: str) -> list:
     """头条表（新造/有效业务市场总量）：行标签需要forward-fill（类别字母只在
     该类别第一行出现），一路走到唯一的总额行（精确匹配"總額"，不能用
     "contains"——"類別 A 總額"这类分类小计也含"總額"字样，但不是终点）。"""
     n_rows, n_cols = df.shape
-    anchor_row = _find_header_anchor_row(df, sheet_label)
-    first_data_row = anchor_row + 1
+    first_data_row = _find_first_data_row(df, sheet_label)
 
     header_rows = [r for r in range(first_data_row) if not _is_decorative_row(df, r)]
     if not header_rows:
@@ -189,8 +197,7 @@ def _parse_insurer_grid(df: pd.DataFrame, sheet_label: str) -> list:
     （字符串），产生零条记录，不是错误。表尾"市場總額/Market Total"是全市场
     合计，作为最后一条记录保留（可用来跟头条表的"總額"交叉核对）。"""
     n_rows, n_cols = df.shape
-    anchor_row = _find_header_anchor_row(df, sheet_label)
-    first_data_row = anchor_row + 1
+    first_data_row = _find_first_data_row(df, sheet_label)
 
     header_rows = [r for r in range(first_data_row) if not _is_decorative_row(df, r)]
     if not header_rows:
@@ -237,22 +244,31 @@ class ExcelParser:
         with pd.ExcelFile(file_path, engine=engine) as xls:
             nb_sheet, nb_schema = _find_sheet(xls.sheet_names, NB_CANDIDATES)
             if_sheet, if_schema = _find_sheet(xls.sheet_names, IF_CANDIDATES)
-            nb_ins_sheet, nb_ins_schema = _find_sheet(xls.sheet_names, NB_BY_INSURER_CANDIDATES)
-            if not (nb_schema == if_schema == nb_ins_schema):
+            if nb_schema != if_schema:
                 raise SheetStructureError(
-                    f"{file_path.name}: 三张sheet的schema判定不一致"
-                    f"（新造={nb_schema}，有效={if_schema}，按公司={nb_ins_schema}），"
-                    f"同一份文件不该出现这种情况"
+                    f"{file_path.name}: 新造业务sheet判定为{nb_schema}，"
+                    f"有效业务sheet判定为{if_schema}，同一份文件不该有两种schema"
                 )
 
             nb_df = xls.parse(nb_sheet, header=None)
             if_df = xls.parse(if_sheet, header=None)
-            nb_ins_df = xls.parse(nb_ins_sheet, header=None)
+
+            # 按公司拆分表(Table L1)是可选的——2024Q3(RBC过渡期那一份文件)
+            # 官网原始Excel里根本没有这张sheet，不能因为它缺失就让整份文件的
+            # 头条表数据也解析失败，只是这一期没有按公司拆分的数据可用。
+            nb_ins_sheet = None
+            nb_ins_records = []
+            try:
+                nb_ins_sheet, _ = _find_sheet(xls.sheet_names, NB_BY_INSURER_CANDIDATES)
+                nb_ins_df = xls.parse(nb_ins_sheet, header=None)
+                nb_ins_records = _parse_insurer_grid(nb_ins_df, f"{file_path.name}/{nb_ins_sheet}")
+            except SheetNotFoundError:
+                pass
 
         return {
             "new_business": _parse_headline_grid(nb_df, f"{file_path.name}/{nb_sheet}"),
             "in_force": _parse_headline_grid(if_df, f"{file_path.name}/{if_sheet}"),
-            "new_business_by_insurer": _parse_insurer_grid(nb_ins_df, f"{file_path.name}/{nb_ins_sheet}"),
+            "new_business_by_insurer": nb_ins_records,
             "schema_version": nb_schema,
             "nb_sheet_name": nb_sheet,
             "if_sheet_name": if_sheet,

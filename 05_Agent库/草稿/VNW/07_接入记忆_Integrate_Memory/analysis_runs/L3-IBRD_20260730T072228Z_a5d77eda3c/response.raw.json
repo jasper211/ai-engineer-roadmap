@@ -1,0 +1,623 @@
+{
+  "schema_version": "vnw.l3-analysis.v1",
+  "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
+  "generation_mode": "UNIFIED_MODEL",
+  "analysis_status": "MODEL_DRAFT",
+  "model_run": null,
+  "source_scope": {
+    "database": "process_analytics",
+    "knowledge": "ACTIVE supplemental evidence only",
+    "evidence_count": 141
+  },
+  "l4_analysis": [
+    {
+      "l4_code": "L4-IBRD-01",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-79e541381392d63231c1",
+        "EVD-cb5d824e68b82007ad3c",
+        "EVD-9e286821652b0d46400f",
+        "EVD-e1a6023a0d233bf637f4",
+        "EVD-4feac73a1bb77489d9d8",
+        "EVD-d0c9f8e9b3562b84f143",
+        "EVD-baa0c8ac8dea6a88dfcc",
+        "EVD-aae70d28db211a10238b",
+        "EVD-edbeb6a8081e87720457",
+        "EVD-77d0f28b8f15ec2e89c6",
+        "EVD-ec4508cb154ef7e2e855",
+        "EVD-8b8f67a1f96815c0fb67",
+        "EVD-5a4888926a9611d55c03"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "流程启动入口，输出《合作资格预审与流程启动计划》，驱动后续步骤",
+      "specific_capabilities": [
+        "收集合作方基本信息（结构化数据）",
+        "按预审规则自动比对（需拆分参数校验子Skill）",
+        "生成计划草稿（模板填充）"
+      ],
+      "ai_reshape": "自动化信息收集与资格比对，输出预审建议和计划初稿；最终决策（Q1）必须人工确认",
+      "quality_anchor": "预审结论与计划完整性、合规性",
+      "ai_responsibility": "数据采集、规则引擎比对、草案生成",
+      "human_responsibility": "审核预审结果，批准/否决并处理例外",
+      "handoff_triggers": [
+        "自动比对失败或信息不全",
+        "Q1决策点：通过/不通过需人工拍板"
+      ],
+      "control_gates": [
+        "Q1资格预审决策 – 人工控制，不可绕过"
+      ],
+      "data_basis": [
+        "d1_input_struct=2 (结构化程度高)",
+        "d2_rule_clear=1 (规则模糊，需明确预审标准)",
+        "d4_api_reach=1 (外部系统集成受限)",
+        "skill_feasibility: A-高封装但复合动作需拆分"
+      ],
+      "process_context": "蓝图STEP-01，紧接决策Q1；若未通过则终止流程进入观察池",
+      "risks_limits": [
+        "规则不清晰，易导致自动比对错误",
+        "API可达性低，部分数据需人工补录",
+        "复合动作需拆分子Skill，否则执行混乱"
+      ],
+      "current_recommendation": "拆分为信息收集、规则比对、计划生成三个子任务；规则比对自动化但保留人工复核；推荐Tier: Hybrid",
+      "database_tier": "Auto",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-IBRD-02",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-dedde837485829756683",
+        "EVD-c9eb2a262fec8714f73f",
+        "EVD-6eb1b439a12d90cf7240",
+        "EVD-ec41f8a74c9b2074f78b",
+        "EVD-4f8ddfbb1e4c61e6cafa",
+        "EVD-9492ab4655a23b17bbda",
+        "EVD-56fa619a32ab1ead3a4c",
+        "EVD-2ef16053e6a9a46fa01b",
+        "EVD-5e95d50db90b55504e25",
+        "EVD-f903e72fc1611d2c5a7c",
+        "EVD-3f58b9ce7c1712720a2f",
+        "EVD-536754bbbad4f56f11f4"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "建立项目沟通机制，明确渠道与内部各方的信息传递方式",
+      "specific_capabilities": [
+        "语义理解（需分析项目背景定制沟通方案）",
+        "跨角色协调"
+      ],
+      "ai_reshape": "AI生成沟通机制模板并基于项目类型推荐，最终方案经人工确认后生效",
+      "quality_anchor": "沟通方案的适用性与执行反馈",
+      "ai_responsibility": "模板生成、信息汇总、初级建议",
+      "human_responsibility": "方案最终确认、与合作伙伴实际沟通、调整策略",
+      "handoff_triggers": [
+        "模板不适用或需显著定制",
+        "外部反馈需要调整"
+      ],
+      "control_gates": [],
+      "data_basis": [
+        "d2=2 (规则较清晰)",
+        "d4=2 (API可达性好)",
+        "skill_feasibility: C-低封装，语义复核类"
+      ],
+      "process_context": "蓝图STEP-06，位于尽职调查执行之后，同步项目各方",
+      "risks_limits": [
+        "低封装度，无法确定性自动化",
+        "降级处理(d5=1)可能导致自动化中断"
+      ],
+      "current_recommendation": "采用Agent辅助模式生成沟通草案，人类审核后发布；推荐Tier: Hybrid",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-IBRD-03",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-10569f24b807acbef038",
+        "EVD-97a32e949a0137f637ca",
+        "EVD-98ed96ec1c16d21405e6",
+        "EVD-03bee025d6032f007539",
+        "EVD-2928a71cc0198689c952",
+        "EVD-bb464c760d4761bf4023",
+        "EVD-cc5fed960c997bd542ad",
+        "EVD-dc960b7d2c23f1d64164",
+        "EVD-7cb2fe76a3540fdbb657",
+        "EVD-89ad8c2b49e1612fa8e4",
+        "EVD-c101d47479a9cae1485d",
+        "EVD-985e477d2c6405a91055"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "汇总尽职调查信息，形成DD记录数据表",
+      "specific_capabilities": [
+        "单一信息处理动作（汇总、整合、输出）"
+      ],
+      "ai_reshape": "可自动化数据汇总与报告生成，但受限于输入结构化和API接口",
+      "quality_anchor": "数据准确性、完整性",
+      "ai_responsibility": "自动抓取数据、生成报告",
+      "human_responsibility": "审核输出，补充缺失信息",
+      "handoff_triggers": [
+        "数据源无法自动获取",
+        "汇总结果存在矛盾或缺失"
+      ],
+      "control_gates": [],
+      "data_basis": [
+        "d1=1 (输入结构化差)",
+        "d4=1 (API可达性低)",
+        "skill_feasibility: A-高封装，单一动作"
+      ],
+      "process_context": "蓝图STEP-07，紧接AML评估，为风险评估提供输入",
+      "risks_limits": [
+        "输入结构不足，需人工整理",
+        "API集成缺失导致手动操作"
+      ],
+      "current_recommendation": "优先改进数据输入结构和接口，短期采用Aug模式（人机协同），长期可升级为Auto；推荐Tier: Aug",
+      "database_tier": "Auto",
+      "recommended_tier": "Aug",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-IBRD-04",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-bc485527b3f59ae264fc",
+        "EVD-464bd63b6ad1beff52ca",
+        "EVD-afee18113308d6d4644d",
+        "EVD-2e5f5aac3c9bb1ff790c",
+        "EVD-7ce44f45fa66398436d5",
+        "EVD-ae319d4d8c7cd5d37292",
+        "EVD-d955048d3a5f03f49ff8",
+        "EVD-af4ef8dac830daa02cf7",
+        "EVD-2fdbb31e05d4b2c4258e",
+        "EVD-08bb0b9062df10daf463",
+        "EVD-4abc2f785090bbcff739",
+        "EVD-0bd1f6d218ac9e7c102f"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "核查合作伙伴牌照并取得保司确认，是合规的必要环节",
+      "specific_capabilities": [
+        "牌照数据库查询（可封装）",
+        "保司沟通确认（必须人工）",
+        "记录生成（可模板化）"
+      ],
+      "ai_reshape": "自动查询牌照信息，填充记录模板，人工完成保司确认后补充",
+      "quality_anchor": "牌照信息无误，保司确认有效性",
+      "ai_responsibility": "牌照查询、记录草稿生成",
+      "human_responsibility": "执行保司确认、复核并签字",
+      "handoff_triggers": [
+        "牌照查询结果异常",
+        "保司确认需人工沟通"
+      ],
+      "control_gates": [
+        "保司确认 – 合规硬性要求，必须人工执行"
+      ],
+      "data_basis": [
+        "d2=1 (规则不清晰)",
+        "human_touchpoint 明确人工执行",
+        "skill_feasibility: B-中封装，需人工复核"
+      ],
+      "process_context": "蓝图STEP-03，早期合规核查，影响后续准入",
+      "risks_limits": [
+        "规则模糊，需固化核查标准",
+        "保司环节不可自动化"
+      ],
+      "current_recommendation": "封装牌照查询为Skill，保留人工确认环节；推荐Tier: Aug",
+      "database_tier": "Aug",
+      "recommended_tier": "Aug",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-IBRD-05",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-7a7e41231504bce62195",
+        "EVD-7d03f8355c4a8d0b155f",
+        "EVD-34faf746a3101e259c01",
+        "EVD-d87a998849dce32b1391",
+        "EVD-65b7b4faf08681037407",
+        "EVD-1faf8824cc8995bff5a8",
+        "EVD-e9529171404d256e2951",
+        "EVD-9b699167c25cc0fc2320",
+        "EVD-e9fc20f9fc84989cf431",
+        "EVD-e68e02f0d632ba2944ea",
+        "EVD-d198c7b507b9fdb883fb",
+        "EVD-7364d272380007096a7b"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "执行DD Form填写与收集，以及股东穿透查册",
+      "specific_capabilities": [
+        "DD Form自动填充与收集（需拆分子技能）",
+        "股东穿透查册请求调度",
+        "费用预算控制（人工）"
+      ],
+      "ai_reshape": "AI可自动发起查册请求并跟踪状态，汇总穿透结果；人工审核穿透完整性并确认费用",
+      "quality_anchor": "股东穿透完整、Form准确，查册费用合规",
+      "ai_responsibility": "查册请求调度、状态监控、数据汇总",
+      "human_responsibility": "审核穿透报告，处理异常，批准查册费用",
+      "handoff_triggers": [
+        "查册服务异常或结果不符合预期",
+        "穿透层级复杂需人工判断停止",
+        "费用超预算"
+      ],
+      "control_gates": [
+        "查册费用审批 – 资金相关，必须人工"
+      ],
+      "data_basis": [
+        "d1=1 (输入结构化差)",
+        "d2=1 (规则不清晰)",
+        "human_touchpoint 明确人工执行",
+        "skill_feasibility: A-高封装但复合动作需拆分"
+      ],
+      "process_context": "蓝图STEP-04，DD Form与股东查册，为AML评级提供基础",
+      "risks_limits": [
+        "输入结构弱，需人工整理Form",
+        "查册外部服务依赖，失败降级处理弱",
+        "费用需预算，当前规则待确认"
+      ],
+      "current_recommendation": "拆分为DD Form生成、查册调度、报告审核子任务；自动化查册调度，人工审核与费用审批；推荐Tier: Aug",
+      "database_tier": "Auto",
+      "recommended_tier": "Aug",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-IBRD-06",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-50b8a3072e8f75ab4df7",
+        "EVD-6a2f73322a9861ea31de",
+        "EVD-49c24201c26a46433e02",
+        "EVD-0e5c4fec7a80a788317e",
+        "EVD-b30cd6a6e2c6d2703b23",
+        "EVD-35017c94ab62e4b58330",
+        "EVD-c73f3d982c5b5fa4535a",
+        "EVD-c8091c8a6312ae8dfd09",
+        "EVD-d9c7a4c05c08b17ba31d",
+        "EVD-42987378aa376b7288e4",
+        "EVD-49929a6d268523a3407e",
+        "EVD-be0a8a3c6b3d22b2ca95"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "基于DD结果进行AML风险评估，输出高/中/低三档评级及依据",
+      "specific_capabilities": [
+        "风险评估打分（规则引擎）",
+        "等级划分与依据说明生成"
+      ],
+      "ai_reshape": "AI自动计算风险评分并生成评级建议与依据说明；最终评级由人确认并签字",
+      "quality_anchor": "评级结果与监管标准一致，可追溯",
+      "ai_responsibility": "数据聚合、评分计算、报告草稿",
+      "human_responsibility": "审核评级，调整争议项，最终确认",
+      "handoff_triggers": [
+        "数据矛盾或评分边界模糊",
+        "高风险情形需二次判定"
+      ],
+      "control_gates": [
+        "评级结果影响准入，必须人工确认"
+      ],
+      "data_basis": [
+        "d2=2 (规则较清晰)",
+        "d6=1 (合规性弱)",
+        "skill_feasibility: C-低封装，需判断/权威"
+      ],
+      "process_context": "蓝图STEP-05，决策Q2基于此评级决定后续推进路径",
+      "risks_limits": [
+        "低封装度，无法全自动",
+        "合规要求需人类权威判断"
+      ],
+      "current_recommendation": "采用Agent辅助评分与报告生成，人类审批；推荐Tier: Hybrid",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-IBRD-07",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-13809ebaf39a07a2b1de",
+        "EVD-adb2983fdf0d16f90384",
+        "EVD-cb898ae6ee728efd0964",
+        "EVD-92352afe64b3d9f06613",
+        "EVD-2b43a5fe1b58df479e39",
+        "EVD-0d9be3b6b989dcd0cb96",
+        "EVD-2247a61dbede97c300d8",
+        "EVD-7646abfc25ae440f2fb4",
+        "EVD-1a5bf09609c57786ddab",
+        "EVD-df1fa7a2356072132a51",
+        "EVD-5ba2753a12e280c9ced7",
+        "EVD-20e7708aaf9ca7a1e9c8",
+        "EVD-da3c74e1fe8f8368742e",
+        "EVD-889f88b07c761248bb8c",
+        "EVD-8b8f67a1f96815c0fb67"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "基于尽调结果和业务模式，做出双路径（九富/Uniwin）准入判断",
+      "specific_capabilities": [
+        "佣金计算与对比（可标准化）",
+        "业务模式匹配（需人工经验）",
+        "最终决策（权威）"
+      ],
+      "ai_reshape": "AI自动计算佣金差异并推荐路径，提供理由；人工最终决策",
+      "quality_anchor": "推荐路径符合业务逻辑，佣金最大化",
+      "ai_responsibility": "佣金计算、路径推荐、理由生成",
+      "human_responsibility": "综合业务因素审核推荐，做出最终准入判断",
+      "handoff_triggers": [
+        "佣金差异不明显或模式模糊",
+        "需要调整推荐逻辑"
+      ],
+      "control_gates": [
+        "渠道准入决策 – 商业决策，必须人工"
+      ],
+      "data_basis": [
+        "d1=1 (输入结构弱)",
+        "d2=1 (规则不清)",
+        "human_touchpoint 明确人工判断",
+        "skill_feasibility: C-低封装"
+      ],
+      "process_context": "蓝图STEP-02，早期准入判断，影响后续路径",
+      "risks_limits": [
+        "规则不清晰，需经验",
+        "决策后果重大，不可全自动化"
+      ],
+      "current_recommendation": "Agent辅助计算与建议，人类审核并决策；推荐Tier: Hybrid",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-IBRD-08",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-0f4445f72b1297ca2140",
+        "EVD-934dafdf9ebc555ec5c3",
+        "EVD-2d9bb747ecd771cafd97",
+        "EVD-4f891e4592284d49ffab",
+        "EVD-f9fd4d697299150b9361",
+        "EVD-8394e3ff5e8c0eed3b9a",
+        "EVD-c2b18109d4693c12cefa",
+        "EVD-8a685e97095d922eba51",
+        "EVD-7ce453ef9034ac305d9e",
+        "EVD-0cb80873eba50ae7b8ff",
+        "EVD-ec219ab327719508ffe0",
+        "EVD-0b41cd3890c1817fb9db",
+        "EVD-ced009c2b3be7fbdcc6d"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "按年度周期触发已签约渠道的DD Form更新流程",
+      "specific_capabilities": [
+        "定时调度（日历触发）",
+        "通知与任务分配"
+      ],
+      "ai_reshape": "完全自动化定时任务，生成并发送更新请求，跟踪完成状态",
+      "quality_anchor": "触发准时率、渠道响应率",
+      "ai_responsibility": "调度执行、通知发送、状态监控",
+      "human_responsibility": "处理超期未响应渠道，解决异常",
+      "handoff_triggers": [
+        "渠道连续未响应超过阈值",
+        "系统通知发送失败"
+      ],
+      "control_gates": [],
+      "data_basis": [
+        "d1=2, d2=2, d3=2, d4=2 (高度自动化条件)",
+        "skill_feasibility: A-高封装，单一动作"
+      ],
+      "process_context": "蓝图STEP-08，年度维护任务，与PARTNER-R007规则挂钩",
+      "risks_limits": [
+        "降级处理(d5=1)弱，系统中断需人工介入",
+        "合规监控(d6=1)不足，需确保更新表单合规"
+      ],
+      "current_recommendation": "封装为Skill，自动调度，人工仅处理异常；推荐Tier: Auto",
+      "database_tier": "Auto",
+      "recommended_tier": "Auto",
+      "quadrant": "unclassified"
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "TASK-IBRD-01",
+      "l4_code": "L4-IBRD-01",
+      "task_name": "执行合作伙伴资格预审信息收集与比对",
+      "source_type": "evidence",
+      "evidence_refs": [
+        "EVD-79e541381392d63231c1",
+        "EVD-cb5d824e68b82007ad3c",
+        "EVD-9e286821652b0d46400f",
+        "EVD-8b8f67a1f96815c0fb67"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "预审规则不清晰(Q1需人工确认)，输入结构化程度高但仍有不确定因素"
+    },
+    {
+      "task_id": "TASK-IBRD-02",
+      "l4_code": "L4-IBRD-02",
+      "task_name": "生成项目沟通机制方案并确认",
+      "source_type": "evidence",
+      "evidence_refs": [
+        "EVD-dedde837485829756683",
+        "EVD-536754bbbad4f56f11f4"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "语义复核类任务，需人工确认沟通策略，AI仅辅助生成"
+    },
+    {
+      "task_id": "TASK-IBRD-03",
+      "l4_code": "L4-IBRD-03",
+      "task_name": "汇总尽职调查数据并生成记录表",
+      "source_type": "evidence",
+      "evidence_refs": [
+        "EVD-10569f24b807acbef038",
+        "EVD-97a32e949a0137f637ca",
+        "EVD-98ed96ec1c16d21405e6"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "输入结构化和API可达性欠佳，需人工补录和审核，短期无法全Auto"
+    },
+    {
+      "task_id": "TASK-IBRD-04",
+      "l4_code": "L4-IBRD-04",
+      "task_name": "核查牌照并获取保司确认",
+      "source_type": "evidence",
+      "evidence_refs": [
+        "EVD-bc485527b3f59ae264fc",
+        "EVD-af4ef8dac830daa02cf7",
+        "EVD-0bd1f6d218ac9e7c102f"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "保司确认必须人工执行，牌照查询可部分自动化"
+    },
+    {
+      "task_id": "TASK-IBRD-05",
+      "l4_code": "L4-IBRD-05",
+      "task_name": "执行DD Form收集与股东穿透查册",
+      "source_type": "evidence",
+      "evidence_refs": [
+        "EVD-7a7e41231504bce62195",
+        "EVD-9b699167c25cc0fc2320",
+        "EVD-9959787969badff79a35",
+        "EVD-7364d272380007096a7b"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "明确的人工执行环节，外部查册服务和费用需人审批"
+    },
+    {
+      "task_id": "TASK-IBRD-06",
+      "l4_code": "L4-IBRD-06",
+      "task_name": "进行AML风险评估并输出三档评级",
+      "source_type": "evidence",
+      "evidence_refs": [
+        "EVD-50b8a3072e8f75ab4df7",
+        "EVD-be0a8a3c6b3d22b2ca95",
+        "EVD-dc51c95de4255c7a4d93"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "需决策判断，AI辅助评分，人工最终确认评级"
+    },
+    {
+      "task_id": "TASK-IBRD-07",
+      "l4_code": "L4-IBRD-07",
+      "task_name": "做出双路径渠道准入判断",
+      "source_type": "evidence",
+      "evidence_refs": [
+        "EVD-13809ebaf39a07a2b1de",
+        "EVD-7646abfc25ae440f2fb4",
+        "EVD-20e7708aaf9ca7a1e9c8",
+        "EVD-da3c74e1fe8f8368742e"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "商业决策属低封装判断，AI提供建议，人工拍板"
+    },
+    {
+      "task_id": "TASK-IBRD-08",
+      "l4_code": "L4-IBRD-08",
+      "task_name": "触发DD Form年度更新流程",
+      "source_type": "evidence",
+      "evidence_refs": [
+        "EVD-0f4445f72b1297ca2140",
+        "EVD-0b41cd3890c1817fb9db",
+        "EVD-ced009c2b3be7fbdcc6d"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "定时调度与通知可全自动化，仅异常需人工"
+    }
+  ],
+  "priority_drafts": [
+    {
+      "priority": "P0",
+      "rationale": "合作伙伴尽调记录(VN-IBRD-01)数据链接通过但落地和可追溯性均FAIL，直接影响DD流程可靠性，需优先补齐数据基础和线上化",
+      "evidence_refs": [
+        "EVD-768716383b3b39e64576",
+        "EVD-a47aab9c76daaa0145df",
+        "EVD-2047d679f027915c04a9",
+        "EVD-4da87d945b3ce01dd0ba"
+      ],
+      "l4_codes": ["L4-IBRD-03", "L4-IBRD-05", "L4-IBRD-06", "L4-IBRD-07", "L4-IBRD-08"]
+    }
+  ],
+  "decision_drafts": [
+    {
+      "priority": "P0",
+      "task_ids": ["TASK-IBRD-05", "TASK-IBRD-03"],
+      "title": "启动DD流程数据化试点：优先解决DD Form执行与股东查册的线上化和自动化",
+      "pilot_scope": "选取2个新签约渠道，在L4-05和L4-03环节试运行DD Form电子化收集与股东查册调度，AI辅助生成汇总报告",
+      "human_boundary": "1. 股东穿透查册最终审核与签字须由指定交付经理完成；2. 查册费用审批须走财务人工流程；3. 任何自动化异常须立即转入人工处理",
+      "evidence_refs": [
+        "EVD-7a7e41231504bce62195",
+        "EVD-9b699167c25cc0fc2320",
+        "EVD-5e9a6a1a9242a8faefb3",
+        "EVD-9d9be9adab8491e63a2f"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "control_chain": [
+    {
+      "control_id": "CC-Q1",
+      "control_name": "资格预审决策",
+      "l4_codes": ["L4-IBRD-01"],
+      "human_mandatory": true,
+      "evidence_refs": ["EVD-8b8f67a1f96815c0fb67"]
+    },
+    {
+      "control_id": "CC-PSI",
+      "control_name": "保司确认",
+      "l4_codes": ["L4-IBRD-04"],
+      "human_mandatory": true,
+      "evidence_refs": ["EVD-af4ef8dac830daa02cf7"]
+    },
+    {
+      "control_id": "CC-FEE",
+      "control_name": "查册费用审批",
+      "l4_codes": ["L4-IBRD-05"],
+      "human_mandatory": true,
+      "evidence_refs": ["EVD-5e9a6a1a9242a8faefb3"]
+    },
+    {
+      "control_id": "CC-AML",
+      "control_name": "AML评级确认",
+      "l4_codes": ["L4-IBRD-06"],
+      "human_mandatory": true,
+      "evidence_refs": ["EVD-50b8a3072e8f75ab4df7"]
+    },
+    {
+      "control_id": "CC-PATH",
+      "control_name": "双路径准入决策",
+      "l4_codes": ["L4-IBRD-07"],
+      "human_mandatory": true,
+      "evidence_refs": ["EVD-13809ebaf39a07a2b1de"]
+    }
+  ],
+  "rejected_task_sources": [],
+  "missing_analysis": [
+    {
+      "field": "l4_analysis[L4-IBRD-01].specific_capabilities -> 依赖 human_touchpoint 缺失",
+      "evidence_id": "EVD-aae70d28db211a10238b",
+      "note": "human_touchpoint = MISSING，无法确认具体人工职责细节"
+    },
+    {
+      "field": "l4_analysis[L4-IBRD-02].ai_responsibility -> 部分依赖缺失",
+      "evidence_id": "EVD-2ef16053e6a9a46fa01b",
+      "note": "human_touchpoint = MISSING，AI重塑范围受限"
+    },
+    {
+      "field": "l4_analysis[L4-IBRD-03].handoff_triggers -> 输入结构细节不足",
+      "evidence_id": "EVD-dc960b7d2c23f1d64164",
+      "note": "human_touchpoint = MISSING，转人工条件需补充"
+    },
+    {
+      "field": "l4_analysis[L4-IBRD-06].specific_capabilities -> 缺乏任务级细化",
+      "evidence_id": "EVD-c8091c8a6312ae8dfd09",
+      "note": "human_touchpoint = MISSING，无法精确划分人机交互点"
+    },
+    {
+      "field": "l4_analysis[L4-IBRD-08].human_responsibility -> 异常处理定义模糊",
+      "evidence_id": "EVD-8a685e97095d922eba51",
+      "note": "human_touchpoint = MISSING，人类干预准则待明确"
+    }
+  ]
+}

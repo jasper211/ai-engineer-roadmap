@@ -1,0 +1,311 @@
+{
+  "l4_analysis": [
+    {
+      "l4_code": "L4-COM-07",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-29c339c1a0dd9c423cc5",
+        "EVD-3df97af198f7e74f488c",
+        "EVD-40c59feacc33cb6427f6",
+        "EVD-4f56b1006f9184d68ad8",
+        "EVD-5fbb5b83848024c94e46",
+        "EVD-5fe54f11175d89ceebe4",
+        "EVD-695b219bf1d792e24224",
+        "EVD-77486ed2077b93e81e0f",
+        "EVD-bae4acdb80c52047fb1b",
+        "EVD-df9b2ec7a2b14b98616d",
+        "EVD-efedee1f2b93f8d7416c",
+        "EVD-effcded9d8f28d105a2d"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "deliverable_role": "控制交付物",
+      "specific_capabilities": [
+        "争议分类",
+        "证据归集",
+        "协同裁定",
+        "关闭复盘"
+      ],
+      "ai_reshape": "AI登记和分类争议、汇总证据与建议；跨部门裁定由人完成",
+      "quality_anchor": "争议ID/类型/责任方/状态/关闭时间完整，同类问题可复盘",
+      "ai_responsibility": "登记争议、分类、归集证据并形成建议",
+      "human_responsibility": "跨部门裁定责任和处置结果",
+      "handoff_triggers": [
+        "规则无法覆盖",
+        "责任不清",
+        "金额争议"
+      ],
+      "control_gates": [
+        "争议关闭人工批准"
+      ],
+      "data_basis": [
+        "数据库Tier=Hybrid (EVD-5fbb5b83848024c94e46)",
+        "D1-D6=2/0/1/1/1/1 (EVD-effcded9d8f28d105a2d, EVD-4f56b1006f9184d68ad8, EVD-3df97af198f7e74f488c, EVD-40c59feacc33cb6427f6, EVD-77486ed2077b93e81e0f, EVD-5fe54f11175d89ceebe4)",
+        "Skill可行性=C-低封装 (EVD-bae4acdb80c52047fb1b，判断/策略类，单一动作，需权威裁决)"
+      ],
+      "process_context": "COM-11/12出现差异时触发，承担跨部门争议关闭，属于对账后人工环节",
+      "risks_limits": [
+        "D2=0（规则不清）形成自动化否决权",
+        "分类与裁定规则未标准化"
+      ],
+      "current_recommendation": "暂缓自动化，先结构化争议分类与证据模板",
+      "quadrant": "q4"
+    },
+    {
+      "l4_code": "L4-COM-08",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-078dc285950e2c103d98",
+        "EVD-110b5ae5526e47c122d3",
+        "EVD-2ca779490c3cefc9c65b",
+        "EVD-4716c83e831b0dd49463",
+        "EVD-56c22eb88d5332d532af",
+        "EVD-57f4a62ec54ae63244d4",
+        "EVD-5c3e5e997e7a09864957",
+        "EVD-8783f0465208f9cff033",
+        "EVD-96ac726827b2f513156f",
+        "EVD-c9891efc841d12f1244a",
+        "EVD-e769e15719494fb5900d",
+        "EVD-f9c4c96b3d547e7cb56c"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "database_tier": "Auto",
+      "recommended_tier": "Aug",
+      "deliverable_role": "支撑交付物",
+      "specific_capabilities": [
+        "跨保司归一",
+        "去重",
+        "口径校准"
+      ],
+      "ai_reshape": "自动汇集各保司数据并标识口径差异；专业人员确认映射",
+      "quality_anchor": "保司覆盖完整、重复项清除、口径差异有处理记录",
+      "ai_responsibility": "汇集多保司数据、去重并标识口径差异",
+      "human_responsibility": "确认保司映射和特殊口径",
+      "handoff_triggers": [
+        "格式无法映射",
+        "口径冲突",
+        "数据缺失"
+      ],
+      "control_gates": [
+        "跨保司口径确认"
+      ],
+      "data_basis": [
+        "数据库Tier=Auto (EVD-f9c4c96b3d547e7cb56c)",
+        "D1-D6=2/2/2/2/2/2 (EVD-c9891efc841d12f1244a, EVD-57f4a62ec54ae63244d4, EVD-e769e15719494fb5900d, EVD-96ac726827b2f513156f, EVD-56c22eb88d5332d532af, EVD-2ca779490c3cefc9c65b)",
+        "Skill可行性=A-高封装 (EVD-110b5ae5526e47c122d3，语义复核判定，单一动作，理想Skill候选)"
+      ],
+      "process_context": "与COM-01/02并行，统一多保司佣金口径，为后续核算提供合并基础",
+      "risks_limits": [
+        "保司格式与口径差异需要专业确认，不能只做机械合并"
+      ],
+      "current_recommendation": "先治理保司映射字典，再推进自动化，建议Aug模式（AI自动处理+人工确认）",
+      "quadrant": "q2"
+    },
+    {
+      "l4_code": "L4-COM-09",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-06af6881f372bb005ecb",
+        "EVD-123c1b07a259bb34aae6",
+        "EVD-440d672e3afafdbde106",
+        "EVD-5a9eaeb50db982d6dadf",
+        "EVD-8440e68d409dafc9eac3",
+        "EVD-8e87079eb14ce4f052d8",
+        "EVD-a75edf54c6dc7961fdd8",
+        "EVD-ad628ed729c76cc1ad97",
+        "EVD-c9e5dbc937aa3a7466b9",
+        "EVD-d9de8ac1f0092ad1b3dc",
+        "EVD-e7f085fe7b16c300cf2f",
+        "EVD-fde1d6a88ff00ba8b344"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "database_tier": "Aug",
+      "recommended_tier": "Auto",
+      "deliverable_role": "控制交付物",
+      "specific_capabilities": [
+        "异常扫描",
+        "风险模式识别",
+        "案件升级"
+      ],
+      "ai_reshape": "规则和模型扫描异常并生成风险线索；反欺诈判断与升级保留人工",
+      "quality_anchor": "阈值有版本，命中有证据，误报与处置结果可回溯",
+      "ai_responsibility": "运行异常扫描并生成风险线索",
+      "human_responsibility": "判断是否构成欺诈并决定升级",
+      "handoff_triggers": [
+        "阈值命中",
+        "模式异常",
+        "证据不足"
+      ],
+      "control_gates": [
+        "反欺诈复核与升级"
+      ],
+      "data_basis": [
+        "数据库Tier=Aug (EVD-a75edf54c6dc7961fdd8)",
+        "D1-D6=3/3/3/3/2/2 (EVD-06af6881f372bb005ecb, EVD-c9e5dbc937aa3a7466b9, EVD-123c1b07a259bb34aae6, EVD-8e87079eb14ce4f052d8, EVD-d9de8ac1f0092ad1b3dc, EVD-fde1d6a88ff00ba8b344)",
+        "Skill可行性=B-中封装 (EVD-8440e68d409dafc9eac3，合规类，单一动作，需报告模板/系统集成)"
+      ],
+      "process_context": "COM-03前进行异常检测和反欺诈抽查，保护佣金外发数据质量",
+      "risks_limits": [
+        "阈值/误报和升级责任需明确，当前实际仍以手工抽查为主"
+      ],
+      "current_recommendation": "优先验证检测能力和规则库，然后转向Auto模式（AI扫描+人工仅复核升级案件）",
+      "quadrant": "q1"
+    },
+    {
+      "l4_code": "L4-COM-10",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-002f1b451f2fff284c21",
+        "EVD-01345904f1065138f842",
+        "EVD-03a699069f8262dd19bf",
+        "EVD-0f33bf6a01d612dfe164",
+        "EVD-2bc31b7138251a29ed76",
+        "EVD-53ed5a0156c91fda8988",
+        "EVD-7378d51ba99d1b30e9c9",
+        "EVD-7c8dda65cb074c32095c",
+        "EVD-8c0204d58939225375a1",
+        "EVD-a03ac71d1111eab0d66d",
+        "EVD-a82615e90ab961a3a109",
+        "EVD-d438ad66fc634c61f8b2"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "database_tier": "Auto",
+      "recommended_tier": "Aug",
+      "deliverable_role": "价值交付物",
+      "specific_capabilities": [
+        "多源保单整合",
+        "应收计算",
+        "完整性检查"
+      ],
+      "ai_reshape": "自动合并保单与配置并计算应收，输出缺项及不一致项",
+      "quality_anchor": "来源齐全、应收公式一致、总额与明细可勾稽",
+      "ai_responsibility": "合并保单与市场配置、计算应收并检查缺项",
+      "human_responsibility": "确认异常来源和应收口径",
+      "handoff_triggers": [
+        "来源缺失",
+        "总额不平",
+        "配置未生效"
+      ],
+      "control_gates": [
+        "应收清单确认"
+      ],
+      "data_basis": [
+        "数据库Tier=Auto (EVD-a03ac71d1111eab0d66d)",
+        "D1-D6=2/3/2/2/1/1 (EVD-03a699069f8262dd19bf, EVD-002f1b451f2fff284c21, EVD-7378d51ba99d1b30e9c9, EVD-7c8dda65cb074c32095c, EVD-2bc31b7138251a29ed76, EVD-01345904f1065138f842)",
+        "Skill可行性=A-高封装 (EVD-53ed5a0156c91fda8988，信息处理类，复合动作，需拆分子Skill)"
+      ],
+      "process_context": "把保单数据与市场配置合并形成应收明细，是对账前置",
+      "risks_limits": [
+        "当前待注册，多源口径和字段完整性需先建立验收",
+        "复合动作需拆分为子Skill才能稳定自动化"
+      ],
+      "current_recommendation": "补齐数据源和注册状态，先拆分动作再推进Aug模式（自动计算+人工审差异）",
+      "quadrant": "q3"
+    },
+    {
+      "l4_code": "L4-COM-11",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-0c082792c1babee9daab",
+        "EVD-0e38a79e83aeada84c22",
+        "EVD-0e4ed9b8d9783fb026f2",
+        "EVD-0f5ad3713e2428416f27",
+        "EVD-2b5d641a68e1944f3675",
+        "EVD-6ecee95348b8eef3a70d",
+        "EVD-8eda65bd2cf2217110b9",
+        "EVD-b2b61df7b18b3c16743c",
+        "EVD-b8572f0e5e34fa49e96a",
+        "EVD-ec616da2ec2c5db89bb8",
+        "EVD-ee93d8fc4b4f44f1b943",
+        "EVD-fa1835f16ba87f353b3d"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "database_tier": "Auto",
+      "recommended_tier": "Aug",
+      "deliverable_role": "价值交付物",
+      "specific_capabilities": [
+        "回单OCR",
+        "应实匹配",
+        "差异归因",
+        "平衡校验"
+      ],
+      "ai_reshape": "自动提取银行回单并完成匹配和平衡校验；差异转人工分类",
+      "quality_anchor": "应收与实收可勾稽，差异有原因码，回单和版本可追溯",
+      "ai_responsibility": "OCR回单、自动匹配、生成差异对照和平衡结果",
+      "human_responsibility": "分类差异并确认是否已对平",
+      "handoff_triggers": [
+        "无法匹配",
+        "金额不平",
+        "回单冲突"
+      ],
+      "control_gates": [
+        "财务对账确认"
+      ],
+      "data_basis": [
+        "数据库Tier=Auto (EVD-0e38a79e83aeada84c22)",
+        "D1-D6=2/2/2/2/1/1 (EVD-0e4ed9b8d9783fb026f2, EVD-fa1835f16ba87f353b3d, EVD-ee93d8fc4b4f44f1b943, EVD-8eda65bd2cf2217110b9, EVD-6ecee95348b8eef3a70d, EVD-0f5ad3713e2428416f27)",
+        "Skill可行性=A-高封装 (EVD-ec616da2ec2c5db89bb8，信息处理类，复合动作，需拆分子Skill)"
+      ],
+      "process_context": "银行到账与应收核对，是三级验证链第一关",
+      "risks_limits": [
+        "银行回单未结构化，OCR准确率影响匹配",
+        "差异原因码与已对平状态未完整定义"
+      ],
+      "current_recommendation": "治理银行回单结构化与差异字典，再推进Aug自动对账（自动匹配+人工确认差异）",
+      "quadrant": "q2"
+    },
+    {
+      "l4_code": "L4-COM-12",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-1b9206cbf7054edfde19",
+        "EVD-26078473098258db3bb0",
+        "EVD-2788a605c12978e09c58",
+        "EVD-3a5dfd4aae70d01ee437",
+        "EVD-3c0f2ca5629dc9f5ce49",
+        "EVD-6d8f25e35f9390785832",
+        "EVD-81591b835d4cef439562",
+        "EVD-9fdb424c96a791445a5e",
+        "EVD-b839f8dcd4ea3fd3a570",
+        "EVD-e2ff815caf3340600032",
+        "EVD-e4573dab6044d8374475",
+        "EVD-f1968ea26fdb8212802e"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "database_tier": "Auto",
+      "recommended_tier": "Aug",
+      "deliverable_role": "价值交付物",
+      "specific_capabilities": [
+        "协议参数加载",
+        "应派计算",
+        "渠道对账",
+        "阈值预检"
+      ],
+      "ai_reshape": "自动计算应派和渠道对账，发布前运行合规阈值检查",
+      "quality_anchor": "映射版本有效，公式可复算，渠道总额平衡，阈值检查通过",
+      "ai_responsibility": "加载有效映射、计算应派、渠道对账和阈值预检",
+      "human_responsibility": "确认参数例外和异常分配",
+      "handoff_triggers": [
+        "映射过期",
+        "总额不平",
+        "阈值失败"
+      ],
+      "control_gates": [
+        "应派发布确认 + IA前置检查"
+      ],
+      "data_basis": [
+        "数据库Tier=Auto (EVD-e4573dab6044d8374475)",
+        "D1-D6=2/3/2/2/1/1 (EVD-e2ff815caf3340600032, EVD-81591b835d4cef439562, EVD-26078473098258db3bb0, EVD-3c0f2ca5629dc9f5ce49, EVD-2788a605c12978e09c58, EVD-b839f8dcd4ea3fd3a570)",
+        "Skill可行性=A-高封装 (EVD-f1968ea26fdb8212802e，信息处理类，复合动作，需拆分子Skill)"
+      ],
+      "process_context": "实收后计算各渠道应派，连接COM-03和多个价值节点",
+      "risks_limits": [
+        "协议映射无版本管理，可能引用过期配置",
+        "IA阈值仍需COM-17硬拦截，自动化检查尚未独立"
+      ],
+      "current_recommendation": "治理协议映射版本管理，补齐IA独立校验，再推进Aug模式（自动计算+人工确认例外）",
+      "quadrant": "q2"
+    }
+  ]
+}

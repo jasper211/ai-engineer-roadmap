@@ -10,8 +10,8 @@ VNW_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(VNW_ROOT / "05_集成工具_Integrate_Tools"))
 sys.path.insert(0, str(VNW_ROOT / "06_开发技能_Develop_Skills"))
 
-from skills.l3_model_builder import BlueprintIndex, L3ModelBuilder, d1d6_name_key  # noqa: E402
-from skills.l3_analysis_contract import ANALYSIS_STANDARD_ID, analysis_input_hash, validate_analysis_package  # noqa: E402
+from skills.l3_model_builder import BlueprintIndex, L3ModelBuilder, d1d6_name_key, load_analysis_packages, skill_recommendation  # noqa: E402
+from skills.l3_analysis_contract import ANALYSIS_STANDARD_ID, analysis_input_hash, eligible_analysis_evidence_ids, validate_analysis_package  # noqa: E402
 from skills.l3_analysis_runner import L3AnalysisRunner, _json_from_text, normalize_model_package  # noqa: E402
 from skills.blueprint_parser import parse_blueprint  # noqa: E402
 from tools.evidence import EvidenceClass, EvidenceRecord, EvidenceStatus, SourceRef, authoritative  # noqa: E402
@@ -44,6 +44,17 @@ class FakeReader:
 
 
 class L3ModelSystemTests(unittest.TestCase):
+    def test_model_analysis_package_takes_precedence_over_reviewed_fallback(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "L3-T.reviewed.json").write_text(
+                json.dumps({"source": "reviewed"}), encoding="utf-8"
+            )
+            (root / "L3-T.model.json").write_text(
+                json.dumps({"source": "model"}), encoding="utf-8"
+            )
+            self.assertEqual(load_analysis_packages(root)["L3-T"]["source"], "model")
+
     def builder(self, complete_d=True, with_mapping=True):
         index = {"L3-T": BlueprintIndex("L3-T", "测试流程", "V1.0", "蓝图.md")}
         return L3ModelBuilder(FakeReader(complete_d, with_mapping), index)
@@ -107,6 +118,49 @@ class L3ModelSystemTests(unittest.TestCase):
         evidence_id = model["l4s"][0]["evidence_refs"]["agent_d1_input_struct"]
         evidence = next(item for item in model["evidence_registry"] if item["evidence_id"] == evidence_id)
         self.assertEqual(evidence["source"]["source_key"], "L4-LEGACY-01")
+
+    def test_skill_feasibility_is_independent_from_tier_and_keeps_provenance(self):
+        builder = self.qualified_builder()
+        builder.skill_feasibility = {
+            "L4-T-01": {
+                "action_nature": "信息处理/事务类",
+                "action_singularity": "复合动作(建议先拆分)",
+                "grade": "A-高封装(理想条件下Skill候选)",
+                "judgment_basis": "A-需先拆分为子Skill(复合动作)",
+                "funds_safety_hard_gate": False,
+                "physical_execution": False,
+                "verification_status": "VERIFIED",
+                "_source_l4_code": "L4-T-01",
+                "_source_row": 2,
+            }
+        }
+        model = builder.build("L3-T")
+        skill = model["l4s"][0]["skill_feasibility"]
+        self.assertEqual(skill["grade"], "A-高封装(理想条件下Skill候选)")
+        self.assertEqual(skill["recommended_path"], "设计为Skill执行、人工判断或批准")
+        evidence_id = model["l4s"][0]["evidence_refs"]["skill_feasibility"]
+        evidence = next(item for item in model["evidence_registry"] if item["evidence_id"] == evidence_id)
+        self.assertEqual(evidence["source"]["source_key"], "L4-T-01@row:2")
+        self.assertEqual(evidence["evidence_class"], "SUPPLEMENTAL")
+
+    def test_provisional_skill_assessment_stays_out_of_active_supplemental_layer(self):
+        assessment = {
+            "grade": "B-中封装(需报告模板/系统集成配合)",
+            "verification_status": "PROVISIONAL",
+        }
+        self.assertEqual(
+            skill_recommendation(assessment, "Hybrid"),
+            "待补书面佐证，暂不进入正式Skill优先级判断",
+        )
+
+    def test_analysis_evidence_excludes_consensus_and_unverified(self):
+        registry = [
+            {"evidence_id": "E-A", "evidence_class": "AUTHORITATIVE", "status": "ACTIVE"},
+            {"evidence_id": "E-S", "evidence_class": "SUPPLEMENTAL", "status": "ACTIVE"},
+            {"evidence_id": "E-C", "evidence_class": "CONSENSUS", "status": "ACTIVE"},
+            {"evidence_id": "E-U", "evidence_class": "SUPPLEMENTAL", "status": "UNVERIFIED"},
+        ]
+        self.assertEqual(eligible_analysis_evidence_ids(registry), {"E-A", "E-S"})
 
     def test_model_readiness_blocks_unparsed_blueprint(self):
         model = self.builder().build("L3-T")
@@ -396,6 +450,73 @@ class L3ModelSystemTests(unittest.TestCase):
             response_path.write_text(json.dumps(bad, ensure_ascii=False), encoding="utf-8")
             with self.assertRaisesRegex(ValueError, "缺少有效证据"):
                 runner.validate_and_publish(run_dir, response_path)
+
+    def test_l4_refresh_prepares_bounded_target_only_bundle(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            prompt = root / "08_设计提示词_Design_Prompts/L3统一分析模型_v1.0.md"
+            prompt.parent.mkdir(parents=True)
+            prompt.write_text("只使用事实包。", encoding="utf-8")
+            model = self.qualified_builder().build("L3-T")
+            snapshot = root / "L3-T.json"
+            snapshot.write_text(
+                json.dumps(model, ensure_ascii=False), encoding="utf-8"
+            )
+            package_path = root / "L3-T.model.json"
+            package_path.write_text(
+                json.dumps(model["analysis"], ensure_ascii=False), encoding="utf-8"
+            )
+            runner = L3AnalysisRunner(root)
+            run_dir = runner.prepare_l4_refresh(
+                snapshot, package_path, ["L4-T-01"]
+            )
+            request = json.loads(
+                (run_dir / "request.json").read_text(encoding="utf-8")
+            )
+            payload = json.loads(
+                (run_dir / "user_payload.json").read_text(encoding="utf-8")
+            )
+            self.assertEqual(request["run_type"], "L4_BATCH_REFRESH")
+            self.assertEqual(request["target_l4_codes"], ["L4-T-01"])
+            self.assertEqual(
+                [item["l4_code"] for item in payload["fact_pack"]["l4s"]],
+                ["L4-T-01"],
+            )
+            self.assertNotIn("tasks", payload["refresh_output_contract"])
+
+    def test_l4_refresh_rejects_more_than_six_targets(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            prompt = root / "08_设计提示词_Design_Prompts/L3统一分析模型_v1.0.md"
+            prompt.parent.mkdir(parents=True)
+            prompt.write_text("只使用事实包。", encoding="utf-8")
+            model = self.qualified_builder().build("L3-T")
+            model["l4s"] = [
+                {**model["l4s"][0], "l4_code": f"L4-T-{index:02d}"}
+                for index in range(1, 8)
+            ]
+            snapshot = root / "L3-T.json"
+            snapshot.write_text(
+                json.dumps(model, ensure_ascii=False), encoding="utf-8"
+            )
+            package_path = root / "L3-T.model.json"
+            package_path.write_text(
+                json.dumps(model["analysis"], ensure_ascii=False), encoding="utf-8"
+            )
+            with self.assertRaisesRegex(ValueError, "单批最多刷新6个L4"):
+                L3AnalysisRunner(root).prepare_l4_refresh(
+                    snapshot,
+                    package_path,
+                    [f"L4-T-{index:02d}" for index in range(1, 8)],
+                )
+
+    def test_l4_refresh_keeps_valid_refs_and_audits_unknown_refs(self):
+        valid = {"EVD-VALID"}
+        refs = ["EVD-VALID", "EVD-MADE-UP"]
+        kept = [ref for ref in refs if ref in valid]
+        rejected = [ref for ref in refs if ref not in valid]
+        self.assertEqual(kept, ["EVD-VALID"])
+        self.assertEqual(rejected, ["EVD-MADE-UP"])
 
 
 if __name__ == "__main__":

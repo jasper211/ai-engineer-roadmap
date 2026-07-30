@@ -1,0 +1,312 @@
+{
+  "l4_analysis": [
+    {
+      "l4_code": "L4-COM-01",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-0fd5978f33cca2d7873c",
+        "EVD-2db466428bd0c9f7a073",
+        "EVD-516613c2c07e7e5f0bdb",
+        "EVD-6f7b950c445b03221796",
+        "EVD-7faaaa7ea5605173b3ed",
+        "EVD-8b6a9e7334d1b341d708",
+        "EVD-95ead820075a56f696b1",
+        "EVD-978b640534fd409082bd",
+        "EVD-c343c6d3cd547689f533",
+        "EVD-f53356cfe45b437227b3"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "价值交付物",
+      "specific_capabilities": [
+        "外部政策识别",
+        "版本登记",
+        "字段映射",
+        "冲突检测"
+      ],
+      "ai_reshape": "接收政策后生成结构化录入草稿、检查字段和生效期冲突；人确认异常",
+      "quality_anchor": "保司/季度/版本完整，字段逐行校验，生效期无重叠",
+      "ai_responsibility": "登记版本、抽取字段、提示生效期冲突",
+      "human_responsibility": "解释保司特殊格式并确认正式入库",
+      "handoff_triggers": [
+        "低置信字段",
+        "原件不完整",
+        "生效期冲突"
+      ],
+      "control_gates": [
+        "专业确认后写入政策库"
+      ],
+      "data_basis": [
+        "数据库Tier=Auto",
+        "D1-D6=2/2/2/2/2/2",
+        "总分=12/18"
+      ],
+      "process_context": "政策更新触发COM-16→01→02，源头格式差异大",
+      "risks_limits": [
+        "PDF/Excel非标准",
+        "无OCR",
+        "39条规则未书面化",
+        "双轨校验存在SPOF",
+        "复合动作需先拆分为子Skill（封装评估A级）"
+      ],
+      "current_recommendation": "治理后推进",
+      "database_tier": "Auto",
+      "recommended_tier": "Aug",
+      "quadrant": "q2"
+    },
+    {
+      "l4_code": "L4-COM-02",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-4348645f997bbc545631",
+        "EVD-51b9375d56608331b530",
+        "EVD-5b88d5549a8660faac03",
+        "EVD-73c78aac3ee351f1d240",
+        "EVD-867a6421b5a1b4149c38",
+        "EVD-8c7011a8d0bd24ef450a",
+        "EVD-8f39d05eed73571639e8",
+        "EVD-949f96f53bf843877f5a",
+        "EVD-b7662c64ba812b8dd326",
+        "EVD-c6c7b3d9f8c8275bd6fb",
+        "EVD-ca3143c95277bc3494e4"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "价值交付物",
+      "specific_capabilities": [
+        "公式理解",
+        "差异识别",
+        "配置验证",
+        "版本切换"
+      ],
+      "ai_reshape": "生成差异配置与公式变更草稿，执行回归校验；人审批上线与停更",
+      "quality_anchor": "公式有备份和验证，新旧结果一致，切换条件可验收",
+      "ai_responsibility": "比较政策差异、生成配置草稿、执行公式回归",
+      "human_responsibility": "审批公式变更并决定新旧脚本切换",
+      "handoff_triggers": [
+        "回归结果不一致",
+        "口径冲突",
+        "验收未达标"
+      ],
+      "control_gates": [
+        "公式发布与停更审批"
+      ],
+      "data_basis": [
+        "数据库Tier=Auto",
+        "D1-D6=2/2/2/2/2/2",
+        "总分=12/18"
+      ],
+      "process_context": "承接标准化政策并形成市场配置，影响全部后续核算",
+      "risks_limits": [
+        "公式变更与新脚本切换无量化验收，三年迁移无SOP",
+        "复合动作需先拆分为子Skill（封装评估A级）"
+      ],
+      "current_recommendation": "治理后推进",
+      "database_tier": "Auto",
+      "recommended_tier": "Aug",
+      "quadrant": "q2"
+    },
+    {
+      "l4_code": "L4-COM-03",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-062d9cbf4146d7c3da1b",
+        "EVD-35c713752826d9f583bd",
+        "EVD-4ffa0a47eeca2b9236d4",
+        "EVD-692e5420c0a1c073e1ac",
+        "EVD-74e926413fddfc3a2085",
+        "EVD-778f3534700c8932cdc0",
+        "EVD-9fe75c4f838f44aa3fe2",
+        "EVD-a2f379ae03473e137461",
+        "EVD-a4cd35c423ab72f84327",
+        "EVD-d69f814d7f54218e1804",
+        "EVD-f7826c7d3a79c39b2c04"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "价值交付物",
+      "specific_capabilities": [
+        "多清单整合",
+        "外发格式生成",
+        "发布控制"
+      ],
+      "ai_reshape": "自动汇总确认后的应派数据并生成外发凭证；发布前保留人工确认",
+      "quality_anchor": "金额与应派清单一致，版本唯一，接收对象和发布记录可追溯",
+      "ai_responsibility": "整合应派结果并生成外发凭证",
+      "human_responsibility": "确认金额、版本、接收对象和发布时间",
+      "handoff_triggers": [
+        "金额不平",
+        "版本冲突",
+        "接收对象异常"
+      ],
+      "control_gates": [
+        "不可逆外发前人工确认"
+      ],
+      "data_basis": [
+        "数据库Tier=Auto",
+        "D1-D6=3/3/3/3/2/2",
+        "总分=16/18"
+      ],
+      "process_context": "位于应派确认后、财务制单前，是多个PAY节点的外发枢纽",
+      "risks_limits": [
+        "发布不可逆",
+        "金额、版本和接收对象需强校验",
+        "复合动作需先拆分（封装评估A级）"
+      ],
+      "current_recommendation": "优先验证",
+      "database_tier": "Auto",
+      "recommended_tier": "Aug",
+      "quadrant": "q1"
+    },
+    {
+      "l4_code": "L4-COM-04",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-166f2b3631edd11dde71",
+        "EVD-1e959f9079b2f9e90b6d",
+        "EVD-2b74f6872f6a54576fa0",
+        "EVD-3bf2db587071e6c28664",
+        "EVD-4b298e49cf6bb6f4a2ea",
+        "EVD-637b9b199c2a06301a02",
+        "EVD-792e588c2d00b3429fcb",
+        "EVD-85305ee146879d402fa9",
+        "EVD-a037447b91f458e2a21a",
+        "EVD-e039d743a2d2ffdb1258",
+        "EVD-e70ac0e42ff3b8dcd0f7",
+        "EVD-eb6de534b20d241a80ea"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "支撑交付物",
+      "specific_capabilities": [
+        "预算汇总",
+        "情景分析",
+        "规划判断"
+      ],
+      "ai_reshape": "AI汇集历史佣金与假设并形成预算情景；负责人保留战略判断",
+      "quality_anchor": "假设有来源，版本可比较，预算审批可追溯",
+      "ai_responsibility": "汇集历史数据、生成预算情景和规划草稿",
+      "human_responsibility": "选择假设、作战略判断并批准预算",
+      "handoff_triggers": [
+        "假设冲突",
+        "重大偏差",
+        "预算超边界"
+      ],
+      "control_gates": [
+        "年度预算审批"
+      ],
+      "data_basis": [
+        "数据库Tier=Hybrid",
+        "D1-D6=2/1/1/1/1/1",
+        "总分=7/18"
+      ],
+      "process_context": "年度预算位于全链路起点前，属于战略规划支链",
+      "risks_limits": [
+        "D2/规则/接口偏弱，价值高但判断不可自动替代",
+        "低封装度（C级），需判断/权威，不直接封装确定性Skill"
+      ],
+      "current_recommendation": "暂缓自动化，先做AI辅助",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "q4"
+    },
+    {
+      "l4_code": "L4-COM-05",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-0babd05ddaaf0140b8b1",
+        "EVD-134e12cedd643f35389b",
+        "EVD-2ef4b994588f78e3adc9",
+        "EVD-3287d741bc8db87f418b",
+        "EVD-53517d6e7309d0c608c7",
+        "EVD-62dfdbbdcbd21cc384f6",
+        "EVD-6a41802aef939068983f",
+        "EVD-7eeb331271d6f6cd236b",
+        "EVD-80a76dba2b0859d641e0",
+        "EVD-89edcab0671596dd6a81",
+        "EVD-a0497d8fcf768369af5c",
+        "EVD-dbecf6136964647ad282"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "支撑交付物",
+      "specific_capabilities": [
+        "追溯识别",
+        "倒扣计算",
+        "异常审批"
+      ],
+      "ai_reshape": "识别退保及历史差异、计算调整建议；异常调整由人审批",
+      "quality_anchor": "原交易可追溯，调整公式一致，审批及影响范围完整",
+      "ai_responsibility": "识别退保与历史差异、计算调整建议",
+      "human_responsibility": "确认追溯依据并审批异常调整",
+      "handoff_triggers": [
+        "原交易缺失",
+        "规则不适用",
+        "金额超常"
+      ],
+      "control_gates": [
+        "异常调整审批"
+      ],
+      "data_basis": [
+        "数据库Tier=Aug",
+        "D1-D6=3/3/3/3/2/2",
+        "总分=16/18"
+      ],
+      "process_context": "COM-12后处理退保和历史差异，属于月度修正支链",
+      "risks_limits": [
+        "追溯依据和异常审批决定资金影响，需保留人工责任",
+        "B级中封装：需报告模板/系统集成配合，先补条件再验证Skill"
+      ],
+      "current_recommendation": "优先验证标准计算段",
+      "database_tier": "Aug",
+      "recommended_tier": "Aug",
+      "quadrant": "q1"
+    },
+    {
+      "l4_code": "L4-COM-06",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-05dbb71ab55ac2d4d7a0",
+        "EVD-0b405e172852aa77b700",
+        "EVD-2ed9aeff9e36f9700130",
+        "EVD-4c1afaa2820a8a881c27",
+        "EVD-525aaf7968883322c3d2",
+        "EVD-57b92e28acc6a0a05524",
+        "EVD-8dcc039dbdaac45dcacd",
+        "EVD-8f412c5cea311e6823c2",
+        "EVD-a467c3a2d94b55f526a5",
+        "EVD-df876bda0147ec1d27d7",
+        "EVD-e41cd2ac12c2eee4c7a2",
+        "EVD-e97e48f78d3111490b30"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "控制交付物",
+      "specific_capabilities": [
+        "税务规则匹配",
+        "计税计算",
+        "合规签字"
+      ],
+      "ai_reshape": "自动匹配税务规则并生成处理记录；签字频率与责任待确认",
+      "quality_anchor": "计税依据、税率版本、计算结果和签字证据齐全",
+      "ai_responsibility": "匹配税务规则、计算并生成处理记录",
+      "human_responsibility": "确认适用口径并完成税务签字",
+      "handoff_triggers": [
+        "税务规则冲突",
+        "特殊主体",
+        "签字条件不明"
+      ],
+      "control_gates": [
+        "税务合规签字"
+      ],
+      "data_basis": [
+        "数据库Tier=Auto",
+        "D1-D6=3/3/3/3/2/2",
+        "总分=16/18"
+      ],
+      "process_context": "COM-13后完成税务处理，直接影响合规留痕",
+      "risks_limits": [
+        "税务签字是常规还是异常，频率和责任仍待确认",
+        "高封装单一动作（A级），但合规签字仍需人工执行"
+      ],
+      "current_recommendation": "治理后推进",
+      "database_tier": "Auto",
+      "recommended_tier": "Aug",
+      "quadrant": "q2"
+    }
+  ]
+}

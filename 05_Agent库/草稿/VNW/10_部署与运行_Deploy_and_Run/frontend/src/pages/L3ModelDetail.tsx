@@ -37,6 +37,19 @@ function tierTone(tier: string) {
   return 'border-slate-200 bg-slate-100 text-slate-600'
 }
 
+function skillTone(grade: string) {
+  if (grade.startsWith('A-')) return 'border-emerald-200 bg-emerald-100 text-emerald-800'
+  if (grade.startsWith('B-')) return 'border-blue-200 bg-blue-100 text-blue-800'
+  if (grade.startsWith('C-')) return 'border-amber-200 bg-amber-100 text-amber-800'
+  if (grade.startsWith('F-')) return 'border-rose-200 bg-rose-100 text-rose-800'
+  return 'border-slate-200 bg-slate-100 text-slate-600'
+}
+
+function shortSkillGrade(grade: string) {
+  if (!grade) return '封装待评估'
+  return grade.split('(')[0].trim()
+}
+
 function roleTone(role: string) {
   if (role.startsWith('价值')) return 'border-blue-200 bg-blue-50/70'
   if (role.startsWith('控制')) return 'border-rose-200 bg-rose-50/70'
@@ -330,6 +343,24 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
             <div key={l4.l4_code} className={`rounded-xl border p-4 ${roleTone(String(analysis?.deliverable_role || ''))}`}>
               <div className="flex items-center justify-between gap-3"><span className="font-mono text-[11px] text-accent-primary-light">{l4.l4_code}</span><span className={`rounded-md border px-2 py-1 text-[10px] font-semibold ${tierTone(displayTier)}`}>{displayTier || '未评估'}</span></div>
               <p className="mt-2 text-sm font-bold text-text-primary">{l4.l4_name}</p>
+              {l4.skill_feasibility && (
+                <div className="mt-3 rounded-lg border border-slate-200 bg-white/80 p-3">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className={`rounded-md border px-2 py-1 text-[10px] font-semibold ${skillTone(l4.skill_feasibility.grade)}`}>{shortSkillGrade(l4.skill_feasibility.grade)}</span>
+                    <span className="rounded-md bg-slate-100 px-2 py-1 text-[10px] text-slate-700">{l4.skill_feasibility.action_nature}</span>
+                    <span className="rounded-md bg-slate-100 px-2 py-1 text-[10px] text-slate-700">{l4.skill_feasibility.action_singularity}</span>
+                    {l4.skill_feasibility.verification_status === 'PROVISIONAL' && <span className="rounded-md border border-violet-200 bg-violet-50 px-2 py-1 text-[10px] text-violet-700">待书面佐证</span>}
+                  </div>
+                  <p className="mt-2 text-[11px] leading-5 text-text-secondary"><b>封装判断：</b>{l4.skill_feasibility.judgment_basis}</p>
+                  <p className="mt-1 text-[11px] font-medium leading-5 text-indigo-700"><b>基于数据库Tier的设计路径：</b>{l4.skill_feasibility.recommended_path}</p>
+                  {(l4.skill_feasibility.funds_safety_hard_gate || l4.skill_feasibility.physical_execution) && (
+                    <p className="mt-2 text-[10px] font-medium text-rose-700">
+                      {l4.skill_feasibility.funds_safety_hard_gate ? '资金安全：必须保留人工确认关卡。' : ''}
+                      {l4.skill_feasibility.physical_execution ? ' 物理执行：只优化前后信息流。' : ''}
+                    </p>
+                  )}
+                </div>
+              )}
               {deliverableIssue ? (
                 <div className="mt-3 rounded-lg border border-amber-300 bg-amber-50 p-3">
                   <div className="flex flex-wrap items-center justify-between gap-2">
@@ -416,6 +447,9 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
                   <article key={card.card_id} draggable onDragStart={event => event.dataTransfer.setData('text/card', card.card_id)} className="cursor-grab rounded-lg border border-border-default bg-bg-elevated p-3 active:cursor-grabbing">
                     <div className="flex gap-2"><GripVertical className="mt-0.5 h-4 w-4 shrink-0 text-text-muted" /><div><p className="text-xs font-medium text-text-primary">{card.deliverable || card.l4_name}</p><p className="mt-1 font-mono text-[10px] text-text-muted">{card.l4_code}</p></div></div>
                     <p className="mt-1 text-[10px] text-text-muted">{card.source_type}</p>
+                    {model.l4s.find(item => item.l4_code === card.l4_code)?.skill_feasibility?.action_singularity.includes('复合') && (
+                      <p className="mt-2 rounded bg-amber-50 px-2 py-1 text-[10px] leading-4 text-amber-800">该L4被复核为复合动作；应以蓝图/规则继续拆成任务后再决定AI分工。</p>
+                    )}
                     {card.changed && <p className="mt-2 rounded bg-violet-400/10 px-2 py-1 text-[10px] text-violet-700">工作坊共识假设 · 数据库原位置：{card.tier}</p>}
                     <select aria-label={`调整 ${card.card_id} 的工作坊位置`} value={card.placement} onChange={event => moveCard(card.card_id, event.target.value)} className="mt-2 w-full rounded border border-border-default bg-bg-surface px-2 py-1 text-[10px] text-text-secondary lg:hidden">
                       {COLUMNS.map(option => <option key={option.id} value={option.id}>{option.label}</option>)}
@@ -467,13 +501,27 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
           </div>
         </div>
         {model.analysis.priority_drafts.length === 0 ? (
-          <div className="mt-4 grid gap-3 sm:grid-cols-2">
-            {['优先验证', '治理后推进', '补数据后推进', '暂缓自动化'].map(label => (
-              <div key={label} className="min-h-28 rounded-xl border border-dashed border-border-default bg-bg-surface p-4">
-                <p className="text-sm font-medium text-text-primary">{label}</p>
-                <p className="mt-2 text-xs text-text-muted">尚无经过证据校验的逐L4分析，不生成假位置。</p>
+          <div className="mt-4 space-y-3">
+            <div className="rounded-xl border border-indigo-200 bg-indigo-50/60 p-4">
+              <p className="text-sm font-semibold text-indigo-900">Skill封装评估已接入，但不自动编造象限坐标</p>
+              <p className="mt-1 text-xs leading-5 text-text-secondary">A/B/C/F回答“适合怎么封装”，Tier回答“需要多少人工判断”。正式象限仍需逐L4四维分析或负责人工作坊确认。</p>
+              <div className="mt-3 grid gap-2 md:grid-cols-2">
+                {model.l4s.filter(l4 => l4.skill_feasibility).map(l4 => (
+                  <div key={l4.l4_code} className="rounded-lg border border-white bg-white p-3">
+                    <div className="flex flex-wrap items-center gap-2"><span className="font-mono text-[10px] text-accent-primary">{l4.l4_code}</span><b className="text-xs">{l4.l4_name}</b><span className={`rounded border px-2 py-0.5 text-[9px] ${skillTone(l4.skill_feasibility?.grade || '')}`}>{shortSkillGrade(l4.skill_feasibility?.grade || '')}</span></div>
+                    <p className="mt-2 text-[11px] leading-5 text-text-secondary">{l4.skill_feasibility?.recommended_path}</p>
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {['优先验证', '治理后推进', '补数据后推进', '暂缓自动化'].map(label => (
+                <div key={label} className="min-h-28 rounded-xl border border-dashed border-border-default bg-bg-surface p-4">
+                  <p className="text-sm font-medium text-text-primary">{label}</p>
+                  <p className="mt-2 text-xs text-text-muted">尚无经过证据校验的逐L4四维分析，不生成假位置。</p>
+                </div>
+              ))}
+            </div>
           </div>
         ) : (
           <div className="mt-4 space-y-3">

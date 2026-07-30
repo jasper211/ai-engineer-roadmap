@@ -7,11 +7,18 @@ import re
 from dataclasses import dataclass
 from pathlib import Path
 
+from openpyxl import load_workbook
+
 from tools.evidence import EvidenceClass, EvidenceRecord, EvidenceStatus, SourceRef, authoritative
 from tools.postgres_reader import PostgresL3Reader
 from tools.snapshot_writer import write_snapshot
 from skills.blueprint_parser import parse_blueprint
-from skills.l3_analysis_contract import analysis_input_hash, build_analysis_envelope, validate_analysis_package
+from skills.l3_analysis_contract import (
+    analysis_input_hash,
+    build_analysis_envelope,
+    eligible_analysis_evidence_ids,
+    validate_analysis_package,
+)
 
 VALID_TIERS = {"Human", "Aug", "Hybrid", "Auto"}
 D_FIELDS = (
@@ -132,15 +139,89 @@ def load_d1d6_supplement(csv_path: Path) -> dict[str, dict]:
     return result
 
 
+def load_skill_feasibility(xlsx_path: Path) -> dict[str, dict]:
+    """加载L4 Skill封装可行性复核，保持其与自动化Tier为两条独立分析轴。
+
+    直接编码和“同一L3+完全相同L4名称”各建一个索引；后者只在名称唯一时生效，
+    用于兼容UCA等历史L4编码。SFC/SPE六条口头确认例外保留为待佐证共识层。
+    """
+    workbook = load_workbook(xlsx_path, read_only=True, data_only=True)
+    sheet = workbook["L4明细_最终确认版"]
+    rows = sheet.iter_rows(values_only=True)
+    headers = [str(value).strip() if value is not None else "" for value in next(rows)]
+    result: dict[str, dict] = {}
+    name_candidates: dict[str, list[dict]] = {}
+    for row_number, values in enumerate(rows, 2):
+        row = dict(zip(headers, values))
+        l4_code = str(row.get("L4编码") or "").strip().upper()
+        l3_code = str(row.get("L3编码") or "").strip().upper()
+        l4_name = str(row.get("L4活动") or "").strip()
+        if not l4_code or not l3_code or not l4_name:
+            continue
+        if l4_code in result:
+            raise ValueError(f"Skill封装评估L4编码重复：{l4_code}")
+        provisional = l3_code in {"L3-SFC", "L3-SPE"}
+        item = {
+            "action_nature": str(row.get("动作性质") or "").strip(),
+            "action_singularity": str(row.get("动作单一性") or "").strip(),
+            "grade": str(row.get("最终档位") or "").strip(),
+            "judgment_basis": str(row.get("判断依据") or "").strip(),
+            "funds_safety_hard_gate": str(row.get("资金安全强制关卡(新增)") or "").strip() == "是",
+            "physical_execution": str(row.get("物理执行类(新增)") or "").strip() == "是",
+            "verification_status": "PROVISIONAL" if provisional else "VERIFIED",
+            "_source_l4_code": l4_code,
+            "_source_row": row_number,
+        }
+        result[l4_code] = item
+        name_candidates.setdefault(d1d6_name_key(l3_code, l4_name), []).append(item)
+    for key, candidates in name_candidates.items():
+        if len(candidates) == 1:
+            result[key] = candidates[0]
+    return result
+
+
+def skill_recommendation(assessment: dict, tier: str) -> str:
+    """根据已批准的双轴规则生成可审计的设计路径，不生成优先级坐标。"""
+    if assessment.get("verification_status") != "VERIFIED":
+        return "待补书面佐证，暂不进入正式Skill优先级判断"
+    grade = str(assessment.get("grade", ""))
+    if grade.startswith("A-") and tier in {"Auto", "Aug"}:
+        return "优先进入Skill原型候选池"
+    if grade.startswith("A-") and tier == "Hybrid":
+        return "设计为Skill执行、人工判断或批准"
+    if grade.startswith("B-"):
+        return "先补报告模板、规则固化或系统接口，再验证Skill"
+    if grade.startswith("C-"):
+        return "优先考虑Agent辅助或决策支持，不直接封装确定性Skill"
+    if grade.startswith("F-"):
+        return "不封装物理动作，只优化动作前后的信息流"
+    return "待负责人结合任务拆分确认"
+
+
 def load_analysis_packages(dir_path: Path) -> dict[str, dict]:
-    """加载已经过校验/复核的L3分析包；文件名使用`L3-CODE.*.json`。"""
+    """加载已经过校验/复核的L3分析包。
+
+    同一L3可同时保留历史人工复核包和新发布模型包。新模型包已经通过
+    AnalysisRunner门禁，因此优先于``reviewed``回退包；同优先级重复才
+    视为配置冲突。
+    """
     result = {}
+    selected_priority: dict[str, int] = {}
+    selected_path: dict[str, Path] = {}
     for path in Path(dir_path).glob("L3-*.json"):
         package = json.loads(path.read_text(encoding="utf-8"))
         code = path.name.split(".", 1)[0]
-        if code in result:
-            raise ValueError(f"同一L3存在多个分析包：{code}")
+        priority = 2 if path.name.endswith(".model.json") else 1
+        if code in result and priority == selected_priority[code]:
+            raise ValueError(
+                f"同一L3存在多个同优先级分析包："
+                f"{selected_path[code].name}, {path.name}"
+            )
+        if code in result and priority < selected_priority[code]:
+            continue
         result[code] = package
+        selected_priority[code] = priority
+        selected_path[code] = path
     return result
 
 
@@ -210,6 +291,7 @@ class L3ModelBuilder:
         blueprint_index: dict[str, BlueprintIndex],
         blueprint_dir: Path | None = None,
         d1d6_supplement: dict[str, dict] | None = None,
+        skill_feasibility: dict[str, dict] | None = None,
         demo_registry: dict[str, str] | None = None,
         analysis_packages: dict[str, dict] | None = None,
         sop_records: list[dict] | None = None,
@@ -220,6 +302,7 @@ class L3ModelBuilder:
         self.blueprint_index = blueprint_index
         self.blueprint_dir = blueprint_dir
         self.d1d6_supplement = d1d6_supplement or {}
+        self.skill_feasibility = skill_feasibility or {}
         self.demo_registry = demo_registry or {}
         self.analysis_packages = analysis_packages or {}
         self.sop_records = sop_records or []
@@ -345,6 +428,36 @@ class L3ModelBuilder:
                 else:
                     d1_d6[field] = None
                     refs[field] = add(authoritative(field, None, "dim_process", code, field))
+            skill = self.skill_feasibility.get(code)
+            if skill is None:
+                skill = self.skill_feasibility.get(d1d6_name_key(l3_code, row.get("l4_name", "")))
+            skill_payload = None
+            if skill is not None:
+                source_code = skill.get("_source_l4_code", code)
+                source_row = skill.get("_source_row", "")
+                is_provisional = skill.get("verification_status") == "PROVISIONAL"
+                skill_payload = {
+                    key: skill[key] for key in (
+                        "action_nature", "action_singularity", "grade", "judgment_basis",
+                        "funds_safety_hard_gate", "physical_execution", "verification_status",
+                    )
+                }
+                skill_payload["recommended_path"] = skill_recommendation(skill, row.get("agentifiability", ""))
+                refs["skill_feasibility"] = add(EvidenceRecord(
+                    field_name="skill_feasibility",
+                    value=skill_payload,
+                    evidence_class=EvidenceClass.CONSENSUS if is_provisional else EvidenceClass.SUPPLEMENTAL,
+                    status=EvidenceStatus.UNVERIFIED if is_provisional else EvidenceStatus.ACTIVE,
+                    confidence="LOW" if is_provisional else "HIGH",
+                    conflict_note="基于业务方口头确认，待补01层书面材料" if is_provisional else "",
+                    source=SourceRef(
+                        source_system="OB知识库",
+                        source_object="L4流程_Skill封装可行性评估_确认最终版_v2.xlsx",
+                        source_key=f"{source_code}@row:{source_row}",
+                        source_field="L4明细_最终确认版:A:N",
+                        source_version="v2",
+                    ),
+                ))
             l4s.append({
                 "l4_code": code,
                 "l4_name": row.get("l4_name", ""),
@@ -353,6 +466,7 @@ class L3ModelBuilder:
                 "tier": row.get("agentifiability", ""),
                 "human_touchpoint": row.get("agent_human_touchpoint", ""),
                 "d1_d6": d1_d6,
+                "skill_feasibility": skill_payload,
                 "evidence_refs": refs,
             })
 
@@ -431,6 +545,16 @@ class L3ModelBuilder:
         deliverable_ratio = deliverable_count / len(l4s) if l4s else 0
         d_complete_count = sum(all(item["d1_d6"][field] is not None for field in D_FIELDS) for item in l4s)
         d_complete = has_l4 and d_complete_count == len(l4s)
+        skill_verified_count = sum(
+            bool(item.get("skill_feasibility"))
+            and item["skill_feasibility"].get("verification_status") == "VERIFIED"
+            for item in l4s
+        )
+        skill_provisional_count = sum(
+            bool(item.get("skill_feasibility"))
+            and item["skill_feasibility"].get("verification_status") == "PROVISIONAL"
+            for item in l4s
+        )
         gate_m_checks = [
             {"rule_id": "M-001", "passed": has_l4, "detail": f"L4数量={len(l4s)}"},
             {"rule_id": "M-002", "passed": blueprint_parsed, "detail": blueprint.filename if blueprint_parsed else "缺少可解析流程蓝图"},
@@ -564,6 +688,11 @@ class L3ModelBuilder:
                     "task": {"covered": len(task_l4s), "total": len(l4s)},
                     "rule_l4": {"covered": len(rule_l4s), "total": len(l4s)},
                     "critical_task": {"covered": len(critical_l4s & task_l4s), "total": len(critical_l4s)},
+                    "skill_feasibility": {
+                        "verified": skill_verified_count,
+                        "provisional": skill_provisional_count,
+                        "total": len(l4s),
+                    },
                 },
                 "linked_sources": {
                     "sops": [
@@ -579,12 +708,13 @@ class L3ModelBuilder:
             "evidence_registry": sorted(evidence.values(), key=lambda item: item["evidence_id"]),
             "supplemental_evidence_refs": [record.evidence_id for record in (supplemental or [])],
         }
+        analysis_evidence_ids = eligible_analysis_evidence_ids(evidence)
         model["analysis"] = analysis_candidate or build_analysis_envelope(
-            l3_code=l3_code, l4s=l4s, blueprint=model["blueprint"], evidence_ids=set(evidence),
+            l3_code=l3_code, l4s=l4s, blueprint=model["blueprint"], evidence_ids=analysis_evidence_ids,
         )
         validate_analysis_package(
             model["analysis"],
-            evidence_ids=set(evidence),
+            evidence_ids=analysis_evidence_ids,
             l4_codes={item["l4_code"] for item in l4s},
         )
         model["analysis_input_hash"] = analysis_input_hash(model)

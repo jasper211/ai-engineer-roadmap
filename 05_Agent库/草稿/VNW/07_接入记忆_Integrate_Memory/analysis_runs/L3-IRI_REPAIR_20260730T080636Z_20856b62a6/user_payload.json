@@ -1,0 +1,3224 @@
+{
+  "instruction": "这是模块修复，不得重写已冻结的l4_analysis或priority_drafts。只返回顶层tasks与decision_drafts，不要用output_contract包裹。每个L4至少拆出1个来自事实包的具体工作任务；任务须覆盖全部L4。并且每个L4的任务数量不得低于minimum_task_counts；不同蓝图步骤、失败返回或重新联调应拆成独立任务。所有evidence_refs必须是fact_pack中真实evidence_id且不能为空。decision_drafts至少1条，只能引用本次tasks中的task_id。证据不支持的细节不得补造。",
+  "repair_output_contract": {
+    "tasks": [
+      {
+        "task_id": "L4-XXX-01-M01",
+        "l4_code": "L4-XXX-01",
+        "task_name": "具体、可执行的日常工作步骤",
+        "source_type": "MODEL_DECOMPOSITION_FROM_L4",
+        "evidence_refs": [
+          "当前fact_pack中真实存在的evidence_id"
+        ],
+        "analysis_status": "MODEL_DRAFT",
+        "suggested_tier": "Human|Aug|Hybrid|Auto",
+        "tier_rationale": "基于证据说明AI与人的任务边界"
+      }
+    ],
+    "decision_drafts": [
+      {
+        "priority": 1,
+        "task_ids": [
+          "必须引用上方真实task_id"
+        ],
+        "title": "负责人需要拍板的具体试点",
+        "pilot_scope": "最小试点范围与可观察产出",
+        "human_boundary": "不可交给AI的判断、审批或控制门",
+        "evidence_refs": [
+          "当前fact_pack中真实存在的evidence_id"
+        ],
+        "analysis_status": "MODEL_DRAFT"
+      }
+    ]
+  },
+  "minimum_task_counts": {
+    "L4-IRI-01": 1,
+    "L4-IRI-02": 1,
+    "L4-IRI-03": 2,
+    "L4-IRI-04": 1,
+    "L4-IRI-05": 1,
+    "L4-IRI-06": 2,
+    "L4-IRI-07": 1
+  },
+  "frozen_analysis": {
+    "l4_analysis": [
+      {
+        "l4_code": "L4-IRI-01",
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [
+          "EVD-9e48e07e2b017fd5d67b",
+          "EVD-f58846cd444696abc279",
+          "EVD-533f7ff0805c43720e08",
+          "EVD-2ec5e2f48afb7673bdf3",
+          "EVD-6bee5e65f8c58250eef8",
+          "EVD-2e2e355c19b8510b3068",
+          "EVD-03c1c78918cf87a87349",
+          "EVD-78815e43e1ef2aaecfdf",
+          "EVD-96e9ee7e8ee363a235a5",
+          "EVD-a1f8dbef2e4585018f02",
+          "EVD-8e15f0a65bcac2d327d5",
+          "EVD-044724ee17558e0136cd",
+          "EVD-52b0cc4ad42718878f21"
+        ],
+        "confidence": "MODEL_DRAFT",
+        "deliverable_role": "《权限清单》是后续所有资源对接与权限配置的基准文档，定义了保司可访问的数据和系统范围。",
+        "specific_capabilities": [
+          "权限范围协商",
+          "信息安全策略判断",
+          "利益相关方沟通"
+        ],
+        "ai_reshape": "AI可辅助收集历史权限清单、相似保司案例，供人工谈判参考；但最终权限边界需人工确认。",
+        "quality_anchor": "清单中每项权限均有明确的数据范围和有效期，并获得双方授权签批。",
+        "ai_responsibility": "提供权限模板和历史清单比对，标记潜在冲突点。",
+        "human_responsibility": "与保司谈判确定权限清单内容，签署确认。",
+        "handoff_triggers": [
+          "权限涉及资金操作或敏感个人信息时",
+          "保司提出新增权限请求超出标准模板时"
+        ],
+        "control_gates": [
+          "权限清单必须经法务/安全负责人审核"
+        ],
+        "data_basis": [
+          "EVD-9e48e07e2b017fd5d67b (输入结构化程度1，依赖人工收集)"
+        ],
+        "process_context": "属于L3-IRI流程的第一步，在蓝图STEP-01执行，为后续资源盘点和技术对接奠定权限基础。",
+        "risks_limits": [
+          "谈判结果不确定，过度授权可能导致数据泄露风险",
+          "高度依赖关键人员的判断能力",
+          "API可达性低(d4=0)，无法自动化配置"
+        ],
+        "current_recommendation": "建议维持Hybrid层级，AI负责信息收集与冲突标记，人工负责谈判确认；后续若能抽象出标准权限模板且双方系统可自动配置，可考虑Aug级别，但当前封装度低(C级)，不宜全自动。",
+        "database_tier": "Hybrid",
+        "recommended_tier": "Hybrid",
+        "quadrant": "unclassified"
+      },
+      {
+        "l4_code": "L4-IRI-02",
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [
+          "EVD-a0cb205cc3aee6bb8352",
+          "EVD-72fe76bb38661d562dd6",
+          "EVD-736fcc732a10c8cc6beb",
+          "EVD-38f9735202663a227a79",
+          "EVD-1172fc848b36c519244e",
+          "EVD-b5f4de2b0aea2ca2c140",
+          "EVD-89a68a23c5cc4d4bc335",
+          "EVD-9f05031d924e36c3443a",
+          "EVD-1bd8fa144d974074db96",
+          "EVD-fd4eb8e73b1ca19a6dd2",
+          "EVD-1b4ff8d3a2ecc4a3e8ae",
+          "EVD-ef83d89f408f32abbcc8",
+          "EVD-6736ec7092739f62d38e"
+        ],
+        "confidence": "MODEL_DRAFT",
+        "deliverable_role": "《资源对接清单》明确了保司侧可提供的系统、数据和人员资源，是后续对接规划和执行的基础。",
+        "specific_capabilities": [
+          "系统资源信息采集",
+          "标准化数据输出"
+        ],
+        "ai_reshape": "可由确定性Skill执行：从保司系统自动抓取资源信息，生成结构化清单，人工仅需审核。",
+        "quality_anchor": "清单内容与实际系统资源一致，字段完整，有版本控制。",
+        "ai_responsibility": "自动采集保司系统元数据，生成清单初稿。",
+        "human_responsibility": "审核清单准确性，补充缺失资源项，确认签字。",
+        "handoff_triggers": [
+          "系统数据抓取失败或数据异常时"
+        ],
+        "control_gates": [
+          "清单需经双方项目经理确认"
+        ],
+        "data_basis": [
+          "EVD-a0cb205cc3aee6bb8352 (输入结构化程度2，可API对接)"
+        ],
+        "process_context": "蓝图STEP-02，与L4-IRI-06并行，为后续对接提供输入。",
+        "risks_limits": [
+          "保司系统接口可能不稳定，数据格式不统一",
+          "需定期更新清单以保证时效性"
+        ],
+        "current_recommendation": "推荐Auto Tier，开发确定性Skill用于资源盘点，人工仅监督审核。鉴于A级封装可行性，可纳入Skill原型开发。",
+        "database_tier": "Auto",
+        "recommended_tier": "Auto",
+        "quadrant": "unclassified"
+      },
+      {
+        "l4_code": "L4-IRI-03",
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [
+          "EVD-d7bdef1bf8a0cb09a4cd",
+          "EVD-1a4cd2324328ba161958",
+          "EVD-e2ecd0e98749b6927a50",
+          "EVD-13cfe7c03379a70e58d1",
+          "EVD-de5401bfa9eea69b51ab",
+          "EVD-02d3e0ea1e235ede8b2f",
+          "EVD-3bc5be30b40c03ef1cc7",
+          "EVD-dbc1df15130b3fc7184d",
+          "EVD-39b4747921861c55c07c",
+          "EVD-bbf6df6b3e01a5042333",
+          "EVD-7bc09bed7725bcd74485",
+          "EVD-6224271584b21fd9ffba",
+          "EVD-ab8391767822b04d6214"
+        ],
+        "confidence": "MODEL_DRAFT",
+        "deliverable_role": "对接完成报告记录了各方系统联调、数据对接和人员协同的情况，是技术集成的里程碑。",
+        "specific_capabilities": [
+          "对接进度跟踪",
+          "状态汇总",
+          "异常提醒"
+        ],
+        "ai_reshape": "Skill自动跟踪对接任务进度，收集各团队状态，生成对接报告，人仅处理例外。",
+        "quality_anchor": "报告覆盖所有对接点，包括API、SSO、数据传输，有明确完成标识。",
+        "ai_responsibility": "自动收集各团队反馈，汇总完成状态。",
+        "human_responsibility": "协调解决对接中的技术或人员障碍，确认报告。",
+        "handoff_triggers": [
+          "对接超时、出现技术障碍或团队人员变更时"
+        ],
+        "control_gates": [
+          "对接完成需技术负责人签字"
+        ],
+        "data_basis": [
+          "EVD-d7bdef1bf8a0cb09a4cd (输入结构化程度2，可自动化)"
+        ],
+        "process_context": "蓝图STEP-03，基于资源盘点和技术规范进行实际对接。",
+        "risks_limits": [
+          "多方协调依赖人工沟通，自动化程度受限于团队配合度",
+          "单一动作但可能涉及复杂技术决策时需人工介入"
+        ],
+        "current_recommendation": "建议Auto Tier，可构建Skill用于对接状态跟踪与报告生成，但需人工解决阻塞问题。鉴于A级，优先Skill化。",
+        "database_tier": "Auto",
+        "recommended_tier": "Auto",
+        "quadrant": "unclassified"
+      },
+      {
+        "l4_code": "L4-IRI-04",
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [
+          "EVD-19f87a57d8aa661c8f10",
+          "EVD-c7e92790c81936bb894f",
+          "EVD-e79129d1334c2b53c44a",
+          "EVD-203a6241788163e6f44e",
+          "EVD-2a26b53f4d9f8fd45d03",
+          "EVD-5024d6b1b5278033e109",
+          "EVD-42e3d902d6d5db3573c8",
+          "EVD-ba8220cd957d883f044d",
+          "EVD-d84805e5a3e88682f6c8",
+          "EVD-f7696b1a02cf45cef184",
+          "EVD-d0bedd06ba8d138f2ec7",
+          "EVD-1f16d4893daa67eac8b5",
+          "EVD-09fb9d312c03fa2c624f"
+        ],
+        "confidence": "MODEL_DRAFT",
+        "deliverable_role": "权限生效通知证明保司端权限已按清单配置生效，可以进入培训与正式使用阶段。",
+        "specific_capabilities": [
+          "权限同步配置",
+          "权限测试验证",
+          "通知发送"
+        ],
+        "ai_reshape": "可拆解为多个子Skill：1) 权限同步Skill，2) 权限测试Skill，3) 通知推送Skill。但权限配置涉及系统变更，需有回滚机制。",
+        "quality_anchor": "所有权限变更经过测试，通知明确权限范围和生效时间。",
+        "ai_responsibility": "执行权限配置和初步验证，生成通知。",
+        "human_responsibility": "确认权限配置正确，处理配置失败的例外情况，最终签发通知。",
+        "handoff_triggers": [
+          "权限配置失败或测试发现偏差时"
+        ],
+        "control_gates": [
+          "权限变更需审批，设置人工确认点"
+        ],
+        "data_basis": [
+          "EVD-19f87a57d8aa661c8f10 (输入结构化程度3，高度自动化可行)"
+        ],
+        "process_context": "蓝图STEP-04，在系统技术验证通过后执行。",
+        "risks_limits": [
+          "复合动作需确保子Skill顺序和失败回退，避免部分配置生效导致系统不一致",
+          "建议先拆分后封装"
+        ],
+        "current_recommendation": "推荐Auto Tier，但需先拆分为独立子Skill，逐步实现自动化。优先实现权限同步和验证Skill，通知可由已有工具完成。鉴于A级封装可行性，纳入Skill原型。",
+        "database_tier": "Auto",
+        "recommended_tier": "Auto",
+        "quadrant": "unclassified"
+      },
+      {
+        "l4_code": "L4-IRI-05",
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [
+          "EVD-b5d4a34b869854a33792",
+          "EVD-897bf7b88f3e19b3a099",
+          "EVD-7387448909a8ece9322d",
+          "EVD-190d42c84389fc9defd3",
+          "EVD-e017f6e55d09309534d0",
+          "EVD-325631a7641454a54cc3",
+          "EVD-b75c5d38a8877741f5a0",
+          "EVD-24933e2bad45556edf98",
+          "EVD-e6368f05e7b7445da055",
+          "EVD-d156a78dc289923c3579",
+          "EVD-f57e954be3d0f0789420",
+          "EVD-42e69105c3cd239a8329",
+          "EVD-28862fa9387a8871f562",
+          "EVD-4e17bf4f41ab7d5c85ec",
+          "EVD-03dff1fc8e2f83f8e864"
+        ],
+        "confidence": "MODEL_DRAFT",
+        "deliverable_role": "《整合就绪确认书》是最终交付物，标志着保司资源整合完成，可进入运营阶段。",
+        "specific_capabilities": [
+          "Checklist核验执行",
+          "数据完整性检查"
+        ],
+        "ai_reshape": "Skill自动执行各项核验Checklist，汇总结果并生成确认书初稿，人审核。",
+        "quality_anchor": "所有核验项通过，确认书有双方负责人签名。",
+        "ai_responsibility": "执行所有Checklist检查项，输出通过/未通过状态，生成确认书。",
+        "human_responsibility": "审核核验结果，签字确认。",
+        "handoff_triggers": [
+          "任一项检查失败或数据异常时"
+        ],
+        "control_gates": [
+          "确认书具有法律效力，需人工签署"
+        ],
+        "data_basis": [
+          "EVD-b5d4a34b869854a33792 (输入结构化程度2，可自动化)"
+        ],
+        "process_context": "蓝图STEP-06，流程最后一步，在培训换手后进行。",
+        "risks_limits": [
+          "若前期步骤未完成，核验可能不通过，需向上游环节反馈"
+        ],
+        "current_recommendation": "建议Auto Tier，Skill可自动化核验并起草确认书。由于价值节点P1，应优先开发。",
+        "database_tier": "Auto",
+        "recommended_tier": "Auto",
+        "quadrant": "unclassified"
+      },
+      {
+        "l4_code": "L4-IRI-06",
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [
+          "EVD-c6b87ea3dfa7384f50b3",
+          "EVD-00235454a7c2d98e820d",
+          "EVD-3b052879e4a180580309",
+          "EVD-20b837fe0d8e965a7a3d",
+          "EVD-84d743ecedb8c8171cdf",
+          "EVD-103149948c2b6d1071bf",
+          "EVD-a0013f89ac114acaf5e9",
+          "EVD-7e496cc12b54d1b7b900",
+          "EVD-ba7606e240c3083a468e",
+          "EVD-c8c71c11884fe166a01d",
+          "EVD-6d2335f253348828b88a",
+          "EVD-d8f5b8cf37c6d749abd0",
+          "EVD-6736ec7092739f62d38e",
+          "EVD-ab8391767822b04d6214"
+        ],
+        "confidence": "MODEL_DRAFT",
+        "deliverable_role": "《对接技术规范》是指导保司IT系统对接的技术文档，确保数据交换的标准化。",
+        "specific_capabilities": [
+          "技术规范标准化输出"
+        ],
+        "ai_reshape": "AI可根据保司系统信息和平台标准自动生成对接规范草稿，人工审核补充特殊要求。",
+        "quality_anchor": "规范覆盖所有数据交换接口，通过技术评审。",
+        "ai_responsibility": "生成对接规范模板，填充已知参数。",
+        "human_responsibility": "审核规范内容，与保司确认特殊需求，批准发布。",
+        "handoff_triggers": [
+          "保司系统有非标准接口或安全要求超出模板范围时"
+        ],
+        "control_gates": [
+          "规范需技术负责人审批"
+        ],
+        "data_basis": [
+          "EVD-c6b87ea3dfa7384f50b3 (输入结构化程度2，可自动化)"
+        ],
+        "process_context": "蓝图STEP-02与STEP-03，为系统对接提供标准。",
+        "risks_limits": [
+          "依赖保司技术栈信息，若信息不全则生成质量下降"
+        ],
+        "current_recommendation": "建议Auto Tier，可用于生成初稿。A级封装可行性高，优先Skill化。",
+        "database_tier": "Auto",
+        "recommended_tier": "Auto",
+        "quadrant": "unclassified"
+      },
+      {
+        "l4_code": "L4-IRI-07",
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [
+          "EVD-5e4251de05ccd7855d82",
+          "EVD-c002572aa5abe71dbdd9",
+          "EVD-5a3686507b8c80c777a7",
+          "EVD-094761efc658210e2039",
+          "EVD-6441df35217b715d668e",
+          "EVD-2e7077ab3cd881df022a",
+          "EVD-f2d72ad3fb75da7e8513",
+          "EVD-8e5ae428a1335781531a",
+          "EVD-d88ef0fe40c0900fbeda",
+          "EVD-d1332f949f4ab6e14f9b",
+          "EVD-ed512836d8acd32edf4a",
+          "EVD-bd6b0441ef88ca3771a0",
+          "EVD-7461458c94ffad2a4ba2"
+        ],
+        "confidence": "MODEL_DRAFT",
+        "deliverable_role": "《培训换手记录》确保保司人员掌握系统操作，为持续运营提供人力保障。",
+        "specific_capabilities": [
+          "培训材料准备",
+          "现场培训与指导",
+          "知识转移验证"
+        ],
+        "ai_reshape": "AI可辅助生成培训材料、录制操作视频、记录培训过程，但无法替代现场培训，建议Agent辅助模式。",
+        "quality_anchor": "所有关键人员通过操作考核，换手记录完整。",
+        "ai_responsibility": "提供标准化培训内容，记录培训参与和考核成绩。",
+        "human_responsibility": "主持培训，进行操作示范，考核人员能力。",
+        "handoff_triggers": [
+          "当培训对象无法掌握系统、需额外辅导时"
+        ],
+        "control_gates": [
+          "培训后需确认换手签字"
+        ],
+        "data_basis": [
+          "EVD-5e4251de05ccd7855d82 (输入结构化程度2，但规则清晰度低d2=1)"
+        ],
+        "process_context": "蓝图STEP-05，在权限生效后进行。",
+        "risks_limits": [
+          "物理执行（现场培训）难以自动化，人员流失可能导致知识断档",
+          "C级低封装，不宜强行Skill化"
+        ],
+        "current_recommendation": "建议维持Hybrid Tier，AI Agent辅助管理培训进度与资料，核心培训仍由人完成。可探索VR培训等数字化手段，但短期不可自动化。",
+        "database_tier": "Hybrid",
+        "recommended_tier": "Hybrid",
+        "quadrant": "unclassified"
+      }
+    ],
+    "priority_drafts": [
+      {
+        "l4_code": "L4-IRI-01",
+        "quadrant": "unclassified",
+        "data_basis": [
+          "EVD-9e48e07e2b017fd5d67b (输入结构化程度1，依赖人工收集)"
+        ],
+        "process_context": "属于L3-IRI流程的第一步，在蓝图STEP-01执行，为后续资源盘点和技术对接奠定权限基础。",
+        "risks_limits": [
+          "谈判结果不确定，过度授权可能导致数据泄露风险",
+          "高度依赖关键人员的判断能力",
+          "API可达性低(d4=0)，无法自动化配置"
+        ],
+        "current_recommendation": "建议维持Hybrid层级，AI负责信息收集与冲突标记，人工负责谈判确认；后续若能抽象出标准权限模板且双方系统可自动配置，可考虑Aug级别，但当前封装度低(C级)，不宜全自动。",
+        "evidence_refs": [
+          "EVD-9e48e07e2b017fd5d67b",
+          "EVD-f58846cd444696abc279",
+          "EVD-533f7ff0805c43720e08",
+          "EVD-2ec5e2f48afb7673bdf3",
+          "EVD-6bee5e65f8c58250eef8",
+          "EVD-2e2e355c19b8510b3068",
+          "EVD-03c1c78918cf87a87349",
+          "EVD-78815e43e1ef2aaecfdf",
+          "EVD-96e9ee7e8ee363a235a5",
+          "EVD-a1f8dbef2e4585018f02",
+          "EVD-8e15f0a65bcac2d327d5",
+          "EVD-044724ee17558e0136cd",
+          "EVD-52b0cc4ad42718878f21"
+        ],
+        "analysis_status": "MODEL_DRAFT"
+      },
+      {
+        "l4_code": "L4-IRI-02",
+        "quadrant": "unclassified",
+        "data_basis": [
+          "EVD-a0cb205cc3aee6bb8352 (输入结构化程度2，可API对接)"
+        ],
+        "process_context": "蓝图STEP-02，与L4-IRI-06并行，为后续对接提供输入。",
+        "risks_limits": [
+          "保司系统接口可能不稳定，数据格式不统一",
+          "需定期更新清单以保证时效性"
+        ],
+        "current_recommendation": "推荐Auto Tier，开发确定性Skill用于资源盘点，人工仅监督审核。鉴于A级封装可行性，可纳入Skill原型开发。",
+        "evidence_refs": [
+          "EVD-a0cb205cc3aee6bb8352",
+          "EVD-72fe76bb38661d562dd6",
+          "EVD-736fcc732a10c8cc6beb",
+          "EVD-38f9735202663a227a79",
+          "EVD-1172fc848b36c519244e",
+          "EVD-b5f4de2b0aea2ca2c140",
+          "EVD-89a68a23c5cc4d4bc335",
+          "EVD-9f05031d924e36c3443a",
+          "EVD-1bd8fa144d974074db96",
+          "EVD-fd4eb8e73b1ca19a6dd2",
+          "EVD-1b4ff8d3a2ecc4a3e8ae",
+          "EVD-ef83d89f408f32abbcc8",
+          "EVD-6736ec7092739f62d38e"
+        ],
+        "analysis_status": "MODEL_DRAFT"
+      },
+      {
+        "l4_code": "L4-IRI-03",
+        "quadrant": "unclassified",
+        "data_basis": [
+          "EVD-d7bdef1bf8a0cb09a4cd (输入结构化程度2，可自动化)"
+        ],
+        "process_context": "蓝图STEP-03，基于资源盘点和技术规范进行实际对接。",
+        "risks_limits": [
+          "多方协调依赖人工沟通，自动化程度受限于团队配合度",
+          "单一动作但可能涉及复杂技术决策时需人工介入"
+        ],
+        "current_recommendation": "建议Auto Tier，可构建Skill用于对接状态跟踪与报告生成，但需人工解决阻塞问题。鉴于A级，优先Skill化。",
+        "evidence_refs": [
+          "EVD-d7bdef1bf8a0cb09a4cd",
+          "EVD-1a4cd2324328ba161958",
+          "EVD-e2ecd0e98749b6927a50",
+          "EVD-13cfe7c03379a70e58d1",
+          "EVD-de5401bfa9eea69b51ab",
+          "EVD-02d3e0ea1e235ede8b2f",
+          "EVD-3bc5be30b40c03ef1cc7",
+          "EVD-dbc1df15130b3fc7184d",
+          "EVD-39b4747921861c55c07c",
+          "EVD-bbf6df6b3e01a5042333",
+          "EVD-7bc09bed7725bcd74485",
+          "EVD-6224271584b21fd9ffba",
+          "EVD-ab8391767822b04d6214"
+        ],
+        "analysis_status": "MODEL_DRAFT"
+      },
+      {
+        "l4_code": "L4-IRI-04",
+        "quadrant": "unclassified",
+        "data_basis": [
+          "EVD-19f87a57d8aa661c8f10 (输入结构化程度3，高度自动化可行)"
+        ],
+        "process_context": "蓝图STEP-04，在系统技术验证通过后执行。",
+        "risks_limits": [
+          "复合动作需确保子Skill顺序和失败回退，避免部分配置生效导致系统不一致",
+          "建议先拆分后封装"
+        ],
+        "current_recommendation": "推荐Auto Tier，但需先拆分为独立子Skill，逐步实现自动化。优先实现权限同步和验证Skill，通知可由已有工具完成。鉴于A级封装可行性，纳入Skill原型。",
+        "evidence_refs": [
+          "EVD-19f87a57d8aa661c8f10",
+          "EVD-c7e92790c81936bb894f",
+          "EVD-e79129d1334c2b53c44a",
+          "EVD-203a6241788163e6f44e",
+          "EVD-2a26b53f4d9f8fd45d03",
+          "EVD-5024d6b1b5278033e109",
+          "EVD-42e3d902d6d5db3573c8",
+          "EVD-ba8220cd957d883f044d",
+          "EVD-d84805e5a3e88682f6c8",
+          "EVD-f7696b1a02cf45cef184",
+          "EVD-d0bedd06ba8d138f2ec7",
+          "EVD-1f16d4893daa67eac8b5",
+          "EVD-09fb9d312c03fa2c624f"
+        ],
+        "analysis_status": "MODEL_DRAFT"
+      },
+      {
+        "l4_code": "L4-IRI-05",
+        "quadrant": "unclassified",
+        "data_basis": [
+          "EVD-b5d4a34b869854a33792 (输入结构化程度2，可自动化)"
+        ],
+        "process_context": "蓝图STEP-06，流程最后一步，在培训换手后进行。",
+        "risks_limits": [
+          "若前期步骤未完成，核验可能不通过，需向上游环节反馈"
+        ],
+        "current_recommendation": "建议Auto Tier，Skill可自动化核验并起草确认书。由于价值节点P1，应优先开发。",
+        "evidence_refs": [
+          "EVD-b5d4a34b869854a33792",
+          "EVD-897bf7b88f3e19b3a099",
+          "EVD-7387448909a8ece9322d",
+          "EVD-190d42c84389fc9defd3",
+          "EVD-e017f6e55d09309534d0",
+          "EVD-325631a7641454a54cc3",
+          "EVD-b75c5d38a8877741f5a0",
+          "EVD-24933e2bad45556edf98",
+          "EVD-e6368f05e7b7445da055",
+          "EVD-d156a78dc289923c3579",
+          "EVD-f57e954be3d0f0789420",
+          "EVD-42e69105c3cd239a8329",
+          "EVD-28862fa9387a8871f562",
+          "EVD-4e17bf4f41ab7d5c85ec",
+          "EVD-03dff1fc8e2f83f8e864"
+        ],
+        "analysis_status": "MODEL_DRAFT"
+      },
+      {
+        "l4_code": "L4-IRI-06",
+        "quadrant": "unclassified",
+        "data_basis": [
+          "EVD-c6b87ea3dfa7384f50b3 (输入结构化程度2，可自动化)"
+        ],
+        "process_context": "蓝图STEP-02与STEP-03，为系统对接提供标准。",
+        "risks_limits": [
+          "依赖保司技术栈信息，若信息不全则生成质量下降"
+        ],
+        "current_recommendation": "建议Auto Tier，可用于生成初稿。A级封装可行性高，优先Skill化。",
+        "evidence_refs": [
+          "EVD-c6b87ea3dfa7384f50b3",
+          "EVD-00235454a7c2d98e820d",
+          "EVD-3b052879e4a180580309",
+          "EVD-20b837fe0d8e965a7a3d",
+          "EVD-84d743ecedb8c8171cdf",
+          "EVD-103149948c2b6d1071bf",
+          "EVD-a0013f89ac114acaf5e9",
+          "EVD-7e496cc12b54d1b7b900",
+          "EVD-ba7606e240c3083a468e",
+          "EVD-c8c71c11884fe166a01d",
+          "EVD-6d2335f253348828b88a",
+          "EVD-d8f5b8cf37c6d749abd0",
+          "EVD-6736ec7092739f62d38e",
+          "EVD-ab8391767822b04d6214"
+        ],
+        "analysis_status": "MODEL_DRAFT"
+      },
+      {
+        "l4_code": "L4-IRI-07",
+        "quadrant": "unclassified",
+        "data_basis": [
+          "EVD-5e4251de05ccd7855d82 (输入结构化程度2，但规则清晰度低d2=1)"
+        ],
+        "process_context": "蓝图STEP-05，在权限生效后进行。",
+        "risks_limits": [
+          "物理执行（现场培训）难以自动化，人员流失可能导致知识断档",
+          "C级低封装，不宜强行Skill化"
+        ],
+        "current_recommendation": "建议维持Hybrid Tier，AI Agent辅助管理培训进度与资料，核心培训仍由人完成。可探索VR培训等数字化手段，但短期不可自动化。",
+        "evidence_refs": [
+          "EVD-5e4251de05ccd7855d82",
+          "EVD-c002572aa5abe71dbdd9",
+          "EVD-5a3686507b8c80c777a7",
+          "EVD-094761efc658210e2039",
+          "EVD-6441df35217b715d668e",
+          "EVD-2e7077ab3cd881df022a",
+          "EVD-f2d72ad3fb75da7e8513",
+          "EVD-8e5ae428a1335781531a",
+          "EVD-d88ef0fe40c0900fbeda",
+          "EVD-d1332f949f4ab6e14f9b",
+          "EVD-ed512836d8acd32edf4a",
+          "EVD-bd6b0441ef88ca3771a0",
+          "EVD-7461458c94ffad2a4ba2"
+        ],
+        "analysis_status": "MODEL_DRAFT"
+      }
+    ]
+  },
+  "fact_pack": {
+    "l3_code": "L3-IRI",
+    "l3_name": "保司资源整合与深度对接",
+    "snapshot_hash": "20856b62a6461a56a9e64e66ccb6119e4ec0982c67db1bc01eda97b7069ebeae",
+    "source_policy": {
+      "consensus_separate": true,
+      "database_authority": "process_analytics",
+      "reverse_writeback": false,
+      "supplemental_requires_active": true
+    },
+    "gates": {
+      "A": {
+        "checks": [
+          {
+            "detail": "Gate E=CONDITIONAL",
+            "passed": true,
+            "rule_id": "A-001"
+          },
+          {
+            "detail": "D1-D6完整=7/7",
+            "passed": true,
+            "rule_id": "A-002"
+          },
+          {
+            "detail": "价值节点-L4映射=1",
+            "passed": true,
+            "rule_id": "A-003"
+          },
+          {
+            "detail": "无熔断节点",
+            "passed": true,
+            "rule_id": "A-004"
+          }
+        ],
+        "status": "PASS"
+      },
+      "E": {
+        "checks": [
+          {
+            "detail": "Gate M=PASS",
+            "passed": true,
+            "rule_id": "E-001"
+          },
+          {
+            "detail": "交付物完整=7/7（完整门槛90%）",
+            "passed": true,
+            "rule_id": "E-002"
+          },
+          {
+            "detail": "Tier合法",
+            "passed": true,
+            "rule_id": "E-003"
+          },
+          {
+            "detail": "可追溯任务覆盖=7/7（完整门槛80%）",
+            "passed": true,
+            "rule_id": "E-004"
+          },
+          {
+            "detail": "关键L4任务覆盖=0/0",
+            "passed": true,
+            "rule_id": "E-005"
+          },
+          {
+            "detail": "价值节点-L4映射=1",
+            "passed": true,
+            "rule_id": "E-006"
+          },
+          {
+            "detail": "规则可定位L4=0/7",
+            "passed": false,
+            "rule_id": "E-007"
+          },
+          {
+            "detail": "缺少SOP草稿或同等任务执行材料（不阻断建模）",
+            "passed": false,
+            "rule_id": "E-008"
+          },
+          {
+            "detail": "缺少可关联的规则记录（不阻断建模）",
+            "passed": false,
+            "rule_id": "E-009"
+          }
+        ],
+        "status": "CONDITIONAL"
+      },
+      "M": {
+        "checks": [
+          {
+            "detail": "L4数量=7",
+            "passed": true,
+            "rule_id": "M-001"
+          },
+          {
+            "detail": "流程蓝图_L3-IRI_保司资源整合与深度对接_V1.1.md",
+            "passed": true,
+            "rule_id": "M-002"
+          },
+          {
+            "detail": "L4名称完整",
+            "passed": true,
+            "rule_id": "M-003"
+          },
+          {
+            "detail": "交付物完整=7/7（最低门槛70%）",
+            "passed": true,
+            "rule_id": "M-004"
+          },
+          {
+            "detail": "D1-D6完整=7/7",
+            "passed": true,
+            "rule_id": "M-005"
+          }
+        ],
+        "status": "PASS"
+      }
+    },
+    "l2_capabilities": [
+      {
+        "l2_code": "L2-01.3",
+        "l2_name": "资源投放与执行",
+        "l3_code": "L3-IRI"
+      }
+    ],
+    "l4s": [
+      {
+        "d1_d6": {
+          "agent_d1_input_struct": 1,
+          "agent_d2_rule_clear": 0,
+          "agent_d3_output_verify": 0,
+          "agent_d4_api_reach": 0,
+          "agent_d5_fallback": 0,
+          "agent_d6_compliance": 1
+        },
+        "deliverable": "《权限清单》",
+        "deliverable_type": "数据表",
+        "evidence_refs": {
+          "agent_d1_input_struct": "EVD-9e48e07e2b017fd5d67b",
+          "agent_d2_rule_clear": "EVD-f58846cd444696abc279",
+          "agent_d3_output_verify": "EVD-533f7ff0805c43720e08",
+          "agent_d4_api_reach": "EVD-2ec5e2f48afb7673bdf3",
+          "agent_d5_fallback": "EVD-6bee5e65f8c58250eef8",
+          "agent_d6_compliance": "EVD-2e2e355c19b8510b3068",
+          "agent_human_touchpoint": "EVD-03c1c78918cf87a87349",
+          "agentifiability": "EVD-78815e43e1ef2aaecfdf",
+          "l4_deliverable": "EVD-96e9ee7e8ee363a235a5",
+          "l4_deliverable_type": "EVD-a1f8dbef2e4585018f02",
+          "l4_name": "EVD-8e15f0a65bcac2d327d5",
+          "skill_feasibility": "EVD-044724ee17558e0136cd"
+        },
+        "human_touchpoint": "人工执行：权限清单谈判",
+        "l4_code": "L4-IRI-01",
+        "l4_name": "权限清单谈判",
+        "skill_feasibility": {
+          "action_nature": "判断/策略/认知类",
+          "action_singularity": "单一动作",
+          "funds_safety_hard_gate": false,
+          "grade": "C-低封装(判断/策略/关系类,理论天花板)",
+          "judgment_basis": "C-仍低封装度(需判断/权威)",
+          "physical_execution": false,
+          "recommended_path": "优先考虑Agent辅助或决策支持，不直接封装确定性Skill",
+          "verification_status": "VERIFIED"
+        },
+        "tier": "Hybrid"
+      },
+      {
+        "d1_d6": {
+          "agent_d1_input_struct": 2,
+          "agent_d2_rule_clear": 2,
+          "agent_d3_output_verify": 2,
+          "agent_d4_api_reach": 2,
+          "agent_d5_fallback": 2,
+          "agent_d6_compliance": 2
+        },
+        "deliverable": "《资源对接清单》",
+        "deliverable_type": "数据表",
+        "evidence_refs": {
+          "agent_d1_input_struct": "EVD-a0cb205cc3aee6bb8352",
+          "agent_d2_rule_clear": "EVD-72fe76bb38661d562dd6",
+          "agent_d3_output_verify": "EVD-736fcc732a10c8cc6beb",
+          "agent_d4_api_reach": "EVD-38f9735202663a227a79",
+          "agent_d5_fallback": "EVD-1172fc848b36c519244e",
+          "agent_d6_compliance": "EVD-b5f4de2b0aea2ca2c140",
+          "agent_human_touchpoint": "EVD-89a68a23c5cc4d4bc335",
+          "agentifiability": "EVD-9f05031d924e36c3443a",
+          "l4_deliverable": "EVD-1bd8fa144d974074db96",
+          "l4_deliverable_type": "EVD-fd4eb8e73b1ca19a6dd2",
+          "l4_name": "EVD-1b4ff8d3a2ecc4a3e8ae",
+          "skill_feasibility": "EVD-ef83d89f408f32abbcc8"
+        },
+        "human_touchpoint": "人工执行：保司资源盘点",
+        "l4_code": "L4-IRI-02",
+        "l4_name": "保司资源盘点",
+        "skill_feasibility": {
+          "action_nature": "信息处理/事务类",
+          "action_singularity": "单一动作",
+          "funds_safety_hard_gate": false,
+          "grade": "A-高封装(理想条件下Skill候选)",
+          "judgment_basis": "A-高封装(单一信息处理动作)",
+          "physical_execution": false,
+          "recommended_path": "优先进入Skill原型候选池",
+          "verification_status": "VERIFIED"
+        },
+        "tier": "Auto"
+      },
+      {
+        "d1_d6": {
+          "agent_d1_input_struct": 2,
+          "agent_d2_rule_clear": 2,
+          "agent_d3_output_verify": 2,
+          "agent_d4_api_reach": 2,
+          "agent_d5_fallback": 2,
+          "agent_d6_compliance": 2
+        },
+        "deliverable": "对接完成报告",
+        "deliverable_type": "报告",
+        "evidence_refs": {
+          "agent_d1_input_struct": "EVD-d7bdef1bf8a0cb09a4cd",
+          "agent_d2_rule_clear": "EVD-1a4cd2324328ba161958",
+          "agent_d3_output_verify": "EVD-e2ecd0e98749b6927a50",
+          "agent_d4_api_reach": "EVD-13cfe7c03379a70e58d1",
+          "agent_d5_fallback": "EVD-de5401bfa9eea69b51ab",
+          "agent_d6_compliance": "EVD-02d3e0ea1e235ede8b2f",
+          "agent_human_touchpoint": "EVD-3bc5be30b40c03ef1cc7",
+          "agentifiability": "EVD-dbc1df15130b3fc7184d",
+          "l4_deliverable": "EVD-39b4747921861c55c07c",
+          "l4_deliverable_type": "EVD-bbf6df6b3e01a5042333",
+          "l4_name": "EVD-7bc09bed7725bcd74485",
+          "skill_feasibility": "EVD-6224271584b21fd9ffba"
+        },
+        "human_touchpoint": "人工执行：系统数据团队对接",
+        "l4_code": "L4-IRI-03",
+        "l4_name": "系统数据团队对接",
+        "skill_feasibility": {
+          "action_nature": "信息处理/事务类",
+          "action_singularity": "单一动作",
+          "funds_safety_hard_gate": false,
+          "grade": "A-高封装(理想条件下Skill候选)",
+          "judgment_basis": "A-高封装(单一信息处理动作)",
+          "physical_execution": false,
+          "recommended_path": "优先进入Skill原型候选池",
+          "verification_status": "VERIFIED"
+        },
+        "tier": "Auto"
+      },
+      {
+        "d1_d6": {
+          "agent_d1_input_struct": 3,
+          "agent_d2_rule_clear": 3,
+          "agent_d3_output_verify": 3,
+          "agent_d4_api_reach": 3,
+          "agent_d5_fallback": 2,
+          "agent_d6_compliance": 2
+        },
+        "deliverable": "权限生效通知",
+        "deliverable_type": "方案",
+        "evidence_refs": {
+          "agent_d1_input_struct": "EVD-19f87a57d8aa661c8f10",
+          "agent_d2_rule_clear": "EVD-c7e92790c81936bb894f",
+          "agent_d3_output_verify": "EVD-e79129d1334c2b53c44a",
+          "agent_d4_api_reach": "EVD-203a6241788163e6f44e",
+          "agent_d5_fallback": "EVD-2a26b53f4d9f8fd45d03",
+          "agent_d6_compliance": "EVD-5024d6b1b5278033e109",
+          "agent_human_touchpoint": "EVD-42e3d902d6d5db3573c8",
+          "agentifiability": "EVD-ba8220cd957d883f044d",
+          "l4_deliverable": "EVD-d84805e5a3e88682f6c8",
+          "l4_deliverable_type": "EVD-f7696b1a02cf45cef184",
+          "l4_name": "EVD-d0bedd06ba8d138f2ec7",
+          "skill_feasibility": "EVD-1f16d4893daa67eac8b5"
+        },
+        "human_touchpoint": "人工执行：权限生效与配置",
+        "l4_code": "L4-IRI-04",
+        "l4_name": "权限生效与配置",
+        "skill_feasibility": {
+          "action_nature": "信息处理/事务类",
+          "action_singularity": "复合动作(建议先拆分)",
+          "funds_safety_hard_gate": false,
+          "grade": "A-高封装(理想条件下Skill候选)",
+          "judgment_basis": "A-需先拆分为子Skill(复合动作)",
+          "physical_execution": false,
+          "recommended_path": "优先进入Skill原型候选池",
+          "verification_status": "VERIFIED"
+        },
+        "tier": "Auto"
+      },
+      {
+        "d1_d6": {
+          "agent_d1_input_struct": 2,
+          "agent_d2_rule_clear": 2,
+          "agent_d3_output_verify": 2,
+          "agent_d4_api_reach": 2,
+          "agent_d5_fallback": 2,
+          "agent_d6_compliance": 2
+        },
+        "deliverable": "《整合就绪确认书》",
+        "deliverable_type": "方案",
+        "evidence_refs": {
+          "agent_d1_input_struct": "EVD-b5d4a34b869854a33792",
+          "agent_d2_rule_clear": "EVD-897bf7b88f3e19b3a099",
+          "agent_d3_output_verify": "EVD-7387448909a8ece9322d",
+          "agent_d4_api_reach": "EVD-190d42c84389fc9defd3",
+          "agent_d5_fallback": "EVD-e017f6e55d09309534d0",
+          "agent_d6_compliance": "EVD-325631a7641454a54cc3",
+          "agent_human_touchpoint": "EVD-b75c5d38a8877741f5a0",
+          "agentifiability": "EVD-24933e2bad45556edf98",
+          "l4_deliverable": "EVD-e6368f05e7b7445da055",
+          "l4_deliverable_type": "EVD-d156a78dc289923c3579",
+          "l4_name": "EVD-f57e954be3d0f0789420",
+          "skill_feasibility": "EVD-42e69105c3cd239a8329"
+        },
+        "human_touchpoint": "人工执行：整合就绪确认",
+        "l4_code": "L4-IRI-05",
+        "l4_name": "整合就绪确认",
+        "skill_feasibility": {
+          "action_nature": "信息处理/事务类",
+          "action_singularity": "单一动作",
+          "funds_safety_hard_gate": false,
+          "grade": "A-高封装(理想条件下Skill候选)",
+          "judgment_basis": "A-高封装(单一信息处理动作)",
+          "physical_execution": false,
+          "recommended_path": "优先进入Skill原型候选池",
+          "verification_status": "VERIFIED"
+        },
+        "tier": "Auto"
+      },
+      {
+        "d1_d6": {
+          "agent_d1_input_struct": 2,
+          "agent_d2_rule_clear": 2,
+          "agent_d3_output_verify": 2,
+          "agent_d4_api_reach": 2,
+          "agent_d5_fallback": 2,
+          "agent_d6_compliance": 2
+        },
+        "deliverable": "《对接技术规范》",
+        "deliverable_type": "方案",
+        "evidence_refs": {
+          "agent_d1_input_struct": "EVD-c6b87ea3dfa7384f50b3",
+          "agent_d2_rule_clear": "EVD-00235454a7c2d98e820d",
+          "agent_d3_output_verify": "EVD-3b052879e4a180580309",
+          "agent_d4_api_reach": "EVD-20b837fe0d8e965a7a3d",
+          "agent_d5_fallback": "EVD-84d743ecedb8c8171cdf",
+          "agent_d6_compliance": "EVD-103149948c2b6d1071bf",
+          "agent_human_touchpoint": "EVD-a0013f89ac114acaf5e9",
+          "agentifiability": "EVD-7e496cc12b54d1b7b900",
+          "l4_deliverable": "EVD-ba7606e240c3083a468e",
+          "l4_deliverable_type": "EVD-c8c71c11884fe166a01d",
+          "l4_name": "EVD-6d2335f253348828b88a",
+          "skill_feasibility": "EVD-d8f5b8cf37c6d749abd0"
+        },
+        "human_touchpoint": "人工执行：保司IT系统深度对接",
+        "l4_code": "L4-IRI-06",
+        "l4_name": "保司IT系统深度对接",
+        "skill_feasibility": {
+          "action_nature": "信息处理/事务类",
+          "action_singularity": "单一动作",
+          "funds_safety_hard_gate": false,
+          "grade": "A-高封装(理想条件下Skill候选)",
+          "judgment_basis": "A-高封装(单一信息处理动作)",
+          "physical_execution": false,
+          "recommended_path": "优先进入Skill原型候选池",
+          "verification_status": "VERIFIED"
+        },
+        "tier": "Auto"
+      },
+      {
+        "d1_d6": {
+          "agent_d1_input_struct": 2,
+          "agent_d2_rule_clear": 1,
+          "agent_d3_output_verify": 2,
+          "agent_d4_api_reach": 2,
+          "agent_d5_fallback": 1,
+          "agent_d6_compliance": 1
+        },
+        "deliverable": "《培训换手记录》",
+        "deliverable_type": "数据表",
+        "evidence_refs": {
+          "agent_d1_input_struct": "EVD-5e4251de05ccd7855d82",
+          "agent_d2_rule_clear": "EVD-c002572aa5abe71dbdd9",
+          "agent_d3_output_verify": "EVD-5a3686507b8c80c777a7",
+          "agent_d4_api_reach": "EVD-094761efc658210e2039",
+          "agent_d5_fallback": "EVD-6441df35217b715d668e",
+          "agent_d6_compliance": "EVD-2e7077ab3cd881df022a",
+          "agent_human_touchpoint": "EVD-f2d72ad3fb75da7e8513",
+          "agentifiability": "EVD-8e5ae428a1335781531a",
+          "l4_deliverable": "EVD-d88ef0fe40c0900fbeda",
+          "l4_deliverable_type": "EVD-d1332f949f4ab6e14f9b",
+          "l4_name": "EVD-ed512836d8acd32edf4a",
+          "skill_feasibility": "EVD-bd6b0441ef88ca3771a0"
+        },
+        "human_touchpoint": "人工执行：保司内部培训与换手",
+        "l4_code": "L4-IRI-07",
+        "l4_name": "保司内部培训与换手",
+        "skill_feasibility": {
+          "action_nature": "语义复核判定",
+          "action_singularity": "复合动作(建议先拆分)",
+          "funds_safety_hard_gate": false,
+          "grade": "C-低封装(判断/策略/关系类,理论天花板)",
+          "judgment_basis": "C-低封装度(判断/策略/关系类,语义复核后确认)",
+          "physical_execution": true,
+          "recommended_path": "优先考虑Agent辅助或决策支持，不直接封装确定性Skill",
+          "verification_status": "VERIFIED"
+        },
+        "tier": "Hybrid"
+      }
+    ],
+    "value_nodes": [
+      {
+        "evidence_refs": {
+          "gate1_data_linked": "EVD-f9326fd5f6462f9ed661",
+          "gate2_grounded": "EVD-3318dce55435da160242",
+          "gate3_traceable": "EVD-6802c95a0d7003b4c5b0",
+          "is_fused": "EVD-95a2a1b4f5ac3c9ee67f",
+          "overall_judgment": "EVD-03dff1fc8e2f83f8e864",
+          "priority": "EVD-4e17bf4f41ab7d5c85ec",
+          "vn_name": "EVD-5fab25d41a47f311588d"
+        },
+        "is_fused": false,
+        "overall_judgment": "PARTIAL",
+        "priority": "P1",
+        "vn_id": "VN-INS-03",
+        "vn_name": "整合就绪确认书"
+      }
+    ],
+    "vn_l4_mappings": [
+      {
+        "l3_code": "L3-IRI",
+        "l4_code": "L4-IRI-05",
+        "mapping_status": "direct",
+        "vn_id": "VN-INS-03"
+      }
+    ],
+    "kpi_mappings": [
+      {
+        "contribution_weight": 0.15,
+        "kpi_code": "T01",
+        "kpi_name": "保司Pipeline周推进数",
+        "l3_code": "L3-IRI",
+        "row_status": "draft",
+        "weight_confirmed": "pending"
+      }
+    ],
+    "value_stream_mappings": [
+      {
+        "l3_code": "L3-IRI",
+        "stage_code": "S3",
+        "vs_code": "VS-1",
+        "vs_name": "保司资源投放旅程"
+      }
+    ],
+    "blueprint": {
+      "blueprint_value_nodes": [],
+      "coverage": "INDEXED",
+      "decisions": [
+        {
+          "after_step": "STEP-03",
+          "branches": [
+            {
+              "is_return": false,
+              "label": "通过",
+              "source_line": 51,
+              "target_l4": "",
+              "target_step": "STEP-04",
+              "target_text": "步骤4"
+            },
+            {
+              "is_return": true,
+              "label": "未通过",
+              "source_line": 52,
+              "target_l4": "L4-IRI-06",
+              "target_step": "",
+              "target_text": "返回L4-IRI-06修订技术规范，重新联调"
+            },
+            {
+              "is_return": false,
+              "label": "执行L4-IRI-04：系统自动化配置权限",
+              "source_line": 55,
+              "target_l4": "",
+              "target_step": "",
+              "target_text": "输出权限生效通知"
+            }
+          ],
+          "decision_id": "Q1",
+          "evidence_ref": "EVD-00b9142e08e1785cf892",
+          "question": "系统对接是否通过技术验证",
+          "source_line": 50
+        },
+        {
+          "after_step": "STEP-04",
+          "branches": [
+            {
+              "is_return": false,
+              "label": "通过",
+              "source_line": 58,
+              "target_l4": "",
+              "target_step": "STEP-05",
+              "target_text": "步骤5"
+            },
+            {
+              "is_return": true,
+              "label": "未通过",
+              "source_line": 59,
+              "target_l4": "L4-IRI-03",
+              "target_step": "",
+              "target_text": "返回L4-IRI-03技术团队修复"
+            },
+            {
+              "is_return": false,
+              "label": "执行L4-IRI-07：对保司人员开展培训",
+              "source_line": 62,
+              "target_l4": "",
+              "target_step": "",
+              "target_text": "输出《培训换手记录》"
+            }
+          ],
+          "decision_id": "Q2",
+          "evidence_ref": "EVD-d0b4c6e621b592754ff6",
+          "question": "权限生效测试是否通过",
+          "source_line": 57
+        }
+      ],
+      "diagnostics": {
+        "blueprint_l4_count": 7,
+        "db_l4_count": 7,
+        "extra_in_blueprint": [],
+        "missing_in_blueprint": [],
+        "parsed_step_l4_count": 7,
+        "retired_l4s_ignored": [],
+        "unmapped_step_count": 0
+      },
+      "edges": [
+        {
+          "edge_id": "SEQ-STEP-01-STEP-02",
+          "edge_type": "SEQUENCE",
+          "from": "STEP-01",
+          "label": "",
+          "source_rule": "蓝图显式编号步骤的相邻顺序",
+          "to": "STEP-02"
+        },
+        {
+          "edge_id": "SEQ-STEP-02-STEP-03",
+          "edge_type": "SEQUENCE",
+          "from": "STEP-02",
+          "label": "",
+          "source_rule": "蓝图显式编号步骤的相邻顺序",
+          "to": "STEP-03"
+        },
+        {
+          "edge_id": "SEQ-STEP-03-STEP-04",
+          "edge_type": "SEQUENCE",
+          "from": "STEP-03",
+          "label": "",
+          "source_rule": "蓝图显式编号步骤的相邻顺序",
+          "to": "STEP-04"
+        },
+        {
+          "edge_id": "SEQ-STEP-04-STEP-05",
+          "edge_type": "SEQUENCE",
+          "from": "STEP-04",
+          "label": "",
+          "source_rule": "蓝图显式编号步骤的相邻顺序",
+          "to": "STEP-05"
+        },
+        {
+          "edge_id": "SEQ-STEP-05-STEP-06",
+          "edge_type": "SEQUENCE",
+          "from": "STEP-05",
+          "label": "",
+          "source_rule": "蓝图显式编号步骤的相邻顺序",
+          "to": "STEP-06"
+        },
+        {
+          "edge_id": "Q1-6",
+          "edge_type": "DECISION",
+          "from": "Q1",
+          "label": "通过",
+          "source_rule": "蓝图第51行显式分支",
+          "to": "STEP-04"
+        },
+        {
+          "edge_id": "Q1-7",
+          "edge_type": "RETURN",
+          "from": "Q1",
+          "label": "未通过",
+          "source_rule": "蓝图第52行显式分支",
+          "to": "L4-IRI-06"
+        },
+        {
+          "edge_id": "Q2-8",
+          "edge_type": "DECISION",
+          "from": "Q2",
+          "label": "通过",
+          "source_rule": "蓝图第58行显式分支",
+          "to": "STEP-05"
+        },
+        {
+          "edge_id": "Q2-9",
+          "edge_type": "RETURN",
+          "from": "Q2",
+          "label": "未通过",
+          "source_rule": "蓝图第59行显式分支",
+          "to": "L4-IRI-03"
+        }
+      ],
+      "filename": "流程蓝图_L3-IRI_保司资源整合与深度对接_V1.1.md",
+      "note": "已从蓝图正文解析；步骤顺序边由显式步骤编号派生，判断分支保留原文行号",
+      "raci": [],
+      "source_hash": "0c30718b398b970d408d8699b53560a2e4339a072ca555b4e2939444b39f7852",
+      "source_path": "/Users/a112233/Desktop/流程架构项目_jasper/02_过程成果-工作产出/L3流程库/流程蓝图_L3-IRI_保司资源整合与深度对接_V1.1.md",
+      "steps": [
+        {
+          "activities": [
+            "执行L4-IRI-01：A族 + Mark确认权限边界 → 输出《权限清单》（Mark必须介入）"
+          ],
+          "evidence_ref": "EVD-52b0cc4ad42718878f21",
+          "l4_codes": [
+            "L4-IRI-01"
+          ],
+          "sequence": 1,
+          "source_line": 40,
+          "step_id": "STEP-01",
+          "step_name": "权限清单谈判与确认"
+        },
+        {
+          "activities": [
+            "执行L4-IRI-02：盘点保司可用资源 → 输出《资源对接清单》",
+            "执行L4-IRI-06：制定《对接技术规范》（API/SSO/联调）"
+          ],
+          "evidence_ref": "EVD-6736ec7092739f62d38e",
+          "l4_codes": [
+            "L4-IRI-02",
+            "L4-IRI-06"
+          ],
+          "sequence": 2,
+          "source_line": 43,
+          "step_id": "STEP-02",
+          "step_name": "资源盘点与对接规范制定"
+        },
+        {
+          "activities": [
+            "执行L4-IRI-03：系统+数据+人员三线对接 → 输出对接完成报告",
+            "未通过 → 返回L4-IRI-06修订技术规范，重新联调"
+          ],
+          "evidence_ref": "EVD-ab8391767822b04d6214",
+          "l4_codes": [
+            "L4-IRI-03",
+            "L4-IRI-06"
+          ],
+          "sequence": 3,
+          "source_line": 47,
+          "step_id": "STEP-03",
+          "step_name": "系统与数据团队对接"
+        },
+        {
+          "activities": [
+            "执行L4-IRI-04：系统自动化配置权限 → 输出权限生效通知",
+            "未通过 → 返回L4-IRI-03技术团队修复"
+          ],
+          "evidence_ref": "EVD-09fb9d312c03fa2c624f",
+          "l4_codes": [
+            "L4-IRI-04",
+            "L4-IRI-03"
+          ],
+          "sequence": 4,
+          "source_line": 54,
+          "step_id": "STEP-04",
+          "step_name": "权限生效与配置"
+        },
+        {
+          "activities": [
+            "执行L4-IRI-07：对保司人员开展培训 → 输出《培训换手记录》"
+          ],
+          "evidence_ref": "EVD-7461458c94ffad2a4ba2",
+          "l4_codes": [
+            "L4-IRI-07"
+          ],
+          "sequence": 5,
+          "source_line": 61,
+          "step_id": "STEP-05",
+          "step_name": "保司内部培训与人员换手"
+        },
+        {
+          "activities": [
+            "执行L4-IRI-05：各项checklist核验 → 输出《整合就绪确认书》"
+          ],
+          "evidence_ref": "EVD-28862fa9387a8871f562",
+          "l4_codes": [
+            "L4-IRI-05"
+          ],
+          "sequence": 6,
+          "source_line": 64,
+          "step_id": "STEP-06",
+          "step_name": "整合就绪确认"
+        }
+      ],
+      "structure_status": "PARSED",
+      "version": "V1.1"
+    },
+    "evidence_registry": [
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-00235454a7c2d98e820d",
+        "field_name": "agent_d2_rule_clear",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d2_rule_clear",
+          "source_key": "L4-IRI-06",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-00b9142e08e1785cf892",
+        "field_name": "blueprint.decisions.Q1",
+        "source": {
+          "observed_at": "",
+          "source_field": "decision",
+          "source_key": "line:50",
+          "source_object": "流程蓝图_L3-IRI_保司资源整合与深度对接_V1.1.md",
+          "source_system": "L3流程库",
+          "source_version": "V1.1"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "branches": [
+            {
+              "is_return": false,
+              "label": "通过",
+              "source_line": 51,
+              "target_l4": "",
+              "target_step": "STEP-04",
+              "target_text": "步骤4"
+            },
+            {
+              "is_return": true,
+              "label": "未通过",
+              "source_line": 52,
+              "target_l4": "L4-IRI-06",
+              "target_step": "",
+              "target_text": "返回L4-IRI-06修订技术规范，重新联调"
+            },
+            {
+              "is_return": false,
+              "label": "执行L4-IRI-04：系统自动化配置权限",
+              "source_line": 55,
+              "target_l4": "",
+              "target_step": "",
+              "target_text": "输出权限生效通知"
+            }
+          ],
+          "question": "系统对接是否通过技术验证"
+        }
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-02d3e0ea1e235ede8b2f",
+        "field_name": "agent_d6_compliance",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d6_compliance",
+          "source_key": "L4-IRI-03",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-03c1c78918cf87a87349",
+        "field_name": "agent_human_touchpoint",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_human_touchpoint",
+          "source_key": "L4-IRI-01",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "人工执行：权限清单谈判"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-03dff1fc8e2f83f8e864",
+        "field_name": "overall_judgment",
+        "source": {
+          "observed_at": "",
+          "source_field": "overall_judgment",
+          "source_key": "VN-INS-03",
+          "source_object": "process_analytics.dim_vn",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "PARTIAL"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-044724ee17558e0136cd",
+        "field_name": "skill_feasibility",
+        "source": {
+          "observed_at": "",
+          "source_field": "L4明细_最终确认版:A:N",
+          "source_key": "L4-IRI-01@row:201",
+          "source_object": "L4流程_Skill封装可行性评估_确认最终版_v2.xlsx",
+          "source_system": "OB知识库",
+          "source_version": "v2"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "action_nature": "判断/策略/认知类",
+          "action_singularity": "单一动作",
+          "funds_safety_hard_gate": false,
+          "grade": "C-低封装(判断/策略/关系类,理论天花板)",
+          "judgment_basis": "C-仍低封装度(需判断/权威)",
+          "physical_execution": false,
+          "recommended_path": "优先考虑Agent辅助或决策支持，不直接封装确定性Skill",
+          "verification_status": "VERIFIED"
+        }
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-094761efc658210e2039",
+        "field_name": "agent_d4_api_reach",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d4_api_reach",
+          "source_key": "L4-IRI-07",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-09fb9d312c03fa2c624f",
+        "field_name": "blueprint.steps.STEP-04",
+        "source": {
+          "observed_at": "",
+          "source_field": "step",
+          "source_key": "line:54",
+          "source_object": "流程蓝图_L3-IRI_保司资源整合与深度对接_V1.1.md",
+          "source_system": "L3流程库",
+          "source_version": "V1.1"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "l4_codes": [
+            "L4-IRI-04",
+            "L4-IRI-03"
+          ],
+          "step_name": "权限生效与配置"
+        }
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-103149948c2b6d1071bf",
+        "field_name": "agent_d6_compliance",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d6_compliance",
+          "source_key": "L4-IRI-06",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-1172fc848b36c519244e",
+        "field_name": "agent_d5_fallback",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d5_fallback",
+          "source_key": "L4-IRI-02",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-13cfe7c03379a70e58d1",
+        "field_name": "agent_d4_api_reach",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d4_api_reach",
+          "source_key": "L4-IRI-03",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-190d42c84389fc9defd3",
+        "field_name": "agent_d4_api_reach",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d4_api_reach",
+          "source_key": "L4-IRI-05",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-19f87a57d8aa661c8f10",
+        "field_name": "agent_d1_input_struct",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d1_input_struct",
+          "source_key": "L4-IRI-04",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 3
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-1a4cd2324328ba161958",
+        "field_name": "agent_d2_rule_clear",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d2_rule_clear",
+          "source_key": "L4-IRI-03",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-1b4ff8d3a2ecc4a3e8ae",
+        "field_name": "l4_name",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_name",
+          "source_key": "L4-IRI-02",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "保司资源盘点"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-1bd8fa144d974074db96",
+        "field_name": "l4_deliverable",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_deliverable",
+          "source_key": "L4-IRI-02",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "《资源对接清单》"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-1f16d4893daa67eac8b5",
+        "field_name": "skill_feasibility",
+        "source": {
+          "observed_at": "",
+          "source_field": "L4明细_最终确认版:A:N",
+          "source_key": "L4-IRI-04@row:204",
+          "source_object": "L4流程_Skill封装可行性评估_确认最终版_v2.xlsx",
+          "source_system": "OB知识库",
+          "source_version": "v2"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "action_nature": "信息处理/事务类",
+          "action_singularity": "复合动作(建议先拆分)",
+          "funds_safety_hard_gate": false,
+          "grade": "A-高封装(理想条件下Skill候选)",
+          "judgment_basis": "A-需先拆分为子Skill(复合动作)",
+          "physical_execution": false,
+          "recommended_path": "优先进入Skill原型候选池",
+          "verification_status": "VERIFIED"
+        }
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-203a6241788163e6f44e",
+        "field_name": "agent_d4_api_reach",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d4_api_reach",
+          "source_key": "L4-IRI-04",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 3
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-20b837fe0d8e965a7a3d",
+        "field_name": "agent_d4_api_reach",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d4_api_reach",
+          "source_key": "L4-IRI-06",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-24933e2bad45556edf98",
+        "field_name": "agentifiability",
+        "source": {
+          "observed_at": "",
+          "source_field": "agentifiability",
+          "source_key": "L4-IRI-05",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "Auto"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-28862fa9387a8871f562",
+        "field_name": "blueprint.steps.STEP-06",
+        "source": {
+          "observed_at": "",
+          "source_field": "step",
+          "source_key": "line:64",
+          "source_object": "流程蓝图_L3-IRI_保司资源整合与深度对接_V1.1.md",
+          "source_system": "L3流程库",
+          "source_version": "V1.1"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "l4_codes": [
+            "L4-IRI-05"
+          ],
+          "step_name": "整合就绪确认"
+        }
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-2a26b53f4d9f8fd45d03",
+        "field_name": "agent_d5_fallback",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d5_fallback",
+          "source_key": "L4-IRI-04",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-2e2e355c19b8510b3068",
+        "field_name": "agent_d6_compliance",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d6_compliance",
+          "source_key": "L4-IRI-01",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 1
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-2e7077ab3cd881df022a",
+        "field_name": "agent_d6_compliance",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d6_compliance",
+          "source_key": "L4-IRI-07",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 1
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-2ec5e2f48afb7673bdf3",
+        "field_name": "agent_d4_api_reach",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d4_api_reach",
+          "source_key": "L4-IRI-01",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 0
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-325631a7641454a54cc3",
+        "field_name": "agent_d6_compliance",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d6_compliance",
+          "source_key": "L4-IRI-05",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-3318dce55435da160242",
+        "field_name": "gate2_grounded",
+        "source": {
+          "observed_at": "",
+          "source_field": "gate2_grounded",
+          "source_key": "VN-INS-03",
+          "source_object": "process_analytics.dim_vn",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "PASS"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-38f9735202663a227a79",
+        "field_name": "agent_d4_api_reach",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d4_api_reach",
+          "source_key": "L4-IRI-02",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-39b4747921861c55c07c",
+        "field_name": "l4_deliverable",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_deliverable",
+          "source_key": "L4-IRI-03",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "对接完成报告"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-3b052879e4a180580309",
+        "field_name": "agent_d3_output_verify",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d3_output_verify",
+          "source_key": "L4-IRI-06",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-3bc5be30b40c03ef1cc7",
+        "field_name": "agent_human_touchpoint",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_human_touchpoint",
+          "source_key": "L4-IRI-03",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "人工执行：系统数据团队对接"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-42e3d902d6d5db3573c8",
+        "field_name": "agent_human_touchpoint",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_human_touchpoint",
+          "source_key": "L4-IRI-04",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "人工执行：权限生效与配置"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-42e69105c3cd239a8329",
+        "field_name": "skill_feasibility",
+        "source": {
+          "observed_at": "",
+          "source_field": "L4明细_最终确认版:A:N",
+          "source_key": "L4-IRI-05@row:205",
+          "source_object": "L4流程_Skill封装可行性评估_确认最终版_v2.xlsx",
+          "source_system": "OB知识库",
+          "source_version": "v2"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "action_nature": "信息处理/事务类",
+          "action_singularity": "单一动作",
+          "funds_safety_hard_gate": false,
+          "grade": "A-高封装(理想条件下Skill候选)",
+          "judgment_basis": "A-高封装(单一信息处理动作)",
+          "physical_execution": false,
+          "recommended_path": "优先进入Skill原型候选池",
+          "verification_status": "VERIFIED"
+        }
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-4e17bf4f41ab7d5c85ec",
+        "field_name": "priority",
+        "source": {
+          "observed_at": "",
+          "source_field": "priority",
+          "source_key": "VN-INS-03",
+          "source_object": "process_analytics.dim_vn",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "P1"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-5024d6b1b5278033e109",
+        "field_name": "agent_d6_compliance",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d6_compliance",
+          "source_key": "L4-IRI-04",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-52b0cc4ad42718878f21",
+        "field_name": "blueprint.steps.STEP-01",
+        "source": {
+          "observed_at": "",
+          "source_field": "step",
+          "source_key": "line:40",
+          "source_object": "流程蓝图_L3-IRI_保司资源整合与深度对接_V1.1.md",
+          "source_system": "L3流程库",
+          "source_version": "V1.1"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "l4_codes": [
+            "L4-IRI-01"
+          ],
+          "step_name": "权限清单谈判与确认"
+        }
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-533f7ff0805c43720e08",
+        "field_name": "agent_d3_output_verify",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d3_output_verify",
+          "source_key": "L4-IRI-01",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 0
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-5a3686507b8c80c777a7",
+        "field_name": "agent_d3_output_verify",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d3_output_verify",
+          "source_key": "L4-IRI-07",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-5e4251de05ccd7855d82",
+        "field_name": "agent_d1_input_struct",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d1_input_struct",
+          "source_key": "L4-IRI-07",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-5fab25d41a47f311588d",
+        "field_name": "vn_name",
+        "source": {
+          "observed_at": "",
+          "source_field": "vn_name",
+          "source_key": "VN-INS-03",
+          "source_object": "process_analytics.dim_vn",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "整合就绪确认书"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-6224271584b21fd9ffba",
+        "field_name": "skill_feasibility",
+        "source": {
+          "observed_at": "",
+          "source_field": "L4明细_最终确认版:A:N",
+          "source_key": "L4-IRI-03@row:203",
+          "source_object": "L4流程_Skill封装可行性评估_确认最终版_v2.xlsx",
+          "source_system": "OB知识库",
+          "source_version": "v2"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "action_nature": "信息处理/事务类",
+          "action_singularity": "单一动作",
+          "funds_safety_hard_gate": false,
+          "grade": "A-高封装(理想条件下Skill候选)",
+          "judgment_basis": "A-高封装(单一信息处理动作)",
+          "physical_execution": false,
+          "recommended_path": "优先进入Skill原型候选池",
+          "verification_status": "VERIFIED"
+        }
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-6441df35217b715d668e",
+        "field_name": "agent_d5_fallback",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d5_fallback",
+          "source_key": "L4-IRI-07",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 1
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-6736ec7092739f62d38e",
+        "field_name": "blueprint.steps.STEP-02",
+        "source": {
+          "observed_at": "",
+          "source_field": "step",
+          "source_key": "line:43",
+          "source_object": "流程蓝图_L3-IRI_保司资源整合与深度对接_V1.1.md",
+          "source_system": "L3流程库",
+          "source_version": "V1.1"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "l4_codes": [
+            "L4-IRI-02",
+            "L4-IRI-06"
+          ],
+          "step_name": "资源盘点与对接规范制定"
+        }
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-6802c95a0d7003b4c5b0",
+        "field_name": "gate3_traceable",
+        "source": {
+          "observed_at": "",
+          "source_field": "gate3_traceable",
+          "source_key": "VN-INS-03",
+          "source_object": "process_analytics.dim_vn",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "PARTIAL"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-6bee5e65f8c58250eef8",
+        "field_name": "agent_d5_fallback",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d5_fallback",
+          "source_key": "L4-IRI-01",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 0
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-6d2335f253348828b88a",
+        "field_name": "l4_name",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_name",
+          "source_key": "L4-IRI-06",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "保司IT系统深度对接"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-72fe76bb38661d562dd6",
+        "field_name": "agent_d2_rule_clear",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d2_rule_clear",
+          "source_key": "L4-IRI-02",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-736fcc732a10c8cc6beb",
+        "field_name": "agent_d3_output_verify",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d3_output_verify",
+          "source_key": "L4-IRI-02",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-7387448909a8ece9322d",
+        "field_name": "agent_d3_output_verify",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d3_output_verify",
+          "source_key": "L4-IRI-05",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-7461458c94ffad2a4ba2",
+        "field_name": "blueprint.steps.STEP-05",
+        "source": {
+          "observed_at": "",
+          "source_field": "step",
+          "source_key": "line:61",
+          "source_object": "流程蓝图_L3-IRI_保司资源整合与深度对接_V1.1.md",
+          "source_system": "L3流程库",
+          "source_version": "V1.1"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "l4_codes": [
+            "L4-IRI-07"
+          ],
+          "step_name": "保司内部培训与人员换手"
+        }
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-78815e43e1ef2aaecfdf",
+        "field_name": "agentifiability",
+        "source": {
+          "observed_at": "",
+          "source_field": "agentifiability",
+          "source_key": "L4-IRI-01",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "Hybrid"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-7bc09bed7725bcd74485",
+        "field_name": "l4_name",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_name",
+          "source_key": "L4-IRI-03",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "系统数据团队对接"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-7e496cc12b54d1b7b900",
+        "field_name": "agentifiability",
+        "source": {
+          "observed_at": "",
+          "source_field": "agentifiability",
+          "source_key": "L4-IRI-06",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "Auto"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-84d743ecedb8c8171cdf",
+        "field_name": "agent_d5_fallback",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d5_fallback",
+          "source_key": "L4-IRI-06",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-897bf7b88f3e19b3a099",
+        "field_name": "agent_d2_rule_clear",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d2_rule_clear",
+          "source_key": "L4-IRI-05",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-89a68a23c5cc4d4bc335",
+        "field_name": "agent_human_touchpoint",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_human_touchpoint",
+          "source_key": "L4-IRI-02",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "人工执行：保司资源盘点"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-8e15f0a65bcac2d327d5",
+        "field_name": "l4_name",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_name",
+          "source_key": "L4-IRI-01",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "权限清单谈判"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-8e5ae428a1335781531a",
+        "field_name": "agentifiability",
+        "source": {
+          "observed_at": "",
+          "source_field": "agentifiability",
+          "source_key": "L4-IRI-07",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "Hybrid"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-95a2a1b4f5ac3c9ee67f",
+        "field_name": "is_fused",
+        "source": {
+          "observed_at": "",
+          "source_field": "is_fused",
+          "source_key": "VN-INS-03",
+          "source_object": "process_analytics.dim_vn",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": false
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-96e9ee7e8ee363a235a5",
+        "field_name": "l4_deliverable",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_deliverable",
+          "source_key": "L4-IRI-01",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "《权限清单》"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-9e48e07e2b017fd5d67b",
+        "field_name": "agent_d1_input_struct",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d1_input_struct",
+          "source_key": "L4-IRI-01",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 1
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-9f05031d924e36c3443a",
+        "field_name": "agentifiability",
+        "source": {
+          "observed_at": "",
+          "source_field": "agentifiability",
+          "source_key": "L4-IRI-02",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "Auto"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-a0013f89ac114acaf5e9",
+        "field_name": "agent_human_touchpoint",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_human_touchpoint",
+          "source_key": "L4-IRI-06",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "人工执行：保司IT系统深度对接"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-a0cb205cc3aee6bb8352",
+        "field_name": "agent_d1_input_struct",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d1_input_struct",
+          "source_key": "L4-IRI-02",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-a1f8dbef2e4585018f02",
+        "field_name": "l4_deliverable_type",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_deliverable_type",
+          "source_key": "L4-IRI-01",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "数据表"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-ab8391767822b04d6214",
+        "field_name": "blueprint.steps.STEP-03",
+        "source": {
+          "observed_at": "",
+          "source_field": "step",
+          "source_key": "line:47",
+          "source_object": "流程蓝图_L3-IRI_保司资源整合与深度对接_V1.1.md",
+          "source_system": "L3流程库",
+          "source_version": "V1.1"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "l4_codes": [
+            "L4-IRI-03",
+            "L4-IRI-06"
+          ],
+          "step_name": "系统与数据团队对接"
+        }
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-b5d4a34b869854a33792",
+        "field_name": "agent_d1_input_struct",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d1_input_struct",
+          "source_key": "L4-IRI-05",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-b5f4de2b0aea2ca2c140",
+        "field_name": "agent_d6_compliance",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d6_compliance",
+          "source_key": "L4-IRI-02",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-b75c5d38a8877741f5a0",
+        "field_name": "agent_human_touchpoint",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_human_touchpoint",
+          "source_key": "L4-IRI-05",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "人工执行：整合就绪确认"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-ba7606e240c3083a468e",
+        "field_name": "l4_deliverable",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_deliverable",
+          "source_key": "L4-IRI-06",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "《对接技术规范》"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-ba8220cd957d883f044d",
+        "field_name": "agentifiability",
+        "source": {
+          "observed_at": "",
+          "source_field": "agentifiability",
+          "source_key": "L4-IRI-04",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "Auto"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-bbf6df6b3e01a5042333",
+        "field_name": "l4_deliverable_type",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_deliverable_type",
+          "source_key": "L4-IRI-03",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "报告"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-bd6b0441ef88ca3771a0",
+        "field_name": "skill_feasibility",
+        "source": {
+          "observed_at": "",
+          "source_field": "L4明细_最终确认版:A:N",
+          "source_key": "L4-IRI-07@row:207",
+          "source_object": "L4流程_Skill封装可行性评估_确认最终版_v2.xlsx",
+          "source_system": "OB知识库",
+          "source_version": "v2"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "action_nature": "语义复核判定",
+          "action_singularity": "复合动作(建议先拆分)",
+          "funds_safety_hard_gate": false,
+          "grade": "C-低封装(判断/策略/关系类,理论天花板)",
+          "judgment_basis": "C-低封装度(判断/策略/关系类,语义复核后确认)",
+          "physical_execution": true,
+          "recommended_path": "优先考虑Agent辅助或决策支持，不直接封装确定性Skill",
+          "verification_status": "VERIFIED"
+        }
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-c002572aa5abe71dbdd9",
+        "field_name": "agent_d2_rule_clear",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d2_rule_clear",
+          "source_key": "L4-IRI-07",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 1
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-c6b87ea3dfa7384f50b3",
+        "field_name": "agent_d1_input_struct",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d1_input_struct",
+          "source_key": "L4-IRI-06",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-c7e92790c81936bb894f",
+        "field_name": "agent_d2_rule_clear",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d2_rule_clear",
+          "source_key": "L4-IRI-04",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 3
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-c8c71c11884fe166a01d",
+        "field_name": "l4_deliverable_type",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_deliverable_type",
+          "source_key": "L4-IRI-06",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "方案"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-d0b4c6e621b592754ff6",
+        "field_name": "blueprint.decisions.Q2",
+        "source": {
+          "observed_at": "",
+          "source_field": "decision",
+          "source_key": "line:57",
+          "source_object": "流程蓝图_L3-IRI_保司资源整合与深度对接_V1.1.md",
+          "source_system": "L3流程库",
+          "source_version": "V1.1"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "branches": [
+            {
+              "is_return": false,
+              "label": "通过",
+              "source_line": 58,
+              "target_l4": "",
+              "target_step": "STEP-05",
+              "target_text": "步骤5"
+            },
+            {
+              "is_return": true,
+              "label": "未通过",
+              "source_line": 59,
+              "target_l4": "L4-IRI-03",
+              "target_step": "",
+              "target_text": "返回L4-IRI-03技术团队修复"
+            },
+            {
+              "is_return": false,
+              "label": "执行L4-IRI-07：对保司人员开展培训",
+              "source_line": 62,
+              "target_l4": "",
+              "target_step": "",
+              "target_text": "输出《培训换手记录》"
+            }
+          ],
+          "question": "权限生效测试是否通过"
+        }
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-d0bedd06ba8d138f2ec7",
+        "field_name": "l4_name",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_name",
+          "source_key": "L4-IRI-04",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "权限生效与配置"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-d1332f949f4ab6e14f9b",
+        "field_name": "l4_deliverable_type",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_deliverable_type",
+          "source_key": "L4-IRI-07",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "数据表"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-d156a78dc289923c3579",
+        "field_name": "l4_deliverable_type",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_deliverable_type",
+          "source_key": "L4-IRI-05",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "方案"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-d7bdef1bf8a0cb09a4cd",
+        "field_name": "agent_d1_input_struct",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d1_input_struct",
+          "source_key": "L4-IRI-03",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-d84805e5a3e88682f6c8",
+        "field_name": "l4_deliverable",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_deliverable",
+          "source_key": "L4-IRI-04",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "权限生效通知"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-d88ef0fe40c0900fbeda",
+        "field_name": "l4_deliverable",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_deliverable",
+          "source_key": "L4-IRI-07",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "《培训换手记录》"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-d8f5b8cf37c6d749abd0",
+        "field_name": "skill_feasibility",
+        "source": {
+          "observed_at": "",
+          "source_field": "L4明细_最终确认版:A:N",
+          "source_key": "L4-IRI-06@row:206",
+          "source_object": "L4流程_Skill封装可行性评估_确认最终版_v2.xlsx",
+          "source_system": "OB知识库",
+          "source_version": "v2"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "action_nature": "信息处理/事务类",
+          "action_singularity": "单一动作",
+          "funds_safety_hard_gate": false,
+          "grade": "A-高封装(理想条件下Skill候选)",
+          "judgment_basis": "A-高封装(单一信息处理动作)",
+          "physical_execution": false,
+          "recommended_path": "优先进入Skill原型候选池",
+          "verification_status": "VERIFIED"
+        }
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-dbc1df15130b3fc7184d",
+        "field_name": "agentifiability",
+        "source": {
+          "observed_at": "",
+          "source_field": "agentifiability",
+          "source_key": "L4-IRI-03",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "Auto"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-de5401bfa9eea69b51ab",
+        "field_name": "agent_d5_fallback",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d5_fallback",
+          "source_key": "L4-IRI-03",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-e017f6e55d09309534d0",
+        "field_name": "agent_d5_fallback",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d5_fallback",
+          "source_key": "L4-IRI-05",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-e2ecd0e98749b6927a50",
+        "field_name": "agent_d3_output_verify",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d3_output_verify",
+          "source_key": "L4-IRI-03",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-e6368f05e7b7445da055",
+        "field_name": "l4_deliverable",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_deliverable",
+          "source_key": "L4-IRI-05",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "《整合就绪确认书》"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-e79129d1334c2b53c44a",
+        "field_name": "agent_d3_output_verify",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d3_output_verify",
+          "source_key": "L4-IRI-04",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 3
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-ed512836d8acd32edf4a",
+        "field_name": "l4_name",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_name",
+          "source_key": "L4-IRI-07",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "保司内部培训与换手"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-ef83d89f408f32abbcc8",
+        "field_name": "skill_feasibility",
+        "source": {
+          "observed_at": "",
+          "source_field": "L4明细_最终确认版:A:N",
+          "source_key": "L4-IRI-02@row:202",
+          "source_object": "L4流程_Skill封装可行性评估_确认最终版_v2.xlsx",
+          "source_system": "OB知识库",
+          "source_version": "v2"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "action_nature": "信息处理/事务类",
+          "action_singularity": "单一动作",
+          "funds_safety_hard_gate": false,
+          "grade": "A-高封装(理想条件下Skill候选)",
+          "judgment_basis": "A-高封装(单一信息处理动作)",
+          "physical_execution": false,
+          "recommended_path": "优先进入Skill原型候选池",
+          "verification_status": "VERIFIED"
+        }
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-f2d72ad3fb75da7e8513",
+        "field_name": "agent_human_touchpoint",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_human_touchpoint",
+          "source_key": "L4-IRI-07",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "人工执行：保司内部培训与换手"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-f57e954be3d0f0789420",
+        "field_name": "l4_name",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_name",
+          "source_key": "L4-IRI-05",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "整合就绪确认"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-f58846cd444696abc279",
+        "field_name": "agent_d2_rule_clear",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d2_rule_clear",
+          "source_key": "L4-IRI-01",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 0
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-f7696b1a02cf45cef184",
+        "field_name": "l4_deliverable_type",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_deliverable_type",
+          "source_key": "L4-IRI-04",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "方案"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-f9326fd5f6462f9ed661",
+        "field_name": "gate1_data_linked",
+        "source": {
+          "observed_at": "",
+          "source_field": "gate1_data_linked",
+          "source_key": "VN-INS-03",
+          "source_object": "process_analytics.dim_vn",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "PASS"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-fd4eb8e73b1ca19a6dd2",
+        "field_name": "l4_deliverable_type",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_deliverable_type",
+          "source_key": "L4-IRI-02",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "数据表"
+      }
+    ]
+  }
+}

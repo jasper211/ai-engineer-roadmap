@@ -17,6 +17,7 @@
         "evidence_refs": [
           "EVD-33796f8883af8edebc42",
           "EVD-610d5007b15fa616a513",
+          "EVD-61fcfd98758dfba18bdc",
           "EVD-85acc851227b38eaa2d3",
           "EVD-8c35b56b10b4efabdbf6",
           "EVD-91ea2c4aa9aac7450c68",
@@ -55,6 +56,7 @@
           "EVD-adc2dd8598de0a3737e0",
           "EVD-cb052bac53767464f972",
           "EVD-d86da447b22f78fd7205",
+          "EVD-edcc2a930c2ee06a9be9",
           "EVD-f1a2bbdd0a39b0875cfc"
         ],
         "handoff_triggers": [],
@@ -79,7 +81,7 @@
     "schema_version": "vnw.l3-analysis.v1",
     "source_scope": {
       "database": "process_analytics",
-      "evidence_count": 32,
+      "evidence_count": 34,
       "knowledge": "ACTIVE supplemental evidence only"
     },
     "tasks": [
@@ -109,7 +111,7 @@
       }
     ]
   },
-  "analysis_input_hash": "dc69be4f29993b76ad0a5ae39e0e7bafe1e6aa1b3e3fdf8c327b01787f860f1c",
+  "analysis_input_hash": "2073300caa5e0fe922319727492d61a2db4bec16028e0140d23e8a6a95eef2bc",
   "blueprint": {
     "blueprint_value_nodes": [],
     "coverage": "INDEXED",
@@ -396,6 +398,33 @@
       "status": "ACTIVE",
       "transform_rule": "",
       "value": 2
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-61fcfd98758dfba18bdc",
+      "field_name": "skill_feasibility",
+      "source": {
+        "observed_at": "",
+        "source_field": "L4明细_最终确认版:A:N",
+        "source_key": "L4-CDS-01@row:21",
+        "source_object": "L4流程_Skill封装可行性评估_确认最终版_v2.xlsx",
+        "source_system": "OB知识库",
+        "source_version": "v2"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "action_nature": "信息处理/事务类",
+        "action_singularity": "单一动作",
+        "funds_safety_hard_gate": false,
+        "grade": "A-高封装(理想条件下Skill候选)",
+        "judgment_basis": "A-高封装(单一信息处理动作)",
+        "physical_execution": false,
+        "recommended_path": "优先进入Skill原型候选池",
+        "verification_status": "VERIFIED"
+      }
     },
     {
       "confidence": "HIGH",
@@ -727,6 +756,33 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-edcc2a930c2ee06a9be9",
+      "field_name": "skill_feasibility",
+      "source": {
+        "observed_at": "",
+        "source_field": "L4明细_最终确认版:A:N",
+        "source_key": "L4-CDS-02@row:22",
+        "source_object": "L4流程_Skill封装可行性评估_确认最终版_v2.xlsx",
+        "source_system": "OB知识库",
+        "source_version": "v2"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "action_nature": "信息处理/事务类",
+        "action_singularity": "复合动作(建议先拆分)",
+        "funds_safety_hard_gate": false,
+        "grade": "A-高封装(理想条件下Skill候选)",
+        "judgment_basis": "A-需先拆分为子Skill(复合动作)",
+        "physical_execution": false,
+        "recommended_path": "优先进入Skill原型候选池",
+        "verification_status": "VERIFIED"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
       "evidence_id": "EVD-f1a2bbdd0a39b0875cfc",
       "field_name": "l4_name",
@@ -902,11 +958,22 @@
         "agentifiability": "EVD-85acc851227b38eaa2d3",
         "l4_deliverable": "EVD-bc1ebcd84c80020c2e30",
         "l4_deliverable_type": "EVD-f6c0d5fbfeba0b7ed54d",
-        "l4_name": "EVD-955997e99390e61b783e"
+        "l4_name": "EVD-955997e99390e61b783e",
+        "skill_feasibility": "EVD-61fcfd98758dfba18bdc"
       },
       "human_touchpoint": null,
       "l4_code": "L4-CDS-01",
       "l4_name": "起草合同要点确认",
+      "skill_feasibility": {
+        "action_nature": "信息处理/事务类",
+        "action_singularity": "单一动作",
+        "funds_safety_hard_gate": false,
+        "grade": "A-高封装(理想条件下Skill候选)",
+        "judgment_basis": "A-高封装(单一信息处理动作)",
+        "physical_execution": false,
+        "recommended_path": "优先进入Skill原型候选池",
+        "verification_status": "VERIFIED"
+      },
       "tier": "Auto"
     },
     {
@@ -931,11 +998,22 @@
         "agentifiability": "EVD-6a66954025b8d6cd5709",
         "l4_deliverable": "EVD-adc2dd8598de0a3737e0",
         "l4_deliverable_type": "EVD-249f51dd643206dfe3ed",
-        "l4_name": "EVD-f1a2bbdd0a39b0875cfc"
+        "l4_name": "EVD-f1a2bbdd0a39b0875cfc",
+        "skill_feasibility": "EVD-edcc2a930c2ee06a9be9"
       },
       "human_touchpoint": null,
       "l4_code": "L4-CDS-02",
       "l4_name": "签署核对与完成",
+      "skill_feasibility": {
+        "action_nature": "信息处理/事务类",
+        "action_singularity": "复合动作(建议先拆分)",
+        "funds_safety_hard_gate": false,
+        "grade": "A-高封装(理想条件下Skill候选)",
+        "judgment_basis": "A-需先拆分为子Skill(复合动作)",
+        "physical_execution": false,
+        "recommended_path": "优先进入Skill原型候选池",
+        "verification_status": "VERIFIED"
+      },
       "tier": "Auto"
     }
   ],
@@ -953,6 +1031,11 @@
       "rule_l4": {
         "covered": 0,
         "total": 2
+      },
+      "skill_feasibility": {
+        "provisional": 0,
+        "total": 2,
+        "verified": 2
       },
       "sop_count": 1,
       "task": {

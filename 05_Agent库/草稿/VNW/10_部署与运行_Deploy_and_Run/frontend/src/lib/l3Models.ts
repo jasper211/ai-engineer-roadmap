@@ -18,6 +18,7 @@ export interface ModelIndexItem {
     task: { covered: number; total: number }
     rule_l4: { covered: number; total: number }
     critical_task: { covered: number; total: number }
+    skill_feasibility: { verified: number; provisional: number; total: number }
   }
   analysis_status: 'PENDING_MODEL' | 'MODEL_DRAFT' | 'REVIEWED'
   analysis_input_hash: string
@@ -78,6 +79,16 @@ export interface L4Item {
   tier: string
   human_touchpoint: string
   d1_d6: Record<string, unknown>
+  skill_feasibility: null | {
+    action_nature: string
+    action_singularity: string
+    grade: string
+    judgment_basis: string
+    funds_safety_hard_gate: boolean
+    physical_execution: boolean
+    verification_status: 'VERIFIED' | 'PROVISIONAL'
+    recommended_path: string
+  }
   evidence_refs: Record<string, string>
 }
 

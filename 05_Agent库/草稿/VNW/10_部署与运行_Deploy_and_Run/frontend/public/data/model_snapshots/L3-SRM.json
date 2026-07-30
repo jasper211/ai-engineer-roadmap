@@ -17,6 +17,7 @@
         "evidence_refs": [
           "EVD-0a5c0c0097296580d977",
           "EVD-18369d1bcb247693b527",
+          "EVD-2a02f611aa2641a79af4",
           "EVD-63171c4f1fde169319eb",
           "EVD-7843068b3a7015f82078",
           "EVD-9cb90c43575486cfbdd4",
@@ -53,6 +54,7 @@
           "EVD-83db90b3a4570456e107",
           "EVD-865bb50d358df580bb9b",
           "EVD-abcb505f2c5a0fe496ef",
+          "EVD-c9044239687a776daefa",
           "EVD-cc3978b256b6ad259712",
           "EVD-d47dde130406fd90a638",
           "EVD-fb2a894a4f7c5d9f86e7"
@@ -79,12 +81,12 @@
     "schema_version": "vnw.l3-analysis.v1",
     "source_scope": {
       "database": "process_analytics",
-      "evidence_count": 22,
+      "evidence_count": 24,
       "knowledge": "ACTIVE supplemental evidence only"
     },
     "tasks": []
   },
-  "analysis_input_hash": "7eb01bdb2d5a2db1448da0e854922d54eee40a9109940e306a56000eca445dcb",
+  "analysis_input_hash": "62205d27c73ea02d128633be659aaf8d486b25339de9f8836eae6d75d4d8aed8",
   "blueprint": {
     "blueprint_value_nodes": [],
     "coverage": "MISSING",
@@ -155,6 +157,33 @@
       "status": "ACTIVE",
       "transform_rule": "",
       "value": "方案"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-2a02f611aa2641a79af4",
+      "field_name": "skill_feasibility",
+      "source": {
+        "observed_at": "",
+        "source_field": "L4明细_最终确认版:A:N",
+        "source_key": "L4-SRM-01@row:316",
+        "source_object": "L4流程_Skill封装可行性评估_确认最终版_v2.xlsx",
+        "source_system": "OB知识库",
+        "source_version": "v2"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "action_nature": "信息处理/事务类",
+        "action_singularity": "单一动作",
+        "funds_safety_hard_gate": false,
+        "grade": "A-高封装(理想条件下Skill候选)",
+        "judgment_basis": "A-高封装(单一信息处理动作)",
+        "physical_execution": false,
+        "recommended_path": "优先进入Skill原型候选池",
+        "verification_status": "VERIFIED"
+      }
     },
     {
       "confidence": "HIGH",
@@ -389,6 +418,33 @@
       "status": "ACTIVE",
       "transform_rule": "",
       "value": 2
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-c9044239687a776daefa",
+      "field_name": "skill_feasibility",
+      "source": {
+        "observed_at": "",
+        "source_field": "L4明细_最终确认版:A:N",
+        "source_key": "L4-SRM-02@row:317",
+        "source_object": "L4流程_Skill封装可行性评估_确认最终版_v2.xlsx",
+        "source_system": "OB知识库",
+        "source_version": "v2"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "action_nature": "语义复核判定",
+        "action_singularity": "单一动作",
+        "funds_safety_hard_gate": false,
+        "grade": "C-低封装(判断/策略/关系类,理论天花板)",
+        "judgment_basis": "C-低封装度(判断/策略/关系类,语义复核后确认)",
+        "physical_execution": false,
+        "recommended_path": "优先考虑Agent辅助或决策支持，不直接封装确定性Skill",
+        "verification_status": "VERIFIED"
+      }
     },
     {
       "confidence": "HIGH",
@@ -640,11 +696,22 @@
         "agentifiability": "EVD-b7aba09b2d9a096a99d8",
         "l4_deliverable": "EVD-d5d88495d56e2a71a54f",
         "l4_deliverable_type": "EVD-18369d1bcb247693b527",
-        "l4_name": "EVD-9cb90c43575486cfbdd4"
+        "l4_name": "EVD-9cb90c43575486cfbdd4",
+        "skill_feasibility": "EVD-2a02f611aa2641a79af4"
       },
       "human_touchpoint": null,
       "l4_code": "L4-SRM-01",
       "l4_name": "外部资源对接",
+      "skill_feasibility": {
+        "action_nature": "信息处理/事务类",
+        "action_singularity": "单一动作",
+        "funds_safety_hard_gate": false,
+        "grade": "A-高封装(理想条件下Skill候选)",
+        "judgment_basis": "A-高封装(单一信息处理动作)",
+        "physical_execution": false,
+        "recommended_path": "优先进入Skill原型候选池",
+        "verification_status": "VERIFIED"
+      },
       "tier": "Auto"
     },
     {
@@ -669,11 +736,22 @@
         "agentifiability": "EVD-125508ca1ac0681d62e9",
         "l4_deliverable": "EVD-abcb505f2c5a0fe496ef",
         "l4_deliverable_type": "EVD-6827e3cfc10122a76434",
-        "l4_name": "EVD-636a06c93c36be89a63d"
+        "l4_name": "EVD-636a06c93c36be89a63d",
+        "skill_feasibility": "EVD-c9044239687a776daefa"
       },
       "human_touchpoint": null,
       "l4_code": "L4-SRM-02",
       "l4_name": "转介渠道管理",
+      "skill_feasibility": {
+        "action_nature": "语义复核判定",
+        "action_singularity": "单一动作",
+        "funds_safety_hard_gate": false,
+        "grade": "C-低封装(判断/策略/关系类,理论天花板)",
+        "judgment_basis": "C-低封装度(判断/策略/关系类,语义复核后确认)",
+        "physical_execution": false,
+        "recommended_path": "优先考虑Agent辅助或决策支持，不直接封装确定性Skill",
+        "verification_status": "VERIFIED"
+      },
       "tier": "Hybrid"
     }
   ],
@@ -691,6 +769,11 @@
       "rule_l4": {
         "covered": 0,
         "total": 2
+      },
+      "skill_feasibility": {
+        "provisional": 0,
+        "total": 2,
+        "verified": 2
       },
       "sop_count": 0,
       "task": {

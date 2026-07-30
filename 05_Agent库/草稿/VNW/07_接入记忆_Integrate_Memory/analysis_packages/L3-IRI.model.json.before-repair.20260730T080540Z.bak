@@ -1,0 +1,683 @@
+{
+  "schema_version": "vnw.l3-analysis.v1",
+  "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
+  "generation_mode": "UNIFIED_MODEL",
+  "analysis_status": "MODEL_DRAFT",
+  "model_run": {
+    "model_name": "deepseek-v4-pro",
+    "model_version": "deepseek-v4-pro",
+    "prompt_version": "VNW-L3-COM-GOLD-v1.0",
+    "generated_at": "2026-07-30T07:31:49.152804+00:00",
+    "input_snapshot_hash": "20856b62a6461a56a9e64e66ccb6119e4ec0982c67db1bc01eda97b7069ebeae"
+  },
+  "source_scope": {
+    "database": "process_analytics",
+    "knowledge": "ACTIVE supplemental evidence only",
+    "evidence_count": 99
+  },
+  "l4_analysis": [
+    {
+      "l4_code": "L4-IRI-01",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-9e48e07e2b017fd5d67b",
+        "EVD-f58846cd444696abc279",
+        "EVD-533f7ff0805c43720e08",
+        "EVD-2ec5e2f48afb7673bdf3",
+        "EVD-6bee5e65f8c58250eef8",
+        "EVD-2e2e355c19b8510b3068",
+        "EVD-03c1c78918cf87a87349",
+        "EVD-78815e43e1ef2aaecfdf",
+        "EVD-96e9ee7e8ee363a235a5",
+        "EVD-a1f8dbef2e4585018f02",
+        "EVD-8e15f0a65bcac2d327d5",
+        "EVD-044724ee17558e0136cd",
+        "EVD-52b0cc4ad42718878f21"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "《权限清单》是后续所有资源对接与权限配置的基准文档，定义了保司可访问的数据和系统范围。",
+      "specific_capabilities": [
+        "权限范围协商",
+        "信息安全策略判断",
+        "利益相关方沟通"
+      ],
+      "ai_reshape": "AI可辅助收集历史权限清单、相似保司案例，供人工谈判参考；但最终权限边界需人工确认。",
+      "quality_anchor": "清单中每项权限均有明确的数据范围和有效期，并获得双方授权签批。",
+      "ai_responsibility": "提供权限模板和历史清单比对，标记潜在冲突点。",
+      "human_responsibility": "与保司谈判确定权限清单内容，签署确认。",
+      "handoff_triggers": [
+        "权限涉及资金操作或敏感个人信息时",
+        "保司提出新增权限请求超出标准模板时"
+      ],
+      "control_gates": [
+        "权限清单必须经法务/安全负责人审核"
+      ],
+      "data_basis": [
+        "EVD-9e48e07e2b017fd5d67b (输入结构化程度1，依赖人工收集)"
+      ],
+      "process_context": "属于L3-IRI流程的第一步，在蓝图STEP-01执行，为后续资源盘点和技术对接奠定权限基础。",
+      "risks_limits": [
+        "谈判结果不确定，过度授权可能导致数据泄露风险",
+        "高度依赖关键人员的判断能力",
+        "API可达性低(d4=0)，无法自动化配置"
+      ],
+      "current_recommendation": "建议维持Hybrid层级，AI负责信息收集与冲突标记，人工负责谈判确认；后续若能抽象出标准权限模板且双方系统可自动配置，可考虑Aug级别，但当前封装度低(C级)，不宜全自动。",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-IRI-02",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-a0cb205cc3aee6bb8352",
+        "EVD-72fe76bb38661d562dd6",
+        "EVD-736fcc732a10c8cc6beb",
+        "EVD-38f9735202663a227a79",
+        "EVD-1172fc848b36c519244e",
+        "EVD-b5f4de2b0aea2ca2c140",
+        "EVD-89a68a23c5cc4d4bc335",
+        "EVD-9f05031d924e36c3443a",
+        "EVD-1bd8fa144d974074db96",
+        "EVD-fd4eb8e73b1ca19a6dd2",
+        "EVD-1b4ff8d3a2ecc4a3e8ae",
+        "EVD-ef83d89f408f32abbcc8",
+        "EVD-6736ec7092739f62d38e"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "《资源对接清单》明确了保司侧可提供的系统、数据和人员资源，是后续对接规划和执行的基础。",
+      "specific_capabilities": [
+        "系统资源信息采集",
+        "标准化数据输出"
+      ],
+      "ai_reshape": "可由确定性Skill执行：从保司系统自动抓取资源信息，生成结构化清单，人工仅需审核。",
+      "quality_anchor": "清单内容与实际系统资源一致，字段完整，有版本控制。",
+      "ai_responsibility": "自动采集保司系统元数据，生成清单初稿。",
+      "human_responsibility": "审核清单准确性，补充缺失资源项，确认签字。",
+      "handoff_triggers": [
+        "系统数据抓取失败或数据异常时"
+      ],
+      "control_gates": [
+        "清单需经双方项目经理确认"
+      ],
+      "data_basis": [
+        "EVD-a0cb205cc3aee6bb8352 (输入结构化程度2，可API对接)"
+      ],
+      "process_context": "蓝图STEP-02，与L4-IRI-06并行，为后续对接提供输入。",
+      "risks_limits": [
+        "保司系统接口可能不稳定，数据格式不统一",
+        "需定期更新清单以保证时效性"
+      ],
+      "current_recommendation": "推荐Auto Tier，开发确定性Skill用于资源盘点，人工仅监督审核。鉴于A级封装可行性，可纳入Skill原型开发。",
+      "database_tier": "Auto",
+      "recommended_tier": "Auto",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-IRI-03",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-d7bdef1bf8a0cb09a4cd",
+        "EVD-1a4cd2324328ba161958",
+        "EVD-e2ecd0e98749b6927a50",
+        "EVD-13cfe7c03379a70e58d1",
+        "EVD-de5401bfa9eea69b51ab",
+        "EVD-02d3e0ea1e235ede8b2f",
+        "EVD-3bc5be30b40c03ef1cc7",
+        "EVD-dbc1df15130b3fc7184d",
+        "EVD-39b4747921861c55c07c",
+        "EVD-bbf6df6b3e01a5042333",
+        "EVD-7bc09bed7725bcd74485",
+        "EVD-6224271584b21fd9ffba",
+        "EVD-ab8391767822b04d6214"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "对接完成报告记录了各方系统联调、数据对接和人员协同的情况，是技术集成的里程碑。",
+      "specific_capabilities": [
+        "对接进度跟踪",
+        "状态汇总",
+        "异常提醒"
+      ],
+      "ai_reshape": "Skill自动跟踪对接任务进度，收集各团队状态，生成对接报告，人仅处理例外。",
+      "quality_anchor": "报告覆盖所有对接点，包括API、SSO、数据传输，有明确完成标识。",
+      "ai_responsibility": "自动收集各团队反馈，汇总完成状态。",
+      "human_responsibility": "协调解决对接中的技术或人员障碍，确认报告。",
+      "handoff_triggers": [
+        "对接超时、出现技术障碍或团队人员变更时"
+      ],
+      "control_gates": [
+        "对接完成需技术负责人签字"
+      ],
+      "data_basis": [
+        "EVD-d7bdef1bf8a0cb09a4cd (输入结构化程度2，可自动化)"
+      ],
+      "process_context": "蓝图STEP-03，基于资源盘点和技术规范进行实际对接。",
+      "risks_limits": [
+        "多方协调依赖人工沟通，自动化程度受限于团队配合度",
+        "单一动作但可能涉及复杂技术决策时需人工介入"
+      ],
+      "current_recommendation": "建议Auto Tier，可构建Skill用于对接状态跟踪与报告生成，但需人工解决阻塞问题。鉴于A级，优先Skill化。",
+      "database_tier": "Auto",
+      "recommended_tier": "Auto",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-IRI-04",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-19f87a57d8aa661c8f10",
+        "EVD-c7e92790c81936bb894f",
+        "EVD-e79129d1334c2b53c44a",
+        "EVD-203a6241788163e6f44e",
+        "EVD-2a26b53f4d9f8fd45d03",
+        "EVD-5024d6b1b5278033e109",
+        "EVD-42e3d902d6d5db3573c8",
+        "EVD-ba8220cd957d883f044d",
+        "EVD-d84805e5a3e88682f6c8",
+        "EVD-f7696b1a02cf45cef184",
+        "EVD-d0bedd06ba8d138f2ec7",
+        "EVD-1f16d4893daa67eac8b5",
+        "EVD-09fb9d312c03fa2c624f"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "权限生效通知证明保司端权限已按清单配置生效，可以进入培训与正式使用阶段。",
+      "specific_capabilities": [
+        "权限同步配置",
+        "权限测试验证",
+        "通知发送"
+      ],
+      "ai_reshape": "可拆解为多个子Skill：1) 权限同步Skill，2) 权限测试Skill，3) 通知推送Skill。但权限配置涉及系统变更，需有回滚机制。",
+      "quality_anchor": "所有权限变更经过测试，通知明确权限范围和生效时间。",
+      "ai_responsibility": "执行权限配置和初步验证，生成通知。",
+      "human_responsibility": "确认权限配置正确，处理配置失败的例外情况，最终签发通知。",
+      "handoff_triggers": [
+        "权限配置失败或测试发现偏差时"
+      ],
+      "control_gates": [
+        "权限变更需审批，设置人工确认点"
+      ],
+      "data_basis": [
+        "EVD-19f87a57d8aa661c8f10 (输入结构化程度3，高度自动化可行)"
+      ],
+      "process_context": "蓝图STEP-04，在系统技术验证通过后执行。",
+      "risks_limits": [
+        "复合动作需确保子Skill顺序和失败回退，避免部分配置生效导致系统不一致",
+        "建议先拆分后封装"
+      ],
+      "current_recommendation": "推荐Auto Tier，但需先拆分为独立子Skill，逐步实现自动化。优先实现权限同步和验证Skill，通知可由已有工具完成。鉴于A级封装可行性，纳入Skill原型。",
+      "database_tier": "Auto",
+      "recommended_tier": "Auto",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-IRI-05",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-b5d4a34b869854a33792",
+        "EVD-897bf7b88f3e19b3a099",
+        "EVD-7387448909a8ece9322d",
+        "EVD-190d42c84389fc9defd3",
+        "EVD-e017f6e55d09309534d0",
+        "EVD-325631a7641454a54cc3",
+        "EVD-b75c5d38a8877741f5a0",
+        "EVD-24933e2bad45556edf98",
+        "EVD-e6368f05e7b7445da055",
+        "EVD-d156a78dc289923c3579",
+        "EVD-f57e954be3d0f0789420",
+        "EVD-42e69105c3cd239a8329",
+        "EVD-28862fa9387a8871f562",
+        "EVD-4e17bf4f41ab7d5c85ec",
+        "EVD-03dff1fc8e2f83f8e864"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "《整合就绪确认书》是最终交付物，标志着保司资源整合完成，可进入运营阶段。",
+      "specific_capabilities": [
+        "Checklist核验执行",
+        "数据完整性检查"
+      ],
+      "ai_reshape": "Skill自动执行各项核验Checklist，汇总结果并生成确认书初稿，人审核。",
+      "quality_anchor": "所有核验项通过，确认书有双方负责人签名。",
+      "ai_responsibility": "执行所有Checklist检查项，输出通过/未通过状态，生成确认书。",
+      "human_responsibility": "审核核验结果，签字确认。",
+      "handoff_triggers": [
+        "任一项检查失败或数据异常时"
+      ],
+      "control_gates": [
+        "确认书具有法律效力，需人工签署"
+      ],
+      "data_basis": [
+        "EVD-b5d4a34b869854a33792 (输入结构化程度2，可自动化)"
+      ],
+      "process_context": "蓝图STEP-06，流程最后一步，在培训换手后进行。",
+      "risks_limits": [
+        "若前期步骤未完成，核验可能不通过，需向上游环节反馈"
+      ],
+      "current_recommendation": "建议Auto Tier，Skill可自动化核验并起草确认书。由于价值节点P1，应优先开发。",
+      "database_tier": "Auto",
+      "recommended_tier": "Auto",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-IRI-06",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-c6b87ea3dfa7384f50b3",
+        "EVD-00235454a7c2d98e820d",
+        "EVD-3b052879e4a180580309",
+        "EVD-20b837fe0d8e965a7a3d",
+        "EVD-84d743ecedb8c8171cdf",
+        "EVD-103149948c2b6d1071bf",
+        "EVD-a0013f89ac114acaf5e9",
+        "EVD-7e496cc12b54d1b7b900",
+        "EVD-ba7606e240c3083a468e",
+        "EVD-c8c71c11884fe166a01d",
+        "EVD-6d2335f253348828b88a",
+        "EVD-d8f5b8cf37c6d749abd0",
+        "EVD-6736ec7092739f62d38e",
+        "EVD-ab8391767822b04d6214"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "《对接技术规范》是指导保司IT系统对接的技术文档，确保数据交换的标准化。",
+      "specific_capabilities": [
+        "技术规范标准化输出"
+      ],
+      "ai_reshape": "AI可根据保司系统信息和平台标准自动生成对接规范草稿，人工审核补充特殊要求。",
+      "quality_anchor": "规范覆盖所有数据交换接口，通过技术评审。",
+      "ai_responsibility": "生成对接规范模板，填充已知参数。",
+      "human_responsibility": "审核规范内容，与保司确认特殊需求，批准发布。",
+      "handoff_triggers": [
+        "保司系统有非标准接口或安全要求超出模板范围时"
+      ],
+      "control_gates": [
+        "规范需技术负责人审批"
+      ],
+      "data_basis": [
+        "EVD-c6b87ea3dfa7384f50b3 (输入结构化程度2，可自动化)"
+      ],
+      "process_context": "蓝图STEP-02与STEP-03，为系统对接提供标准。",
+      "risks_limits": [
+        "依赖保司技术栈信息，若信息不全则生成质量下降"
+      ],
+      "current_recommendation": "建议Auto Tier，可用于生成初稿。A级封装可行性高，优先Skill化。",
+      "database_tier": "Auto",
+      "recommended_tier": "Auto",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-IRI-07",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-5e4251de05ccd7855d82",
+        "EVD-c002572aa5abe71dbdd9",
+        "EVD-5a3686507b8c80c777a7",
+        "EVD-094761efc658210e2039",
+        "EVD-6441df35217b715d668e",
+        "EVD-2e7077ab3cd881df022a",
+        "EVD-f2d72ad3fb75da7e8513",
+        "EVD-8e5ae428a1335781531a",
+        "EVD-d88ef0fe40c0900fbeda",
+        "EVD-d1332f949f4ab6e14f9b",
+        "EVD-ed512836d8acd32edf4a",
+        "EVD-bd6b0441ef88ca3771a0",
+        "EVD-7461458c94ffad2a4ba2"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "《培训换手记录》确保保司人员掌握系统操作，为持续运营提供人力保障。",
+      "specific_capabilities": [
+        "培训材料准备",
+        "现场培训与指导",
+        "知识转移验证"
+      ],
+      "ai_reshape": "AI可辅助生成培训材料、录制操作视频、记录培训过程，但无法替代现场培训，建议Agent辅助模式。",
+      "quality_anchor": "所有关键人员通过操作考核，换手记录完整。",
+      "ai_responsibility": "提供标准化培训内容，记录培训参与和考核成绩。",
+      "human_responsibility": "主持培训，进行操作示范，考核人员能力。",
+      "handoff_triggers": [
+        "当培训对象无法掌握系统、需额外辅导时"
+      ],
+      "control_gates": [
+        "培训后需确认换手签字"
+      ],
+      "data_basis": [
+        "EVD-5e4251de05ccd7855d82 (输入结构化程度2，但规则清晰度低d2=1)"
+      ],
+      "process_context": "蓝图STEP-05，在权限生效后进行。",
+      "risks_limits": [
+        "物理执行（现场培训）难以自动化，人员流失可能导致知识断档",
+        "C级低封装，不宜强行Skill化"
+      ],
+      "current_recommendation": "建议维持Hybrid Tier，AI Agent辅助管理培训进度与资料，核心培训仍由人完成。可探索VR培训等数字化手段，但短期不可自动化。",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "T01-L4-IRI-01",
+      "l4_code": "L4-IRI-01",
+      "task_name": "执行权限清单谈判",
+      "source_type": "BLUEPRINT_STEP",
+      "evidence_refs": [
+        "EVD-52b0cc4ad42718878f21",
+        "EVD-044724ee17558e0136cd",
+        "EVD-9e48e07e2b017fd5d67b"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "谈判需要人工判断，输入结构化低(d1=1)，规则不清晰(d2=0)，输出无法自动验证(d3=0)，API不可达(d4=0)，回退方案缺失(d5=0)，且Skill可行性评估为C级，建议Hybrid。"
+    },
+    {
+      "task_id": "T02-L4-IRI-02",
+      "l4_code": "L4-IRI-02",
+      "task_name": "盘点和生成保司资源对接清单",
+      "source_type": "BLUEPRINT_STEP",
+      "evidence_refs": [
+        "EVD-6736ec7092739f62d38e",
+        "EVD-ef83d89f408f32abbcc8",
+        "EVD-a0cb205cc3aee6bb8352"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "信息处理类单一动作，d1-d6均为2，Skill可行性A级，可全自动化生成清单，人工仅审核。"
+    },
+    {
+      "task_id": "T03-L4-IRI-03",
+      "l4_code": "L4-IRI-03",
+      "task_name": "跟踪系统数据对接进度并生成报告",
+      "source_type": "BLUEPRINT_STEP",
+      "evidence_refs": [
+        "EVD-ab8391767822b04d6214",
+        "EVD-6224271584b21fd9ffba",
+        "EVD-d7bdef1bf8a0cb09a4cd"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "信息处理类单一动作，d1-d6均为2，Skill可行性A级，可自动跟踪和报告，人工仅处理例外。"
+    },
+    {
+      "task_id": "T04-L4-IRI-04",
+      "l4_code": "L4-IRI-04",
+      "task_name": "执行权限同步配置与生效通知",
+      "source_type": "BLUEPRINT_STEP",
+      "evidence_refs": [
+        "EVD-09fb9d312c03fa2c624f",
+        "EVD-1f16d4893daa67eac8b5",
+        "EVD-19f87a57d8aa661c8f10"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "d1-d4均为3，API可达性极高，Skill可行性A级，但需先拆分为子Skill；自动化配置为主，人工确认边界。"
+    },
+    {
+      "task_id": "T05-L4-IRI-05",
+      "l4_code": "L4-IRI-05",
+      "task_name": "执行整合就绪Checklist核验并生成确认书",
+      "source_type": "BLUEPRINT_STEP",
+      "evidence_refs": [
+        "EVD-28862fa9387a8871f562",
+        "EVD-42e69105c3cd239a8329",
+        "EVD-b5d4a34b869854a33792",
+        "EVD-4e17bf4f41ab7d5c85ec"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "信息处理单一动作，d=2，Skill可行性A，价值节点P1，适合优先自动化并引入人工签署控制。"
+    },
+    {
+      "task_id": "T06-L4-IRI-06",
+      "l4_code": "L4-IRI-06",
+      "task_name": "制定保司IT对接技术规范",
+      "source_type": "BLUEPRINT_STEP",
+      "evidence_refs": [
+        "EVD-6736ec7092739f62d38e",
+        "EVD-ab8391767822b04d6214",
+        "EVD-d8f5b8cf37c6d749abd0",
+        "EVD-c6b87ea3dfa7384f50b3"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "信息处理类单一动作，d=2，Skill可行性A，可自动生成规范初稿，人工审核特殊需求。"
+    },
+    {
+      "task_id": "T07-L4-IRI-07",
+      "l4_code": "L4-IRI-07",
+      "task_name": "实施保司人员培训与换手记录",
+      "source_type": "BLUEPRINT_STEP",
+      "evidence_refs": [
+        "EVD-7461458c94ffad2a4ba2",
+        "EVD-bd6b0441ef88ca3771a0",
+        "EVD-5e4251de05ccd7855d82"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "涉及物理执行和人际交互，规则清晰度低(d2=1)，Skill可行性C级，Agent辅助材料准备与记录，核心培训需人工。"
+    }
+  ],
+  "priority_drafts": [
+    {
+      "l4_code": "L4-IRI-01",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "EVD-9e48e07e2b017fd5d67b (输入结构化程度1，依赖人工收集)"
+      ],
+      "process_context": "属于L3-IRI流程的第一步，在蓝图STEP-01执行，为后续资源盘点和技术对接奠定权限基础。",
+      "risks_limits": [
+        "谈判结果不确定，过度授权可能导致数据泄露风险",
+        "高度依赖关键人员的判断能力",
+        "API可达性低(d4=0)，无法自动化配置"
+      ],
+      "current_recommendation": "建议维持Hybrid层级，AI负责信息收集与冲突标记，人工负责谈判确认；后续若能抽象出标准权限模板且双方系统可自动配置，可考虑Aug级别，但当前封装度低(C级)，不宜全自动。",
+      "evidence_refs": [
+        "EVD-9e48e07e2b017fd5d67b",
+        "EVD-f58846cd444696abc279",
+        "EVD-533f7ff0805c43720e08",
+        "EVD-2ec5e2f48afb7673bdf3",
+        "EVD-6bee5e65f8c58250eef8",
+        "EVD-2e2e355c19b8510b3068",
+        "EVD-03c1c78918cf87a87349",
+        "EVD-78815e43e1ef2aaecfdf",
+        "EVD-96e9ee7e8ee363a235a5",
+        "EVD-a1f8dbef2e4585018f02",
+        "EVD-8e15f0a65bcac2d327d5",
+        "EVD-044724ee17558e0136cd",
+        "EVD-52b0cc4ad42718878f21"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-IRI-02",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "EVD-a0cb205cc3aee6bb8352 (输入结构化程度2，可API对接)"
+      ],
+      "process_context": "蓝图STEP-02，与L4-IRI-06并行，为后续对接提供输入。",
+      "risks_limits": [
+        "保司系统接口可能不稳定，数据格式不统一",
+        "需定期更新清单以保证时效性"
+      ],
+      "current_recommendation": "推荐Auto Tier，开发确定性Skill用于资源盘点，人工仅监督审核。鉴于A级封装可行性，可纳入Skill原型开发。",
+      "evidence_refs": [
+        "EVD-a0cb205cc3aee6bb8352",
+        "EVD-72fe76bb38661d562dd6",
+        "EVD-736fcc732a10c8cc6beb",
+        "EVD-38f9735202663a227a79",
+        "EVD-1172fc848b36c519244e",
+        "EVD-b5f4de2b0aea2ca2c140",
+        "EVD-89a68a23c5cc4d4bc335",
+        "EVD-9f05031d924e36c3443a",
+        "EVD-1bd8fa144d974074db96",
+        "EVD-fd4eb8e73b1ca19a6dd2",
+        "EVD-1b4ff8d3a2ecc4a3e8ae",
+        "EVD-ef83d89f408f32abbcc8",
+        "EVD-6736ec7092739f62d38e"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-IRI-03",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "EVD-d7bdef1bf8a0cb09a4cd (输入结构化程度2，可自动化)"
+      ],
+      "process_context": "蓝图STEP-03，基于资源盘点和技术规范进行实际对接。",
+      "risks_limits": [
+        "多方协调依赖人工沟通，自动化程度受限于团队配合度",
+        "单一动作但可能涉及复杂技术决策时需人工介入"
+      ],
+      "current_recommendation": "建议Auto Tier，可构建Skill用于对接状态跟踪与报告生成，但需人工解决阻塞问题。鉴于A级，优先Skill化。",
+      "evidence_refs": [
+        "EVD-d7bdef1bf8a0cb09a4cd",
+        "EVD-1a4cd2324328ba161958",
+        "EVD-e2ecd0e98749b6927a50",
+        "EVD-13cfe7c03379a70e58d1",
+        "EVD-de5401bfa9eea69b51ab",
+        "EVD-02d3e0ea1e235ede8b2f",
+        "EVD-3bc5be30b40c03ef1cc7",
+        "EVD-dbc1df15130b3fc7184d",
+        "EVD-39b4747921861c55c07c",
+        "EVD-bbf6df6b3e01a5042333",
+        "EVD-7bc09bed7725bcd74485",
+        "EVD-6224271584b21fd9ffba",
+        "EVD-ab8391767822b04d6214"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-IRI-04",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "EVD-19f87a57d8aa661c8f10 (输入结构化程度3，高度自动化可行)"
+      ],
+      "process_context": "蓝图STEP-04，在系统技术验证通过后执行。",
+      "risks_limits": [
+        "复合动作需确保子Skill顺序和失败回退，避免部分配置生效导致系统不一致",
+        "建议先拆分后封装"
+      ],
+      "current_recommendation": "推荐Auto Tier，但需先拆分为独立子Skill，逐步实现自动化。优先实现权限同步和验证Skill，通知可由已有工具完成。鉴于A级封装可行性，纳入Skill原型。",
+      "evidence_refs": [
+        "EVD-19f87a57d8aa661c8f10",
+        "EVD-c7e92790c81936bb894f",
+        "EVD-e79129d1334c2b53c44a",
+        "EVD-203a6241788163e6f44e",
+        "EVD-2a26b53f4d9f8fd45d03",
+        "EVD-5024d6b1b5278033e109",
+        "EVD-42e3d902d6d5db3573c8",
+        "EVD-ba8220cd957d883f044d",
+        "EVD-d84805e5a3e88682f6c8",
+        "EVD-f7696b1a02cf45cef184",
+        "EVD-d0bedd06ba8d138f2ec7",
+        "EVD-1f16d4893daa67eac8b5",
+        "EVD-09fb9d312c03fa2c624f"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-IRI-05",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "EVD-b5d4a34b869854a33792 (输入结构化程度2，可自动化)"
+      ],
+      "process_context": "蓝图STEP-06，流程最后一步，在培训换手后进行。",
+      "risks_limits": [
+        "若前期步骤未完成，核验可能不通过，需向上游环节反馈"
+      ],
+      "current_recommendation": "建议Auto Tier，Skill可自动化核验并起草确认书。由于价值节点P1，应优先开发。",
+      "evidence_refs": [
+        "EVD-b5d4a34b869854a33792",
+        "EVD-897bf7b88f3e19b3a099",
+        "EVD-7387448909a8ece9322d",
+        "EVD-190d42c84389fc9defd3",
+        "EVD-e017f6e55d09309534d0",
+        "EVD-325631a7641454a54cc3",
+        "EVD-b75c5d38a8877741f5a0",
+        "EVD-24933e2bad45556edf98",
+        "EVD-e6368f05e7b7445da055",
+        "EVD-d156a78dc289923c3579",
+        "EVD-f57e954be3d0f0789420",
+        "EVD-42e69105c3cd239a8329",
+        "EVD-28862fa9387a8871f562",
+        "EVD-4e17bf4f41ab7d5c85ec",
+        "EVD-03dff1fc8e2f83f8e864"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-IRI-06",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "EVD-c6b87ea3dfa7384f50b3 (输入结构化程度2，可自动化)"
+      ],
+      "process_context": "蓝图STEP-02与STEP-03，为系统对接提供标准。",
+      "risks_limits": [
+        "依赖保司技术栈信息，若信息不全则生成质量下降"
+      ],
+      "current_recommendation": "建议Auto Tier，可用于生成初稿。A级封装可行性高，优先Skill化。",
+      "evidence_refs": [
+        "EVD-c6b87ea3dfa7384f50b3",
+        "EVD-00235454a7c2d98e820d",
+        "EVD-3b052879e4a180580309",
+        "EVD-20b837fe0d8e965a7a3d",
+        "EVD-84d743ecedb8c8171cdf",
+        "EVD-103149948c2b6d1071bf",
+        "EVD-a0013f89ac114acaf5e9",
+        "EVD-7e496cc12b54d1b7b900",
+        "EVD-ba7606e240c3083a468e",
+        "EVD-c8c71c11884fe166a01d",
+        "EVD-6d2335f253348828b88a",
+        "EVD-d8f5b8cf37c6d749abd0",
+        "EVD-6736ec7092739f62d38e",
+        "EVD-ab8391767822b04d6214"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-IRI-07",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "EVD-5e4251de05ccd7855d82 (输入结构化程度2，但规则清晰度低d2=1)"
+      ],
+      "process_context": "蓝图STEP-05，在权限生效后进行。",
+      "risks_limits": [
+        "物理执行（现场培训）难以自动化，人员流失可能导致知识断档",
+        "C级低封装，不宜强行Skill化"
+      ],
+      "current_recommendation": "建议维持Hybrid Tier，AI Agent辅助管理培训进度与资料，核心培训仍由人完成。可探索VR培训等数字化手段，但短期不可自动化。",
+      "evidence_refs": [
+        "EVD-5e4251de05ccd7855d82",
+        "EVD-c002572aa5abe71dbdd9",
+        "EVD-5a3686507b8c80c777a7",
+        "EVD-094761efc658210e2039",
+        "EVD-6441df35217b715d668e",
+        "EVD-2e7077ab3cd881df022a",
+        "EVD-f2d72ad3fb75da7e8513",
+        "EVD-8e5ae428a1335781531a",
+        "EVD-d88ef0fe40c0900fbeda",
+        "EVD-d1332f949f4ab6e14f9b",
+        "EVD-ed512836d8acd32edf4a",
+        "EVD-bd6b0441ef88ca3771a0",
+        "EVD-7461458c94ffad2a4ba2"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "decision_drafts": [
+    {
+      "priority": "P1",
+      "task_ids": [
+        "T05-L4-IRI-05"
+      ],
+      "title": "启动整合就绪确认Skill开发并试点",
+      "pilot_scope": "选取1-2家保司进行整合就绪确认自动化试点，自动核验Checklist并生成确认书草稿，人工审核签署。",
+      "human_boundary": "人工必须负责最终核验结果的审核与确认书签署，AI不得直接发送确认书。",
+      "evidence_refs": [
+        "EVD-42e69105c3cd239a8329",
+        "EVD-4e17bf4f41ab7d5c85ec"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "control_chain": [],
+  "rejected_task_sources": [],
+  "missing_analysis": []
+}

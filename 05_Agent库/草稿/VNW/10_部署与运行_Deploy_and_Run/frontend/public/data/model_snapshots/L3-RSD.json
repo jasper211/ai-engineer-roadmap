@@ -21,6 +21,7 @@
           "EVD-5dfb7171bfe359ff0b7d",
           "EVD-5e5de39c3508065a347a",
           "EVD-651e2c2fc86f68136cb8",
+          "EVD-6c75cd78bdb789f954d7",
           "EVD-96a2372be46f2c24b857",
           "EVD-b65764cd881af07fc2d6",
           "EVD-ba53502295d541ab052a",
@@ -49,7 +50,7 @@
     "schema_version": "vnw.l3-analysis.v1",
     "source_scope": {
       "database": "process_analytics",
-      "evidence_count": 19,
+      "evidence_count": 20,
       "knowledge": "ACTIVE supplemental evidence only"
     },
     "tasks": [
@@ -67,7 +68,7 @@
       }
     ]
   },
-  "analysis_input_hash": "6dc7857796761a35597c84621dee86ac8a8612fc333877fd7e0f7962e0055000",
+  "analysis_input_hash": "539eb2f8353583a2518382394c65593e08504492712977d0d393a91b08cb88bc",
   "blueprint": {
     "blueprint_value_nodes": [],
     "coverage": "INDEXED",
@@ -327,6 +328,33 @@
       "status": "ACTIVE",
       "transform_rule": "",
       "value": 1
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-6c75cd78bdb789f954d7",
+      "field_name": "skill_feasibility",
+      "source": {
+        "observed_at": "",
+        "source_field": "L4明细_最终确认版:A:N",
+        "source_key": "L4-RSD-01@row:283",
+        "source_object": "L4流程_Skill封装可行性评估_确认最终版_v2.xlsx",
+        "source_system": "OB知识库",
+        "source_version": "v2"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "action_nature": "判断/策略/认知类",
+        "action_singularity": "复合动作(建议先拆分)",
+        "funds_safety_hard_gate": false,
+        "grade": "C-低封装(判断/策略/关系类,理论天花板)",
+        "judgment_basis": "C-仍低封装度(需判断/权威)",
+        "physical_execution": false,
+        "recommended_path": "优先考虑Agent辅助或决策支持，不直接封装确定性Skill",
+        "verification_status": "VERIFIED"
+      }
     },
     {
       "confidence": "HIGH",
@@ -596,11 +624,22 @@
         "agentifiability": "EVD-5e5de39c3508065a347a",
         "l4_deliverable": "EVD-beac904f6ca442d77011",
         "l4_deliverable_type": "EVD-5dfb7171bfe359ff0b7d",
-        "l4_name": "EVD-30d0aeee43feece2072f"
+        "l4_name": "EVD-30d0aeee43feece2072f",
+        "skill_feasibility": "EVD-6c75cd78bdb789f954d7"
       },
       "human_touchpoint": null,
       "l4_code": "L4-RSD-01",
       "l4_name": "权益方案需求分析与框架设计",
+      "skill_feasibility": {
+        "action_nature": "判断/策略/认知类",
+        "action_singularity": "复合动作(建议先拆分)",
+        "funds_safety_hard_gate": false,
+        "grade": "C-低封装(判断/策略/关系类,理论天花板)",
+        "judgment_basis": "C-仍低封装度(需判断/权威)",
+        "physical_execution": false,
+        "recommended_path": "优先考虑Agent辅助或决策支持，不直接封装确定性Skill",
+        "verification_status": "VERIFIED"
+      },
       "tier": "Hybrid"
     }
   ],
@@ -618,6 +657,11 @@
       "rule_l4": {
         "covered": 0,
         "total": 1
+      },
+      "skill_feasibility": {
+        "provisional": 0,
+        "total": 1,
+        "verified": 1
       },
       "sop_count": 0,
       "task": {
