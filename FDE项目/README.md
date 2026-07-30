@@ -6,4 +6,4 @@
 
 | Agent ID | 名称 | 状态 | 启动文档 |
 |---|---|---|---|
-| HKIA | 香港保监局（IA）行业数据自动化分析 Agent | 配置更新完成（长期业务2023Q1~2026Q1，人工下载范围），待 Jasper 放好13份原始文件后进入第4步开发 | [README](HKIA/README.md) · [需求定义](HKIA/01_初始化项目_Initialize_Project/需求定义.md) · [流程设计](HKIA/03_规划项目结构_Plan_Project_Structure/流程设计.md) |
+| HKIA | 香港保监局（IA）行业数据自动化分析 Agent | 测试中——13期端到端跑通，8项集成测试全过，待 Mark/Jasper 确认归档 | [README](HKIA/README.md) · [需求定义](HKIA/01_初始化项目_Initialize_Project/需求定义.md) · [流程设计](HKIA/03_规划项目结构_Plan_Project_Structure/流程设计.md) · [执行记录](HKIA/执行记录.md) |

@@ -79,12 +79,109 @@
     "schema_version": "vnw.l3-analysis.v1",
     "source_scope": {
       "database": "process_analytics",
-      "evidence_count": 29,
+      "evidence_count": 31,
       "knowledge": "ACTIVE supplemental evidence only"
     },
-    "tasks": []
+    "tasks": [
+      {
+        "analysis_status": "FACT_EXTRACTED",
+        "evidence_refs": [
+          "EVD-6071e3d948997d2d34a9"
+        ],
+        "l4_code": "L4-BSRV-01",
+        "source_type": "BLUEPRINT",
+        "suggested_tier": "",
+        "task_id": "L4-BSRV-01-T01",
+        "task_name": "接收机构日常运营问题/需求（保单/账单/系统/人员等）",
+        "tier_rationale": ""
+      },
+      {
+        "analysis_status": "FACT_EXTRACTED",
+        "evidence_refs": [
+          "EVD-6071e3d948997d2d34a9"
+        ],
+        "l4_code": "L4-BSRV-01",
+        "source_type": "BLUEPRINT",
+        "suggested_tier": "",
+        "task_id": "L4-BSRV-01-T02",
+        "task_name": "协调内部资源（IT/合规/财务等）响应机构需求",
+        "tier_rationale": ""
+      },
+      {
+        "analysis_status": "FACT_EXTRACTED",
+        "evidence_refs": [
+          "EVD-6071e3d948997d2d34a9"
+        ],
+        "l4_code": "L4-BSRV-01",
+        "source_type": "BLUEPRINT",
+        "suggested_tier": "",
+        "task_id": "L4-BSRV-01-T03",
+        "task_name": "跟进问题处理进度，确保机构正常运营",
+        "tier_rationale": ""
+      },
+      {
+        "analysis_status": "FACT_EXTRACTED",
+        "evidence_refs": [
+          "EVD-378e57127e95a547d2ca"
+        ],
+        "l4_code": "L4-BSRV-02",
+        "source_type": "BLUEPRINT",
+        "suggested_tier": "",
+        "task_id": "L4-BSRV-02-T01",
+        "task_name": "接收各费用类型账单（结算服务费/权益费/管理费/合规费/邮箱费）",
+        "tier_rationale": ""
+      },
+      {
+        "analysis_status": "FACT_EXTRACTED",
+        "evidence_refs": [
+          "EVD-378e57127e95a547d2ca"
+        ],
+        "l4_code": "L4-BSRV-02",
+        "source_type": "BLUEPRINT",
+        "suggested_tier": "",
+        "task_id": "L4-BSRV-02-T02",
+        "task_name": "按费用类型逐一核对金额与合同条款",
+        "tier_rationale": ""
+      },
+      {
+        "analysis_status": "FACT_EXTRACTED",
+        "evidence_refs": [
+          "EVD-378e57127e95a547d2ca"
+        ],
+        "l4_code": "L4-BSRV-02",
+        "source_type": "BLUEPRINT",
+        "suggested_tier": "",
+        "task_id": "L4-BSRV-02-T03",
+        "task_name": "确认各费用类型核对结果，标注异常项",
+        "tier_rationale": ""
+      },
+      {
+        "analysis_status": "FACT_EXTRACTED",
+        "evidence_refs": [
+          "EVD-378e57127e95a547d2ca"
+        ],
+        "l4_code": "L4-BSRV-02",
+        "source_type": "BLUEPRINT",
+        "suggested_tier": "",
+        "task_id": "L4-BSRV-02-T04",
+        "task_name": "核对确认后，移交中台对应结算 L3 执行付款",
+        "tier_rationale": ""
+      },
+      {
+        "analysis_status": "FACT_EXTRACTED",
+        "evidence_refs": [
+          "EVD-378e57127e95a547d2ca"
+        ],
+        "l4_code": "L4-BSRV-02",
+        "source_type": "BLUEPRINT",
+        "suggested_tier": "",
+        "task_id": "L4-BSRV-02-T05",
+        "task_name": "存档结算核对台账",
+        "tier_rationale": ""
+      }
+    ]
   },
-  "analysis_input_hash": "206d1647cc461a4b2a5d5bfdc36bc6422be8bcb95f0b9c6ea03fe05991e6cdcc",
+  "analysis_input_hash": "63af9f0ffe30cea6d1db3f73e9353290e4ad4bd8d103b327e31f78ed815cf553",
   "blueprint": {
     "blueprint_value_nodes": [],
     "coverage": "INDEXED",
@@ -94,16 +191,59 @@
       "db_l4_count": 2,
       "extra_in_blueprint": [],
       "missing_in_blueprint": [],
-      "parsed_step_l4_count": 0
+      "parsed_step_l4_count": 2,
+      "retired_l4s_ignored": []
     },
-    "edges": [],
+    "edges": [
+      {
+        "edge_id": "SEQ-STEP-01-STEP-02",
+        "edge_type": "SEQUENCE",
+        "from": "STEP-01",
+        "label": "",
+        "source_rule": "蓝图显式编号步骤的相邻顺序",
+        "to": "STEP-02"
+      }
+    ],
     "filename": "流程蓝图_L3-BSRV_经代机构结算与日常运营评估_V1.0.md",
-    "note": "正文缺少可确认结构或与当前数据库冲突，禁止生成箭头、决策点和回退关系",
+    "note": "已从蓝图正文解析；步骤顺序边由显式步骤编号派生，判断分支保留原文行号",
     "raci": [],
     "source_hash": "a15ba98e4f1bc20cdfdcd23f672c750b37323d1ccf0c05748661f9b98603d4e8",
     "source_path": "/Users/a112233/Desktop/流程架构项目_jasper/02_过程成果-工作产出/L3流程库/流程蓝图_L3-BSRV_经代机构结算与日常运营评估_V1.0.md",
-    "steps": [],
-    "structure_status": "INDEX_ONLY",
+    "steps": [
+      {
+        "activities": [
+          "接收机构日常运营问题/需求（保单/账单/系统/人员等）",
+          "协调内部资源（IT/合规/财务等）响应机构需求",
+          "跟进问题处理进度，确保机构正常运营"
+        ],
+        "evidence_ref": "EVD-6071e3d948997d2d34a9",
+        "l4_codes": [
+          "L4-BSRV-01"
+        ],
+        "sequence": 1,
+        "source_line": 69,
+        "step_id": "STEP-01",
+        "step_name": "日常运营协同"
+      },
+      {
+        "activities": [
+          "接收各费用类型账单（结算服务费/权益费/管理费/合规费/邮箱费）",
+          "按费用类型逐一核对金额与合同条款",
+          "确认各费用类型核对结果，标注异常项",
+          "核对确认后，移交中台对应结算 L3 执行付款",
+          "存档结算核对台账"
+        ],
+        "evidence_ref": "EVD-378e57127e95a547d2ca",
+        "l4_codes": [
+          "L4-BSRV-02"
+        ],
+        "sequence": 2,
+        "source_line": 87,
+        "step_id": "STEP-02",
+        "step_name": "结算与评估"
+      }
+    ],
+    "structure_status": "PARSED",
     "version": "V1.0"
   },
   "demo_file": "",
@@ -255,6 +395,29 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-378e57127e95a547d2ca",
+      "field_name": "blueprint.steps.STEP-02",
+      "source": {
+        "observed_at": "",
+        "source_field": "step",
+        "source_key": "line:87",
+        "source_object": "流程蓝图_L3-BSRV_经代机构结算与日常运营评估_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "l4_codes": [
+          "L4-BSRV-02"
+        ],
+        "step_name": "结算与评估"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
       "evidence_id": "EVD-3e865387b8f41472b921",
       "field_name": "overall_judgment",
@@ -323,6 +486,29 @@
       "status": "ACTIVE",
       "transform_rule": "",
       "value": "日常运营协同"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-6071e3d948997d2d34a9",
+      "field_name": "blueprint.steps.STEP-01",
+      "source": {
+        "observed_at": "",
+        "source_field": "step",
+        "source_key": "line:69",
+        "source_object": "流程蓝图_L3-BSRV_经代机构结算与日常运营评估_V1.0.md",
+        "source_system": "L3流程库",
+        "source_version": "V1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "l4_codes": [
+          "L4-BSRV-01"
+        ],
+        "step_name": "日常运营协同"
+      }
     },
     {
       "confidence": "HIGH",
@@ -635,8 +821,8 @@
     "A": {
       "checks": [
         {
-          "detail": "Gate E=BLOCKED",
-          "passed": false,
+          "detail": "Gate E=CONDITIONAL",
+          "passed": true,
           "rule_id": "A-001"
         },
         {
@@ -655,13 +841,13 @@
           "rule_id": "A-004"
         }
       ],
-      "status": "BLOCKED"
+      "status": "PASS"
     },
     "E": {
       "checks": [
         {
-          "detail": "Gate M=BLOCKED",
-          "passed": false,
+          "detail": "Gate M=PASS",
+          "passed": true,
           "rule_id": "E-001"
         },
         {
@@ -675,8 +861,8 @@
           "rule_id": "E-003"
         },
         {
-          "detail": "可追溯任务覆盖=0/2（完整门槛80%）",
-          "passed": false,
+          "detail": "可追溯任务覆盖=2/2（完整门槛80%）",
+          "passed": true,
           "rule_id": "E-004"
         },
         {
@@ -705,7 +891,7 @@
           "rule_id": "E-009"
         }
       ],
-      "status": "BLOCKED"
+      "status": "CONDITIONAL"
     },
     "M": {
       "checks": [
@@ -715,8 +901,8 @@
           "rule_id": "M-001"
         },
         {
-          "detail": "缺少可解析流程蓝图",
-          "passed": false,
+          "detail": "流程蓝图_L3-BSRV_经代机构结算与日常运营评估_V1.0.md",
+          "passed": true,
           "rule_id": "M-002"
         },
         {
@@ -735,7 +921,7 @@
           "rule_id": "M-005"
         }
       ],
-      "status": "BLOCKED"
+      "status": "PASS"
     }
   },
   "has_demo": false,
@@ -826,7 +1012,7 @@
       },
       "sop_count": 0,
       "task": {
-        "covered": 0,
+        "covered": 2,
         "total": 2
       }
     },
@@ -834,8 +1020,8 @@
       "rules": [],
       "sops": []
     },
-    "model_generation_allowed": false,
-    "status": "WAITING_INPUT",
+    "model_generation_allowed": true,
+    "status": "LIMITED_MODEL",
     "thresholds": {
       "critical_l4_required": 1.0,
       "deliverable_full": 0.9,

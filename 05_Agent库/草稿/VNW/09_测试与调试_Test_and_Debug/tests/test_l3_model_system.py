@@ -187,6 +187,31 @@ class L3ModelSystemTests(unittest.TestCase):
         self.assertEqual(result["blueprint_value_nodes"][0]["vn_id"], "VN-PAY-01")
         self.assertEqual(result["raci"][0]["accountable"], "刘敏然")
 
+    def test_blueprint_parser_supports_l4_heading_step_tables_and_ignores_retired_l4(self):
+        content = """## 二、重定义
+原L4处置：L4-CRR-01已废弃，重建L4-CRR-06~07。
+## 五、流程步骤详述
+### L4-CRR-06 续约到期识别
+| 步骤 | 活动 | 执行主体 |
+|------|------|---------|
+| 1 | 查询即将到期合作伙伴 | 商务岗 |
+| 2 | 生成到期清单 | 商务岗 |
+### L4-CRR-07 续约资格判定
+| 步骤 | 活动 | 执行主体 |
+|------|------|---------|
+| 1 | 核查审核期出单记录 | 商务岗 |
+| 2 | 判定续约或终止 | 商务岗 |
+"""
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "crr.md"
+            path.write_text(content, encoding="utf-8")
+            result = parse_blueprint(path, {"L4-CRR-06", "L4-CRR-07"})
+        self.assertEqual(result["structure_status"], "PARSED")
+        self.assertEqual(len(result["steps"]), 2)
+        self.assertEqual(result["steps"][0]["activities"], ["查询即将到期合作伙伴", "生成到期清单"])
+        self.assertEqual(result["diagnostics"]["extra_in_blueprint"], [])
+        self.assertIn("L4-CRR-01", result["diagnostics"]["retired_l4s_ignored"])
+
     def test_analysis_runner_prepares_auditable_bundle(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

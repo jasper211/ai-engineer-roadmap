@@ -1,6 +1,6 @@
 # HKIA · 香港保监局（IA）行业数据自动化分析 Agent
 
-> 状态：草稿，SOP 第3步（配置编写）。`agents/agent.py` 尚未开发，下面的命令是第4步开发完成后的目标形态，现在还跑不了。
+> 状态：测试中。SOP 第4步（开发）+第5步（集成测试）已完成——13期端到端跑通，8项集成测试全过，待 Mark/Jasper 确认归档（SOP第6步）。下面的命令现在可以直接跑。
 
 ## 这是什么
 
@@ -35,15 +35,19 @@ HKIA/
 └── 11_监控与优化_Monitor_and_Optimize/     （demo阶段不做，留空）
 ```
 
-## 快速开始（第4步开发完成后）
+## 快速开始
 
 ```bash
 python3 04_定义Agent_Define_Agent/agents/agent.py --run-demo
+python3 04_定义Agent_Define_Agent/agents/agent.py --status
 python3 09_测试与调试_Test_and_Debug/tests/test_integration.py
 ```
+
+`--run-demo` 会清空重建本地SQLite（`07_接入记忆_Integrate_Memory/data/hkia.db`），一次性解析13份文件写入；`--status`查看当前库里有哪些期数、多少条记录。
 
 ## 关联文档
 
 - [需求定义.md](01_初始化项目_Initialize_Project/需求定义.md) — 含官网真实实测发现（文件命名不统一、YTD累计口径、一般业务断更但长期业务未断更的纠正、Cloudflare防护）
-- [流程设计.md](03_规划项目结构_Plan_Project_Structure/流程设计.md) — L3-HKIA-01~03 端到端流程
+- [流程设计.md](03_规划项目结构_Plan_Project_Structure/流程设计.md) — L3-HKIA-01~03 端到端流程，含4种表格结构变体的真实核实结果
+- [执行记录.md](执行记录.md) — 端到端运行结果 + 6个真实踩坑记录 + 已知限制
 - [raw_data/README.md](07_接入记忆_Integrate_Memory/raw_data/README.md) — 13份原始文件的期待清单

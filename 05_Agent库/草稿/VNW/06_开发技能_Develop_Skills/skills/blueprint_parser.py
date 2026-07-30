@@ -11,6 +11,8 @@ STEP_ZH = re.compile(r"^步骤\s*(\d+)[：:]\s*(.+?)\s*$")
 L4_RE = re.compile(r"L4-[A-Za-z0-9-]+")
 DECISION_INLINE = re.compile(r"【判断节点\s*(\d+)】\s*(.+?)[？?]?\s*$")
 DECISION_HEADING = re.compile(r"^###\s*(Q\d+)[：:]\s*(.+?)(?:（Step\s*(\d+)后）)?\s*$", re.I)
+L4_HEADING = re.compile(r"^###\s+(L4-[A-Za-z0-9-]+)\s+(.+?)\s*$", re.I)
+RETIRED_CONTEXT = re.compile(r"废弃|删除|原L4|历史|不再使用|已移除")
 
 
 def _line_number(text: str, offset: int) -> int:
@@ -25,7 +27,14 @@ def parse_blueprint(path: Path, db_l4_codes: set[str]) -> dict:
     text = Path(path).read_text(encoding="utf-8", errors="replace")
     lines = text.splitlines()
     source_hash = hashlib.sha256(text.encode("utf-8")).hexdigest()
-    all_blueprint_l4s = set(L4_RE.findall(text))
+    all_blueprint_l4s: set[str] = set()
+    retired_l4s: set[str] = set()
+    for line in lines:
+        codes = set(L4_RE.findall(line))
+        if RETIRED_CONTEXT.search(line):
+            retired_l4s.update(codes)
+        else:
+            all_blueprint_l4s.update(codes)
 
     steps: list[dict] = []
     current: dict | None = None
@@ -80,6 +89,46 @@ def parse_blueprint(path: Path, db_l4_codes: set[str]) -> dict:
                 "activities": [stripped],
                 "source_line": number,
             })
+
+    # CRR等蓝图以三级L4标题划分阶段，并把任务写在Markdown步骤表格中。
+    # 一个L4形成一个流程阶段，表格的每行活动保留为任务拆分依据。
+    if not steps:
+        table_sequence = 0
+        index = 0
+        while index < len(lines):
+            heading = L4_HEADING.match(lines[index].strip())
+            if not heading:
+                index += 1
+                continue
+            l4_code = heading.group(1).upper()
+            if l4_code not in db_l4_codes:
+                index += 1
+                continue
+            activities = []
+            cursor = index + 1
+            in_step_table = False
+            while cursor < len(lines):
+                stripped = lines[cursor].strip()
+                if stripped.startswith("### ") or stripped.startswith("## "):
+                    break
+                if stripped.startswith("|"):
+                    cells = [cell.strip() for cell in stripped.strip("|").split("|")]
+                    if len(cells) >= 2 and cells[0] == "步骤" and cells[1] == "活动":
+                        in_step_table = True
+                    elif in_step_table and len(cells) >= 2 and cells[0].isdigit():
+                        activities.append(cells[1])
+                cursor += 1
+            if activities:
+                table_sequence += 1
+                steps.append({
+                    "step_id": f"STEP-{table_sequence:02d}",
+                    "sequence": table_sequence,
+                    "step_name": heading.group(2).strip(),
+                    "l4_codes": [l4_code],
+                    "activities": activities,
+                    "source_line": index + 1,
+                })
+            index = max(cursor, index + 1)
 
     decisions: list[dict] = []
     for index, line in enumerate(lines):
@@ -221,5 +270,6 @@ def parse_blueprint(path: Path, db_l4_codes: set[str]) -> dict:
             "parsed_step_l4_count": len(parsed_l4s),
             "missing_in_blueprint": missing_in_blueprint,
             "extra_in_blueprint": extra_in_blueprint,
+            "retired_l4s_ignored": sorted(retired_l4s - db_l4_codes),
         },
     }
