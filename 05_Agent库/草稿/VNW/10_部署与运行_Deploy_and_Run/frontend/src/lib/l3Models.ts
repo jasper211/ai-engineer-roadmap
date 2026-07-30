@@ -138,6 +138,12 @@ export interface L3Model {
     }[]
     priority_drafts: Record<string, unknown>[]
     decision_drafts: Record<string, unknown>[]
+    control_chain?: {
+      level: string
+      l4_code: string
+      label: string
+      tone: string
+    }[]
     missing_analysis: string[]
   }
 }

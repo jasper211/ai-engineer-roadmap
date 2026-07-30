@@ -117,6 +117,18 @@ def load_d1d6_supplement(csv_path: Path) -> dict[str, dict[str, int]]:
     return result
 
 
+def load_analysis_packages(dir_path: Path) -> dict[str, dict]:
+    """加载已经过校验/复核的L3分析包；文件名使用`L3-CODE.*.json`。"""
+    result = {}
+    for path in Path(dir_path).glob("L3-*.json"):
+        package = json.loads(path.read_text(encoding="utf-8"))
+        code = path.name.split(".", 1)[0]
+        if code in result:
+            raise ValueError(f"同一L3存在多个分析包：{code}")
+        result[code] = package
+    return result
+
+
 def gate_result(status: str, checks: list[dict]) -> dict:
     return {"status": status, "checks": checks}
 
@@ -131,12 +143,14 @@ class L3ModelBuilder:
         blueprint_dir: Path | None = None,
         d1d6_supplement: dict[str, dict[str, int]] | None = None,
         demo_registry: dict[str, str] | None = None,
+        analysis_packages: dict[str, dict] | None = None,
     ):
         self.reader = reader
         self.blueprint_index = blueprint_index
         self.blueprint_dir = blueprint_dir
         self.d1d6_supplement = d1d6_supplement or {}
         self.demo_registry = demo_registry or {}
+        self.analysis_packages = analysis_packages or {}
 
     def build(self, l3_code: str, supplemental: list[EvidenceRecord] | None = None) -> dict:
         processes = self.reader.processes(l3_code)
@@ -366,11 +380,8 @@ class L3ModelBuilder:
             "evidence_registry": sorted(evidence.values(), key=lambda item: item["evidence_id"]),
             "supplemental_evidence_refs": [record.evidence_id for record in (supplemental or [])],
         }
-        model["analysis"] = build_analysis_envelope(
-            l3_code=l3_code,
-            l4s=l4s,
-            blueprint=model["blueprint"],
-            evidence_ids=set(evidence),
+        model["analysis"] = self.analysis_packages.get(l3_code) or build_analysis_envelope(
+            l3_code=l3_code, l4s=l4s, blueprint=model["blueprint"], evidence_ids=set(evidence),
         )
         validate_analysis_package(
             model["analysis"],

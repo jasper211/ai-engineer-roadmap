@@ -84,6 +84,7 @@ def main() -> int:
             load_blueprint_index,
             load_blueprint_index_from_dir,
             load_d1d6_supplement,
+            load_analysis_packages,
         )
         from skills.sync_data_foundation import db_query
         from tools.postgres_reader import BulkPostgresL3Reader, PostgresL3Reader
@@ -114,6 +115,9 @@ def main() -> int:
             blueprint_dir=blueprint_dir,
             d1d6_supplement=d1d6_supplement,
             demo_registry=DEMO_REGISTRY,
+            analysis_packages=load_analysis_packages(
+                AGENT_ROOT / "07_接入记忆_Integrate_Memory/analysis_packages"
+            ),
         )
         snapshot_dir = workspace.root / "model_snapshots"
         results = builder.build_and_write(codes, snapshot_dir)
