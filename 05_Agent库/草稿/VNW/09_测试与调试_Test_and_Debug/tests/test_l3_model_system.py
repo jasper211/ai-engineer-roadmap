@@ -3,6 +3,7 @@ from __future__ import annotations
 import sys
 import tempfile
 import unittest
+import json
 from pathlib import Path
 
 VNW_ROOT = Path(__file__).resolve().parents[2]
@@ -11,6 +12,7 @@ sys.path.insert(0, str(VNW_ROOT / "06_开发技能_Develop_Skills"))
 
 from skills.l3_model_builder import BlueprintIndex, L3ModelBuilder  # noqa: E402
 from skills.l3_analysis_contract import ANALYSIS_STANDARD_ID, validate_analysis_package  # noqa: E402
+from skills.l3_analysis_runner import L3AnalysisRunner, _json_from_text, normalize_model_package  # noqa: E402
 from skills.blueprint_parser import parse_blueprint  # noqa: E402
 from tools.evidence import EvidenceClass, EvidenceRecord, EvidenceStatus, SourceRef, authoritative  # noqa: E402
 from tools.obsidian_reader import note_is_eligible  # noqa: E402
@@ -156,6 +158,58 @@ class L3ModelSystemTests(unittest.TestCase):
         self.assertEqual(len(result["steps"]), 2)
         self.assertEqual(result["blueprint_value_nodes"][0]["vn_id"], "VN-PAY-01")
         self.assertEqual(result["raci"][0]["accountable"], "刘敏然")
+
+    def test_analysis_runner_prepares_auditable_bundle(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            prompt = root / "08_设计提示词_Design_Prompts/L3统一分析模型_v1.0.md"
+            prompt.parent.mkdir(parents=True)
+            prompt.write_text("只使用事实包。", encoding="utf-8")
+            snapshot = root / "L3-T.json"
+            snapshot.write_text(json.dumps(self.builder().build("L3-T"), ensure_ascii=False), encoding="utf-8")
+            run_dir = L3AnalysisRunner(root).prepare(snapshot)
+            request = json.loads((run_dir / "request.json").read_text(encoding="utf-8"))
+            payload = json.loads((run_dir / "user_payload.json").read_text(encoding="utf-8"))
+            self.assertEqual(request["status"], "PREPARED")
+            self.assertEqual(payload["fact_pack"]["l3_code"], "L3-T")
+            self.assertEqual(len(payload["output_contract"]["l4_analysis"]), 1)
+
+    def test_analysis_runner_rejects_stale_snapshot(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            prompt = root / "08_设计提示词_Design_Prompts/L3统一分析模型_v1.0.md"
+            prompt.parent.mkdir(parents=True)
+            prompt.write_text("只使用事实包。", encoding="utf-8")
+            snapshot = root / "L3-T.json"
+            model = self.builder().build("L3-T")
+            snapshot.write_text(json.dumps(model, ensure_ascii=False), encoding="utf-8")
+            runner = L3AnalysisRunner(root)
+            run_dir = runner.prepare(snapshot)
+            (run_dir / "response.raw.json").write_text("{}", encoding="utf-8")
+            model["l3_name"] = "已变化"
+            snapshot.write_text(json.dumps(model, ensure_ascii=False), encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "事实快照已变化"):
+                runner.validate_and_publish(run_dir)
+
+    def test_analysis_runner_accepts_output_contract_wrapper(self):
+        value = _json_from_text('{"output_contract":{"schema_version":"vnw.l3-analysis.v1"}}')
+        self.assertEqual(value["schema_version"], "vnw.l3-analysis.v1")
+
+    def test_analysis_runner_normalizes_tasks_without_inventing_quadrant(self):
+        package = {
+            "l4_analysis": [{
+                "l4_code": "L4-T-01", "evidence_refs": ["EVD-1"], "quadrant": "Auto",
+                "data_basis": ["x"], "process_context": "y", "risks_limits": ["z"],
+                "current_recommendation": "r",
+            }],
+            "tasks": [{"l4_code": "L4-T-01", "task_name": "测试", "recommended_tier": "Auto", "rationale": "规则"}],
+            "decision_drafts": [{"decision_id": "Q1"}],
+            "missing_analysis": [],
+        }
+        result = normalize_model_package(package, {"evidence_registry": []})
+        self.assertEqual(result["tasks"][0]["evidence_refs"], ["EVD-1"])
+        self.assertEqual(result["priority_drafts"][0]["quadrant"], "unclassified")
+        self.assertEqual(result["decision_drafts"], [])
 
 
 if __name__ == "__main__":

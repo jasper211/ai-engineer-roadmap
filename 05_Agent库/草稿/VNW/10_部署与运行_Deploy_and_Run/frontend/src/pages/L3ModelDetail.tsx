@@ -10,7 +10,20 @@ const COLUMNS = [
   { id: 'Aug', label: 'AI 增强', color: 'border-sky-400/30 bg-sky-400/5' },
 ] as const
 
-type WorkshopState = { placements: Record<string, string>; note: string; updatedAt: string; baseSnapshotHash: string }
+const PRIORITY_ZONES = [
+  { id: 'q1', label: '优先验证', tone: 'border-emerald-200 bg-emerald-50/60' },
+  { id: 'q2', label: '治理后推进', tone: 'border-blue-200 bg-blue-50/60' },
+  { id: 'q3', label: '补数据后推进', tone: 'border-amber-200 bg-amber-50/60' },
+  { id: 'q4', label: '暂缓自动化', tone: 'border-rose-200 bg-rose-50/60' },
+] as const
+
+type WorkshopState = {
+  placements: Record<string, string>
+  priorityPlacements: Record<string, string>
+  note: string
+  updatedAt: string
+  baseSnapshotHash: string
+}
 
 function gateTone(status: string) {
   return status === 'PASS' ? 'border-emerald-400/25 bg-emerald-400/10 text-emerald-700' : 'border-amber-400/25 bg-amber-400/10 text-amber-700'
@@ -31,20 +44,42 @@ function roleTone(role: string) {
   return 'border-border-default bg-bg-surface'
 }
 
+function deliverableQuality(rawDeliverable: string, sameValueCount: number) {
+  const governanceLanguage = /P[01]\s*[:：]|系统\s*bug|根因|未纳入流程库|当前无标准|待建设|纯手工|批次\d+|新增[:：]/
+  if (rawDeliverable.length > 80 || governanceLanguage.test(rawDeliverable)) {
+    return {
+      level: 'MIXED_CONTENT',
+      label: '源数据待治理 · 交付物混入问题或治理说明',
+      reason: '该字段不只包含交付物，还包含现状、问题、人员或待补规则。',
+    }
+  }
+  if (rawDeliverable && sameValueCount >= 3) {
+    return {
+      level: 'REPEATED_VALUE',
+      label: `源数据待核实 · 同一交付物在 ${sameValueCount} 个 L4 中复用`,
+      reason: '重复可能是标准化共用交付物，也可能是源表批量填充；系统不自动判错。',
+    }
+  }
+  return null
+}
+
 export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}) {
   const params = useParams()
   const l3Code = modelCode || params.l3Code || ''
   const [model, setModel] = useState<L3Model | null>(null)
   const [error, setError] = useState('')
   const storageKey = `vnw-workshop-v1:${l3Code}`
-  const [session, setSession] = useState<WorkshopState>({ placements: {}, note: '', updatedAt: '', baseSnapshotHash: '' })
+  const [session, setSession] = useState<WorkshopState>({ placements: {}, priorityPlacements: {}, note: '', updatedAt: '', baseSnapshotHash: '' })
   const [taskL4Filter, setTaskL4Filter] = useState('ALL')
 
   useEffect(() => {
     loadL3Model(l3Code).then(setModel).catch(error => setError(error.message))
     const saved = localStorage.getItem(storageKey)
     if (saved) {
-      try { setSession(JSON.parse(saved)) } catch { localStorage.removeItem(storageKey) }
+      try {
+        const parsed = JSON.parse(saved)
+        setSession({ placements: {}, priorityPlacements: {}, note: '', updatedAt: '', baseSnapshotHash: '', ...parsed })
+      } catch { localStorage.removeItem(storageKey) }
     }
   }, [l3Code, storageKey])
 
@@ -75,8 +110,32 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
     () => taskL4Filter === 'ALL' ? cards : cards.filter(card => card.l4_code === taskL4Filter),
     [cards, taskL4Filter],
   )
+  const priorityDrafts = useMemo(() => {
+    if (!model) return []
+    return model.analysis.priority_drafts.map((item, index) => {
+      const l4Code = String(item.l4_code || `priority-${index}`)
+      const initial = ['q1', 'q2', 'q3', 'q4'].includes(String(item.quadrant)) ? String(item.quadrant) : 'unclassified'
+      const placement = session.priorityPlacements[l4Code] || initial
+      return {
+        l4Code,
+        l4Name: model.l4s.find(l4 => l4.l4_code === l4Code)?.l4_name || '中文名称待补',
+        initial,
+        placement,
+        changed: placement !== initial,
+        current_recommendation: String(item.current_recommendation || ''),
+        process_context: String(item.process_context || ''),
+        risks_limits: Array.isArray(item.risks_limits) ? item.risks_limits : [],
+        data_basis: Array.isArray(item.data_basis) ? item.data_basis : [],
+      }
+    })
+  }, [model, session.priorityPlacements])
   function moveCard(cardId: string, placement: string) {
     setSession(current => ({ ...current, placements: { ...current.placements, [cardId]: placement } }))
+  }
+
+  function movePriority(l4Code: string, placement: string) {
+    if (!l4Code) return
+    setSession(current => ({ ...current, priorityPlacements: { ...current.priorityPlacements, [l4Code]: placement } }))
   }
 
   function persist() {
@@ -87,7 +146,7 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
 
   function reset() {
     localStorage.removeItem(storageKey)
-    setSession({ placements: {}, note: '', updatedAt: '', baseSnapshotHash: '' })
+    setSession({ placements: {}, priorityPlacements: {}, note: '', updatedAt: '', baseSnapshotHash: '' })
   }
 
   if (error) return <div className="panel p-5 text-sm text-accent-danger">{error}</div>
@@ -219,11 +278,31 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
           {model.l4s.map(l4 => {
             const analysis = model.analysis.l4_analysis.find(item => String(item.l4_code) === l4.l4_code) as Record<string, unknown> | undefined
             const displayTier = String(analysis?.recommended_tier || l4.tier || '')
+            const rawDeliverable = String(l4.deliverable || '')
+            const sameValueCount = model.l4s.filter(item => String(item.deliverable || '') === rawDeliverable).length
+            const deliverableIssue = deliverableQuality(rawDeliverable, sameValueCount)
+            const proposedDeliverable = String(analysis?.proposed_deliverable || '')
             return (
             <div key={l4.l4_code} className={`rounded-xl border p-4 ${roleTone(String(analysis?.deliverable_role || ''))}`}>
               <div className="flex items-center justify-between gap-3"><span className="font-mono text-[11px] text-accent-primary-light">{l4.l4_code}</span><span className={`rounded-md border px-2 py-1 text-[10px] font-semibold ${tierTone(displayTier)}`}>{displayTier || '未评估'}</span></div>
-              <p className="mt-2 text-sm font-medium">{l4.deliverable || l4.l4_name}</p>
-              <p className="mt-1 text-xs text-text-muted">{l4.l4_name}</p>
+              <p className="mt-2 text-sm font-bold text-text-primary">{l4.l4_name}</p>
+              {deliverableIssue ? (
+                <div className="mt-3 rounded-lg border border-amber-300 bg-amber-50 p-3">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <span className="text-[10px] font-semibold text-amber-800">{deliverableIssue.label}</span>
+                    <span className="font-mono text-[9px] text-amber-700">{String(l4.evidence_refs.l4_deliverable || '')}</span>
+                  </div>
+                  <p className="mt-1 text-[10px] leading-4 text-amber-800">{deliverableIssue.reason}</p>
+                  {proposedDeliverable && <p className="mt-2 text-xs font-medium text-text-primary"><b>模型拆分草稿：</b>{proposedDeliverable}</p>}
+                  {proposedDeliverable && <p className="mt-1 text-[10px] text-amber-800">仅供业务确认，尚未回写数据库。</p>}
+                  <details className="mt-2">
+                    <summary className="cursor-pointer text-[10px] text-amber-800">展开数据库原文</summary>
+                    <p className="mt-2 break-words text-[10px] leading-4 text-text-secondary">{rawDeliverable}</p>
+                  </details>
+                </div>
+              ) : (
+                <p className="mt-2 text-xs text-text-secondary"><b>权威交付物：</b>{rawDeliverable || '待补'}</p>
+              )}
               {Boolean(analysis?.deliverable_role) && <span className="mt-3 inline-block rounded-full bg-indigo-50 px-2.5 py-1 text-[10px] font-medium text-indigo-700">{String(analysis?.deliverable_role)}</span>}
               {Array.isArray(analysis?.specific_capabilities) && analysis.specific_capabilities.length > 0 && <p className="mt-3 text-xs leading-5 text-text-secondary"><b>具体能力：</b>{analysis.specific_capabilities.join('、')}</p>}
               {Boolean(analysis?.ai_reshape) && <p className="mt-2 text-xs leading-5 text-indigo-700"><b>AI重塑：</b>{String(analysis?.ai_reshape)}</p>}
@@ -326,8 +405,16 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
       </section>
 
       <section className="panel p-5">
-        <div className="flex items-center gap-2"><Layers3 className="h-4 w-4 text-accent-primary-light" /><h2 className="text-sm font-semibold">面板 D · AI机会优先级</h2></div>
-        <p className="mt-2 text-xs text-text-muted">每个位置必须有数据依据、流程背景、风险限制和当前建议；无分析依据时不自动安排象限位置。</p>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <div className="flex items-center gap-2"><Layers3 className="h-4 w-4 text-accent-primary-light" /><h2 className="text-sm font-semibold">面板 D · AI机会优先级工作坊</h2></div>
+            <p className="mt-2 text-xs text-text-muted">可将每项 L4 拖入讨论后的象限。初始位置来自分析包；移动结果仅是本机工作坊共识，不会写回权威库。</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <button onClick={reset} className="flex items-center gap-1.5 rounded-lg border border-border-default px-3 py-2 text-xs text-text-muted hover:text-text-primary"><RotateCcw className="h-3.5 w-3.5" />恢复初始位置</button>
+            <button onClick={persist} className="flex items-center gap-1.5 rounded-lg bg-accent-primary px-3 py-2 text-xs text-white"><Save className="h-3.5 w-3.5" />保存到本机</button>
+          </div>
+        </div>
         {model.analysis.priority_drafts.length === 0 ? (
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
             {['优先验证', '治理后推进', '补数据后推进', '暂缓自动化'].map(label => (
@@ -339,41 +426,59 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
           </div>
         ) : (
           <div className="mt-4 space-y-3">
-            {model.analysis.priority_drafts.some(item => !['q1', 'q2', 'q3', 'q4'].includes(String(item.quadrant))) && (
-              <div className="rounded-xl border border-violet-200 bg-violet-50/70 p-4">
+            <div
+              onDragOver={event => event.preventDefault()}
+              onDrop={event => movePriority(event.dataTransfer.getData('text/priority'), 'unclassified')}
+              className="min-h-24 rounded-xl border border-violet-200 bg-violet-50/70 p-4"
+            >
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <p className="text-sm font-semibold text-violet-900">待负责人归类 · 不编造象限位置</p>
-                  <span className="rounded-full bg-white px-2 py-1 text-[10px] text-violet-700">缺少逐 L4 价值依据</span>
+                  <span className="rounded-full bg-white px-2 py-1 text-[10px] text-violet-700">{priorityDrafts.filter(item => item.placement === 'unclassified').length} 项 · 可拖入下方象限</span>
                 </div>
                 <div className="mt-3 grid gap-2 lg:grid-cols-2">
-                  {model.analysis.priority_drafts.filter(item => !['q1', 'q2', 'q3', 'q4'].includes(String(item.quadrant))).map((item, index) => (
-                    <div key={String(item.l4_code || index)} className="rounded-lg border border-violet-100 bg-white p-3 shadow-sm">
-                      <p className="font-mono text-[10px] text-accent-primary">{String(item.l4_code || '')}</p>
-                      <p className="mt-1 text-xs font-medium text-text-primary">{String(item.current_recommendation || '')}</p>
-                      <p className="mt-1 text-[11px] leading-4 text-text-secondary"><b>流程背景：</b>{String(item.process_context || '')}</p>
-                      <p className="mt-1 text-[10px] leading-4 text-text-muted"><b>风险/限制：</b>{Array.isArray(item.risks_limits) ? item.risks_limits.join('；') : ''}</p>
-                      <p className="mt-1 text-[10px] leading-4 text-text-muted"><b>数据依据：</b>{Array.isArray(item.data_basis) ? item.data_basis.join('；') : ''}</p>
+                  {priorityDrafts.filter(item => item.placement === 'unclassified').map((item, index) => (
+                    <div key={item.l4Code || index} draggable onDragStart={event => event.dataTransfer.setData('text/priority', item.l4Code)} className="cursor-grab rounded-lg border border-violet-100 bg-white p-3 shadow-sm active:cursor-grabbing">
+                      <div className="flex items-center gap-2">
+                        <GripVertical className="h-3.5 w-3.5 shrink-0 text-text-muted" />
+                        <p className="text-xs text-text-primary"><span className="font-mono text-[10px] text-accent-primary">{item.l4Code}</span><b className="ml-2">{item.l4Name}</b></p>
+                      </div>
+                      <p className="mt-3 text-[11px] leading-5 text-text-secondary"><b>数据依据：</b>{item.data_basis.join('；') || '待补'}</p>
+                      <p className="mt-1 text-[11px] leading-5 text-text-secondary"><b>流程背景：</b>{item.process_context || '待补'}</p>
+                      <p className="mt-1 text-[11px] leading-5 text-text-secondary"><b>风险/限制：</b>{item.risks_limits.join('；') || '待补'}</p>
+                      <p className="mt-1 text-[11px] font-medium leading-5 text-text-primary"><b>当前建议：</b>{item.current_recommendation || '待补'}</p>
+                      <select aria-label={`调整 ${item.l4Code} 的优先级位置`} value={item.placement} onChange={event => movePriority(item.l4Code, event.target.value)} className="mt-2 w-full rounded border border-border-default bg-bg-surface px-2 py-1 text-[10px] text-text-secondary lg:hidden">
+                        <option value="unclassified">待负责人归类</option>
+                        {PRIORITY_ZONES.map(zone => <option key={zone.id} value={zone.id}>{zone.label}</option>)}
+                      </select>
                     </div>
                   ))}
                 </div>
-              </div>
-            )}
+            </div>
             <div className="grid gap-3 sm:grid-cols-2">
-              {[
-                ['q1', '优先验证', 'border-emerald-200 bg-emerald-50/60'],
-                ['q2', '治理后推进', 'border-blue-200 bg-blue-50/60'],
-                ['q3', '补数据后推进', 'border-amber-200 bg-amber-50/60'],
-                ['q4', '暂缓自动化', 'border-rose-200 bg-rose-50/60'],
-              ].map(([quadrant, label, tone]) => (
-                <div key={quadrant} className={`min-h-36 rounded-xl border p-4 ${tone}`}>
-                  <p className="text-sm font-semibold text-text-primary">{label}</p>
+              {PRIORITY_ZONES.map(zone => (
+                <div
+                  key={zone.id}
+                  onDragOver={event => event.preventDefault()}
+                  onDrop={event => movePriority(event.dataTransfer.getData('text/priority'), zone.id)}
+                  className={`min-h-40 rounded-xl border p-4 ${zone.tone}`}
+                >
+                  <div className="flex items-center justify-between"><p className="text-sm font-semibold text-text-primary">{zone.label}</p><span className="text-xs text-text-muted">{priorityDrafts.filter(item => item.placement === zone.id).length}</span></div>
                   <div className="mt-3 space-y-2">
-                    {model.analysis.priority_drafts.filter(item => String(item.quadrant) === quadrant).map((item, index) => (
-                      <div key={String(item.l4_code || index)} className="rounded-lg border border-white/80 bg-white p-3 shadow-sm">
-                        <p className="font-mono text-[10px] text-accent-primary">{String(item.l4_code || '')}</p>
-                        <p className="mt-1 text-xs font-medium text-text-primary">{String(item.current_recommendation || '')}</p>
-                        <p className="mt-1 text-[11px] leading-4 text-text-secondary">{String(item.process_context || '')}</p>
-                        <p className="mt-1 text-[10px] leading-4 text-text-muted">限制：{Array.isArray(item.risks_limits) ? item.risks_limits.join('；') : ''}</p>
+                    {priorityDrafts.filter(item => item.placement === zone.id).map((item, index) => (
+                      <div key={item.l4Code || index} draggable onDragStart={event => event.dataTransfer.setData('text/priority', item.l4Code)} className="cursor-grab rounded-lg border border-white/80 bg-white p-3 shadow-sm active:cursor-grabbing">
+                        <div className="flex items-center gap-2">
+                          <GripVertical className="h-3.5 w-3.5 shrink-0 text-text-muted" />
+                          <p className="text-xs text-text-primary"><span className="font-mono text-[10px] text-accent-primary">{item.l4Code}</span><b className="ml-2">{item.l4Name}</b></p>
+                        </div>
+                        <p className="mt-3 text-[11px] leading-5 text-text-secondary"><b>数据依据：</b>{item.data_basis.join('；') || '待补'}</p>
+                        <p className="mt-1 text-[11px] leading-5 text-text-secondary"><b>流程背景：</b>{item.process_context || '待补'}</p>
+                        <p className="mt-1 text-[11px] leading-5 text-text-secondary"><b>风险/限制：</b>{item.risks_limits.join('；') || '待补'}</p>
+                        <p className="mt-1 text-[11px] font-medium leading-5 text-text-primary"><b>当前建议：</b>{item.current_recommendation || '待补'}</p>
+                        {item.changed && <p className="mt-2 rounded bg-violet-50 px-2 py-1 text-[10px] text-violet-700">工作坊共识 · 初始位置：{item.initial === 'unclassified' ? '待负责人归类' : PRIORITY_ZONES.find(value => value.id === item.initial)?.label}</p>}
+                        <select aria-label={`调整 ${item.l4Code} 的优先级位置`} value={item.placement} onChange={event => movePriority(item.l4Code, event.target.value)} className="mt-2 w-full rounded border border-border-default bg-bg-surface px-2 py-1 text-[10px] text-text-secondary lg:hidden">
+                          <option value="unclassified">待负责人归类</option>
+                          {PRIORITY_ZONES.map(option => <option key={option.id} value={option.id}>{option.label}</option>)}
+                        </select>
                       </div>
                     ))}
                   </div>

@@ -6,4 +6,4 @@
 
 | Agent ID | 名称 | 状态 | 启动文档 |
 |---|---|---|---|
-| HKIA | 香港保监局（IA）行业数据自动化分析 Agent | 需求定义中 | [启动方案](HKIA/01_初始化项目_Initialize_Project/需求定义.md) |
+| HKIA | 香港保监局（IA）行业数据自动化分析 Agent | 配置编写完成，待进入第4步开发 | [README](HKIA/README.md) · [需求定义](HKIA/01_初始化项目_Initialize_Project/需求定义.md) · [流程设计](HKIA/03_规划项目结构_Plan_Project_Structure/流程设计.md) |

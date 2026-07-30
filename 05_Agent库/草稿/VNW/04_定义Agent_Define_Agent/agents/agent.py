@@ -42,6 +42,10 @@ def parse_args():
     parser.add_argument("--build-all-model-snapshots", action="store_true", help="批量只读构建数据库中的全部L3模型")
     parser.add_argument("--l3-code", action="append", help="要构建的L3编码；可重复传入")
     parser.add_argument("--blueprint-index", type=Path, help="L3蓝图覆盖清单CSV")
+    parser.add_argument("--prepare-l3-analysis", action="append", help="从现有快照准备统一模型运行包；可重复传入L3编码")
+    parser.add_argument("--run-analysis-dir", type=Path, help="调用模型运行指定分析运行包并校验发布")
+    parser.add_argument("--import-analysis-output", type=Path, help="导入外部模型JSON；需同时提供--run-analysis-dir")
+    parser.add_argument("--analysis-model", help="覆盖配置中的模型名称")
     return parser.parse_args()
 
 
@@ -78,6 +82,31 @@ def main() -> int:
     if args.status:
         print(json.dumps({"agent_id": settings["agent_id"], "version": settings["version"], "workspace": str(workspace.root), "tracked_files": len(state.get("files", {})), "last_run": state.get("runs", [])[-1:]}, ensure_ascii=False, indent=2))
         return 0
+    if args.prepare_l3_analysis or args.run_analysis_dir or args.import_analysis_output:
+        from skills.l3_analysis_runner import L3AnalysisRunner
+
+        runner = L3AnalysisRunner(AGENT_ROOT)
+        if args.prepare_l3_analysis:
+            snapshot_dir = AGENT_ROOT / "10_部署与运行_Deploy_and_Run/frontend/public/data/model_snapshots"
+            prepared = []
+            for code in args.prepare_l3_analysis:
+                normalized = code.upper() if code.upper().startswith("L3-") else f"L3-{code.upper()}"
+                snapshot_path = snapshot_dir / f"{normalized}.json"
+                if not snapshot_path.exists():
+                    raise FileNotFoundError(f"缺少模型快照：{snapshot_path}")
+                run_dir = runner.prepare(snapshot_path)
+                prepared.append({"l3_code": normalized, "run_dir": str(run_dir), "status": "PREPARED"})
+            print(json.dumps({"status": "prepared", "runs": prepared}, ensure_ascii=False, indent=2))
+            return 0
+        if args.import_analysis_output and not args.run_analysis_dir:
+            parser_error = "--import-analysis-output必须与--run-analysis-dir同时使用"
+            print(f"错误：{parser_error}", file=sys.stderr)
+            return 2
+        if args.run_analysis_dir:
+            response = args.import_analysis_output or runner.run(args.run_analysis_dir, model=args.analysis_model)
+            output = runner.validate_and_publish(args.run_analysis_dir, response)
+            print(json.dumps({"status": "published", "analysis_package": str(output)}, ensure_ascii=False, indent=2))
+            return 0
     if args.build_model_snapshots or args.build_all_model_snapshots:
         from skills.l3_model_builder import (
             L3ModelBuilder,

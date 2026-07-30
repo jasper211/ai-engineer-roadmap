@@ -104,6 +104,8 @@
 - 67/67个快照已包含`VNW-L3-COM-GOLD-v1.0`分析包；
 - 已提取406条带证据的蓝图任务；
 - 3条残缺或跨集合L4引用已被拒绝并留痕；
-- COM完整页面仍存在专用嵌入，下一步迁移为统一React组件；
-- 统一模型执行器尚未批量生成COM深度分析。
-
+- COM、IRI、IBRD、BAM已使用同一React组件；旧HTML只作历史归档；
+- COM、IRI、IBRD、BAM已有通过统一契约校验的深度分析包；
+- 统一分析执行器已实现`prepare → run/import → validate → publish`；
+- IRR、KPI、JOPD已生成首批冻结事实Hash的模型运行包，待模型执行；
+- 交付物质量审计已覆盖67个L3，并接入模型清单筛选。

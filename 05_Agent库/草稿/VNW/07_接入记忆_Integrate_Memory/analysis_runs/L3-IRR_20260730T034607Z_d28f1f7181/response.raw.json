@@ -1,0 +1,848 @@
+{
+  "output_contract": {
+    "schema_version": "vnw.l3-analysis.v1",
+    "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
+    "generation_mode": "UNIFIED_MODEL",
+    "analysis_status": "MODEL_DRAFT",
+    "model_run": null,
+    "source_scope": {
+      "database": "process_analytics",
+      "knowledge": "ACTIVE supplemental evidence only",
+      "evidence_count": 173
+    },
+    "l4_analysis": [
+      {
+        "l4_code": "L4-IRR-01",
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [
+          "EVD-79856336b8dd3061abed",
+          "EVD-261c2d7238131104fa4c",
+          "EVD-a2d6a785081702e013b8",
+          "EVD-885471012e6c943b0d3e"
+        ],
+        "confidence": "MODEL_DRAFT",
+        "deliverable_role": "",
+        "specific_capabilities": [],
+        "ai_reshape": "完全自动化：AI独立完成数据抽取、汇总并生成《周期总结报告》",
+        "quality_anchor": "",
+        "ai_responsibility": "从各系统抽取数据、按规则汇总、生成报告",
+        "human_responsibility": "无，全程自动化；异常时介入",
+        "handoff_triggers": [
+          "数据源异常",
+          "系统不可用"
+        ],
+        "control_gates": [],
+        "data_basis": [
+          "D1 输入结构化 3分 (EVD-6a2a1c8888fe5abf805d)",
+          "D2 规则清晰 3分 (EVD-69fd32ba6005bf5ada71)",
+          "D3 输出可验证 3分 (EVD-292b643e8df4e9610b89)",
+          "D4 接口可达 3分 (EVD-519fd7c330d9b2b6e066)",
+          "D5 降级方案 2分 (EVD-42f3507aa5b8b5c5f1d2)",
+          "D6 合规 2分 (EVD-99e735d8e80c838acfbd)"
+        ],
+        "process_context": "STEP-01: 合作周期数据汇总与流失预警 (EVD-885471012e6c943b0d3e)",
+        "risks_limits": [
+          "数据源接口变更导致规则失效",
+          "合规要求可能升级"
+        ],
+        "current_recommendation": "保持Auto Tier，建立数据质量监控机制",
+        "database_tier": "Auto",
+        "recommended_tier": "Auto",
+        "quadrant": "Automated"
+      },
+      {
+        "l4_code": "L4-IRR-02",
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [
+          "EVD-fa339ea2a51c8df8cf4d",
+          "EVD-7817949823dd227b4d08",
+          "EVD-2cfb660cb88553bf3bf5",
+          "EVD-3d01a6e2309a5b7f0c57"
+        ],
+        "confidence": "MODEL_DRAFT",
+        "deliverable_role": "",
+        "specific_capabilities": [],
+        "ai_reshape": "AI辅助生成内部评估结论草案，人工决策",
+        "quality_anchor": "",
+        "ai_responsibility": "汇总评估数据、生成初版《内部评估结论》",
+        "human_responsibility": "审核评估结论、做出决策",
+        "handoff_triggers": [
+          "AI建议与业务判断冲突",
+          "评估数据缺失或异常"
+        ],
+        "control_gates": [],
+        "data_basis": [
+          "D1 输入结构化 2分 (EVD-f12035324c90c0f81dbb)",
+          "D2 规则清晰 2分 (EVD-eb73a9d086a4eaf5a34e)",
+          "D3 输出可验证 2分 (EVD-0b858c7ed88cc19c8834)",
+          "D4 接口可达 2分 (EVD-8a7b65ab27cd1dae5e57)",
+          "D5 降级方案 2分 (EVD-4c5241ef9ed998a8a906)",
+          "D6 合规 2分 (EVD-4d5c850b5dcee42cf5d5)"
+        ],
+        "process_context": "STEP-02: 内部联合评估 (EVD-3d01a6e2309a5b7f0c57)",
+        "risks_limits": [
+          "评估规则复杂可能变化",
+          "AI输出需人工复核"
+        ],
+        "current_recommendation": "维持Hybrid Tier，明确人工决策点",
+        "database_tier": "Hybrid",
+        "recommended_tier": "Hybrid",
+        "quadrant": "Collaborative"
+      },
+      {
+        "l4_code": "L4-IRR-03",
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [
+          "EVD-8b6368dc49b01afb1429",
+          "EVD-56211c84b6853737fb2d",
+          "EVD-fc59930c3276197d3eba",
+          "EVD-312235d5e7fd3d9488d2"
+        ],
+        "confidence": "MODEL_DRAFT",
+        "deliverable_role": "",
+        "specific_capabilities": [],
+        "ai_reshape": "AI协助准备会议材料，人工主导联合评估会议",
+        "quality_anchor": "",
+        "ai_responsibility": "生成会议议程、汇总要点",
+        "human_responsibility": "主持保司联合评估会议，形成《联合评估结论》",
+        "handoff_triggers": [
+          "会议分歧需要人工协调"
+        ],
+        "control_gates": [
+          "对外沟通控制：需业务负责人参与"
+        ],
+        "data_basis": [
+          "D1 输入结构化 1分 (EVD-4e3617d996a51a4683da)",
+          "D2 规则清晰 0分 (EVD-d1b98e6bae4da9d4f025)",
+          "D3 输出可验证 0分 (EVD-dbfecbc807e90324b9c9)",
+          "D4 接口可达 0分 (EVD-de7313b7d2a17e32eabb)",
+          "D5 降级方案 0分 (EVD-704c54370789b3394aea)",
+          "D6 合规 1分 (EVD-23afb94e188c7abc17e7)"
+        ],
+        "process_context": "STEP-03: 保司联合评估会议 (EVD-312235d5e7fd3d9488d2)",
+        "risks_limits": [
+          "完全依赖人工沟通，AI仅辅助"
+        ],
+        "current_recommendation": "保持Hybrid，提前准备AI辅助材料",
+        "database_tier": "Hybrid",
+        "recommended_tier": "Hybrid",
+        "quadrant": "Collaborative"
+      },
+      {
+        "l4_code": "L4-IRR-04",
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [
+          "EVD-11c6cab8b7d0e70cf949",
+          "EVD-b965a9851c2be061bbd5",
+          "EVD-08d174a3129a96f69600",
+          "EVD-9d61e8ed360b7b89ea01"
+        ],
+        "confidence": "MODEL_DRAFT",
+        "deliverable_role": "",
+        "specific_capabilities": [],
+        "ai_reshape": "AI提供合同草案与风险提示，人工主导谈判与签署",
+        "quality_anchor": "",
+        "ai_responsibility": "生成续约/终止合同草案，提示关键条款",
+        "human_responsibility": "执行续约谈判或终止，签署最终协议",
+        "handoff_triggers": [
+          "合同条款需要法律审核",
+          "资金或重大权益变动"
+        ],
+        "control_gates": [
+          "资金/合规：合同签署需法务/财务审批",
+          "对外发布：不可逆操作需高级别授权"
+        ],
+        "data_basis": [
+          "D1 输入结构化 0分 (EVD-ff2a79bee456bdf077bd)",
+          "D2 规则清晰 0分 (EVD-16fbfb525af7b8911a1f)",
+          "D3 输出可验证 0分 (EVD-df6c973d21c67c084674)",
+          "D4 接口可达 0分 (EVD-d23b93640cda485a17a4)",
+          "D5 降级方案 0分 (EVD-663b3f176975b3b85437)",
+          "D6 合规 1分 (EVD-e29b3a677fcedd08a6aa)"
+        ],
+        "process_context": "STEP-04: 续约/终止决策与谈判 (EVD-9d61e8ed360b7b89ea01)",
+        "risks_limits": [
+          "法律风险高，AI不可替代人工",
+          "需多部门协同决策"
+        ],
+        "current_recommendation": "维持Hybrid，加强AI合同辅助能力",
+        "database_tier": "Hybrid",
+        "recommended_tier": "Hybrid",
+        "quadrant": "Collaborative"
+      },
+      {
+        "l4_code": "L4-IRR-05",
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [
+          "EVD-b4e869279a502a0e1094",
+          "EVD-25c5be7943b3714fdeb7",
+          "EVD-41faea4a0c3a4796222f",
+          "EVD-1af2e8a3e4d2394c6e5c"
+        ],
+        "confidence": "MODEL_DRAFT",
+        "deliverable_role": "",
+        "specific_capabilities": [],
+        "ai_reshape": "AI生成决议通知并推送，人工确认关键沟通",
+        "quality_anchor": "",
+        "ai_responsibility": "生成决议通知、分发内部通知",
+        "human_responsibility": "审核决议内容，处理特殊沟通",
+        "handoff_triggers": [
+          "决议涉及敏感信息",
+          "接收方反馈异常"
+        ],
+        "control_gates": [],
+        "data_basis": [
+          "D1 输入结构化 2分 (EVD-541445fa65810138e6a3)",
+          "D2 规则清晰 2分 (EVD-6283191f36c4636bb29a)",
+          "D3 输出可验证 2分 (EVD-d7a5c39786b1317c099d)",
+          "D4 接口可达 2分 (EVD-e079190e89ac03c3a88f)",
+          "D5 降级方案 2分 (EVD-4d1b90adf712ee6dcbe0)",
+          "D6 合规 2分 (EVD-4425f1b7e4981d7c0836)"
+        ],
+        "process_context": "STEP-05: 决议执行与内部沟通 (EVD-1af2e8a3e4d2394c6e5c)",
+        "risks_limits": [
+          "沟通内容准确性需人工复核"
+        ],
+        "current_recommendation": "维持Hybrid，优化AI生成与分发流程",
+        "database_tier": "Hybrid",
+        "recommended_tier": "Hybrid",
+        "quadrant": "Collaborative"
+      },
+      {
+        "l4_code": "L4-IRR-06",
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [
+          "EVD-74d340046c8ae41f9a38",
+          "EVD-5a13a10d04fbaaf04749",
+          "EVD-bec8749d93d2f8521473",
+          "EVD-885471012e6c943b0d3e"
+        ],
+        "confidence": "MODEL_DRAFT",
+        "deliverable_role": "",
+        "specific_capabilities": [],
+        "ai_reshape": "完全自动化生成流失预警报告",
+        "quality_anchor": "",
+        "ai_responsibility": "监控数据、触发预警、自动生成《流失预警报告》",
+        "human_responsibility": "无，异常时人工复核",
+        "handoff_triggers": [
+          "预警规则变更",
+          "数据源异常"
+        ],
+        "control_gates": [],
+        "data_basis": [
+          "D1 输入结构化 3分 (EVD-9116ebb2bfbe42a3b4b2)",
+          "D2 规则清晰 3分 (EVD-e12af740d9977baa7b7c)",
+          "D3 输出可验证 3分 (EVD-ad749a40ad257ab68143)",
+          "D4 接口可达 3分 (EVD-53d4f374249406f77a4f)",
+          "D5 降级方案 2分 (EVD-ef958b4e36366ed751ff)",
+          "D6 合规 2分 (EVD-fbfffdad9ec62e017de4)"
+        ],
+        "process_context": "STEP-01: 合作周期数据汇总与流失预警 (EVD-885471012e6c943b0d3e)",
+        "risks_limits": [
+          "预警模型需定期校准"
+        ],
+        "current_recommendation": "保持Auto Tier，定期评估模型效果",
+        "database_tier": "Auto",
+        "recommended_tier": "Auto",
+        "quadrant": "Automated"
+      },
+      {
+        "l4_code": "L4-IRR-07",
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [
+          "EVD-d1e0c2d962da6ba419c9",
+          "EVD-459ce35becd35f0e8115",
+          "EVD-6ebdb1088a06308b99f1",
+          "EVD-9d61e8ed360b7b89ea01"
+        ],
+        "confidence": "MODEL_DRAFT",
+        "deliverable_role": "",
+        "specific_capabilities": [],
+        "ai_reshape": "AI提供升级方案草案，人工主导谈判",
+        "quality_anchor": "",
+        "ai_responsibility": "生成《升级方案》草案、条款对比",
+        "human_responsibility": "主持升级谈判，确定最终条款",
+        "handoff_triggers": [
+          "谈判僵局需人工决策"
+        ],
+        "control_gates": [],
+        "data_basis": [
+          "D1 输入结构化 2分 (EVD-0ba2ade038a87db2b64f)",
+          "D2 规则清晰 1分 (EVD-5819bbb9ce6bb563a2d8)",
+          "D3 输出可验证 1分 (EVD-93019ce36d24016e28be)",
+          "D4 接口可达 0分 (EVD-0df91e957b2c6bb18c83)",
+          "D5 降级方案 0分 (EVD-2d817c624a0ae2dc5d59)",
+          "D6 合规 1分 (EVD-b550ded264b6ab3a1336)"
+        ],
+        "process_context": "STEP-04: 续约/终止决策与谈判 (EVD-9d61e8ed360b7b89ea01)",
+        "risks_limits": [
+          "依赖人工谈判技巧",
+          "数据支撑不足"
+        ],
+        "current_recommendation": "保持Hybrid，提升AI方案质量",
+        "database_tier": "Hybrid",
+        "recommended_tier": "Hybrid",
+        "quadrant": "Collaborative"
+      },
+      {
+        "l4_code": "L4-IRR-08",
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [
+          "EVD-bfc5eb30bdea448fef22",
+          "EVD-5c0238e0c68f5db3f26f",
+          "EVD-c1b2567c75119c09efb3",
+          "EVD-343ef74cabd83ca13dfb"
+        ],
+        "confidence": "MODEL_DRAFT",
+        "deliverable_role": "",
+        "specific_capabilities": [],
+        "ai_reshape": "AI增强：自动生成交付清单并追踪进度，人工抽查",
+        "quality_anchor": "",
+        "ai_responsibility": "汇总数据、生成《100天交付清单》、跟踪进度",
+        "human_responsibility": "抽查交付质量、处理异常",
+        "handoff_triggers": [
+          "进度严重滞后",
+          "交付质量低下"
+        ],
+        "control_gates": [],
+        "data_basis": [
+          "D1 输入结构化 2分 (EVD-3edb893ef7109d70d161)",
+          "D2 规则清晰 2分 (EVD-541979ef3beace9f3c18)",
+          "D3 输出可验证 2分 (EVD-437e5911f146cda01d43)",
+          "D4 接口可达 2分 (EVD-3013e76bb89fd77e4ed1)",
+          "D5 降级方案 2分 (EVD-434ced498710b4affdf2)",
+          "D6 合规 2分 (EVD-fa678978c1e8ca9de7f5)"
+        ],
+        "process_context": "STEP-06: 续约后追踪 (EVD-343ef74cabd83ca13dfb)",
+        "risks_limits": [
+          "交付清单依赖人工反馈"
+        ],
+        "current_recommendation": "保持Aug Tier，逐步提升自动化",
+        "database_tier": "Aug",
+        "recommended_tier": "Aug",
+        "quadrant": "Assisted"
+      },
+      {
+        "l4_code": "L4-IRR-09",
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [
+          "EVD-6dee81243cbd035e3001",
+          "EVD-e5b5d244471c6b5697a9",
+          "EVD-b6acdee6eda2378ee8c7",
+          "EVD-1af2e8a3e4d2394c6e5c"
+        ],
+        "confidence": "MODEL_DRAFT",
+        "deliverable_role": "",
+        "specific_capabilities": [],
+        "ai_reshape": "AI监测变动并生成应对记录，人工介入决策层变动",
+        "quality_anchor": "",
+        "ai_responsibility": "自动抓取公开信息、生成《变动应对记录》",
+        "human_responsibility": "对重大变动进行人工干预和关系维护",
+        "handoff_triggers": [
+          "关键决策层变动",
+          "合作关系风险上升"
+        ],
+        "control_gates": [],
+        "data_basis": [
+          "D1 输入结构化 2分 (EVD-91096c8a689264f3818f)",
+          "D2 规则清晰 0分 (EVD-1286f0c8a37c0cd6d83f)",
+          "D3 输出可验证 1分 (EVD-55a94fa9d4f3fbcf3fbc)",
+          "D4 接口可达 1分 (EVD-e3925a277bed15513e3d)",
+          "D5 降级方案 0分 (EVD-6f6d3a16ef096923ecac)",
+          "D6 合规 1分 (EVD-5d91b8e4b13341a68f37)"
+        ],
+        "process_context": "STEP-05: 决议执行与内部沟通 (EVD-1af2e8a3e4d2394c6e5c)",
+        "risks_limits": [
+          "信息抓取不完整",
+          "人工判断为核心"
+        ],
+        "current_recommendation": "维持Hybrid，增强AI监测能力",
+        "database_tier": "Hybrid",
+        "recommended_tier": "Hybrid",
+        "quadrant": "Collaborative"
+      },
+      {
+        "l4_code": "L4-IRR-10",
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [
+          "EVD-c68bed2c9dcec9e8330d",
+          "EVD-dad842485f9c7bb57bd6",
+          "EVD-eaf50a86967742b6745b",
+          "EVD-ac32f452acb9c3f7b5f0"
+        ],
+        "confidence": "MODEL_DRAFT",
+        "deliverable_role": "",
+        "specific_capabilities": [],
+        "ai_reshape": "AI提供升级时机评估建议，人工战略决策",
+        "quality_anchor": "",
+        "ai_responsibility": "分析条件、生成《升级时机评估》",
+        "human_responsibility": "战略决策Phase 3升级联动",
+        "handoff_triggers": [
+          "战略级决策需高层审批"
+        ],
+        "control_gates": [
+          "战略级控制：需高管批准"
+        ],
+        "data_basis": [
+          "D1 输入结构化 1分 (EVD-ee9d572ac450ea1ef29f)",
+          "D2 规则清晰 0分 (EVD-ef5dd5043c767a6b1fa9)",
+          "D3 输出可验证 0分 (EVD-b71a2b06e3343dc3c470)",
+          "D4 接口可达 0分 (EVD-8d7907acbe4ce9a0eff5)",
+          "D5 降级方案 0分 (EVD-b73cd7e4ea5308975f00)",
+          "D6 合规 1分 (EVD-ed3807b05932f44730e6)"
+        ],
+        "process_context": "STEP-07: Phase 3升级联动评估（条件触发） (EVD-ac32f452acb9c3f7b5f0)",
+        "risks_limits": [
+          "高度依赖人工战略判断"
+        ],
+        "current_recommendation": "保持Hybrid，AI仅提供数据支撑",
+        "database_tier": "Hybrid",
+        "recommended_tier": "Hybrid",
+        "quadrant": "Collaborative"
+      },
+      {
+        "l4_code": "L4-IRR-11",
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [
+          "EVD-35909e0c05d5c1d64bcf",
+          "EVD-56dcdc3a5728fb62b568",
+          "EVD-f29949240e0d03e98da8",
+          "EVD-343ef74cabd83ca13dfb"
+        ],
+        "confidence": "MODEL_DRAFT",
+        "deliverable_role": "",
+        "specific_capabilities": [],
+        "ai_reshape": "AI增强：自动汇总回收清单，人工核查关键资产",
+        "quality_anchor": "",
+        "ai_responsibility": "自动生成《回收清单》并追踪回收进度",
+        "human_responsibility": "物理核查关键资产",
+        "handoff_triggers": [
+          "资产未按期回收",
+          "清单与实际不符"
+        ],
+        "control_gates": [],
+        "data_basis": [
+          "D1 输入结构化 3分 (EVD-4126ba9b31e22a62709a)",
+          "D2 规则清晰 3分 (EVD-f789794dbab9012e00b4)",
+          "D3 输出可验证 3分 (EVD-d36c97c4c2de07055d77)",
+          "D4 接口可达 3分 (EVD-9c8f22ef4c9cb8f328f7)",
+          "D5 降级方案 2分 (EVD-633cfd0b5c431ff64a9e)",
+          "D6 合规 2分 (EVD-9eac5de0f392865b6da6)"
+        ],
+        "process_context": "STEP-06: 终止路径 (EVD-343ef74cabd83ca13dfb)",
+        "risks_limits": [
+          "人工盘点环节难以自动化"
+        ],
+        "current_recommendation": "保持Aug，优化AI核对功能",
+        "database_tier": "Aug",
+        "recommended_tier": "Aug",
+        "quadrant": "Assisted"
+      },
+      {
+        "l4_code": "L4-IRR-12",
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [
+          "EVD-a09fd0e638909ee71cf5",
+          "EVD-b655c2173c04d67eeecd",
+          "EVD-c98db4e060dadfbe3571",
+          "EVD-343ef74cabd83ca13dfb"
+        ],
+        "confidence": "MODEL_DRAFT",
+        "deliverable_role": "",
+        "specific_capabilities": [],
+        "ai_reshape": "AI辅助维护机会池，人工制定关系维护策略",
+        "quality_anchor": "",
+        "ai_responsibility": "更新《机会池维护记录》，推荐联系人",
+        "human_responsibility": "制订并执行关系维护策略",
+        "handoff_triggers": [
+          "高价值机会需人工跟进"
+        ],
+        "control_gates": [],
+        "data_basis": [
+          "D1 输入结构化 2分 (EVD-3063a3822a8faa7e2661)",
+          "D2 规则清晰 0分 (EVD-71d5e423c0b2db7f1491)",
+          "D3 输出可验证 1分 (EVD-a0dd1db6dbe9b74dfbea)",
+          "D4 接口可达 2分 (EVD-af0583c65dd10e66595a)",
+          "D5 降级方案 0分 (EVD-d633ae4a6355a8391231)",
+          "D6 合规 1分 (EVD-e22392603ead9bd53ddd)"
+        ],
+        "process_context": "STEP-06: 终止路径 (EVD-343ef74cabd83ca13dfb)",
+        "risks_limits": [
+          "关系维护依赖人工洞察"
+        ],
+        "current_recommendation": "维持Hybrid，提升AI推荐精准度",
+        "database_tier": "Hybrid",
+        "recommended_tier": "Hybrid",
+        "quadrant": "Collaborative"
+      },
+      {
+        "l4_code": "L4-IRR-13",
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [
+          "EVD-4c4ff7da76889e8d1813",
+          "EVD-5c263404147de3d5baa5",
+          "EVD-461bd258e04ca1bf24bb",
+          "EVD-9d61e8ed360b7b89ea01"
+        ],
+        "confidence": "MODEL_DRAFT",
+        "deliverable_role": "",
+        "specific_capabilities": [],
+        "ai_reshape": "AI提供长约方案草案，人工战略谈判",
+        "quality_anchor": "",
+        "ai_responsibility": "生成《长约方案》草案、分析绑定条款",
+        "human_responsibility": "主导战略谈判，签订多年长约",
+        "handoff_triggers": [
+          "条款涉及重大权益",
+          "需要高层决策"
+        ],
+        "control_gates": [
+          "资金/战略：需董事会或高管批准"
+        ],
+        "data_basis": [
+          "D1 输入结构化 1分 (EVD-dd28505492cabbbe2d0c)",
+          "D2 规则清晰 0分 (EVD-0e62843cbe14eddbd61e)",
+          "D3 输出可验证 0分 (EVD-4700d1aea9e944352337)",
+          "D4 接口可达 0分 (EVD-1347d1b8ad6dbc0a8284)",
+          "D5 降级方案 0分 (EVD-24a4ae8cfef468f753b8)",
+          "D6 合规 1分 (EVD-9957b587383800fea77b)"
+        ],
+        "process_context": "STEP-04: 续约/终止决策与谈判 (EVD-9d61e8ed360b7b89ea01)",
+        "risks_limits": [
+          "高风险战略合作，完全依赖人工"
+        ],
+        "current_recommendation": "保持Hybrid，AI仅支持前期方案",
+        "database_tier": "Hybrid",
+        "recommended_tier": "Hybrid",
+        "quadrant": "Collaborative"
+      }
+    ],
+    "tasks": [
+      {
+        "l4_code": "L4-IRR-01",
+        "task_name": "合作周期数据汇总",
+        "recommended_tier": "Auto",
+        "rationale": "完全自动化生成周期总结报告"
+      },
+      {
+        "l4_code": "L4-IRR-02",
+        "task_name": "内部联合评估",
+        "recommended_tier": "Hybrid",
+        "rationale": "AI辅助生成评估结论，人工决策"
+      },
+      {
+        "l4_code": "L4-IRR-03",
+        "task_name": "保司联合评估会议",
+        "recommended_tier": "Hybrid",
+        "rationale": "AI辅助准备材料，人工主导会议"
+      },
+      {
+        "l4_code": "L4-IRR-04",
+        "task_name": "续约谈判或终止",
+        "recommended_tier": "Hybrid",
+        "rationale": "AI提供合同草案，人工谈判签署"
+      },
+      {
+        "l4_code": "L4-IRR-05",
+        "task_name": "决议执行与内部沟通",
+        "recommended_tier": "Hybrid",
+        "rationale": "AI生成并分发通知，人工审核"
+      },
+      {
+        "l4_code": "L4-IRR-06",
+        "task_name": "续约前流失预警",
+        "recommended_tier": "Auto",
+        "rationale": "完全自动化预警报告"
+      },
+      {
+        "l4_code": "L4-IRR-07",
+        "task_name": "续约条款升级谈判",
+        "recommended_tier": "Hybrid",
+        "rationale": "AI提供方案，人工谈判"
+      },
+      {
+        "l4_code": "L4-IRR-08",
+        "task_name": "续约后100天成效",
+        "recommended_tier": "Aug",
+        "rationale": "AI增强，自动生成清单但需人工抽查"
+      },
+      {
+        "l4_code": "L4-IRR-09",
+        "task_name": "保司决策层变动应对",
+        "recommended_tier": "Hybrid",
+        "rationale": "AI监测变动，人工介入"
+      },
+      {
+        "l4_code": "L4-IRR-10",
+        "task_name": "Phase 3升级联动",
+        "recommended_tier": "Hybrid",
+        "rationale": "AI分析建议，人工战略决策"
+      },
+      {
+        "l4_code": "L4-IRR-11",
+        "task_name": "终止后资产回收",
+        "recommended_tier": "Aug",
+        "rationale": "AI生成回收清单，人工核查"
+      },
+      {
+        "l4_code": "L4-IRR-12",
+        "task_name": "终止后关系维护",
+        "recommended_tier": "Hybrid",
+        "rationale": "AI维护机会池，人工策略"
+      },
+      {
+        "l4_code": "L4-IRR-13",
+        "task_name": "多年长约战略绑定",
+        "recommended_tier": "Hybrid",
+        "rationale": "AI方案支持，人工战略谈判"
+      }
+    ],
+    "priority_drafts": [
+      "L3-IRR包含3个P0价值节点：新合同/终止协议(VN-INS-08)、联合评估结论(VN-INS-09)、周期总结报告(VN-INS-10)，均需优先保障数据链路与评估质量。建议优先自动化数据汇总和流失预警，确保P0交付物准确及时。",
+      "证据：VN-INS-08 (EVD-21b3c0eeef8128bbc1e7, EVD-9fab8c98cfc918b7e7cf, EVD-f43ce35a7af1b1b156b5); VN-INS-09 (EVD-95ce46114ac2917786bf, EVD-2bae920702b017c9340a, EVD-f1b1c881a0a6c1cb2726); VN-INS-10 (EVD-1f48b79fea616b13c97d, EVD-68e98df18249370496e7, EVD-b74c7de8edb64e4351fc)"
+    ],
+    "decision_drafts": [
+      {
+        "decision_id": "Q1",
+        "question": "内部评估结论",
+        "draft": "系统自动汇总评估数据，AI提供续约方向建议（标准续约/升级），但需业务负责人最终确认。",
+        "to_be_decided": "确认续约方向（标准续约或升级），并触发相应后续流程。",
+        "evidence_refs": [
+          "EVD-d87433f3efa27e183832"
+        ]
+      },
+      {
+        "decision_id": "Q2",
+        "question": "续约决策方向",
+        "draft": "基于联合评估结论，明确选择标准续约、条款升级或终止合作，并指定后续执行步骤。标准续约直接进入合同签署；升级触发条款谈判及可能的长期绑定；终止则启动资产回收与关系维护。",
+        "to_be_decided": "确定续约/终止的具体路径，分配执行资源。",
+        "evidence_refs": [
+          "EVD-cd186517f878acee337e"
+        ]
+      }
+    ],
+    "control_chain": [
+      {
+        "l4_code": "L4-IRR-04",
+        "control_type": "合同签署",
+        "responsible_role": "商务负责人/法务/财务",
+        "note": "人工执行：续约谈判或终止；涉及资金、合规，不可逆操作需多层审批。"
+      },
+      {
+        "l4_code": "L4-IRR-03",
+        "control_type": "对外会议",
+        "responsible_role": "业务负责人",
+        "note": "保司联合评估会议需我方代表人工参与。"
+      },
+      {
+        "l4_code": "L4-IRR-10",
+        "control_type": "战略升级",
+        "responsible_role": "高管/策略委员会",
+        "note": "Phase 3升级联动为战略级决策，需高层批准。"
+      },
+      {
+        "l4_code": "L4-IRR-13",
+        "control_type": "战略绑定",
+        "responsible_role": "董事会/CEO",
+        "note": "多年长约战略绑定涉及重大资金与长期合作，需最高层审批。"
+      }
+    ],
+    "rejected_task_sources": [],
+    "missing_analysis": [
+      {
+        "l4_code": "L4-IRR-01",
+        "field": "deliverable_role",
+        "reason": "无直接证据"
+      },
+      {
+        "l4_code": "L4-IRR-01",
+        "field": "specific_capabilities",
+        "reason": "无直接证据"
+      },
+      {
+        "l4_code": "L4-IRR-01",
+        "field": "quality_anchor",
+        "reason": "无直接证据"
+      },
+      {
+        "l4_code": "L4-IRR-02",
+        "field": "deliverable_role",
+        "reason": "无直接证据"
+      },
+      {
+        "l4_code": "L4-IRR-02",
+        "field": "specific_capabilities",
+        "reason": "无直接证据"
+      },
+      {
+        "l4_code": "L4-IRR-02",
+        "field": "quality_anchor",
+        "reason": "无直接证据"
+      },
+      {
+        "l4_code": "L4-IRR-03",
+        "field": "deliverable_role",
+        "reason": "无直接证据"
+      },
+      {
+        "l4_code": "L4-IRR-03",
+        "field": "specific_capabilities",
+        "reason": "无直接证据"
+      },
+      {
+        "l4_code": "L4-IRR-03",
+        "field": "quality_anchor",
+        "reason": "无直接证据"
+      },
+      {
+        "l4_code": "L4-IRR-04",
+        "field": "deliverable_role",
+        "reason": "无直接证据"
+      },
+      {
+        "l4_code": "L4-IRR-04",
+        "field": "specific_capabilities",
+        "reason": "无直接证据"
+      },
+      {
+        "l4_code": "L4-IRR-04",
+        "field": "quality_anchor",
+        "reason": "无直接证据"
+      },
+      {
+        "l4_code": "L4-IRR-05",
+        "field": "deliverable_role",
+        "reason": "无直接证据"
+      },
+      {
+        "l4_code": "L4-IRR-05",
+        "field": "specific_capabilities",
+        "reason": "无直接证据"
+      },
+      {
+        "l4_code": "L4-IRR-05",
+        "field": "quality_anchor",
+        "reason": "无直接证据"
+      },
+      {
+        "l4_code": "L4-IRR-06",
+        "field": "deliverable_role",
+        "reason": "无直接证据"
+      },
+      {
+        "l4_code": "L4-IRR-06",
+        "field": "specific_capabilities",
+        "reason": "无直接证据"
+      },
+      {
+        "l4_code": "L4-IRR-06",
+        "field": "quality_anchor",
+        "reason": "无直接证据"
+      },
+      {
+        "l4_code": "L4-IRR-07",
+        "field": "deliverable_role",
+        "reason": "无直接证据"
+      },
+      {
+        "l4_code": "L4-IRR-07",
+        "field": "specific_capabilities",
+        "reason": "无直接证据"
+      },
+      {
+        "l4_code": "L4-IRR-07",
+        "field": "quality_anchor",
+        "reason": "无直接证据"
+      },
+      {
+        "l4_code": "L4-IRR-08",
+        "field": "deliverable_role",
+        "reason": "无直接证据"
+      },
+      {
+        "l4_code": "L4-IRR-08",
+        "field": "specific_capabilities",
+        "reason": "无直接证据"
+      },
+      {
+        "l4_code": "L4-IRR-08",
+        "field": "quality_anchor",
+        "reason": "无直接证据"
+      },
+      {
+        "l4_code": "L4-IRR-09",
+        "field": "deliverable_role",
+        "reason": "无直接证据"
+      },
+      {
+        "l4_code": "L4-IRR-09",
+        "field": "specific_capabilities",
+        "reason": "无直接证据"
+      },
+      {
+        "l4_code": "L4-IRR-09",
+        "field": "quality_anchor",
+        "reason": "无直接证据"
+      },
+      {
+        "l4_code": "L4-IRR-10",
+        "field": "deliverable_role",
+        "reason": "无直接证据"
+      },
+      {
+        "l4_code": "L4-IRR-10",
+        "field": "specific_capabilities",
+        "reason": "无直接证据"
+      },
+      {
+        "l4_code": "L4-IRR-10",
+        "field": "quality_anchor",
+        "reason": "无直接证据"
+      },
+      {
+        "l4_code": "L4-IRR-11",
+        "field": "deliverable_role",
+        "reason": "无直接证据"
+      },
+      {
+        "l4_code": "L4-IRR-11",
+        "field": "specific_capabilities",
+        "reason": "无直接证据"
+      },
+      {
+        "l4_code": "L4-IRR-11",
+        "field": "quality_anchor",
+        "reason": "无直接证据"
+      },
+      {
+        "l4_code": "L4-IRR-12",
+        "field": "deliverable_role",
+        "reason": "无直接证据"
+      },
+      {
+        "l4_code": "L4-IRR-12",
+        "field": "specific_capabilities",
+        "reason": "无直接证据"
+      },
+      {
+        "l4_code": "L4-IRR-12",
+        "field": "quality_anchor",
+        "reason": "无直接证据"
+      },
+      {
+        "l4_code": "L4-IRR-13",
+        "field": "deliverable_role",
+        "reason": "无直接证据"
+      },
+      {
+        "l4_code": "L4-IRR-13",
+        "field": "specific_capabilities",
+        "reason": "无直接证据"
+      },
+      {
+        "l4_code": "L4-IRR-13",
+        "field": "quality_anchor",
+        "reason": "无直接证据"
+      }
+    ]
+  }
+}

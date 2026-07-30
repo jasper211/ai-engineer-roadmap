@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router'
 import { AlertTriangle, ArrowRight, CheckCircle2, Database, GitBranch, LoaderCircle, Search, Star } from 'lucide-react'
-import { loadModelIndex, type ModelIndex, type ModelIndexItem } from '../lib/l3Models'
+import { loadDeliverableAudit, loadModelIndex, type DeliverableAudit, type ModelIndex, type ModelIndexItem } from '../lib/l3Models'
 
 function Gate({ name, status }: { name: string; status: string }) {
   const pass = status === 'PASS'
@@ -12,7 +12,7 @@ function Gate({ name, status }: { name: string; status: string }) {
   )
 }
 
-function ModelCard({ model }: { model: ModelIndexItem }) {
+function ModelCard({ model, quality }: { model: ModelIndexItem; quality?: { mixed: number; repeated: number } }) {
   const ready = model.classification === 'MODEL_READY'
   return (
     <Link to={`/models/${model.l3_code}`} className="group panel block p-5 transition hover:border-border-hover hover:-translate-y-0.5">
@@ -33,6 +33,8 @@ function ModelCard({ model }: { model: ModelIndexItem }) {
           <span className={`rounded-full px-2.5 py-1 text-[11px] font-medium ${ready ? 'bg-emerald-400/10 text-emerald-700' : 'bg-amber-400/10 text-amber-700'}`}>
             {ready ? '可进入模型' : '待补数据'}
           </span>
+          {Boolean(quality && quality.mixed > 0) && <span className="rounded-full bg-rose-50 px-2.5 py-1 text-[11px] font-medium text-rose-700">交付物待治理 {quality?.mixed}</span>}
+          {Boolean(quality && quality.repeated > 0) && <span className="rounded-full bg-amber-50 px-2.5 py-1 text-[11px] font-medium text-amber-700">重复值待核实 {quality?.repeated}</span>}
         </div>
       </div>
       <div className="mt-4 flex flex-wrap gap-2">
@@ -53,13 +55,27 @@ function ModelCard({ model }: { model: ModelIndexItem }) {
 
 export default function L3Models() {
   const [data, setData] = useState<ModelIndex | null>(null)
+  const [audit, setAudit] = useState<DeliverableAudit | null>(null)
   const [error, setError] = useState('')
-  const [view, setView] = useState<'all' | 'ready' | 'evaluable' | 'missing' | 'demo'>('all')
+  const [view, setView] = useState<'all' | 'ready' | 'evaluable' | 'missing' | 'demo' | 'quality'>('all')
   const [query, setQuery] = useState('')
 
   useEffect(() => {
-    loadModelIndex().then(setData).catch(error => setError(error.message))
+    Promise.all([loadModelIndex(), loadDeliverableAudit()])
+      .then(([modelData, auditData]) => { setData(modelData); setAudit(auditData) })
+      .catch(error => setError(error.message))
   }, [])
+
+  const qualityByL3 = useMemo(() => {
+    const result: Record<string, { mixed: number; repeated: number }> = {}
+    for (const finding of audit?.findings ?? []) {
+      const row = result[finding.l3_code] ?? { mixed: 0, repeated: 0 }
+      if (finding.issue_type === 'MIXED_CONTENT') row.mixed += 1
+      if (finding.issue_type === 'REPEATED_VALUE') row.repeated += 1
+      result[finding.l3_code] = row
+    }
+    return result
+  }, [audit])
 
   const groups = useMemo(() => ({
     all: data?.models ?? [],
@@ -67,7 +83,8 @@ export default function L3Models() {
     evaluable: data?.models.filter(item => item.highest_gate === 'E') ?? [],
     missing: data?.models.filter(item => item.classification === 'NEEDS_DATA') ?? [],
     demo: data?.models.filter(item => item.has_demo) ?? [],
-  }), [data])
+    quality: data?.models.filter(item => Boolean(qualityByL3[item.l3_code])) ?? [],
+  }), [data, qualityByL3])
 
   if (error) return <div className="panel p-5 text-sm text-accent-danger">{error}</div>
   if (!data) return <div className="flex min-h-64 items-center justify-center text-text-muted"><LoaderCircle className="mr-2 h-5 w-5 animate-spin" />正在读取真实模型快照</div>
@@ -111,15 +128,19 @@ export default function L3Models() {
         <button onClick={() => setView('demo')} className={`flex items-center gap-2 rounded-xl px-4 py-3 text-sm ${view === 'demo' ? 'bg-violet-400/10 text-violet-700' : 'text-text-secondary hover:bg-bg-surface'}`}>
           <Star className="h-4 w-4" /> 已有完整 Demo <strong>{groups.demo.length}</strong>
         </button>
+        <button onClick={() => setView('quality')} className={`flex items-center gap-2 rounded-xl px-4 py-3 text-sm ${view === 'quality' ? 'bg-rose-50 text-rose-700' : 'text-text-secondary hover:bg-bg-surface'}`}>
+          <AlertTriangle className="h-4 w-4" /> 交付物待治理/核实 <strong>{groups.quality.length}</strong>
+        </button>
         <div className="ml-auto flex items-center gap-2 px-3 text-[11px] text-text-muted"><Database className="h-3.5 w-3.5" /> {data.source_policy}</div>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-4">
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
         {[
           ['数据库 L3', data.models.length, '权威库当前有效集合'],
           ['可解析蓝图', parsedCount, '已有步骤或判断结构'],
           ['可评估', groups.evaluable.length + groups.ready.length, '至少通过 Gate E'],
           ['可移交 AIT', groups.ready.length, '通过 Gate A'],
+          ['交付物疑点', audit?.finding_count ?? 0, `涉及 ${audit?.affected_l3_count ?? 0} 个 L3`],
         ].map(([label, value, note]) => (
           <div key={String(label)} className="panel p-4"><p className="eyebrow">{label}</p><p className="mt-2 metric-value">{value}</p><p className="mt-1 text-[11px] text-text-muted">{note}</p></div>
         ))}
@@ -131,7 +152,7 @@ export default function L3Models() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
-        {current.map(model => <ModelCard key={model.l3_code} model={model} />)}
+        {current.map(model => <ModelCard key={model.l3_code} model={model} quality={qualityByL3[model.l3_code]} />)}
       </div>
     </div>
   )

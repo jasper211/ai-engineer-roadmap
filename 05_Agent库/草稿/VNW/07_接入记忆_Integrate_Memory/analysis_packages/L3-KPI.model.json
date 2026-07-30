@@ -1,0 +1,405 @@
+{
+  "schema_version": "vnw.l3-analysis.v1",
+  "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
+  "generation_mode": "UNIFIED_MODEL",
+  "analysis_status": "MODEL_DRAFT",
+  "model_run": {
+    "model_name": "deepseek-v4-pro",
+    "model_version": "deepseek-v4-pro",
+    "prompt_version": "VNW-L3-COM-GOLD-v1.0",
+    "generated_at": "2026-07-30T04:06:46.644111+00:00",
+    "input_snapshot_hash": "2db5a019e47c781e2d3cdcb14662f35901077fc061eebadba400427308840be0"
+  },
+  "source_scope": {
+    "database": "process_analytics",
+    "knowledge": "ACTIVE supplemental evidence only",
+    "evidence_count": 85
+  },
+  "l4_analysis": [
+    {
+      "l4_code": "L4-KPI-01",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-09d22d441e3bad9e0295",
+        "EVD-79bbc469aad8281748a4",
+        "EVD-6a9ca53fcc1b25f0e29f",
+        "EVD-68a184d00500139eea36",
+        "EVD-f67132d9a172a2b2af49",
+        "EVD-5ffd5f37ef9499582664",
+        "EVD-b7b70dd8620fa220307c"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "提供公司战略方向与顶层目标，作为绩效体系设计的起点",
+      "specific_capabilities": [],
+      "ai_reshape": "当前为人工执行；AI可辅助数据收集与草案生成，但高层战略解码仍需人工决策",
+      "quality_anchor": "",
+      "ai_responsibility": "辅助收集战略相关数据，生成初步分析草案",
+      "human_responsibility": "负责战略解码与顶层目标确认（人工执行）",
+      "handoff_triggers": [],
+      "control_gates": [
+        {
+          "decision_id": "Q1",
+          "description": "战略方向是否明确？如不清则回退L3-MED补充战略输入",
+          "source_evidence": "EVD-5ffd5f37ef9499582664"
+        }
+      ],
+      "data_basis": [],
+      "process_context": "STEP-01：公司战略解码，是L3-KPI流程的起始步骤",
+      "risks_limits": [],
+      "current_recommendation": "建议探索战略信息数据源API接入可行性，以减少人工收集工作量",
+      "database_tier": "Auto",
+      "recommended_tier": "Human (当前数据包显示人工执行，且D4/D5评分为0，建议重新评估)",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-KPI-02",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-13606d4429f006580f69",
+        "EVD-a7514dc27349e64feb2f",
+        "EVD-59aff8c0fc42916902cc",
+        "EVD-20bafc2a12ea5f17c542",
+        "EVD-40d127604061251b3cee",
+        "EVD-988a8d0d101737e62e57",
+        "EVD-8b5ae87bcf4f9e03f20b"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "定义平衡计分卡四大维度框架，指导KPI指标分解",
+      "specific_capabilities": [],
+      "ai_reshape": "AI可根据战略输入自动生成平衡计分卡框架草案，但框架设计仍需人工调整确认",
+      "quality_anchor": "",
+      "ai_responsibility": "基于战略目标自动推荐维度与关键成功因素",
+      "human_responsibility": "负责平衡计分卡框架设计（人工执行）",
+      "handoff_triggers": [],
+      "control_gates": [
+        {
+          "decision_id": "Q2",
+          "description": "四维度框架是否覆盖所有价值流？如有缺口则补充关键成功因素后重走Step2",
+          "source_evidence": "EVD-988a8d0d101737e62e57"
+        }
+      ],
+      "data_basis": [],
+      "process_context": "STEP-02：平衡计分卡框架设计，承接战略解码输出",
+      "risks_limits": [],
+      "current_recommendation": "保持Hybrid模式，AI生成草案后由业务负责人审阅调整",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-KPI-03",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-8f36668d2c61d4d3a813",
+        "EVD-ed74a6909216dc6d571f",
+        "EVD-c1043f99ca61cdd2c083",
+        "EVD-389fa5c80002ad070218",
+        "EVD-82920ccadb73d576adad",
+        "EVD-77d024638da1b169f451"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "将平衡计分卡框架转化为具体、可量化的KPI指标文档",
+      "specific_capabilities": [],
+      "ai_reshape": "AI可基于框架和业务数据自动生成KPI定义初稿，利用结构化数据提升效率",
+      "quality_anchor": "",
+      "ai_responsibility": "自动生成KPI定义并结构化输出",
+      "human_responsibility": "负责KPI指标定义与文档化（人工执行）",
+      "handoff_triggers": [
+        "当AI无法确定业务术语或指标归属时触发人工介入"
+      ],
+      "control_gates": [],
+      "data_basis": [
+        "平衡计分卡框架、业务数据字典"
+      ],
+      "process_context": "STEP-03：KPI指标定义，输入为平衡计分卡框架",
+      "risks_limits": [
+        "KPI定义不当可能导致后续目标值偏差"
+      ],
+      "current_recommendation": "建议提升AI参与度，由AI完成初稿后人工审核，审批通过后发布",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-KPI-04",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-a4b897c79198215b9a35",
+        "EVD-3a4aafadc03e0df40e03",
+        "EVD-5cc05a556b73cdd807ee",
+        "EVD-32dd2f23dc13011ca628",
+        "EVD-b3f35ef05603e1f7a489",
+        "EVD-944623ba7b46d3f5140a",
+        "EVD-74f68d4a549cc6a359a0"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "设定各KPI的目标值，并通过校准达成跨部门共识",
+      "specific_capabilities": [],
+      "ai_reshape": "AI可基于历史数据、行业基准推荐目标值，但校准和共识仍需人工主导",
+      "quality_anchor": "",
+      "ai_responsibility": "生成目标值推荐并支持多场景模拟",
+      "human_responsibility": "负责目标值设定与校准（人工执行）",
+      "handoff_triggers": [
+        "部门间存在分歧时需人工介入"
+      ],
+      "control_gates": [
+        {
+          "decision_id": "Q3",
+          "description": "目标值是否达成部门共识？有分歧则回退Step4重新校准，必要时提交Mark裁定",
+          "source_evidence": "EVD-944623ba7b46d3f5140a"
+        }
+      ],
+      "data_basis": [
+        "KPI定义文档、历史绩效数据、行业基准"
+      ],
+      "process_context": "STEP-04：目标值设定与校准，输入为KPI定义文档",
+      "risks_limits": [
+        "目标值过高或过低均会影响组织绩效"
+      ],
+      "current_recommendation": "建议AI辅助推荐目标值并可视化分歧点，加速共识过程",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-KPI-05",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-b440fa80e98b2bbe611b",
+        "EVD-d72dcc171b8da739f2d0",
+        "EVD-73c0a2b8868f3fc331b9",
+        "EVD-3810789e6b2a3d774105",
+        "EVD-399f634384f8dd3b30ef",
+        "EVD-9727249abd8bda6f627f",
+        "EVD-bdc427ed8ce78bb6ba9e"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "通过部门负责人书面签署承诺，锁定KPI目标责任",
+      "specific_capabilities": [],
+      "ai_reshape": "承诺签署本身为人工行为，AI可自动化承诺书生成与签署流程追踪",
+      "quality_anchor": "",
+      "ai_responsibility": "自动生成承诺书并跟踪签署状态",
+      "human_responsibility": "负责部门承诺书签署与确认（人工执行）",
+      "handoff_triggers": [],
+      "control_gates": [
+        {
+          "decision_id": "Q4",
+          "description": "承诺是否有书面留痕？仅口头确认需补充书面签署后方可进入Step6",
+          "source_evidence": "EVD-9727249abd8bda6f627f"
+        }
+      ],
+      "data_basis": [
+        "目标值设定文档、部门负责人信息"
+      ],
+      "process_context": "STEP-05：部门承诺书签署，输入为目标值设定文档",
+      "risks_limits": [
+        "口头承诺无法追溯，必须书面留痕"
+      ],
+      "current_recommendation": "建议部署电子签章系统，实现全流程电子化，同时降低人工遗漏风险",
+      "database_tier": "Auto",
+      "recommended_tier": "Hybrid (书面签署仍需人工确认，但流程可高度自动化)",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-KPI-06",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-75945a384cbecec56ada",
+        "EVD-69e703cc770c3900b638",
+        "EVD-518683d2723071fe309b",
+        "EVD-efa22971c9463211601d",
+        "EVD-4999ba5e54a54fd5e08a",
+        "EVD-fb3f479fab958ef6116b",
+        "EVD-0a2b461b2ea769b411fb"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "将KPI体系配置到BI系统和相关业务系统中，实现数据自动采集与可视化",
+      "specific_capabilities": [],
+      "ai_reshape": "AI可自动生成系统配置规范并执行配置，但涉及生产系统需人工审批准入",
+      "quality_anchor": "",
+      "ai_responsibility": "自动完成系统配置与BI报表生成",
+      "human_responsibility": "负责配置规范审核与系统上线批准",
+      "handoff_triggers": [
+        "配置变更涉及资金、合规或对外发布时触发人工审批"
+      ],
+      "control_gates": [
+        {
+          "decision_id": "GATE-AUTO",
+          "description": "系统配置上线前必须经过人工复核与测试验证",
+          "source_evidence": "EVD-fb3f479fab958ef6116b (agentifiability=Auto但缺少human_touchpoint，建议添加人工控制门)"
+        }
+      ],
+      "data_basis": [
+        "承诺书、KPI定义文档、系统元数据"
+      ],
+      "process_context": "STEP-06：系统集成与BI配置，是整个流程的最终落地环节",
+      "risks_limits": [
+        "错误配置可能导致数据泄露或决策误导"
+      ],
+      "current_recommendation": "尽管数据库标记为Auto，但实际操作涉及生产系统，强烈建议增加人工审批门，确保安全合规",
+      "database_tier": "Auto",
+      "recommended_tier": "Hybrid (增加人工审批后)",
+      "quadrant": "unclassified"
+    }
+  ],
+  "tasks": [],
+  "priority_drafts": [
+    {
+      "l4_code": "L4-KPI-01",
+      "quadrant": "unclassified",
+      "data_basis": [],
+      "process_context": "STEP-01：公司战略解码，是L3-KPI流程的起始步骤",
+      "risks_limits": [],
+      "current_recommendation": "建议探索战略信息数据源API接入可行性，以减少人工收集工作量",
+      "evidence_refs": [
+        "EVD-09d22d441e3bad9e0295",
+        "EVD-79bbc469aad8281748a4",
+        "EVD-6a9ca53fcc1b25f0e29f",
+        "EVD-68a184d00500139eea36",
+        "EVD-f67132d9a172a2b2af49",
+        "EVD-5ffd5f37ef9499582664",
+        "EVD-b7b70dd8620fa220307c"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-KPI-02",
+      "quadrant": "unclassified",
+      "data_basis": [],
+      "process_context": "STEP-02：平衡计分卡框架设计，承接战略解码输出",
+      "risks_limits": [],
+      "current_recommendation": "保持Hybrid模式，AI生成草案后由业务负责人审阅调整",
+      "evidence_refs": [
+        "EVD-13606d4429f006580f69",
+        "EVD-a7514dc27349e64feb2f",
+        "EVD-59aff8c0fc42916902cc",
+        "EVD-20bafc2a12ea5f17c542",
+        "EVD-40d127604061251b3cee",
+        "EVD-988a8d0d101737e62e57",
+        "EVD-8b5ae87bcf4f9e03f20b"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-KPI-03",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "平衡计分卡框架、业务数据字典"
+      ],
+      "process_context": "STEP-03：KPI指标定义，输入为平衡计分卡框架",
+      "risks_limits": [
+        "KPI定义不当可能导致后续目标值偏差"
+      ],
+      "current_recommendation": "建议提升AI参与度，由AI完成初稿后人工审核，审批通过后发布",
+      "evidence_refs": [
+        "EVD-8f36668d2c61d4d3a813",
+        "EVD-ed74a6909216dc6d571f",
+        "EVD-c1043f99ca61cdd2c083",
+        "EVD-389fa5c80002ad070218",
+        "EVD-82920ccadb73d576adad",
+        "EVD-77d024638da1b169f451"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-KPI-04",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "KPI定义文档、历史绩效数据、行业基准"
+      ],
+      "process_context": "STEP-04：目标值设定与校准，输入为KPI定义文档",
+      "risks_limits": [
+        "目标值过高或过低均会影响组织绩效"
+      ],
+      "current_recommendation": "建议AI辅助推荐目标值并可视化分歧点，加速共识过程",
+      "evidence_refs": [
+        "EVD-a4b897c79198215b9a35",
+        "EVD-3a4aafadc03e0df40e03",
+        "EVD-5cc05a556b73cdd807ee",
+        "EVD-32dd2f23dc13011ca628",
+        "EVD-b3f35ef05603e1f7a489",
+        "EVD-944623ba7b46d3f5140a",
+        "EVD-74f68d4a549cc6a359a0"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-KPI-05",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "目标值设定文档、部门负责人信息"
+      ],
+      "process_context": "STEP-05：部门承诺书签署，输入为目标值设定文档",
+      "risks_limits": [
+        "口头承诺无法追溯，必须书面留痕"
+      ],
+      "current_recommendation": "建议部署电子签章系统，实现全流程电子化，同时降低人工遗漏风险",
+      "evidence_refs": [
+        "EVD-b440fa80e98b2bbe611b",
+        "EVD-d72dcc171b8da739f2d0",
+        "EVD-73c0a2b8868f3fc331b9",
+        "EVD-3810789e6b2a3d774105",
+        "EVD-399f634384f8dd3b30ef",
+        "EVD-9727249abd8bda6f627f",
+        "EVD-bdc427ed8ce78bb6ba9e"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-KPI-06",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "承诺书、KPI定义文档、系统元数据"
+      ],
+      "process_context": "STEP-06：系统集成与BI配置，是整个流程的最终落地环节",
+      "risks_limits": [
+        "错误配置可能导致数据泄露或决策误导"
+      ],
+      "current_recommendation": "尽管数据库标记为Auto，但实际操作涉及生产系统，强烈建议增加人工审批门，确保安全合规",
+      "evidence_refs": [
+        "EVD-75945a384cbecec56ada",
+        "EVD-69e703cc770c3900b638",
+        "EVD-518683d2723071fe309b",
+        "EVD-efa22971c9463211601d",
+        "EVD-4999ba5e54a54fd5e08a",
+        "EVD-fb3f479fab958ef6116b",
+        "EVD-0a2b461b2ea769b411fb"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "decision_drafts": [],
+  "control_chain": [
+    {
+      "from_decision": "Q1",
+      "to_decision": null,
+      "description": "战略方向明确性检查 → 决定是否继续后续步骤"
+    },
+    {
+      "from_decision": "Q2",
+      "to_decision": null,
+      "description": "四维度覆盖度检查 → 决定是否补充CSF后重做"
+    },
+    {
+      "from_decision": "Q3",
+      "to_decision": null,
+      "description": "部门共识检查 → 分歧时回退目标值校准"
+    },
+    {
+      "from_decision": "Q4",
+      "to_decision": null,
+      "description": "书面留痕检查 → 仅口头确认需补充签署"
+    }
+  ],
+  "rejected_task_sources": [],
+  "missing_analysis": [
+    "L4-KPI-01 · 事实包未包含所需能力、质量标准、输入数据及风险说明",
+    "L4-KPI-02 · 同上",
+    "L4-KPI-03 · 同上",
+    "L4-KPI-04 · 同上",
+    "L4-KPI-05 · 同上",
+    "L4-KPI-06 · 同上",
+    "负责人决策草稿结构不合格，已拒绝3条",
+    "模型未返回可校验的逐任务拆分"
+  ]
+}

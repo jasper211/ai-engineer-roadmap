@@ -24,6 +24,25 @@ export interface ModelIndex {
   models: ModelIndexItem[]
 }
 
+export interface DeliverableAuditFinding {
+  l3_code: string
+  l4_code: string
+  l4_name: string
+  issue_type: 'MIXED_CONTENT' | 'REPEATED_VALUE'
+  reasons: string[]
+  evidence_id: string
+  source_value: string
+}
+
+export interface DeliverableAudit {
+  schema_version: string
+  generated_at: string
+  scanned_l3_count: number
+  affected_l3_count: number
+  finding_count: number
+  findings: DeliverableAuditFinding[]
+}
+
 export interface GateCheck {
   rule_id: string
   passed: boolean
@@ -151,6 +170,12 @@ export interface L3Model {
 export async function loadModelIndex(): Promise<ModelIndex> {
   const response = await fetch('/data/model_snapshots/index.json')
   if (!response.ok) throw new Error('L3模型索引读取失败')
+  return response.json()
+}
+
+export async function loadDeliverableAudit(): Promise<DeliverableAudit> {
+  const response = await fetch('/data/l4_deliverable_quality_audit.json')
+  if (!response.ok) throw new Error('L4交付物质量审计读取失败')
   return response.json()
 }
 
