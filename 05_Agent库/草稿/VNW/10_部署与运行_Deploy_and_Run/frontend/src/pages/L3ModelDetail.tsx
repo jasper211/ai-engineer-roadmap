@@ -79,6 +79,26 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
         </div>
       </div>
 
+      <section className="rounded-2xl border border-indigo-200 bg-indigo-50/60 p-4">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-semibold text-indigo-700">统一分析标准 · {model.analysis.analysis_standard_id}</p>
+            <p className="mt-1 text-xs leading-5 text-text-secondary">
+              当前事实包已从同一数据库与知识输入链生成，提取出 {model.analysis.tasks.length} 条可追溯蓝图任务。
+              {model.analysis.analysis_status === 'PENDING_MODEL'
+                ? '模型分析尚未执行，以下页面只展示事实层，不会自动补造COM式结论。'
+                : '模型分析草稿已生成，页面中的推导内容必须保留证据引用。'}
+            </p>
+          </div>
+          <span className={`rounded-full px-3 py-1.5 text-xs font-medium ${model.analysis.analysis_status === 'PENDING_MODEL' ? 'bg-amber-100 text-amber-800' : 'bg-violet-100 text-violet-800'}`}>
+            {model.analysis.analysis_status === 'PENDING_MODEL' ? '待运行统一模型' : '模型分析草稿'}
+          </span>
+        </div>
+        {model.analysis.missing_analysis.length > 0 && (
+          <p className="mt-2 text-[11px] text-text-muted">尚待生成：{model.analysis.missing_analysis.join('、')}</p>
+        )}
+      </section>
+
       {model.has_demo && (
         <a
           href={`/demos/${encodeURIComponent(model.demo_file)}`}

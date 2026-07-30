@@ -112,6 +112,34 @@ export interface L3Model {
   value_stream_mappings: Record<string, unknown>[]
   gates: Record<'M' | 'E' | 'A', { status: GateStatus; checks: GateCheck[] }>
   evidence_registry: Record<string, unknown>[]
+  analysis: {
+    schema_version: string
+    analysis_standard_id: string
+    generation_mode: string
+    analysis_status: 'PENDING_MODEL' | 'MODEL_DRAFT' | 'REVIEWED'
+    model_run: null | {
+      model_name: string
+      model_version: string
+      prompt_version: string
+      generated_at: string
+      input_snapshot_hash: string
+    }
+    source_scope: Record<string, unknown>
+    l4_analysis: Record<string, unknown>[]
+    tasks: {
+      task_id: string
+      l4_code: string
+      task_name: string
+      source_type: string
+      evidence_refs: string[]
+      analysis_status: string
+      suggested_tier: string
+      tier_rationale: string
+    }[]
+    priority_drafts: Record<string, unknown>[]
+    decision_drafts: Record<string, unknown>[]
+    missing_analysis: string[]
+  }
 }
 
 export async function loadModelIndex(): Promise<ModelIndex> {

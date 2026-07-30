@@ -11,6 +11,7 @@ from tools.evidence import EvidenceClass, EvidenceRecord, EvidenceStatus, Source
 from tools.postgres_reader import PostgresL3Reader
 from tools.snapshot_writer import write_snapshot
 from skills.blueprint_parser import parse_blueprint
+from skills.l3_analysis_contract import build_analysis_envelope, validate_analysis_package
 
 VALID_TIERS = {"Human", "Aug", "Hybrid", "Auto"}
 D_FIELDS = (
@@ -365,6 +366,17 @@ class L3ModelBuilder:
             "evidence_registry": sorted(evidence.values(), key=lambda item: item["evidence_id"]),
             "supplemental_evidence_refs": [record.evidence_id for record in (supplemental or [])],
         }
+        model["analysis"] = build_analysis_envelope(
+            l3_code=l3_code,
+            l4s=l4s,
+            blueprint=model["blueprint"],
+            evidence_ids=set(evidence),
+        )
+        validate_analysis_package(
+            model["analysis"],
+            evidence_ids=set(evidence),
+            l4_codes={item["l4_code"] for item in l4s},
+        )
         return model
 
     def build_and_write(

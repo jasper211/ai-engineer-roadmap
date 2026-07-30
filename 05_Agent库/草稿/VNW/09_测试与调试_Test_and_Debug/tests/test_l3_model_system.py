@@ -10,6 +10,7 @@ sys.path.insert(0, str(VNW_ROOT / "05_集成工具_Integrate_Tools"))
 sys.path.insert(0, str(VNW_ROOT / "06_开发技能_Develop_Skills"))
 
 from skills.l3_model_builder import BlueprintIndex, L3ModelBuilder  # noqa: E402
+from skills.l3_analysis_contract import ANALYSIS_STANDARD_ID, validate_analysis_package  # noqa: E402
 from skills.blueprint_parser import parse_blueprint  # noqa: E402
 from tools.evidence import EvidenceClass, EvidenceRecord, EvidenceStatus, SourceRef, authoritative  # noqa: E402
 from tools.obsidian_reader import note_is_eligible  # noqa: E402
@@ -83,6 +84,20 @@ class L3ModelSystemTests(unittest.TestCase):
             first = write_snapshot(model, Path(tmp))
             second = write_snapshot(model, Path(tmp))
             self.assertEqual(first["snapshot_hash"], second["snapshot_hash"])
+
+    def test_all_l3_receive_same_analysis_contract(self):
+        model = self.builder().build("L3-T")
+        self.assertEqual(model["analysis"]["analysis_standard_id"], ANALYSIS_STANDARD_ID)
+        self.assertEqual(len(model["analysis"]["l4_analysis"]), 1)
+        self.assertEqual(model["analysis"]["l4_analysis"][0]["analysis_status"], "PENDING_MODEL")
+
+    def test_model_draft_without_evidence_is_rejected(self):
+        model = self.builder().build("L3-T")
+        package = model["analysis"]
+        package["l4_analysis"][0]["analysis_status"] = "MODEL_DRAFT"
+        package["l4_analysis"][0]["evidence_refs"] = []
+        with self.assertRaises(ValueError):
+            validate_analysis_package(package, set(), {"L4-T-01"})
 
     def test_blueprint_parser_keeps_explicit_steps_and_returns(self):
         content = """## 三、关键步骤
