@@ -55,6 +55,12 @@ def load_api_config(agent_root: Path) -> tuple[str, str]:
 def normalize_model_package(package: dict, fact_pack: dict) -> dict:
     """只做可证明的结构归一化，不生成新的业务结论。"""
     l4_by_code = {item.get("l4_code", ""): item for item in package.get("l4_analysis", []) if isinstance(item, dict)}
+    blueprint_steps = fact_pack.get("blueprint", {}).get("steps", [])
+    step_by_evidence = {
+        step.get("evidence_ref"): step
+        for step in blueprint_steps
+        if step.get("evidence_ref")
+    }
     normalized_tasks = []
     sequence: dict[str, int] = {}
     for task in package.get("tasks", []):
@@ -65,12 +71,35 @@ def normalize_model_package(package: dict, fact_pack: dict) -> dict:
         if not analysis or not task.get("task_name"):
             continue
         sequence[code] = sequence.get(code, 0) + 1
+        evidence_refs = task.get("evidence_refs") or analysis.get("evidence_refs", [])
+        matched_steps = [
+            step_by_evidence[ref] for ref in evidence_refs
+            if ref in step_by_evidence
+            and code in step_by_evidence[ref].get("l4_codes", [])
+        ]
+        matched_steps.sort(key=lambda step: step.get("sequence", 10**9))
+        source_step = matched_steps[0] if matched_steps else {}
+        supplied_status = task.get("sequence_status", "")
+        sequence_status = supplied_status if supplied_status in {
+            "SOURCE_CONFIRMED", "SOURCE_STEP_ONLY", "UNCONFIRMED",
+        } else ("SOURCE_STEP_ONLY" if source_step else "UNCONFIRMED")
         normalized_tasks.append({
             "task_id": task.get("task_id") or f"{code}-M{sequence[code]:02d}",
             "l4_code": code,
             "task_name": task["task_name"],
             "source_type": task.get("source_type") or "MODEL_DECOMPOSITION_FROM_L4",
-            "evidence_refs": task.get("evidence_refs") or analysis.get("evidence_refs", []),
+            "sequence_no": (
+                task.get("sequence_no")
+                if supplied_status == "SOURCE_CONFIRMED"
+                else source_step.get("sequence")
+            ),
+            "sequence_status": sequence_status,
+            "source_step_id": task.get("source_step_id") or source_step.get("step_id", ""),
+            "source_line": task.get("source_line") or source_step.get("source_line"),
+            "previous_task_ids": task.get("previous_task_ids", []),
+            "next_task_ids": task.get("next_task_ids", []),
+            "relation_type": task.get("relation_type", "UNCONFIRMED"),
+            "evidence_refs": evidence_refs,
             "analysis_status": "MODEL_DRAFT",
             "suggested_tier": task.get("suggested_tier") or task.get("recommended_tier", ""),
             "tier_rationale": task.get("tier_rationale") or task.get("rationale", ""),
@@ -303,6 +332,13 @@ class L3AnalysisRunner:
                 "l4_code": "L4-XXX-01",
                 "task_name": "具体、可执行的日常工作步骤",
                 "source_type": "MODEL_DECOMPOSITION_FROM_L4",
+                "sequence_no": 1,
+                "sequence_status": "SOURCE_CONFIRMED|SOURCE_STEP_ONLY|UNCONFIRMED",
+                "source_step_id": "仅在蓝图存在对应步骤时填写",
+                "source_line": 0,
+                "previous_task_ids": [],
+                "next_task_ids": [],
+                "relation_type": "SEQUENTIAL|PARALLEL|BRANCH|RETURN|UNCONFIRMED",
                 "evidence_refs": ["当前fact_pack中真实存在的evidence_id"],
                 "analysis_status": "MODEL_DRAFT",
                 "suggested_tier": "Human|Aug|Hybrid|Auto",
@@ -325,6 +361,9 @@ class L3AnalysisRunner:
                 "每个L4至少拆出1个来自事实包的具体工作任务；任务须覆盖全部L4。"
                 "并且每个L4的任务数量不得低于minimum_task_counts；不同蓝图步骤、"
                 "失败返回、重新联调，以及知识库标记的复合动作应拆成独立任务。"
+                "只有蓝图、SOP或规则明确给出顺序时，sequence_status才可写"
+                "SOURCE_CONFIRMED；只能定位到同一蓝图阶段、但阶段内先后不明确时写"
+                "SOURCE_STEP_ONLY；没有时序证据时写UNCONFIRMED，不得按task_id猜顺序。"
                 "展示文本不得出现具体人员姓名；来源中的姓名必须概括为岗位族、"
                 "部门或授权决策角色，但证据引用保持原样以便溯源。"
                 "所有evidence_refs必须是fact_pack中真实evidence_id且不能为空。"

@@ -86,6 +86,13 @@ def build_analysis_envelope(
                     "l4_code": l4_code,
                     "task_name": activity,
                     "source_type": "BLUEPRINT",
+                    "sequence_no": step.get("sequence"),
+                    "sequence_status": "SOURCE_CONFIRMED",
+                    "source_step_id": step.get("step_id", ""),
+                    "source_line": step.get("source_line"),
+                    "previous_task_ids": [],
+                    "next_task_ids": [],
+                    "relation_type": "SEQUENTIAL",
                     "evidence_refs": [step_ref],
                     "analysis_status": "FACT_EXTRACTED",
                     "suggested_tier": "",
@@ -172,3 +179,10 @@ def validate_analysis_package(package: dict, evidence_ids: set[str], l4_codes: s
         refs = task.get("evidence_refs") or []
         if not refs or set(refs) - evidence_ids:
             raise ValueError(f"任务缺少有效证据：{task.get('task_id')}")
+        sequence_status = task.get("sequence_status", "UNCONFIRMED")
+        if sequence_status not in {
+            "SOURCE_CONFIRMED", "SOURCE_STEP_ONLY", "UNCONFIRMED",
+        }:
+            raise ValueError(f"任务时序状态不合法：{task.get('task_id')}")
+        if sequence_status == "SOURCE_CONFIRMED" and not task.get("sequence_no"):
+            raise ValueError(f"任务声明时序已确认但缺少序号：{task.get('task_id')}")

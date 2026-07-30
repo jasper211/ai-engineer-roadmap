@@ -117,6 +117,7 @@ export interface L3Model {
       l4_codes: string[]
       activities: string[]
       source_line: number
+      evidence_ref?: string
     }[]
     decisions: {
       decision_id: string
@@ -196,6 +197,13 @@ export interface L3Model {
       l4_code: string
       task_name: string
       source_type: string
+      sequence_no?: number | null
+      sequence_status?: 'SOURCE_CONFIRMED' | 'SOURCE_STEP_ONLY' | 'UNCONFIRMED'
+      source_step_id?: string
+      source_line?: number | null
+      previous_task_ids?: string[]
+      next_task_ids?: string[]
+      relation_type?: 'SEQUENTIAL' | 'PARALLEL' | 'BRANCH' | 'RETURN' | 'UNCONFIRMED'
       evidence_refs: string[]
       analysis_status: string
       suggested_tier: string

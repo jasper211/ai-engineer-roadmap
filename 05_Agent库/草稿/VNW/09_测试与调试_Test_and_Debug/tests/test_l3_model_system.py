@@ -388,6 +388,60 @@ class L3ModelSystemTests(unittest.TestCase):
         self.assertEqual(result["decision_drafts"], [])
         self.assertEqual(result["control_chain"], [])
 
+    def test_task_sequence_uses_blueprint_evidence_not_task_id(self):
+        package = {
+            "l4_analysis": [{
+                "l4_code": "L4-T-01", "evidence_refs": ["EVD-L4"],
+                "data_basis": [], "process_context": "", "risks_limits": [],
+                "current_recommendation": "",
+            }],
+            "tasks": [{
+                "task_id": "TASK-999",
+                "l4_code": "L4-T-01",
+                "task_name": "执行有来源的步骤",
+                "evidence_refs": ["EVD-STEP-2"],
+                "suggested_tier": "Aug",
+                "tier_rationale": "辅助执行",
+            }],
+            "decision_drafts": [],
+            "missing_analysis": [],
+        }
+        fact_pack = {
+            "evidence_registry": [],
+            "blueprint": {"steps": [{
+                "step_id": "STEP-02", "sequence": 2, "source_line": 18,
+                "l4_codes": ["L4-T-01"], "evidence_ref": "EVD-STEP-2",
+            }]},
+        }
+        task = normalize_model_package(package, fact_pack)["tasks"][0]
+        self.assertEqual(task["sequence_no"], 2)
+        self.assertEqual(task["source_step_id"], "STEP-02")
+        self.assertEqual(task["source_line"], 18)
+        self.assertEqual(task["sequence_status"], "SOURCE_STEP_ONLY")
+
+    def test_task_sequence_stays_unconfirmed_without_source_relation(self):
+        package = {
+            "l4_analysis": [{
+                "l4_code": "L4-T-01", "evidence_refs": ["EVD-L4"],
+                "data_basis": [], "process_context": "", "risks_limits": [],
+                "current_recommendation": "",
+            }],
+            "tasks": [{
+                "task_id": "TASK-001",
+                "l4_code": "L4-T-01",
+                "task_name": "只有任务名称",
+                "suggested_tier": "Human",
+                "tier_rationale": "需要人工",
+            }],
+            "decision_drafts": [],
+            "missing_analysis": [],
+        }
+        task = normalize_model_package(
+            package, {"evidence_registry": [], "blueprint": {"steps": []}}
+        )["tasks"][0]
+        self.assertIsNone(task["sequence_no"])
+        self.assertEqual(task["sequence_status"], "UNCONFIRMED")
+
     def test_module_repair_preserves_analysis_and_requires_l4_coverage(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

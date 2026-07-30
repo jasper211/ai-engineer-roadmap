@@ -228,17 +228,48 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
   const cards = useMemo(() => {
     if (!model) return []
     const analyzedTasks = model.analysis.tasks.filter(task => COLUMNS.some(column => column.id === task.suggested_tier))
+    const ordinalByL4: Record<string, number> = {}
     const base = analyzedTasks.length > 0
-      ? analyzedTasks.map(task => ({
-          card_id: task.task_id,
-          l4_code: task.l4_code,
-          deliverable: task.task_name,
-          l4_name: task.tier_rationale,
-          tier: task.suggested_tier,
-          source_type: task.source_type,
-        }))
+      ? analyzedTasks.map(task => {
+          ordinalByL4[task.l4_code] = (ordinalByL4[task.l4_code] || 0) + 1
+          const matchedStep = model.blueprint.steps.find(step =>
+            step.l4_codes.includes(task.l4_code)
+            && Boolean(step.evidence_ref)
+            && task.evidence_refs.includes(step.evidence_ref || '')
+          )
+          const sequenceStatus = task.sequence_status
+            || (matchedStep ? 'SOURCE_STEP_ONLY' : 'UNCONFIRMED')
+          return {
+            card_id: task.task_id,
+            displayTaskCode: `${task.l4_code.replace(/^L4-/, 'L3-')}-${String(ordinalByL4[task.l4_code]).padStart(2, '0')}`,
+            l4_code: task.l4_code,
+            deliverable: task.task_name,
+            l4_name: task.tier_rationale,
+            tier: task.suggested_tier,
+            source_type: task.source_type,
+            sequenceNo: task.sequence_no ?? matchedStep?.sequence ?? null,
+            sequenceStatus,
+            sourceStepId: task.source_step_id || matchedStep?.step_id || '',
+            sourceLine: task.source_line ?? matchedStep?.source_line ?? null,
+            previousTaskIds: task.previous_task_ids || [],
+            nextTaskIds: task.next_task_ids || [],
+            relationType: task.relation_type || 'UNCONFIRMED',
+          }
+        })
       : model.analysis.analysis_status === 'PENDING_MODEL'
-        ? model.l4s.map(l4 => ({ ...l4, card_id: l4.l4_code, source_type: 'DATABASE_L4' }))
+        ? model.l4s.map(l4 => ({
+            ...l4,
+            card_id: l4.l4_code,
+            displayTaskCode: `${l4.l4_code.replace(/^L4-/, 'L3-')}-01`,
+            source_type: 'DATABASE_L4',
+            sequenceNo: null,
+            sequenceStatus: 'UNCONFIRMED' as const,
+            sourceStepId: '',
+            sourceLine: null,
+            previousTaskIds: [],
+            nextTaskIds: [],
+            relationType: 'UNCONFIRMED',
+          }))
         : []
     return base.map(card => ({
       ...card,
@@ -611,7 +642,14 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
               <div className="space-y-2">
                 {visibleCards.filter(card => card.placement === column.id).map(card => (
                   <article key={card.card_id} draggable onDragStart={event => event.dataTransfer.setData('text/card', card.card_id)} className="cursor-grab rounded-lg border border-border-default bg-bg-elevated p-3 active:cursor-grabbing">
+                    <p className="mb-2 font-mono text-[10px] font-semibold text-indigo-700">TASK：{card.displayTaskCode}</p>
                     <div className="flex gap-2"><GripVertical className="mt-0.5 h-4 w-4 shrink-0 text-text-muted" /><div><p className="text-xs font-medium text-text-primary">{card.deliverable || card.l4_name}</p><p className="mt-1 font-mono text-[10px] text-text-muted">{card.l4_code}</p></div></div>
+                    <div className="mt-2 flex flex-wrap gap-1.5">
+                      <span className={`rounded px-2 py-1 text-[9px] ${card.sequenceNo === null ? 'bg-amber-50 text-amber-800' : 'bg-indigo-50 text-indigo-700'}`}>
+                        {card.sequenceNo === null ? '顺序待确认' : `蓝图阶段 ${String(card.sequenceNo).padStart(2, '0')}`}
+                      </span>
+                      {card.sourceLine && <span className="rounded bg-slate-100 px-2 py-1 text-[9px] text-slate-600">源文第 {card.sourceLine} 行</span>}
+                    </div>
                     <p className="mt-1 text-[10px] text-text-muted">{card.source_type}</p>
                     {model.l4s.find(item => item.l4_code === card.l4_code)?.skill_feasibility?.action_singularity.includes('复合') && (
                       <p className="mt-2 rounded bg-amber-50 px-2 py-1 text-[10px] leading-4 text-amber-800">该L4被复核为复合动作；应以蓝图/规则继续拆成任务后再决定AI分工。</p>
