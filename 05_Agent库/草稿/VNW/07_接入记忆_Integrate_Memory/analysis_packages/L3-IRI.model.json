@@ -356,155 +356,294 @@
     {
       "task_id": "L4-IRI-01-01-M01",
       "l4_code": "L4-IRI-01",
-      "task_name": "与A族和Mark谈判确认权限边界，输出《权限清单》",
+      "task_name": "收集历史权限清单与保司需求，由授权负责人与保司谈判确认权限边界，输出《权限清单》",
       "source_type": "MODEL_DECOMPOSITION_FROM_L4",
       "evidence_refs": [
-        "EVD-52b0cc4ad42718878f21",
+        "EVD-9e48e07e2b017fd5d67b",
+        "EVD-f58846cd444696abc279",
+        "EVD-533f7ff0805c43720e08",
+        "EVD-2ec5e2f48afb7673bdf3",
+        "EVD-6bee5e65f8c58250eef8",
+        "EVD-2e2e355c19b8510b3068",
         "EVD-03c1c78918cf87a87349",
         "EVD-78815e43e1ef2aaecfdf",
-        "EVD-8e15f0a65bcac2d327d5",
         "EVD-96e9ee7e8ee363a235a5",
-        "EVD-044724ee17558e0136cd"
+        "EVD-a1f8dbef2e4585018f02",
+        "EVD-8e15f0a65bcac2d327d5",
+        "EVD-044724ee17558e0136cd",
+        "EVD-52b0cc4ad42718878f21"
       ],
       "analysis_status": "MODEL_DRAFT",
       "suggested_tier": "Hybrid",
-      "tier_rationale": "谈判过程高度依赖人工判断，AI仅可辅助整理历史清单和潜在冲突信息；《权限清单》最终边界需授权人确认，无法自动化。"
+      "tier_rationale": "权限谈判依赖人工判断与策略（d2=0），且API不可达（d4=0），需人主导，AI仅辅助收集历史信息与标记冲突点"
     },
     {
       "task_id": "L4-IRI-02-01-M01",
       "l4_code": "L4-IRI-02",
-      "task_name": "盘点保司可用资源，生成《资源对接清单》",
+      "task_name": "自动采集保司系统元数据生成《资源对接清单》初稿，并提交岗位族审核补充后确认签字",
       "source_type": "MODEL_DECOMPOSITION_FROM_L4",
       "evidence_refs": [
-        "EVD-6736ec7092739f62d38e",
+        "EVD-a0cb205cc3aee6bb8352",
+        "EVD-72fe76bb38661d562dd6",
+        "EVD-736fcc732a10c8cc6beb",
+        "EVD-38f9735202663a227a79",
+        "EVD-1172fc848b36c519244e",
+        "EVD-b5f4de2b0aea2ca2c140",
         "EVD-89a68a23c5cc4d4bc335",
         "EVD-9f05031d924e36c3443a",
-        "EVD-1b4ff8d3a2ecc4a3e8ae",
         "EVD-1bd8fa144d974074db96",
-        "EVD-ef83d89f408f32abbcc8"
+        "EVD-fd4eb8e73b1ca19a6dd2",
+        "EVD-1b4ff8d3a2ecc4a3e8ae",
+        "EVD-ef83d89f408f32abbcc8",
+        "EVD-6736ec7092739f62d38e"
       ],
       "analysis_status": "MODEL_DRAFT",
       "suggested_tier": "Auto",
-      "tier_rationale": "资源盘点属于信息处理类单一动作，输入结构化程度高（d1=2），API可达，可由Skill自动采集并生成清单，人工仅需审核确认。"
+      "tier_rationale": "信息处理类单一动作，输入结构化程度2，规则清晰、可API对接，可封装为确定性Skill自动执行，人仅审核"
     },
     {
       "task_id": "L4-IRI-03-01-M01",
       "l4_code": "L4-IRI-03",
-      "task_name": "协调系统、数据和人员三线对接，生成对接完成报告",
+      "task_name": "组织系统、数据、人员三线对接，跟踪任务进度，收集反馈并生成对接完成报告",
       "source_type": "MODEL_DECOMPOSITION_FROM_L4",
       "evidence_refs": [
-        "EVD-ab8391767822b04d6214",
+        "EVD-d7bdef1bf8a0cb09a4cd",
+        "EVD-1a4cd2324328ba161958",
+        "EVD-e2ecd0e98749b6927a50",
+        "EVD-13cfe7c03379a70e58d1",
+        "EVD-de5401bfa9eea69b51ab",
+        "EVD-02d3e0ea1e235ede8b2f",
         "EVD-3bc5be30b40c03ef1cc7",
         "EVD-dbc1df15130b3fc7184d",
-        "EVD-7bc09bed7725bcd74485",
         "EVD-39b4747921861c55c07c",
-        "EVD-6224271584b21fd9ffba"
+        "EVD-bbf6df6b3e01a5042333",
+        "EVD-7bc09bed7725bcd74485",
+        "EVD-6224271584b21fd9ffba",
+        "EVD-ab8391767822b04d6214"
       ],
       "analysis_status": "MODEL_DRAFT",
       "suggested_tier": "Auto",
-      "tier_rationale": "对接进度跟踪和报告生成可自动化，Skill可汇总各团队状态并输出完成报告；但涉及多团队协调，人工需推动阻塞问题。"
+      "tier_rationale": "状态跟踪与报告生成可自动化，人仅处理例外协调"
     },
     {
       "task_id": "L4-IRI-03-02-M01",
       "l4_code": "L4-IRI-03",
-      "task_name": "根据技术验证或权限测试失败反馈，修复系统对接问题并重新提交报告",
+      "task_name": "对接超时或技术阻塞时，协调技术团队修复并重新联调，更新对接状态",
       "source_type": "MODEL_DECOMPOSITION_FROM_L4",
       "evidence_refs": [
-        "EVD-09fb9d312c03fa2c624f",
-        "EVD-d0b4c6e621b592754ff6",
+        "EVD-d7bdef1bf8a0cb09a4cd",
+        "EVD-1a4cd2324328ba161958",
+        "EVD-e2ecd0e98749b6927a50",
+        "EVD-13cfe7c03379a70e58d1",
+        "EVD-de5401bfa9eea69b51ab",
+        "EVD-02d3e0ea1e235ede8b2f",
         "EVD-3bc5be30b40c03ef1cc7",
         "EVD-dbc1df15130b3fc7184d",
         "EVD-39b4747921861c55c07c",
-        "EVD-6224271584b21fd9ffba"
+        "EVD-bbf6df6b3e01a5042333",
+        "EVD-7bc09bed7725bcd74485",
+        "EVD-6224271584b21fd9ffba",
+        "EVD-ab8391767822b04d6214"
       ],
       "analysis_status": "MODEL_DRAFT",
-      "suggested_tier": "Auto",
-      "tier_rationale": "修复过程依赖技术团队，但Skill可自动接收失败反馈、跟踪修复进度并更新报告；人工负责技术决策和协调。"
+      "suggested_tier": "Human",
+      "tier_rationale": "异常协调需人工判断与多方沟通，无法自动化"
     },
     {
       "task_id": "L4-IRI-04-01-M01",
       "l4_code": "L4-IRI-04",
-      "task_name": "在系统中自动化配置权限并执行测试，发送权限生效通知",
+      "task_name": "依据权限清单，通过自动化Skill在保司系统配置权限",
       "source_type": "MODEL_DECOMPOSITION_FROM_L4",
       "evidence_refs": [
-        "EVD-09fb9d312c03fa2c624f",
+        "EVD-19f87a57d8aa661c8f10",
+        "EVD-c7e92790c81936bb894f",
+        "EVD-e79129d1334c2b53c44a",
+        "EVD-203a6241788163e6f44e",
+        "EVD-2a26b53f4d9f8fd45d03",
+        "EVD-5024d6b1b5278033e109",
         "EVD-42e3d902d6d5db3573c8",
         "EVD-ba8220cd957d883f044d",
-        "EVD-d0bedd06ba8d138f2ec7",
         "EVD-d84805e5a3e88682f6c8",
-        "EVD-1f16d4893daa67eac8b5"
+        "EVD-f7696b1a02cf45cef184",
+        "EVD-d0bedd06ba8d138f2ec7",
+        "EVD-1f16d4893daa67eac8b5",
+        "EVD-09fb9d312c03fa2c624f"
       ],
       "analysis_status": "MODEL_DRAFT",
       "suggested_tier": "Auto",
-      "tier_rationale": "权限配置具有复合动作特性，但可拆分为同步、验证和通知子Skill；自动化配置与测试可执行，失败回退需人工确认。"
+      "tier_rationale": "配置动作可封装为确定性Skill，但需设置失败回滚机制与人工审批控制门"
+    },
+    {
+      "task_id": "L4-IRI-04-02-M01",
+      "l4_code": "L4-IRI-04",
+      "task_name": "执行权限生效测试，验证配置正确性；若测试未通过则回滚并上报至技术团队修复",
+      "source_type": "MODEL_DECOMPOSITION_FROM_L4",
+      "evidence_refs": [
+        "EVD-19f87a57d8aa661c8f10",
+        "EVD-c7e92790c81936bb894f",
+        "EVD-e79129d1334c2b53c44a",
+        "EVD-203a6241788163e6f44e",
+        "EVD-2a26b53f4d9f8fd45d03",
+        "EVD-5024d6b1b5278033e109",
+        "EVD-42e3d902d6d5db3573c8",
+        "EVD-ba8220cd957d883f044d",
+        "EVD-d84805e5a3e88682f6c8",
+        "EVD-f7696b1a02cf45cef184",
+        "EVD-d0bedd06ba8d138f2ec7",
+        "EVD-1f16d4893daa67eac8b5",
+        "EVD-09fb9d312c03fa2c624f"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "自动化测试可行，但异常处理需人工介入判断与协调回滚"
+    },
+    {
+      "task_id": "L4-IRI-04-03-M01",
+      "l4_code": "L4-IRI-04",
+      "task_name": "测试通过后，自动生成并发送权限生效通知",
+      "source_type": "MODEL_DECOMPOSITION_FROM_L4",
+      "evidence_refs": [
+        "EVD-19f87a57d8aa661c8f10",
+        "EVD-c7e92790c81936bb894f",
+        "EVD-e79129d1334c2b53c44a",
+        "EVD-203a6241788163e6f44e",
+        "EVD-2a26b53f4d9f8fd45d03",
+        "EVD-5024d6b1b5278033e109",
+        "EVD-42e3d902d6d5db3573c8",
+        "EVD-ba8220cd957d883f044d",
+        "EVD-d84805e5a3e88682f6c8",
+        "EVD-f7696b1a02cf45cef184",
+        "EVD-d0bedd06ba8d138f2ec7",
+        "EVD-1f16d4893daa67eac8b5",
+        "EVD-09fb9d312c03fa2c624f"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "通知发送为确定性步骤，可完全自动化"
     },
     {
       "task_id": "L4-IRI-05-01-M01",
       "l4_code": "L4-IRI-05",
-      "task_name": "执行Checklist核验，生成《整合就绪确认书》并签字",
+      "task_name": "执行整合就绪核验Checklist，自动生成《整合就绪确认书》初稿，由授权负责人审核签字",
       "source_type": "MODEL_DECOMPOSITION_FROM_L4",
       "evidence_refs": [
-        "EVD-28862fa9387a8871f562",
+        "EVD-b5d4a34b869854a33792",
+        "EVD-897bf7b88f3e19b3a099",
+        "EVD-7387448909a8ece9322d",
+        "EVD-190d42c84389fc9defd3",
+        "EVD-e017f6e55d09309534d0",
+        "EVD-325631a7641454a54cc3",
         "EVD-b75c5d38a8877741f5a0",
         "EVD-24933e2bad45556edf98",
-        "EVD-f57e954be3d0f0789420",
         "EVD-e6368f05e7b7445da055",
-        "EVD-42e69105c3cd239a8329"
+        "EVD-d156a78dc289923c3579",
+        "EVD-f57e954be3d0f0789420",
+        "EVD-42e69105c3cd239a8329",
+        "EVD-28862fa9387a8871f562",
+        "EVD-4e17bf4f41ab7d5c85ec",
+        "EVD-03dff1fc8e2f83f8e864"
       ],
       "analysis_status": "MODEL_DRAFT",
       "suggested_tier": "Auto",
-      "tier_rationale": "核验项目为预定义Checklist，Skill可自动执行检查并生成确认书草稿；最终签署需人工，但可作为高价值Skill试点（P1）。"
+      "tier_rationale": "核验逻辑明确且可结构化，可封装Skill，人工仅执行最终审批控制门"
     },
     {
       "task_id": "L4-IRI-06-01-M01",
       "l4_code": "L4-IRI-06",
-      "task_name": "制定包括API、SSO和联调的《对接技术规范》",
+      "task_name": "根据保司系统信息与平台标准模板，自动生成《对接技术规范》初稿，经技术负责人审核后发布",
       "source_type": "MODEL_DECOMPOSITION_FROM_L4",
       "evidence_refs": [
-        "EVD-6736ec7092739f62d38e",
+        "EVD-c6b87ea3dfa7384f50b3",
+        "EVD-00235454a7c2d98e820d",
+        "EVD-3b052879e4a180580309",
+        "EVD-20b837fe0d8e965a7a3d",
+        "EVD-84d743ecedb8c8171cdf",
+        "EVD-103149948c2b6d1071bf",
         "EVD-a0013f89ac114acaf5e9",
         "EVD-7e496cc12b54d1b7b900",
-        "EVD-6d2335f253348828b88a",
         "EVD-ba7606e240c3083a468e",
-        "EVD-d8f5b8cf37c6d749abd0"
+        "EVD-c8c71c11884fe166a01d",
+        "EVD-6d2335f253348828b88a",
+        "EVD-d8f5b8cf37c6d749abd0",
+        "EVD-6736ec7092739f62d38e",
+        "EVD-ab8391767822b04d6214"
       ],
       "analysis_status": "MODEL_DRAFT",
       "suggested_tier": "Auto",
-      "tier_rationale": "规范生成为标准化输出，Skill可根据保司信息和平台模板自动生成初稿，人工审核特殊要求后签发。"
+      "tier_rationale": "规范生成基于标准模板，可自动化；人工审核作为控制门"
     },
     {
       "task_id": "L4-IRI-06-02-M01",
       "l4_code": "L4-IRI-06",
-      "task_name": "根据对接过程反馈，修订技术规范并重新推动联调",
+      "task_name": "当系统对接未通过技术验证时，根据反馈修订《对接技术规范》，重新发布并通知相关团队",
       "source_type": "MODEL_DECOMPOSITION_FROM_L4",
       "evidence_refs": [
-        "EVD-00b9142e08e1785cf892",
-        "EVD-ab8391767822b04d6214",
+        "EVD-c6b87ea3dfa7384f50b3",
+        "EVD-00235454a7c2d98e820d",
+        "EVD-3b052879e4a180580309",
+        "EVD-20b837fe0d8e965a7a3d",
+        "EVD-84d743ecedb8c8171cdf",
+        "EVD-103149948c2b6d1071bf",
         "EVD-a0013f89ac114acaf5e9",
         "EVD-7e496cc12b54d1b7b900",
         "EVD-ba7606e240c3083a468e",
-        "EVD-d8f5b8cf37c6d749abd0"
+        "EVD-c8c71c11884fe166a01d",
+        "EVD-6d2335f253348828b88a",
+        "EVD-d8f5b8cf37c6d749abd0",
+        "EVD-6736ec7092739f62d38e",
+        "EVD-ab8391767822b04d6214"
       ],
       "analysis_status": "MODEL_DRAFT",
-      "suggested_tier": "Auto",
-      "tier_rationale": "修订动作可基于反馈由Skill生成更新版规范草案，但技术决策（如接口变更）需人工确认；仍可归为Auto辅助生成。"
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "修订需人工判断问题根源并决策，AI可辅助草拟修订内容"
     },
     {
       "task_id": "L4-IRI-07-01-M01",
       "l4_code": "L4-IRI-07",
-      "task_name": "实施保司人员培训与操作考核，记录换手",
+      "task_name": "AI辅助生成标准化培训材料与操作视频，由培训岗位族进行审核补充",
       "source_type": "MODEL_DECOMPOSITION_FROM_L4",
       "evidence_refs": [
-        "EVD-7461458c94ffad2a4ba2",
+        "EVD-5e4251de05ccd7855d82",
+        "EVD-c002572aa5abe71dbdd9",
+        "EVD-5a3686507b8c80c777a7",
+        "EVD-094761efc658210e2039",
+        "EVD-6441df35217b715d668e",
+        "EVD-2e7077ab3cd881df022a",
         "EVD-f2d72ad3fb75da7e8513",
         "EVD-8e5ae428a1335781531a",
-        "EVD-ed512836d8acd32edf4a",
         "EVD-d88ef0fe40c0900fbeda",
-        "EVD-bd6b0441ef88ca3771a0"
+        "EVD-d1332f949f4ab6e14f9b",
+        "EVD-ed512836d8acd32edf4a",
+        "EVD-bd6b0441ef88ca3771a0",
+        "EVD-7461458c94ffad2a4ba2"
       ],
       "analysis_status": "MODEL_DRAFT",
       "suggested_tier": "Hybrid",
-      "tier_rationale": "培训包含现场指导和物理执行，难以完全自动化；AI可辅助生成培训资料与进度追踪，但核心教学和考核由人完成。"
+      "tier_rationale": "培训材料生成可部分自动化，但内容审核与定制需人工，受d2规则清晰度低影响"
+    },
+    {
+      "task_id": "L4-IRI-07-02-M01",
+      "l4_code": "L4-IRI-07",
+      "task_name": "组织现场培训，进行系统操作示范，考核保司人员并记录换手签字",
+      "source_type": "MODEL_DECOMPOSITION_FROM_L4",
+      "evidence_refs": [
+        "EVD-5e4251de05ccd7855d82",
+        "EVD-c002572aa5abe71dbdd9",
+        "EVD-5a3686507b8c80c777a7",
+        "EVD-094761efc658210e2039",
+        "EVD-6441df35217b715d668e",
+        "EVD-2e7077ab3cd881df022a",
+        "EVD-f2d72ad3fb75da7e8513",
+        "EVD-8e5ae428a1335781531a",
+        "EVD-d88ef0fe40c0900fbeda",
+        "EVD-d1332f949f4ab6e14f9b",
+        "EVD-ed512836d8acd32edf4a",
+        "EVD-bd6b0441ef88ca3771a0",
+        "EVD-7461458c94ffad2a4ba2"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "现场培训与考核本质为物理执行，依赖人工互动与判断，无法自动化"
     }
   ],
   "priority_drafts": [
@@ -718,16 +857,16 @@
     {
       "priority": 1,
       "task_ids": [
-        "L4-IRI-05-01-M01"
+        "L4-IRI-04-01-M01",
+        "L4-IRI-04-02-M01",
+        "L4-IRI-04-03-M01"
       ],
-      "title": "试点开发L4-IRI-05 Skill：自动核验并生成《整合就绪确认书》",
-      "pilot_scope": "选取首个保司对接完成后的整合就绪确认环节，用Skill执行所有checklist核验并生成确认书初稿，人工仅签字。",
-      "human_boundary": "确认书需双方负责人最终签署；核验不通过的项目需人工判断原因。",
+      "title": "试点自动化权限配置与测试流程",
+      "pilot_scope": "选择一个保司的单个非生产系统，使用Skill自动配置权限并执行测试，观察准确率与人工介入次数",
+      "human_boundary": "权限变更审批、测试异常判断与最终通知签发必须由授权负责人执行",
       "evidence_refs": [
-        "EVD-4e17bf4f41ab7d5c85ec",
-        "EVD-03dff1fc8e2f83f8e864",
-        "EVD-42e69105c3cd239a8329",
-        "EVD-28862fa9387a8871f562"
+        "EVD-1f16d4893daa67eac8b5",
+        "EVD-09fb9d312c03fa2c624f"
       ],
       "analysis_status": "MODEL_DRAFT"
     }
@@ -760,6 +899,19 @@
       "input_snapshot_hash": "20856b62a6461a56a9e64e66ccb6119e4ec0982c67db1bc01eda97b7069ebeae",
       "previous_package_hash": "fc24928bbf6714ce29cf6d9491049e7d54f671ab800f64d4307c52297499009b",
       "task_count": 9,
+      "decision_count": 1
+    },
+    {
+      "run_id": "L3-IRI_REPAIR_20260730T081121Z_20856b62a6",
+      "modules": [
+        "tasks",
+        "decision_drafts"
+      ],
+      "model": "deepseek-v4-pro",
+      "repaired_at": "2026-07-30T08:13:19.884410+00:00",
+      "input_snapshot_hash": "20856b62a6461a56a9e64e66ccb6119e4ec0982c67db1bc01eda97b7069ebeae",
+      "previous_package_hash": "8bd7baf2f1a90728c4fb623a7cca31b40b92f7f02fa19ccf6a0ded6e8ee2c8af",
+      "task_count": 12,
       "decision_count": 1
     }
   ]

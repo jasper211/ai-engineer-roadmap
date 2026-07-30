@@ -7,19 +7,18 @@
       {
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-7a7e41231504bce62195",
-          "EVD-9b699167c25cc0fc2320",
-          "EVD-5e9a6a1a9242a8faefb3",
-          "EVD-9d9be9adab8491e63a2f"
+          "EVD-0f4445f72b1297ca2140",
+          "EVD-ced009c2b3be7fbdcc6d",
+          "EVD-0b41cd3890c1817fb9db",
+          "EVD-309b0cc68dfb26ecee15"
         ],
-        "human_boundary": "1. 股东穿透查册最终审核与签字须由指定交付经理完成；2. 查册费用审批须走财务人工流程；3. 任何自动化异常须立即转入人工处理",
-        "pilot_scope": "选取2个新签约渠道，在L4-05和L4-03环节试运行DD Form电子化收集与股东查册调度，AI辅助生成汇总报告",
-        "priority": "P0",
+        "human_boundary": "通知连续3次失败或渠道超季度未响应时，由交付经理决定转手动催办或标记关闭，所有更新表单内容合规性由合规岗位复核。",
+        "pilot_scope": "选取3个已签约渠道，在下一个年度周期启用自动触发与状态跟踪，观察完成率与人工介入次数。",
+        "priority": 1,
         "task_ids": [
-          "TASK-IBRD-05",
-          "TASK-IBRD-03"
+          "L4-IBRD-08-01-M01"
         ],
-        "title": "启动DD流程数据化试点：优先解决DD Form执行与股东查册的线上化和自动化"
+        "title": "优先试点DD Form年度更新自动化"
       }
     ],
     "generation_mode": "UNIFIED_MODEL",
@@ -691,6 +690,34 @@
       }
     ],
     "rejected_task_sources": [],
+    "repair_history": [
+      {
+        "decision_count": 1,
+        "input_snapshot_hash": "a5d77eda3cb94bbb0bf805df61f15c6263409a05fe5d10e2695899029117bff9",
+        "model": "deepseek-v4-pro",
+        "modules": [
+          "tasks",
+          "decision_drafts"
+        ],
+        "previous_package_hash": "0075aee98f06428cbdbe38a08badc73df0813ed6427ee0b9ecbf24008ea1511c",
+        "repaired_at": "2026-07-30T08:10:27.878899+00:00",
+        "run_id": "L3-IBRD_REPAIR_20260730T080859Z_a5d77eda3c",
+        "task_count": 8
+      },
+      {
+        "decision_count": 1,
+        "input_snapshot_hash": "a5d77eda3cb94bbb0bf805df61f15c6263409a05fe5d10e2695899029117bff9",
+        "model": "deepseek-v4-pro",
+        "modules": [
+          "tasks",
+          "decision_drafts"
+        ],
+        "previous_package_hash": "efc109d1fbfba5a08eb77df2d6e1f8c3ffb34122db93888054fc2d96b940413f",
+        "repaired_at": "2026-07-30T08:12:57.480856+00:00",
+        "run_id": "L3-IBRD_REPAIR_20260730T081121Z_a5d77eda3c",
+        "task_count": 12
+      }
+    ],
     "schema_version": "vnw.l3-analysis.v1",
     "source_scope": {
       "database": "process_analytics",
@@ -707,110 +734,177 @@
           "EVD-8b8f67a1f96815c0fb67"
         ],
         "l4_code": "L4-IBRD-01",
-        "source_type": "evidence",
+        "source_type": "MODEL_DECOMPOSITION_FROM_L4",
         "suggested_tier": "Hybrid",
-        "task_id": "TASK-IBRD-01",
-        "task_name": "执行合作伙伴资格预审信息收集与比对",
-        "tier_rationale": "预审规则不清晰(Q1需人工确认)，输入结构化程度高但仍有不确定因素"
+        "task_id": "L4-IBRD-01-01-M01",
+        "task_name": "收集合作方基本信息，按预审规则自动比对并生成比对结论",
+        "tier_rationale": "Skill可行性为A但需拆分，规则参考EVD-9e286821652b0d46400f(d2=1)，自动比对后需人工校验，最终决策Q1必须人工确认。"
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [
+          "EVD-79e541381392d63231c1",
+          "EVD-edbeb6a8081e87720457",
+          "EVD-5a4888926a9611d55c03",
+          "EVD-8b8f67a1f96815c0fb67"
+        ],
+        "l4_code": "L4-IBRD-01",
+        "source_type": "MODEL_DECOMPOSITION_FROM_L4",
+        "suggested_tier": "Human",
+        "task_id": "L4-IBRD-01-02-M01",
+        "task_name": "生成合作资格预审与流程启动计划草稿，提交人工审核与决策(含Q1通过/不通过分支)",
+        "tier_rationale": "交付物为计划方案，涉及流程启动决策(蓝图Q1)，必须由授权岗位族审核批准，不可自动化。"
       },
       {
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
           "EVD-dedde837485829756683",
-          "EVD-536754bbbad4f56f11f4"
+          "EVD-c9eb2a262fec8714f73f",
+          "EVD-4f8ddfbb1e4c61e6cafa",
+          "EVD-56fa619a32ab1ead3a4c"
         ],
         "l4_code": "L4-IBRD-02",
-        "source_type": "evidence",
+        "source_type": "MODEL_DECOMPOSITION_FROM_L4",
         "suggested_tier": "Hybrid",
-        "task_id": "TASK-IBRD-02",
-        "task_name": "生成项目沟通机制方案并确认",
-        "tier_rationale": "语义复核类任务，需人工确认沟通策略，AI仅辅助生成"
+        "task_id": "L4-IBRD-02-01-M01",
+        "task_name": "分析项目背景与角色，生成沟通机制模板并推荐渠道通知方式",
+        "tier_rationale": "Skill评估为C-低封装，依赖语义理解与跨角色协调；AI生成草案后，由交付经理确认并发布。"
       },
       {
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
           "EVD-10569f24b807acbef038",
           "EVD-97a32e949a0137f637ca",
-          "EVD-98ed96ec1c16d21405e6"
+          "EVD-7cb2fe76a3540fdbb657",
+          "EVD-985e477d2c6405a91055"
         ],
         "l4_code": "L4-IBRD-03",
-        "source_type": "evidence",
+        "source_type": "MODEL_DECOMPOSITION_FROM_L4",
         "suggested_tier": "Aug",
-        "task_id": "TASK-IBRD-03",
-        "task_name": "汇总尽职调查数据并生成记录表",
-        "tier_rationale": "输入结构化和API可达性欠佳，需人工补录和审核，短期无法全Auto"
+        "task_id": "L4-IBRD-03-01-M01",
+        "task_name": "汇总尽职调查信息，生成DD记录数据表并输出汇总报告",
+        "tier_rationale": "Skill评估A高封装但输入结构化差(d1=1)且API受限(d4=1)，AI自动抓取并填充模板，人工补充缺失信息。"
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [
+          "EVD-bc485527b3f59ae264fc",
+          "EVD-464bd63b6ad1beff52ca",
+          "EVD-afee18113308d6d4644d",
+          "EVD-2fdbb31e05d4b2c4258e"
+        ],
+        "l4_code": "L4-IBRD-04",
+        "source_type": "MODEL_DECOMPOSITION_FROM_L4",
+        "suggested_tier": "Aug",
+        "task_id": "L4-IBRD-04-01-M01",
+        "task_name": "查询合作方牌照信息，填充记录模板草稿",
+        "tier_rationale": "牌照查询可封装为Skill，但规则模糊(d2=1)，自动生成记录后需人工复核。"
       },
       {
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
           "EVD-bc485527b3f59ae264fc",
           "EVD-af4ef8dac830daa02cf7",
-          "EVD-0bd1f6d218ac9e7c102f"
+          "EVD-0bd1f6d218ac9e7c102f",
+          "EVD-d955048d3a5f03f49ff8"
         ],
         "l4_code": "L4-IBRD-04",
-        "source_type": "evidence",
-        "suggested_tier": "Aug",
-        "task_id": "TASK-IBRD-04",
-        "task_name": "核查牌照并获取保司确认",
-        "tier_rationale": "保司确认必须人工执行，牌照查询可部分自动化"
+        "source_type": "MODEL_DECOMPOSITION_FROM_L4",
+        "suggested_tier": "Human",
+        "task_id": "L4-IBRD-04-02-M01",
+        "task_name": "与保司确认牌照有效性并完成《牌照核查与保司确认记录》",
+        "tier_rationale": "合规硬要求，人力投入明确，必须由授权岗位族执行保司沟通、确认并签字，不可绕过。"
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [
+          "EVD-7a7e41231504bce62195",
+          "EVD-7d03f8355c4a8d0b155f",
+          "EVD-34faf746a3101e259c01",
+          "EVD-7364d272380007096a7b"
+        ],
+        "l4_code": "L4-IBRD-05",
+        "source_type": "MODEL_DECOMPOSITION_FROM_L4",
+        "suggested_tier": "Hybrid",
+        "task_id": "L4-IBRD-05-01-M01",
+        "task_name": "生成DD Form并分发给渠道，跟踪回收状态",
+        "tier_rationale": "Skill A但输入结构差(d1=1)且规则不清(d2=1)，AI生成表单并监控回收，人工处理例外和催办。"
       },
       {
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
           "EVD-7a7e41231504bce62195",
           "EVD-9b699167c25cc0fc2320",
-          "EVD-9959787969badff79a35",
-          "EVD-7364d272380007096a7b"
+          "EVD-e9529171404d256e2951",
+          "EVD-d198c7b507b9fdb883fb"
         ],
         "l4_code": "L4-IBRD-05",
-        "source_type": "evidence",
+        "source_type": "MODEL_DECOMPOSITION_FROM_L4",
         "suggested_tier": "Aug",
-        "task_id": "TASK-IBRD-05",
-        "task_name": "执行DD Form收集与股东穿透查册",
-        "tier_rationale": "明确的人工执行环节，外部查册服务和费用需人审批"
+        "task_id": "L4-IBRD-05-02-M01",
+        "task_name": "调度股东穿透查册，汇总查册结果并审核费用",
+        "tier_rationale": "查册请求可自动化调度，但结果审核、穿透层级决策和费用审批必须由交付经理或财务岗位族执行。"
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [
+          "EVD-50b8a3072e8f75ab4df7",
+          "EVD-6a2f73322a9861ea31de",
+          "EVD-49c24201c26a46433e02",
+          "EVD-be0a8a3c6b3d22b2ca95"
+        ],
+        "l4_code": "L4-IBRD-06",
+        "source_type": "MODEL_DECOMPOSITION_FROM_L4",
+        "suggested_tier": "Hybrid",
+        "task_id": "L4-IBRD-06-01-M01",
+        "task_name": "基于尽调结果计算AML风险评分，生成评级建议与依据说明",
+        "tier_rationale": "规则较清晰(d2=2)可部分自动化，但合规性弱(d6=1)且Skill C低封装，需Agent辅助生成评级草案。"
       },
       {
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
           "EVD-50b8a3072e8f75ab4df7",
           "EVD-be0a8a3c6b3d22b2ca95",
-          "EVD-dc51c95de4255c7a4d93"
+          "EVD-c73f3d982c5b5fa4535a",
+          "EVD-54a0fa2740eb8b810d6b"
         ],
         "l4_code": "L4-IBRD-06",
-        "source_type": "evidence",
-        "suggested_tier": "Hybrid",
-        "task_id": "TASK-IBRD-06",
-        "task_name": "进行AML风险评估并输出三档评级",
-        "tier_rationale": "需决策判断，AI辅助评分，人工最终确认评级"
+        "source_type": "MODEL_DECOMPOSITION_FROM_L4",
+        "suggested_tier": "Human",
+        "task_id": "L4-IBRD-06-02-M01",
+        "task_name": "审核AML评级结果，处理争议项并最终确认评级",
+        "tier_rationale": "评级直接影响准入决策(Q2)，合规部门或授权岗位族必须人工审核并签字确认，不能全自动。"
       },
       {
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
           "EVD-13809ebaf39a07a2b1de",
-          "EVD-7646abfc25ae440f2fb4",
-          "EVD-20e7708aaf9ca7a1e9c8",
-          "EVD-da3c74e1fe8f8368742e"
+          "EVD-adb2983fdf0d16f90384",
+          "EVD-cb898ae6ee728efd0964",
+          "EVD-20e7708aaf9ca7a1e9c8"
         ],
         "l4_code": "L4-IBRD-07",
-        "source_type": "evidence",
+        "source_type": "MODEL_DECOMPOSITION_FROM_L4",
         "suggested_tier": "Hybrid",
-        "task_id": "TASK-IBRD-07",
-        "task_name": "做出双路径渠道准入判断",
-        "tier_rationale": "商业决策属低封装判断，AI提供建议，人工拍板"
+        "task_id": "L4-IBRD-07-01-M01",
+        "task_name": "计算佣金差异并匹配业务模式，生成双路径推荐建议",
+        "tier_rationale": "佣金计算可标准化，但规则不清(d2=1)及业务模式匹配需人工经验，Agent辅助推荐，人工拍板。"
       },
       {
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
           "EVD-0f4445f72b1297ca2140",
-          "EVD-0b41cd3890c1817fb9db",
-          "EVD-ced009c2b3be7fbdcc6d"
+          "EVD-934dafdf9ebc555ec5c3",
+          "EVD-2d9bb747ecd771cafd97",
+          "EVD-ced009c2b3be7fbdcc6d",
+          "EVD-0b41cd3890c1817fb9db"
         ],
         "l4_code": "L4-IBRD-08",
-        "source_type": "evidence",
+        "source_type": "MODEL_DECOMPOSITION_FROM_L4",
         "suggested_tier": "Auto",
-        "task_id": "TASK-IBRD-08",
-        "task_name": "触发DD Form年度更新流程",
-        "tier_rationale": "定时调度与通知可全自动化，仅异常需人工"
+        "task_id": "L4-IBRD-08-01-M01",
+        "task_name": "按年度触发DD Form更新，发送通知并监控渠道完成状态",
+        "tier_rationale": "高自动化条件(d1~d4=2)，Skill评估A且为单一动作，可封装为确定性Skill调度，人工仅介入异常。"
       }
     ]
   },
@@ -4462,6 +4556,93 @@
     }
   },
   "schema_version": "vnw.l3-model.v1",
+  "source_locations": {
+    "L4两阶段复核_全量368条_合并版_v1.0.csv": {
+      "rows": [
+        80,
+        81,
+        82,
+        83,
+        84,
+        85,
+        86,
+        87
+      ]
+    },
+    "L4流程_Skill封装可行性评估_确认最终版_v2.xlsx": {
+      "rows": [
+        168,
+        169,
+        170,
+        171,
+        172,
+        173,
+        174,
+        175
+      ]
+    },
+    "T19_SOP生产进度_全域_v2.0.csv": {
+      "rows": [
+        35
+      ]
+    },
+    "T5_规则清单_全域_v3.0.csv": {
+      "rows": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24
+      ]
+    },
+    "process_analytics.dim_process": {
+      "record_keys": [
+        "L4-IBRD-01",
+        "L4-IBRD-02",
+        "L4-IBRD-03",
+        "L4-IBRD-04",
+        "L4-IBRD-05",
+        "L4-IBRD-06",
+        "L4-IBRD-07",
+        "L4-IBRD-08"
+      ]
+    },
+    "process_analytics.dim_vn": {
+      "record_keys": [
+        "VN-IBRD-01",
+        "VN-IBRD-02"
+      ]
+    },
+    "流程蓝图_L3-IBRD_合作伙伴需求分析与诊断_V1.4.md": {
+      "lines": [
+        55,
+        61,
+        68,
+        72,
+        79,
+        84,
+        88,
+        96,
+        106,
+        112
+      ]
+    }
+  },
   "source_policy": {
     "consensus_separate": true,
     "database_authority": "process_analytics",

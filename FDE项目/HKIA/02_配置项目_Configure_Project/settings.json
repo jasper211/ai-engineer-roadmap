@@ -1,7 +1,7 @@
 {
   "agent_id": "HKIA",
   "name": "香港保监局（IA）行业数据自动化分析 Agent",
-  "version": "0.2.0",
+  "version": "0.2.3",
   "status": "测试中",
   "description": "解析 IA 官网长期业务季度保费统计（2023Q1~2026Q1，共13期，人工下载放本地目录），标准化为长表格式并写入本地存储——demo 目标是跑通一次、数出对，不做增量/调度/云端/自动抓取。",
   "entrypoint": "04_定义Agent_Define_Agent/agents/agent.py",
@@ -17,6 +17,11 @@
   },
 
   "skills": ["report_discovery", "excel_parser", "normalizer", "growth_analysis"],
+  "table_types": [
+    "new_business", "in_force", "new_business_by_insurer",
+    "new_business_by_ccy", "new_business_by_prem_term",
+    "new_business_by_channel", "new_business_by_insurer_channel"
+  ],
   "tools": [],
 
   "archive_gate": {

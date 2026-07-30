@@ -4,10 +4,17 @@
 技能：解析长期业务Excel里的头条表，输出未标准化的原始字段记录
 （category/metric_name/value）。
 
-覆盖3张表：
+覆盖7张表：
 - "新造业务"/"有效业务"（市场总量，按类别/产品类型细分）
-- "新造业务·按保险公司"（Table L1，市场份额用）——有效业务的按保险公司拆分
-  （Table L3/L3-1+L3-2）demo暂不做，见流程设计文档
+- "新造业务·按保险公司"（Table L1，市场份额用）
+- "新造业务·按币种/按缴费年期/按销售渠道"（市场总量口径，缴费结构/渠道结构/
+  货币结构用）
+- "新造业务·按保险公司·按销售渠道"（Table L1(channel)，经纪渠道排名用）
+- 有效业务的按保险公司拆分（Table L3/L3-1+L3-2）demo暂不做，见流程设计文档
+
+按币种/年期/渠道这几张表的行结构（类别/业务种类或保险公司名）跟头条表、
+Table L1完全一样，只是列表头更深一层——已验证 `_parse_headline_grid`/
+`_parse_insurer_grid` 不用改就能直接解析，不需要专门写新函数。
 
 真实结构（打开13份真实文件核实过，见03_规划项目结构/流程设计.md 3.2节）：
 - 旧制度(2023~2024Q2)按監管類別A-F分类，sheet名 "Form HKLQ1-1"/"Form HKLQ2-1"
@@ -41,6 +48,25 @@ NB_BY_INSURER_CANDIDATES = {
     # 不同——这张表本身分不出schema，直接沿用已经从头条表判定出来的
     # schema_version，不独立猜测（用 None 占位，调用方不使用这个值）。
     "exact": [("Table L1", None)],
+    "regex": [],
+}
+CCY_CANDIDATES = {
+    "exact": [("Form HKLQ1-1(a)", "pre_rbc")],
+    "regex": [(r"LT QR \(CCY\)$", "post_rbc")],
+}
+PREM_TERM_CANDIDATES = {
+    "exact": [("Form HKLQ1-1(c)", "pre_rbc")],
+    "regex": [(r"LT QR \(prem term\)$", "post_rbc")],
+}
+CHANNEL_CANDIDATES = {
+    "exact": [("Form HKLQ1-1(d)", "pre_rbc")],
+    "regex": [(r"LT QR \(channel\)$", "post_rbc")],
+}
+CHANNEL_BY_INSURER_CANDIDATES = {
+    # 旧制度是"Table L1(d)"（按渠道的保费金额，(h)是按渠道的保单数，不用它）；
+    # 新制度是"Table L1 (channel)"——两边命名规则完全不同，一样不靠sheet名判
+    # schema，沿用头条表已经判定出来的 schema_version。
+    "exact": [("Table L1(d)", None), ("Table L1 (channel)", None)],
     "regex": [],
 }
 
@@ -233,13 +259,20 @@ def _parse_insurer_grid(df: pd.DataFrame, sheet_label: str) -> list:
 
 
 class ExcelParser:
-    """解析单份长期业务Excel的头条表 + 按保险公司拆分表。"""
+    """解析单份长期业务Excel的头条表 + 按保险公司拆分表 + 按币种/年期/渠道
+    的市场总量拆分表。"""
 
     def parse(self, file_path: Path) -> dict:
-        """返回 {"new_business": [...], "in_force": [...],
-        "new_business_by_insurer": [...], "schema_version": "pre_rbc"/"post_rbc"}
-        三张表理论上schema_version应该一致，如果不一致会抛错——那说明这份文件
-        本身结构有问题，不能装作没看见继续跑。"""
+        """返回字典，key见下方 optional_sheets/必需sheet，另加
+        "schema_version"："pre_rbc"/"post_rbc"（由新造/有效两张头条表判定，
+        必须一致，不一致就抛错——说明这份文件本身结构有问题，不能装作没看见
+        继续跑）。
+
+        "新造业务"/"有效业务"两张头条表是必需的，缺一份就整份文件解析失败；
+        其余（按公司拆分、按币种/年期/渠道拆分、按公司按渠道拆分）都是可选
+        的——2024Q3(RBC过渡期那份文件)官网原始Excel里就没有按公司拆分的sheet，
+        不能因为某张可选sheet缺失就让整份文件失败，只是这些维度这一期没数据。
+        """
         engine = "xlrd" if file_path.suffix.lower() == ".xls" else "openpyxl"
         with pd.ExcelFile(file_path, engine=engine) as xls:
             nb_sheet, nb_schema = _find_sheet(xls.sheet_names, NB_CANDIDATES)
@@ -253,24 +286,27 @@ class ExcelParser:
             nb_df = xls.parse(nb_sheet, header=None)
             if_df = xls.parse(if_sheet, header=None)
 
-            # 按公司拆分表(Table L1)是可选的——2024Q3(RBC过渡期那一份文件)
-            # 官网原始Excel里根本没有这张sheet，不能因为它缺失就让整份文件的
-            # 头条表数据也解析失败，只是这一期没有按公司拆分的数据可用。
-            nb_ins_sheet = None
-            nb_ins_records = []
-            try:
-                nb_ins_sheet, _ = _find_sheet(xls.sheet_names, NB_BY_INSURER_CANDIDATES)
-                nb_ins_df = xls.parse(nb_ins_sheet, header=None)
-                nb_ins_records = _parse_insurer_grid(nb_ins_df, f"{file_path.name}/{nb_ins_sheet}")
-            except SheetNotFoundError:
-                pass
+            result = {
+                "new_business": _parse_headline_grid(nb_df, f"{file_path.name}/{nb_sheet}"),
+                "in_force": _parse_headline_grid(if_df, f"{file_path.name}/{if_sheet}"),
+                "schema_version": nb_schema,
+                "nb_sheet_name": nb_sheet,
+                "if_sheet_name": if_sheet,
+            }
 
-        return {
-            "new_business": _parse_headline_grid(nb_df, f"{file_path.name}/{nb_sheet}"),
-            "in_force": _parse_headline_grid(if_df, f"{file_path.name}/{if_sheet}"),
-            "new_business_by_insurer": nb_ins_records,
-            "schema_version": nb_schema,
-            "nb_sheet_name": nb_sheet,
-            "if_sheet_name": if_sheet,
-            "nb_insurer_sheet_name": nb_ins_sheet,
-        }
+            optional_sheets = [
+                ("new_business_by_insurer", NB_BY_INSURER_CANDIDATES, _parse_insurer_grid),
+                ("new_business_by_ccy", CCY_CANDIDATES, _parse_headline_grid),
+                ("new_business_by_prem_term", PREM_TERM_CANDIDATES, _parse_headline_grid),
+                ("new_business_by_channel", CHANNEL_CANDIDATES, _parse_headline_grid),
+                ("new_business_by_insurer_channel", CHANNEL_BY_INSURER_CANDIDATES, _parse_insurer_grid),
+            ]
+            for key, candidates, parse_fn in optional_sheets:
+                try:
+                    sheet_name, _ = _find_sheet(xls.sheet_names, candidates)
+                    df = xls.parse(sheet_name, header=None)
+                    result[key] = parse_fn(df, f"{file_path.name}/{sheet_name}")
+                except SheetNotFoundError:
+                    result[key] = []
+
+        return result

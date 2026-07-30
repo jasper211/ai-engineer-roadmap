@@ -4,18 +4,24 @@ import { AlertTriangle, ArrowLeft, ArrowRight, Bot, GitBranch, GripVertical, Inf
 import { loadL3Model, type L3Model } from '../lib/l3Models'
 
 const COLUMNS = [
-  { id: 'Human', label: '暂不替代', color: 'border-rose-400/30 bg-rose-400/5' },
-  { id: 'Hybrid', label: '人机协同', color: 'border-amber-400/30 bg-amber-400/5' },
-  { id: 'Auto', label: '可完全替代', color: 'border-emerald-400/30 bg-emerald-400/5' },
-  { id: 'Aug', label: 'AI 增强', color: 'border-sky-400/30 bg-sky-400/5' },
+  { id: 'Human', label: 'Human · 人工主导', explanation: '任务由人完成；AI最多提供资料检索或记录支持，不替代判断与执行。', color: 'border-rose-400/30 bg-rose-400/5' },
+  { id: 'Hybrid', label: 'Hybrid · 人机协同', explanation: 'AI与人分段协作；AI处理可标准化部分，人承担判断、审批或异常处置。', color: 'border-amber-400/30 bg-amber-400/5' },
+  { id: 'Auto', label: 'Auto · 自动执行', explanation: '规则、输入和校验均稳定时由系统自动完成，并保留监控、回退与审计。', color: 'border-emerald-400/30 bg-emerald-400/5' },
+  { id: 'Aug', label: 'Aug · AI增强', explanation: '人仍是任务主体；AI生成草稿、提示风险或加速分析，由人确认结果。', color: 'border-sky-400/30 bg-sky-400/5' },
 ] as const
 
 const PRIORITY_ZONES = [
-  { id: 'q1', label: '优先验证', tone: 'border-emerald-200 bg-emerald-50/60' },
-  { id: 'q2', label: '治理后推进', tone: 'border-blue-200 bg-blue-50/60' },
-  { id: 'q3', label: '补数据后推进', tone: 'border-amber-200 bg-amber-50/60' },
-  { id: 'q4', label: '暂缓自动化', tone: 'border-rose-200 bg-rose-50/60' },
+  { id: 'q1', label: '优先验证', explanation: '价值明确、输入与规则较稳定、风险可控。适合先做小范围AI原型，用真实任务验证效率与质量。', guide: '先选任务 → 明确人工边界 → 设质量指标 → 小范围试跑', tone: 'border-emerald-200 bg-emerald-50/60' },
+  { id: 'q2', label: '治理后推进', explanation: '机会成立，但流程、职责、规则或接口尚不稳定。先完成治理，再进入AI方案验证。', guide: '先定流程/责任/控制门 → 再开发AI', tone: 'border-blue-200 bg-blue-50/60' },
+  { id: 'q3', label: '补数据后推进', explanation: '业务场景有价值，但缺少可用输入、历史样本或质量基准，当前无法可靠训练、提示或验收。', guide: '先补数据与质量口径 → 建立样本集 → 再验证AI', tone: 'border-amber-200 bg-amber-50/60' },
+  { id: 'q4', label: '暂缓自动化', explanation: '高风险判断、强关系协商、物理执行或投入产出不合理。当前以人工为主，仅优化前后信息流。', guide: '保留人工主导 → 监测条件变化 → 定期复评', tone: 'border-rose-200 bg-rose-50/60' },
 ] as const
+
+const GATE_INFO = {
+  M: { name: 'Modelable · 可建模门', description: '确认是否具备建流程模型的最低事实基础：可解析蓝图、L4交付活动及D1–D6评估。缺少任一硬输入时不生成模型。' },
+  E: { name: 'Evidence · 证据充分门', description: '检查交付物、任务、规则、SOP及补充证据的覆盖与可追溯性。规则或SOP不足可条件通过，但必须明确缺口。' },
+  A: { name: 'Actionable · 可行动门', description: '确认输出能否支持AI任务拆分、优先级讨论和负责人决策；要求任务可执行、边界清晰且结论可回到证据。' },
+} as const
 
 type WorkshopState = {
   placements: Record<string, string>
@@ -35,6 +41,10 @@ function tierTone(tier: string) {
   if (tier === 'Hybrid') return 'border-amber-200 bg-amber-100 text-amber-800'
   if (tier === 'Human') return 'border-rose-200 bg-rose-100 text-rose-800'
   return 'border-slate-200 bg-slate-100 text-slate-600'
+}
+
+function tierLabel(tier: string) {
+  return COLUMNS.find(column => column.id === tier)?.label || tier || '未评估'
 }
 
 function skillTone(grade: string) {
@@ -70,6 +80,110 @@ function readableList(value: unknown) {
     return ''
   }).filter(Boolean)
   return texts.length ? texts.join('；') : '待补'
+}
+
+function PanelMeta({ ssot, logic }: { ssot: string; logic?: string }) {
+  return (
+    <details className="max-w-md text-right">
+      <summary className="cursor-pointer text-[10px] font-medium text-indigo-700">SSOT来源与分析逻辑</summary>
+      <div className="mt-2 rounded-lg border border-indigo-100 bg-indigo-50/90 p-3 text-left text-[10px] leading-4 text-text-secondary shadow-sm">
+        <p><b>SSOT：</b>{ssot}</p>
+        {logic && <p className="mt-1"><b>分析逻辑：</b>{logic}</p>}
+      </div>
+    </details>
+  )
+}
+
+function sourceContribution(sourceObject: string, fields: string[]) {
+  if (sourceObject === 'process_analytics.dim_process') {
+    return {
+      thinking: '以数据库正式L4定义为结构主轴，区分活动名称、交付物、交付物类型、既有AI协作Tier与人工触点。',
+      input: '决定模型中的L4范围，并进入Gate M/E、面板B、C、D、E。',
+    }
+  }
+  if (sourceObject === 'process_analytics.dim_vn') {
+    return {
+      thinking: '流程模型最终需要服务真实价值节点，并保留优先级、融合状态和可追溯性判断。',
+      input: '进入Gate A、流程背景、价值节点映射和负责人决策语境。',
+    }
+  }
+  if (sourceObject.includes('L4两阶段复核')) {
+    return {
+      thinking: '从“是否能自动化”进一步拆成输入结构、规则清晰、输出验证、接口可达、失败降级和合规约束六个判断维度。',
+      input: '为Gate M/E、面板B的人机边界、面板D的风险与推进条件提供D1–D6事实输入。',
+    }
+  }
+  if (sourceObject.includes('Skill封装可行性评估')) {
+    return {
+      thinking: 'AI机会不能只看Tier，还要判断动作是信息处理还是认知决策、单一还是复合，以及是否存在资金安全或物理执行硬门槛。',
+      input: '为面板C的任务拆分、面板D的治理路径、面板E的A/B/C/F封装方式和Skill/Agent设计建议提供输入。',
+    }
+  }
+  if (sourceObject.toLowerCase().includes('sop')) {
+    return {
+      thinking: '将流程目标下沉为可执行步骤、人工确认点、异常返回和质量检查。',
+      input: '为面板A流程补充、面板B控制门和面板C任务卡提供执行层输入。',
+    }
+  }
+  if (sourceObject.includes('流程蓝图_')) {
+    return {
+      thinking: '使用真实步骤、先后关系、判断点、返回路径、RACI与价值节点背景还原流程，不由模型补画。',
+      input: '直接形成面板A，并为面板B控制点、面板C任务拆分、面板D流程背景提供输入。',
+    }
+  }
+  if (sourceObject.includes('T5_规则清单')) {
+    return {
+      thinking: '把现行规则动作、判断标准和适用节点作为持续治理中的约束输入，而不是人机协作规则本身。',
+      input: '用于Gate E证据覆盖、任务拆分、控制门和风险限制；缺规则不阻断建模，但明确标注缺口。',
+    }
+  }
+  if (sourceObject.includes('T19_SOP生产进度')) {
+    return {
+      thinking: '确认哪些节点已经有可定位的执行材料，避免仅凭L4名称推测日常任务。',
+      input: '用于Gate E及面板C任务证据；具体SOP正文只在已经定位到真实文件时使用。',
+    }
+  }
+  return {
+    thinking: `从该文件提取${fields.join('、') || '可追溯知识'}，作为数据库事实之外的补充视角。`,
+    input: '仅进入其证据能够支持的分析字段；未覆盖部分保持待补。',
+  }
+}
+
+function compactRanges(values: number[]) {
+  const sorted = [...new Set(values)].sort((a, b) => a - b)
+  const ranges: string[] = []
+  let start = sorted[0]
+  let previous = sorted[0]
+  for (const value of sorted.slice(1)) {
+    if (value === previous + 1) {
+      previous = value
+      continue
+    }
+    ranges.push(start === previous ? `${start}` : `${start}–${previous}`)
+    start = value
+    previous = value
+  }
+  if (start !== undefined) ranges.push(start === previous ? `${start}` : `${start}–${previous}`)
+  return ranges.join('、')
+}
+
+function sourceLocation(sourceSystem: string, keys: string[], indexed?: { rows?: number[]; lines?: number[]; record_keys?: string[] }) {
+  if (indexed?.rows?.length) return `使用行：${compactRanges(indexed.rows)}（命中${new Set(indexed.rows).size}行）`
+  if (indexed?.lines?.length) return `使用正文行：${compactRanges(indexed.lines)}（命中${new Set(indexed.lines).size}处）`
+  if (indexed?.record_keys?.length) return `数据库记录键：${indexed.record_keys.slice(0, 4).join('、')}${indexed.record_keys.length > 4 ? ` 等${indexed.record_keys.length}条` : ''}`
+  const rows = keys.flatMap(key => {
+    const match = key.match(/@row:(\d+)/)
+    return match ? [Number(match[1])] : []
+  })
+  const lines = keys.flatMap(key => {
+    const match = key.match(/line:(\d+)/)
+    return match ? [Number(match[1])] : []
+  })
+  if (rows.length) return `使用行：${compactRanges(rows)}（命中${new Set(rows).size}行）`
+  if (lines.length) return `使用正文行：${compactRanges(lines)}（命中${new Set(lines).size}处）`
+  const cleanKeys = [...new Set(keys)].filter(Boolean)
+  if (sourceSystem === 'PostgreSQL') return `数据库记录键：${cleanKeys.slice(0, 4).join('、')}${cleanKeys.length > 4 ? ` 等${cleanKeys.length}条` : ''}`
+  return `源记录：${cleanKeys.slice(0, 4).join('、')}${cleanKeys.length > 4 ? ` 等${cleanKeys.length}条` : ''}`
 }
 
 function deliverableQuality(rawDeliverable: string, sameValueCount: number) {
@@ -159,6 +273,40 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
       }
     })
   }, [model, session.priorityPlacements])
+  const inputLineage = useMemo(() => {
+    if (!model) return []
+    const groups = new Map<string, { sourceObject: string; sourceSystem: string; sourceVersion: string; fields: Set<string>; keys: Set<string>; evidenceCount: number }>()
+    model.evidence_registry.forEach(item => {
+      const source = item.source as Record<string, unknown> | undefined
+      const sourceSystem = String(source?.source_system || '')
+      const sourceObject = String(source?.source_object || '')
+      if (!sourceObject) return
+      const groupKey = `${sourceSystem}::${sourceObject}`
+      const current = groups.get(groupKey) || {
+        sourceObject,
+        sourceSystem,
+        sourceVersion: String(source?.source_version || ''),
+        fields: new Set<string>(),
+        keys: new Set<string>(),
+        evidenceCount: 0,
+      }
+      current.fields.add(String(item.field_name || ''))
+      current.keys.add(String(source?.source_key || ''))
+      current.evidenceCount += 1
+      groups.set(groupKey, current)
+    })
+    return [...groups.values()].map(group => {
+      const fields = [...group.fields].filter(Boolean)
+      const keys = [...group.keys].filter(Boolean)
+      return {
+        ...group,
+        fields,
+        keys,
+        location: sourceLocation(group.sourceSystem, keys, model.source_locations?.[group.sourceObject]),
+        ...sourceContribution(group.sourceObject, fields),
+      }
+    })
+  }, [model])
   function moveCard(cardId: string, placement: string) {
     setSession(current => ({ ...current, placements: { ...current.placements, [cardId]: placement } }))
   }
@@ -245,11 +393,16 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
       </section>
 
       <section className="panel p-5">
-        <div className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-accent-primary-light" /><h2 className="text-sm font-semibold">为什么处于这个 Gate</h2></div>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-accent-primary-light" /><h2 className="text-sm font-semibold">为什么处于这个 Gate</h2></div>
+          <PanelMeta ssot="数据库L3/L4、D1–D6、流程蓝图、SOP与规则覆盖快照。" logic="Gate由确定性程序规则计算，不由大模型自由判断；M控制能否建模，E说明证据充分度，A说明是否可支持行动决策。" />
+        </div>
         <div className="mt-4 grid gap-3 md:grid-cols-3">
           {(['M', 'E', 'A'] as const).map(gate => (
             <div key={gate} className="rounded-xl border border-border-default bg-bg-surface p-4">
-              <p className="font-mono text-xs text-text-muted">Gate {gate}</p>
+              <p className="font-mono text-xs font-semibold text-text-primary">Gate {gate} · {GATE_INFO[gate].name}</p>
+              <p className="mt-2 text-[11px] leading-5 text-text-muted">{GATE_INFO[gate].description}</p>
+              <p className={`mt-3 inline-block rounded-full border px-2 py-1 text-[10px] ${gateTone(model.gates[gate].status)}`}>当前：{model.gates[gate].status}</p>
               <div className="mt-2 space-y-2">
                 {model.gates[gate].checks.map(check => (
                   <div key={check.rule_id} className="flex gap-2 text-xs">
@@ -266,7 +419,7 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
       <section className="panel p-5">
         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border-default pb-3">
           <div className="flex items-center gap-2"><GitBranch className="h-4 w-4 text-accent-primary-light" /><h2 className="text-sm font-semibold">面板 A · L3流程叙事（理想态执行路径）</h2></div>
-          <span className="text-[10px] text-text-muted">{model.blueprint.filename} · {model.blueprint.steps.length}步 / {model.blueprint.decisions.length}判断点</span>
+          <PanelMeta ssot={`${model.blueprint.filename || '流程蓝图待补'}；正文解析为${model.blueprint.steps.length}步、${model.blueprint.decisions.length}个判断点。`} logic="仅按蓝图中显式步骤、箭头、判断和返回关系绘制；大模型不得补造流程节点。" />
         </div>
         {model.blueprint.structure_status === 'PARSED' ? (
           <>
@@ -329,8 +482,19 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
       </section>
 
       <section className="panel p-5">
-        <div className="flex items-center gap-2"><Layers3 className="h-4 w-4 text-accent-primary-light" /><h2 className="text-sm font-semibold">面板 E · L4交付物地图</h2></div>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div className="flex items-center gap-2"><Layers3 className="h-4 w-4 text-accent-primary-light" /><h2 className="text-sm font-semibold">面板 E · L4交付物地图</h2></div>
+          <PanelMeta ssot="数据库L4、交付物、Tier、L2能力、价值节点映射；OB知识库Skill封装评估。" logic="大模型只在有效证据上分析交付物角色、具体能力、AI重塑方式和质量锚点；数据库Tier与模型建议并列保留。" />
+        </div>
         <p className="mt-2 text-xs text-text-muted">围绕 L3 目标查看交付物、数据库 Tier 和人工介入点。当前蓝图为 {model.blueprint.structure_status}，因此不展示未经正文解析的流程箭头。</p>
+        <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+          {COLUMNS.map(column => (
+            <div key={column.id} className={`rounded-lg border p-3 ${column.color}`}>
+              <p className="text-xs font-semibold text-text-primary">{column.label}</p>
+              <p className="mt-1 text-[10px] leading-4 text-text-secondary">{column.explanation}</p>
+            </div>
+          ))}
+        </div>
         <div className="mt-4 grid gap-3 md:grid-cols-2">
           {model.l4s.map(l4 => {
             const analysis = model.analysis.l4_analysis.find(item => String(item.l4_code) === l4.l4_code) as Record<string, unknown> | undefined
@@ -341,7 +505,7 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
             const proposedDeliverable = String(analysis?.proposed_deliverable || '')
             return (
             <div key={l4.l4_code} className={`rounded-xl border p-4 ${roleTone(String(analysis?.deliverable_role || ''))}`}>
-              <div className="flex items-center justify-between gap-3"><span className="font-mono text-[11px] text-accent-primary-light">{l4.l4_code}</span><span className={`rounded-md border px-2 py-1 text-[10px] font-semibold ${tierTone(displayTier)}`}>{displayTier || '未评估'}</span></div>
+              <div className="flex items-center justify-between gap-3"><span className="font-mono text-[11px] text-accent-primary-light">{l4.l4_code}</span><span className={`rounded-md border px-2 py-1 text-[10px] font-semibold ${tierTone(displayTier)}`}>{tierLabel(displayTier)}</span></div>
               <p className="mt-2 text-sm font-bold text-text-primary">{l4.l4_name}</p>
               {l4.skill_feasibility && (
                 <div className="mt-3 rounded-lg border border-slate-200 bg-white/80 p-3">
@@ -412,6 +576,7 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
             <p className="mt-2 text-xs text-text-muted">初始位置来自数据库；拖动后的差异仅是本机工作坊共识，不会写回权威库。</p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
+            <PanelMeta ssot="蓝图任务、规则、交付物构成及经校验的任务证据。" logic="统一模型按任务判断Human/Aug/Hybrid/Auto；拖动结果仅保存为浏览器工作坊共识。" />
             <label className="flex items-center gap-2 rounded-lg border border-border-default bg-white px-3 py-2 text-xs text-text-secondary">
               <span>L4筛选</span>
               <select value={taskL4Filter} onChange={event => setTaskL4Filter(event.target.value)} className="bg-transparent font-mono text-[11px] text-text-primary outline-none">
@@ -442,6 +607,7 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
           {COLUMNS.map(column => (
             <div key={column.id} onDragOver={event => event.preventDefault()} onDrop={event => moveCard(event.dataTransfer.getData('text/card'), column.id)} className={`min-h-48 rounded-xl border p-3 ${column.color}`}>
               <div className="mb-3 flex items-center justify-between"><h3 className="text-sm font-semibold">{column.label}</h3><span className="text-xs text-text-muted">{visibleCards.filter(card => card.placement === column.id).length}</span></div>
+              <p className="mb-3 text-[10px] leading-4 text-text-secondary">{column.explanation}</p>
               <div className="space-y-2">
                 {visibleCards.filter(card => card.placement === column.id).map(card => (
                   <article key={card.card_id} draggable onDragStart={event => event.dataTransfer.setData('text/card', card.card_id)} className="cursor-grab rounded-lg border border-border-default bg-bg-elevated p-3 active:cursor-grabbing">
@@ -469,7 +635,10 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
       </section>
 
       <section className="panel p-5">
-        <div className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-accent-primary-light" /><h2 className="text-sm font-semibold">面板 B · 人机协作与控制地图</h2></div>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-accent-primary-light" /><h2 className="text-sm font-semibold">面板 B · 人机协作与控制地图</h2></div>
+          <PanelMeta ssot="L4人工触点、D1–D6、蓝图控制点、SOP与规则证据。" logic="大模型逐L4划分AI责任、人工责任、转人工触发条件和不可绕过控制门；不依据Tier名称直接反推控制规则。" />
+        </div>
         <p className="mt-2 text-xs text-text-muted">固定展示AI负责、人负责、转人工条件和不可绕过控制门。模型未完成分析时保留缺失态，不从Tier名称反推业务控制。</p>
         {model.analysis.analysis_status === 'PENDING_MODEL' ? (
           <div className="mt-4 rounded-xl border border-dashed border-amber-300 bg-amber-50 p-5">
@@ -496,6 +665,7 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
             <p className="mt-2 text-xs text-text-muted">可将每项 L4 拖入讨论后的象限。初始位置来自分析包；移动结果仅是本机工作坊共识，不会写回权威库。</p>
           </div>
           <div className="flex items-center gap-2">
+            <PanelMeta ssot="逐L4四维分析：数据依据、流程背景、风险/限制、当前建议。" logic="大模型提供可追溯的初始建议；无数据支持时保持待归类。负责人拖动后只形成本机工作坊共识。" />
             <button onClick={reset} className="flex items-center gap-1.5 rounded-lg border border-border-default px-3 py-2 text-xs text-text-muted hover:text-text-primary"><RotateCcw className="h-3.5 w-3.5" />恢复初始位置</button>
             <button onClick={persist} className="flex items-center gap-1.5 rounded-lg bg-accent-primary px-3 py-2 text-xs text-white"><Save className="h-3.5 w-3.5" />保存到本机</button>
           </div>
@@ -515,10 +685,12 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
               </div>
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
-              {['优先验证', '治理后推进', '补数据后推进', '暂缓自动化'].map(label => (
-                <div key={label} className="min-h-28 rounded-xl border border-dashed border-border-default bg-bg-surface p-4">
-                  <p className="text-sm font-medium text-text-primary">{label}</p>
-                  <p className="mt-2 text-xs text-text-muted">尚无经过证据校验的逐L4四维分析，不生成假位置。</p>
+              {PRIORITY_ZONES.map(zone => (
+                <div key={zone.id} className={`min-h-28 rounded-xl border p-4 ${zone.tone}`}>
+                  <p className="text-sm font-semibold text-text-primary">{zone.label}</p>
+                  <p className="mt-2 text-[11px] leading-5 text-text-secondary">{zone.explanation}</p>
+                  <p className="mt-2 text-[10px] font-medium text-text-primary">归类指引：{zone.guide}</p>
+                  <p className="mt-2 text-[10px] text-text-muted">当前无经过证据校验的逐L4位置，不生成假坐标。</p>
                 </div>
               ))}
             </div>
@@ -562,6 +734,8 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
                   className={`min-h-40 rounded-xl border p-4 ${zone.tone}`}
                 >
                   <div className="flex items-center justify-between"><p className="text-sm font-semibold text-text-primary">{zone.label}</p><span className="text-xs text-text-muted">{priorityDrafts.filter(item => item.placement === zone.id).length}</span></div>
+                  <p className="mt-2 text-[10px] leading-4 text-text-secondary">{zone.explanation}</p>
+                  <p className="mt-1 text-[10px] font-medium text-text-primary">归类指引：{zone.guide}</p>
                   <div className="mt-3 space-y-2">
                     {priorityDrafts.filter(item => item.placement === zone.id).map((item, index) => (
                       <div key={item.l4Code || index} draggable onDragStart={event => event.dataTransfer.setData('text/priority', item.l4Code)} className="cursor-grab rounded-lg border border-white/80 bg-white p-3 shadow-sm active:cursor-grabbing">
@@ -610,7 +784,64 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
       <section className="panel p-5">
         <details>
           <summary className="cursor-pointer text-sm font-semibold text-text-primary">面板 F · SSOT与证据</summary>
+          <div className="mt-3 flex justify-end">
+            <PanelMeta ssot="数据库 process_analytics 与已纳入VNW引用范围的OB知识库文件；每条记录保留来源对象、字段、键和证据ID。" logic="本面板不生成业务判断，只展示证据注册表。模型只能引用ACTIVE且通过准入的证据；CONSENSUS/UNVERIFIED不参与自动分析。" />
+          </div>
           <p className="mt-2 text-xs text-text-muted">当前模型共登记 {model.evidence_registry.length} 条字段证据；分析标准为 {model.analysis.analysis_standard_id}。</p>
+          <div className="mt-4 rounded-xl border border-violet-200 bg-violet-50/70 p-4">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <h3 className="text-sm font-semibold text-violet-900">本Demo输入谱系 · 数据、知识与方法</h3>
+                <p className="mt-1 text-[11px] text-text-secondary">回答“这份L3模型实际使用了什么来源、具体定位到哪里、带来什么思考、进入哪个面板”；每个L3按实际命中范围独立生成。</p>
+              </div>
+              <span className="rounded-full bg-white px-2.5 py-1 text-[10px] font-medium text-violet-700">{inputLineage.length} 类事实来源 + 2 项分析方法</span>
+            </div>
+            {inputLineage.length === 0 ? (
+              <p className="mt-3 rounded-lg border border-dashed border-violet-200 bg-white/70 p-3 text-xs text-text-muted">当前 L3 没有登记可追溯事实输入，不生成模型贡献说明。</p>
+            ) : (
+              <div className="mt-3 space-y-3">
+                {inputLineage.map(item => (
+                  <div key={`${item.sourceSystem}:${item.sourceObject}`} className="rounded-xl border border-white bg-white p-4">
+                    <div className="flex flex-wrap items-start justify-between gap-3">
+                      <div>
+                        <p className="text-xs font-semibold text-text-primary">{item.sourceObject}</p>
+                        <p className="mt-1 text-[10px] text-text-muted">{item.sourceSystem} · {item.sourceVersion || '版本见源文件'} · 本L3命中 {item.keys.length} 个对象 / {item.evidenceCount} 条字段证据</p>
+                        <p className="mt-1 font-mono text-[10px] text-violet-700">{item.location}</p>
+                      </div>
+                      <span className="rounded-full bg-violet-50 px-2 py-1 text-[9px] text-violet-700">{item.fields.join('、')}</span>
+                    </div>
+                    <div className="mt-3 grid gap-3 md:grid-cols-2">
+                      <div className="rounded-lg bg-slate-50 p-3">
+                        <p className="text-[10px] font-semibold text-slate-700">带来的核心思考</p>
+                        <p className="mt-1 text-[11px] leading-5 text-text-secondary">{item.thinking}</p>
+                      </div>
+                      <div className="rounded-lg bg-indigo-50 p-3">
+                        <p className="text-[10px] font-semibold text-indigo-700">进入本模型的输入</p>
+                        <p className="mt-1 text-[11px] leading-5 text-text-secondary">{item.input}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+            <div className="mt-4 border-t border-violet-200 pt-4">
+              <h4 className="text-xs font-semibold text-violet-900">分析方法与大模型加工</h4>
+              <div className="mt-3 grid gap-3 md:grid-cols-2">
+                <div className="rounded-xl border border-white bg-white p-4">
+                  <p className="text-xs font-semibold text-text-primary">L3流程模型统一模板_v1.0.md</p>
+                  <p className="mt-1 text-[10px] text-text-muted">方法论模板 · {model.analysis.analysis_standard_id}</p>
+                  <p className="mt-3 text-[11px] leading-5 text-text-secondary"><b>核心思考：</b>用统一的Gate、面板A–F、双轴AI判断和负责人决策结构约束所有L3，避免每份Demo各自发挥。</p>
+                  <p className="mt-2 text-[11px] leading-5 text-indigo-700"><b>进入本模型：</b>决定页面结构、必填分析字段、缺失态和可发布门槛。</p>
+                </div>
+                <div className="rounded-xl border border-white bg-white p-4">
+                  <p className="text-xs font-semibold text-text-primary">L3统一分析模型_v1.0.md</p>
+                  <p className="mt-1 text-[10px] text-text-muted">{model.analysis.model_run?.model_name || '模型尚未运行'} · Prompt {model.analysis.model_run?.prompt_version || model.analysis.analysis_standard_id}</p>
+                  <p className="mt-3 text-[11px] leading-5 text-text-secondary"><b>核心思考：</b>模型只能使用事实包，必须逐项引用证据；Skill封装与AI Tier分轴判断，复合动作拆为任务，具体人名不进入展示。</p>
+                  <p className="mt-2 text-[11px] leading-5 text-indigo-700"><b>进入本模型：</b>加工面板B–E和负责人决策；其输出为MODEL_DRAFT，不改变数据库与知识库原文。</p>
+                </div>
+              </div>
+            </div>
+          </div>
           <div className="mt-4 max-h-96 overflow-auto rounded-xl border border-border-default">
             <table className="w-full text-left text-xs">
               <thead className="sticky top-0 bg-bg-surface text-text-muted"><tr><th className="px-3 py-2">证据ID</th><th>证据层</th><th>字段</th><th>状态</th></tr></thead>

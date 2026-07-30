@@ -112,7 +112,7 @@ def load_d1d6_supplement(csv_path: Path) -> dict[str, dict]:
     result: dict[str, dict] = {}
     name_candidates: dict[str, list[dict]] = {}
     with Path(csv_path).open(encoding="utf-8-sig") as file:
-        for row in csv.DictReader(file):
+        for source_row, row in enumerate(csv.DictReader(file), start=2):
             l4_code = row.get("L4编码", "").strip()
             if not l4_code:
                 continue
@@ -127,6 +127,7 @@ def load_d1d6_supplement(csv_path: Path) -> dict[str, dict]:
                     break
             if complete:
                 values["_source_l4_code"] = l4_code
+                values["_source_row"] = source_row
                 result[l4_code] = values
                 l3_code = row.get("L3编码", "").strip().upper()
                 l4_name = row.get("L4名称", "").strip()
@@ -229,7 +230,7 @@ def load_sop_records(csv_path: Path, sop_dir: Path) -> list[dict]:
     """读取SOP生产清单，并只保留能够定位到真实文件的记录。"""
     result = []
     with Path(csv_path).open(encoding="utf-8-sig") as file:
-        for row in csv.DictReader(file):
+        for source_row, row in enumerate(csv.DictReader(file), start=2):
             filename = row.get("sop_file", "").strip()
             source_path = Path(sop_dir) / filename
             if not filename or not source_path.exists():
@@ -237,6 +238,7 @@ def load_sop_records(csv_path: Path, sop_dir: Path) -> list[dict]:
             content = source_path.read_text(encoding="utf-8")
             result.append({
                 **row,
+                "_source_row": source_row,
                 "source_path": str(source_path),
                 "l4_codes": sorted(set(re.findall(r"\bL4-[A-Z0-9]+(?:-[A-Z0-9]+)+\b", content, flags=re.I))),
             })
@@ -245,13 +247,16 @@ def load_sop_records(csv_path: Path, sop_dir: Path) -> list[dict]:
 
 def load_rule_records(csv_path: Path) -> list[dict]:
     """读取当前有效规则清单；空规则动作不作为建模依据。"""
+    result = []
     with Path(csv_path).open(encoding="utf-8-sig") as file:
-        return [
-            row for row in csv.DictReader(file)
-            if row.get("rule_id", "").strip()
-            and row.get("node_id", "").strip()
-            and row.get("rule_action", "").strip()
-        ]
+        for source_row, row in enumerate(csv.DictReader(file), start=2):
+            if (
+                row.get("rule_id", "").strip()
+                and row.get("node_id", "").strip()
+                and row.get("rule_action", "").strip()
+            ):
+                result.append({**row, "_source_row": source_row})
+    return result
 
 
 def load_prepared_analysis_codes(dir_path: Path) -> set[str]:
@@ -625,6 +630,61 @@ class L3ModelBuilder:
         gate_a = "PASS" if all(c["passed"] for c in gate_a_checks) else "BLOCKED"
 
         l3_name = processes[0].get("l3_name", "") if processes else (blueprint.l3_name if blueprint else "")
+        d1d6_rows = []
+        skill_rows = []
+        for l4 in l4s:
+            supplement = self.d1d6_supplement.get(l4["l4_code"])
+            if supplement is None:
+                supplement = self.d1d6_supplement.get(
+                    d1d6_name_key(l3_code, l4.get("l4_name", ""))
+                )
+            if supplement and supplement.get("_source_row"):
+                d1d6_rows.append(supplement["_source_row"])
+            skill = self.skill_feasibility.get(l4["l4_code"])
+            if skill is None:
+                skill = self.skill_feasibility.get(
+                    d1d6_name_key(l3_code, l4.get("l4_name", ""))
+                )
+            if skill and skill.get("_source_row"):
+                skill_rows.append(skill["_source_row"])
+        blueprint_lines = []
+        if parsed_blueprint:
+            for collection in ("steps", "decisions", "blueprint_value_nodes", "raci"):
+                blueprint_lines.extend(
+                    item.get("source_line")
+                    for item in parsed_blueprint.get(collection, [])
+                    if item.get("source_line")
+                )
+        source_locations = {
+            "process_analytics.dim_process": {
+                "record_keys": sorted({item["l4_code"] for item in l4s}),
+            },
+            "process_analytics.dim_vn": {
+                "record_keys": sorted({item["vn_id"] for item in vn_items}),
+            },
+            "L4两阶段复核_全量368条_合并版_v1.0.csv": {
+                "rows": sorted(set(d1d6_rows)),
+            },
+            "L4流程_Skill封装可行性评估_确认最终版_v2.xlsx": {
+                "rows": sorted(set(skill_rows)),
+            },
+            "T5_规则清单_全域_v3.0.csv": {
+                "rows": sorted({
+                    row.get("_source_row") for row in linked_rules
+                    if row.get("_source_row")
+                }),
+            },
+            "T19_SOP生产进度_全域_v2.0.csv": {
+                "rows": sorted({
+                    row.get("_source_row") for row in linked_sops
+                    if row.get("_source_row")
+                }),
+            },
+        }
+        if blueprint:
+            source_locations[blueprint.filename] = {
+                "lines": sorted(set(blueprint_lines)),
+            }
         model = {
             "schema_version": self.schema_version,
             "l3_code": l3_code,
@@ -637,6 +697,7 @@ class L3ModelBuilder:
                 "consensus_separate": True,
                 "reverse_writeback": False,
             },
+            "source_locations": source_locations,
             "blueprint": {
                 "coverage": "INDEXED" if blueprint else "MISSING",
                 "version": blueprint.version if blueprint else "",

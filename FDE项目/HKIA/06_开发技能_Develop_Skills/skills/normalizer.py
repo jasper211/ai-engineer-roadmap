@@ -58,9 +58,13 @@ class Normalizer:
             ("new_business", "new_business"),
             ("in_force", "in_force"),
             ("new_business_by_insurer", "new_business_by_insurer"),
+            ("new_business_by_ccy", "new_business_by_ccy"),
+            ("new_business_by_prem_term", "new_business_by_prem_term"),
+            ("new_business_by_channel", "new_business_by_channel"),
+            ("new_business_by_insurer_channel", "new_business_by_insurer_channel"),
         )
         for table_type, key in table_keys:
-            for rec in parsed[key]:
+            for rec in parsed.get(key, []):
                 metric_name, unit = _split_unit(rec["metric_name"])
                 rows.append(NormalizedRow(
                     date=period_end,

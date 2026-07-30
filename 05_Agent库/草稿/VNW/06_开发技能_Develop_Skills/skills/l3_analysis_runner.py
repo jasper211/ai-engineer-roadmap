@@ -262,7 +262,17 @@ class L3AnalysisRunner:
             for code in set(step.get("l4_codes", [])):
                 blueprint_task_counts[code] += 1
         minimum_task_counts = {
-            item["l4_code"]: max(1, blueprint_task_counts[item["l4_code"]])
+            item["l4_code"]: max(
+                1,
+                blueprint_task_counts[item["l4_code"]],
+                2
+                if "复合动作" in str(
+                    (item.get("skill_feasibility") or {}).get(
+                        "action_singularity", ""
+                    )
+                )
+                else 1,
+            )
             for item in fact_pack["l4s"]
         }
         package_hash = canonical_hash(current_package)
@@ -314,7 +324,7 @@ class L3AnalysisRunner:
                 "只返回顶层tasks与decision_drafts，不要用output_contract包裹。"
                 "每个L4至少拆出1个来自事实包的具体工作任务；任务须覆盖全部L4。"
                 "并且每个L4的任务数量不得低于minimum_task_counts；不同蓝图步骤、"
-                "失败返回或重新联调应拆成独立任务。"
+                "失败返回、重新联调，以及知识库标记的复合动作应拆成独立任务。"
                 "展示文本不得出现具体人员姓名；来源中的姓名必须概括为岗位族、"
                 "部门或授权决策角色，但证据引用保持原样以便溯源。"
                 "所有evidence_refs必须是fact_pack中真实evidence_id且不能为空。"

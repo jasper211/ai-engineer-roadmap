@@ -100,6 +100,11 @@ export interface L3Model {
   has_demo: boolean
   demo_file: string
   source_policy: Record<string, unknown>
+  source_locations?: Record<string, {
+    rows?: number[]
+    lines?: number[]
+    record_keys?: string[]
+  }>
   blueprint: {
     coverage: string
     version: string
