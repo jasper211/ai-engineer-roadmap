@@ -1,15 +1,15 @@
 {
   "agent_id": "HKIA",
   "name": "香港保监局（IA）行业数据自动化分析 Agent",
-  "version": "0.2.4",
+  "version": "0.3.0",
   "status": "测试中",
-  "description": "解析 IA 官网长期业务季度保费统计（2023Q1~2026Q1，共13期，人工下载放本地目录），标准化为长表格式并写入本地存储——demo 目标是跑通一次、数出对，不做增量/调度/云端/自动抓取。",
+  "description": "解析 IA 官网长期业务季度保费统计（2015Q1~2026Q1，共45期，人工下载放本地目录），标准化为长表格式并写入本地存储——demo 目标是跑通一次、数出对，不做增量/调度/云端/自动抓取。",
   "entrypoint": "04_定义Agent_Define_Agent/agents/agent.py",
 
-  "migration_note": "v0.1.0~v0.1.3：需求定义+流程设计阶段几次调整，包括发现Cloudflare JS挑战需要Playwright、发现data.gov.hk分表CSV数据源、一度将demo窗口收窄为2023Q1~2024Q2。v0.2.0（当前）：Jasper纠正此前判断——'2024Q3起断更'只对一般业务成立，长期业务实际连续更新到2026Q1；range改为长期业务单线2023Q1~2026Q1共13期，一般业务本次不做；同时决定跳过自动化抓取，Jasper人工下载13份原始Excel放入07_接入记忆_Integrate_Memory/raw_data/，Agent从解析本地文件开始，Playwright抓取自动化推迟到下一版本单独验证。真实文件格式：2023~2024Q2是老版.xls，2024Q3起是新版.xlsx，个别期数文件名带下划线（非统一模式）。",
+  "migration_note": "v0.1.0~v0.1.3：需求定义+流程设计阶段几次调整，包括发现Cloudflare JS挑战需要Playwright、发现data.gov.hk分表CSV数据源、一度将demo窗口收窄为2023Q1~2024Q2。v0.2.0：Jasper纠正此前判断——'2024Q3起断更'只对一般业务成立，长期业务实际连续更新到2026Q1；range改为长期业务单线2023Q1~2026Q1共13期，一般业务本次不做；同时决定跳过自动化抓取，人工下载放本地目录。v0.2.1~0.2.4：新增growth_analysis(QoQ/YoY，含YTD累计还原当季独立新增额)、company_rankings(6类保险公司排名，跟第三方信息图逐项交叉验证，修正了'银行系保险公司'名单应为3家而非2家的错误)。v0.3.0（当前）：Jasper补充2015~2022年历史数据，时间窗口从13期扩展到45期(2015Q1~2026Q1)；report_discovery.py的文件名正则需要同时兼容2位数年份(如1q22)和4位数年份(如1q2021——2021年两份文件用4位年份、另两份用2位年份，同一年内两种写法混用)；excel_parser.py不需要任何改动，验证了通用设计对11年真实数据仍然成立。",
 
   "data_scope": {
-    "time_window": "2023Q1~2026Q1（13期）",
+    "time_window": "2015Q1~2026Q1（45期，v0.3.0从13期扩展）",
     "reports": ["長期業務季度發表的臨時統計數字"],
     "source": "人工下载 ia.org.hk 原始 Excel，放 07_接入记忆_Integrate_Memory/raw_data/",
     "formats": ".xls（2023~2024Q2，需xlrd）+ .xlsx（2024Q3起，需openpyxl）",
