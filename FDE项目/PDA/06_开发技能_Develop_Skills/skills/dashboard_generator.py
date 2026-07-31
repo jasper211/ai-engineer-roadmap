@@ -4,15 +4,22 @@
 技能：把聚合结果渲染成可交互 HTML 看板。
 
 对应 流程设计.md L3-PDA-04。CSS/Chart.js 渲染逻辑直接复用阶段一原型
-（业绩数据多维分析看板.html）——那部分本身没有 bug，核实底表时也没发现
-视觉/交互层的问题，改的只是数据来源和 footer 的统计口径说明（阶段一原型
-硬编码"11条future_dated"，改为动态注入真实数字，不再重蹈硬编码的坑）。
+（业绩数据多维分析看板.html），但修复了一个真实核实出的第3个bug：
+阶段一原型引用的 CDN 地址 https://cdnjs.cloudflare.com/.../Chart.js/4.4.4/chart.umd.min.js
+实测返回 404（cdnjs 上 4.4.4 版本的文件名不是 chart.umd.min.js）——Chart 加载失败后
+会在 `charts.trend = makeLine(...)` 处抛出未捕获异常，导致脚本执行中断，
+排行榜下方所有模块（图表+签单周期+融资占比+生效占比）点选后都不会更新，
+这正是 Jasper 实测反馈的"选择后下方各模块没有显示数据"。
+本版本改为把 Chart.js 4.5.0 UMD 包（`skills/vendor/chart.umd.min.js`）直接内联进
+HTML，看板不再依赖任何外部网络请求，真正做到"双击即可打开"。
 
 用 __TOKEN__ 占位符 + str.replace 而不是 str.format，因为模板里的 CSS/JS
 本身大量使用花括号，用 format 会跟 CSS 规则语法冲突。
 """
 import json
 from pathlib import Path
+
+_VENDOR_CHART_JS = (Path(__file__).parent / "vendor" / "chart.umd.min.js").read_text(encoding="utf-8")
 
 _TEMPLATE = r"""<!DOCTYPE html>
 <html lang="zh-CN">
@@ -22,7 +29,7 @@ _TEMPLATE = r"""<!DOCTYPE html>
 <title>业绩数据多维分析 · 牌照端视角</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700;900&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script>__CHART_JS_INLINE__</script>
 <style>
   :root{
     --ink:#0e1420;
@@ -320,6 +327,8 @@ Chart.defaults.font.size = 11.5;
 Chart.defaults.borderColor = '#2a3650';
 
 let charts = {};
+const CHART_AVAILABLE = typeof Chart !== 'undefined';
+if(!CHART_AVAILABLE) console.error('Chart.js 未加载成功，图表将不显示，但KPI/排行榜/周期等数值仍会正常更新');
 function makeDonut(id){
   const ctx = document.getElementById(id);
   return new Chart(ctx, {
@@ -350,14 +359,16 @@ function makeLine(id){
   });
 }
 
-charts.trend = makeLine('chartTrend');
-charts.status = makeDonut('chartStatus');
-charts.bcat = makeBar('chartBcat', true);
-charts.mkt = makeBar('chartMkt', true);
-charts.prod = makeBar('chartProd', true);
-charts.carrier = makeDonut('chartCarrier');
-charts.cust = makeDonut('chartCust');
-charts.ccy = makeDonut('chartCcy');
+if(CHART_AVAILABLE){
+  charts.trend = makeLine('chartTrend');
+  charts.status = makeDonut('chartStatus');
+  charts.bcat = makeBar('chartBcat', true);
+  charts.mkt = makeBar('chartMkt', true);
+  charts.prod = makeBar('chartProd', true);
+  charts.carrier = makeDonut('chartCarrier');
+  charts.cust = makeDonut('chartCust');
+  charts.ccy = makeDonut('chartCcy');
+}
 
 function filterAggByEntity(aggDict, entity){
   const out = {};
@@ -379,6 +390,7 @@ function filterAggByEntity(aggDict, entity){
 }
 
 function updateDonut(chart, subMap, topN){
+  if(!chart) return;
   let entries = Object.entries(subMap).sort((a,b)=>b[1].premium-a[1].premium);
   if(topN && entries.length>topN){
     const head = entries.slice(0,topN);
@@ -390,6 +402,7 @@ function updateDonut(chart, subMap, topN){
   chart.update();
 }
 function updateBar(chart, subMap){
+  if(!chart) return;
   const entries = Object.entries(subMap).sort((a,b)=>b[1].premium-a[1].premium);
   chart.data.labels = entries.map(([k])=>k);
   chart.data.datasets[0].data = entries.map(([,v])=>v.premium);
@@ -408,9 +421,11 @@ function selectEntity(entity){
     if(entity && ent!==entity) continue;
     monthMap[m] = (monthMap[m]||0) + DATA.by_entity_month[k].premium;
   }
-  charts.trend.data.labels = DATA.months;
-  charts.trend.data.datasets[0].data = DATA.months.map(m=>monthMap[m]||0);
-  charts.trend.update();
+  if(charts.trend){
+    charts.trend.data.labels = DATA.months;
+    charts.trend.data.datasets[0].data = DATA.months.map(m=>monthMap[m]||0);
+    charts.trend.update();
+  }
 
   updateDonut(charts.status, filterAggByEntity(DATA.by_entity_status, entity));
   updateBar(charts.bcat, filterAggByEntity(DATA.by_entity_bcat, entity));
@@ -471,6 +486,7 @@ class DashboardGenerator:
         agent_version: str = "v0.1.0",
     ) -> str:
         html = _TEMPLATE
+        html = html.replace("__CHART_JS_INLINE__", _VENDOR_CHART_JS)
         html = html.replace("__DATA_JSON__", json.dumps(agg, ensure_ascii=False))
         html = html.replace("__SOURCE__", source_file_name)
         html = html.replace("__EXPORT_DATE__", export_date)

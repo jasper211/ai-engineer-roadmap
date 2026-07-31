@@ -23,7 +23,7 @@ from skills.dashboard_generator import DashboardGenerator
 from memory.workspace import Workspace
 
 RAW_DATA_DIR = AGENT_ROOT / "07_接入记忆_Integrate_Memory" / "raw_data"
-AGENT_VERSION = "v0.1.0"
+AGENT_VERSION = "v0.1.1"
 
 
 def run():
