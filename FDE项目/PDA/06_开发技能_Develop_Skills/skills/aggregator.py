@@ -59,6 +59,28 @@ class Aggregator:
         for entity, g in df.groupby("issuing_entity", observed=True):
             fin_by_entity[entity] = [int((g["Is_Premium_Financing"] == 1).sum()), int(len(g))]
 
+        # ---- future_dated 聚合：围绕"未来排期"（sign_date 晚于导出日期）按牌照端透视 ----
+        # cleaner 已生成 future_dated 布尔列。这里按牌照端聚合数量/保费/APE，并把档期
+        # (sign_date 按日) 分布一并带出，供看板做未来排期下钻。entry["days"] 存 {YYYY-MM-DD: 条数}。
+        future_dated_by_entity = {}
+        future_dated_total = {"count": 0, "premium": 0.0, "ape": 0.0}
+        if "future_dated" in df.columns and df["future_dated"].any():
+            fd_df = df[df["future_dated"]].copy()
+            fd_df = fd_df.assign(_fd_day=fd_df["sign_date"].dt.strftime("%Y-%m-%d"))
+            for (entity, day), g in fd_df.groupby(["issuing_entity", "_fd_day"], observed=True):
+                entry = future_dated_by_entity.setdefault(
+                    entity, {"count": 0, "premium": 0.0, "ape": 0.0, "days": {}}
+                )
+                entry["count"] += int(len(g))
+                entry["premium"] += float(g["premium"].sum())
+                entry["ape"] += float(g["ape"].sum())
+                entry["days"][str(day)] = entry["days"].get(str(day), 0) + int(len(g))
+            future_dated_total = {
+                "count": int(len(fd_df)),
+                "premium": float(fd_df["premium"].sum()),
+                "ape": float(fd_df["ape"].sum()),
+            }
+
         return {
             "entities": entities,
             "months": months,
@@ -75,4 +97,6 @@ class Aggregator:
             "by_entity_ccy": _by_entity_and(df, "currency_code"),
             "cycle_avg": cycle_avg,
             "fin_by_entity": fin_by_entity,
+            "future_dated_by_entity": future_dated_by_entity,
+            "future_dated_total": future_dated_total,
         }
