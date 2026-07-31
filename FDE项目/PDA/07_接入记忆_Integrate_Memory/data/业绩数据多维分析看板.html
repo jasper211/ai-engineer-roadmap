@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>业绩数据多维分析 · 牌照端视角</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700;900&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<style>
+  :root{
+    --ink:#0e1420;
+    --ink-2:#141c2b;
+    --card:#182236;
+    --card-hi:#1e2b42;
+    --line:#2a3650;
+    --text:#eef1f0;
+    --text-dim:#93a1b8;
+    --text-faint:#5f6d87;
+    --jade:#2fa88a;
+    --jade-soft:rgba(47,168,138,0.16);
+    --brass:#c9a15a;
+    --brass-soft:rgba(201,161,90,0.16);
+    --rose:#c96a5a;
+    --rose-soft:rgba(201,106,90,0.14);
+    --serif:'Noto Serif SC', serif;
+    --sans:'Inter', -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    --mono:'IBM Plex Mono', 'PingFang SC', monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background:
+      radial-gradient(ellipse 900px 500px at 12% -10%, rgba(47,168,138,0.10), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 100% 0%, rgba(201,161,90,0.08), transparent 55%),
+      var(--ink);
+    color:var(--text);
+    font-family:var(--sans);
+    line-height:1.5;
+    padding-bottom:80px;
+  }
+  .wrap{max-width:1240px; margin:0 auto; padding:0 28px;}
+
+  header.hero{
+    padding:52px 0 34px;
+    border-bottom:1px solid var(--line);
+    position:relative;
+  }
+  .seal{
+    position:absolute; right:28px; top:44px;
+    width:88px; height:88px; border-radius:50%;
+    border:1.5px solid var(--brass);
+    display:flex; align-items:center; justify-content:center;
+    color:var(--brass); font-family:var(--serif); font-weight:700;
+    font-size:12px; letter-spacing:2px; text-align:center;
+    opacity:0.85;
+  }
+  .seal::before{
+    content:""; position:absolute; inset:6px; border:1px solid var(--brass); border-radius:50%; opacity:0.5;
+  }
+  .eyebrow{
+    font-family:var(--mono); font-size:12px; letter-spacing:3px; text-transform:uppercase;
+    color:var(--jade); margin-bottom:14px; display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{content:"◆"; font-size:9px;}
+  h1{
+    font-family:var(--serif); font-weight:900; font-size:40px; letter-spacing:1px;
+    color:var(--text); max-width:820px;
+  }
+  .sub{color:var(--text-dim); font-size:15px; margin-top:12px; max-width:640px;}
+
+  .kpi-row{
+    display:grid; grid-template-columns:repeat(5,1fr); gap:1px;
+    background:var(--line); border:1px solid var(--line); margin-top:36px; border-radius:4px; overflow:hidden;
+  }
+  .kpi{background:var(--ink-2); padding:20px 22px;}
+  .kpi .label{font-size:12px; color:var(--text-faint); letter-spacing:1px;}
+  .kpi .val{font-family:var(--mono); font-weight:600; font-size:24px; margin-top:8px; color:var(--text);}
+  .kpi .val small{font-size:13px; color:var(--text-dim); font-weight:400; margin-left:3px;}
+  .kpi.accent .val{color:var(--jade);}
+
+  section{padding:56px 0 0;}
+  .section-head{display:flex; align-items:baseline; justify-content:space-between; margin-bottom:22px; flex-wrap:wrap; gap:10px;}
+  .section-head h2{font-family:var(--serif); font-size:22px; font-weight:700;}
+  .section-head .note{font-size:12.5px; color:var(--text-faint); font-family:var(--mono);}
+  .idx{color:var(--brass); font-family:var(--mono); font-size:13px; margin-right:10px;}
+
+  .rank-card{background:var(--card); border:1px solid var(--line); border-radius:6px; padding:26px 26px 10px;}
+  .rank-row{display:grid; grid-template-columns:180px 1fr 130px; align-items:center; gap:16px; padding:10px 0; border-bottom:1px dashed var(--line);}
+  .rank-row:last-child{border-bottom:none;}
+  .rank-name{font-size:13.5px; color:var(--text); cursor:pointer; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .rank-name .n{color:var(--brass); font-family:var(--mono); margin-right:8px; font-size:12px;}
+  .rank-bar-track{height:20px; background:var(--ink-2); border-radius:3px; overflow:hidden; position:relative;}
+  .rank-bar-fill{height:100%; background:linear-gradient(90deg, var(--jade), #4fc9a8); border-radius:3px; transition:width .4s ease;}
+  .rank-val{font-family:var(--mono); font-size:12.5px; color:var(--text-dim); text-align:right;}
+
+  .chip-row{display:flex; flex-wrap:wrap; gap:10px; margin-bottom:8px;}
+  .chip{
+    border:1px solid var(--line); background:var(--card); color:var(--text-dim);
+    padding:9px 16px; border-radius:20px; font-size:13px; cursor:pointer;
+    transition:all .15s ease; font-family:var(--sans); white-space:nowrap;
+  }
+  .chip:hover{border-color:var(--jade); color:var(--text);}
+  .chip.active{background:var(--jade-soft); border-color:var(--jade); color:var(--jade); font-weight:600;}
+
+  .grid2{display:grid; grid-template-columns:1.3fr 1fr; gap:18px; margin-bottom:18px;}
+  .grid3{display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-bottom:18px;}
+  .grid4{display:grid; grid-template-columns:repeat(4,1fr); gap:18px;}
+  @media (max-width:900px){ .grid2,.grid3,.grid4{grid-template-columns:1fr;} .kpi-row{grid-template-columns:repeat(2,1fr);} }
+
+  .card{background:var(--card); border:1px solid var(--line); border-radius:6px; padding:20px 22px;}
+  .card h3{font-size:13.5px; font-weight:600; color:var(--text-dim); letter-spacing:.3px; margin-bottom:14px; display:flex; justify-content:space-between; align-items:center;}
+  .card h3 span.tag{font-family:var(--mono); font-size:10.5px; color:var(--text-faint); font-weight:400;}
+  .chart-box{position:relative; height:230px;}
+  .chart-box.tall{height:280px;}
+
+  .stat-mini{display:flex; flex-direction:column; justify-content:center; height:230px;}
+  .stat-mini .big{font-family:var(--mono); font-size:34px; font-weight:600; color:var(--brass);}
+  .stat-mini .cap{color:var(--text-faint); font-size:12px; margin-top:6px;}
+  .stat-mini .bars{margin-top:18px; display:flex; flex-direction:column; gap:10px;}
+  .stat-mini .barline{display:flex; align-items:center; gap:10px; font-size:12px;}
+  .stat-mini .barline .lbl{width:64px; color:var(--text-dim); flex-shrink:0;}
+  .stat-mini .barline .track{flex:1; height:8px; background:var(--ink-2); border-radius:3px; overflow:hidden;}
+  .stat-mini .barline .fill{height:100%; background:var(--brass);}
+  .stat-mini .barline .v{width:56px; text-align:right; font-family:var(--mono); color:var(--text-dim); flex-shrink:0;}
+
+  footer{margin-top:70px; padding:30px 0; border-top:1px solid var(--line);}
+  footer .cols{display:grid; grid-template-columns:2fr 1fr; gap:40px;}
+  footer h4{font-family:var(--serif); font-size:14px; color:var(--brass); margin-bottom:10px;}
+  footer p, footer li{font-size:12.5px; color:var(--text-faint); line-height:1.8;}
+  footer ul{padding-left:18px;}
+  footer .meta{font-family:var(--mono); font-size:11.5px; color:var(--text-faint); text-align:right;}
+
+  ::-webkit-scrollbar{height:6px; width:6px;}
+  ::-webkit-scrollbar-thumb{background:var(--line); border-radius:3px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div class="seal">牌照端<br>数据看板</div>
+    <div class="eyebrow">Performance Data · PDA Agent v0.1.0</div>
+    <h1>业绩数据多维分析<br>牌照端（Issuing Entity）视角</h1>
+    <p class="sub">基于业绩数据底表（业绩数据底表-20260724.xlsx，截至 2026-07-24 导出）清洗后的 3593 条有效保单记录，围绕 12 家持牌主体构建业务规模、结构、客户、效率四类分析视图。由 PDA Agent 自动清洗聚合生成，已修复阶段一原型的日期类型解析问题。</p>
+
+    <div class="kpi-row" id="kpiRow"></div>
+  </header>
+
+  <section>
+    <div class="section-head">
+      <h2><span class="idx">01</span>牌照端业绩总览</h2>
+      <div class="note">按保费（港币口径）降序排列 · 点击任一牌照端可下钻明细</div>
+    </div>
+    <div class="rank-card">
+      <div id="rankList"></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <h2><span class="idx">02</span>选择牌照端查看明细</h2>
+      <div class="note" id="selNote">当前：全部牌照端合计</div>
+    </div>
+    <div class="chip-row" id="chipRow"></div>
+  </section>
+
+  <section>
+    <div class="grid2">
+      <div class="card">
+        <h3>业绩趋势（按签单月份）<span class="tag">PREMIUM · MONTHLY</span></h3>
+        <div class="chart-box tall"><canvas id="chartTrend"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>保单状态结构<span class="tag">STATUS GROUP</span></h3>
+        <div class="chart-box tall"><canvas id="chartStatus"></canvas></div>
+      </div>
+    </div>
+
+    <div class="grid3">
+      <div class="card">
+        <h3>业务类型结构<span class="tag">BUSINESS CATEGORY</span></h3>
+        <div class="chart-box"><canvas id="chartBcat"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>市场细分结构<span class="tag">MARKET SEGMENT</span></h3>
+        <div class="chart-box"><canvas id="chartMkt"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>产品品类结构<span class="tag">PRODUCT CATEGORY</span></h3>
+        <div class="chart-box"><canvas id="chartProd"></canvas></div>
+      </div>
+    </div>
+
+    <div class="grid4">
+      <div class="card">
+        <h3>承保保司分布<span class="tag">CARRIER</span></h3>
+        <div class="chart-box"><canvas id="chartCarrier"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>客户分群<span class="tag">PI / NONPI</span></h3>
+        <div class="chart-box"><canvas id="chartCust"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>币种结构<span class="tag">CURRENCY</span></h3>
+        <div class="chart-box"><canvas id="chartCcy"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="stat-mini">
+          <div class="cap" style="margin-bottom:2px;">签单→批核平均周期</div>
+          <div class="big" id="cycleVal">—</div>
+          <div class="cap">天（有批核日期的保单）</div>
+          <div class="bars">
+            <div class="barline"><div class="lbl">融资单占比</div><div class="track"><div class="fill" id="finFill" style="width:0%"></div></div><div class="v" id="finVal">0%</div></div>
+            <div class="barline"><div class="lbl">生效占比</div><div class="track"><div class="fill" id="effFill" style="width:0%; background:var(--jade);"></div></div><div class="v" id="effVal">0%</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="cols">
+      <div>
+        <h4>数据说明 · Agent 清洗规则</h4>
+        <ul>
+          <li>原始底表 3594 行，剔除表头残留行 1 行，保留有效记录 3593 条</li>
+          <li>保单状态归并为三档：生效 / 在途（待批核·pending·排期·已签单·尚欠保费）/ 终止（取消投保·退保·搁置受保·拒保）</li>
+          <li>保费口径统一使用 premium 字段（已折算港币），跨币种可比</li>
+          <li>signal：company_name 缺失 419 条、issue_date 缺失 704 条、53 条签单日期晚于导出日，均为在途保单的合理缺失，建议业务侧复核</li>
+          <li>日期字段（res_date/sign_date/submit_date）里混有 Excel 序列号整数，已按序列号规则换算为正确日期，不再静默产出 1970 年附近的错误时间戳（阶段一原型未处理此问题）</li>
+          <li>本页由 PDA Agent 每次运行重新清洗生成，不是人工静态快照 — 对应规划中的阶段二（实时同步）与阶段三（知识库问答）尚未接入</li>
+        </ul>
+      </div>
+      <div class="meta">
+        SOURCE 业绩数据底表-20260724.xlsx<br>
+        RECORDS 3593 / ENTITIES 12<br>
+        GENERATED 2026-07-31 00:47<br>
+        PDA Agent v0.1.0 — PHASE 1 OF 3
+      </div>
+    </div>
+  </footer>
+</div>
+
+<script>
+const DATA = {"entities": ["Manulife 宏利 (澳门)", "九富保险服务有限公司", "众和恒富理财集团有限公司", "利泰丰财富管理有限公司", "唯思管理有限公司", "唯思财富顾问有限公司", "天誉国际财富管理有限公司", "富强天一财富管理有限公司", "怡泰财富管理有限公司", "泰溢国际有限公司", "盈富理财顾问有限公司", "置富理财(香港)有限公司"], "months": ["2024-07", "2024-10", "2024-11", "2024-12", "2025-01", "2025-02", "2025-03", "2025-04", "2025-05", "2025-06", "2025-07", "2025-08", "2025-09", "2025-10", "2025-11", "2025-12", "2026-01", "2026-02", "2026-03", "2026-04", "2026-05", "2026-06", "2026-07", "2026-08"], "top_carriers": ["香港永明金融有限公司", "中国人寿保险（海外）股份有限公司（澳门）", "立桥人寿保险有限公司", "澳门宏利", "香港安盛保险有限公司", "中银人寿保险有限公司"], "by_entity_all": {"Manulife 宏利 (澳门)": {"premium": 65131788.480000004, "ape": 22044994.08, "count": 43}, "九富保险服务有限公司": {"premium": 355374066.94799995, "ape": 354671161.138, "count": 1056}, "众和恒富理财集团有限公司": {"premium": 386704370.042, "ape": 371238889.75460005, "count": 1081}, "利泰丰财富管理有限公司": {"premium": 39496127.58, "ape": 7906127.58, "count": 38}, "唯思管理有限公司": {"premium": 1638000.6239999998, "ape": 1638000.6239999998, "count": 3}, "唯思财富顾问有限公司": {"premium": 105799.2, "ape": 105799.2, "count": 3}, "天誉国际财富管理有限公司": {"premium": 113692518.24000001, "ape": 69692330.58000001, "count": 209}, "富强天一财富管理有限公司": {"premium": 50240307.646, "ape": 42080589.586, "count": 25}, "怡泰财富管理有限公司": {"premium": 2895381654.804, "ape": 583605089.004, "count": 1053}, "泰溢国际有限公司": {"premium": 3725182.9220000003, "ape": 3654982.9220000003, "count": 16}, "盈富理财顾问有限公司": {"premium": 103525999.94999999, "ape": 103525999.94999999, "count": 40}, "置富理财(香港)有限公司": {"premium": 2218463.68, "ape": 1165451.6056, "count": 26}}, "by_entity_effective": {"九富保险服务有限公司": {"premium": 283435295.918, "ape": 282732390.10800004, "count": 874}, "众和恒富理财集团有限公司": {"premium": 289034815.376, "ape": 288823303.6886, "count": 874}, "利泰丰财富管理有限公司": {"premium": 39091260.0, "ape": 7501260.0, "count": 34}, "唯思管理有限公司": {"premium": 1638000.6239999998, "ape": 1638000.6239999998, "count": 3}, "唯思财富顾问有限公司": {"premium": 78000.0, "ape": 78000.0, "count": 1}, "天誉国际财富管理有限公司": {"premium": 48834693.4, "ape": 22040525.740000002, "count": 91}, "富强天一财富管理有限公司": {"premium": 49437044.646, "ape": 41979326.585999995, "count": 23}, "怡泰财富管理有限公司": {"premium": 2413335205.3999996, "ape": 489012875.6, "count": 879}, "泰溢国际有限公司": {"premium": 1829541.122, "ape": 1759341.122, "count": 12}, "盈富理财顾问有限公司": {"premium": 99447999.94999999, "ape": 99447999.94999999, "count": 37}, "置富理财(香港)有限公司": {"premium": 2171355.58, "ape": 1118343.5056, "count": 24}}, "by_entity_bcat": {"Manulife 宏利 (澳门)|KA业务": {"premium": 65131788.480000004, "ape": 22044994.08, "count": 43}, "九富保险服务有限公司|KA业务": {"premium": 37038741.968, "ape": 37038741.968, "count": 85}, "九富保险服务有限公司|代理人业务": {"premium": 133150082.22999999, "ape": 133150082.22999999, "count": 514}, "九富保险服务有限公司|经代业务": {"premium": 185185242.75, "ape": 184482336.94, "count": 457}, "众和恒富理财集团有限公司|KA业务": {"premium": 151229929.65600002, "ape": 149953974.456, "count": 460}, "众和恒富理财集团有限公司|代理人业务": {"premium": 228000.0, "ape": 228000.0, "count": 1}, "众和恒富理财集团有限公司|经代业务": {"premium": 235246440.38599998, "ape": 221056915.29860002, "count": 620}, "利泰丰财富管理有限公司|KA业务": {"premium": 78000.0, "ape": 78000.0, "count": 1}, "利泰丰财富管理有限公司|代理人业务": {"premium": 39418127.58, "ape": 7828127.58, "count": 37}, "唯思管理有限公司|KA业务": {"premium": 1638000.6239999998, "ape": 1638000.6239999998, "count": 3}, "唯思财富顾问有限公司|KA业务": {"premium": 27799.199999999997, "ape": 27799.199999999997, "count": 2}, "唯思财富顾问有限公司|代理人业务": {"premium": 78000.0, "ape": 78000.0, "count": 1}, "天誉国际财富管理有限公司|MGA业务": {"premium": 113692518.24000001, "ape": 69692330.58000001, "count": 209}, "富强天一财富管理有限公司|KA业务": {"premium": 1022278.046, "ape": 646743.1460000001, "count": 5}, "富强天一财富管理有限公司|代理人业务": {"premium": 9050897.7, "ape": 1266714.54, "count": 16}, "富强天一财富管理有限公司|经代业务": {"premium": 40167131.9, "ape": 40167131.9, "count": 4}, "怡泰财富管理有限公司|KA业务": {"premium": 69812636.29200001, "ape": 65466273.492, "count": 219}, "怡泰财富管理有限公司|代理人业务": {"premium": 134422113.992, "ape": 81955686.99200001, "count": 286}, "怡泰财富管理有限公司|经代业务": {"premium": 2691146904.52, "ape": 436183128.52, "count": 548}, "泰溢国际有限公司|KA业务": {"premium": 2833982.892, "ape": 2763782.892, "count": 8}, "泰溢国际有限公司|代理人业务": {"premium": 891200.03, "ape": 891200.03, "count": 8}, "盈富理财顾问有限公司|KA业务": {"premium": 68292666.65, "ape": 68292666.65, "count": 19}, "盈富理财顾问有限公司|代理人业务": {"premium": 27333333.3, "ape": 27333333.3, "count": 17}, "盈富理财顾问有限公司|经代业务": {"premium": 7900000.0, "ape": 7900000.0, "count": 4}, "置富理财(香港)有限公司|KA业务": {"premium": 399166.55999999994, "ape": 399166.55999999994, "count": 12}, "置富理财(香港)有限公司|代理人业务": {"premium": 1798985.92, "ape": 745973.8456, "count": 13}, "置富理财(香港)有限公司|经代业务": {"premium": 20311.2, "ape": 20311.2, "count": 1}}, "by_entity_mkt": {"Manulife 宏利 (澳门)|同行机构转介": {"premium": 65131788.480000004, "ape": 22044994.08, "count": 43}, "九富保险服务有限公司|IYB分公司": {"premium": 24533611.0, "ape": 24533611.0, "count": 102}, "九富保险服务有限公司|同行个人转介": {"premium": 1839321.9, "ape": 1839321.9, "count": 5}, "九富保险服务有限公司|同行机构转介": {"premium": 33320740.902000003, "ape": 33320740.902000003, "count": 67}, "九富保险服务有限公司|天领机构": {"premium": 87074774.43, "ape": 87074774.43, "count": 332}, "九富保险服务有限公司|天领贴牌": {"premium": 21541696.8, "ape": 21541696.8, "count": 80}, "九富保险服务有限公司|异业机构转介": {"premium": 1287001.326, "ape": 1287001.326, "count": 2}, "九富保险服务有限公司|持牌经纪": {"premium": 185185242.75, "ape": 184482336.94, "count": 457}, "九富保险服务有限公司|持牌转介": {"premium": 591677.8400000001, "ape": 591677.8400000001, "count": 11}, "众和恒富理财集团有限公司|IYB分公司": {"premium": 228000.0, "ape": 228000.0, "count": 1}, "众和恒富理财集团有限公司|同行个人转介": {"premium": 3457288.38, "ape": 3457288.38, "count": 8}, "众和恒富理财集团有限公司|同行机构转介": {"premium": 125510337.64, "ape": 124234382.44, "count": 358}, "众和恒富理财集团有限公司|异业机构转介": {"premium": 21883604.876000002, "ape": 21883604.876000002, "count": 81}, "众和恒富理财集团有限公司|持牌经纪": {"premium": 235246440.38599998, "ape": 221056915.29860002, "count": 620}, "众和恒富理财集团有限公司|持牌转介": {"premium": 378698.75999999995, "ape": 378698.75999999995, "count": 13}, "利泰丰财富管理有限公司|同行机构转介": {"premium": 78000.0, "ape": 78000.0, "count": 1}, "利泰丰财富管理有限公司|天领机构": {"premium": 39418127.58, "ape": 7828127.58, "count": 37}, "唯思管理有限公司|同行机构转介": {"premium": 1638000.6239999998, "ape": 1638000.6239999998, "count": 3}, "唯思财富顾问有限公司|IYB分公司": {"premium": 78000.0, "ape": 78000.0, "count": 1}, "唯思财富顾问有限公司|异业机构转介": {"premium": 27799.199999999997, "ape": 27799.199999999997, "count": 2}, "天誉国际财富管理有限公司|持牌经纪": {"premium": 113692518.24000001, "ape": 69692330.58000001, "count": 209}, "富强天一财富管理有限公司|同行个人转介": {"premium": 585000.156, "ape": 585000.156, "count": 2}, "富强天一财富管理有限公司|天领机构": {"premium": 6350046.3, "ape": 996629.3999999999, "count": 12}, "富强天一财富管理有限公司|天领贴牌": {"premium": 2700851.4, "ape": 270085.14, "count": 4}, "富强天一财富管理有限公司|持牌资管": {"premium": 40167131.9, "ape": 40167131.9, "count": 4}, "富强天一财富管理有限公司|持牌转介": {"premium": 437277.89, "ape": 61742.99, "count": 3}, "怡泰财富管理有限公司|IYB分公司": {"premium": 57309199.212, "ape": 55554199.212, "count": 192}, "怡泰财富管理有限公司|同行个人转介": {"premium": 3579626.732, "ape": 2069343.9319999998, "count": 12}, "怡泰财富管理有限公司|同行机构转介": {"premium": 12796135.404, "ape": 12796135.404, "count": 31}, "怡泰财富管理有限公司|天领机构": {"premium": 70952084.624, "ape": 22478984.623999998, "count": 73}, "怡泰财富管理有限公司|天领贴牌": {"premium": 6160830.1559999995, "ape": 3922503.156, "count": 21}, "怡泰财富管理有限公司|异业机构转介": {"premium": 50180879.596, "ape": 49380599.596, "count": 161}, "怡泰财富管理有限公司|持牌资管": {"premium": 213324863.02, "ape": 36561263.019999996, "count": 57}, "怡泰财富管理有限公司|持牌转介": {"premium": 3255994.56, "ape": 1220194.56, "count": 15}, "怡泰财富管理有限公司|银行网点": {"premium": 2477822041.5, "ape": 399621865.5, "count": 491}, "泰溢国际有限公司|同行个人转介": {"premium": 1507982.892, "ape": 1507982.892, "count": 3}, "泰溢国际有限公司|同行机构转介": {"premium": 468000.0, "ape": 397800.0, "count": 2}, "泰溢国际有限公司|天领机构": {"premium": 733200.0, "ape": 733200.0, "count": 6}, "泰溢国际有限公司|天领贴牌": {"premium": 158000.03, "ape": 158000.03, "count": 2}, "泰溢国际有限公司|持牌转介": {"premium": 858000.0, "ape": 858000.0, "count": 3}, "盈富理财顾问有限公司|同行机构转介": {"premium": 1666666.65, "ape": 1666666.65, "count": 1}, "盈富理财顾问有限公司|天领机构": {"premium": 26333333.3, "ape": 26333333.3, "count": 16}, "盈富理财顾问有限公司|天领贴牌": {"premium": 1000000.0, "ape": 1000000.0, "count": 1}, "盈富理财顾问有限公司|异业机构转介": {"premium": 66626000.0, "ape": 66626000.0, "count": 18}, "盈富理财顾问有限公司|持牌经纪": {"premium": 7900000.0, "ape": 7900000.0, "count": 4}, "置富理财(香港)有限公司|同行个人转介": {"premium": 285507.924, "ape": 285507.924, "count": 4}, "置富理财(香港)有限公司|天领机构": {"premium": 1798985.92, "ape": 745973.8456, "count": 13}, "置富理财(香港)有限公司|异业机构转介": {"premium": 51838.254, "ape": 51838.254, "count": 6}, "置富理财(香港)有限公司|持牌资管": {"premium": 20311.2, "ape": 20311.2, "count": 1}, "置富理财(香港)有限公司|持牌转介": {"premium": 61820.382, "ape": 61820.382, "count": 2}}, "by_entity_prod": {"Manulife 宏利 (澳门)|储蓄": {"premium": 65131788.480000004, "ape": 22044994.08, "count": 43}, "九富保险服务有限公司|人寿": {"premium": 1140439.95, "ape": 1140439.95, "count": 10}, "九富保险服务有限公司|储蓄": {"premium": 349068539.536, "ape": 349068539.536, "count": 968}, "九富保险服务有限公司|医疗": {"premium": 74981.64, "ape": 74981.64, "count": 11}, "九富保险服务有限公司|年金": {"premium": 820187.31, "ape": 117281.5, "count": 2}, "九富保险服务有限公司|重疾": {"premium": 4269918.511999999, "ape": 4269918.511999999, "count": 65}, "众和恒富理财集团有限公司|人寿": {"premium": 18756585.9, "ape": 3502617.3, "count": 18}, "众和恒富理财集团有限公司|储蓄": {"premium": 366777893.08000004, "ape": 366777893.08000004, "count": 1016}, "众和恒富理财集团有限公司|医疗": {"premium": 52353.0, "ape": 52353.0, "count": 4}, "众和恒富理财集团有限公司|年金": {"premium": 416301.36600000004, "ape": 204789.67859999998, "count": 4}, "众和恒富理财集团有限公司|重疾": {"premium": 701236.6959999999, "ape": 701236.6959999999, "count": 39}, "利泰丰财富管理有限公司|万用寿险": {"premium": 35100000.0, "ape": 3510000.0, "count": 2}, "利泰丰财富管理有限公司|储蓄": {"premium": 4381260.0, "ape": 4381260.0, "count": 35}, "利泰丰财富管理有限公司|重疾": {"premium": 14867.58, "ape": 14867.58, "count": 1}, "唯思管理有限公司|储蓄": {"premium": 1638000.6239999998, "ape": 1638000.6239999998, "count": 3}, "唯思财富顾问有限公司|储蓄": {"premium": 78000.0, "ape": 78000.0, "count": 1}, "唯思财富顾问有限公司|重疾": {"premium": 27799.199999999997, "ape": 27799.199999999997, "count": 2}, "天誉国际财富管理有限公司|万用寿险": {"premium": 14784900.0, "ape": 1478490.0, "count": 11}, "天誉国际财富管理有限公司|储蓄": {"premium": 98895146.03999999, "ape": 68201368.38, "count": 196}, "天誉国际财富管理有限公司|重疾": {"premium": 12472.199999999999, "ape": 12472.199999999999, "count": 2}, "富强天一财富管理有限公司|储蓄": {"premium": 50185222.456, "ape": 42025504.396, "count": 22}, "富强天一财富管理有限公司|医疗": {"premium": 23263.0, "ape": 23263.0, "count": 1}, "富强天一财富管理有限公司|年金": {"premium": 20016.89, "ape": 20016.89, "count": 1}, "富强天一财富管理有限公司|重疾": {"premium": 11805.3, "ape": 11805.3, "count": 1}, "怡泰财富管理有限公司|万用寿险": {"premium": 37407240.0, "ape": 4154904.0, "count": 4}, "怡泰财富管理有限公司|人寿": {"premium": 2076605.7, "ape": 1268322.9, "count": 19}, "怡泰财富管理有限公司|储蓄": {"premium": 2854194721.288, "ape": 576478774.288, "count": 973}, "怡泰财富管理有限公司|医疗": {"premium": 312565.186, "ape": 312565.186, "count": 10}, "怡泰财富管理有限公司|年金": {"premium": 80013.64, "ape": 80013.64, "count": 1}, "怡泰财富管理有限公司|重疾": {"premium": 1310508.9899999998, "ape": 1310508.9899999998, "count": 46}, "泰溢国际有限公司|储蓄": {"premium": 2445982.9220000003, "ape": 2375782.9220000003, "count": 11}, "泰溢国际有限公司|重疾": {"premium": 1279200.0, "ape": 1279200.0, "count": 5}, "盈富理财顾问有限公司|储蓄": {"premium": 103525999.94999999, "ape": 103525999.94999999, "count": 40}, "置富理财(香港)有限公司|储蓄": {"premium": 1914915.054, "ape": 861902.9796, "count": 8}, "置富理财(香港)有限公司|重疾": {"premium": 303548.626, "ape": 303548.626, "count": 18}}, "by_entity_carrier": {"Manulife 宏利 (澳门)|澳门宏利": {"premium": 65131788.480000004, "ape": 22044994.08, "count": 43}, "九富保险服务有限公司|其他": {"premium": 4305609.828, "ape": 4305609.828, "count": 10}, "九富保险服务有限公司|香港永明金融有限公司": {"premium": 351068457.12, "ape": 350365551.30999994, "count": 1046}, "众和恒富理财集团有限公司|其他": {"premium": 5479288.38, "ape": 5479288.38, "count": 8}, "众和恒富理财集团有限公司|香港永明金融有限公司": {"premium": 381225081.662, "ape": 365759601.3746, "count": 1073}, "利泰丰财富管理有限公司|其他": {"premium": 4396127.58, "ape": 4396127.58, "count": 36}, "利泰丰财富管理有限公司|香港永明金融有限公司": {"premium": 35100000.0, "ape": 3510000.0, "count": 2}, "唯思管理有限公司|其他": {"premium": 1638000.6239999998, "ape": 1638000.6239999998, "count": 3}, "唯思财富顾问有限公司|其他": {"premium": 105799.2, "ape": 105799.2, "count": 3}, "天誉国际财富管理有限公司|其他": {"premium": 15222472.04, "ape": 10694572.04, "count": 36}, "天誉国际财富管理有限公司|立桥人寿保险有限公司": {"premium": 43858097.4, "ape": 4385809.74, "count": 39}, "天誉国际财富管理有限公司|香港安盛保险有限公司": {"premium": 54611948.8, "ape": 54611948.8, "count": 134}, "富强天一财富管理有限公司|中银人寿保险有限公司": {"premium": 40553885.79, "ape": 40553885.79, "count": 5}, "富强天一财富管理有限公司|其他": {"premium": 620068.456, "ape": 620068.456, "count": 4}, "富强天一财富管理有限公司|立桥人寿保险有限公司": {"premium": 9066353.4, "ape": 906635.34, "count": 16}, "怡泰财富管理有限公司|其他": {"premium": 37899975.626, "ape": 32677095.626000002, "count": 110}, "怡泰财富管理有限公司|立桥人寿保险有限公司": {"premium": 25043070.0, "ape": 2504307.0, "count": 21}, "怡泰财富管理有限公司|香港安盛保险有限公司": {"premium": 7019076.384000001, "ape": 7019076.384000001, "count": 31}, "怡泰财富管理有限公司|香港永明金融有限公司": {"premium": 2825419532.794, "ape": 541404609.994, "count": 891}, "泰溢国际有限公司|其他": {"premium": 3725182.9220000003, "ape": 3654982.9220000003, "count": 16}, "盈富理财顾问有限公司|中国人寿保险（海外）股份有限公司（澳门）": {"premium": 98526000.0, "ape": 98526000.0, "count": 37}, "盈富理财顾问有限公司|其他": {"premium": 4999999.949999999, "ape": 4999999.949999999, "count": 3}, "置富理财(香港)有限公司|其他": {"premium": 2218463.68, "ape": 1165451.6056, "count": 26}}, "by_entity_cust": {"Manulife 宏利 (澳门)|NONPI": {"premium": 65131788.480000004, "ape": 22044994.08, "count": 43}, "九富保险服务有限公司|NONPI": {"premium": 301088796.94799995, "ape": 300385891.138, "count": 1012}, "九富保险服务有限公司|PI": {"premium": 54285270.0, "ape": 54285270.0, "count": 44}, "众和恒富理财集团有限公司|NONPI": {"premium": 359395350.842, "ape": 343929870.5546, "count": 1049}, "众和恒富理财集团有限公司|PI": {"premium": 27309019.200000003, "ape": 27309019.200000003, "count": 32}, "利泰丰财富管理有限公司|NONPI": {"premium": 39496127.58, "ape": 7906127.58, "count": 38}, "唯思管理有限公司|NONPI": {"premium": 1638000.6239999998, "ape": 1638000.6239999998, "count": 3}, "唯思财富顾问有限公司|NONPI": {"premium": 105799.2, "ape": 105799.2, "count": 3}, "天誉国际财富管理有限公司|NONPI": {"premium": 103513518.24000001, "ape": 61268330.580000006, "count": 196}, "天誉国际财富管理有限公司|PI": {"premium": 10179000.0, "ape": 8424000.0, "count": 13}, "富强天一财富管理有限公司|NONPI": {"premium": 23096308.746000003, "ape": 14936590.686, "count": 23}, "富强天一财富管理有限公司|PI": {"premium": 27143998.9, "ape": 27143998.9, "count": 2}, "怡泰财富管理有限公司|NONPI": {"premium": 2828855454.804, "ape": 517078889.004, "count": 943}, "怡泰财富管理有限公司|PI": {"premium": 66526200.0, "ape": 66526200.0, "count": 110}, "泰溢国际有限公司|NONPI": {"premium": 3725182.9220000003, "ape": 3654982.9220000003, "count": 16}, "盈富理财顾问有限公司|NONPI": {"premium": 103525999.94999999, "ape": 103525999.94999999, "count": 40}, "置富理财(香港)有限公司|NONPI": {"premium": 2218463.68, "ape": 1165451.6056, "count": 26}}, "by_entity_status": {"Manulife 宏利 (澳门)|终止": {"premium": 65131788.480000004, "ape": 22044994.08, "count": 43}, "九富保险服务有限公司|在途": {"premium": 26615767.4, "ape": 26615767.4, "count": 61}, "九富保险服务有限公司|生效": {"premium": 283435295.918, "ape": 282732390.10800004, "count": 874}, "九富保险服务有限公司|终止": {"premium": 45323003.63, "ape": 45323003.63, "count": 121}, "众和恒富理财集团有限公司|在途": {"premium": 45375310.230000004, "ape": 35365913.43, "count": 89}, "众和恒富理财集团有限公司|生效": {"premium": 289034815.376, "ape": 288823303.6886, "count": 874}, "众和恒富理财集团有限公司|终止": {"premium": 52294244.436000004, "ape": 47049672.636, "count": 118}, "利泰丰财富管理有限公司|生效": {"premium": 39091260.0, "ape": 7501260.0, "count": 34}, "利泰丰财富管理有限公司|终止": {"premium": 404867.58, "ape": 404867.58, "count": 4}, "唯思管理有限公司|生效": {"premium": 1638000.6239999998, "ape": 1638000.6239999998, "count": 3}, "唯思财富顾问有限公司|在途": {"premium": 27799.199999999997, "ape": 27799.199999999997, "count": 2}, "唯思财富顾问有限公司|生效": {"premium": 78000.0, "ape": 78000.0, "count": 1}, "天誉国际财富管理有限公司|在途": {"premium": 61882904.839999996, "ape": 45378884.839999996, "count": 110}, "天誉国际财富管理有限公司|生效": {"premium": 48834693.4, "ape": 22040525.740000002, "count": 91}, "天誉国际财富管理有限公司|终止": {"premium": 2974920.0, "ape": 2272920.0, "count": 8}, "富强天一财富管理有限公司|生效": {"premium": 49437044.646, "ape": 41979326.585999995, "count": 23}, "富强天一财富管理有限公司|终止": {"premium": 803263.0, "ape": 101263.0, "count": 2}, "怡泰财富管理有限公司|在途": {"premium": 163008924.0, "ape": 32358924.0, "count": 51}, "怡泰财富管理有限公司|生效": {"premium": 2413335205.3999996, "ape": 489012875.6, "count": 879}, "怡泰财富管理有限公司|终止": {"premium": 319037525.40400004, "ape": 62233289.404, "count": 123}, "泰溢国际有限公司|生效": {"premium": 1829541.122, "ape": 1759341.122, "count": 12}, "泰溢国际有限公司|终止": {"premium": 1895641.8, "ape": 1895641.8, "count": 4}, "盈富理财顾问有限公司|在途": {"premium": 4000000.0, "ape": 4000000.0, "count": 2}, "盈富理财顾问有限公司|生效": {"premium": 99447999.94999999, "ape": 99447999.94999999, "count": 37}, "盈富理财顾问有限公司|终止": {"premium": 78000.0, "ape": 78000.0, "count": 1}, "置富理财(香港)有限公司|生效": {"premium": 2171355.58, "ape": 1118343.5056, "count": 24}, "置富理财(香港)有限公司|终止": {"premium": 47108.1, "ape": 47108.1, "count": 2}}, "by_entity_month": {"Manulife 宏利 (澳门)|2025-01": {"premium": 78000.0, "ape": 78000.0, "count": 1}, "Manulife 宏利 (澳门)|2025-02": {"premium": 234000.0, "ape": 234000.0, "count": 1}, "Manulife 宏利 (澳门)|2025-03": {"premium": 560905.8, "ape": 560905.8, "count": 3}, "Manulife 宏利 (澳门)|2025-04": {"premium": 0.0, "ape": 0.0, "count": 1}, "Manulife 宏利 (澳门)|2025-05": {"premium": 4204785.0, "ape": 4204785.0, "count": 3}, "Manulife 宏利 (澳门)|2025-06": {"premium": 3472716.7800000003, "ape": 2856922.38, "count": 9}, "Manulife 宏利 (澳门)|2025-07": {"premium": 1170000.0, "ape": 1170000.0, "count": 2}, "Manulife 宏利 (澳门)|2025-08": {"premium": 390000.0, "ape": 390000.0, "count": 2}, "Manulife 宏利 (澳门)|2025-09": {"premium": 4810275.6, "ape": 4810275.6, "count": 6}, "Manulife 宏利 (澳门)|2025-10": {"premium": 0.0, "ape": 0.0, "count": 1}, "Manulife 宏利 (澳门)|2025-11": {"premium": 31200000.0, "ape": 3120000.0, "count": 4}, "Manulife 宏利 (澳门)|2025-12": {"premium": 19011105.3, "ape": 4620105.3, "count": 10}, "九富保险服务有限公司|2024-07": {"premium": 390000.0, "ape": 390000.0, "count": 1}, "九富保险服务有限公司|2024-11": {"premium": 117000.0, "ape": 117000.0, "count": 1}, "九富保险服务有限公司|2024-12": {"premium": 6745523.226, "ape": 6745523.226, "count": 22}, "九富保险服务有限公司|2025-01": {"premium": 6454500.0, "ape": 6454500.0, "count": 18}, "九富保险服务有限公司|2025-02": {"premium": 5754414.600000001, "ape": 5754414.600000001, "count": 27}, "九富保险服务有限公司|2025-03": {"premium": 9754118.4, "ape": 9754118.4, "count": 36}, "九富保险服务有限公司|2025-04": {"premium": 5988028.8, "ape": 5988028.8, "count": 17}, "九富保险服务有限公司|2025-05": {"premium": 7828160.34, "ape": 7828160.34, "count": 22}, "九富保险服务有限公司|2025-06": {"premium": 22752688.799999997, "ape": 22752688.799999997, "count": 85}, "九富保险服务有限公司|2025-07": {"premium": 5806716.0, "ape": 5806716.0, "count": 13}, "九富保险服务有限公司|2025-08": {"premium": 2991744.9220000003, "ape": 2991744.9220000003, "count": 16}, "九富保险服务有限公司|2025-09": {"premium": 24068550.6, "ape": 24068550.6, "count": 86}, "九富保险服务有限公司|2025-10": {"premium": 5267765.1, "ape": 5267765.1, "count": 22}, "九富保险服务有限公司|2025-11": {"premium": 19406953.199999996, "ape": 19406953.199999996, "count": 61}, "九富保险服务有限公司|2025-12": {"premium": 54457868.870000005, "ape": 53754963.06, "count": 123}, "九富保险服务有限公司|2026-01": {"premium": 13077899.399999999, "ape": 13077899.399999999, "count": 54}, "九富保险服务有限公司|2026-02": {"premium": 17940363.85, "ape": 17940363.85, "count": 61}, "九富保险服务有限公司|2026-03": {"premium": 45954535.2, "ape": 45954535.2, "count": 101}, "九富保险服务有限公司|2026-04": {"premium": 23301278.28, "ape": 23301278.28, "count": 83}, "九富保险服务有限公司|2026-05": {"premium": 39978275.129999995, "ape": 39978275.129999995, "count": 90}, "九富保险服务有限公司|2026-06": {"premium": 26301411.630000003, "ape": 26301411.630000003, "count": 78}, "九富保险服务有限公司|2026-07": {"premium": 9784370.600000001, "ape": 9784370.600000001, "count": 34}, "九富保险服务有限公司|2026-08": {"premium": 1251900.0, "ape": 1251900.0, "count": 5}, "众和恒富理财集团有限公司|2025-03": {"premium": 60358.74, "ape": 60358.74, "count": 1}, "众和恒富理财集团有限公司|2025-04": {"premium": 2340000.0, "ape": 2340000.0, "count": 6}, "众和恒富理财集团有限公司|2025-05": {"premium": 2176200.0, "ape": 2176200.0, "count": 14}, "众和恒富理财集团有限公司|2025-06": {"premium": 41887745.736, "ape": 41887745.736, "count": 113}, "众和恒富理财集团有限公司|2025-07": {"premium": 8421224.4, "ape": 8421224.4, "count": 22}, "众和恒富理财集团有限公司|2025-08": {"premium": 39150785.7, "ape": 37874830.5, "count": 108}, "众和恒富理财集团有限公司|2025-09": {"premium": 79158043.89, "ape": 79158043.89, "count": 229}, "众和恒富理财集团有限公司|2025-10": {"premium": 11171824.326000001, "ape": 10960312.6386, "count": 41}, "众和恒富理财集团有限公司|2025-11": {"premium": 25185596.099999998, "ape": 25185596.099999998, "count": 61}, "众和恒富理财集团有限公司|2025-12": {"premium": 42518675.879999995, "ape": 37274104.08, "count": 102}, "众和恒富理财集团有限公司|2026-01": {"premium": 8752000.0, "ape": 8752000.0, "count": 26}, "众和恒富理财集团有限公司|2026-02": {"premium": 13560669.98, "ape": 13560669.98, "count": 39}, "众和恒富理财集团有限公司|2026-03": {"premium": 16077700.1, "ape": 16077700.1, "count": 65}, "众和恒富理财集团有限公司|2026-04": {"premium": 15035102.579999998, "ape": 15035102.579999998, "count": 28}, "众和恒富理财集团有限公司|2026-05": {"premium": 17410386.78, "ape": 17410386.78, "count": 65}, "众和恒富理财集团有限公司|2026-06": {"premium": 31397164.43, "ape": 30505694.630000003, "count": 90}, "众和恒富理财集团有限公司|2026-07": {"premium": 31017891.4, "ape": 23175919.6, "count": 69}, "众和恒富理财集团有限公司|2026-08": {"premium": 1383000.0, "ape": 1383000.0, "count": 2}, "利泰丰财富管理有限公司|2024-11": {"premium": 117000.0, "ape": 117000.0, "count": 2}, "利泰丰财富管理有限公司|2025-02": {"premium": 429000.0, "ape": 429000.0, "count": 4}, "利泰丰财富管理有限公司|2025-03": {"premium": 468000.0, "ape": 468000.0, "count": 4}, "利泰丰财富管理有限公司|2025-04": {"premium": 429000.0, "ape": 429000.0, "count": 3}, "利泰丰财富管理有限公司|2025-05": {"premium": 702000.0, "ape": 702000.0, "count": 6}, "利泰丰财富管理有限公司|2025-06": {"premium": 2227727.58, "ape": 2227727.58, "count": 16}, "利泰丰财富管理有限公司|2025-07": {"premium": 23400.0, "ape": 23400.0, "count": 1}, "利泰丰财富管理有限公司|2026-04": {"premium": 35100000.0, "ape": 3510000.0, "count": 2}, "唯思管理有限公司|2025-09": {"premium": 1638000.6239999998, "ape": 1638000.6239999998, "count": 3}, "唯思财富顾问有限公司|2026-06": {"premium": 78000.0, "ape": 78000.0, "count": 1}, "唯思财富顾问有限公司|2026-07": {"premium": 27799.199999999997, "ape": 27799.199999999997, "count": 2}, "天誉国际财富管理有限公司|2026-02": {"premium": 10140000.0, "ape": 1014000.0, "count": 4}, "天誉国际财富管理有限公司|2026-03": {"premium": 5289172.2, "ape": 2337262.1999999997, "count": 15}, "天誉国际财富管理有限公司|2026-04": {"premium": 10800803.4, "ape": 7298644.74, "count": 24}, "天誉国际财富管理有限公司|2026-05": {"premium": 16776100.0, "ape": 10286110.0, "count": 36}, "天誉国际财富管理有限公司|2026-06": {"premium": 29504250.0, "ape": 13914585.0, "count": 42}, "天誉国际财富管理有限公司|2026-07": {"premium": 41182192.64, "ape": 34841728.64, "count": 88}, "富强天一财富管理有限公司|2025-05": {"premium": 908524.0, "ape": 111789.1, "count": 3}, "富强天一财富管理有限公司|2025-06": {"premium": 3569241.156, "ape": 883424.2559999999, "count": 8}, "富强天一财富管理有限公司|2025-09": {"premium": 13779870.0, "ape": 13077870.0, "count": 2}, "富强天一财富管理有限公司|2025-10": {"premium": 29610850.299999997, "ape": 27390684.04, "count": 6}, "富强天一财富管理有限公司|2025-12": {"premium": 791805.3, "ape": 89805.3, "count": 2}, "富强天一财富管理有限公司|2026-01": {"premium": 390000.0, "ape": 390000.0, "count": 1}, "富强天一财富管理有限公司|2026-03": {"premium": 1190016.8900000001, "ape": 137016.89, "count": 3}, "怡泰财富管理有限公司|2024-10": {"premium": 29640.0, "ape": 29640.0, "count": 1}, "怡泰财富管理有限公司|2024-11": {"premium": 38142000.0, "ape": 6130800.0, "count": 8}, "怡泰财富管理有限公司|2024-12": {"premium": 79646166.6, "ape": 32261166.6, "count": 76}, "怡泰财富管理有限公司|2025-01": {"premium": 17431689.46, "ape": 16729689.46, "count": 45}, "怡泰财富管理有限公司|2025-02": {"premium": 76154668.078, "ape": 27576268.078, "count": 80}, "怡泰财富管理有限公司|2025-03": {"premium": 23802824.682, "ape": 23802824.682, "count": 71}, "怡泰财富管理有限公司|2025-04": {"premium": 38389088.868, "ape": 10940888.868, "count": 33}, "怡泰财富管理有限公司|2025-05": {"premium": 17403589.258, "ape": 17403589.258, "count": 52}, "怡泰财富管理有限公司|2025-06": {"premium": 111824798.808, "ape": 90062798.808, "count": 237}, "怡泰财富管理有限公司|2025-07": {"premium": 82651732.8, "ape": 18910132.8, "count": 34}, "怡泰财富管理有限公司|2025-08": {"premium": 65425019.4, "ape": 17689019.4, "count": 26}, "怡泰财富管理有限公司|2025-09": {"premium": 44643646.944, "ape": 17007310.944, "count": 34}, "怡泰财富管理有限公司|2025-10": {"premium": 301406826.186, "ape": 33418326.186, "count": 34}, "怡泰财富管理有限公司|2025-11": {"premium": 1233430210.74, "ape": 126516610.74000001, "count": 90}, "怡泰财富管理有限公司|2025-12": {"premium": 361098891.65999997, "ape": 51742584.66, "count": 64}, "怡泰财富管理有限公司|2026-01": {"premium": 114208703.7, "ape": 21634980.9, "count": 27}, "怡泰财富管理有限公司|2026-02": {"premium": 15397200.0, "ape": 8377200.0, "count": 10}, "怡泰财富管理有限公司|2026-03": {"premium": 71704744.82, "ape": 14842744.82, "count": 26}, "怡泰财富管理有限公司|2026-04": {"premium": 41223000.0, "ape": 9878700.0, "count": 22}, "怡泰财富管理有限公司|2026-05": {"premium": 64635292.8, "ape": 11634292.8, "count": 27}, "怡泰财富管理有限公司|2026-06": {"premium": 54065920.0, "ape": 11594920.0, "count": 27}, "怡泰财富管理有限公司|2026-07": {"premium": 40716000.0, "ape": 15225600.0, "count": 28}, "怡泰财富管理有限公司|2026-08": {"premium": 1950000.0, "ape": 195000.0, "count": 1}, "泰溢国际有限公司|2024-11": {"premium": 234000.0, "ape": 234000.0, "count": 1}, "泰溢国际有限公司|2025-01": {"premium": 156000.0, "ape": 85800.0, "count": 2}, "泰溢国际有限公司|2025-02": {"premium": 156000.0, "ape": 156000.0, "count": 2}, "泰溢国际有限公司|2025-03": {"premium": 858000.0, "ape": 858000.0, "count": 3}, "泰溢国际有限公司|2025-04": {"premium": 1429982.892, "ape": 1429982.892, "count": 2}, "泰溢国际有限公司|2025-08": {"premium": 31200.0, "ape": 31200.0, "count": 1}, "泰溢国际有限公司|2025-09": {"premium": 468000.0, "ape": 468000.0, "count": 2}, "泰溢国际有限公司|2025-12": {"premium": 80000.03, "ape": 80000.03, "count": 1}, "泰溢国际有限公司|2026-02": {"premium": 234000.0, "ape": 234000.0, "count": 1}, "泰溢国际有限公司|2026-04": {"premium": 78000.0, "ape": 78000.0, "count": 1}, "盈富理财顾问有限公司|2024-12": {"premium": 1666666.65, "ape": 1666666.65, "count": 1}, "盈富理财顾问有限公司|2025-01": {"premium": 1666666.65, "ape": 1666666.65, "count": 1}, "盈富理财顾问有限公司|2025-02": {"premium": 3666666.65, "ape": 3666666.65, "count": 2}, "盈富理财顾问有限公司|2025-05": {"premium": 7078000.0, "ape": 7078000.0, "count": 3}, "盈富理财顾问有限公司|2025-06": {"premium": 28000000.0, "ape": 28000000.0, "count": 6}, "盈富理财顾问有限公司|2025-08": {"premium": 8000000.0, "ape": 8000000.0, "count": 2}, "盈富理财顾问有限公司|2025-09": {"premium": 4748000.0, "ape": 4748000.0, "count": 2}, "盈富理财顾问有限公司|2025-10": {"premium": 3000000.0, "ape": 3000000.0, "count": 2}, "盈富理财顾问有限公司|2025-11": {"premium": 2000000.0, "ape": 2000000.0, "count": 2}, "盈富理财顾问有限公司|2026-01": {"premium": 4000000.0, "ape": 4000000.0, "count": 3}, "盈富理财顾问有限公司|2026-02": {"premium": 20000000.0, "ape": 20000000.0, "count": 6}, "盈富理财顾问有限公司|2026-03": {"premium": 2800000.0, "ape": 2800000.0, "count": 2}, "盈富理财顾问有限公司|2026-04": {"premium": 3000000.0, "ape": 3000000.0, "count": 2}, "盈富理财顾问有限公司|2026-05": {"premium": 6600000.0, "ape": 6600000.0, "count": 3}, "盈富理财顾问有限公司|2026-06": {"premium": 3300000.0, "ape": 3300000.0, "count": 1}, "盈富理财顾问有限公司|2026-07": {"premium": 4000000.0, "ape": 4000000.0, "count": 2}, "置富理财(香港)有限公司|2025-01": {"premium": 80956.746, "ape": 80956.746, "count": 3}, "置富理财(香港)有限公司|2025-03": {"premium": 545411.724, "ape": 545411.724, "count": 4}, "置富理财(香港)有限公司|2025-04": {"premium": 17958.72, "ape": 17958.72, "count": 2}, "置富理财(香港)有限公司|2025-05": {"premium": 46014.852, "ape": 46014.852, "count": 2}, "置富理财(香港)有限公司|2025-06": {"premium": 7796.88, "ape": 7796.88, "count": 2}, "置富理财(香港)有限公司|2025-07": {"premium": 8697.0, "ape": 8697.0, "count": 1}, "置富理财(香港)有限公司|2025-09": {"premium": 69986.98199999999, "ape": 69986.98199999999, "count": 3}, "置富理财(香港)有限公司|2025-10": {"premium": 1170013.416, "ape": 117001.3416, "count": 2}, "置富理财(香港)有限公司|2026-01": {"premium": 43711.36, "ape": 43711.36, "count": 3}, "置富理财(香港)有限公司|2026-05": {"premium": 227916.0, "ape": 227916.0, "count": 4}}, "by_entity_ccy": {"Manulife 宏利 (澳门)|人民币": {"premium": 279300.0, "ape": 279300.0, "count": 2}, "Manulife 宏利 (澳门)|未填": {"premium": 0.0, "ape": 0.0, "count": 4}, "Manulife 宏利 (澳门)|美金": {"premium": 64852488.48, "ape": 21765694.08, "count": 37}, "九富保险服务有限公司|人民币": {"premium": 27731640.0, "ape": 27731640.0, "count": 77}, "九富保险服务有限公司|加元": {"premium": 105300.0, "ape": 105300.0, "count": 1}, "九富保险服务有限公司|港币": {"premium": 131928.0, "ape": 131928.0, "count": 5}, "九富保险服务有限公司|澳元": {"premium": 750000.0, "ape": 750000.0, "count": 1}, "九富保险服务有限公司|美金": {"premium": 326655198.94799995, "ape": 325952293.13799995, "count": 972}, "众和恒富理财集团有限公司|人民币": {"premium": 43597590.0, "ape": 43597590.0, "count": 138}, "众和恒富理财集团有限公司|加元": {"premium": 234000.0, "ape": 234000.0, "count": 1}, "众和恒富理财集团有限公司|港币": {"premium": 462256.0, "ape": 462256.0, "count": 5}, "众和恒富理财集团有限公司|澳元": {"premium": 1252500.0, "ape": 1252500.0, "count": 4}, "众和恒富理财集团有限公司|美金": {"premium": 341158024.04200006, "ape": 325692543.7546, "count": 933}, "利泰丰财富管理有限公司|美金": {"premium": 39496127.58, "ape": 7906127.58, "count": 38}, "唯思管理有限公司|美金": {"premium": 1638000.6239999998, "ape": 1638000.6239999998, "count": 3}, "唯思财富顾问有限公司|美金": {"premium": 105799.2, "ape": 105799.2, "count": 3}, "天誉国际财富管理有限公司|人民币": {"premium": 2576400.0, "ape": 2576400.0, "count": 8}, "天誉国际财富管理有限公司|港币": {"premium": 40000.0, "ape": 40000.0, "count": 1}, "天誉国际财富管理有限公司|美金": {"premium": 111076118.24, "ape": 67075930.580000006, "count": 200}, "富强天一财富管理有限公司|港币": {"premium": 43279.89, "ape": 43279.89, "count": 2}, "富强天一财富管理有限公司|美金": {"premium": 50197027.756, "ape": 42037309.695999995, "count": 23}, "怡泰财富管理有限公司|人民币": {"premium": 1459200.0, "ape": 1459200.0, "count": 4}, "怡泰财富管理有限公司|港币": {"premium": 164764.64, "ape": 164764.64, "count": 7}, "怡泰财富管理有限公司|澳元": {"premium": 250000.0, "ape": 250000.0, "count": 1}, "怡泰财富管理有限公司|美金": {"premium": 2893507690.164, "ape": 581731124.364, "count": 1041}, "泰溢国际有限公司|港币": {"premium": 80000.03, "ape": 80000.03, "count": 1}, "泰溢国际有限公司|美金": {"premium": 3645182.892, "ape": 3574982.892, "count": 15}, "盈富理财顾问有限公司|港币": {"premium": 103447999.94999999, "ape": 103447999.94999999, "count": 39}, "盈富理财顾问有限公司|美金": {"premium": 78000.0, "ape": 78000.0, "count": 1}, "置富理财(香港)有限公司|美金": {"premium": 2218463.68, "ape": 1165451.6056, "count": 26}}, "cycle_avg": {"九富保险服务有限公司": 22.3, "众和恒富理财集团有限公司": 21.2, "利泰丰财富管理有限公司": 22.1, "唯思管理有限公司": 13.0, "唯思财富顾问有限公司": 21.0, "天誉国际财富管理有限公司": 18.1, "富强天一财富管理有限公司": 32.4, "怡泰财富管理有限公司": 34.1, "泰溢国际有限公司": 35.4, "盈富理财顾问有限公司": 14.8, "置富理财(香港)有限公司": 19.0}, "fin_by_entity": {"Manulife 宏利 (澳门)": [0, 43], "九富保险服务有限公司": [0, 1056], "众和恒富理财集团有限公司": [0, 1081], "利泰丰财富管理有限公司": [0, 38], "唯思管理有限公司": [0, 3], "唯思财富顾问有限公司": [0, 3], "天誉国际财富管理有限公司": [0, 209], "富强天一财富管理有限公司": [0, 25], "怡泰财富管理有限公司": [162, 1053], "泰溢国际有限公司": [0, 16], "盈富理财顾问有限公司": [39, 40], "置富理财(香港)有限公司": [0, 26]}};
+const fmtMoney = n => {
+  if(n>=100000000) return (n/100000000).toFixed(2)+'亿';
+  if(n>=10000) return (n/10000).toFixed(1)+'万';
+  return Math.round(n).toLocaleString();
+};
+const fmtPct = n => (n*100).toFixed(1)+'%';
+
+const PALETTE = ['#2fa88a','#c9a15a','#c96a5a','#5b8fc9','#9a7ec9','#c9c05b','#5bc9c0','#c98fb0','#7ea6c9','#a6c97e','#c98f5b','#8c8c8c'];
+
+function sumAgg(rows){
+  return rows.reduce((a,r)=>({premium:a.premium+r.premium, ape:a.ape+r.ape, count:a.count+r.count}), {premium:0,ape:0,count:0});
+}
+
+const entityTotals = DATA.entities.map(e => ({
+  entity: e,
+  ...( DATA.by_entity_all[e] || {premium:0,ape:0,count:0} )
+})).sort((a,b)=>b.premium-a.premium);
+
+const grandTotal = sumAgg(Object.values(DATA.by_entity_all));
+const effTotal = sumAgg(Object.values(DATA.by_entity_effective));
+
+const kpiRow = document.getElementById('kpiRow');
+const kpis = [
+  {label:'总保费（港币口径）', val: fmtMoney(grandTotal.premium)},
+  {label:'总 APE', val: fmtMoney(grandTotal.ape)},
+  {label:'保单总数', val: grandTotal.count.toLocaleString()},
+  {label:'生效保单占比', val: fmtPct(effTotal.count/grandTotal.count), accent:true},
+  {label:'覆盖牌照端', val: DATA.entities.length + ' 家'},
+];
+kpiRow.innerHTML = kpis.map(k=>`<div class="kpi ${k.accent?'accent':''}"><div class="label">${k.label}</div><div class="val">${k.val}</div></div>`).join('');
+
+const rankList = document.getElementById('rankList');
+const maxPremium = entityTotals[0].premium;
+function renderRank(){
+  rankList.innerHTML = entityTotals.map((r,i)=>`
+    <div class="rank-row" data-entity="${r.entity}">
+      <div class="rank-name"><span class="n">${String(i+1).padStart(2,'0')}</span>${r.entity}</div>
+      <div class="rank-bar-track"><div class="rank-bar-fill" style="width:${(r.premium/maxPremium*100).toFixed(1)}%"></div></div>
+      <div class="rank-val">${fmtMoney(r.premium)} · ${r.count}件</div>
+    </div>`).join('');
+  rankList.querySelectorAll('.rank-row').forEach(el=>{
+    el.addEventListener('click', ()=> selectEntity(el.dataset.entity));
+  });
+}
+renderRank();
+
+const chipRow = document.getElementById('chipRow');
+function renderChips(selected){
+  const all = [{k:null, label:'全部合计'}, ...DATA.entities.map(e=>({k:e,label:e}))];
+  chipRow.innerHTML = all.map(o=>`<div class="chip ${selected===o.k?'active':''}" data-k="${o.k===null?'':o.k}">${o.label}</div>`).join('');
+  chipRow.querySelectorAll('.chip').forEach(el=>{
+    el.addEventListener('click', ()=> selectEntity(el.dataset.k || null));
+  });
+}
+
+Chart.defaults.color = '#93a1b8';
+Chart.defaults.font.family = "'Inter','PingFang SC',sans-serif";
+Chart.defaults.font.size = 11.5;
+Chart.defaults.borderColor = '#2a3650';
+
+let charts = {};
+function makeDonut(id){
+  const ctx = document.getElementById(id);
+  return new Chart(ctx, {
+    type:'doughnut',
+    data:{labels:[], datasets:[{data:[], backgroundColor:PALETTE, borderColor:'#182236', borderWidth:2}]},
+    options:{responsive:true, maintainAspectRatio:false, cutout:'62%',
+      plugins:{legend:{position:'right', labels:{boxWidth:10, padding:10, font:{size:11}}}}}
+  });
+}
+function makeBar(id, horizontal){
+  const ctx = document.getElementById(id);
+  return new Chart(ctx, {
+    type:'bar',
+    data:{labels:[], datasets:[{data:[], backgroundColor:'#2fa88a', borderRadius:3, barThickness:16}]},
+    options:{responsive:true, maintainAspectRatio:false, indexAxis: horizontal?'y':'x',
+      plugins:{legend:{display:false}},
+      scales:{ x:{grid:{color:'#20293c'}}, y:{grid:{display:false}} }}
+  });
+}
+function makeLine(id){
+  const ctx = document.getElementById(id);
+  return new Chart(ctx, {
+    type:'line',
+    data:{labels:[], datasets:[{data:[], borderColor:'#2fa88a', backgroundColor:'rgba(47,168,138,0.15)', fill:true, tension:0.35, pointRadius:2}]},
+    options:{responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{ x:{grid:{display:false}}, y:{grid:{color:'#20293c'}, ticks:{callback:v=>fmtMoney(v)}} }}
+  });
+}
+
+charts.trend = makeLine('chartTrend');
+charts.status = makeDonut('chartStatus');
+charts.bcat = makeBar('chartBcat', true);
+charts.mkt = makeBar('chartMkt', true);
+charts.prod = makeBar('chartProd', true);
+charts.carrier = makeDonut('chartCarrier');
+charts.cust = makeDonut('chartCust');
+charts.ccy = makeDonut('chartCcy');
+
+function filterAggByEntity(aggDict, entity){
+  const out = {};
+  for(const k in aggDict){
+    const parts = k.split('|');
+    const ent = parts[0];
+    const sub = parts.slice(1).join('|');
+    if(entity && ent !== entity) continue;
+    if(!entity){
+      if(!out[sub]) out[sub] = {premium:0,ape:0,count:0};
+      out[sub].premium += aggDict[k].premium;
+      out[sub].ape += aggDict[k].ape;
+      out[sub].count += aggDict[k].count;
+    } else {
+      out[sub] = aggDict[k];
+    }
+  }
+  return out;
+}
+
+function updateDonut(chart, subMap, topN){
+  let entries = Object.entries(subMap).sort((a,b)=>b[1].premium-a[1].premium);
+  if(topN && entries.length>topN){
+    const head = entries.slice(0,topN);
+    const restSum = entries.slice(topN).reduce((a,[,v])=>a+v.premium,0);
+    entries = [...head, ['其他', {premium:restSum}]];
+  }
+  chart.data.labels = entries.map(([k])=>k);
+  chart.data.datasets[0].data = entries.map(([,v])=>v.premium);
+  chart.update();
+}
+function updateBar(chart, subMap){
+  const entries = Object.entries(subMap).sort((a,b)=>b[1].premium-a[1].premium);
+  chart.data.labels = entries.map(([k])=>k);
+  chart.data.datasets[0].data = entries.map(([,v])=>v.premium);
+  chart.update();
+}
+
+function selectEntity(entity){
+  renderChips(entity);
+  document.getElementById('selNote').textContent = '当前：' + (entity || '全部牌照端合计');
+
+  const monthMap = {};
+  DATA.months.forEach(m=>monthMap[m]=0);
+  for(const k in DATA.by_entity_month){
+    const parts = k.split('|');
+    const ent = parts[0], m = parts[1];
+    if(entity && ent!==entity) continue;
+    monthMap[m] = (monthMap[m]||0) + DATA.by_entity_month[k].premium;
+  }
+  charts.trend.data.labels = DATA.months;
+  charts.trend.data.datasets[0].data = DATA.months.map(m=>monthMap[m]||0);
+  charts.trend.update();
+
+  updateDonut(charts.status, filterAggByEntity(DATA.by_entity_status, entity));
+  updateBar(charts.bcat, filterAggByEntity(DATA.by_entity_bcat, entity));
+  updateBar(charts.mkt, filterAggByEntity(DATA.by_entity_mkt, entity));
+  updateBar(charts.prod, filterAggByEntity(DATA.by_entity_prod, entity));
+  updateDonut(charts.carrier, filterAggByEntity(DATA.by_entity_carrier, entity));
+  updateDonut(charts.cust, filterAggByEntity(DATA.by_entity_cust, entity));
+  updateDonut(charts.ccy, filterAggByEntity(DATA.by_entity_ccy, entity));
+
+  let cycleVal = '—';
+  if(entity && DATA.cycle_avg[entity]!==undefined) cycleVal = DATA.cycle_avg[entity];
+  else if(!entity){
+    const vals = Object.values(DATA.cycle_avg);
+    cycleVal = (vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1);
+  }
+  document.getElementById('cycleVal').textContent = cycleVal;
+
+  let finPct = 0, effPct = 0;
+  if(entity){
+    const fin = DATA.fin_by_entity[entity] || [0,1];
+    finPct = fin[0]/fin[1];
+    const all = (DATA.by_entity_all[entity]||{count:0}).count;
+    const eff = (DATA.by_entity_effective[entity]||{count:0}).count;
+    effPct = all? eff/all : 0;
+  } else {
+    let finN=0, finD=0;
+    for(const e of DATA.entities){ const f=DATA.fin_by_entity[e]||[0,0]; finN+=f[0]; finD+=f[1]; }
+    finPct = finD? finN/finD : 0;
+    effPct = grandTotal.count? effTotal.count/grandTotal.count : 0;
+  }
+  document.getElementById('finFill').style.width = (finPct*100).toFixed(1)+'%';
+  document.getElementById('finVal').textContent = fmtPct(finPct);
+  document.getElementById('effFill').style.width = (effPct*100).toFixed(1)+'%';
+  document.getElementById('effVal').textContent = fmtPct(effPct);
+}
+
+selectEntity(null);
+</script>
+</body>
+</html>

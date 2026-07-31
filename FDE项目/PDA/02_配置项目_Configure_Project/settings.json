@@ -1,0 +1,30 @@
+{
+  "agent_id": "PDA",
+  "name": "业绩数据多维分析 Agent（围绕牌照端 issuing_entity）",
+  "version": "0.1.0",
+  "status": "测试中",
+  "description": "读取业绩数据底表 Excel，清洗标准化（含日期类型修正、policy_status三档映射、future_dated标记），围绕issuing_entity做7类多维聚合，生成可交互HTML看板——demo目标是修复阶段一原型里未察觉的真实bug并把流程Agent化，不做增量/调度/云端/CRM对接。",
+  "entrypoint": "04_定义Agent_Define_Agent/agents/agent.py",
+
+  "migration_note": "v0.1.0：以FDE角色承接《业绩数据分析项目启动方案》，按Agent搭建SOP v1.2的01-11骨架搭建。真实底表核实（需求定义.md第十一节）发现阶段一原型有2个未被发现的真实bug：①res_date/sign_date/submit_date字段混有Excel序列号整数，朴素pd.to_datetime会静默解析成1970年附近的错误时间戳，直接污染'运营效率'维度；②future_dated真实为53条而非原型footer硬编码的11条。Jasper确认'按你的发现和逻辑出来'后，本版本直接把这两处修复设计进L3-PDA-02清洗流程，不再逐条等待业务侧确认。",
+
+  "data_scope": {
+    "source": "Jasper 人工放置的业绩数据底表 Excel，放 07_接入记忆_Integrate_Memory/raw_data/",
+    "current_file": "业绩数据底表-20260724.xlsx（3595行原始，3593条有效记录，30列，12家issuing_entity）",
+    "storage": "本地缓存清洗后数据 + 生成的HTML看板，07_接入记忆_Integrate_Memory/data/"
+  },
+
+  "skills": ["data_loader", "cleaner", "aggregator", "dashboard_generator"],
+  "tools": [],
+
+  "known_limitations": [
+    "sum_assured/SQ_rate/referral_code/premium_term 四个字段本版本不参与清洗和聚合（当前7维分析框架未用到），透传原样，不代表已处理",
+    "carrier固定汇率假设（美金7.8/人民币1.14/加元5.85/澳元5.0/港币1.0）沿用底表premium字段自带口径，未与业务侧确认是否需要定期更新",
+    "阶段二（CRM/保司系统实时同步）、阶段三（知识库问答）不在本版本范围，见需求定义.md 4.2节"
+  ],
+
+  "archive_gate": {
+    "mark_confirmed": false,
+    "deliverables": ["settings.json", "agents/agent.yaml", "README.md", "执行记录.md"]
+  }
+}
