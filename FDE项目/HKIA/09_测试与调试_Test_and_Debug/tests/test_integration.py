@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-HKIA 集成测试——对着 raw_data/ 里的13份真实文件跑一遍全流程，做确定性检查
-（不用LLM判断对不对，用脚本断言），对应 Agent搭建SOP 5.2节"确定性检查优先"。
+HKIA 集成测试——对着 raw_data/ 里的真实文件（2015Q1~2026Q1）跑一遍全流程，
+做确定性检查（不用LLM判断对不对，用脚本断言），对应 Agent搭建SOP 5.2节
+"确定性检查优先"。
 
-跑之前必须已经把13份文件放进 07_接入记忆_Integrate_Memory/raw_data/。
+跑之前必须已经把文件放进 07_接入记忆_Integrate_Memory/raw_data/。
 """
 import sys
 import unittest
@@ -44,8 +45,8 @@ class TestHKIAIntegration(unittest.TestCase):
             except Exception as e:
                 cls.parse_errors.append((r, e))
 
-    def test_all_13_periods_present(self):
-        """完整性：13期一期不缺，缺了要能看见，不能静默漏掉。"""
+    def test_all_periods_present(self):
+        """完整性：EXPECTED_PERIODS一期不缺（2015Q1~2026Q1），缺了要能看见，不能静默漏掉。"""
         self.assertEqual(
             len(self.reports), len(EXPECTED_PERIODS),
             f"应该有{len(EXPECTED_PERIODS)}期，实际找到{len(self.reports)}期。"
@@ -53,7 +54,7 @@ class TestHKIAIntegration(unittest.TestCase):
         )
 
     def test_no_parse_errors(self):
-        """13份文件全部能解析成功，不能有沉默失败。"""
+        """全部文件都能解析成功，不能有沉默失败。"""
         self.assertEqual(
             len(self.parse_errors), 0,
             f"以下期数解析失败: {[(r.year, r.quarter, str(e)) for r, e in self.parse_errors]}"
@@ -119,7 +120,7 @@ class TestHKIAIntegration(unittest.TestCase):
         for _, _, rows in self.all_rows:
             workspace.insert_rows(rows)
         self.assertEqual(workspace.row_count(), sum(len(rows) for _, _, rows in self.all_rows))
-        self.assertEqual(len(workspace.distinct_periods()), 13)
+        self.assertEqual(len(workspace.distinct_periods()), len(EXPECTED_PERIODS))
 
     def _rows_for(self, year, quarter, table_type, category):
         month_day = {1: "03-31", 2: "06-30", 3: "09-30", 4: "12-31"}[quarter]

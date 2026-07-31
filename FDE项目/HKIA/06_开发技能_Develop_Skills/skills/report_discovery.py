@@ -1,26 +1,27 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-技能：扫描 raw_data/ 目录，把长期业务13期Excel跟期数对上号，并做完整性校验。
+技能：扫描 raw_data/ 目录，把长期业务Excel跟期数对上号，并做完整性校验。
 
-文件名格式在官网本身就不统一（2023~2024Q2是"NqYYlong.xls"，2024Q3起是
-"NqYY_long.xlsx"或"NqYYlong.xlsx"混用），正则里下划线设为可选，不假设任何一种
-写法是"标准"写法。
+文件名格式在官网本身就不统一：
+- 2023~2024Q2是"NqYYlong.xls"，2024Q3起是"NqYY_long.xlsx"或"NqYYlong.xlsx"混用
+  （下划线可选）
+- 2015~2022这批补充历史数据里，大部分年份是2位数年份("1q22long.xls")，但
+  2021年两份文件("1q2021long.xls"/"2q2021long.xls")用的是4位数年份，同一年
+  剩下两份("3q21long.xls"/"4q21long.xls")又是2位数——同一年内两种写法都有，
+  不是我们能假设"一个文件名格式管一整年"的情况，正则必须同时接受2位和4位年份
 """
 import re
 from dataclasses import dataclass
 from pathlib import Path
 
 EXPECTED_PERIODS = [
-    (2023, 1), (2023, 2), (2023, 3), (2023, 4),
-    (2024, 1), (2024, 2), (2024, 3), (2024, 4),
-    (2025, 1), (2025, 2), (2025, 3), (2025, 4),
-    (2026, 1),
-]
+    (y, q) for y in range(2015, 2026) for q in (1, 2, 3, 4)
+] + [(2026, 1)]
 
 PERIOD_TYPE_BY_QUARTER = {1: "YTD_Q1", 2: "YTD_H1", 3: "YTD_9M", 4: "YTD_FY"}
 
-FILENAME_PATTERN = re.compile(r"^(\d)q(\d{2})_?long\.(xlsx|xls)$", re.IGNORECASE)
+FILENAME_PATTERN = re.compile(r"^(\d)q(\d{2}|\d{4})_?long\.(xlsx|xls)$", re.IGNORECASE)
 
 
 @dataclass
@@ -33,7 +34,7 @@ class ReportFile:
 
 
 class ReportDiscovery:
-    """扫描本地raw_data目录，匹配13期长期业务文件，报出缺失/多余项。"""
+    """扫描本地raw_data目录，匹配长期业务文件（2015Q1~2026Q1），报出缺失/多余项。"""
 
     def __init__(self, raw_data_dir: Path):
         self.raw_data_dir = Path(raw_data_dir)
@@ -57,7 +58,8 @@ class ReportDiscovery:
                 unmatched_files.append(path.name)
                 continue
             quarter = int(m.group(1))
-            year = 2000 + int(m.group(2))
+            year_group = m.group(2)
+            year = int(year_group) if len(year_group) == 4 else 2000 + int(year_group)
             if (year, quarter) in found_by_period:
                 unmatched_files.append(
                     f"{path.name}（重复：{year}Q{quarter} 已经由 "

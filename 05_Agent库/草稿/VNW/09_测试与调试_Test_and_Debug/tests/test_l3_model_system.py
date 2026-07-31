@@ -12,7 +12,7 @@ sys.path.insert(0, str(VNW_ROOT / "06_开发技能_Develop_Skills"))
 
 from skills.l3_model_builder import BlueprintIndex, L3ModelBuilder, d1d6_name_key, load_analysis_packages, skill_recommendation  # noqa: E402
 from skills.l3_analysis_contract import ANALYSIS_STANDARD_ID, analysis_input_hash, eligible_analysis_evidence_ids, validate_analysis_package  # noqa: E402
-from skills.l3_analysis_runner import L3AnalysisRunner, _json_from_text, normalize_model_package  # noqa: E402
+from skills.l3_analysis_runner import L3AnalysisRunner, _json_from_text, clear_resolved_l4_missing, normalize_model_package  # noqa: E402
 from skills.blueprint_parser import parse_blueprint  # noqa: E402
 from tools.evidence import EvidenceClass, EvidenceRecord, EvidenceStatus, SourceRef, authoritative  # noqa: E402
 from tools.obsidian_reader import note_is_eligible  # noqa: E402
@@ -571,6 +571,26 @@ class L3ModelSystemTests(unittest.TestCase):
         rejected = [ref for ref in refs if ref not in valid]
         self.assertEqual(kept, ["EVD-VALID"])
         self.assertEqual(rejected, ["EVD-MADE-UP"])
+
+    def test_l4_refresh_clears_only_proven_resolved_missing_fields(self):
+        missing = [
+            "l4_analysis[L4-T-01].specific_capabilities -> 旧缺口",
+            "l4_analysis[L4-T-01].control_gates -> 仍为空",
+            "控制链缺少L4定位，已拒绝2条",
+        ]
+        replacement = {
+            "L4-T-01": {
+                "specific_capabilities": ["已补能力"],
+                "control_gates": [],
+            }
+        }
+        self.assertEqual(
+            clear_resolved_l4_missing(missing, replacement),
+            [
+                "l4_analysis[L4-T-01].control_gates -> 仍为空",
+                "控制链缺少L4定位，已拒绝2条",
+            ],
+        )
 
 
 if __name__ == "__main__":

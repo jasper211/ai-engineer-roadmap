@@ -176,6 +176,29 @@ DECISION_FIELDS = {
 VALID_TIERS = {"Human", "Aug", "Hybrid", "Auto"}
 
 
+def clear_resolved_l4_missing(
+    missing_analysis: list, replacement: dict[str, dict]
+) -> list:
+    """只清理由定向刷新后的非空字段能够直接证明已解决的缺口。"""
+    remaining = []
+    pattern = re.compile(r"l4_analysis\[(L4-[A-Za-z0-9-]+)\]\.([a-z0-9_]+)")
+    for item in missing_analysis:
+        match = pattern.search(str(item))
+        if not match:
+            remaining.append(item)
+            continue
+        l4_code, field = match.groups()
+        refreshed = replacement.get(l4_code)
+        if not refreshed:
+            remaining.append(item)
+            continue
+        value = refreshed.get(field)
+        resolved = bool(value) if not isinstance(value, list) else len(value) > 0
+        if not resolved:
+            remaining.append(item)
+    return remaining
+
+
 class L3AnalysisRunner:
     def __init__(self, agent_root: Path):
         self.agent_root = Path(agent_root)
@@ -646,6 +669,9 @@ class L3AnalysisRunner:
             for item in merged["l4_analysis"]
             if item["l4_code"] in old_priority
         ]
+        merged["missing_analysis"] = clear_resolved_l4_missing(
+            current_package.get("missing_analysis", []), replacement
+        )
         merged.setdefault("refresh_history", []).append({
             "run_id": request["run_id"],
             "modules": request["refresh_modules"],
