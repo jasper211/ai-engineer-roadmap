@@ -305,11 +305,11 @@ _TEMPLATE = r"""<!DOCTYPE html>
 
 <script>
 const DATA = __DATA_JSON__;
-// 金额统一"万"为单位（港币口径），不再混用亿/万，缩短展示
+// 金额统一以"万"为单位（港币口径），不再出现亿，缩短展示
 const fmtMoney = n => {
   const w = n/10000;
-  if(w>=10000) return (w/10000).toFixed(2)+'万';
-  return (w>=100 ? w.toFixed(0) : w.toLocaleString(undefined,{maximumFractionDigits:1}))+'万';
+  const num = w>=100 ? w.toFixed(0) : w.toLocaleString(undefined,{maximumFractionDigits:1});
+  return num + '万';
 };
 const fmtPct = n => (n*100).toFixed(1)+'%';
 // 当前展示口径：premium(保费) / ape(APE)，由顶部切换按钮控制
