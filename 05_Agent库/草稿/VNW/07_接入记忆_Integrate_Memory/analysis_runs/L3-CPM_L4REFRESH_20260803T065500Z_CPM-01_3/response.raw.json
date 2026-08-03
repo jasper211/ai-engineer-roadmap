@@ -1,0 +1,175 @@
+{
+  "l4_analysis": [
+    {
+      "l4_code": "L4-CPM-01",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-02f83b83656a28550a7b",
+        "EVD-2edff90c9662216720aa",
+        "EVD-317bd89f066e3f192fbd",
+        "EVD-4f8efac6ce82066fa2eb",
+        "EVD-6f30b72fcd9151ad1387",
+        "EVD-7fee2ba2077224052e00",
+        "EVD-83b269bc58502074c300",
+        "EVD-8d524965ca9053ef1ac8",
+        "EVD-9cbdcf339cecac143d06",
+        "EVD-a029ece01c7ca228af8a",
+        "EVD-bb3f211da5c0557c0dc9",
+        "EVD-e690300382e62db1b340"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "方案",
+      "specific_capabilities": [
+        "确定监控维度：核心KPI统一与个性化KPI设计",
+        "设计指标计算逻辑、数据源映射和更新频率",
+        "搭建实时看板：Dashboard配置、权限设置、告警规则",
+        "机构确认：看板内容审核、数据口径对齐"
+      ],
+      "ai_reshape": "AI辅助生成KPI草案、计算逻辑建议和看板初始配置，由人工做最终策略判断和机构确认。",
+      "quality_anchor": "监控指标体系须经机构正式确认，看板数据口径对齐，指标设计不超越合同边界。",
+      "ai_responsibility": "自动生成KPI选项、计算逻辑建议、看板初始配置和文档初稿。",
+      "human_responsibility": "最终确定监控维度，审批计算逻辑，审核看板内容，与机构对接人沟通确认。",
+      "handoff_triggers": [
+        "AI生成的方案存在歧义或指标冲突时",
+        "机构提出特殊约束或个性化需求超越合同边界时",
+        "最终机构确认环节必须人工完成"
+      ],
+      "control_gates": [
+        "指标与看板方案必须经流程项目组负责人和机构对接人双重审批后上线",
+        "个性化KPI若涉及合同外内容需法务/合规确认"
+      ],
+      "data_basis": [
+        "D1输入结构化=2",
+        "D2规则清晰度=2",
+        "D3输出可验证性=2",
+        "D4 API可达性=2",
+        "D5回退机制=2",
+        "D6合规支撑=2"
+      ],
+      "process_context": "此为流程持续监控的首个步骤，为后续实时监控和分析奠定基础。当前VN-CPM-01（机构监控指标体系与看板）综合判定为FAIL，看板未上线，数据验证gate未通过，优先级P1。",
+      "risks_limits": [
+        "Skill封装可行性为C级，判断/策略认知类，复合动作，建议拆分为子技能",
+        "指标设计若超越合同边界可能引发合规风险",
+        "看板数据源未完全打通（D4=2），API接口待提升"
+      ],
+      "current_recommendation": "鉴于Skill封装度低，建议采用Agent辅助模式（Hybrid），AI生成草案供人工评审，关键决策点设置人工控制门。同时推进API对接和数据源标准化，为未来拆分后的子技能封装做准备。",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-CPM-02",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-0e2a9197ed1a54fdab89",
+        "EVD-32b784987d1bffe12d9c",
+        "EVD-4ec529fd7f8e412db31b",
+        "EVD-75c7a67035167f10b8ac",
+        "EVD-7675563984dd4ee7fd6c",
+        "EVD-81ee6529d8ec745020f8",
+        "EVD-82e611e4ad5a4d049cf8",
+        "EVD-891a78f37c510189c025",
+        "EVD-d1351b506a43b84bc3d7",
+        "EVD-d29389de239016eeddcf",
+        "EVD-d5cc65a531fea169d3ce",
+        "EVD-f3fa703a46fba36e97a4"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "数据表",
+      "specific_capabilities": [
+        "机构运营数据自动采集（4张关联表定时拉取）",
+        "数据清洗标准化（去重、格式统一、异常值标记）",
+        "标准化数据推送至BI看板",
+        "异常自动预警并通知流程项目组"
+      ],
+      "ai_reshape": "可封装为确定性Skill，将采集、清洗、推送、预警步骤自动化，但需先拆分为独立子技能以确保每一步规则明确。",
+      "quality_anchor": "清洗后数据无重复、格式统一，异常标记准确率≥95%，推送延迟≤5分钟。",
+      "ai_responsibility": "全自动完成数据采集、清洗、上传和异常预警，正常流程无需人工干预。",
+      "human_responsibility": "确认异常阈值设定，审批清洗规则变更，处理无法自动修复的脏数据。",
+      "handoff_triggers": [
+        "采集链路中断或数据量异常下降",
+        "清洗结果出现大量异常记录",
+        "预警规则触发后，由人工复核是否派发通知"
+      ],
+      "control_gates": [
+        "数据推送权限需限定，防止未授权访问",
+        "清洗规则变更需版本控制及审批"
+      ],
+      "data_basis": [
+        "D1输入结构化=3",
+        "D2规则清晰度=3",
+        "D3输出可验证性=3",
+        "D4 API可达性=3",
+        "D5回退机制=2",
+        "D6合规支撑=2"
+      ],
+      "process_context": "紧随监控指标设计之后，将多源数据持续注入看板，支撑后续月度深度分析。数据处理本身高度事务性，是自动化潜力最高的环节。",
+      "risks_limits": [
+        "Skill封装可行性A级但属复合动作，需先拆分为子技能才能安全实现全自动",
+        "外部数据源变更或API不稳定可能中断流程",
+        "异常预警误报可能增加人工复核负担"
+      ],
+      "current_recommendation": "优先对拆分后的子技能（采集、清洗、推送、预警）分别开发与测试，完成后可达到Auto级别。在当前拆分未完成阶段，建议以Hybrid过渡，逐步提升自动化Tier。数据库Tier为Auto，最终推荐Tier定为Auto，但需注明拆分前提。",
+      "database_tier": "Auto",
+      "recommended_tier": "Auto",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-CPM-03",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-0fbc3916e83194edf328",
+        "EVD-2fc9400f48e8e4e3aaf7",
+        "EVD-53a90aa80625fcc0e90c",
+        "EVD-7defb4c8c4ce292e6eb7",
+        "EVD-a5923eda985286b2e7ad",
+        "EVD-bcf302ecdb8e5e4f6031",
+        "EVD-bed56241d12cdf16abff",
+        "EVD-d2535c20caaa5c45e4f0",
+        "EVD-df85f8db7b88aab4992e",
+        "EVD-eff040de1bd0eaee2119",
+        "EVD-f57ca348162a221ac778",
+        "EVD-6605458612e277a1bfec"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "报告",
+      "specific_capabilities": [
+        "月度数据汇总与趋势分析（时间序列、同比/环比、横向对标）",
+        "识别流程瓶颈、合规风险与改进机会",
+        "结构化报告撰写",
+        "报告分发与机构确认"
+      ],
+      "ai_reshape": "AI辅助完成数据汇总、趋势图表生成和报告初稿撰写，人工负责深度解读和优化建议制定。",
+      "quality_anchor": "报告分析维度完整，数据引用准确，建议具备可操作性，经机构对接人确认。",
+      "ai_responsibility": "自动汇总计算、生成趋势图表、提取异常点、生成报告模板。",
+      "human_responsibility": "分析瓶颈原因、制定优化建议、审核报告内容、与机构沟通确认。",
+      "handoff_triggers": [
+        "识别出重大风险或严重数据异常",
+        "结论需要跨部门协调决策",
+        "最终报告发布前必须人工审批"
+      ],
+      "control_gates": [
+        "报告分发前须由流程项目组负责人和经代联合运营组确认",
+        "涉及资金、合规敏感内容须专项审核"
+      ],
+      "data_basis": [
+        "D1输入结构化=2",
+        "D2规则清晰度=2",
+        "D3输出可验证性=2",
+        "D4 API可达性=2",
+        "D5回退机制=2",
+        "D6合规支撑=2"
+      ],
+      "process_context": "承接实时监控数据，生成月度健康度报告，为后续优化建议评审（L4-CPM-04）提供依据，是优化闭环的关键分析节点。VN-CPM-02优先级P1，当前因报告模板未建立及闭环未跑通而判定为FAIL。",
+      "risks_limits": [
+        "Skill封装可行性C级，判断/策略认知类，难以直接封装",
+        "AI分析可能流于表面，深度依赖人工经验",
+        "数据质量波动可能影响分析结论可靠性"
+      ],
+      "current_recommendation": "采用Agent辅助模式（Hybrid），AI承担数据汇总与图表生成，让人专注深度分析。可逐步构建分析模板和知识库，提升AI辅助质量。数据库Tier为Hybrid，推荐Tier保持Hybrid。",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    }
+  ]
+}

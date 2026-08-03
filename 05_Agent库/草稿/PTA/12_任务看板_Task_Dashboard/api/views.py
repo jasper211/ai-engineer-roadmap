@@ -27,6 +27,7 @@ from skills.daily_sensing import list_tasks_from_state, latest_report_summary, D
 from skills.pipeline_health import summarize_latest_report, drift_detail_from_latest_report, REPORT_DIR_RELATIVE
 from skills.agent_status import detect_all_agent_statuses
 from tools.ob_bridge import get_background
+from tools import ea_index_bridge
 from tools.task_knowledge import load_task_map
 from skills.execution_planning import ExecutionScheduler, ExecutionPlan, ExecutionStep
 
@@ -632,6 +633,48 @@ def ob_search(query: str, mode: str = "hybrid", max_results: int = 5) -> dict:
     返回None，这里原样透传成found=False，不是接口层面的错误。"""
     text = get_background(query, mode=mode, max_results=max_results)
     return {"query": query, "found": text is not None, "background": text}
+
+
+def related_documents(project_name: str, relative_files: List[str]) -> dict:
+    """"这份文件还跟哪些文档有关系"——用 tools/ea_index_bridge 对来源文件里
+    识别到的治理编号（CUR-/AUD25-/AUD21-/DEC-ACC.../GOV-T-/ACC- 等），在 Mark
+    的 EA 全库索引（覆盖约3065个受管文件，远超 daily_sensing 只看"最近变化"
+    的范围）里做确定性交叉检索，不是语义联想。
+
+    最多只取任务的前3份来源文件（真实任务的related_files很少超过3个，超过
+    这个数量再逐个起 subprocess 查询性价比不高），返回结果里剔除来源文件
+    自己（避免"这份文件的关联文档"里出现它自己）。索引不可用（脚本/数据库
+    缺失，或全部编号查询失败）时 available=False，前端据此显示"暂不可用"，
+    不是显示一个假的空列表。"""
+    resolved = _resolve_workspace_for_project(project_name)
+    if resolved is None:
+        return {"available": False, "error": f"未知项目: {project_name}", "ids_found": [], "documents": []}
+    root, _workspace = resolved
+
+    relative_files = [f for f in relative_files if f][:3]
+    if not relative_files:
+        return {"available": True, "ids_found": [], "documents": []}
+
+    all_ids: List[str] = []
+    for rel in relative_files:
+        file_result = read_project_file(project_name, rel)
+        if not file_result.get("success"):
+            continue
+        for rid in ea_index_bridge.extract_reference_ids(file_result["content"]):
+            if rid not in all_ids:
+                all_ids.append(rid)
+
+    if not all_ids:
+        return {"available": True, "ids_found": [], "documents": []}
+
+    documents = ea_index_bridge.query_related_by_ids(root, all_ids)
+    if documents is None:
+        return {"available": False, "ids_found": all_ids, "documents": [],
+                "error": "EA全库索引当前不可用（索引脚本或数据库缺失，或本次查询全部失败）"}
+
+    source_set = set(relative_files)
+    documents = [d for d in documents if d["path"] not in source_set]
+    return {"available": True, "ids_found": all_ids, "documents": documents}
 
 
 def execution_history(project_filter: str = "all", limit: int = 30) -> List[dict]:

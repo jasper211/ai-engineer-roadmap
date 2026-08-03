@@ -206,6 +206,41 @@ class L3AnalysisRunner:
         self.run_root = self.agent_root / "07_接入记忆_Integrate_Memory/analysis_runs"
         self.package_root = self.agent_root / "07_接入记忆_Integrate_Memory/analysis_packages"
 
+    def segmented_package_path(self, l3_code: str) -> Path:
+        return self.package_root / "staging" / f"{l3_code}.segmented.json"
+
+    def initialize_segmented(self, snapshot_path: Path, force: bool = False) -> Path:
+        """从事实层骨架初始化隔离的分段分析包，不进入正式发布目录。"""
+        snapshot_path = Path(snapshot_path)
+        snapshot = json.loads(snapshot_path.read_text(encoding="utf-8"))
+        readiness = snapshot.get("model_readiness", {})
+        if readiness and not readiness.get("model_generation_allowed", False):
+            raise ValueError(f"{snapshot['l3_code']}未通过模型准入，不生成分段分析")
+        fact_pack = self._fact_pack(snapshot)
+        output = self.segmented_package_path(snapshot["l3_code"])
+        if output.exists() and not force:
+            current = json.loads(output.read_text(encoding="utf-8"))
+            current_hash = (current.get("segmented_run") or {}).get("input_snapshot_hash")
+            if current_hash != fact_pack["snapshot_hash"]:
+                raise ValueError("分段暂存包基于旧事实快照；需显式force后重新初始化")
+            return output
+        bootstrap = json.loads(json.dumps(snapshot.get("analysis", {}), ensure_ascii=False))
+        if not bootstrap or bootstrap.get("analysis_status") != "PENDING_MODEL":
+            bootstrap = self._output_contract(fact_pack)
+        bootstrap["schema_version"] = ANALYSIS_SCHEMA_VERSION
+        bootstrap["analysis_standard_id"] = ANALYSIS_STANDARD_ID
+        bootstrap["generation_mode"] = "SEGMENTED_STAGING"
+        bootstrap["analysis_status"] = "PENDING_MODEL"
+        bootstrap["segmented_run"] = {
+            "status": "STAGING",
+            "input_snapshot_hash": fact_pack["snapshot_hash"],
+            "initialized_at": datetime.now(timezone.utc).isoformat(),
+            "completed_l4_codes": [],
+        }
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_text(json.dumps(bootstrap, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        return output
+
     def _fact_pack(self, snapshot: dict) -> dict:
         l4s = json.loads(json.dumps(snapshot.get("l4s", []), ensure_ascii=False))
         for item in l4s:
@@ -407,7 +442,8 @@ class L3AnalysisRunner:
         return run_dir
 
     def prepare_l4_refresh(
-        self, snapshot_path: Path, package_path: Path, target_l4_codes: list[str]
+        self, snapshot_path: Path, package_path: Path, target_l4_codes: list[str],
+        publish_package_path: Path | None = None,
     ) -> Path:
         """按一小批L4刷新分析，避免大型L3整包输出被模型截断。"""
         snapshot_path = Path(snapshot_path)
@@ -468,9 +504,9 @@ class L3AnalysisRunner:
             "input_snapshot_hash": fact_pack["snapshot_hash"],
             "current_package_path": str(package_path.resolve()),
             "current_package_hash": package_hash,
-            "publish_package_path": str(
-                (self.package_root / f"{snapshot['l3_code']}.model.json").resolve()
-            ),
+            "publish_package_path": str((publish_package_path or (
+                self.package_root / f"{snapshot['l3_code']}.model.json"
+            )).resolve()),
             "analysis_standard_id": ANALYSIS_STANDARD_ID,
             "prepared_at": datetime.now(timezone.utc).isoformat(),
         }
@@ -502,6 +538,78 @@ class L3AnalysisRunner:
             json.dumps(user_payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
         )
         return run_dir
+
+    def prepare_segmented_l4(
+        self, snapshot_path: Path, target_l4_codes: list[str]
+    ) -> Path:
+        snapshot = json.loads(Path(snapshot_path).read_text(encoding="utf-8"))
+        staging = self.initialize_segmented(snapshot_path)
+        return self.prepare_l4_refresh(
+            snapshot_path, staging, target_l4_codes, publish_package_path=staging
+        )
+
+    def finalize_segmented(self, snapshot_path: Path) -> Path:
+        """仅在全部L4、任务和决策通过最终契约后，将暂存包发布为正式包。"""
+        snapshot_path = Path(snapshot_path)
+        snapshot = json.loads(snapshot_path.read_text(encoding="utf-8"))
+        fact_pack = self._fact_pack(snapshot)
+        staging = self.segmented_package_path(snapshot["l3_code"])
+        if not staging.exists():
+            raise FileNotFoundError(f"缺少分段暂存包：{staging}")
+        package = json.loads(staging.read_text(encoding="utf-8"))
+        staged_hash = (package.get("segmented_run") or {}).get("input_snapshot_hash")
+        if staged_hash != fact_pack["snapshot_hash"]:
+            raise ValueError("分段暂存包与当前事实快照Hash不一致")
+        expected = {item["l4_code"] for item in fact_pack["l4s"]}
+        completed = {
+            item.get("l4_code") for item in package.get("l4_analysis", [])
+            if item.get("analysis_status") == "MODEL_DRAFT"
+        }
+        if completed != expected:
+            raise ValueError(f"分段L4分析未完成：{sorted(expected - completed)}")
+        task_l4s = {item.get("l4_code") for item in package.get("tasks", [])}
+        if task_l4s != expected:
+            raise ValueError(f"分段任务未覆盖全部L4：{sorted(expected - task_l4s)}")
+        if not package.get("decision_drafts"):
+            raise ValueError("分段分析缺少负责人决策草稿")
+        resolved_bootstrap_markers = {
+            "逐L4交付物与具体能力分析",
+            "逐任务AI分工分析",
+            "逐L4人机协作与控制分析",
+            "逐L4优先级四维分析",
+            "任务级负责人决策建议",
+        }
+        package["missing_analysis"] = [
+            item for item in package.get("missing_analysis", [])
+            if item not in resolved_bootstrap_markers
+        ]
+        package["generation_mode"] = "UNIFIED_MODEL"
+        package["analysis_status"] = "MODEL_DRAFT"
+        history = package.get("refresh_history", []) + package.get("repair_history", [])
+        models = [item.get("model") for item in history if item.get("model")]
+        package["model_run"] = {
+            "model_name": models[-1] if models else "segmented-external-import",
+            "model_version": models[-1] if models else "segmented-external-import",
+            "prompt_version": ANALYSIS_STANDARD_ID,
+            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "input_snapshot_hash": fact_pack["snapshot_hash"],
+            "run_mode": "SEGMENTED_L4_THEN_MODULE_REPAIR",
+        }
+        package["segmented_run"] = {
+            **package.get("segmented_run", {}),
+            "status": "COMPLETED",
+            "completed_l4_codes": sorted(completed),
+            "finalized_at": datetime.now(timezone.utc).isoformat(),
+        }
+        evidence_ids = eligible_analysis_evidence_ids(fact_pack["evidence_registry"])
+        validate_analysis_package(package, evidence_ids, expected)
+        self.package_root.mkdir(parents=True, exist_ok=True)
+        output = self.package_root / f"{snapshot['l3_code']}.model.json"
+        if output.exists():
+            timestamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+            shutil.copy2(output, output.with_name(f"{output.name}.before-segmented.{timestamp}.bak"))
+        output.write_text(json.dumps(package, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        return output
 
     def run(self, run_dir: Path, model: str | None = None) -> Path:
         run_dir = Path(run_dir)
@@ -684,6 +792,10 @@ class L3AnalysisRunner:
         })
         if rejected_refs:
             merged.setdefault("rejected_evidence_refs", []).extend(rejected_refs)
+        if isinstance(merged.get("segmented_run"), dict):
+            completed = set(merged["segmented_run"].get("completed_l4_codes", []))
+            completed.update(targets)
+            merged["segmented_run"]["completed_l4_codes"] = sorted(completed)
         current_snapshot = json.loads(
             Path(request["input_snapshot_path"]).read_text(encoding="utf-8")
         )

@@ -123,6 +123,10 @@ class Handler(BaseHTTPRequestHandler):
             mode = query.get("mode", ["hybrid"])[0]
             max_results = int(query.get("max_results", ["5"])[0])
             self._send_json(200, views.ob_search(search_query, mode, max_results))
+        elif parsed.path == "/api/related-documents":
+            project = query.get("project", [""])[0]
+            files = [f for f in query.get("files", [""])[0].split(",") if f]
+            self._send_json(200, views.related_documents(project, files))
         elif parsed.path == "/api/execution-history":
             project = query.get("project", ["all"])[0]
             limit = int(query.get("limit", ["30"])[0])

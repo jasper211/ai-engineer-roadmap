@@ -1,0 +1,113 @@
+{
+  "l4_analysis": [
+    {
+      "l4_code": "L4-CPM-04",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-d5e841ca40816d11ac69",
+        "EVD-54a3ed42c8496f137e7e",
+        "EVD-dd88d4e6428b19ce8892",
+        "EVD-bdfbdbf5521175be21f0",
+        "EVD-c837c0597e771ae73ffc",
+        "EVD-437507e28ba64e8929d1",
+        "EVD-3736daf9700585d09d10",
+        "EVD-98b46c524761a4e5111b",
+        "EVD-23d5a5a00823ec74f895",
+        "EVD-861313d3563ef099228f",
+        "EVD-1bf73d7bfd771573f8e3",
+        "EVD-2029694a617b758eba32"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "最终决策依据与执行计划载体，为后续执行提供明确指令",
+      "specific_capabilities": [
+        "多维度优先级排序（紧急度/影响面/实施成本）",
+        "ROI量化评估与预测",
+        "跨部门联合评审与分歧仲裁能力",
+        "决议文本撰写与分阶段执行计划编制",
+        "策略权衡与权威判断能力（低封装度）"
+      ],
+      "ai_reshape": "AI作为决策支持工具，提供数据聚合、影响模拟与草案生成；最终评审与决议由人主导，不封装为确定性Skill",
+      "quality_anchor": "评审通过的决议文本需获得中台与机构双方认可",
+      "ai_responsibility": "依据规则库提供优先级建议、成本收益预估、偏差分析等辅助数据",
+      "human_responsibility": "进行跨部门协商、解决分歧、签署决议、指派执行责任人",
+      "handoff_triggers": [
+        "评审中出现不可调和分歧",
+        "ROI或风险超出预设自动审批阈值",
+        "涉及组织架构或资源重大调整"
+      ],
+      "control_gates": [
+        "决议需经授权审批人（如流程负责人或分管领导）确认"
+      ],
+      "data_basis": [
+        "紧急度、影响面、实施成本（来源：蓝图步骤STEP-04）",
+        "预期收益与资源需求（ROI评估）",
+        "历史优化案例与效果数据"
+      ],
+      "process_context": "接续定期深度分析结果（L4-CPM-03），驱动后续优化执行（L4-CPM-05）",
+      "risks_limits": [
+        "判断失误可能导致低效优化或资源浪费",
+        "Agent辅助无法替代跨部门协商的权威性",
+        "低封装度下强行自动化会引入流程僵化风险"
+      ],
+      "current_recommendation": "维持Hybrid模式，强化AI对优先级与ROI的预分析能力，保留人工评审与决策控制",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-CPM-05",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-f9b5e961ee4d96134ae0",
+        "EVD-f2ac15935240a7054b46",
+        "EVD-ecdf3160d6e31866bc55",
+        "EVD-e917b39961a0ab0c3ff4",
+        "EVD-35351dd336e287febf3b",
+        "EVD-62ba33d8dc29d00adbf6",
+        "EVD-272576c505d57bac758c",
+        "EVD-ef947bd5f6a8f51b7f70",
+        "EVD-d683090842cc397d793d",
+        "EVD-d8bb6e500a8f50b651fe",
+        "EVD-d3204a231046d39e9149",
+        "EVD-78bb6c6ed72faea7d966"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "记录执行过程与量化效果，为闭环提供证据并沉淀最佳实践",
+      "specific_capabilities": [
+        "原子任务拆解与分配",
+        "跨系统任务下达与进度追踪",
+        "执行前后数据采集与效果比对",
+        "报告自动生成与案例归档",
+        "季度战略复盘与决策支持（人工主导）"
+      ],
+      "ai_reshape": "将可标准化子任务（数据采集/报告生成/任务下发）封装为确定性Skill，通过Agent编排串联流程，保留人工复盘与例外处理节点",
+      "quality_anchor": "执行报告完整反映改善对比数据且通过复盘审核",
+      "ai_responsibility": "自动拆解标准优化项为任务、调用L3-EFB接口下达、采集前后数据并生成基础报告",
+      "human_responsibility": "审核任务分配合理性、处理执行异常、主持季度战略复盘并提炼经验",
+      "handoff_triggers": [
+        "任务执行超时或阻塞",
+        "改善效果未达预期阈值",
+        "涉及跨流程冲突需协调"
+      ],
+      "control_gates": [
+        "季度复盘结论需由管理层确认",
+        "对外发布报告前须经合规审核"
+      ],
+      "data_basis": [
+        "优化决议中的任务清单（来源：STEP-05）",
+        "L3-EFB接口状态与进度数据",
+        "改善前后关键指标对比"
+      ],
+      "process_context": "承接优化决议（L4-CPM-04），最终将经验反馈至监控指标设计（L4-CPM-01）",
+      "risks_limits": [
+        "复合动作若未经拆分直接自动化将导致脆弱流程",
+        "任务下达需确认下游系统可用性",
+        "复盘质量依赖人工经验，无法全自动"
+      ],
+      "current_recommendation": "优先拆分复合动作，将数据采集、报告生成、任务下达封装为独立Skill，编排成半自动流水线，保留人工监督与复盘窗口",
+      "database_tier": "Auto",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    }
+  ]
+}

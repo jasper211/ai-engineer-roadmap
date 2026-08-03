@@ -208,6 +208,20 @@ export interface ObSearchResult {
   background: string | null
 }
 
+export interface RelatedDocument {
+  path: string
+  extension: string
+  matched_ids: string[]
+  excerpt: string
+}
+
+export interface RelatedDocumentsResponse {
+  available: boolean
+  ids_found: string[]
+  documents: RelatedDocument[]
+  error?: string
+}
+
 export interface WatchedProjectConfig {
   name: string
   project_root: string
@@ -263,6 +277,10 @@ export function fetchAgentMonitor(): Promise<AgentMonitorResponse> {
 
 export function fetchObSearch(query: string): Promise<ObSearchResult> {
   return getJSON(`/api/ob-search?query=${encodeURIComponent(query)}`)
+}
+
+export function fetchRelatedDocuments(project: string, files: string[]): Promise<RelatedDocumentsResponse> {
+  return getJSON(`/api/related-documents?project=${encodeURIComponent(project)}&files=${encodeURIComponent(files.join(','))}`)
 }
 
 export function fetchWatchedProjects(): Promise<WatchedProjectConfig[]> {

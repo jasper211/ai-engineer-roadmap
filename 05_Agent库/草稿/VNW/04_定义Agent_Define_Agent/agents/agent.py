@@ -47,6 +47,9 @@ def parse_args():
     parser.add_argument("--prepare-l3-analysis", action="append", help="从现有快照准备统一模型运行包；可重复传入L3编码")
     parser.add_argument("--prepare-analysis-repair", action="append", help="为已有分析包准备任务与负责人决策模块修复；可重复传入L3编码")
     parser.add_argument("--prepare-analysis-l4-refresh", help="为已有分析包准备一批L4分析刷新")
+    parser.add_argument("--prepare-segmented-analysis", help="为无完整分析包的大型L3初始化/继续分段L4分析")
+    parser.add_argument("--prepare-segmented-repair", help="为分段暂存包准备任务与负责人决策模块")
+    parser.add_argument("--finalize-segmented-analysis", help="校验并发布已完成的分段分析包")
     parser.add_argument("--analysis-l4-code", action="append", help="L4分批刷新目标；单批最多6个")
     parser.add_argument("--run-analysis-dir", type=Path, help="调用模型运行指定分析运行包并校验发布")
     parser.add_argument("--import-analysis-output", type=Path, help="导入外部模型JSON；需同时提供--run-analysis-dir")
@@ -87,7 +90,10 @@ def main() -> int:
     if args.status:
         print(json.dumps({"agent_id": settings["agent_id"], "version": settings["version"], "workspace": str(workspace.root), "tracked_files": len(state.get("files", {})), "last_run": state.get("runs", [])[-1:]}, ensure_ascii=False, indent=2))
         return 0
-    if args.prepare_l3_analysis or args.prepare_analysis_repair or args.prepare_analysis_l4_refresh or args.run_analysis_dir or args.import_analysis_output:
+    if (args.prepare_l3_analysis or args.prepare_analysis_repair
+            or args.prepare_analysis_l4_refresh or args.prepare_segmented_analysis
+            or args.prepare_segmented_repair or args.finalize_segmented_analysis
+            or args.run_analysis_dir or args.import_analysis_output):
         from skills.l3_analysis_runner import L3AnalysisRunner
 
         runner = L3AnalysisRunner(AGENT_ROOT)
@@ -146,6 +152,53 @@ def main() -> int:
                 "l3_code": normalized,
                 "target_l4_codes": args.analysis_l4_code or [],
                 "run_dir": str(run_dir),
+            }, ensure_ascii=False, indent=2))
+            return 0
+        if args.prepare_segmented_analysis:
+            normalized = (
+                args.prepare_segmented_analysis.upper()
+                if args.prepare_segmented_analysis.upper().startswith("L3-")
+                else f"L3-{args.prepare_segmented_analysis.upper()}"
+            )
+            snapshot_path = AGENT_ROOT / f"10_部署与运行_Deploy_and_Run/frontend/public/data/model_snapshots/{normalized}.json"
+            if not snapshot_path.exists():
+                raise FileNotFoundError(f"缺少模型快照：{snapshot_path}")
+            run_dir = runner.prepare_segmented_l4(
+                snapshot_path, args.analysis_l4_code or []
+            )
+            print(json.dumps({
+                "status": "segmented_l4_prepared", "l3_code": normalized,
+                "target_l4_codes": args.analysis_l4_code or [],
+                "run_dir": str(run_dir),
+            }, ensure_ascii=False, indent=2))
+            return 0
+        if args.prepare_segmented_repair:
+            normalized = (
+                args.prepare_segmented_repair.upper()
+                if args.prepare_segmented_repair.upper().startswith("L3-")
+                else f"L3-{args.prepare_segmented_repair.upper()}"
+            )
+            snapshot_path = AGENT_ROOT / f"10_部署与运行_Deploy_and_Run/frontend/public/data/model_snapshots/{normalized}.json"
+            package_path = runner.segmented_package_path(normalized)
+            if not snapshot_path.exists() or not package_path.exists():
+                raise FileNotFoundError(f"缺少快照或分段暂存包：{normalized}")
+            run_dir = runner.prepare_repair(snapshot_path, package_path)
+            print(json.dumps({
+                "status": "segmented_repair_prepared", "l3_code": normalized,
+                "run_dir": str(run_dir),
+            }, ensure_ascii=False, indent=2))
+            return 0
+        if args.finalize_segmented_analysis:
+            normalized = (
+                args.finalize_segmented_analysis.upper()
+                if args.finalize_segmented_analysis.upper().startswith("L3-")
+                else f"L3-{args.finalize_segmented_analysis.upper()}"
+            )
+            snapshot_path = AGENT_ROOT / f"10_部署与运行_Deploy_and_Run/frontend/public/data/model_snapshots/{normalized}.json"
+            output = runner.finalize_segmented(snapshot_path)
+            print(json.dumps({
+                "status": "segmented_analysis_published", "l3_code": normalized,
+                "analysis_package": str(output),
             }, ensure_ascii=False, indent=2))
             return 0
         if args.import_analysis_output and not args.run_analysis_dir:

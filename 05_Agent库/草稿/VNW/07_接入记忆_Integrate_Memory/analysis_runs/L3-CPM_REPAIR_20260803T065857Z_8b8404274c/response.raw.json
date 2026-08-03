@@ -1,0 +1,182 @@
+{
+  "tasks": [
+    {
+      "task_id": "L4-CPM-01-M01",
+      "l4_code": "L4-CPM-01",
+      "task_name": "确定监控维度并设计指标计算逻辑与数据源映射",
+      "source_type": "MODEL_DECOMPOSITION_FROM_L4",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-01",
+      "source_line": 100,
+      "previous_task_ids": [],
+      "next_task_ids": ["L4-CPM-02-M01", "L4-CPM-02-M02"],
+      "relation_type": "SEQUENTIAL",
+      "evidence_refs": [
+        "EVD-e690300382e62db1b340",
+        "EVD-8d524965ca9053ef1ac8",
+        "EVD-7fee2ba2077224052e00"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "指标设计涉及业务判断与机构对齐，需要人工决策，AI辅助生成草案和计算逻辑建议，适合Hybrid模式。"
+    },
+    {
+      "task_id": "L4-CPM-01-M02",
+      "l4_code": "L4-CPM-01",
+      "task_name": "搭建实时看板并完成机构确认与数据口径对齐",
+      "source_type": "MODEL_DECOMPOSITION_FROM_L4",
+      "sequence_no": 2,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-01",
+      "source_line": 100,
+      "previous_task_ids": [],
+      "next_task_ids": ["L4-CPM-02-M01", "L4-CPM-02-M02"],
+      "relation_type": "SEQUENTIAL",
+      "evidence_refs": [
+        "EVD-e690300382e62db1b340",
+        "EVD-8d524965ca9053ef1ac8",
+        "EVD-4f8efac6ce82066fa2eb"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "看板配置可部分自动化，但机构确认必须人工进行，数据口径对齐需要协调，建议Hybrid。"
+    },
+    {
+      "task_id": "L4-CPM-02-M01",
+      "l4_code": "L4-CPM-02",
+      "task_name": "执行机构运营数据自动采集与数据清洗标准化",
+      "source_type": "MODEL_DECOMPOSITION_FROM_L4",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-02",
+      "source_line": 113,
+      "previous_task_ids": ["L4-CPM-01-M01", "L4-CPM-01-M02"],
+      "next_task_ids": ["L4-CPM-03-M01"],
+      "relation_type": "SEQUENTIAL",
+      "evidence_refs": [
+        "EVD-f3fa703a46fba36e97a4",
+        "EVD-0e2a9197ed1a54fdab89"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "数据采集和清洗规则明确、结构化，适合封装为确定性Skill全自动执行，异常时转人工。"
+    },
+    {
+      "task_id": "L4-CPM-02-M02",
+      "l4_code": "L4-CPM-02",
+      "task_name": "配置数据推送至看板并设置异常自动预警规则",
+      "source_type": "MODEL_DECOMPOSITION_FROM_L4",
+      "sequence_no": 2,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-02",
+      "source_line": 113,
+      "previous_task_ids": ["L4-CPM-01-M01", "L4-CPM-01-M02"],
+      "next_task_ids": ["L4-CPM-03-M01"],
+      "relation_type": "SEQUENTIAL",
+      "evidence_refs": [
+        "EVD-f3fa703a46fba36e97a4",
+        "EVD-75c7a67035167f10b8ac"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "推送和预警基于规则，可实现全自动；预警阈值需人工设定，但日常执行可自动化。"
+    },
+    {
+      "task_id": "L4-CPM-03-M01",
+      "l4_code": "L4-CPM-03",
+      "task_name": "执行月度数据汇总分析、识别风险与机会并撰写健康度报告",
+      "source_type": "MODEL_DECOMPOSITION_FROM_L4",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-03",
+      "source_line": 128,
+      "previous_task_ids": ["L4-CPM-02-M01", "L4-CPM-02-M02"],
+      "next_task_ids": ["L4-CPM-04-M01"],
+      "relation_type": "SEQUENTIAL",
+      "evidence_refs": [
+        "EVD-6605458612e277a1bfec",
+        "EVD-2fc9400f48e8e4e3aaf7"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "分析需要业务理解与判断，AI辅助生成图表和初稿，但深度洞察和报告确认依赖人工，建议Hybrid。"
+    },
+    {
+      "task_id": "L4-CPM-04-M01",
+      "l4_code": "L4-CPM-04",
+      "task_name": "组织联合评审、进行优先级排序与ROI评估并形成优化决议",
+      "source_type": "MODEL_DECOMPOSITION_FROM_L4",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-04",
+      "source_line": 141,
+      "previous_task_ids": ["L4-CPM-03-M01"],
+      "next_task_ids": ["L4-CPM-05-M01", "L4-CPM-05-M02"],
+      "relation_type": "SEQUENTIAL",
+      "evidence_refs": [
+        "EVD-c837c0597e771ae73ffc",
+        "EVD-bdfbdbf5521175be21f0"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "评审涉及跨部门协商与权威决策，AI仅提供数据支持，必须人工主导，建议Hybrid。"
+    },
+    {
+      "task_id": "L4-CPM-05-M01",
+      "l4_code": "L4-CPM-05",
+      "task_name": "拆解优化决议为原子任务并通过L3-EFB下达执行与进度追踪",
+      "source_type": "MODEL_DECOMPOSITION_FROM_L4",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-05",
+      "source_line": 154,
+      "previous_task_ids": ["L4-CPM-04-M01"],
+      "next_task_ids": [],
+      "relation_type": "UNCONFIRMED",
+      "evidence_refs": [
+        "EVD-35351dd336e287febf3b",
+        "EVD-e917b39961a0ab0c3ff4"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "任务拆解与EFB下达基于规则和接口，可自动化；进度追踪可系统完成，异常触发人工干预。"
+    },
+    {
+      "task_id": "L4-CPM-05-M02",
+      "l4_code": "L4-CPM-05",
+      "task_name": "收集改善对比数据、生成执行报告并主导季度战略复盘",
+      "source_type": "MODEL_DECOMPOSITION_FROM_L4",
+      "sequence_no": 2,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-05",
+      "source_line": 154,
+      "previous_task_ids": ["L4-CPM-04-M01"],
+      "next_task_ids": [],
+      "relation_type": "UNCONFIRMED",
+      "evidence_refs": [
+        "EVD-35351dd336e287febf3b",
+        "EVD-e917b39961a0ab0c3ff4"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "数据采集与报告生成可自动化，但季度复盘需高层判断与经验总结，必须人工主导，建议Hybrid。"
+    }
+  ],
+  "decision_drafts": [
+    {
+      "priority": 1,
+      "task_ids": ["L4-CPM-01-M01", "L4-CPM-01-M02"],
+      "title": "试点建立机构监控指标体系与看板",
+      "pilot_scope": "选定1-2家合作机构，完成核心KPI设计和实时看板搭建，验证数据口径对齐与告警规则。",
+      "human_boundary": "最终监控维度确定、指标审批、机构确认环节必须由流程项目组负责人和机构对接人完成。",
+      "evidence_refs": [
+        "EVD-aa6a53f584e0a05a468f",
+        "EVD-1debdba4b24feb012634",
+        "EVD-384cbd335f594eaa8202",
+        "EVD-8d524965ca9053ef1ac8"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ]
+}

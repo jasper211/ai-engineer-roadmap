@@ -636,6 +636,58 @@ class L3ModelSystemTests(unittest.TestCase):
             ],
         )
 
+    def test_segmented_analysis_stays_in_staging_until_complete(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            prompt = root / "08_设计提示词_Design_Prompts/L3统一分析模型_v1.0.md"
+            prompt.parent.mkdir(parents=True)
+            prompt.write_text("只使用事实包。", encoding="utf-8")
+            model = self.qualified_builder().build("L3-T")
+            snapshot = root / "L3-T.json"
+            snapshot.write_text(json.dumps(model, ensure_ascii=False), encoding="utf-8")
+            runner = L3AnalysisRunner(root)
+            staging = runner.initialize_segmented(snapshot)
+            self.assertIn("analysis_packages/staging", str(staging))
+            self.assertFalse((root / "07_接入记忆_Integrate_Memory/analysis_packages/L3-T.model.json").exists())
+            with self.assertRaisesRegex(ValueError, "分段L4分析未完成"):
+                runner.finalize_segmented(snapshot)
+
+    def test_segmented_analysis_finalizes_only_valid_complete_package(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            prompt = root / "08_设计提示词_Design_Prompts/L3统一分析模型_v1.0.md"
+            prompt.parent.mkdir(parents=True)
+            prompt.write_text("只使用事实包。", encoding="utf-8")
+            model = self.qualified_builder().build("L3-T")
+            snapshot = root / "L3-T.json"
+            snapshot.write_text(json.dumps(model, ensure_ascii=False), encoding="utf-8")
+            runner = L3AnalysisRunner(root)
+            staging = runner.initialize_segmented(snapshot)
+            package = json.loads(staging.read_text(encoding="utf-8"))
+            evidence_id = model["evidence_registry"][0]["evidence_id"]
+            item = package["l4_analysis"][0]
+            item["analysis_status"] = "MODEL_DRAFT"
+            item["evidence_refs"] = [evidence_id]
+            package["tasks"] = [{
+                "task_id": "L4-T-01-M01", "l4_code": "L4-T-01",
+                "task_name": "核对测试交付物", "source_type": "MODEL_DECOMPOSITION_FROM_L4",
+                "evidence_refs": [evidence_id], "analysis_status": "MODEL_DRAFT",
+                "suggested_tier": "Aug", "tier_rationale": "人工复核",
+                "sequence_status": "UNCONFIRMED",
+            }]
+            package["decision_drafts"] = [{
+                "priority": 1, "task_ids": ["L4-T-01-M01"], "title": "试点",
+                "pilot_scope": "单一交付物", "human_boundary": "人工确认",
+                "evidence_refs": [evidence_id], "analysis_status": "MODEL_DRAFT",
+            }]
+            staging.write_text(json.dumps(package, ensure_ascii=False), encoding="utf-8")
+            output = runner.finalize_segmented(snapshot)
+            published = json.loads(output.read_text(encoding="utf-8"))
+            self.assertEqual(published["analysis_status"], "MODEL_DRAFT")
+            self.assertEqual(published["generation_mode"], "UNIFIED_MODEL")
+            self.assertEqual(published["segmented_run"]["status"], "COMPLETED")
+            self.assertNotIn("逐L4交付物与具体能力分析", published["missing_analysis"])
+
 
 if __name__ == "__main__":
     unittest.main()
