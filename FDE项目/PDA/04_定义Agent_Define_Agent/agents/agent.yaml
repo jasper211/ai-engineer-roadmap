@@ -1,6 +1,6 @@
 agent_id: PDA
 name: 业绩数据多维分析 Agent（围绕牌照端 issuing_entity）
-version: 0.1.1
+version: 0.2.0
 status: 测试中
 entrypoint: agent.py
 capabilities:
@@ -8,6 +8,7 @@ capabilities:
   - clean_and_standardize  # 日期类型修正(Excel序列号)、policy_status三档映射、future_dated标记
   - aggregate_by_issuing_entity  # 围绕issuing_entity的7类多维聚合，对齐阶段一原型DATA结构
   - generate_html_dashboard  # 复用阶段一原型的Chart.js模板注入修正后数据
+  - enrich_report_derived_fields  # 反推还原S8_明细数据底表13个衍生字段，用真实S8 sheet逐行核验
 boundaries:
-  included: 单份底表Excel的一次性清洗+聚合+看板生成demo；修复真实核实发现的日期类型bug和future_dated计数bug
-  deferred: CRM/保司系统实时同步、多用户权限、知识库问答（阶段二/三，前提未确认）、sum_assured/SQ_rate/referral_code/premium_term字段的清洗与聚合（当前维度框架未用到）
+  included: 单份底表Excel的一次性清洗+聚合+看板生成demo；修复真实核实发现的日期类型bug和future_dated计数bug；S8明细底表13个衍生字段（12个已100%核验，1个待补标准化规则）
+  deferred: CRM/保司系统实时同步、多用户权限、知识库问答（阶段二/三，前提未确认）、sum_assured/referral_code字段的清洗与聚合（当前维度框架未用到）、S1-S7/S9共7张专题视角表+PPT生成（涉及外部目标APE数据源，暂未接入）

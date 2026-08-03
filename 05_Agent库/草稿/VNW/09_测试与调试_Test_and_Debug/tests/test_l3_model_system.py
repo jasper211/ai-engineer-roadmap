@@ -55,6 +55,29 @@ class L3ModelSystemTests(unittest.TestCase):
             )
             self.assertEqual(load_analysis_packages(root)["L3-T"]["source"], "model")
 
+    def test_stale_analysis_falls_back_when_source_adds_l4(self):
+        previous = self.qualified_builder().build("L3-T")["analysis"]
+        reader = FakeReader(complete_d=True, with_mapping=True)
+        second_row = dict(reader.row)
+        second_row.update({
+            "l4_code": "L4-T-02",
+            "l4_name": "形成新增交付物",
+            "l4_deliverable": "新增交付物",
+        })
+        reader.processes = lambda _: [reader.row, second_row]
+        builder = L3ModelBuilder(
+            reader,
+            {"L3-T": BlueprintIndex("L3-T", "测试流程", "V1.0", "蓝图.md")},
+            analysis_packages={"L3-T": previous},
+        )
+
+        model = builder.build("L3-T")
+
+        self.assertEqual(model["analysis"]["analysis_status"], "PENDING_MODEL")
+        self.assertEqual(len(model["analysis"]["l4_analysis"]), 2)
+        self.assertEqual(model["stale_analysis"]["status"], "ANALYSIS_INPUT_CHANGED")
+        self.assertIn("L4-T-02", model["stale_analysis"]["reason"])
+
     def builder(self, complete_d=True, with_mapping=True):
         index = {"L3-T": BlueprintIndex("L3-T", "测试流程", "V1.0", "蓝图.md")}
         return L3ModelBuilder(FakeReader(complete_d, with_mapping), index)

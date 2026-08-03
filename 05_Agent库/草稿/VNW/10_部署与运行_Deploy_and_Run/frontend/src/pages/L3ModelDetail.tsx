@@ -411,11 +411,13 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
               当前事实包已从同一数据库与知识输入链生成，提取出 {model.analysis.tasks.length} 条可追溯蓝图任务。
               {model.analysis.analysis_status === 'PENDING_MODEL'
                 ? '模型分析尚未执行，以下页面只展示事实层，不会自动补造COM式结论。'
-                : '模型分析草稿已生成，页面中的推导内容必须保留证据引用。'}
+                : model.analysis.analysis_status === 'REVIEWED'
+                  ? '已形成人工复核基线，页面结论仍保留证据引用和版本边界。'
+                  : '模型分析草稿已生成，页面中的推导内容必须保留证据引用。'}
             </p>
           </div>
-          <span className={`rounded-full px-3 py-1.5 text-xs font-medium ${model.analysis.analysis_status === 'PENDING_MODEL' ? 'bg-amber-100 text-amber-800' : 'bg-violet-100 text-violet-800'}`}>
-            {model.analysis.analysis_status === 'PENDING_MODEL' ? '待运行统一模型' : '模型分析草稿'}
+          <span className={`rounded-full px-3 py-1.5 text-xs font-medium ${model.analysis.analysis_status === 'PENDING_MODEL' ? 'bg-amber-100 text-amber-800' : model.analysis.analysis_status === 'REVIEWED' ? 'bg-emerald-100 text-emerald-800' : 'bg-violet-100 text-violet-800'}`}>
+            {model.analysis.analysis_status === 'PENDING_MODEL' ? '待运行统一模型' : model.analysis.analysis_status === 'REVIEWED' ? '人工复核基线' : '模型分析草稿'}
           </span>
         </div>
         {model.analysis.missing_analysis.length > 0 && (

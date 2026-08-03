@@ -171,7 +171,15 @@ def validate_analysis_package(package: dict, evidence_ids: set[str], l4_codes: s
                 raise ValueError(f"{code}引用未知证据：{sorted(unknown)}")
 
     if seen != l4_codes:
-        raise ValueError(f"L4分析覆盖不完整：{len(seen)}/{len(l4_codes)}")
+        missing_codes = sorted(l4_codes - seen)
+        extra_codes = sorted(seen - l4_codes)
+        details = []
+        if missing_codes:
+            details.append(f"缺失={','.join(missing_codes)}")
+        if extra_codes:
+            details.append(f"多余={','.join(extra_codes)}")
+        suffix = f"（{'; '.join(details)}）" if details else ""
+        raise ValueError(f"L4分析覆盖不完整：{len(seen)}/{len(l4_codes)}{suffix}")
 
     for task in package.get("tasks", []):
         if task.get("l4_code") not in l4_codes:

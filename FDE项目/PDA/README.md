@@ -40,14 +40,16 @@ PDA/
 
 ```bash
 python3 04_定义Agent_Define_Agent/agents/agent.py --run
+python3 04_定义Agent_Define_Agent/agents/agent.py --enrich
 python3 04_定义Agent_Define_Agent/agents/agent.py --status
 python3 09_测试与调试_Test_and_Debug/tests/test_integration.py
 ```
 
-`--run` 读取 `raw_data/` 下的底表 Excel，清洗、聚合，在 `07_接入记忆_Integrate_Memory/data/` 生成 HTML 看板；`--status` 查看上次运行的记录数/future_dated数等摘要。
+`--run` 读取 `raw_data/` 下的底表 Excel，清洗、聚合，在 `07_接入记忆_Integrate_Memory/data/` 生成 HTML 看板；`--enrich` 清洗后加上 S8 明细底表的13个衍生字段，存成CSV（为复刻9-sheet专题报表打基础）；`--status` 查看上次运行的记录数/future_dated数等摘要。
 
 ## 关联文档
 
 - [需求定义.md](01_初始化项目_Initialize_Project/需求定义.md) — 含真实底表核实发现（日期类型bug、future_dated真实计数）
-- [流程设计.md](03_规划项目结构_Plan_Project_Structure/流程设计.md) — L3-PDA-01~04 端到端流程 + 清洗规则明细表
+- [S8衍生字段_反推标准_v0.1.md](01_初始化项目_Initialize_Project/S8衍生字段_反推标准_v0.1.md) — 从《业绩分析报表》反推还原S8明细底表13个衍生字段规则，12个已100%核验
+- [流程设计.md](03_规划项目结构_Plan_Project_Structure/流程设计.md) — L3-PDA-01~05 端到端流程 + 清洗/衍生字段规则明细表
 - [执行记录.md](执行记录.md) — 端到端运行结果 + 踩坑记录

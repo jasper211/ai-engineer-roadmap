@@ -20,8 +20,10 @@ from skills.data_loader import DataLoader, MissingColumnsError
 from skills.cleaner import Cleaner, UnmappedStatusError
 from skills.aggregator import Aggregator
 from skills.dashboard_generator import DashboardGenerator
+from skills.report_enricher import ReportEnricher, UnmappedPolicyStageError
 
 RAW_DATA_DIR = AGENT_ROOT / "07_接入记忆_Integrate_Memory" / "raw_data"
+REPORT_FILE = RAW_DATA_DIR / "业绩分析报表_0724.xlsx"
 
 failures = []
 
@@ -104,6 +106,50 @@ def main():
     broken = load_result.df.drop(columns=["premium"])
     missing = [c for c in EXPECTED_COLUMNS if c not in broken.columns]
     check("列完整性校验能识别出缺失列", missing == ["premium"])
+
+    # ---- L3-PDA-05：report_enricher，对照真实"业绩分析报表"S8独立核验 ----
+    # 按SOP 5.2节"独立数据源交叉核验"原则：ground truth来自另一份独立文件（Jasper提供的
+    # 业绩分析报表_0724.xlsx），不是拿enricher自己的输出自我复述。
+    enriched = ReportEnricher().enrich(df)
+    if REPORT_FILE.exists():
+        import pandas as pd
+        s8 = pd.read_excel(REPORT_FILE, sheet_name="S8_明细数据底表", header=1)
+        m = enriched.merge(s8, left_on="policy_id", right_on="订单编号", how="inner")
+        check("report_enricher 与真实S8全部匹配上（未丢单）", len(m) == len(enriched))
+
+        simple_fields = [
+            ("保单阶段", "保单阶段_x", "保单阶段_y"),
+            ("业务大类", "业务大类_x", "业务大类_y"),
+            ("融资标签", "融资标签_x", "融资标签_y"),
+            ("保费分档", "保费分档_x", "保费分档_y"),
+            ("APE分档", "APE分档_x", "APE分档_y"),
+            ("签单年", "签单年_x", "签单年_y"),
+            ("签单年月", "签单年月_x", "签单年月_y"),
+            ("预约年月", "预约年月_x", "预约年月_y"),
+        ]
+        for name, ca, cb in simple_fields:
+            match = (m[ca].astype(object).where(m[ca].notna(), None)
+                     == m[cb].astype(object).where(m[cb].notna(), None)).sum()
+            check(f"report_enricher『{name}』与真实S8 100%匹配", match == len(m), f"{match}/{len(m)}")
+
+        # 年期分类：真实数据里24行(premium_term为文本/缺失)两边都是None，直接==会判false，需分开算
+        term_match = ((m["年期分类_x"] == m["年期分类_y"]) | (m["年期分类_x"].isna() & m["年期分类_y"].isna())).sum()
+        check("report_enricher『年期分类』与真实S8 100%匹配", term_match == len(m), f"{term_match}/{len(m)}")
+
+        # 签批时效/批核年/批核年月：issue_date缺失的704条两边都是NaN，同样要分开算
+        for name, ca, cb in [("签批时效(天)", "签批时效(天)_x", "签批时效(天)_y"),
+                              ("批核年", "批核年_x", "批核年_y"),
+                              ("批核年月", "批核年月_x", "批核年月_y")]:
+            match = ((m[ca] == m[cb]) | (m[ca].isna() & m[cb].isna())).sum()
+            check(f"report_enricher『{name}』与真实S8 100%匹配", match == len(m), f"{match}/{len(m)}")
+    else:
+        check(f"⚠️ {REPORT_FILE.name} 不存在，跳过report_enricher独立核验（不算失败，但下次有文件要重跑）", True)
+
+    try:
+        ReportEnricher().enrich(df.assign(policy_status=["未知状态"] * len(df)))
+        check("policy_status 出现未知取值时 enrich 应抛出 UnmappedPolicyStageError", False)
+    except UnmappedPolicyStageError:
+        check("policy_status 出现未知取值时 enrich 正确抛出 UnmappedPolicyStageError", True)
 
     print()
     if failures:

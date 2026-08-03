@@ -579,9 +579,17 @@ class L3ModelBuilder:
             if code in l4_codes
         }
         analysis_candidate = self.analysis_packages.get(l3_code)
+        candidate_l4_codes = {
+            item.get("l4_code", "")
+            for item in (analysis_candidate or {}).get("l4_analysis", [])
+            if item.get("l4_code")
+        }
+        analysis_candidate_current = bool(analysis_candidate) and candidate_l4_codes == l4_codes
         analyzed_task_l4s = {
             task.get("l4_code", "") for task in (analysis_candidate or {}).get("tasks", [])
-            if task.get("evidence_refs") and task.get("l4_code") in l4_codes
+            if analysis_candidate_current
+            and task.get("evidence_refs")
+            and task.get("l4_code") in l4_codes
         }
         task_l4s = blueprint_task_l4s | sop_task_l4s | analyzed_task_l4s
         task_ratio = len(task_l4s) / len(l4s) if l4s else 0
@@ -770,14 +778,31 @@ class L3ModelBuilder:
             "supplemental_evidence_refs": [record.evidence_id for record in (supplemental or [])],
         }
         analysis_evidence_ids = eligible_analysis_evidence_ids(evidence)
-        model["analysis"] = analysis_candidate or build_analysis_envelope(
+        fallback_analysis = build_analysis_envelope(
             l3_code=l3_code, l4s=l4s, blueprint=model["blueprint"], evidence_ids=analysis_evidence_ids,
         )
-        validate_analysis_package(
-            model["analysis"],
-            evidence_ids=analysis_evidence_ids,
-            l4_codes={item["l4_code"] for item in l4s},
-        )
+        model["analysis"] = analysis_candidate or fallback_analysis
+        try:
+            validate_analysis_package(
+                model["analysis"],
+                evidence_ids=analysis_evidence_ids,
+                l4_codes={item["l4_code"] for item in l4s},
+            )
+        except ValueError as exc:
+            if not analysis_candidate:
+                raise
+            model["stale_analysis"] = {
+                "status": "ANALYSIS_INPUT_CHANGED",
+                "reason": str(exc),
+                "previous_analysis_status": analysis_candidate.get("analysis_status", ""),
+                "previous_input_snapshot_hash": (analysis_candidate.get("model_run") or {}).get("input_snapshot_hash", ""),
+            }
+            model["analysis"] = fallback_analysis
+            validate_analysis_package(
+                model["analysis"],
+                evidence_ids=analysis_evidence_ids,
+                l4_codes={item["l4_code"] for item in l4s},
+            )
         model["analysis_input_hash"] = analysis_input_hash(model)
         return model
 
@@ -790,7 +815,10 @@ class L3ModelBuilder:
         results = []
         models = []
         for code in l3_codes:
-            model = self.build(code, (supplemental_by_l3 or {}).get(code, []))
+            try:
+                model = self.build(code, (supplemental_by_l3 or {}).get(code, []))
+            except (KeyError, TypeError, ValueError) as exc:
+                raise type(exc)(f"{code}快照构建失败：{exc}") from exc
             models.append(model)
             results.append(write_snapshot(model, output_dir))
         indexed_models = {}
@@ -823,6 +851,7 @@ class L3ModelBuilder:
                     "analysis_run_input_hash": (model["analysis"].get("model_run") or {}).get("input_snapshot_hash", ""),
                     "production_status": (
                         "BLOCKED_INPUT" if not model["model_readiness"]["model_generation_allowed"]
+                        else "ANALYSIS_INPUT_CHANGED" if model.get("stale_analysis")
                         else "RUN_PREPARED" if model["l3_code"] in self.prepared_analysis_codes and model["analysis"]["analysis_status"] == "PENDING_MODEL"
                         else "READY_TO_RUN" if model["analysis"]["analysis_status"] == "PENDING_MODEL"
                         else "REVIEWED_BASELINE" if model["analysis"]["analysis_status"] == "REVIEWED" and not (model["analysis"].get("model_run") or {}).get("input_snapshot_hash")

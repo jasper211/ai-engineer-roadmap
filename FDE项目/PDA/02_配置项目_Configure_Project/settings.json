@@ -1,26 +1,29 @@
 {
   "agent_id": "PDA",
   "name": "业绩数据多维分析 Agent（围绕牌照端 issuing_entity）",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "status": "测试中",
-  "description": "读取业绩数据底表 Excel，清洗标准化（含日期类型修正、policy_status三档映射、future_dated标记），围绕issuing_entity做7类多维聚合，生成可交互HTML看板——demo目标是修复阶段一原型里未察觉的真实bug并把流程Agent化，不做增量/调度/云端/CRM对接。",
+  "description": "读取业绩数据底表 Excel，清洗标准化（含日期类型修正、policy_status三档映射、future_dated标记），围绕issuing_entity做7类多维聚合，生成可交互HTML看板；同时反推还原《业绩分析报表》S8明细底表的13个衍生字段规则，为下一步复刻多sheet专题报表打基础。不做增量/调度/云端/CRM对接。",
   "entrypoint": "04_定义Agent_Define_Agent/agents/agent.py",
 
-  "migration_note": "v0.1.0：以FDE角色承接《业绩数据分析项目启动方案》，按Agent搭建SOP v1.2的01-11骨架搭建。真实底表核实（需求定义.md第十一节）发现阶段一原型有2个未被发现的真实bug：①res_date/sign_date/submit_date字段混有Excel序列号整数，朴素pd.to_datetime会静默解析成1970年附近的错误时间戳，直接污染'运营效率'维度；②future_dated真实为53条而非原型footer硬编码的11条。Jasper确认'按你的发现和逻辑出来'后，本版本直接把这两处修复设计进L3-PDA-02清洗流程，不再逐条等待业务侧确认。v0.1.1：Jasper反馈'看板内选择后下方各模块没有显示数据'，实测（curl直连CDN URL）发现阶段一原型引用的Chart.js CDN地址（4.4.4版chart.umd.min.js）返回404，导致Chart未定义、整个交互脚本在图表初始化处崩溃。改为把Chart.js 4.5.0 UMD包内联进HTML（skills/vendor/chart.umd.min.js），看板不再依赖任何外部网络请求；并给图表初始化/更新逻辑加了CHART_AVAILABLE防御性判断，避免同类问题再次拖垮整个交互层。",
+  "migration_note": "v0.1.0：以FDE角色承接《业绩数据分析项目启动方案》，按Agent搭建SOP v1.2的01-11骨架搭建。真实底表核实（需求定义.md第十一节）发现阶段一原型有2个未被发现的真实bug：①res_date/sign_date/submit_date字段混有Excel序列号整数，朴素pd.to_datetime会静默解析成1970年附近的错误时间戳，直接污染'运营效率'维度；②future_dated真实为53条而非原型footer硬编码的11条。Jasper确认'按你的发现和逻辑出来'后，本版本直接把这两处修复设计进L3-PDA-02清洗流程，不再逐条等待业务侧确认。v0.1.1：Jasper反馈'看板内选择后下方各模块没有显示数据'，实测（curl直连CDN URL）发现阶段一原型引用的Chart.js CDN地址（4.4.4版chart.umd.min.js）返回404，导致Chart未定义、整个交互脚本在图表初始化处崩溃。改为把Chart.js 4.5.0 UMD包内联进HTML（skills/vendor/chart.umd.min.js），看板不再依赖任何外部网络请求；并给图表初始化/更新逻辑加了CHART_AVAILABLE防御性判断，避免同类问题再次拖垮整个交互层。v0.2.0：Jasper提出真实工作场景比阶段一深得多——raw表还要经过Python+模型结构要求生成9-sheet专题报表(业绩分析报表_0724.xlsx)，再生成周报PPT。现有生成代码Jasper暂时无法提供，改为从产出物反推标准。新增skills/report_enricher.py，反推还原S8_明细数据底表的13个衍生字段，用真实S8 sheet逐行核验，12个字段100%匹配；过程中先后发现并（Jasper手动）修复了S8表头列错位bug，'首年折扣(标准化)'确认来源字段=SQ_rate但标准化规则待补，本版本原样透传不擅自编规则。S1-S9其余7张专题视角表+PPT生成留待下一批（涉及目标APE外部数据源，目前在服务器数据库只读、暂未接入）。",
 
   "data_scope": {
     "source": "Jasper 人工放置的业绩数据底表 Excel，放 07_接入记忆_Integrate_Memory/raw_data/",
     "current_file": "业绩数据底表-20260724.xlsx（3595行原始，3593条有效记录，30列，12家issuing_entity）",
-    "storage": "本地缓存清洗后数据 + 生成的HTML看板，07_接入记忆_Integrate_Memory/data/"
+    "reference_files": "业绩分析报表_0724.xlsx（9-sheet专题报表，S8作为report_enricher的独立ground truth）、周业绩汇报PPT_W29_20260724.pptx（12页，暂未涉及生成逻辑）",
+    "storage": "本地缓存清洗后数据 + 生成的HTML看板 + S8衍生字段CSV，07_接入记忆_Integrate_Memory/data/"
   },
 
-  "skills": ["data_loader", "cleaner", "aggregator", "dashboard_generator"],
+  "skills": ["data_loader", "cleaner", "aggregator", "dashboard_generator", "report_enricher"],
   "tools": [],
 
   "known_limitations": [
-    "sum_assured/SQ_rate/referral_code/premium_term 四个字段本版本不参与清洗和聚合（当前7维分析框架未用到），透传原样，不代表已处理",
+    "sum_assured/referral_code 两个字段本版本不参与清洗和聚合（当前7维分析框架未用到），透传原样，不代表已处理",
+    "首年折扣(标准化)：来源字段已确认=SQ_rate，标准化分档规则待Jasper提供，当前report_enricher原样透传，见S8衍生字段_反推标准_v0.1.md三节",
     "carrier固定汇率假设（美金7.8/人民币1.14/加元5.85/澳元5.0/港币1.0）沿用底表premium字段自带口径，未与业务侧确认是否需要定期更新",
-    "阶段二（CRM/保司系统实时同步）、阶段三（知识库问答）不在本版本范围，见需求定义.md 4.2节"
+    "阶段二（CRM/保司系统实时同步）、阶段三（知识库问答）不在本版本范围，见需求定义.md 4.2节",
+    "S1-S7/S9共7张专题视角表 + PPT生成逻辑尚未反推，且S1/S2/S4/S5/S7/S9依赖外部'目标APE'数据（服务器数据库只读，暂未接入连接）"
   ],
 
   "archive_gate": {
