@@ -25,7 +25,7 @@
           # skills/sync_vnw_reference_files.py docstring。跟原子提炼是
           # 独立的两件事，这里只是顺路复用同一个每日窗口，不共享状态。
           cd "$OB_DIR/06_开发技能_Develop_Skills/skills";
-          /usr/local/bin/python3 sync_vnw_reference_files.py 2>&1 | tee -a /tmp/ob-vnw-reference-sync.log;
+          /usr/local/bin/python3 sync_vnw_reference_files.py 2>&amp;1 | tee -a /tmp/ob-vnw-reference-sync.log;
 
           /usr/local/bin/python3 "$OB_DIR/05_集成工具_Integrate_Tools/tools/sync_to_icloud.py";
 
@@ -44,10 +44,17 @@
           git push origin main || true;
         </string>
     </array>
+    <!-- 2026-08-03：凌晨2点(本机时间)→北京时间每天10点。本机时区是
+    America/Chicago，当前是CDT(UTC-5)：北京10:00 = UTC 02:00 = 本机
+    前一天21:00，所以下面写的是Hour=21（不是10）。⚠️ 这个换算是按当前
+    CDT算的——美国11月初/3月初切换夏令时(CDT↔CST, UTC-5↔UTC-6)时，
+    本机21:00对应的北京时间会跟着漂移1小时(变成北京11点)，北京本身
+    不用夏令时。到时候需要把这里手动改成Hour=20（CST生效后）才能继续
+    对齐北京10点，launchd不支持直接按目标时区配置，只能这样手动跟着调。 -->
     <key>StartCalendarInterval</key>
     <dict>
         <key>Hour</key>
-        <integer>2</integer>
+        <integer>21</integer>
         <key>Minute</key>
         <integer>0</integer>
     </dict>
