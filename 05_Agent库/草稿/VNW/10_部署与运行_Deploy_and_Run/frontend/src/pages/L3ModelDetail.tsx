@@ -805,6 +805,9 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
       <section className="rounded-2xl border border-indigo-200 bg-gradient-to-br from-indigo-50 to-white p-5 shadow-panel">
         <div className="flex items-center gap-2"><Bot className="h-4 w-4 text-accent-primary" /><h2 className="text-sm font-semibold">负责人决策 · 先试哪些AI任务</h2></div>
         <p className="mt-2 text-xs text-text-muted">只输出任务级优先顺序、最小试点、人工边界和需要拍板的事项。</p>
+        <p className="mt-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-[11px] leading-5 text-amber-800">
+          以下是统一模型生成的决策建议草稿，不是数据库结论或已达成的业务共识。试点范围、周期、责任人和验收指标必须由负责人确认后才生效。
+        </p>
         {model.analysis.decision_drafts.length === 0 ? (
           <div className="mt-4 rounded-xl border border-dashed border-indigo-200 bg-white/80 p-5 text-sm text-text-secondary">
             当前尚无通过证据校验的负责人决策草稿。完成统一模型分析后再生成，不使用通用建议占位。
@@ -813,7 +816,13 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
           <div className="mt-4 space-y-3">{model.analysis.decision_drafts.map((draft, index) => (
             <div key={String(draft.priority || index)} className="grid gap-3 rounded-xl border border-indigo-100 bg-white p-4 md:grid-cols-[90px_1.2fr_1fr_1fr]">
               <div><span className="rounded-full bg-indigo-100 px-2.5 py-1 text-xs font-bold text-indigo-800">{String(draft.priority || '')}</span></div>
-              <div><p className="text-sm font-semibold text-text-primary">{String(draft.title || '')}</p><p className="mt-1 font-mono text-[10px] text-text-muted">{Array.isArray(draft.task_ids) ? draft.task_ids.join('、') : ''}</p></div>
+              <div>
+                <p className="text-sm font-semibold text-text-primary">{String(draft.title || '')}</p>
+                <p className="mt-1 font-mono text-[10px] text-text-muted">{Array.isArray(draft.task_ids) ? draft.task_ids.join('、') : ''}</p>
+                {Array.isArray(draft.evidence_refs) && draft.evidence_refs.length > 0 && (
+                  <p className="mt-1 font-mono text-[9px] leading-4 text-indigo-500">证据：{draft.evidence_refs.join('、')}</p>
+                )}
+              </div>
               <div><p className="eyebrow">最小试点</p><p className="mt-1 text-xs leading-5 text-text-secondary">{String(draft.pilot_scope || '')}</p></div>
               <div><p className="eyebrow">人工边界</p><p className="mt-1 text-xs leading-5 text-text-secondary">{String(draft.human_boundary || '')}</p></div>
             </div>
