@@ -11,19 +11,66 @@
         <string>--scan</string>
         <string>--quiet</string>
     </array>
+    <!-- 2026-08-03：每周一9点(本机时间)→北京时间工作日(周一~周五)10:30。
+    本机America/Chicago当前CDT(UTC-5)：北京10:30 = UTC 02:30 = 本机前一天
+    21:30——"前一天"这个跨天很关键，意味着本机的触发星期要往前挪一天：
+    北京周一10:30 对应本机周日21:30，……北京周五10:30 对应本机周四21:30。
+    所以下面是本机Weekday 0(周日)~4(周四)，不是1(周一)~5(周五)，直接照抄
+    北京的星期会全部错开一天。StartCalendarInterval写成数组，5个条件任一
+    满足就触发，等价于"这5个本机时间点各触发一次"。⚠️ 夏令时切换后
+    （CDT↔CST）Hour需要跟着从21改成20，见ob-daily-extract.plist同一条
+    注释的说明，原理一样。 -->
     <key>StartCalendarInterval</key>
-    <dict>
-        <key>Weekday</key>
-        <integer>1</integer>
-        <key>Hour</key>
-        <integer>9</integer>
-        <key>Minute</key>
-        <integer>0</integer>
-    </dict>
+    <array>
+        <dict>
+            <key>Weekday</key>
+            <integer>0</integer>
+            <key>Hour</key>
+            <integer>21</integer>
+            <key>Minute</key>
+            <integer>30</integer>
+        </dict>
+        <dict>
+            <key>Weekday</key>
+            <integer>1</integer>
+            <key>Hour</key>
+            <integer>21</integer>
+            <key>Minute</key>
+            <integer>30</integer>
+        </dict>
+        <dict>
+            <key>Weekday</key>
+            <integer>2</integer>
+            <key>Hour</key>
+            <integer>21</integer>
+            <key>Minute</key>
+            <integer>30</integer>
+        </dict>
+        <dict>
+            <key>Weekday</key>
+            <integer>3</integer>
+            <key>Hour</key>
+            <integer>21</integer>
+            <key>Minute</key>
+            <integer>30</integer>
+        </dict>
+        <dict>
+            <key>Weekday</key>
+            <integer>4</integer>
+            <key>Hour</key>
+            <integer>21</integer>
+            <key>Minute</key>
+            <integer>30</integer>
+        </dict>
+    </array>
     <!-- 2026-07-25：false→true，跟ob-daily-extract同一理由——StartCalendarInterval
-    错过的窗口（电脑关机/睡眠导致周一9点没触发）不会自动补跑，只能等下周一。
-    RunAtLoad=true让下次登录/重启时补跑一次。代价：每次重启/重新登录都会触发
-    一次真实GitHub API+可能的LLM调用，Jasper已确认接受。 -->
+    错过的窗口（电脑关机/睡眠导致该触发的时间点没触发）不会自动补跑，只能
+    等下一个工作日。RunAtLoad=true让下次登录/重启时补跑一次。代价：每次
+    重启/重新登录都会触发一次真实GitHub API+可能的LLM调用，Jasper已确认
+    接受。（2026-08-03备注：这条RunAtLoad修复上线后，实测到目前为止还没有
+    一次是真正靠自己的定时/RunAtLoad触发成功过，唯一一次运行是人工强制
+    reload——这个改成工作日10:30后要继续盯，如果还是不自己触发，说明
+    RunAtLoad没有真正解决根因，需要换个思路诊断。） -->
     <key>RunAtLoad</key>
     <true/>
     <key>StandardOutPath</key>

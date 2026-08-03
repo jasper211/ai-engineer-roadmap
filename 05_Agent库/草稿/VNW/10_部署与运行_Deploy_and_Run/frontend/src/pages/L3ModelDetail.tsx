@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router'
 import { AlertTriangle, ArrowLeft, ArrowRight, Bot, GitBranch, GripVertical, Info, Layers3, LoaderCircle, RotateCcw, Save, ShieldCheck } from 'lucide-react'
 import { loadL3Model, type L3Model } from '../lib/l3Models'
+import { loadAitTrackAssignment, type AitTrackAssignment } from '../lib/aitTracks'
 
 const COLUMNS = [
   { id: 'Human', label: 'Human · 人工主导', explanation: '任务由人完成；AI最多提供资料检索或记录支持，不替代判断与执行。', color: 'border-rose-400/30 bg-rose-400/5' },
@@ -210,12 +211,14 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
   const l3Code = modelCode || params.l3Code || ''
   const [model, setModel] = useState<L3Model | null>(null)
   const [error, setError] = useState('')
+  const [aitTracks, setAitTracks] = useState<AitTrackAssignment | null>(null)
   const storageKey = `vnw-workshop-v1:${l3Code}`
   const [session, setSession] = useState<WorkshopState>({ placements: {}, priorityPlacements: {}, note: '', updatedAt: '', baseSnapshotHash: '' })
   const [taskL4Filter, setTaskL4Filter] = useState('ALL')
 
   useEffect(() => {
     loadL3Model(l3Code).then(setModel).catch(error => setError(error.message))
+    loadAitTrackAssignment(l3Code).then(setAitTracks).catch(() => setAitTracks(null))
     const saved = localStorage.getItem(storageKey)
     if (saved) {
       try {
@@ -431,6 +434,47 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
           <p className="mt-2 text-[11px] text-text-muted">尚待生成：{model.analysis.missing_analysis.join('、')}</p>
         )}
       </section>
+
+      {aitTracks ? (
+        <section className="panel p-5">
+          <div className="flex items-center gap-2"><Bot className="h-4 w-4 text-accent-primary-light" /><h2 className="text-sm font-semibold">AIT 承接状态 · {aitTracks.decisions.reduce((n, d) => n + d.tasks.length, 0)} 条已确认任务</h2></div>
+          <p className="mt-1 text-xs text-text-muted">来源：{aitTracks.source_decisions}。只展示负责人在决策面板确认过的任务，不是全部LLM草稿任务的自动批量灌入。</p>
+          <div className="mt-4 space-y-3">
+            {aitTracks.decisions.map(decision => (
+              <div key={decision.decision_id} className="rounded-xl border border-border-default bg-bg-surface p-4">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <p className="font-mono text-xs text-accent-primary-light">{decision.decision_id}</p>
+                    <p className="mt-0.5 text-sm font-medium text-text-primary">{decision.task_name}</p>
+                  </div>
+                  <span className="text-[11px] text-text-muted">{decision.selected_by} 确认于 {decision.selected_at}</span>
+                </div>
+                <div className="mt-2 grid gap-2 text-[11px] text-text-secondary md:grid-cols-2">
+                  <p><span className="text-text-muted">最小试点：</span>{decision.pilot_scope}</p>
+                  <p><span className="text-text-muted">人工边界：</span>{decision.human_boundary}</p>
+                </div>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {decision.tasks.map(task => (
+                    <span
+                      key={task.task_id}
+                      className={`rounded-md border px-2 py-1 font-mono text-[11px] ${
+                        task.track === '人的规则轨道'
+                          ? 'border-rose-400/30 bg-rose-400/10 text-rose-700'
+                          : 'border-emerald-400/30 bg-emerald-400/10 text-emerald-700'
+                      }`}
+                      title={task.gate_reason || task.track}
+                    >
+                      {task.task_id} · {task.track}{task.gate_type ? ` · ${task.gate_type}` : ''}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      ) : (
+        <section className="panel p-5 text-xs text-text-muted">该L3暂无AIT决策确认记录，还没有任务进入AIT承接流程。</section>
+      )}
 
       <section className="panel p-5">
         <div className="flex flex-wrap items-start justify-between gap-3">
