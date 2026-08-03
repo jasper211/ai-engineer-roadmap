@@ -1,144 +1,305 @@
 {
   "analysis": {
     "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
-    "analysis_status": "PENDING_MODEL",
-    "decision_drafts": [],
-    "generation_mode": "EVIDENCE_ONLY_BOOTSTRAP",
+    "analysis_status": "MODEL_DRAFT",
+    "control_chain": [],
+    "decision_drafts": [
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [
+          "EVD-59267c11e4c675e82806",
+          "EVD-cc8cff085862eb22e542"
+        ],
+        "human_boundary": "电子签法律确认、补签跟进由理财师关系经理负责；归档自动化仅处理已完整签署的电子文档",
+        "pending_approvals": [
+          "电子归档流程的法务合规确认",
+          "总部归档系统接口授权"
+        ],
+        "pilot_scope": "选择1家新开业分公司试运行，覆盖所有新入职理财师",
+        "priority": "P0-DECISION",
+        "task_ids": [
+          "T4"
+        ],
+        "title": "启动协议归档自动化试点"
+      }
+    ],
+    "generation_mode": "UNIFIED_MODEL",
     "l4_analysis": [
       {
-        "ai_reshape": "",
-        "ai_responsibility": "",
-        "analysis_status": "PENDING_MODEL",
-        "confidence": "UNASSESSED",
-        "control_gates": [],
-        "current_recommendation": "",
-        "data_basis": [],
-        "deliverable_role": "",
+        "ai_reshape": "Agent辅助生成待签协议包，人工审核确认",
+        "ai_responsibility": "生成协议文档草稿、预审资料完整性",
+        "analysis_status": "MODEL_DRAFT",
+        "confidence": "MODEL_DRAFT",
+        "control_gates": [
+          "入职资料审核必须由授权岗位执行"
+        ],
+        "current_recommendation": "暂不封装确定性Skill，引入Agent辅助文档生成，保留人工审核节点",
+        "data_basis": [
+          "EVD-2ec708cdb535b2eb1c83（技能封装C级，复合动作）",
+          "EVD-8212e0e6d470547e2749（人工执行触点）"
+        ],
+        "database_tier": "Hybrid",
+        "deliverable_role": "入职材料审核与协议准备",
         "evidence_refs": [
-          "EVD-092e21a81e917b07b3cd",
           "EVD-22c9534245218de8d5ee",
-          "EVD-2ec708cdb535b2eb1c83",
-          "EVD-4dd107db6be8438a9f77",
-          "EVD-5b2decce5a713e6d81d6",
-          "EVD-8212e0e6d470547e2749",
-          "EVD-9553f5aa29d9f1a112bc",
-          "EVD-a082d2f1876e54d0b494",
-          "EVD-a52ccc2a27054fef59da",
           "EVD-a5f56bd2e1ac937d799d",
+          "EVD-9553f5aa29d9f1a112bc",
+          "EVD-8212e0e6d470547e2749",
           "EVD-ad6858c3a9fb85a4afd0",
-          "EVD-c007486464383913ffba"
+          "EVD-2ec708cdb535b2eb1c83"
         ],
-        "handoff_triggers": [],
-        "human_responsibility": "",
+        "handoff_triggers": [
+          "审核异常需人工复核",
+          "政策变化导致协议条款修改"
+        ],
+        "human_responsibility": "最终审核入职资料、批准协议内容",
         "l4_code": "L4-FOB-01",
-        "process_context": "",
-        "quality_anchor": "",
-        "risks_limits": [],
-        "specific_capabilities": []
+        "process_context": "理财师入职流程第一步，为后续协议签署与系统开通奠定基础",
+        "quadrant": "human_centered_augmented",
+        "quality_anchor": "协议包完整性、资料审核准确性",
+        "recommended_tier": "Hybrid",
+        "risks_limits": [
+          "协议模板更新频度影响自动化准确性",
+          "人工依赖导致流程效率瓶颈"
+        ],
+        "specific_capabilities": [
+          "入职资料合规审核",
+          "协议文档生成与整理"
+        ]
       },
       {
-        "ai_reshape": "",
-        "ai_responsibility": "",
-        "analysis_status": "PENDING_MODEL",
-        "confidence": "UNASSESSED",
-        "control_gates": [],
-        "current_recommendation": "",
-        "data_basis": [],
-        "deliverable_role": "",
+        "ai_reshape": "归档操作自动化，签署环节由电子签辅助+人工监控",
+        "ai_responsibility": "自动将签署文件归档至总部系统",
+        "analysis_status": "MODEL_DRAFT",
+        "confidence": "MODEL_DRAFT",
+        "control_gates": [
+          "归档前需确认全部协议已签署"
+        ],
+        "current_recommendation": "优先试点归档自动化，签署环节逐步过渡到电子签+人工监控模式",
+        "data_basis": [
+          "EVD-b91f24f4790092acbc42（技能封装A级，复合动作）",
+          "EVD-59267c11e4c675e82806（人工执行触点：协议签署与寄总部归档）"
+        ],
+        "database_tier": "Auto",
+        "deliverable_role": "协议签署与寄总部归档",
         "evidence_refs": [
-          "EVD-123d47beacd5a8e8bd67",
-          "EVD-1d4a91d606d6b3adc926",
-          "EVD-56aeae2dfc3578e27a99",
-          "EVD-59267c11e4c675e82806",
-          "EVD-6a98482a02ff403e2186",
-          "EVD-74296805f42cf87fc786",
           "EVD-812963c72dd74c02b19a",
-          "EVD-b91f24f4790092acbc42",
-          "EVD-c7f59295851e4bcdf012",
-          "EVD-e022dae5c93603218dd0",
+          "EVD-56aeae2dfc3578e27a99",
           "EVD-e257d609ba523390a6c6",
-          "EVD-fd3b3a46ead3ca6da5f9"
+          "EVD-59267c11e4c675e82806",
+          "EVD-123d47beacd5a8e8bd67",
+          "EVD-b91f24f4790092acbc42"
         ],
-        "handoff_triggers": [],
-        "human_responsibility": "",
+        "handoff_triggers": [
+          "签署状态异常",
+          "归档系统故障"
+        ],
+        "human_responsibility": "签署法律效力确认、异常签署跟进",
         "l4_code": "L4-FOB-02",
-        "process_context": "",
-        "quality_anchor": "",
-        "risks_limits": [],
-        "specific_capabilities": []
+        "process_context": "理财师入职流程第二步，协议签署完成后才能进入系统开通",
+        "quadrant": "high_automation_medium_judgment",
+        "quality_anchor": "签署合规性与归档及时性",
+        "recommended_tier": "Auto",
+        "risks_limits": [
+          "电子签法律效力需法务确认",
+          "物理纸质签署场景无法完全自动化"
+        ],
+        "specific_capabilities": [
+          "电子/纸质签署确认",
+          "已签署协议归档"
+        ]
       },
       {
-        "ai_reshape": "",
-        "ai_responsibility": "",
-        "analysis_status": "PENDING_MODEL",
-        "confidence": "UNASSESSED",
-        "control_gates": [],
-        "current_recommendation": "",
-        "data_basis": [],
-        "deliverable_role": "",
+        "ai_reshape": "通过API全自动化开通与配置，减少人工操作",
+        "ai_responsibility": "全自动完成开通与配置流程",
+        "analysis_status": "MODEL_DRAFT",
+        "confidence": "MODEL_DRAFT",
+        "control_gates": [
+          "无资金关卡，但需定期权限审计"
+        ],
+        "current_recommendation": "立即封装为自动化Skill，人工仅处理异常单",
+        "data_basis": [
+          "EVD-9685f84ff73d748a9611（技能封装A级，复合动作）",
+          "注意：交付物证据EVD-af7adea0f689c48ad749显示为“PDF/纸质签署版”与L4名称冲突，见missing_analysis"
+        ],
+        "database_tier": "Auto",
+        "deliverable_role": "系统账号开通与工具配置",
         "evidence_refs": [
-          "EVD-0bcb54e83921ca99f958",
           "EVD-195a9cb4edc8bffac1bf",
-          "EVD-23dea266d900930d6f4e",
-          "EVD-336110b442add0a25d61",
-          "EVD-610a8a24f0cec5ef552f",
-          "EVD-707bd2b731348746dc8a",
-          "EVD-8774248430436d0ec811",
-          "EVD-9685f84ff73d748a9611",
-          "EVD-99d96284ff3c954eef6e",
-          "EVD-a26a46b0293bc52f1ee8",
           "EVD-af7adea0f689c48ad749",
-          "EVD-fa9ed589f7fc4679ad6e"
+          "EVD-99d96284ff3c954eef6e",
+          "EVD-610a8a24f0cec5ef552f",
+          "EVD-9685f84ff73d748a9611"
         ],
-        "handoff_triggers": [],
-        "human_responsibility": "",
+        "handoff_triggers": [
+          "API调用失败",
+          "权限不足无法完成配置"
+        ],
+        "human_responsibility": "监控异常任务并手动处置",
         "l4_code": "L4-FOB-03",
-        "process_context": "",
-        "quality_anchor": "",
-        "risks_limits": [],
-        "specific_capabilities": []
+        "process_context": "协议签署归档后，为理财师开通业务系统并配置工具",
+        "quadrant": "high_automation_low_judgment",
+        "quality_anchor": "账号可用性和工具配置正确",
+        "recommended_tier": "Auto",
+        "risks_limits": [
+          "依赖多个系统API稳定性",
+          "配置模板覆盖度影响自动化率"
+        ],
+        "specific_capabilities": [
+          "开通业务系统账号",
+          "配置工具与权限",
+          "验证可用性"
+        ]
       },
       {
-        "ai_reshape": "",
-        "ai_responsibility": "",
-        "analysis_status": "PENDING_MODEL",
-        "confidence": "UNASSESSED",
-        "control_gates": [],
-        "current_recommendation": "",
-        "data_basis": [],
-        "deliverable_role": "",
-        "evidence_refs": [
-          "EVD-2b74ae16a55671b53e24",
-          "EVD-3b2c4a7b110caa7bd9d6",
-          "EVD-3c650c9b1d1d3b3a0b43",
-          "EVD-46825c6ebb7f510171c9",
-          "EVD-4943624efb061b3f19bd",
-          "EVD-6afc52cfc5a6fb5015b6",
-          "EVD-7bd8c31fd32d018021c2",
-          "EVD-aeb7a5a04a6db582b7fa",
-          "EVD-c5be6cdd57cf8af72133",
-          "EVD-c6b98062fb126f907a48",
-          "EVD-c974b99ec5f5a9b55eb0",
-          "EVD-ebeda3146a060d0ddac8"
+        "ai_reshape": "Skill基于历史模板生成初版计划，人工定制后启动",
+        "ai_responsibility": "生成培养计划草稿",
+        "analysis_status": "MODEL_DRAFT",
+        "confidence": "MODEL_DRAFT",
+        "control_gates": [
+          "启动前需区域负责人确认"
         ],
-        "handoff_triggers": [],
-        "human_responsibility": "",
+        "current_recommendation": "采用Hybrid模式，AI辅助生成，人工确认发布",
+        "data_basis": [
+          "EVD-aeb7a5a04a6db582b7fa（技能封装A级，单一动作）",
+          "EVD-c974b99ec5f5a9b55eb0（人工执行触点）"
+        ],
+        "database_tier": "Auto",
+        "deliverable_role": "新人90天培养计划制定与启动",
+        "evidence_refs": [
+          "EVD-7bd8c31fd32d018021c2",
+          "EVD-c6b98062fb126f907a48",
+          "EVD-c5be6cdd57cf8af72133",
+          "EVD-c974b99ec5f5a9b55eb0",
+          "EVD-6afc52cfc5a6fb5015b6",
+          "EVD-aeb7a5a04a6db582b7fa"
+        ],
+        "handoff_triggers": [
+          "模板无法满足特定人员需求",
+          "计划内容需跨部门协调"
+        ],
+        "human_responsibility": "审核、调整计划，确认发布",
         "l4_code": "L4-FOB-04",
-        "process_context": "",
-        "quality_anchor": "",
-        "risks_limits": [],
-        "specific_capabilities": []
+        "process_context": "理财师入职最后一步，系统开通后启动培养计划",
+        "quadrant": "hybrid_human_customization",
+        "quality_anchor": "计划完整性和个性化适配度",
+        "recommended_tier": "Hybrid",
+        "risks_limits": [
+          "模板局限性可能导致计划不适用",
+          "计划效果依赖人工优化"
+        ],
+        "specific_capabilities": [
+          "培养计划内容生成",
+          "启动通知与跟进"
+        ]
       }
     ],
     "missing_analysis": [
-      "逐L4交付物与具体能力分析",
-      "逐任务AI分工分析",
-      "逐L4人机协作与控制分析",
-      "逐L4优先级四维分析",
-      "任务级负责人决策建议"
+      "L4-FOB-03.deliverable",
+      "L4-FOB-03.human_touchpoint",
+      "VN-FOB-02",
+      "控制链缺少L4定位，已拒绝1条"
     ],
-    "model_run": null,
-    "priority_drafts": [],
+    "model_run": {
+      "generated_at": "2026-08-03T06:01:49.542043+00:00",
+      "input_snapshot_hash": "5026dc477917531a64ea9f634174d0b216c6e4f510d2236d8348d2442b16e82c",
+      "model_name": "deepseek-v4-pro",
+      "model_version": "deepseek-v4-pro",
+      "prompt_version": "VNW-L3-COM-GOLD-v1.0"
+    },
+    "priority_drafts": [
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "current_recommendation": "暂不封装确定性Skill，引入Agent辅助文档生成，保留人工审核节点",
+        "data_basis": [
+          "EVD-2ec708cdb535b2eb1c83（技能封装C级，复合动作）",
+          "EVD-8212e0e6d470547e2749（人工执行触点）"
+        ],
+        "evidence_refs": [
+          "EVD-22c9534245218de8d5ee",
+          "EVD-a5f56bd2e1ac937d799d",
+          "EVD-9553f5aa29d9f1a112bc",
+          "EVD-8212e0e6d470547e2749",
+          "EVD-ad6858c3a9fb85a4afd0",
+          "EVD-2ec708cdb535b2eb1c83"
+        ],
+        "l4_code": "L4-FOB-01",
+        "process_context": "理财师入职流程第一步，为后续协议签署与系统开通奠定基础",
+        "quadrant": "unclassified",
+        "risks_limits": [
+          "协议模板更新频度影响自动化准确性",
+          "人工依赖导致流程效率瓶颈"
+        ]
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "current_recommendation": "优先试点归档自动化，签署环节逐步过渡到电子签+人工监控模式",
+        "data_basis": [
+          "EVD-b91f24f4790092acbc42（技能封装A级，复合动作）",
+          "EVD-59267c11e4c675e82806（人工执行触点：协议签署与寄总部归档）"
+        ],
+        "evidence_refs": [
+          "EVD-812963c72dd74c02b19a",
+          "EVD-56aeae2dfc3578e27a99",
+          "EVD-e257d609ba523390a6c6",
+          "EVD-59267c11e4c675e82806",
+          "EVD-123d47beacd5a8e8bd67",
+          "EVD-b91f24f4790092acbc42"
+        ],
+        "l4_code": "L4-FOB-02",
+        "process_context": "理财师入职流程第二步，协议签署完成后才能进入系统开通",
+        "quadrant": "unclassified",
+        "risks_limits": [
+          "电子签法律效力需法务确认",
+          "物理纸质签署场景无法完全自动化"
+        ]
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "current_recommendation": "立即封装为自动化Skill，人工仅处理异常单",
+        "data_basis": [
+          "EVD-9685f84ff73d748a9611（技能封装A级，复合动作）",
+          "注意：交付物证据EVD-af7adea0f689c48ad749显示为“PDF/纸质签署版”与L4名称冲突，见missing_analysis"
+        ],
+        "evidence_refs": [
+          "EVD-195a9cb4edc8bffac1bf",
+          "EVD-af7adea0f689c48ad749",
+          "EVD-99d96284ff3c954eef6e",
+          "EVD-610a8a24f0cec5ef552f",
+          "EVD-9685f84ff73d748a9611"
+        ],
+        "l4_code": "L4-FOB-03",
+        "process_context": "协议签署归档后，为理财师开通业务系统并配置工具",
+        "quadrant": "unclassified",
+        "risks_limits": [
+          "依赖多个系统API稳定性",
+          "配置模板覆盖度影响自动化率"
+        ]
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "current_recommendation": "采用Hybrid模式，AI辅助生成，人工确认发布",
+        "data_basis": [
+          "EVD-aeb7a5a04a6db582b7fa（技能封装A级，单一动作）",
+          "EVD-c974b99ec5f5a9b55eb0（人工执行触点）"
+        ],
+        "evidence_refs": [
+          "EVD-7bd8c31fd32d018021c2",
+          "EVD-c6b98062fb126f907a48",
+          "EVD-c5be6cdd57cf8af72133",
+          "EVD-c974b99ec5f5a9b55eb0",
+          "EVD-6afc52cfc5a6fb5015b6",
+          "EVD-aeb7a5a04a6db582b7fa"
+        ],
+        "l4_code": "L4-FOB-04",
+        "process_context": "理财师入职最后一步，系统开通后启动培养计划",
+        "quadrant": "unclassified",
+        "risks_limits": [
+          "模板局限性可能导致计划不适用",
+          "计划效果依赖人工优化"
+        ]
+      }
+    ],
     "rejected_task_sources": [],
     "schema_version": "vnw.l3-analysis.v1",
     "source_scope": {
@@ -148,84 +309,198 @@
     },
     "tasks": [
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-746e82239d70cfe583ce"
+          "EVD-746e82239d70cfe583ce",
+          "EVD-2ec708cdb535b2eb1c83"
         ],
         "l4_code": "L4-FOB-01",
-        "next_task_ids": [],
+        "next_task_ids": [
+          "T3",
+          "T4"
+        ],
         "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
+        "relation_type": "SEQUENCE",
         "sequence_no": 1,
-        "sequence_status": "SOURCE_CONFIRMED",
+        "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 50,
         "source_step_id": "STEP-01",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-FOB-01-T01",
-        "task_name": "L4-FOB-01 入职资料审核与协议准备 → 《待签协议包》(Human)",
-        "tier_rationale": ""
+        "source_type": "BLUEPRINT_STEP",
+        "suggested_tier": "Human",
+        "task_id": "T1",
+        "task_name": "审核入职资料",
+        "tier_rationale": "入职资料审核涉及合规判断，必须由授权岗位人工执行"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-5b2d6545cb8440a289ae"
+          "EVD-746e82239d70cfe583ce",
+          "EVD-2ec708cdb535b2eb1c83"
+        ],
+        "l4_code": "L4-FOB-01",
+        "next_task_ids": [
+          "T3",
+          "T4"
+        ],
+        "previous_task_ids": [],
+        "relation_type": "SEQUENCE",
+        "sequence_no": 1,
+        "sequence_status": "SOURCE_STEP_ONLY",
+        "source_line": 50,
+        "source_step_id": "STEP-01",
+        "source_type": "BLUEPRINT_STEP",
+        "suggested_tier": "Aug",
+        "task_id": "T2",
+        "task_name": "准备待签协议包",
+        "tier_rationale": "协议包生成可借助模板和AI辅助，仍需人工最终核对"
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [
+          "EVD-5b2d6545cb8440a289ae",
+          "EVD-b91f24f4790092acbc42"
         ],
         "l4_code": "L4-FOB-02",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
+        "next_task_ids": [
+          "T4"
+        ],
+        "previous_task_ids": [
+          "T1",
+          "T2"
+        ],
+        "relation_type": "SEQUENCE",
         "sequence_no": 2,
-        "sequence_status": "SOURCE_CONFIRMED",
+        "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 55,
         "source_step_id": "STEP-02",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-FOB-02-T01",
-        "task_name": "L4-FOB-02 协议签署与寄总部归档 → 《已签署协议包》[P0 VN-FOB-01](Human)",
-        "tier_rationale": ""
+        "source_type": "BLUEPRINT_STEP",
+        "suggested_tier": "Hybrid",
+        "task_id": "T3",
+        "task_name": "协助理财师完成协议签署",
+        "tier_rationale": "签署可引入电子签加速，但法律确认仍需人工参与"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [
+          "EVD-5b2d6545cb8440a289ae",
+          "EVD-cc8cff085862eb22e542"
+        ],
+        "l4_code": "L4-FOB-02",
+        "next_task_ids": [
+          "T5",
+          "T6"
+        ],
+        "previous_task_ids": [
+          "T1",
+          "T2"
+        ],
+        "relation_type": "DECISION",
+        "sequence_no": 2,
+        "sequence_status": "SOURCE_STEP_ONLY",
+        "source_line": 55,
+        "source_step_id": "STEP-02",
+        "source_type": "BLUEPRINT_STEP",
+        "suggested_tier": "Auto",
+        "task_id": "T4",
+        "task_name": "寄送已签署协议至总部归档",
+        "tier_rationale": "归档为事务操作，可对接总部系统实现自动化上传，异常时人工处理"
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [
+          "EVD-cc8cff085862eb22e542"
+        ],
+        "l4_code": "L4-FOB-02",
+        "next_task_ids": [
+          "T3"
+        ],
+        "previous_task_ids": [
+          "T4"
+        ],
+        "relation_type": "DECISION",
+        "sequence_no": 5,
+        "sequence_status": "SOURCE_CONFIRMED",
+        "source_line": 84,
+        "source_step_id": "Q1",
+        "source_type": "DECISION_BRANCH",
+        "suggested_tier": "Human",
+        "task_id": "T5",
+        "task_name": "跟进补签未完成协议",
+        "tier_rationale": "跟进修签需人工沟通，补签后返回签署流程"
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [
+          "EVD-54ed3d391aa1345cf0b4",
+          "EVD-9685f84ff73d748a9611"
+        ],
+        "l4_code": "L4-FOB-03",
+        "next_task_ids": [
+          "T8"
+        ],
+        "previous_task_ids": [
+          "T4"
+        ],
+        "relation_type": "SEQUENCE",
+        "sequence_no": 3,
+        "sequence_status": "SOURCE_STEP_ONLY",
+        "source_line": 63,
+        "source_step_id": "STEP-03",
+        "source_type": "BLUEPRINT_STEP",
+        "suggested_tier": "Auto",
+        "task_id": "T6",
+        "task_name": "开通系统账号",
+        "tier_rationale": "账号开通可通过系统API自动化执行，异常时人工介入"
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
           "EVD-54ed3d391aa1345cf0b4"
         ],
         "l4_code": "L4-FOB-03",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
+        "next_task_ids": [
+          "T8"
+        ],
+        "previous_task_ids": [
+          "T4"
+        ],
+        "relation_type": "SEQUENCE",
         "sequence_no": 3,
-        "sequence_status": "SOURCE_CONFIRMED",
+        "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 63,
         "source_step_id": "STEP-03",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-FOB-03-T01",
-        "task_name": "L4-FOB-03 系统账号开通与工具配置 → 《系统开通记录》(Human)",
-        "tier_rationale": ""
+        "source_type": "BLUEPRINT_STEP",
+        "suggested_tier": "Auto",
+        "task_id": "T7",
+        "task_name": "配置业务工具与权限",
+        "tier_rationale": "工具配置可脚本化完成，结合模板实现全自动"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-f010e5a377fcb5eddd68"
+          "EVD-f010e5a377fcb5eddd68",
+          "EVD-aeb7a5a04a6db582b7fa"
         ],
         "l4_code": "L4-FOB-04",
         "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 4,
+        "previous_task_ids": [
+          "T6",
+          "T7"
+        ],
+        "relation_type": "SEQUENCE",
+        "sequence_no": 8,
         "sequence_status": "SOURCE_CONFIRMED",
         "source_line": 69,
         "source_step_id": "STEP-04",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-FOB-04-T01",
-        "task_name": "L4-FOB-04 90天培养计划制定与启动 → 《新人90天培养计划》[P1 VN-FOB-02](Human)",
-        "tier_rationale": ""
+        "source_type": "BLUEPRINT_STEP",
+        "suggested_tier": "Hybrid",
+        "task_id": "T8",
+        "task_name": "制定新人90天培养计划并启动",
+        "tier_rationale": "培养计划需人工定制，AI辅助生成初稿"
       }
     ]
   },
-  "analysis_freshness": "PENDING_MODEL",
+  "analysis_freshness": "CURRENT",
   "analysis_input_hash": "5026dc477917531a64ea9f634174d0b216c6e4f510d2236d8348d2442b16e82c",
   "blueprint": {
     "blueprint_value_nodes": [],

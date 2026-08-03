@@ -1,0 +1,584 @@
+{
+  "schema_version": "vnw.l3-analysis.v1",
+  "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
+  "generation_mode": "UNIFIED_MODEL",
+  "analysis_status": "MODEL_DRAFT",
+  "model_run": null,
+  "source_scope": {
+    "database": "process_analytics",
+    "knowledge": "ACTIVE supplemental evidence only",
+    "evidence_count": 73
+  },
+  "l4_analysis": [
+    {
+      "l4_code": "L4-GTM-01",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-293a524602b79a949748",
+        "EVD-c267cbd9eb0914de2ff4",
+        "EVD-84783375d06ffcf58049",
+        "EVD-aff3d49b2185322ee063"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "渠道策略方案，定义客户触达路径和渠道组合，指导市场进入的渠道设计",
+      "specific_capabilities": [
+        "市场分析与渠道对标能力（需结构化数据输入）",
+        "客户触达路径设计（需行业判断与创造性）",
+        "渠道组合决策（直销/代理/平台选择，需战略权衡）",
+        "策略文档撰写（需领域专业性）"
+      ],
+      "ai_reshape": "采用Agent辅助模式：AI提供市场数据聚合、渠道绩效对比分析、推荐渠道组合建议；人工完成策略权衡和方案决策",
+      "quality_anchor": "方案须与市场进入目标一致，覆盖核心客户接触点，渠道组合具有可执行性",
+      "ai_responsibility": "汇聚市场数据、产出渠道分析报告、生成可选策略组合草案",
+      "human_responsibility": "最终渠道策略选择、方案审批、关键假设验证",
+      "handoff_triggers": [
+        "市场数据不完整或矛盾",
+        "渠道组合推荐出现高风险选项",
+        "策略方案与既有品牌/法规冲突"
+      ],
+      "control_gates": [],
+      "data_basis": [
+        "目标市场分析数据",
+        "客户画像与触达偏好",
+        "竞品渠道布局数据",
+        "内部产品与资源数据"
+      ],
+      "process_context": "市场进入模式设计流程的首个环节，为后续合作伙伴、定价、财务模型提供渠道基础",
+      "risks_limits": [
+        "策略高度依赖主观判断，AI无法处理非结构化战略选择",
+        "渠道组合错误将直接影响市场覆盖率与成本结构"
+      ],
+      "current_recommendation": "维持Hybrid模式，重点构建AI辅助决策仪表板；暂不封装确定性Skill，待积累足够历史决策数据后再评估自动化可能性",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-GTM-02",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-f830e65ed950157908b3",
+        "EVD-e727f855c6e9913f15c0",
+        "EVD-4c389157a302512f4c41",
+        "EVD-e5f6f46fafc16383f442"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "合作伙伴策略文档，明确合作类型、准入标准与能力要求",
+      "specific_capabilities": [
+        "合作伙伴类型识别与能力建模（需行业经验）",
+        "准入规则设计（需法律与合规知识）",
+        "合作模式权衡（需战略与关系管理判断）"
+      ],
+      "ai_reshape": "Agent辅助：AI根据渠道策略生成合作伙伴画像、推荐合作模式、计算准入评分；人工负责关系谈判与策略终审",
+      "quality_anchor": "合作伙伴策略须与渠道组合协同，准入标准可量化执行",
+      "ai_responsibility": "生成合作伙伴候选列表、基于数据的匹配度评分、准入规则草案",
+      "human_responsibility": "合作模式确认、最终合作伙伴选择、关系建立与沟通",
+      "handoff_triggers": [
+        "关键合作伙伴数据缺失",
+        "准入规则涉及特殊合规风险"
+      ],
+      "control_gates": [],
+      "data_basis": [
+        "渠道策略方案",
+        "合作伙伴数据库",
+        "行业合作模式基准",
+        "法律与合规要求"
+      ],
+      "process_context": "承接渠道策略，为后续定价与运营协同做准备，是Go‑to‑Market策略的关键组成部分",
+      "risks_limits": [
+        "合作判断依赖非结构化人际关系，AI难以量化",
+        "不恰当的伙伴选择将导致渠道冲突或品牌稀释"
+      ],
+      "current_recommendation": "Hybrid模式，核心在于关系管理，AI定位为决策支持工具；未来可探索自动生成伙伴风险报告等功能",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-GTM-03",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-812bdce49a834f86e96e",
+        "EVD-739467f96f18175d07b3",
+        "EVD-67d63c275f4e54067c60",
+        "EVD-543c6ff6f14696cbe153"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "定价策略文档，定义产品/服务的价格模型与收入模式",
+      "specific_capabilities": [
+        "市场对标与竞争力分析（需数据清洗与模型构建）",
+        "定价模型设计（需财务与消费者心理学知识）",
+        "收入模式抉择（订阅/一次性/混合等，需战略预判）",
+        "文档撰写（将复杂假设转化为清晰策略）"
+      ],
+      "ai_reshape": "Agent辅助，复合动作需拆分：AI执行市场对标数据抓取与分析，生成定价模拟器；人工根据战略目标决定最终价格与模型",
+      "quality_anchor": "定价模型须通过内部财务校验，收入模式与市场定位匹配",
+      "ai_responsibility": "提供价格弹性分析、竞争对手定价对比、收入模拟测算",
+      "human_responsibility": "价格点与折扣策略决策、收入模式选择、策略文档审批",
+      "handoff_triggers": [
+        "数据不足以支撑定价分析",
+        "模拟结果与战略方向严重不符"
+      ],
+      "control_gates": [],
+      "data_basis": [
+        "渠道与合作伙伴策略",
+        "市场价格数据",
+        "成本结构数据",
+        "客户支付意愿调查"
+      ],
+      "process_context": "结合渠道模式与合作伙伴策略决定收入分成，并为财务模型提供输入",
+      "risks_limits": [
+        "定价错误直接损伤利润或市场份额，AI不能代行最终定价决策",
+        "复合动作须分解为可独立建模的环节，否则AI输出不可追溯"
+      ],
+      "current_recommendation": "作为复合动作，优先拆分为市场对标（可结构化AI辅助）、定价设计（需人工判断）两个子环节；分别采用Auto辅助+Hybrid模式，整体仍保持Hybrid",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-GTM-04",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-b70bbb0db4fe76b9be4e",
+        "EVD-ced86c901d734a9cbc19",
+        "EVD-3481822344441c63413f",
+        "EVD-7220a5b7d3c179ec291e"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "财务预测模型（Excel），支撑收入/成本/利润三表测算，验证商业模式可行性",
+      "specific_capabilities": [
+        "财务模型构建（需会计准则与建模技能）",
+        "数据整合与敏感性分析（需统计与风险分析）",
+        "三表联动逻辑校准（需财务专业知识）",
+        "可视化与呈现（需将复杂模型转化为可读报告）"
+      ],
+      "ai_reshape": "复合动作拆分为：AI批量处理市场与成本数据，自动生成标准化财务模板并填充假设，进行敏感性模拟；人工负责假设校验、异常解释和可行性结论",
+      "quality_anchor": "模型须经财务专家复核，关键假设有据可依，三表勾稽无误",
+      "ai_responsibility": "生成基础财务模板、自动汇总数据、运行多情景模拟、输出敏感性图表",
+      "human_responsibility": "关键假设设定（如增长率、市场占有率）、模型逻辑最终确认、可行性判定",
+      "handoff_triggers": [
+        "关键数据缺失或波动过大",
+        "模拟结果显示不可行需要重新建模"
+      ],
+      "control_gates": [],
+      "data_basis": [
+        "定价策略",
+        "成本结构",
+        "市场规模与渗透率假设",
+        "历史财务数据（如有）"
+      ],
+      "process_context": "综合前序渠道、合作伙伴、定价策略，形成可量化的财务论证，是Go‑to‑Market决策的关键数理支撑",
+      "risks_limits": [
+        "财务预测高度依赖假设，AI可生成但不可代替人工对假设的合理性把关",
+        "需防止‘垃圾进，垃圾出’，数据清洗与校验环节不可绕过人工"
+      ],
+      "current_recommendation": "拆分为数据准备（Auto/Hybrid）、模型构建（AI辅助+人工审核）两个子任务；整体建议Hybrid，明确人机职责边界",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-GTM-05",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-2bfed6609ddf5e0c2dcc",
+        "EVD-d0930bc911561fd26b74",
+        "EVD-771b4d03d920907912c9",
+        "EVD-b02ee9e75c724feb25b2"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "业务流程架构图与完整的业务模型方案，整合所有子策略形成可执行的进入方案",
+      "specific_capabilities": [
+        "业务流程设计与规则定义（需运营知识与系统性思维）",
+        "跨模块整合能力（将渠道、合作、定价、财务凝练为统一方案）",
+        "方案撰写与演示（需高层沟通与战略叙述能力）"
+      ],
+      "ai_reshape": "AI辅助信息聚合与草案生成：基于前序各模块输出，自动生成方案框架、流程图草稿、整合说明；人工负责逻辑校验、战略叙事和最终审批",
+      "quality_anchor": "方案逻辑自洽，所有模块一致，经模拟推演可行",
+      "ai_responsibility": "汇总各策略文档、生成流程架构图草稿、提供方案初稿及完整性检查",
+      "human_responsibility": "跨策略一致性决策、高层汇报与审批、风险预案制定",
+      "handoff_triggers": [
+        "子策略间发现矛盾无法自动协调",
+        "方案审批层提出重大修改"
+      ],
+      "control_gates": [],
+      "data_basis": [
+        "渠道策略方案",
+        "合作伙伴策略文档",
+        "定价策略文档",
+        "财务预测模型"
+      ],
+      "process_context": "市场进入模式设计的最终整合步骤，产出可直接用于投资决策或执行的业务方案",
+      "risks_limits": [
+        "整合质量高度依赖各模块输入，AI可辅助编排但无法替代对商业逻辑的深刻理解",
+        "方案涉及战略决策，须通过人工控制门审批"
+      ],
+      "current_recommendation": "Hybrid模式，AI作为方案集成工具加速初稿生成，人工专注于战略一致性与可行性把关",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "TASK-GTM-01-01",
+      "l4_code": "L4-GTM-01",
+      "task_name": "设计客户触达与转化路径（GTM-SOP-001）",
+      "source_type": "BLUEPRINT_ACTIVITY",
+      "sequence_no": 0,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-01",
+      "source_line": 69,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": null,
+      "evidence_refs": [
+        "EVD-c267cbd9eb0914de2ff4",
+        "EVD-84783375d06ffcf58049"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "渠道策略设计需判断/策略能力，C-级低封装，建议AI提供客户分析数据，人工设计触达路径"
+    },
+    {
+      "task_id": "TASK-GTM-01-02",
+      "l4_code": "L4-GTM-01",
+      "task_name": "确定渠道组合策略（直销/代理/平台）",
+      "source_type": "BLUEPRINT_ACTIVITY",
+      "sequence_no": 0,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-01",
+      "source_line": 69,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": null,
+      "evidence_refs": [
+        "EVD-c267cbd9eb0914de2ff4",
+        "EVD-84783375d06ffcf58049"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "渠道组合选择为战略决策，AI辅助分析各模式优劣，最终由人工确定"
+    },
+    {
+      "task_id": "TASK-GTM-01-03",
+      "l4_code": "L4-GTM-01",
+      "task_name": "输出渠道策略方案",
+      "source_type": "BLUEPRINT_ACTIVITY",
+      "sequence_no": 0,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-01",
+      "source_line": 69,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": null,
+      "evidence_refs": [
+        "EVD-c267cbd9eb0914de2ff4",
+        "EVD-84783375d06ffcf58049"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "方案撰写可部分由AI辅助生成初稿，人工审核补充战略解释"
+    },
+    {
+      "task_id": "TASK-GTM-02-01",
+      "l4_code": "L4-GTM-02",
+      "task_name": "制定合作伙伴策略与准入标准（GTM-SOP-002）",
+      "source_type": "BLUEPRINT_ACTIVITY",
+      "sequence_no": 0,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-02",
+      "source_line": 81,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": null,
+      "evidence_refs": [
+        "EVD-e727f855c6e9913f15c0",
+        "EVD-4c389157a302512f4c41"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "合作策略需结合渠道特点，AI提供伙伴画像推荐，人工制定具体标准"
+    },
+    {
+      "task_id": "TASK-GTM-02-02",
+      "l4_code": "L4-GTM-02",
+      "task_name": "识别关键合作伙伴类型及能力要求",
+      "source_type": "BLUEPRINT_ACTIVITY",
+      "sequence_no": 0,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-02",
+      "source_line": 81,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": null,
+      "evidence_refs": [
+        "EVD-e727f855c6e9913f15c0",
+        "EVD-4c389157a302512f4c41"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "识别需行业经验，AI辅助数据匹配与筛选"
+    },
+    {
+      "task_id": "TASK-GTM-02-03",
+      "l4_code": "L4-GTM-02",
+      "task_name": "输出合作伙伴策略文档",
+      "source_type": "BLUEPRINT_ACTIVITY",
+      "sequence_no": 0,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-02",
+      "source_line": 81,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": null,
+      "evidence_refs": [
+        "EVD-e727f855c6e9913f15c0",
+        "EVD-4c389157a302512f4c41"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "AI辅助生成文档框架，人工最终撰写与审批"
+    },
+    {
+      "task_id": "TASK-GTM-03-01",
+      "l4_code": "L4-GTM-03",
+      "task_name": "设计定价与收入模式（GTM-SOP-003）",
+      "source_type": "BLUEPRINT_ACTIVITY",
+      "sequence_no": 0,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-03",
+      "source_line": 93,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": null,
+      "evidence_refs": [
+        "EVD-739467f96f18175d07b3",
+        "EVD-67d63c275f4e54067c60"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "定价设计为复合动作的核心，需人工战略判断，AI辅助定价模型模拟"
+    },
+    {
+      "task_id": "TASK-GTM-03-02",
+      "l4_code": "L4-GTM-03",
+      "task_name": "市场对标与定价竞争力分析",
+      "source_type": "BLUEPRINT_ACTIVITY",
+      "sequence_no": 0,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-03",
+      "source_line": 93,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": null,
+      "evidence_refs": [
+        "EVD-739467f96f18175d07b3",
+        "EVD-67d63c275f4e54067c60"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "对标分析可高度自动化，但需人工解读行业差异"
+    },
+    {
+      "task_id": "TASK-GTM-03-03",
+      "l4_code": "L4-GTM-03",
+      "task_name": "输出定价策略文档",
+      "source_type": "BLUEPRINT_ACTIVITY",
+      "sequence_no": 0,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-03",
+      "source_line": 93,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": null,
+      "evidence_refs": [
+        "EVD-739467f96f18175d07b3",
+        "EVD-67d63c275f4e54067c60"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "文档整合AI辅助生成，人工确认策略逻辑"
+    },
+    {
+      "task_id": "TASK-GTM-04-01",
+      "l4_code": "L4-GTM-04",
+      "task_name": "构建初步财务模型与可行性分析（GTM-SOP-004）",
+      "source_type": "BLUEPRINT_ACTIVITY",
+      "sequence_no": 0,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-04",
+      "source_line": 105,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": null,
+      "evidence_refs": [
+        "EVD-ced86c901d734a9cbc19",
+        "EVD-3481822344441c63413f"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "财务模型构建需专业判断，AI可生成模板并填充数据，人工校验假设"
+    },
+    {
+      "task_id": "TASK-GTM-04-02",
+      "l4_code": "L4-GTM-04",
+      "task_name": "测算收入/成本/利润三表",
+      "source_type": "BLUEPRINT_ACTIVITY",
+      "sequence_no": 0,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-04",
+      "source_line": 105,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": null,
+      "evidence_refs": [
+        "EVD-ced86c901d734a9cbc19",
+        "EVD-3481822344441c63413f"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "测算可半自动化，但公式与逻辑需财务专家设定"
+    },
+    {
+      "task_id": "TASK-GTM-04-03",
+      "l4_code": "L4-GTM-04",
+      "task_name": "输出财务预测模型",
+      "source_type": "BLUEPRINT_ACTIVITY",
+      "sequence_no": 0,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-04",
+      "source_line": 105,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": null,
+      "evidence_refs": [
+        "EVD-ced86c901d734a9cbc19",
+        "EVD-3481822344441c63413f"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "将测算结果结构化输出，AI可辅助生成图表与摘要"
+    },
+    {
+      "task_id": "TASK-GTM-05-01",
+      "l4_code": "L4-GTM-05",
+      "task_name": "定义核心业务流与协同规则（OP-GTM-05，GTM-SOP-005）",
+      "source_type": "BLUEPRINT_ACTIVITY",
+      "sequence_no": 0,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-05",
+      "source_line": 117,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": null,
+      "evidence_refs": [
+        "EVD-d0930bc911561fd26b74",
+        "EVD-771b4d03d920907912c9"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "流程设计需运营理解，AI可辅助绘制流程图，人工定义规则"
+    },
+    {
+      "task_id": "TASK-GTM-05-02",
+      "l4_code": "L4-GTM-05",
+      "task_name": "整合渠道/合作/定价/财务/运营形成完整方案（OP-GTM-06，GTM-SOP-006）",
+      "source_type": "BLUEPRINT_ACTIVITY",
+      "sequence_no": 0,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-05",
+      "source_line": 117,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": null,
+      "evidence_refs": [
+        "EVD-d0930bc911561fd26b74",
+        "EVD-771b4d03d920907912c9"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "整合为高层任务，AI辅助信息汇总与初稿，人工做一致性决策"
+    },
+    {
+      "task_id": "TASK-GTM-05-03",
+      "l4_code": "L4-GTM-05",
+      "task_name": "输出业务模型完整方案（主交付物，VN-SMPS-03）",
+      "source_type": "BLUEPRINT_ACTIVITY",
+      "sequence_no": 0,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-05",
+      "source_line": 117,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": null,
+      "evidence_refs": [
+        "EVD-d0930bc911561fd26b74",
+        "EVD-771b4d03d920907912c9",
+        "EVD-b02ee9e75c724feb25b2"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "最终交付物生成需人工高密度把关，AI仅起辅助编辑作用"
+    }
+  ],
+  "priority_drafts": [
+    {
+      "priority": "P0",
+      "task_ids": ["TASK-GTM-05-03"],
+      "title": "业务模型完整方案产出相关任务最高优先级",
+      "pilot_scope": "选择单一市场进入场景，试点AI辅助生成方案组件（流程架构、整合初稿），人工负责一致性审核与决策审批",
+      "human_boundary": "跨模块策略一致性、财务可行性判断、合规与风险决策须由授权岗位确认",
+      "evidence_refs": [
+        "EVD-13299d2500652ce6f91f",
+        "EVD-e6d4cbb8345fff69d28b",
+        "EVD-3ee4811a309d90a6240c"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "decision_drafts": [
+    {
+      "priority": "P0",
+      "task_ids": ["TASK-GTM-05-03"],
+      "title": "启动AI辅助业务模型完整方案生成试点，保留人工审批控制门",
+      "pilot_scope": "首个进入国家或业务线作为试点，限定输出为标准结构方案，由AI生成初稿，项目负责人与战略审批人联合终审",
+      "human_boundary": "方案中涉及的战略假设、财务结论、合作条款必须由对应职能岗位审查确认，不可由AI直接发布",
+      "evidence_refs": [
+        "EVD-13299d2500652ce6f91f",
+        "EVD-3ee4811a309d90a6240c"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "control_chain": [],
+  "rejected_task_sources": [],
+  "missing_analysis": [
+    {
+      "object": "L4-GTM-01",
+      "field": "control_gates",
+      "reason": "证据中未明确人工控制门（如审批节点），仅有general人工执行标识，无法精细定义控制门"
+    },
+    {
+      "object": "L4-GTM-02",
+      "field": "control_gates",
+      "reason": "同上，合作伙伴策略无显式控制门证据"
+    },
+    {
+      "object": "L4-GTM-03",
+      "field": "control_gates",
+      "reason": "定价策略无显式审批或合规门证据"
+    },
+    {
+      "object": "L4-GTM-04",
+      "field": "control_gates",
+      "reason": "财务模型可行门无证据，funds_safety_hard_gate=false，但仍需人工核对"
+    },
+    {
+      "object": "L4-GTM-05",
+      "field": "control_gates",
+      "reason": "整合方案缺少明确的发布审批门证据"
+    }
+  ]
+}

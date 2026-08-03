@@ -1,0 +1,488 @@
+{
+  "schema_version": "vnw.l3-analysis.v1",
+  "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
+  "generation_mode": "UNIFIED_MODEL",
+  "analysis_status": "MODEL_DRAFT",
+  "model_run": null,
+  "source_scope": {
+    "database": "process_analytics",
+    "knowledge": "ACTIVE supplemental evidence only",
+    "evidence_count": 61
+  },
+  "l4_analysis": [
+    {
+      "l4_code": "L4-FTR-01",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-2009b0398573b967d6ed",
+        "EVD-8a482b33c1d346db416e",
+        "EVD-d236dd74be66e88a0f27",
+        "EVD-63f466a099e47e8bcd40"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "培训岗（生成《培训安排计划》）",
+      "specific_capabilities": [
+        "培训需求访谈与数据分析",
+        "课程体系匹配与方案制定",
+        "AI可辅助生成课程推荐草案"
+      ],
+      "ai_reshape": "不直接封装确定性Skill，仅通过Agent辅助方案推荐和需求总结，最终决策留给人",
+      "quality_anchor": "《培训安排计划》需经业务负责人审批确认",
+      "ai_responsibility": "无独立决策责任，仅提供建议",
+      "human_responsibility": "全程主导：判断培训需求、选择课程、编制计划并最终审批",
+      "handoff_triggers": [
+        "AI生成的课程推荐与业务目标明显不符",
+        "需求访谈数据冲突且无法自动消解"
+      ],
+      "control_gates": [
+        "培训计划批准必须由业务负责人签字"
+      ],
+      "data_basis": [
+        "历史培训记录、业务目标、理财师能力档案"
+      ],
+      "process_context": "流程起始步骤，为后续培训和演练奠定内容基础",
+      "risks_limits": [
+        "需求误判将导致整个培训无效",
+        "复合动作，目前封装度低，强行自动化风险高"
+      ],
+      "current_recommendation": "引入AI辅助需求分析和课程推荐（Agent模式），但所有输出必须人工确认；不要跳过人工决策环节",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-FTR-02",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-a0feefb5a1df0dfceee1",
+        "EVD-9bad8034ee1b8ddca987",
+        "EVD-6e466ba3cbdc4681bf2f"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "合规培训岗（生成《培训出席记录》）",
+      "specific_capabilities": [
+        "合规材料结构化生成（B级：需模板与规则）",
+        "现场授课执行",
+        "AI可生成初稿但需合规复核"
+      ],
+      "ai_reshape": "先生成合规培训资料初稿，配合规则固化和报告模板；授课环节保持人工",
+      "quality_anchor": "合规内容准确率100%，出席记录完整度100%",
+      "ai_responsibility": "生成材料初稿，不承担合规终审责任",
+      "human_responsibility": "复核所有AI生成的合规内容，执行现场授课，记录出席情况",
+      "handoff_triggers": [
+        "AI生成内容出现合规模糊或错误",
+        "现场授课出现设备/内容异常"
+      ],
+      "control_gates": [
+        "合规内容必须经合规部终审签字方可使用",
+        "关键合规课程未完成者不得转介签约（补课强制门）"
+      ],
+      "data_basis": [
+        "合规要求文档、产品知识库、监管政策"
+      ],
+      "process_context": "核心合规环节，直接关联销售适当性和监管风险",
+      "risks_limits": [
+        "合规风险高，内容错误可能导致监管处罚",
+        "仍需人工授课，部分自动化后仍需人力投入"
+      ],
+      "current_recommendation": "优先补充报告模板、固化合规规则、集成系统接口，然后试点AI生成合规培训初稿；授课和最终审核保持人工",
+      "database_tier": "Aug",
+      "recommended_tier": "Aug",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-FTR-03",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-c3e0229f27e5156cf241",
+        "EVD-bc0c0cf0bc2f415364c1",
+        "EVD-33f7d70bd5a6b4c455df"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "教练/陪访岗（生成《实战演练记录》）",
+      "specific_capabilities": [
+        "物理实战演练组织",
+        "陪访配对决策（语义复核判定）",
+        "AI可推荐配对方案"
+      ],
+      "ai_reshape": "Agent辅助生成配对建议和演练日程，但不替代物理执行和最终配对决策",
+      "quality_anchor": "演练完成度和配对匹配度（需人工事后评估）",
+      "ai_responsibility": "提供配对建议和日程优化",
+      "human_responsibility": "组织演练、确认配对名单、陪同拜访",
+      "handoff_triggers": [
+        "AI推荐配对明显不合理或与客户特征冲突",
+        "演练现场突发状况"
+      ],
+      "control_gates": [
+        "无资金或合规硬门，但陪访质量直接影响转化，需由资深人员把关"
+      ],
+      "data_basis": [
+        "理财师能力画像、客户特征数据"
+      ],
+      "process_context": "能力转化与实战阶段，是培训效果的落地环节",
+      "risks_limits": [
+        "物理执行无法自动化",
+        "配对依赖隐性知识和关系判断，封装天花板低"
+      ],
+      "current_recommendation": "先构建理财师能力标签体系，再尝试AI推荐配对（Agent辅助）；演练部分保持纯人工",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-FTR-04",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-35f5d280aa6fb21c9ab7",
+        "EVD-224fe44eddb9e6c68044",
+        "EVD-7e89df79aace69357e3d"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "知识管理岗（生成《培训课程体系》+配套工具）",
+      "specific_capabilities": [
+        "内容过期检测与更新建议（需人工判断）",
+        "资料自动化分发",
+        "AI可自动分发但需审批"
+      ],
+      "ai_reshape": "可实现自动化分发（带审批流），内容更新由AI检测并建议，但人工决策是否更新",
+      "quality_anchor": "资料时效性和准确性（以使用反馈和业务变化为准）",
+      "ai_responsibility": "识别过期资料、执行分发任务",
+      "human_responsibility": "判断更新必要性、审批分发、最终内容校准",
+      "handoff_triggers": [
+        "AI建议更新但无明确依据",
+        "涉及关键合规或敏感内容的更新/分发"
+      ],
+      "control_gates": [
+        "所有资料分发前需经内容审核岗确认",
+        "对外发布的培训材料必须经多级审批"
+      ],
+      "data_basis": [
+        "资料库元数据、用户反馈、业务规则"
+      ],
+      "process_context": "持续运营支持，确保一线理财师始终使用最新材料",
+      "risks_limits": [
+        "错误或过时资料分发可能造成业务风险和合规问题",
+        "内容更新需权威判断，目前封装度低"
+      ],
+      "current_recommendation": "先实现资料自动化分发（保留人工审批节点）；内容更新功能先做AI建议，后评估是否逐步放权",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "TASK-FTR-01",
+      "l4_code": "L4-FTR-01",
+      "task_name": "评估培训需求",
+      "source_type": "blueprint_step",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-01",
+      "source_line": 52,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-2009b0398573b967d6ed",
+        "EVD-8a482b33c1d346db416e",
+        "EVD-d236dd74be66e88a0f27"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "需求评估需要结合业务目标和理财师现状进行专业判断，skill_feasibility判定为C-低封装，建议保持纯人工。引用EVD-d236dd74be66e88a0f27。"
+    },
+    {
+      "task_id": "TASK-FTR-02",
+      "l4_code": "L4-FTR-01",
+      "task_name": "制定课程安排方案",
+      "source_type": "blueprint_step",
+      "sequence_no": 2,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-01",
+      "source_line": 52,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-2009b0398573b967d6ed",
+        "EVD-8a482b33c1d346db416e",
+        "EVD-d236dd74be66e88a0f27",
+        "EVD-63f466a099e47e8bcd40"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "课程匹配和方案编制可由AI推荐，但仍需培训主管确认，保持Hybrid。数据库tier为Hybrid，与skill_feasibility的Agent辅助建议一致。"
+    },
+    {
+      "task_id": "TASK-FTR-03",
+      "l4_code": "L4-FTR-02",
+      "task_name": "准备合规培训资料",
+      "source_type": "blueprint_step",
+      "sequence_no": 3,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-02",
+      "source_line": 58,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-a0feefb5a1df0dfceee1",
+        "EVD-6e466ba3cbdc4681bf2f",
+        "EVD-9bad8034ee1b8ddca987"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "skill_feasibility为B-中封装，可借助模板和规则自动化生成初稿，但需合规人员复核，符合Aug层级。引用EVD-6e466ba3cbdc4681bf2f。"
+    },
+    {
+      "task_id": "TASK-FTR-04",
+      "l4_code": "L4-FTR-02",
+      "task_name": "执行产品与合规培训授课",
+      "source_type": "blueprint_step",
+      "sequence_no": 4,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-02",
+      "source_line": 58,
+      "previous_task_ids": [],
+      "next_task_ids": [
+        "TASK-FTR-05"
+      ],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-a0feefb5a1df0dfceee1",
+        "EVD-9bad8034ee1b8ddca987",
+        "EVD-6e466ba3cbdc4681bf2f"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "现场授课需要讲师互动和实时答疑，无法自动化，必须纯人工。"
+    },
+    {
+      "task_id": "TASK-FTR-05",
+      "l4_code": "L4-FTR-02",
+      "task_name": "检查培训出席率并判断是否达标",
+      "source_type": "blueprint_decision",
+      "sequence_no": 5,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "Q1",
+      "source_line": 83,
+      "previous_task_ids": [
+        "TASK-FTR-04"
+      ],
+      "next_task_ids": [
+        "TASK-FTR-06",
+        "TASK-FTR-07"
+      ],
+      "relation_type": "DECISION",
+      "evidence_refs": [
+        "EVD-1445ca9adcf699878bb4",
+        "EVD-a0feefb5a1df0dfceee1",
+        "EVD-6e466ba3cbdc4681bf2f"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "系统可自动统计出席数据，但达标阈值和补课必要性需人工判断（如合规课程必须全部完成），故采用Hybrid。"
+    },
+    {
+      "task_id": "TASK-FTR-06",
+      "l4_code": "L4-FTR-02",
+      "task_name": "安排补课",
+      "source_type": "blueprint_decision",
+      "sequence_no": 6,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "Q1",
+      "source_line": 87,
+      "previous_task_ids": [
+        "TASK-FTR-05"
+      ],
+      "next_task_ids": [],
+      "relation_type": "DECISION",
+      "evidence_refs": [
+        "EVD-1445ca9adcf699878bb4",
+        "EVD-a0feefb5a1df0dfceee1"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "补课安排需协调讲师、教室和学员时间，涉及多方沟通，不宜自动化。"
+    },
+    {
+      "task_id": "TASK-FTR-07",
+      "l4_code": "L4-FTR-03",
+      "task_name": "组织实战演练",
+      "source_type": "blueprint_step",
+      "sequence_no": 7,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-03",
+      "source_line": 66,
+      "previous_task_ids": [
+        "TASK-FTR-05"
+      ],
+      "next_task_ids": [],
+      "relation_type": "DECISION",
+      "evidence_refs": [
+        "EVD-c3e0229f27e5156cf241",
+        "EVD-bc0c0cf0bc2f415364c1",
+        "EVD-33f7d70bd5a6b4c455df"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "实战演练为物理执行动作，skill_feasibility明确physical_execution=true，必须人工组织。"
+    },
+    {
+      "task_id": "TASK-FTR-08",
+      "l4_code": "L4-FTR-03",
+      "task_name": "进行陪访配对",
+      "source_type": "blueprint_step",
+      "sequence_no": 8,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-03",
+      "source_line": 66,
+      "previous_task_ids": [],
+      "next_task_ids": [
+        "TASK-FTR-09"
+      ],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-c3e0229f27e5156cf241",
+        "EVD-bc0c0cf0bc2f415364c1",
+        "EVD-33f7d70bd5a6b4c455df"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "配对需语义复核和关系判断，AI可提供推荐，但最终确认需教练凭经验决定，适合Hybrid。skill_feasibility建议Agent辅助。"
+    },
+    {
+      "task_id": "TASK-FTR-09",
+      "l4_code": "L4-FTR-04",
+      "task_name": "更新资料库内容",
+      "source_type": "blueprint_step",
+      "sequence_no": 9,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-04",
+      "source_line": 72,
+      "previous_task_ids": [
+        "TASK-FTR-08"
+      ],
+      "next_task_ids": [
+        "TASK-FTR-10"
+      ],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-35f5d280aa6fb21c9ab7",
+        "EVD-224fe44eddb9e6c68044"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "资料更新需要判断哪些内容过时或缺失，AI可辅助检测，但决定权在人，符合Hybrid。"
+    },
+    {
+      "task_id": "TASK-FTR-10",
+      "l4_code": "L4-FTR-04",
+      "task_name": "分发培训资料",
+      "source_type": "blueprint_step",
+      "sequence_no": 10,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-04",
+      "source_line": 72,
+      "previous_task_ids": [
+        "TASK-FTR-09"
+      ],
+      "next_task_ids": [],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-35f5d280aa6fb21c9ab7",
+        "EVD-224fe44eddb9e6c68044"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "自动分发技术可行，但需保留人工审批以满足合规和质量管理要求，因此建议Hybrid。"
+    }
+  ],
+  "priority_drafts": [
+    {
+      "priority": "P1",
+      "title": "优先提升培训资料准备与分发的自动化程度",
+      "description": "L3流程中资料库更新与分发、合规资料准备对P1价值节点'培训课程体系'的支撑度最高，且当前价值节点判定为FAIL（缺少配套工具），应优先投入。可先通过补全报告模板、系统接口和规则固化，提升TASK-FTR-03和TASK-FTR-10的自动化程度，快速产出标准化培训资料。",
+      "evidence_refs": [
+        "EVD-96bc754dab36dabe1633",
+        "EVD-22c8e08b2a155606aa39",
+        "EVD-6e466ba3cbdc4681bf2f",
+        "EVD-224fe44eddb9e6c68044"
+      ],
+      "task_ids": [
+        "TASK-FTR-03",
+        "TASK-FTR-10"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "decision_drafts": [
+    {
+      "priority": "P1",
+      "task_ids": [
+        "TASK-FTR-03"
+      ],
+      "title": "试点合规培训资料AI生成",
+      "pilot_scope": "仅限于总部合规培训组，针对标准合规课程（如反洗钱、销售适当性）生成培训初稿，由合规岗复核修改后入资料库。",
+      "human_boundary": "所有AI生成的合规培训内容必须经过合规岗人工终审并签字确认，方可使用；发布至一线理财师前需总部培训主管审批。",
+      "evidence_refs": [
+        "EVD-6e466ba3cbdc4681bf2f",
+        "EVD-9bad8034ee1b8ddca987"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "control_chain": [
+    {
+      "task_id": "TASK-FTR-03",
+      "control_type": "COMPLIANCE",
+      "description": "合规培训资料生成后必须由合规岗审核，确保内容符合最新监管要求。",
+      "evidence_refs": [
+        "EVD-6e466ba3cbdc4681bf2f",
+        "EVD-9bad8034ee1b8ddca987"
+      ]
+    },
+    {
+      "task_id": "TASK-FTR-04",
+      "control_type": "COMPLIANCE",
+      "description": "产品与合规培训必须由具备合规资质的人员执行或现场监督。",
+      "evidence_refs": [
+        "EVD-6e466ba3cbdc4681bf2f",
+        "EVD-9bad8034ee1b8ddca987"
+      ]
+    },
+    {
+      "task_id": "TASK-FTR-05",
+      "control_type": "COMPLIANCE",
+      "description": "关键合规课程未完成者不得通过检查，必须安排补课后方可进入后续环节。",
+      "evidence_refs": [
+        "EVD-1445ca9adcf699878bb4"
+      ]
+    },
+    {
+      "task_id": "TASK-FTR-10",
+      "control_type": "AUTHORIZATION",
+      "description": "培训资料分发前需经内容审核岗确认，对外发布需多级审批。",
+      "evidence_refs": [
+        "EVD-35f5d280aa6fb21c9ab7",
+        "EVD-224fe44eddb9e6c68044"
+      ]
+    }
+  ],
+  "rejected_task_sources": [],
+  "missing_analysis": [
+    {
+      "l4_code": "L4-FTR-04",
+      "field": "agent_human_touchpoint",
+      "evidence_id": "EVD-7e89df79aace69357e3d",
+      "note": "数据库中该字段状态为MISSING，无法确定人工触达点，影响任务分工和Tier建议。"
+    },
+    {
+      "l4_code": "L3-FTR",
+      "field": "sop_details",
+      "evidence_id": "EVD-b59eeb9db18648b3c82d",
+      "note": "SOP文件存在但内容未纳入事实包，无法进一步拆解任务细节。"
+    }
+  ]
+}

@@ -1,0 +1,459 @@
+{
+  "schema_version": "vnw.l3-analysis.v1",
+  "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
+  "generation_mode": "UNIFIED_MODEL",
+  "analysis_status": "MODEL_DRAFT",
+  "model_run": {
+    "model_name": "deepseek-v4-pro",
+    "model_version": "deepseek-v4-pro",
+    "prompt_version": "VNW-L3-COM-GOLD-v1.0",
+    "generated_at": "2026-08-03T06:11:53.424243+00:00",
+    "input_snapshot_hash": "3663d695f79bc5e61781f8652c251e0bb2177033a4f761864f2d218cfd785125"
+  },
+  "source_scope": {
+    "database": "process_analytics",
+    "knowledge": "ACTIVE supplemental evidence only",
+    "evidence_count": 62
+  },
+  "l4_analysis": [
+    {
+      "l4_code": "L4-FLM-01",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-0c64e002eb9dc8386850",
+        "EVD-7523359203a9d5fefc14",
+        "EVD-0b3bf2f2e6419af15415",
+        "EVD-98739ac1761698f498d0",
+        "EVD-511320e9701206f9ebaf",
+        "EVD-796a1507095fd6fa257e",
+        "EVD-60a62fc607e148f1577e"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "",
+      "specific_capabilities": [
+        "信息处理/事务类，单一动作，可封装为确定性Skill，根据历史数据自动生成招募计划表"
+      ],
+      "ai_reshape": "通过Skill自动化实现计划表数据汇总与生成，减少人工重复计算",
+      "quality_anchor": "",
+      "ai_responsibility": "负责根据输入数据生成招募计划表草稿",
+      "human_responsibility": "负责制定年度/季度招募目标，审核并确认最终计划表",
+      "handoff_triggers": [
+        "数据缺失或异常时需人工介入",
+        "目标设定需人工决策"
+      ],
+      "control_gates": [],
+      "data_basis": [],
+      "process_context": "属于招募流程第一步，为后续线索挖掘与招募计划提供目标基准",
+      "risks_limits": [
+        "自动化模型可能偏离实际业务战略，需保留人工目标审批"
+      ],
+      "current_recommendation": "优先进入Skill原型候选池，自动化数据汇总与计划表生成，保留人工目标设定与审批，作为首个试点任务",
+      "database_tier": "Auto",
+      "recommended_tier": "Auto",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-FLM-02",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-edda9aa9215243479a37",
+        "EVD-1b994cd9c533a1c70f91",
+        "EVD-c3b35074aa5a8c5d1324",
+        "EVD-5479fe1bfffc157333e2",
+        "EVD-6efbd130fc552fb3d4e0",
+        "EVD-f66410ce7ec27dec2329",
+        "EVD-e81078e08da1989997a1"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "分公司组织发展经理",
+      "specific_capabilities": [
+        "信息处理/事务类，单一动作，可封装Skill，但规则清晰度和输出验证需加强"
+      ],
+      "ai_reshape": "通过Skill统一生成招募计划，解决目前总部未统一收集的问题",
+      "quality_anchor": "招募计划数据标准化，可被总部统一收集",
+      "ai_responsibility": "负责自动汇总分公司数据并生成初步招募计划",
+      "human_responsibility": "负责制定具体的招募策略和计划，并提交总部",
+      "handoff_triggers": [
+        "数据缺失或计划需调整时",
+        "总部收集接口异常时"
+      ],
+      "control_gates": [],
+      "data_basis": [
+        "分公司历史招募数据"
+      ],
+      "process_context": "属于招募流程第二步，承接招募目标，生成具体招募计划",
+      "risks_limits": [
+        "规则清晰度不足可能导致Skill输出偏差",
+        "总部未统一收集数据影响监管"
+      ],
+      "current_recommendation": "优先试点Skill自动化，解决总部统一收集问题，同时加强规则定义和输出校验机制",
+      "database_tier": "Auto",
+      "recommended_tier": "Auto",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-FLM-03",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-a88c5320b69f1c47acd3",
+        "EVD-3e0deebd2a955920c1b9",
+        "EVD-7a6ed4b7aa51234c4e2b",
+        "EVD-a331f2b680a868966c68",
+        "EVD-fe363b0c4709c4144067",
+        "EVD-6d19261e486cfc444cde",
+        "EVD-5d263e90326ef67d2313"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "",
+      "specific_capabilities": [
+        "判断/策略/认知类，复合动作(建议先拆分)；沟通与评估需人工判断，不适合直接封装为确定性Skill；可拆分为沟通记录和评估打分两个子动作"
+      ],
+      "ai_reshape": "通过Agent辅助沟通话术生成、记录自动化，协助人工完成评估；不作为独立决策者",
+      "quality_anchor": "接触记录完整，评估标准一致",
+      "ai_responsibility": "负责提供沟通话术建议、自动记录沟通内容，辅助评估打分依据",
+      "human_responsibility": "负责实际沟通和最终评估判断",
+      "handoff_triggers": [
+        "候选人表现出异议需人工处理",
+        "评估结果需主管审批"
+      ],
+      "control_gates": [],
+      "data_basis": [
+        "候选人基本信息"
+      ],
+      "process_context": "属于招募流程第三步，承接候选人接触与初步筛选",
+      "risks_limits": [
+        "评估主观性强，AI辅助可能引入偏见",
+        "沟通质量依赖人工技能"
+      ],
+      "current_recommendation": "不宜封装为确定性Skill，建议先拆分为沟通辅助工具和评估记录模板，保留人工主导权；试点Agent辅助记录与评估提示",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-FLM-04",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-13466447638e401db826",
+        "EVD-69e1fa6bd7242f0518d4",
+        "EVD-00f2a616561b3d1c528b",
+        "EVD-00ff359b0b52c775a972",
+        "EVD-1cd1eb1203a20274afd0",
+        "EVD-3ed12ee24d9979c963bc",
+        "EVD-a0d82ab9e5b849e2bbdc"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "",
+      "specific_capabilities": [
+        "判断/策略/认知类，复合动作(建议先拆分)；面试安排、评估打分、录用决策等复合动作；评估和决策需人工权威判断，可拆分面试记录与评估支持工具"
+      ],
+      "ai_reshape": "通过Agent辅助面试官记录面试要点，提供评估模板和录用建议，但最终决策由人负责",
+      "quality_anchor": "面试评估记录客观公正，录用决策合规",
+      "ai_responsibility": "负责自动记录面试问答、生成评估草稿，提供录用参考意见",
+      "human_responsibility": "负责实际面试主持、评估打分和最终录用决策",
+      "handoff_triggers": [
+        "涉及薪酬谈判需人工",
+        "录用决策需管理层审批"
+      ],
+      "control_gates": [],
+      "data_basis": [],
+      "process_context": "属于招募流程第四步，完成面试与录用",
+      "risks_limits": [
+        "AI提供的录用建议可能存在偏见，需人工复核",
+        "决策责任明确由人承担"
+      ],
+      "current_recommendation": "不宜整体封装，建议拆分：面试记录工具和录用审批流程，以Agent辅助提升效率，试点评估模板自动化",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "T1",
+      "l4_code": "L4-FLM-01",
+      "task_name": "编制年度/季度招募计划表",
+      "source_type": "BLUEPRINT_STEP",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-01",
+      "source_line": 54,
+      "previous_task_ids": [],
+      "next_task_ids": [
+        "T2"
+      ],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-60a62fc607e148f1577e",
+        "EVD-7523359203a9d5fefc14",
+        "EVD-0c64e002eb9dc8386850",
+        "EVD-511320e9701206f9ebaf",
+        "EVD-796a1507095fd6fa257e"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "技能封装评估为A级，单一信息处理动作，输入输出结构化，适合封装为确定性Skill；当前为人工执行，但具备全面自动化条件，建议试点Auto"
+    },
+    {
+      "task_id": "T2",
+      "l4_code": "L4-FLM-02",
+      "task_name": "编制招募计划并提交总部",
+      "source_type": "BLUEPRINT_STEP",
+      "sequence_no": 2,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-02",
+      "source_line": 62,
+      "previous_task_ids": [
+        "T1"
+      ],
+      "next_task_ids": [
+        "T3",
+        "T4"
+      ],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-e81078e08da1989997a1",
+        "EVD-1b994cd9c533a1c70f91",
+        "EVD-edda9aa9215243479a37",
+        "EVD-6efbd130fc552fb3d4e0",
+        "EVD-f66410ce7ec27dec2329"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "技能封装评估为A级，单一动作，结构清晰；当前人工执行且总部未统一收集，自动化可解决标准化问题，建议Auto"
+    },
+    {
+      "task_id": "T3",
+      "l4_code": "L4-FLM-03",
+      "task_name": "进行候选人初步接触",
+      "source_type": "BLUEPRINT_STEP",
+      "sequence_no": 3,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-03",
+      "source_line": 68,
+      "previous_task_ids": [
+        "T2"
+      ],
+      "next_task_ids": [
+        "T5",
+        "T6"
+      ],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-5d263e90326ef67d2313",
+        "EVD-a88c5320b69f1c47acd3",
+        "EVD-3e0deebd2a955920c1b9",
+        "EVD-6d19261e486cfc444cde"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "候选人接触涉及人际沟通，需人工主导；AI可提供话术辅助、信息提示，适合Aug模式（人工+AI辅助）"
+    },
+    {
+      "task_id": "T4",
+      "l4_code": "L4-FLM-03",
+      "task_name": "完成初步评估与记录",
+      "source_type": "BLUEPRINT_STEP",
+      "sequence_no": 3,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-03",
+      "source_line": 68,
+      "previous_task_ids": [
+        "T2"
+      ],
+      "next_task_ids": [
+        "T5",
+        "T6"
+      ],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-5d263e90326ef67d2313",
+        "EVD-3e0deebd2a955920c1b9",
+        "EVD-6d19261e486cfc444cde",
+        "EVD-fe363b0c4709c4144067"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "初步评估需要人工判断，评估记录可自动化；建议Hybrid模式，AI辅助记录并与人工评估结合"
+    },
+    {
+      "task_id": "T5",
+      "l4_code": "L4-FLM-04",
+      "task_name": "组织面试并记录评估",
+      "source_type": "BLUEPRINT_STEP",
+      "sequence_no": 4,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-04",
+      "source_line": 75,
+      "previous_task_ids": [
+        "T3",
+        "T4"
+      ],
+      "next_task_ids": [],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-a0d82ab9e5b849e2bbdc",
+        "EVD-69e1fa6bd7242f0518d4",
+        "EVD-13466447638e401db826",
+        "EVD-3ed12ee24d9979c963bc",
+        "EVD-1cd1eb1203a20274afd0"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "面试环节以人工主导，AI可辅助录音转写、要点提炼；建议Aug模式，减少记录事务性负担"
+    },
+    {
+      "task_id": "T6",
+      "l4_code": "L4-FLM-04",
+      "task_name": "做出录用决策",
+      "source_type": "BLUEPRINT_STEP",
+      "sequence_no": 4,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-04",
+      "source_line": 75,
+      "previous_task_ids": [
+        "T3",
+        "T4"
+      ],
+      "next_task_ids": [],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-a0d82ab9e5b849e2bbdc",
+        "EVD-13466447638e401db826",
+        "EVD-3ed12ee24d9979c963bc"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "录用决策涉及组织适配和合规，必须由人做出，AI仅可提供数据支持；建议Human，保留完整决策权"
+    }
+  ],
+  "priority_drafts": [
+    {
+      "l4_code": "L4-FLM-01",
+      "quadrant": "unclassified",
+      "data_basis": [],
+      "process_context": "属于招募流程第一步，为后续线索挖掘与招募计划提供目标基准",
+      "risks_limits": [
+        "自动化模型可能偏离实际业务战略，需保留人工目标审批"
+      ],
+      "current_recommendation": "优先进入Skill原型候选池，自动化数据汇总与计划表生成，保留人工目标设定与审批，作为首个试点任务",
+      "evidence_refs": [
+        "EVD-0c64e002eb9dc8386850",
+        "EVD-7523359203a9d5fefc14",
+        "EVD-0b3bf2f2e6419af15415",
+        "EVD-98739ac1761698f498d0",
+        "EVD-511320e9701206f9ebaf",
+        "EVD-796a1507095fd6fa257e",
+        "EVD-60a62fc607e148f1577e"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-FLM-02",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "分公司历史招募数据"
+      ],
+      "process_context": "属于招募流程第二步，承接招募目标，生成具体招募计划",
+      "risks_limits": [
+        "规则清晰度不足可能导致Skill输出偏差",
+        "总部未统一收集数据影响监管"
+      ],
+      "current_recommendation": "优先试点Skill自动化，解决总部统一收集问题，同时加强规则定义和输出校验机制",
+      "evidence_refs": [
+        "EVD-edda9aa9215243479a37",
+        "EVD-1b994cd9c533a1c70f91",
+        "EVD-c3b35074aa5a8c5d1324",
+        "EVD-5479fe1bfffc157333e2",
+        "EVD-6efbd130fc552fb3d4e0",
+        "EVD-f66410ce7ec27dec2329",
+        "EVD-e81078e08da1989997a1"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-FLM-03",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "候选人基本信息"
+      ],
+      "process_context": "属于招募流程第三步，承接候选人接触与初步筛选",
+      "risks_limits": [
+        "评估主观性强，AI辅助可能引入偏见",
+        "沟通质量依赖人工技能"
+      ],
+      "current_recommendation": "不宜封装为确定性Skill，建议先拆分为沟通辅助工具和评估记录模板，保留人工主导权；试点Agent辅助记录与评估提示",
+      "evidence_refs": [
+        "EVD-a88c5320b69f1c47acd3",
+        "EVD-3e0deebd2a955920c1b9",
+        "EVD-7a6ed4b7aa51234c4e2b",
+        "EVD-a331f2b680a868966c68",
+        "EVD-fe363b0c4709c4144067",
+        "EVD-6d19261e486cfc444cde",
+        "EVD-5d263e90326ef67d2313"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-FLM-04",
+      "quadrant": "unclassified",
+      "data_basis": [],
+      "process_context": "属于招募流程第四步，完成面试与录用",
+      "risks_limits": [
+        "AI提供的录用建议可能存在偏见，需人工复核",
+        "决策责任明确由人承担"
+      ],
+      "current_recommendation": "不宜整体封装，建议拆分：面试记录工具和录用审批流程，以Agent辅助提升效率，试点评估模板自动化",
+      "evidence_refs": [
+        "EVD-13466447638e401db826",
+        "EVD-69e1fa6bd7242f0518d4",
+        "EVD-00f2a616561b3d1c528b",
+        "EVD-00ff359b0b52c775a972",
+        "EVD-1cd1eb1203a20274afd0",
+        "EVD-3ed12ee24d9979c963bc",
+        "EVD-a0d82ab9e5b849e2bbdc"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "decision_drafts": [
+    {
+      "priority": "P1",
+      "task_ids": [
+        "T1",
+        "T2"
+      ],
+      "title": "决定投入资源试点招募计划表自动化",
+      "pilot_scope": "在华东分公司试点，使用历史数据训练Skill，生成招募计划表草稿，由组织发展经理审核后采用",
+      "human_boundary": "目标数值和关键策略需人力负责人拍板；自动化输出仅作参考",
+      "evidence_refs": [
+        "EVD-eb9bd5d35dc8b250cde3",
+        "EVD-796a1507095fd6fa257e",
+        "EVD-f66410ce7ec27dec2329"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "control_chain": [],
+  "rejected_task_sources": [],
+  "missing_analysis": [
+    "L4-FLM-01 · deliverable_role · 未在事实包中找到相关岗位证据",
+    "L4-FLM-01 · quality_anchor · 缺少明确的交付物质量标准",
+    "L4-FLM-01 · handoff_triggers · 无证据支持转人工条件的定义",
+    "L4-FLM-01 · control_gates · 未识别到资金、合规或对外发布等控制门证据",
+    "L4-FLM-01 · data_basis · 未找到明确依赖数据来源的证据",
+    "L4-FLM-01 · risks_limits · 风险项为模型推导，非事实包证据",
+    "L4-FLM-02 · handoff_triggers · 无证据直接支持转人工条件",
+    "L4-FLM-02 · control_gates · 未识别到需人工控制的门禁",
+    "L4-FLM-03 · deliverable_role · 事实包未指定执行岗位",
+    "L4-FLM-03 · quality_anchor · 无明确质量标准证据",
+    "L4-FLM-03 · handoff_triggers · 转人工条件为模型推导",
+    "L4-FLM-03 · control_gates · 未识别到控制门",
+    "L4-FLM-03 · data_basis · 依赖数据未在事实包中明确",
+    "L4-FLM-04 · deliverable_role · 事实包未指定执行岗位",
+    "L4-FLM-04 · quality_anchor · 无明确质量标准证据",
+    "L4-FLM-04 · handoff_triggers · 转人工条件为模型推导",
+    "L4-FLM-04 · control_gates · 未识别到资金合规等控制门",
+    "L4-FLM-04 · data_basis · 依赖数据未在事实包中明确"
+  ]
+}

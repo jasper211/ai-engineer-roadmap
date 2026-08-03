@@ -1,144 +1,358 @@
 {
   "analysis": {
     "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
-    "analysis_status": "PENDING_MODEL",
-    "decision_drafts": [],
-    "generation_mode": "EVIDENCE_ONLY_BOOTSTRAP",
+    "analysis_status": "MODEL_DRAFT",
+    "control_chain": [],
+    "decision_drafts": [
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [
+          "EVD-9d4e3db15b19efcc41f4",
+          "EVD-f2056c829562c2a72459",
+          "EVD-64225df3c4aecfd155c5"
+        ],
+        "human_boundary": "原型核算结果不得直接用于发放；必须由被选营业部的理财师主管和财务岗逐笔复核，所有超限或异常项需升级至区域负责人决策。",
+        "pilot_scope": "选择3家营业部作为试点，涵盖不同业务线和规模，季度核算周期内试用自动核算原型。",
+        "priority": "P0",
+        "task_ids": [
+          "TASK-L3-FPG-004"
+        ],
+        "title": "试点L4-FPG-03激励核算Skill原型"
+      }
+    ],
+    "generation_mode": "UNIFIED_MODEL",
     "l4_analysis": [
       {
-        "ai_reshape": "",
-        "ai_responsibility": "",
-        "analysis_status": "PENDING_MODEL",
-        "confidence": "UNASSESSED",
-        "control_gates": [],
-        "current_recommendation": "",
-        "data_basis": [],
-        "deliverable_role": "",
+        "ai_reshape": "Skill可行性为C级（单一语义复核动作但封装度低），不宜直接封装为确定性Skill；优先采用Agent辅助模式，AI负责生成指标草案与多维度测算，人进行语义复核与最终制定。",
+        "ai_responsibility": "基于历史数据、市场基准和规则库，自动生成指标备选方案与影响预估。",
+        "analysis_status": "MODEL_DRAFT",
+        "confidence": "MODEL_DRAFT",
+        "control_gates": [
+          "考核指标正式下发前，必须经由业务负责人签批（人工控制门，不可绕过）"
+        ],
+        "current_recommendation": "双轴设计：Skill轴为C，不追求全自动；自动化轴建议Hybrid。近期加快指标表定稿，建立结构化指标库；中期引入Agent辅助生成初稿，人做决策确认。",
+        "data_basis": [
+          "历史绩效数据库、市场基准资料（通过API或文件导入）",
+          "公司年度策略与业务目标（多为文档或会议纪要，非结构化）"
+        ],
+        "database_tier": "Hybrid",
+        "deliverable_role": "月度/季度考核指标表（数据表，尚未定稿），作为绩效评估与激励的基准文档，直接承载VN-FPG-01价值节点。",
         "evidence_refs": [
-          "EVD-127ef4cdcf499dd20886",
-          "EVD-49627cca315bd63c852c",
-          "EVD-51eab1bd31962f0ff255",
-          "EVD-5d2512a5063ae8c2cf5d",
-          "EVD-757f69c6756befb38fd2",
-          "EVD-894f8191320ad51ae565",
+          "EVD-ff3474eee2ce91a6c7cf",
           "EVD-8c2146e4e77d6152b80e",
-          "EVD-b5ee72e36a65108dd592",
           "EVD-e6736cb014af82df5da0",
-          "EVD-eb0fdbd5036c785ea251",
+          "EVD-894f8191320ad51ae565",
+          "EVD-5d2512a5063ae8c2cf5d",
+          "EVD-b5ee72e36a65108dd592",
           "EVD-f89875efd8039667ec3f",
-          "EVD-ff3474eee2ce91a6c7cf"
+          "EVD-127ef4cdcf499dd20886",
+          "EVD-eb0fdbd5036c785ea251",
+          "EVD-51eab1bd31962f0ff255",
+          "EVD-49627cca315bd63c852c"
         ],
-        "handoff_triggers": [],
-        "human_responsibility": "",
+        "handoff_triggers": [
+          "指标建议值与历史值偏差超过20%",
+          "系统数据缺失无法自动生成部分指标",
+          "业务策略紧急调整导致规则冲突"
+        ],
+        "human_responsibility": "结合业务判断、理财师具体状况及特殊调整需求，进行指标复核、修改，并最终批准下发。",
         "l4_code": "L4-FPG-01",
-        "process_context": "",
-        "quality_anchor": "",
-        "risks_limits": [],
-        "specific_capabilities": []
-      },
-      {
-        "ai_reshape": "",
-        "ai_responsibility": "",
-        "analysis_status": "PENDING_MODEL",
-        "confidence": "UNASSESSED",
-        "control_gates": [],
-        "current_recommendation": "",
-        "data_basis": [],
-        "deliverable_role": "",
-        "evidence_refs": [
-          "EVD-059d223ac68a58837820",
-          "EVD-499ebf1e7112adf01bbb",
-          "EVD-53fd1ce6b92091d659a6",
-          "EVD-623ed5c18fdec7f6eaae",
-          "EVD-724c980f59cb7fc8de98",
-          "EVD-76022e58d0317c93166a",
-          "EVD-790a5f6cbff2c7c0b258",
-          "EVD-807f220e4798b67aac54",
-          "EVD-844890990788d921db86",
-          "EVD-99a8de3de57128a186a7",
-          "EVD-d319cd2ff5f1ee8952a3",
-          "EVD-dbe973792c0bb629f3eb"
+        "process_context": "本活动位于流程蓝图STEP-01，产出考核指标表，直接映射P1价值节点VN-FPG-01（当前状态FAIL，需优先治理）。指标是后续所有跟踪、评估、激励的基础。",
+        "quadrant": "unclassified",
+        "quality_anchor": "指标必须公平、可量化、与公司策略对齐，需业务主管确认合理性。",
+        "recommended_tier": "Hybrid",
+        "risks_limits": [
+          "指标偏离业务实际会导致激励失效或团队不满",
+          "外部市场数据波动可能使生成指标脱离现实",
+          "Excel交付物尚在制定中，版本管理混乱风险"
         ],
-        "handoff_triggers": [],
-        "human_responsibility": "",
-        "l4_code": "L4-FPG-02",
-        "process_context": "",
-        "quality_anchor": "",
-        "risks_limits": [],
-        "specific_capabilities": []
+        "specific_capabilities": [
+          "历史绩效数据分析（D1=3，输入结构化程度高）",
+          "指标模板生成（D2=3，规则明确）",
+          "跨系统数据汇聚（D4=3，API可达性高）"
+        ]
       },
       {
-        "ai_reshape": "",
-        "ai_responsibility": "",
-        "analysis_status": "PENDING_MODEL",
-        "confidence": "UNASSESSED",
-        "control_gates": [],
-        "current_recommendation": "",
-        "data_basis": [],
-        "deliverable_role": "",
+        "ai_reshape": "Skill可行性为C级且被标记为复合动作，建议先拆分：数据收集自动化（提升D1）和评估判断辅助化。AI负责自动化数据拉取与初评标记，人负责最终评估与决策。",
+        "ai_responsibility": "自动化整合各系统业绩数据，生成预填评估表，并对异常进行预警标注。",
+        "analysis_status": "MODEL_DRAFT",
+        "confidence": "MODEL_DRAFT",
+        "control_gates": [
+          "评估结果正式定稿前必须经业务主管复核（人控节点）",
+          "涉及合规或扣罚的评估需额外上报合规/HR审批"
+        ],
+        "current_recommendation": "双轴设计：Skill轴为C且为复合动作，不宜直接封装。优先提升数据输入端结构化（D1），建立自动化数据管道；评估环节暂保持人主导，AI做异常标记。自动化轴建议Hybrid，但D1极低时更接近Human。",
+        "data_basis": [
+          "各业务系统原始数据（目前高度非结构化，D1=0）",
+          "手工报表或邮件提供的业绩数据"
+        ],
+        "database_tier": "Hybrid",
+        "deliverable_role": "《月度绩效评估表》（数据表），是绩效评估的正式记录，为后续激励核算与运营支持提供依据。",
         "evidence_refs": [
-          "EVD-0c58bba4fb23741d30ab",
-          "EVD-3272ec0a4249c478a25e",
-          "EVD-64225df3c4aecfd155c5",
-          "EVD-87438c9a888d31ee1977",
+          "EVD-807f220e4798b67aac54",
+          "EVD-99a8de3de57128a186a7",
+          "EVD-53fd1ce6b92091d659a6",
+          "EVD-790a5f6cbff2c7c0b258",
+          "EVD-d319cd2ff5f1ee8952a3",
+          "EVD-844890990788d921db86",
+          "EVD-dbe973792c0bb629f3eb",
+          "EVD-059d223ac68a58837820",
+          "EVD-623ed5c18fdec7f6eaae",
+          "EVD-499ebf1e7112adf01bbb"
+        ],
+        "handoff_triggers": [
+          "数据源延迟或缺失超过预警时限",
+          "同一位理财师数据出现重大矛盾",
+          "触发合规或风控例外事件"
+        ],
+        "human_responsibility": "人工复核数据准确性，处理异常场景，基于综合表现进行最终评分和达标判定。",
+        "l4_code": "L4-FPG-02",
+        "process_context": "STEP-02，位于考核指标下发之后。本步骤产出评估表，并触发流程分支Q1：达标→继续追踪，未达标→预警并调低激励。该步骤是评估与激励调控的核心输入。",
+        "quadrant": "unclassified",
+        "quality_anchor": "评估数据准确、标准一致，能客观反映理财师当月业绩，并与考核指标严格对齐。",
+        "recommended_tier": "Hybrid",
+        "risks_limits": [
+          "数据源混乱导致评估延迟或错误，直接影响理财师利益与激励公平",
+          "规则不明确时人工判断缺乏一致性，可能引发争议",
+          "复合动作未拆分时，自动化难以精准切入"
+        ],
+        "specific_capabilities": [
+          "多源数据聚合与预填表（D1=0，当前输入未结构化，需先治理）",
+          "绩效规则判断与异常检测（D2=0，规则不明确，需业务澄清）"
+        ]
+      },
+      {
+        "ai_reshape": "Skill可行性为A级（单一信息处理动作，高封装），是理想的Skill候选。可封装为确定性Skill执行自动化核算，但必须嵌入资金安全硬关卡和人工复核流程。",
+        "ai_responsibility": "全自动执行核算规则，生成《季度激励核算表》，并对异常项（如超限、规则冲突）进行标注。",
+        "analysis_status": "MODEL_DRAFT",
+        "confidence": "MODEL_DRAFT",
+        "control_gates": [
+          "资金发放前必须由财务/业务负责人共同审批（资金安全硬关卡，不可绕过）",
+          "核算结果需与后续激励方案审批（L4-FPG-04）无缝衔接"
+        ],
+        "current_recommendation": "双轴设计：Skill轴为A，可直接进入原型候选池；自动化轴建议Auto，但需保留人工复核触发机制，实现“自动核算+人工确认”。近期试点小范围自动核算，验证准确性与审批流。",
+        "data_basis": [
+          "已审批的月度绩效评估表数据",
+          "激励规则库（需维护API可读）"
+        ],
+        "database_tier": "Auto",
+        "deliverable_role": "《季度激励核算表》（数据表），直接决定每位理财师的季度激励金额，是资金发放的依据，涉及资金安全。",
+        "evidence_refs": [
           "EVD-9d4e3db15b19efcc41f4",
+          "EVD-d4e3f9a866cc381f5548",
           "EVD-a3f336c3b75322f9ea5f",
+          "EVD-0c58bba4fb23741d30ab",
+          "EVD-f2056c829562c2a72459",
+          "EVD-bb1f9bb36dd371e00d23",
+          "EVD-64225df3c4aecfd155c5",
           "EVD-abad8e37784ca0e8bca6",
           "EVD-b42d723b0520b3ab10c2",
-          "EVD-bb1f9bb36dd371e00d23",
-          "EVD-d4e3f9a866cc381f5548",
-          "EVD-f2056c829562c2a72459",
-          "EVD-f4e0e16ea6df2e599b94"
+          "EVD-87438c9a888d31ee1977",
+          "EVD-3272ec0a4249c478a25e"
         ],
-        "handoff_triggers": [],
-        "human_responsibility": "",
+        "handoff_triggers": [
+          "核算金额超过预设上限或下限阈值",
+          "同一理财师出现多笔规则冲突",
+          "触发合规或反洗钱预警"
+        ],
+        "human_responsibility": "复核核算表的总金额与异常项，对触及资金阈值或合规风险的核算进行人工裁决，并触发后续审批流。",
         "l4_code": "L4-FPG-03",
-        "process_context": "",
-        "quality_anchor": "",
-        "risks_limits": [],
-        "specific_capabilities": []
+        "process_context": "STEP-03，紧随月度评估与决策分支之后。产出核算表，是VN-FPG-02（季度激励方案）的数据基础，紧连资金发放环节。",
+        "quadrant": "unclassified",
+        "quality_anchor": "核算结果与激励规则严格一致，零错误，满足合规及审计要求。",
+        "recommended_tier": "Auto",
+        "risks_limits": [
+          "资金安全硬关卡（funds_safety_hard_gate=true）要求每次核算必须有人工确认",
+          "规则变动时Skill更新不及时可能导致错误发放",
+          "高度自动化可能被暂缓，直到合规框架确认"
+        ],
+        "specific_capabilities": [
+          "激励规则引擎计算（D2=3，规则清晰）",
+          "结构化数据输入与输出（D1=3）",
+          "与相关系统API交互（D4=3）"
+        ]
       },
       {
-        "ai_reshape": "",
-        "ai_responsibility": "",
-        "analysis_status": "PENDING_MODEL",
-        "confidence": "UNASSESSED",
-        "control_gates": [],
-        "current_recommendation": "",
-        "data_basis": [],
-        "deliverable_role": "",
+        "ai_reshape": "Skill可行性为C级且为复合动作，建议拆分为：方案草案生成、审批、发放。AI辅助计算补贴金额并组装初版方案，人负责策略判断、审批与最终发放。",
+        "ai_responsibility": "基于核算表和策略参数，生成激励分配初稿，并进行预算模拟。",
+        "analysis_status": "MODEL_DRAFT",
+        "confidence": "MODEL_DRAFT",
+        "control_gates": [
+          "方案必须经过部门负责人、HR、财务的多级审批（人工控制门）",
+          "资金/权益实际上账前须由专人执行并留痕"
+        ],
+        "current_recommendation": "双轴设计：Skill轴C且复合，不直接封装。自动化轴建议Hybrid。近期重点治理VN-FPG-02，完善方案模板与规则，提升D2；长期可引入Agent辅助生成草案，审批仍由人把控。",
+        "data_basis": [
+          "季度激励核算表（来自L4-FPG-03）",
+          "人力资源名单、晋升/进人记录等"
+        ],
+        "database_tier": "Hybrid",
+        "deliverable_role": "季度激励方案（Excel/文档），是权益兑现与发放的正式依据，直接承载VN-FPG-02价值节点（当前FAIL，需重点治理）。",
         "evidence_refs": [
+          "EVD-80f8da545f0b55a0983b",
+          "EVD-477a381a621efea1fa3b",
+          "EVD-4d08c3488f1851657c71",
+          "EVD-dfd790577394dc15dd8d",
+          "EVD-9fd540883b4d85005b97",
           "EVD-0756d6fd44fc2b440afb",
           "EVD-27f3a452403486704076",
           "EVD-2cd3ef7fa562e239d935",
-          "EVD-477a381a621efea1fa3b",
-          "EVD-4d08c3488f1851657c71",
           "EVD-4da8e815b134c88c66c4",
-          "EVD-80f8da545f0b55a0983b",
-          "EVD-9fd540883b4d85005b97",
           "EVD-b45691a05812d5623cab",
-          "EVD-d5669cee01cc76919b0e",
-          "EVD-d72cfc3885b66b77da4c",
-          "EVD-dfd790577394dc15dd8d"
+          "EVD-d72cfc3885b66b77da4c"
         ],
-        "handoff_triggers": [],
-        "human_responsibility": "",
+        "handoff_triggers": [
+          "方案总额超出预算10%",
+          "某一群体分配比例异常",
+          "方案涉及新业务或政策解读分歧"
+        ],
+        "human_responsibility": "对方案进行策略性调整（如扶植新团队），跨部门评审，最终审批并执行发放或权益配置。",
         "l4_code": "L4-FPG-04",
-        "process_context": "",
-        "quality_anchor": "",
-        "risks_limits": [],
-        "specific_capabilities": []
+        "process_context": "STEP-04，是激励周期的最后一环节。若VN-FPG-02仍为FAIL，意味着方案质量无保障，必须在本环节强化治理。",
+        "quadrant": "unclassified",
+        "quality_anchor": "方案需符合公司预算和激励政策，公平贴合各团队实际，且具备可执行性。",
+        "recommended_tier": "Hybrid",
+        "risks_limits": [
+          "人工判断成分过重，容易产生分配不公或预算风险",
+          "审批链冗长时，从核算到发放的时效性可能较低",
+          "方案非强制协议，存在执行时弹性过大"
+        ],
+        "specific_capabilities": [
+          "依据核算结果生成方案草案（D2=1，规则不清晰，需人工干预）",
+          "权益计算与分配建模（需结合人员进人/产能等策略）"
+        ]
       }
     ],
     "missing_analysis": [
-      "逐L4交付物与具体能力分析",
-      "逐任务AI分工分析",
-      "逐L4人机协作与控制分析",
-      "逐L4优先级四维分析",
-      "任务级负责人决策建议"
+      "tasks.TASK-L3-FPG-002.data_input_status · L4-FPG-02的D1评分为0，且无额外的结构化数据证据，当前数据收集任务暂无自动化条件支撑。",
+      "l4_analysis.L4-FPG-02.human_touchpoint · 数据库记录为MISSING，未提供人工触点描述，需在工作坊中补充。",
+      "tasks.TASK-L3-FPG-003.rule_clarity · L4-FPG-02的D2评分为0，表明相关评估规则不明确，影响任务可自动化程度。",
+      "控制链缺少L4定位，已拒绝4条"
     ],
-    "model_run": null,
-    "priority_drafts": [],
+    "model_run": {
+      "generated_at": "2026-08-03T06:00:54.224285+00:00",
+      "input_snapshot_hash": "d69972db62a6b406d549cc8d6d64f0c34879084c6fc6c068d3e09fd2ebc403ef",
+      "model_name": "deepseek-v4-pro",
+      "model_version": "deepseek-v4-pro",
+      "prompt_version": "VNW-L3-COM-GOLD-v1.0"
+    },
+    "priority_drafts": [
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "current_recommendation": "双轴设计：Skill轴为C，不追求全自动；自动化轴建议Hybrid。近期加快指标表定稿，建立结构化指标库；中期引入Agent辅助生成初稿，人做决策确认。",
+        "data_basis": [
+          "历史绩效数据库、市场基准资料（通过API或文件导入）",
+          "公司年度策略与业务目标（多为文档或会议纪要，非结构化）"
+        ],
+        "evidence_refs": [
+          "EVD-ff3474eee2ce91a6c7cf",
+          "EVD-8c2146e4e77d6152b80e",
+          "EVD-e6736cb014af82df5da0",
+          "EVD-894f8191320ad51ae565",
+          "EVD-5d2512a5063ae8c2cf5d",
+          "EVD-b5ee72e36a65108dd592",
+          "EVD-f89875efd8039667ec3f",
+          "EVD-127ef4cdcf499dd20886",
+          "EVD-eb0fdbd5036c785ea251",
+          "EVD-51eab1bd31962f0ff255",
+          "EVD-49627cca315bd63c852c"
+        ],
+        "l4_code": "L4-FPG-01",
+        "process_context": "本活动位于流程蓝图STEP-01，产出考核指标表，直接映射P1价值节点VN-FPG-01（当前状态FAIL，需优先治理）。指标是后续所有跟踪、评估、激励的基础。",
+        "quadrant": "unclassified",
+        "risks_limits": [
+          "指标偏离业务实际会导致激励失效或团队不满",
+          "外部市场数据波动可能使生成指标脱离现实",
+          "Excel交付物尚在制定中，版本管理混乱风险"
+        ]
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "current_recommendation": "双轴设计：Skill轴为C且为复合动作，不宜直接封装。优先提升数据输入端结构化（D1），建立自动化数据管道；评估环节暂保持人主导，AI做异常标记。自动化轴建议Hybrid，但D1极低时更接近Human。",
+        "data_basis": [
+          "各业务系统原始数据（目前高度非结构化，D1=0）",
+          "手工报表或邮件提供的业绩数据"
+        ],
+        "evidence_refs": [
+          "EVD-807f220e4798b67aac54",
+          "EVD-99a8de3de57128a186a7",
+          "EVD-53fd1ce6b92091d659a6",
+          "EVD-790a5f6cbff2c7c0b258",
+          "EVD-d319cd2ff5f1ee8952a3",
+          "EVD-844890990788d921db86",
+          "EVD-dbe973792c0bb629f3eb",
+          "EVD-059d223ac68a58837820",
+          "EVD-623ed5c18fdec7f6eaae",
+          "EVD-499ebf1e7112adf01bbb"
+        ],
+        "l4_code": "L4-FPG-02",
+        "process_context": "STEP-02，位于考核指标下发之后。本步骤产出评估表，并触发流程分支Q1：达标→继续追踪，未达标→预警并调低激励。该步骤是评估与激励调控的核心输入。",
+        "quadrant": "unclassified",
+        "risks_limits": [
+          "数据源混乱导致评估延迟或错误，直接影响理财师利益与激励公平",
+          "规则不明确时人工判断缺乏一致性，可能引发争议",
+          "复合动作未拆分时，自动化难以精准切入"
+        ]
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "current_recommendation": "双轴设计：Skill轴为A，可直接进入原型候选池；自动化轴建议Auto，但需保留人工复核触发机制，实现“自动核算+人工确认”。近期试点小范围自动核算，验证准确性与审批流。",
+        "data_basis": [
+          "已审批的月度绩效评估表数据",
+          "激励规则库（需维护API可读）"
+        ],
+        "evidence_refs": [
+          "EVD-9d4e3db15b19efcc41f4",
+          "EVD-d4e3f9a866cc381f5548",
+          "EVD-a3f336c3b75322f9ea5f",
+          "EVD-0c58bba4fb23741d30ab",
+          "EVD-f2056c829562c2a72459",
+          "EVD-bb1f9bb36dd371e00d23",
+          "EVD-64225df3c4aecfd155c5",
+          "EVD-abad8e37784ca0e8bca6",
+          "EVD-b42d723b0520b3ab10c2",
+          "EVD-87438c9a888d31ee1977",
+          "EVD-3272ec0a4249c478a25e"
+        ],
+        "l4_code": "L4-FPG-03",
+        "process_context": "STEP-03，紧随月度评估与决策分支之后。产出核算表，是VN-FPG-02（季度激励方案）的数据基础，紧连资金发放环节。",
+        "quadrant": "unclassified",
+        "risks_limits": [
+          "资金安全硬关卡（funds_safety_hard_gate=true）要求每次核算必须有人工确认",
+          "规则变动时Skill更新不及时可能导致错误发放",
+          "高度自动化可能被暂缓，直到合规框架确认"
+        ]
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "current_recommendation": "双轴设计：Skill轴C且复合，不直接封装。自动化轴建议Hybrid。近期重点治理VN-FPG-02，完善方案模板与规则，提升D2；长期可引入Agent辅助生成草案，审批仍由人把控。",
+        "data_basis": [
+          "季度激励核算表（来自L4-FPG-03）",
+          "人力资源名单、晋升/进人记录等"
+        ],
+        "evidence_refs": [
+          "EVD-80f8da545f0b55a0983b",
+          "EVD-477a381a621efea1fa3b",
+          "EVD-4d08c3488f1851657c71",
+          "EVD-dfd790577394dc15dd8d",
+          "EVD-9fd540883b4d85005b97",
+          "EVD-0756d6fd44fc2b440afb",
+          "EVD-27f3a452403486704076",
+          "EVD-2cd3ef7fa562e239d935",
+          "EVD-4da8e815b134c88c66c4",
+          "EVD-b45691a05812d5623cab",
+          "EVD-d72cfc3885b66b77da4c"
+        ],
+        "l4_code": "L4-FPG-04",
+        "process_context": "STEP-04，是激励周期的最后一环节。若VN-FPG-02仍为FAIL，意味着方案质量无保障，必须在本环节强化治理。",
+        "quadrant": "unclassified",
+        "risks_limits": [
+          "人工判断成分过重，容易产生分配不公或预算风险",
+          "审批链冗长时，从核算到发放的时效性可能较低",
+          "方案非强制协议，存在执行时弹性过大"
+        ]
+      }
+    ],
     "rejected_task_sources": [],
     "schema_version": "vnw.l3-analysis.v1",
     "source_scope": {
@@ -148,84 +362,185 @@
     },
     "tasks": [
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-494be49e2a0fb21aa54f"
+          "EVD-494be49e2a0fb21aa54f",
+          "EVD-ff3474eee2ce91a6c7cf",
+          "EVD-127ef4cdcf499dd20886"
         ],
         "l4_code": "L4-FPG-01",
-        "next_task_ids": [],
+        "next_task_ids": [
+          "TASK-L3-FPG-002",
+          "TASK-L3-FPG-003"
+        ],
         "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
+        "relation_type": "sequence_to_next_l4",
         "sequence_no": 1,
         "sequence_status": "SOURCE_CONFIRMED",
         "source_line": 60,
         "source_step_id": "STEP-01",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-FPG-01-T01",
-        "task_name": "L4-FPG-01 月度考核指标制定与下发 → 《月度考核指标表》[P1 VN-FPG-01](Human)",
-        "tier_rationale": ""
+        "source_type": "BLUEPRINT_STEP",
+        "suggested_tier": "Hybrid",
+        "task_id": "TASK-L3-FPG-001",
+        "task_name": "制定月度/季度考核指标",
+        "tier_rationale": "人力主导最终制定，AI辅助数据分析和草案生成；D1-D6综合评分高，但动作本质为语义复核（C级），无法全自动。"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-d8d04c8dd8eb4f3b07fd"
+          "EVD-d8d04c8dd8eb4f3b07fd",
+          "EVD-807f220e4798b67aac54",
+          "EVD-99a8de3de57128a186a7"
         ],
         "l4_code": "L4-FPG-02",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
+        "next_task_ids": [
+          "TASK-L3-FPG-003",
+          "TASK-L3-FPG-004"
+        ],
+        "previous_task_ids": [
+          "TASK-L3-FPG-001"
+        ],
+        "relation_type": "step_coordination",
         "sequence_no": 2,
-        "sequence_status": "SOURCE_CONFIRMED",
+        "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 66,
         "source_step_id": "STEP-02",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-FPG-02-T01",
-        "task_name": "L4-FPG-02 月度绩效数据收集与评估 → 《月度绩效评估表》(Human)",
-        "tier_rationale": ""
+        "source_type": "BLUEPRINT_STEP",
+        "suggested_tier": "Human",
+        "task_id": "TASK-L3-FPG-002",
+        "task_name": "收集月度绩效数据",
+        "tier_rationale": "数据来源当前高度非结构化（D1=0），自动化条件不具备，需人工干预。后期治理后可向Hybrid升级。"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-5f56236aca63c015f235"
+          "EVD-48bee98310a2b890d583",
+          "EVD-807f220e4798b67aac54",
+          "EVD-790a5f6cbff2c7c0b258"
+        ],
+        "l4_code": "L4-FPG-02",
+        "next_task_ids": [
+          "TASK-L3-FPG-004"
+        ],
+        "previous_task_ids": [
+          "TASK-L3-FPG-001",
+          "TASK-L3-FPG-002"
+        ],
+        "relation_type": "step_coordination_followed_by_decision",
+        "sequence_no": null,
+        "sequence_status": "SOURCE_STEP_ONLY",
+        "source_line": 91,
+        "source_step_id": "STEP-02",
+        "source_type": "BLUEPRINT_DECISION",
+        "suggested_tier": "Human",
+        "task_id": "TASK-L3-FPG-003",
+        "task_name": "评估绩效并标记达标状态",
+        "tier_rationale": "绩效评估为判断性工作，规则不明确（D2=0），且结果直接触发后续激励调整，必须由人做出最终决策。"
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [
+          "EVD-5f56236aca63c015f235",
+          "EVD-9d4e3db15b19efcc41f4",
+          "EVD-abad8e37784ca0e8bca6"
         ],
         "l4_code": "L4-FPG-03",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
+        "next_task_ids": [
+          "TASK-L3-FPG-005",
+          "TASK-L3-FPG-006",
+          "TASK-L3-FPG-007"
+        ],
+        "previous_task_ids": [
+          "TASK-L3-FPG-003"
+        ],
+        "relation_type": "sequence_to_next_l4",
         "sequence_no": 3,
         "sequence_status": "SOURCE_CONFIRMED",
         "source_line": 74,
         "source_step_id": "STEP-03",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-FPG-03-T01",
-        "task_name": "L4-FPG-03 季度激励核算 → 《季度激励核算表》(Human)",
-        "tier_rationale": ""
+        "source_type": "BLUEPRINT_STEP",
+        "suggested_tier": "Auto",
+        "task_id": "TASK-L3-FPG-004",
+        "task_name": "季度激励核算",
+        "tier_rationale": "规则清晰、数据结构化程度高，且Skill可行性为A级，可高度自动化；但资金安全硬关卡要求人工确认，故实际运行为Auto+人审。"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-213a1fc4c4a13ca671c2"
+          "EVD-213a1fc4c4a13ca671c2",
+          "EVD-80f8da545f0b55a0983b",
+          "EVD-4da8e815b134c88c66c4"
+        ],
+        "l4_code": "L4-FPG-04",
+        "next_task_ids": [
+          "TASK-L3-FPG-006"
+        ],
+        "previous_task_ids": [
+          "TASK-L3-FPG-004"
+        ],
+        "relation_type": "step_coordination",
+        "sequence_no": 4,
+        "sequence_status": "SOURCE_STEP_ONLY",
+        "source_line": 80,
+        "source_step_id": "STEP-04",
+        "source_type": "BLUEPRINT_STEP",
+        "suggested_tier": "Hybrid",
+        "task_id": "TASK-L3-FPG-005",
+        "task_name": "制定季度激励方案草案",
+        "tier_rationale": "方案涉及策略判断和预算平衡，AI可辅助生成初稿，最终决策权在人。"
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [
+          "EVD-213a1fc4c4a13ca671c2",
+          "EVD-80f8da545f0b55a0983b",
+          "EVD-2cd3ef7fa562e239d935"
+        ],
+        "l4_code": "L4-FPG-04",
+        "next_task_ids": [
+          "TASK-L3-FPG-007"
+        ],
+        "previous_task_ids": [
+          "TASK-L3-FPG-005",
+          "TASK-L3-FPG-004"
+        ],
+        "relation_type": "step_coordination",
+        "sequence_no": 4,
+        "sequence_status": "SOURCE_STEP_ONLY",
+        "source_line": 80,
+        "source_step_id": "STEP-04",
+        "source_type": "BLUEPRINT_STEP",
+        "suggested_tier": "Human",
+        "task_id": "TASK-L3-FPG-006",
+        "task_name": "审批季度激励方案",
+        "tier_rationale": "审批涉及多部门会签和策略决策，不可由 AI 替代，必须由人全权执行。"
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [
+          "EVD-213a1fc4c4a13ca671c2",
+          "EVD-80f8da545f0b55a0983b",
+          "EVD-4da8e815b134c88c66c4"
         ],
         "l4_code": "L4-FPG-04",
         "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
+        "previous_task_ids": [
+          "TASK-L3-FPG-006"
+        ],
+        "relation_type": "step_coordination",
         "sequence_no": 4,
-        "sequence_status": "SOURCE_CONFIRMED",
+        "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 80,
         "source_step_id": "STEP-04",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-FPG-04-T01",
-        "task_name": "L4-FPG-04 季度激励方案审批与发放 → 《季度激励方案》[P1 VN-FPG-02](Human)",
-        "tier_rationale": ""
+        "source_type": "BLUEPRINT_STEP",
+        "suggested_tier": "Aug",
+        "task_id": "TASK-L3-FPG-007",
+        "task_name": "发放激励权益",
+        "tier_rationale": "发放动作本身可自动化（如系统入账），但需由专人触发并验证审批已完成，推荐增强辅助。"
       }
     ]
   },
-  "analysis_freshness": "PENDING_MODEL",
+  "analysis_freshness": "CURRENT",
   "analysis_input_hash": "d69972db62a6b406d549cc8d6d64f0c34879084c6fc6c068d3e09fd2ebc403ef",
   "blueprint": {
     "blueprint_value_nodes": [],

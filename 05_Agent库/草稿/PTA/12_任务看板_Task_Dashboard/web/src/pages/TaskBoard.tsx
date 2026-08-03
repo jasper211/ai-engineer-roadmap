@@ -78,13 +78,14 @@ function ChangeRow({ change, projectName }: { change: ChangeItem; projectName: s
     }
   }
   return (
-    <div className="border-b border-border-default/70 last:border-0">
+    <div className={change.important_to_me ? 'm-2 overflow-hidden rounded-xl border border-amber-400 bg-amber-50/70 shadow-[0_4px_18px_rgba(180,120,0,.08)]' : 'border-b border-border-default/70 last:border-0'}>
       <button onClick={togglePreview} aria-expanded={open} className="group flex w-full items-start gap-3 px-4 py-3 text-left hover:bg-bg-surface/50">
-        <span className={`mt-0.5 flex items-center gap-1 rounded-md border px-2 py-1 text-[10px] font-medium ${meta.cls}`}><Icon size={11}/>{meta.label}</span>
+        <div className="mt-0.5 flex shrink-0 flex-col items-start gap-1"><span className={`flex items-center gap-1 rounded-md border px-2 py-1 text-[10px] font-medium ${meta.cls}`}><Icon size={11}/>{meta.label}</span>{change.important_to_me && <span className="flex items-center gap-1 rounded-md border border-amber-400 bg-amber-100 px-2 py-1 text-[10px] font-semibold text-amber-800"><Sparkles size={10}/>重要文件</span>}</div>
         <div className="min-w-0 flex-1">
           <div className="break-all font-mono text-[11px] text-text-primary">{change.file}</div>
           <div className="mt-1 text-xs leading-5 text-text-secondary">{change.summary || '已记录文件事实变化'}</div>
           <div className="mt-1 flex flex-wrap gap-2 text-[10px] text-text-muted"><span>{change.domain || '其他'}</span><span>·</span><span>{change.who || '未知来源'}</span>{change.observed_at && <><span>·</span><span>发现于 {formatTime(change.observed_at)}</span></>}{!hasDetail && <><span>·</span><span>旧报告未保存内容级 diff</span></>}</div>
+          {change.important_to_me && <div className="mt-2 rounded-lg border border-amber-300/70 bg-white/70 px-3 py-2 text-[10px] leading-5 text-amber-900"><b>与你相关：</b>{change.importance_reason || '该文件关联当前个人行动事项'}{change.related_personal_tasks?.length ? ` · ${change.related_personal_tasks.join('、')}` : ''}</div>}
         </div>
         <span className="mt-0.5 flex shrink-0 items-center gap-1 rounded-md border border-border-default bg-bg-base px-2 py-1 text-[10px] text-text-secondary group-hover:border-border-hover"><span className="hidden sm:inline">{open ? '收起预览' : '预览详情'}</span><ChevronDown size={13} className={`transition ${open ? 'rotate-180' : ''}`}/></span>
       </button>
@@ -129,6 +130,7 @@ function ProjectPanel({ project, primary = false, filtering = false }: { project
     removed: project.changes.filter(c => c.change_type === 'removed').length,
   }
   const visible = showAll ? project.changes : project.changes.slice(0, 4)
+  const importantCount = project.changes.filter(change => change.important_to_me).length
   return (
     <section className={`overflow-hidden rounded-2xl border bg-bg-elevated ${primary ? 'border-accent-primary/30 shadow-[0_18px_60px_rgba(60,72,110,.12)]' : 'border-border-default'}`}>
       <header className={`border-b border-border-default px-5 py-4 ${primary ? 'bg-gradient-to-r from-accent-primary/10 to-transparent' : ''}`}>
@@ -137,6 +139,7 @@ function ProjectPanel({ project, primary = false, filtering = false }: { project
           <span className="change-counter text-accent-success"><ArrowDownToLine size={12}/>新增 {counts.added}</span>
           <span className="change-counter text-accent-info"><FileDiff size={12}/>修改 {counts.changed}</span>
           <span className="change-counter text-accent-danger"><FileMinus2 size={12}/>删除 {counts.removed}</span>
+          {importantCount > 0 && <span className="change-counter border border-amber-300 bg-amber-50 text-amber-800"><Sparkles size={12}/>重要 {importantCount}</span>}
           <span className="ml-auto flex items-center gap-1 text-[10px] text-text-muted"><Clock3 size={11}/>{formatTime(project.generated_at)}</span>
         </div>
       </header>

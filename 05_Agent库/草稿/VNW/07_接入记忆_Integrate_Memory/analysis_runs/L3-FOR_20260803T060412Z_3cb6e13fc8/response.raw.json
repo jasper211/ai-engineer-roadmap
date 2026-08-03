@@ -1,0 +1,381 @@
+{
+  "schema_version": "vnw.l3-analysis.v1",
+  "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
+  "generation_mode": "UNIFIED_MODEL",
+  "analysis_status": "MODEL_DRAFT",
+  "model_run": null,
+  "source_scope": {
+    "database": "process_analytics",
+    "knowledge": "ACTIVE supplemental evidence only",
+    "evidence_count": 68
+  },
+  "l4_analysis": [
+    {
+      "l4_code": "L4-FOR-01",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-5795c42e5d425628ddc3",
+        "EVD-1bf00a058b4bf4bb5a95",
+        "EVD-1cc5a30d13386539c94d",
+        "EVD-6eb3ba3d3f7acb54e6fa",
+        "EVD-47d8b2a6f8beac311102",
+        "EVD-6b0331a3684900717b58",
+        "EVD-b41f476aa865c674dd6d",
+        "EVD-5c1c37c84f07df423357",
+        "EVD-cd9bf2b07a03188ddd82",
+        "EVD-d7ece86cdbb0b15c852e",
+        "EVD-dbafebc69e717ba0410a",
+        "EVD-83f16ca08ed16998d327"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "方案",
+      "specific_capabilities": [
+        "理财师与陪跑者配对规则引擎（D1:2, D2:2, D4:2可自动化）",
+        "陪跑计划模板生成与填充（D3:2可验证）",
+        "复合动作需拆分为独立子动作：配对决策与计划制定"
+      ],
+      "ai_reshape": "拆分为两个确定性Skill：配对Skill可基于规则全自动执行；计划Skill自动生成草案后人工确认。当前整体保留人工确认节点。",
+      "quality_anchor": "配对合理性（基于历史数据）、计划完整性（覆盖陪跑要点）",
+      "ai_responsibility": "自动生成配对建议和陪跑计划草案",
+      "human_responsibility": "审核配对结果和计划可行性，最终确认并发布",
+      "handoff_triggers": [
+        "配对置信度低于阈值",
+        "计划模板缺失或需要定制化调整"
+      ],
+      "control_gates": [
+        "人工签字确认计划后方可进入执行"
+      ],
+      "data_basis": [
+        "D1:2 结构化输入明确",
+        "D2:2 规则清晰",
+        "D3:2 输出可验证",
+        "D4:2 API可达",
+        "D5:2 异常处理完善",
+        "D6:2 合规检查到位"
+      ],
+      "process_context": "位于首单陪跑启动步骤，为理财师指派陪跑者并制定陪跑计划。",
+      "risks_limits": [
+        "复合动作未被拆分将导致自动化失败",
+        "计划制定涉及领域经验，纯规则可能脱离实际"
+      ],
+      "current_recommendation": "优先将配对模块封装为Auto Skill，计划模块保留Hybrid（AI生成草案+人工确认），待数据积累后逐步提升自动化。",
+      "database_tier": "Auto",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-FOR-02",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-85d3e0ccb9759615a275",
+        "EVD-99ddf14d15c2565f3bc1",
+        "EVD-b2bfb66404644dd901af",
+        "EVD-b4faf1bb1fba2bc57260",
+        "EVD-bc6e440355af3bfb1b2d",
+        "EVD-2979f08d5ad99aa364dd",
+        "EVD-553888922cd2e4477c0c",
+        "EVD-6fe387c96d8a34bee1c0",
+        "EVD-cd96d8b5c3e4cab1ee3e",
+        "EVD-13d278d62b51538a6c20",
+        "EVD-4e511db65451938b7bdc",
+        "EVD-c63e7f15855b011abdf6"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "数据表",
+      "specific_capabilities": [
+        "陪跑执行包含面对面沟通（physical_execution=true）不可全自动",
+        "陪跑记录可作为Skill自动化（D1:2, D3:1可提升）",
+        "复合动作建议拆分为“执行沟通”与“记录回填”"
+      ],
+      "ai_reshape": "记录部分可封装为Skill（自动采集沟通关键信息并填入模板），执行沟通仍由人完成。整体双轴：Human执行 + Auto记录。",
+      "quality_anchor": "陪跑记录完整性、陪跑要点覆盖率",
+      "ai_responsibility": "自动生成陪跑记录初稿（结构化数据）",
+      "human_responsibility": "实际执行陪跑沟通，并最终确认记录内容",
+      "handoff_triggers": [
+        "记录字段冲突或缺失",
+        "执行过程需要临时调整计划"
+      ],
+      "control_gates": [
+        "人工确认记录后方可标记完成"
+      ],
+      "data_basis": [
+        "D1:2 输入结构化高",
+        "D2:1 规则部分清晰",
+        "D3:1 输出验证需加强",
+        "D4:1 API基本可达",
+        "D5:1 异常处理待完善",
+        "D6:1 合规基础存在"
+      ],
+      "process_context": "位于多角色联合陪跑执行步骤，产出P1价值节点《首单陪跑记录》。",
+      "risks_limits": [
+        "陪跑执行依赖软技能，不可逆操作需人把控",
+        "记录标准化程度不够，可能影响数据价值"
+      ],
+      "current_recommendation": "优先将记录回填自动化（Auto），保留陪跑执行为Human，形成Human-Auto协作，逐步提升记录质量。",
+      "database_tier": "Auto",
+      "recommended_tier": "Aug",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-FOR-03",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-6ba7ec49c2f7828e6f1e",
+        "EVD-736032a8a84f1ecf8a34",
+        "EVD-88918a535cf8bf129e19",
+        "EVD-46e43f8a798b28bae625",
+        "EVD-bc49b5b46ffd135bea4d",
+        "EVD-7c95a0cfeab8bcc562a7",
+        "EVD-60e2c52999a54d96a5ef",
+        "EVD-2e1f18748ce362eb765d",
+        "EVD-7d1a46335c69cb9b9ed8",
+        "EVD-940b309774f4d7b76f63",
+        "EVD-75605f612ab292d5fd53",
+        "EVD-6a4a1b7930035e622e27"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "方案",
+      "specific_capabilities": [
+        "语义复核判定类动作，C-低封装",
+        "需人类经验和判断制定营销建议",
+        "物理执行（physical_execution=true）需人操作"
+      ],
+      "ai_reshape": "不可直接封装确定性Skill，适合Agent辅助：提供数据洞察、模板建议，由人最终决策和撰写方案。",
+      "quality_anchor": "营销建议的客户相关性、合规性",
+      "ai_responsibility": "提供数据支持和草稿生成",
+      "human_responsibility": "最终判断市场可行性、撰写并发布方案",
+      "handoff_triggers": [
+        "数据异常或缺失",
+        "营销建议涉及高风险产品"
+      ],
+      "control_gates": [
+        "方案需要合规审核"
+      ],
+      "data_basis": [
+        "D1:1 输入部分结构化",
+        "D2:0 规则不清晰",
+        "D3:0 输出难以批量验证",
+        "D4:0 API不可达",
+        "D5:0 无标准化降级",
+        "D6:1 基础合规"
+      ],
+      "process_context": "月度运营支持，关联P1价值节点《月度营销启发案》，但数据链路未完全打通。",
+      "risks_limits": [
+        "判断高度依赖人，AI只能为辅助",
+        "物理执行（如打印分发）需人工"
+      ],
+      "current_recommendation": "保持Hybrid，采用Agent辅助模式，先聚焦数据采集标准化（D1提升），再引入决策支持。",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-FOR-04",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-6fb50a881635fc131e5f",
+        "EVD-39a1f2bfcffb8b63e890",
+        "EVD-4170df699ce4f9117154",
+        "EVD-151df231790a1e057322",
+        "EVD-4b23a800f6ffe320134c",
+        "EVD-65a93c6f69534fae78e6",
+        "EVD-e71d22fd70b659c7215f",
+        "EVD-d78ca6d27d8e1152e09f",
+        "EVD-ef7c33455b52d56b7e67",
+        "EVD-c6b1d641b23f5eb4f91b",
+        "EVD-1c4d5be978e27ae83c49",
+        "EVD-7ff47f8f7bac22f8dfec"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "数据表",
+      "specific_capabilities": [
+        "语义复核判定（C-），推动策略需实时调整",
+        "日常问题解答依赖经验，非标准化",
+        "无物理执行（physical_execution=false）"
+      ],
+      "ai_reshape": "Agent辅助：监控出单数据，自动生成提醒和建议，由运营人员决策和介入。",
+      "quality_anchor": "问题响应时效、方案落地率",
+      "ai_responsibility": "监控指标、生成预警和初步建议",
+      "human_responsibility": "判断干预时机、制定推动策略并沟通",
+      "handoff_triggers": [
+        "指标异常预警",
+        "需要跨部门协调"
+      ],
+      "control_gates": [
+        "资金相关操作必须人工确认"
+      ],
+      "data_basis": [
+        "D1:2 输入结构化高",
+        "D2:1 规则部分存在",
+        "D3:1 输出可部分验证",
+        "D4:1 API可接入",
+        "D5:1 降级逻辑存在",
+        "D6:1 基础合规"
+      ],
+      "process_context": "日常运营支持，关联P1价值节点BN-FOR-02，但数据链路和数据基础薄弱。",
+      "risks_limits": [
+        "策略制定涉及商业判断，全自动风险高",
+        "数据基础不足导致模型建议质量不稳定"
+      ],
+      "current_recommendation": "采用Hybrid模式，AI提供运营仪表板与预警，人工负责策略生成，同时推动数据标准化（D1/D3提升）。",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "T-001",
+      "l4_code": "L4-FOR-01",
+      "task_name": "进行理财师与陪跑者配对",
+      "source_type": "blueprint_step",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-01",
+      "source_line": 61,
+      "previous_task_ids": [],
+      "next_task_ids": ["T-003", "T-004"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-0ac51353266e1bcba1bf",
+        "EVD-83f16ca08ed16998d327"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "配对规则明确（D2=2），输入结构化（D1=2），API可达（D4=2），可全自动化执行。"
+    },
+    {
+      "task_id": "T-002",
+      "l4_code": "L4-FOR-01",
+      "task_name": "制定首单陪跑计划",
+      "source_type": "blueprint_step",
+      "sequence_no": 2,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-01",
+      "source_line": 61,
+      "previous_task_ids": [],
+      "next_task_ids": ["T-003", "T-004"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-0ac51353266e1bcba1bf",
+        "EVD-83f16ca08ed16998d327"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "计划制定需要领域经验，D2=2但存在例外，推荐AI生成草案后人工确认。"
+    },
+    {
+      "task_id": "T-003",
+      "l4_code": "L4-FOR-02",
+      "task_name": "执行首次陪跑沟通",
+      "source_type": "blueprint_step",
+      "sequence_no": 3,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-02",
+      "source_line": 66,
+      "previous_task_ids": ["T-001", "T-002"],
+      "next_task_ids": ["T-005", "T-006"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-cbee441c5b328b5e9c66",
+        "EVD-c63e7f15855b011abdf6"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "陪跑执行涉及面对面交流、软技能，physical_execution=true，必须人类执行。"
+    },
+    {
+      "task_id": "T-004",
+      "l4_code": "L4-FOR-02",
+      "task_name": "记录首单陪跑结果",
+      "source_type": "blueprint_step",
+      "sequence_no": 4,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-02",
+      "source_line": 66,
+      "previous_task_ids": ["T-001", "T-002"],
+      "next_task_ids": ["T-005", "T-006"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-cbee441c5b328b5e9c66",
+        "EVD-c63e7f15855b011abdf6"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "记录可结构化，D1=2, D3=1 可通过模板提升，适合封装为记录Skill自动填充。"
+    },
+    {
+      "task_id": "T-005",
+      "l4_code": "L4-FOR-03",
+      "task_name": "制定月度营销启发案",
+      "source_type": "blueprint_step",
+      "sequence_no": 5,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-03",
+      "source_line": 74,
+      "previous_task_ids": ["T-003", "T-004"],
+      "next_task_ids": ["T-006"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-2ba196706942cf047d24",
+        "EVD-6a4a1b7930035e622e27"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "判断类动作，C-低封装，需人类决策，AI仅提供数据分析和模板辅助。"
+    },
+    {
+      "task_id": "T-006",
+      "l4_code": "L4-FOR-04",
+      "task_name": "执行日常运营支持与问题解答",
+      "source_type": "blueprint_step",
+      "sequence_no": 6,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-04",
+      "source_line": 80,
+      "previous_task_ids": ["T-005"],
+      "next_task_ids": [],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-9817954e4ff4d55463f5",
+        "EVD-7ff47f8f7bac22f8dfec"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "语义判定类，需要运营人员实时判断和介入，AI提供监控和预警。"
+    }
+  ],
+  "priority_drafts": [
+    {
+      "priority": "P1",
+      "evidence_refs": [
+        "EVD-e69f9a258cf8733a8b96",
+        "EVD-3a59e614d650b5db8272"
+      ],
+      "title": "聚焦P1价值节点对应的L4：首单陪跑记录与月度营销启发案",
+      "data_basis": [
+        "VN-FOR-01和VN-FOR-02均为熔断价值节点，overall_judgment=FAIL，数据链路未通（gate2、gate3均为FAIL）"
+      ],
+      "process_context": "这两个价值节点直接关联理财师运营核心KPI（首单陪跑完成率、活动量），当前数据无法支撑有效度量。",
+      "risks_limits": "强依赖人工记录，自动化基础薄弱；月度方案判断重心在人，难以快速自动化。",
+      "current_recommendation": "优先投入资源完善数据采集标准化（L4-FOR-02和L4-FOR-04），同步试点AI辅助方案生成（L4-FOR-03），形成小闭环。"
+    }
+  ],
+  "decision_drafts": [
+    {
+      "priority": "P1",
+      "task_ids": ["T-001", "T-002", "T-004"],
+      "title": "启动首单陪跑自动化试点",
+      "pilot_scope": "选取1-2个区域分支，由系统自动完成配对和陪跑记录，计划草案由AI生成，团队长审核。",
+      "human_boundary": "计划审核和实际陪跑沟通必须由人工完成；配对结果高置信度时直接采纳，低置信度时人工介入。",
+      "evidence_refs": [
+        "EVD-83f16ca08ed16998d327",
+        "EVD-c63e7f15855b011abdf6"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "control_chain": [],
+  "rejected_task_sources": [],
+  "missing_analysis": []
+}

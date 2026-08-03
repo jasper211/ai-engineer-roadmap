@@ -567,6 +567,20 @@ def command_center(days: int = 1) -> dict:
     feed = activity_feed_range("all", days)
     task_buckets = aggregate_tasks("all")
     open_tasks = task_buckets["new"] + task_buckets["aging"]
+    # 与“与我相关”页面共用同一判断结果：只有 EA 直接行动和已确认可应用到
+    # EA 的 Jasper 事项，其来源文件才标为重要；待评估不提前升级为重要。
+    personal = personal_work()
+    important_tasks = personal["direct_actions"] + personal["ea_applications"]
+    importance_by_project = {}
+    for task in important_tasks:
+        project_map = importance_by_project.setdefault(task.get("project_name", ""), {})
+        for related_file in task.get("related_files", []):
+            entry = project_map.setdefault(related_file, {"reasons": [], "task_ids": []})
+            reason = task.get("personal_reason") or task.get("name", "")
+            if reason and reason not in entry["reasons"]:
+                entry["reasons"].append(reason)
+            if task.get("task_id") and task["task_id"] not in entry["task_ids"]:
+                entry["task_ids"].append(task["task_id"])
     project_entries = []
     for entry in feed:
         name = entry["project_name"]
@@ -577,7 +591,12 @@ def command_center(days: int = 1) -> dict:
             change.setdefault("before_excerpt", "")
             change.setdefault("after_excerpt", "")
             change.setdefault("diff_text", "")
+            importance = importance_by_project.get(name, {}).get(change.get("file", ""))
+            change["important_to_me"] = bool(importance)
+            change["importance_reason"] = "；".join(importance["reasons"][:2]) if importance else ""
+            change["related_personal_tasks"] = importance["task_ids"] if importance else []
             changes.append(change)
+        changes.sort(key=lambda change: (not change.get("important_to_me", False), change.get("file", "")))
         role = PROJECT_ROLES.get(name, {"role": "other", "label": "观察项目", "question": ""})
         project_tasks = [t for t in open_tasks if t.get("project_name") == name]
         project_entries.append({

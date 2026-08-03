@@ -1,0 +1,1761 @@
+{
+  "instruction": "只使用fact_pack。严格返回output_contract同结构JSON；所有MODEL_DRAFT结论必须引用fact_pack中的evidence_id。没有证据则留空并写入missing_analysis。",
+  "output_contract": {
+    "schema_version": "vnw.l3-analysis.v1",
+    "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
+    "generation_mode": "UNIFIED_MODEL",
+    "analysis_status": "MODEL_DRAFT",
+    "model_run": null,
+    "source_scope": {
+      "database": "process_analytics",
+      "knowledge": "ACTIVE supplemental evidence only",
+      "evidence_count": 61
+    },
+    "l4_analysis": [
+      {
+        "l4_code": "L4-FTR-01",
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [],
+        "confidence": "MODEL_DRAFT",
+        "deliverable_role": "",
+        "specific_capabilities": [],
+        "ai_reshape": "",
+        "quality_anchor": "",
+        "ai_responsibility": "",
+        "human_responsibility": "",
+        "handoff_triggers": [],
+        "control_gates": [],
+        "data_basis": [],
+        "process_context": "",
+        "risks_limits": [],
+        "current_recommendation": "",
+        "database_tier": "Hybrid",
+        "recommended_tier": "",
+        "quadrant": "unclassified"
+      },
+      {
+        "l4_code": "L4-FTR-02",
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [],
+        "confidence": "MODEL_DRAFT",
+        "deliverable_role": "",
+        "specific_capabilities": [],
+        "ai_reshape": "",
+        "quality_anchor": "",
+        "ai_responsibility": "",
+        "human_responsibility": "",
+        "handoff_triggers": [],
+        "control_gates": [],
+        "data_basis": [],
+        "process_context": "",
+        "risks_limits": [],
+        "current_recommendation": "",
+        "database_tier": "Aug",
+        "recommended_tier": "",
+        "quadrant": "unclassified"
+      },
+      {
+        "l4_code": "L4-FTR-03",
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [],
+        "confidence": "MODEL_DRAFT",
+        "deliverable_role": "",
+        "specific_capabilities": [],
+        "ai_reshape": "",
+        "quality_anchor": "",
+        "ai_responsibility": "",
+        "human_responsibility": "",
+        "handoff_triggers": [],
+        "control_gates": [],
+        "data_basis": [],
+        "process_context": "",
+        "risks_limits": [],
+        "current_recommendation": "",
+        "database_tier": "Hybrid",
+        "recommended_tier": "",
+        "quadrant": "unclassified"
+      },
+      {
+        "l4_code": "L4-FTR-04",
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [],
+        "confidence": "MODEL_DRAFT",
+        "deliverable_role": "",
+        "specific_capabilities": [],
+        "ai_reshape": "",
+        "quality_anchor": "",
+        "ai_responsibility": "",
+        "human_responsibility": "",
+        "handoff_triggers": [],
+        "control_gates": [],
+        "data_basis": [],
+        "process_context": "",
+        "risks_limits": [],
+        "current_recommendation": "",
+        "database_tier": "Hybrid",
+        "recommended_tier": "",
+        "quadrant": "unclassified"
+      }
+    ],
+    "tasks": [],
+    "priority_drafts": [],
+    "decision_drafts": [],
+    "control_chain": [],
+    "rejected_task_sources": [],
+    "missing_analysis": []
+  },
+  "fact_pack": {
+    "l3_code": "L3-FTR",
+    "l3_name": "理财师培训与转介签约",
+    "snapshot_hash": "ed0ffa02ecf4c43698c74b3500812ce0684eeb022cb761151afe409575e18db6",
+    "source_policy": {
+      "consensus_separate": true,
+      "database_authority": "process_analytics",
+      "reverse_writeback": false,
+      "supplemental_requires_active": true
+    },
+    "gates": {
+      "A": {
+        "checks": [
+          {
+            "detail": "Gate E=CONDITIONAL",
+            "passed": true,
+            "rule_id": "A-001"
+          },
+          {
+            "detail": "D1-D6完整=4/4",
+            "passed": true,
+            "rule_id": "A-002"
+          },
+          {
+            "detail": "价值节点-L4映射=4",
+            "passed": true,
+            "rule_id": "A-003"
+          },
+          {
+            "detail": "存在熔断或无价值节点",
+            "passed": false,
+            "rule_id": "A-004"
+          }
+        ],
+        "status": "BLOCKED"
+      },
+      "E": {
+        "checks": [
+          {
+            "detail": "Gate M=PASS",
+            "passed": true,
+            "rule_id": "E-001"
+          },
+          {
+            "detail": "交付物完整=4/4（完整门槛90%）",
+            "passed": true,
+            "rule_id": "E-002"
+          },
+          {
+            "detail": "Tier合法",
+            "passed": true,
+            "rule_id": "E-003"
+          },
+          {
+            "detail": "可追溯任务覆盖=4/4（完整门槛80%）",
+            "passed": true,
+            "rule_id": "E-004"
+          },
+          {
+            "detail": "关键L4任务覆盖=4/4",
+            "passed": true,
+            "rule_id": "E-005"
+          },
+          {
+            "detail": "价值节点-L4映射=4",
+            "passed": true,
+            "rule_id": "E-006"
+          },
+          {
+            "detail": "规则可定位L4=0/4",
+            "passed": false,
+            "rule_id": "E-007"
+          },
+          {
+            "detail": "SOP/任务执行材料=1份",
+            "passed": true,
+            "rule_id": "E-008"
+          },
+          {
+            "detail": "缺少可关联的规则记录（不阻断建模）",
+            "passed": false,
+            "rule_id": "E-009"
+          }
+        ],
+        "status": "CONDITIONAL"
+      },
+      "M": {
+        "checks": [
+          {
+            "detail": "L4数量=4",
+            "passed": true,
+            "rule_id": "M-001"
+          },
+          {
+            "detail": "流程蓝图_L3-FTR_理财师培训与转介签约_V1.0.md",
+            "passed": true,
+            "rule_id": "M-002"
+          },
+          {
+            "detail": "L4名称完整",
+            "passed": true,
+            "rule_id": "M-003"
+          },
+          {
+            "detail": "交付物完整=4/4（最低门槛70%）",
+            "passed": true,
+            "rule_id": "M-004"
+          },
+          {
+            "detail": "D1-D6完整=4/4",
+            "passed": true,
+            "rule_id": "M-005"
+          }
+        ],
+        "status": "PASS"
+      }
+    },
+    "l2_capabilities": [
+      {
+        "l2_code": "L2-04.3",
+        "l2_name": "赋能实施与运营",
+        "l3_code": "L3-FTR"
+      }
+    ],
+    "l4s": [
+      {
+        "d1_d6": {
+          "agent_d1_input_struct": 2,
+          "agent_d2_rule_clear": 2,
+          "agent_d3_output_verify": 2,
+          "agent_d4_api_reach": 2,
+          "agent_d5_fallback": 2,
+          "agent_d6_compliance": 2
+        },
+        "deliverable": "PPT/视频/表格。总部资料库，含配套督导工具和表格",
+        "deliverable_type": "方案",
+        "evidence_refs": {
+          "agent_d1_input_struct": "EVD-43f1b24aa40ebd9cf773",
+          "agent_d2_rule_clear": "EVD-d959c6e0e6c32116d34d",
+          "agent_d3_output_verify": "EVD-5cfb57bac5d8dd72708d",
+          "agent_d4_api_reach": "EVD-332f7824d9dc1eda23db",
+          "agent_d5_fallback": "EVD-4823638d0595712183a8",
+          "agent_d6_compliance": "EVD-f7448b3258cc6618969b",
+          "agent_human_touchpoint": "EVD-8a482b33c1d346db416e",
+          "agentifiability": "EVD-b44daacd6746a7a4b88e",
+          "l4_deliverable": "EVD-63f466a099e47e8bcd40",
+          "l4_deliverable_type": "EVD-e0d3adf2022e3708cc90",
+          "l4_name": "EVD-2d2a1359308cd9cd6817",
+          "skill_feasibility": "EVD-d236dd74be66e88a0f27"
+        },
+        "human_touchpoint": "人工执行：培训需求评估与课程安排",
+        "l4_code": "L4-FTR-01",
+        "l4_name": "培训需求评估与课程安排",
+        "skill_feasibility": {
+          "action_nature": "判断/策略/认知类",
+          "action_singularity": "复合动作(建议先拆分)",
+          "funds_safety_hard_gate": false,
+          "grade": "C-低封装(判断/策略/关系类,理论天花板)",
+          "judgment_basis": "C-仍低封装度(需判断/权威)",
+          "physical_execution": false,
+          "recommended_path": "优先考虑Agent辅助或决策支持，不直接封装确定性Skill",
+          "verification_status": "VERIFIED"
+        },
+        "tier": "Hybrid"
+      },
+      {
+        "d1_d6": {
+          "agent_d1_input_struct": 3,
+          "agent_d2_rule_clear": 3,
+          "agent_d3_output_verify": 3,
+          "agent_d4_api_reach": 3,
+          "agent_d5_fallback": 2,
+          "agent_d6_compliance": 2
+        },
+        "deliverable": "PPT/视频/表格。总部资料库，含配套督导工具和表格",
+        "deliverable_type": "数据表",
+        "evidence_refs": {
+          "agent_d1_input_struct": "EVD-97f8c1d8e6539fc3b80d",
+          "agent_d2_rule_clear": "EVD-bb80ed9c3eabb4c00fab",
+          "agent_d3_output_verify": "EVD-59781a98ca4db98fb407",
+          "agent_d4_api_reach": "EVD-f9555ebb5e90c2546872",
+          "agent_d5_fallback": "EVD-70281da4184388b99278",
+          "agent_d6_compliance": "EVD-f9e54957fc8f559ed49e",
+          "agent_human_touchpoint": "EVD-9bad8034ee1b8ddca987",
+          "agentifiability": "EVD-78db83322fb74f98afd2",
+          "l4_deliverable": "EVD-cdc4c606a1eb6e328ea6",
+          "l4_deliverable_type": "EVD-5cb2f9e1aaa0c08f615d",
+          "l4_name": "EVD-eed9fb9229c4767630e9",
+          "skill_feasibility": "EVD-6e466ba3cbdc4681bf2f"
+        },
+        "human_touchpoint": "人工执行：产品与合规培训执行",
+        "l4_code": "L4-FTR-02",
+        "l4_name": "产品与合规培训执行",
+        "skill_feasibility": {
+          "action_nature": "合规监管类",
+          "action_singularity": "复合动作(建议先拆分)",
+          "funds_safety_hard_gate": false,
+          "grade": "B-中封装(需报告模板/系统集成配合)",
+          "judgment_basis": "B-可封装但仍需人工复核(合规类)",
+          "physical_execution": false,
+          "recommended_path": "先补报告模板、规则固化或系统接口，再验证Skill",
+          "verification_status": "VERIFIED"
+        },
+        "tier": "Aug"
+      },
+      {
+        "d1_d6": {
+          "agent_d1_input_struct": 2,
+          "agent_d2_rule_clear": 1,
+          "agent_d3_output_verify": 2,
+          "agent_d4_api_reach": 1,
+          "agent_d5_fallback": 1,
+          "agent_d6_compliance": 1
+        },
+        "deliverable": "PPT/视频/表格。总部资料库，含配套督导工具和表格",
+        "deliverable_type": "数据表",
+        "evidence_refs": {
+          "agent_d1_input_struct": "EVD-2aaec5316ad7367068ce",
+          "agent_d2_rule_clear": "EVD-37a7aa768061daa1d472",
+          "agent_d3_output_verify": "EVD-9eed435f13fad46c10f7",
+          "agent_d4_api_reach": "EVD-2e21786ba48d8ec7cbd2",
+          "agent_d5_fallback": "EVD-3b8ac6a4218e8e82653e",
+          "agent_d6_compliance": "EVD-22a565064b3ab2dbe936",
+          "agent_human_touchpoint": "EVD-bc0c0cf0bc2f415364c1",
+          "agentifiability": "EVD-579bb7c94d29b5e117f3",
+          "l4_deliverable": "EVD-19ebf94facc1763082e1",
+          "l4_deliverable_type": "EVD-42be75871edcca9fb556",
+          "l4_name": "EVD-6f74297f228410a34904",
+          "skill_feasibility": "EVD-33f7d70bd5a6b4c455df"
+        },
+        "human_touchpoint": "人工执行：实战演练与陪访配对",
+        "l4_code": "L4-FTR-03",
+        "l4_name": "实战演练与陪访配对",
+        "skill_feasibility": {
+          "action_nature": "语义复核判定",
+          "action_singularity": "复合动作(建议先拆分)",
+          "funds_safety_hard_gate": false,
+          "grade": "C-低封装(判断/策略/关系类,理论天花板)",
+          "judgment_basis": "C-低封装度(判断/策略/关系类,语义复核后确认)",
+          "physical_execution": true,
+          "recommended_path": "优先考虑Agent辅助或决策支持，不直接封装确定性Skill",
+          "verification_status": "VERIFIED"
+        },
+        "tier": "Hybrid"
+      },
+      {
+        "d1_d6": {
+          "agent_d1_input_struct": 3,
+          "agent_d2_rule_clear": 3,
+          "agent_d3_output_verify": 3,
+          "agent_d4_api_reach": 3,
+          "agent_d5_fallback": 2,
+          "agent_d6_compliance": 2
+        },
+        "deliverable": "PPT/视频/表格。总部资料库，含配套督导工具和表格",
+        "deliverable_type": "方案",
+        "evidence_refs": {
+          "agent_d1_input_struct": "EVD-f788923b1ee9a5d359ae",
+          "agent_d2_rule_clear": "EVD-4f795847af954bb550e9",
+          "agent_d3_output_verify": "EVD-7314daa895d0b2f2a9e2",
+          "agent_d4_api_reach": "EVD-b23c0ef9b5c99f34c3ab",
+          "agent_d5_fallback": "EVD-1aa46eed872d6d531bef",
+          "agent_d6_compliance": "EVD-3c99c686d7737b5ffb7b",
+          "agent_human_touchpoint": "EVD-7e89df79aace69357e3d",
+          "agentifiability": "EVD-c1b223d3f043f06a9a7d",
+          "l4_deliverable": "EVD-7d2d9a106b7660dac0e0",
+          "l4_deliverable_type": "EVD-90b891ea716066d75522",
+          "l4_name": "EVD-bb8096a010f5462ac233",
+          "skill_feasibility": "EVD-224fe44eddb9e6c68044"
+        },
+        "human_touchpoint": null,
+        "l4_code": "L4-FTR-04",
+        "l4_name": "资料库维护与分发",
+        "skill_feasibility": {
+          "action_nature": "判断/策略/认知类",
+          "action_singularity": "复合动作(建议先拆分)",
+          "funds_safety_hard_gate": false,
+          "grade": "C-低封装(判断/策略/关系类,理论天花板)",
+          "judgment_basis": "C-仍低封装度(需判断/权威)",
+          "physical_execution": false,
+          "recommended_path": "优先考虑Agent辅助或决策支持，不直接封装确定性Skill",
+          "verification_status": "VERIFIED"
+        },
+        "tier": "Hybrid"
+      }
+    ],
+    "value_nodes": [
+      {
+        "evidence_refs": {
+          "gate1_data_linked": "EVD-3ff30e5fb31933f56a34",
+          "gate2_grounded": "EVD-76cf1b676f7c1fe91a26",
+          "gate3_traceable": "EVD-7cae6df6100e4fe3f8d6",
+          "is_fused": "EVD-cf93169319660da56d2c",
+          "overall_judgment": "EVD-96bc754dab36dabe1633",
+          "priority": "EVD-22c8e08b2a155606aa39",
+          "vn_name": "EVD-983697b446bf46910150"
+        },
+        "is_fused": true,
+        "overall_judgment": "FAIL",
+        "priority": "P1",
+        "vn_id": "VN-FTR-01",
+        "vn_name": "培训课程体系（含配套工具）"
+      }
+    ],
+    "vn_l4_mappings": [
+      {
+        "l3_code": "L3-FTR",
+        "l4_code": "L4-FTR-01",
+        "mapping_status": "expanded",
+        "vn_id": "VN-FTR-01"
+      },
+      {
+        "l3_code": "L3-FTR",
+        "l4_code": "L4-FTR-02",
+        "mapping_status": "expanded",
+        "vn_id": "VN-FTR-01"
+      },
+      {
+        "l3_code": "L3-FTR",
+        "l4_code": "L4-FTR-03",
+        "mapping_status": "expanded",
+        "vn_id": "VN-FTR-01"
+      },
+      {
+        "l3_code": "L3-FTR",
+        "l4_code": "L4-FTR-04",
+        "mapping_status": "expanded",
+        "vn_id": "VN-FTR-01"
+      }
+    ],
+    "kpi_mappings": [],
+    "value_stream_mappings": [
+      {
+        "l3_code": "L3-FTR",
+        "stage_code": "S3",
+        "vs_code": "VS-4",
+        "vs_name": "理财师发展旅程"
+      }
+    ],
+    "blueprint": {
+      "blueprint_value_nodes": [],
+      "coverage": "INDEXED",
+      "decisions": [
+        {
+          "after_step": "STEP-02",
+          "branches": [
+            {
+              "is_return": false,
+              "label": "出席率达标（核心课程全部完成）",
+              "source_line": 86,
+              "target_l4": "",
+              "target_step": "STEP-03",
+              "target_text": "Step 3 实战演练"
+            },
+            {
+              "is_return": false,
+              "label": "未达标",
+              "source_line": 87,
+              "target_l4": "",
+              "target_step": "",
+              "target_text": "补课安排，关键合规课程必须完成后方可出单"
+            }
+          ],
+          "decision_id": "Q1",
+          "evidence_ref": "EVD-1445ca9adcf699878bb4",
+          "question": "培训出席率是否达标",
+          "source_line": 83
+        }
+      ],
+      "diagnostics": {
+        "blueprint_l4_count": 4,
+        "db_l4_count": 4,
+        "extra_in_blueprint": [],
+        "missing_in_blueprint": [],
+        "parsed_step_l4_count": 4,
+        "retired_l4s_ignored": [],
+        "unmapped_step_count": 0
+      },
+      "edges": [
+        {
+          "edge_id": "SEQ-STEP-01-STEP-02",
+          "edge_type": "SEQUENCE",
+          "from": "STEP-01",
+          "label": "",
+          "source_rule": "蓝图显式编号步骤的相邻顺序",
+          "to": "STEP-02"
+        },
+        {
+          "edge_id": "SEQ-STEP-02-STEP-03",
+          "edge_type": "SEQUENCE",
+          "from": "STEP-02",
+          "label": "",
+          "source_rule": "蓝图显式编号步骤的相邻顺序",
+          "to": "STEP-03"
+        },
+        {
+          "edge_id": "SEQ-STEP-03-STEP-04",
+          "edge_type": "SEQUENCE",
+          "from": "STEP-03",
+          "label": "",
+          "source_rule": "蓝图显式编号步骤的相邻顺序",
+          "to": "STEP-04"
+        },
+        {
+          "edge_id": "Q1-4",
+          "edge_type": "DECISION",
+          "from": "Q1",
+          "label": "出席率达标（核心课程全部完成）",
+          "source_rule": "蓝图第86行显式分支",
+          "to": "STEP-03"
+        }
+      ],
+      "filename": "流程蓝图_L3-FTR_理财师培训与转介签约_V1.0.md",
+      "note": "已从蓝图正文解析；步骤顺序边由显式步骤编号派生，判断分支保留原文行号",
+      "raci": [],
+      "source_hash": "3123e64ef046fbffea22d34c8583df4b14adbaaa284e9d90cb5804da0e2cca82",
+      "source_path": "/Users/a112233/Desktop/流程架构项目_jasper/02_过程成果-工作产出/L3流程库/流程蓝图_L3-FTR_理财师培训与转介签约_V1.0.md",
+      "steps": [
+        {
+          "activities": [
+            "L4-FTR-01 培训需求评估与课程安排 → 《培训安排计划》(Human)"
+          ],
+          "evidence_ref": "EVD-2009b0398573b967d6ed",
+          "l4_codes": [
+            "L4-FTR-01"
+          ],
+          "sequence": 1,
+          "source_line": 52,
+          "step_id": "STEP-01",
+          "step_name": "培训需求评估与课程匹配"
+        },
+        {
+          "activities": [
+            "L4-FTR-02 产品与合规培训执行 → 《培训出席记录》(Human)"
+          ],
+          "evidence_ref": "EVD-a0feefb5a1df0dfceee1",
+          "l4_codes": [
+            "L4-FTR-02"
+          ],
+          "sequence": 2,
+          "source_line": 58,
+          "step_id": "STEP-02",
+          "step_name": "产品与合规培训执行"
+        },
+        {
+          "activities": [
+            "L4-FTR-03 实战演练与陪访配对 → 《实战演练记录》(Human)"
+          ],
+          "evidence_ref": "EVD-c3e0229f27e5156cf241",
+          "l4_codes": [
+            "L4-FTR-03"
+          ],
+          "sequence": 3,
+          "source_line": 66,
+          "step_id": "STEP-03",
+          "step_name": "实战演练与陪访准备"
+        },
+        {
+          "activities": [
+            "L4-FTR-04 资料库维护与分发 → 《培训课程体系》+配套工具[P1 VN-FTR-01](Aug)"
+          ],
+          "evidence_ref": "EVD-35f5d280aa6fb21c9ab7",
+          "l4_codes": [
+            "L4-FTR-04"
+          ],
+          "sequence": 4,
+          "source_line": 72,
+          "step_id": "STEP-04",
+          "step_name": "培训课程体系维护与分发"
+        }
+      ],
+      "structure_status": "PARSED",
+      "version": "V1.0"
+    },
+    "evidence_registry": [
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-1445ca9adcf699878bb4",
+        "field_name": "blueprint.decisions.Q1",
+        "source": {
+          "observed_at": "",
+          "source_field": "decision",
+          "source_key": "line:83",
+          "source_object": "流程蓝图_L3-FTR_理财师培训与转介签约_V1.0.md",
+          "source_system": "L3流程库",
+          "source_version": "V1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "branches": [
+            {
+              "is_return": false,
+              "label": "出席率达标（核心课程全部完成）",
+              "source_line": 86,
+              "target_l4": "",
+              "target_step": "STEP-03",
+              "target_text": "Step 3 实战演练"
+            },
+            {
+              "is_return": false,
+              "label": "未达标",
+              "source_line": 87,
+              "target_l4": "",
+              "target_step": "",
+              "target_text": "补课安排，关键合规课程必须完成后方可出单"
+            }
+          ],
+          "question": "培训出席率是否达标"
+        }
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-19ebf94facc1763082e1",
+        "field_name": "l4_deliverable",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_deliverable",
+          "source_key": "L4-FTR-03",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "PPT/视频/表格。总部资料库，含配套督导工具和表格"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-1aa46eed872d6d531bef",
+        "field_name": "agent_d5_fallback",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d5_fallback",
+          "source_key": "L4-FTR-04",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-2009b0398573b967d6ed",
+        "field_name": "blueprint.steps.STEP-01",
+        "source": {
+          "observed_at": "",
+          "source_field": "step",
+          "source_key": "line:52",
+          "source_object": "流程蓝图_L3-FTR_理财师培训与转介签约_V1.0.md",
+          "source_system": "L3流程库",
+          "source_version": "V1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "l4_codes": [
+            "L4-FTR-01"
+          ],
+          "step_name": "培训需求评估与课程匹配"
+        }
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-224fe44eddb9e6c68044",
+        "field_name": "skill_feasibility",
+        "source": {
+          "observed_at": "",
+          "source_field": "L4明细_最终确认版:A:N",
+          "source_key": "L4-FTR-04@row:107",
+          "source_object": "L4流程_Skill封装可行性评估_确认最终版_v2.xlsx",
+          "source_system": "OB知识库",
+          "source_version": "v2"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "action_nature": "判断/策略/认知类",
+          "action_singularity": "复合动作(建议先拆分)",
+          "funds_safety_hard_gate": false,
+          "grade": "C-低封装(判断/策略/关系类,理论天花板)",
+          "judgment_basis": "C-仍低封装度(需判断/权威)",
+          "physical_execution": false,
+          "recommended_path": "优先考虑Agent辅助或决策支持，不直接封装确定性Skill",
+          "verification_status": "VERIFIED"
+        }
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-22a565064b3ab2dbe936",
+        "field_name": "agent_d6_compliance",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d6_compliance",
+          "source_key": "L4-FTR-03",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 1
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-22c8e08b2a155606aa39",
+        "field_name": "priority",
+        "source": {
+          "observed_at": "",
+          "source_field": "priority",
+          "source_key": "VN-FTR-01",
+          "source_object": "process_analytics.dim_vn",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "P1"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-2aaec5316ad7367068ce",
+        "field_name": "agent_d1_input_struct",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d1_input_struct",
+          "source_key": "L4-FTR-03",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-2d2a1359308cd9cd6817",
+        "field_name": "l4_name",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_name",
+          "source_key": "L4-FTR-01",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "培训需求评估与课程安排"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-2e21786ba48d8ec7cbd2",
+        "field_name": "agent_d4_api_reach",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d4_api_reach",
+          "source_key": "L4-FTR-03",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 1
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-332f7824d9dc1eda23db",
+        "field_name": "agent_d4_api_reach",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d4_api_reach",
+          "source_key": "L4-FTR-01",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-33f7d70bd5a6b4c455df",
+        "field_name": "skill_feasibility",
+        "source": {
+          "observed_at": "",
+          "source_field": "L4明细_最终确认版:A:N",
+          "source_key": "L4-FTR-03@row:106",
+          "source_object": "L4流程_Skill封装可行性评估_确认最终版_v2.xlsx",
+          "source_system": "OB知识库",
+          "source_version": "v2"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "action_nature": "语义复核判定",
+          "action_singularity": "复合动作(建议先拆分)",
+          "funds_safety_hard_gate": false,
+          "grade": "C-低封装(判断/策略/关系类,理论天花板)",
+          "judgment_basis": "C-低封装度(判断/策略/关系类,语义复核后确认)",
+          "physical_execution": true,
+          "recommended_path": "优先考虑Agent辅助或决策支持，不直接封装确定性Skill",
+          "verification_status": "VERIFIED"
+        }
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-35f5d280aa6fb21c9ab7",
+        "field_name": "blueprint.steps.STEP-04",
+        "source": {
+          "observed_at": "",
+          "source_field": "step",
+          "source_key": "line:72",
+          "source_object": "流程蓝图_L3-FTR_理财师培训与转介签约_V1.0.md",
+          "source_system": "L3流程库",
+          "source_version": "V1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "l4_codes": [
+            "L4-FTR-04"
+          ],
+          "step_name": "培训课程体系维护与分发"
+        }
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-37a7aa768061daa1d472",
+        "field_name": "agent_d2_rule_clear",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d2_rule_clear",
+          "source_key": "L4-FTR-03",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 1
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-3b8ac6a4218e8e82653e",
+        "field_name": "agent_d5_fallback",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d5_fallback",
+          "source_key": "L4-FTR-03",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 1
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-3c99c686d7737b5ffb7b",
+        "field_name": "agent_d6_compliance",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d6_compliance",
+          "source_key": "L4-FTR-04",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-3ff30e5fb31933f56a34",
+        "field_name": "gate1_data_linked",
+        "source": {
+          "observed_at": "",
+          "source_field": "gate1_data_linked",
+          "source_key": "VN-FTR-01",
+          "source_object": "process_analytics.dim_vn",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "PARTIAL"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-42be75871edcca9fb556",
+        "field_name": "l4_deliverable_type",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_deliverable_type",
+          "source_key": "L4-FTR-03",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "数据表"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-43f1b24aa40ebd9cf773",
+        "field_name": "agent_d1_input_struct",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d1_input_struct",
+          "source_key": "L4-FTR-01",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-4823638d0595712183a8",
+        "field_name": "agent_d5_fallback",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d5_fallback",
+          "source_key": "L4-FTR-01",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-4f795847af954bb550e9",
+        "field_name": "agent_d2_rule_clear",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d2_rule_clear",
+          "source_key": "L4-FTR-04",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 3
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-579bb7c94d29b5e117f3",
+        "field_name": "agentifiability",
+        "source": {
+          "observed_at": "",
+          "source_field": "agentifiability",
+          "source_key": "L4-FTR-03",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "Hybrid"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-59781a98ca4db98fb407",
+        "field_name": "agent_d3_output_verify",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d3_output_verify",
+          "source_key": "L4-FTR-02",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 3
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-5cb2f9e1aaa0c08f615d",
+        "field_name": "l4_deliverable_type",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_deliverable_type",
+          "source_key": "L4-FTR-02",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "数据表"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-5cfb57bac5d8dd72708d",
+        "field_name": "agent_d3_output_verify",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d3_output_verify",
+          "source_key": "L4-FTR-01",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-63f466a099e47e8bcd40",
+        "field_name": "l4_deliverable",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_deliverable",
+          "source_key": "L4-FTR-01",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "PPT/视频/表格。总部资料库，含配套督导工具和表格"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-6e466ba3cbdc4681bf2f",
+        "field_name": "skill_feasibility",
+        "source": {
+          "observed_at": "",
+          "source_field": "L4明细_最终确认版:A:N",
+          "source_key": "L4-FTR-02@row:105",
+          "source_object": "L4流程_Skill封装可行性评估_确认最终版_v2.xlsx",
+          "source_system": "OB知识库",
+          "source_version": "v2"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "action_nature": "合规监管类",
+          "action_singularity": "复合动作(建议先拆分)",
+          "funds_safety_hard_gate": false,
+          "grade": "B-中封装(需报告模板/系统集成配合)",
+          "judgment_basis": "B-可封装但仍需人工复核(合规类)",
+          "physical_execution": false,
+          "recommended_path": "先补报告模板、规则固化或系统接口，再验证Skill",
+          "verification_status": "VERIFIED"
+        }
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-6f74297f228410a34904",
+        "field_name": "l4_name",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_name",
+          "source_key": "L4-FTR-03",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "实战演练与陪访配对"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-70281da4184388b99278",
+        "field_name": "agent_d5_fallback",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d5_fallback",
+          "source_key": "L4-FTR-02",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-7314daa895d0b2f2a9e2",
+        "field_name": "agent_d3_output_verify",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d3_output_verify",
+          "source_key": "L4-FTR-04",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 3
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-76cf1b676f7c1fe91a26",
+        "field_name": "gate2_grounded",
+        "source": {
+          "observed_at": "",
+          "source_field": "gate2_grounded",
+          "source_key": "VN-FTR-01",
+          "source_object": "process_analytics.dim_vn",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "FAIL"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-78db83322fb74f98afd2",
+        "field_name": "agentifiability",
+        "source": {
+          "observed_at": "",
+          "source_field": "agentifiability",
+          "source_key": "L4-FTR-02",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "Aug"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-7cae6df6100e4fe3f8d6",
+        "field_name": "gate3_traceable",
+        "source": {
+          "observed_at": "",
+          "source_field": "gate3_traceable",
+          "source_key": "VN-FTR-01",
+          "source_object": "process_analytics.dim_vn",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "FAIL"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-7d2d9a106b7660dac0e0",
+        "field_name": "l4_deliverable",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_deliverable",
+          "source_key": "L4-FTR-04",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "PPT/视频/表格。总部资料库，含配套督导工具和表格"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-7e89df79aace69357e3d",
+        "field_name": "agent_human_touchpoint",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_human_touchpoint",
+          "source_key": "L4-FTR-04",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "MISSING",
+        "transform_rule": "",
+        "value": null
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-8a482b33c1d346db416e",
+        "field_name": "agent_human_touchpoint",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_human_touchpoint",
+          "source_key": "L4-FTR-01",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "人工执行：培训需求评估与课程安排"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-90b891ea716066d75522",
+        "field_name": "l4_deliverable_type",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_deliverable_type",
+          "source_key": "L4-FTR-04",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "方案"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-96bc754dab36dabe1633",
+        "field_name": "overall_judgment",
+        "source": {
+          "observed_at": "",
+          "source_field": "overall_judgment",
+          "source_key": "VN-FTR-01",
+          "source_object": "process_analytics.dim_vn",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "FAIL"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-97f8c1d8e6539fc3b80d",
+        "field_name": "agent_d1_input_struct",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d1_input_struct",
+          "source_key": "L4-FTR-02",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 3
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-983697b446bf46910150",
+        "field_name": "vn_name",
+        "source": {
+          "observed_at": "",
+          "source_field": "vn_name",
+          "source_key": "VN-FTR-01",
+          "source_object": "process_analytics.dim_vn",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "培训课程体系（含配套工具）"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-9bad8034ee1b8ddca987",
+        "field_name": "agent_human_touchpoint",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_human_touchpoint",
+          "source_key": "L4-FTR-02",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "人工执行：产品与合规培训执行"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-9eed435f13fad46c10f7",
+        "field_name": "agent_d3_output_verify",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d3_output_verify",
+          "source_key": "L4-FTR-03",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-a0feefb5a1df0dfceee1",
+        "field_name": "blueprint.steps.STEP-02",
+        "source": {
+          "observed_at": "",
+          "source_field": "step",
+          "source_key": "line:58",
+          "source_object": "流程蓝图_L3-FTR_理财师培训与转介签约_V1.0.md",
+          "source_system": "L3流程库",
+          "source_version": "V1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "l4_codes": [
+            "L4-FTR-02"
+          ],
+          "step_name": "产品与合规培训执行"
+        }
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-b23c0ef9b5c99f34c3ab",
+        "field_name": "agent_d4_api_reach",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d4_api_reach",
+          "source_key": "L4-FTR-04",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 3
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-b44daacd6746a7a4b88e",
+        "field_name": "agentifiability",
+        "source": {
+          "observed_at": "",
+          "source_field": "agentifiability",
+          "source_key": "L4-FTR-01",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "Hybrid"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-b59eeb9db18648b3c82d",
+        "field_name": "readiness.sop.VN-FTR-01",
+        "source": {
+          "observed_at": "",
+          "source_field": "sop_file",
+          "source_key": "VN-FTR-01",
+          "source_object": "T19_SOP生产进度_全域_v2.0.csv",
+          "source_system": "VNW数据基础",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "file": "SOP_VN-FTR-01_培训课程体系含配套工具_v0.1.md",
+          "title": "VN-FTR-01 · 培训课程体系（含配套工具） v0.1"
+        }
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-bb8096a010f5462ac233",
+        "field_name": "l4_name",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_name",
+          "source_key": "L4-FTR-04",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "资料库维护与分发"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-bb80ed9c3eabb4c00fab",
+        "field_name": "agent_d2_rule_clear",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d2_rule_clear",
+          "source_key": "L4-FTR-02",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 3
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-bc0c0cf0bc2f415364c1",
+        "field_name": "agent_human_touchpoint",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_human_touchpoint",
+          "source_key": "L4-FTR-03",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "人工执行：实战演练与陪访配对"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-c1b223d3f043f06a9a7d",
+        "field_name": "agentifiability",
+        "source": {
+          "observed_at": "",
+          "source_field": "agentifiability",
+          "source_key": "L4-FTR-04",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "Hybrid"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-c3e0229f27e5156cf241",
+        "field_name": "blueprint.steps.STEP-03",
+        "source": {
+          "observed_at": "",
+          "source_field": "step",
+          "source_key": "line:66",
+          "source_object": "流程蓝图_L3-FTR_理财师培训与转介签约_V1.0.md",
+          "source_system": "L3流程库",
+          "source_version": "V1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "l4_codes": [
+            "L4-FTR-03"
+          ],
+          "step_name": "实战演练与陪访准备"
+        }
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-cdc4c606a1eb6e328ea6",
+        "field_name": "l4_deliverable",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_deliverable",
+          "source_key": "L4-FTR-02",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "PPT/视频/表格。总部资料库，含配套督导工具和表格"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-cf93169319660da56d2c",
+        "field_name": "is_fused",
+        "source": {
+          "observed_at": "",
+          "source_field": "is_fused",
+          "source_key": "VN-FTR-01",
+          "source_object": "process_analytics.dim_vn",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": true
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-d236dd74be66e88a0f27",
+        "field_name": "skill_feasibility",
+        "source": {
+          "observed_at": "",
+          "source_field": "L4明细_最终确认版:A:N",
+          "source_key": "L4-FTR-01@row:104",
+          "source_object": "L4流程_Skill封装可行性评估_确认最终版_v2.xlsx",
+          "source_system": "OB知识库",
+          "source_version": "v2"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "action_nature": "判断/策略/认知类",
+          "action_singularity": "复合动作(建议先拆分)",
+          "funds_safety_hard_gate": false,
+          "grade": "C-低封装(判断/策略/关系类,理论天花板)",
+          "judgment_basis": "C-仍低封装度(需判断/权威)",
+          "physical_execution": false,
+          "recommended_path": "优先考虑Agent辅助或决策支持，不直接封装确定性Skill",
+          "verification_status": "VERIFIED"
+        }
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-d959c6e0e6c32116d34d",
+        "field_name": "agent_d2_rule_clear",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d2_rule_clear",
+          "source_key": "L4-FTR-01",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-e0d3adf2022e3708cc90",
+        "field_name": "l4_deliverable_type",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_deliverable_type",
+          "source_key": "L4-FTR-01",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "方案"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-eed9fb9229c4767630e9",
+        "field_name": "l4_name",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_name",
+          "source_key": "L4-FTR-02",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "产品与合规培训执行"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-f7448b3258cc6618969b",
+        "field_name": "agent_d6_compliance",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d6_compliance",
+          "source_key": "L4-FTR-01",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-f788923b1ee9a5d359ae",
+        "field_name": "agent_d1_input_struct",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d1_input_struct",
+          "source_key": "L4-FTR-04",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 3
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-f9555ebb5e90c2546872",
+        "field_name": "agent_d4_api_reach",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d4_api_reach",
+          "source_key": "L4-FTR-02",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 3
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-f9e54957fc8f559ed49e",
+        "field_name": "agent_d6_compliance",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d6_compliance",
+          "source_key": "L4-FTR-02",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      }
+    ]
+  }
+}

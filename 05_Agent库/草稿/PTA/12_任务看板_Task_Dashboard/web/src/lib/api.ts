@@ -108,6 +108,9 @@ export interface ChangeItem {
   after_excerpt: string
   diff_text: string
   observed_at?: string
+  important_to_me?: boolean
+  importance_reason?: string
+  related_personal_tasks?: string[]
 }
 
 export interface RelationshipItem {

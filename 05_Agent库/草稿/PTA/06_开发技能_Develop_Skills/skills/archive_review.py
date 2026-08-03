@@ -12,12 +12,20 @@
    同一个内存对象，不再有"CLI 参数在多级 subprocess 之间转发时漏传"的可能——
    这正是旧架构里 PTA-RUN 调 S05 漏传 --project-root、导致执行记录写进错误
    项目目录那个真实 bug 的结构性解法。
+
+2026-08 迁移记录：`01_execution/`执行记录 + `F3_教训库.md`此前一直直接写进
+project_root（目标项目自己的文件夹），是跟pta_tasks.json/pta_focus.md同一类
+"PTA自己的产物混进目标项目"问题——真实复现过：对EA项目跑一次`--execute`
+dry-run验证，就在EA项目根目录里凭空多出一个`01_execution/`文件夹。现在两个
+写入目标都改成该项目专属工作区下的路径，不再写进任何目标项目自己的文件夹。
 """
 
 from pathlib import Path
 from datetime import datetime
 from typing import Dict, List, Optional
 from dataclasses import dataclass
+
+from memory import workspace as ws
 
 
 @dataclass
@@ -35,8 +43,9 @@ class ArchiveReviewer:
 
     def __init__(self, project_root: Path):
         self.project_root = project_root
-        self.execution_dir = project_root / "01_execution"
-        self.lessons_file = project_root / "F3_教训库.md"
+        workspace = ws.get_project_workspace(Path(project_root))
+        self.execution_dir = workspace / "01_execution"
+        self.lessons_file = workspace / "F3_教训库.md"
 
     def _generate_execution_summary(self, plan: Dict) -> Dict:
         steps = plan.get("steps", [])

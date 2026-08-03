@@ -1,82 +1,198 @@
 {
   "analysis": {
     "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
-    "analysis_status": "PENDING_MODEL",
+    "analysis_status": "MODEL_DRAFT",
+    "control_chain": [],
     "decision_drafts": [],
-    "generation_mode": "EVIDENCE_ONLY_BOOTSTRAP",
+    "generation_mode": "UNIFIED_MODEL",
     "l4_analysis": [
       {
-        "ai_reshape": "",
-        "ai_responsibility": "",
-        "analysis_status": "PENDING_MODEL",
-        "confidence": "UNASSESSED",
-        "control_gates": [],
-        "current_recommendation": "",
-        "data_basis": [],
-        "deliverable_role": "",
-        "evidence_refs": [
-          "EVD-33796f8883af8edebc42",
-          "EVD-610d5007b15fa616a513",
-          "EVD-61fcfd98758dfba18bdc",
-          "EVD-85acc851227b38eaa2d3",
-          "EVD-8c35b56b10b4efabdbf6",
-          "EVD-91ea2c4aa9aac7450c68",
-          "EVD-955997e99390e61b783e",
-          "EVD-9fb861a25fd8b48f8ca9",
-          "EVD-ac319259a1899b42b0f9",
-          "EVD-bc1ebcd84c80020c2e30",
-          "EVD-e9177d6b9ac81af1a137",
-          "EVD-f6c0d5fbfeba0b7ed54d"
+        "ai_reshape": "封装为确定性Skill自动生成《起草合同要点确认》，因规则清晰度不足(1)需保留人工复核接口",
+        "ai_responsibility": "自动提取合同信息、套用模板生成确认文件",
+        "analysis_status": "MODEL_DRAFT",
+        "confidence": "MODEL_DRAFT",
+        "control_gates": [
+          {
+            "evidence": "模型推导（不可逆动作：对外分享合同要点）",
+            "gate": "人工确认门",
+            "trigger": "发送确认文件前需负责人最终签发"
+          }
         ],
-        "handoff_triggers": [],
-        "human_responsibility": "",
+        "current_recommendation": "优先进入Skill原型池，试点自动生成确认文件，同时人工复核所有输出，待规则积累后升级为Auto",
+        "data_basis": [
+          "合同原始数据字段",
+          "《要点确认》模板规则"
+        ],
+        "database_tier": "Auto",
+        "deliverable_role": "确认合同起草时的关键要点，确保后续签署依据准确",
+        "evidence_refs": [
+          "EVD-140cc877d30ae9efdb12",
+          "EVD-61fcfd98758dfba18bdc",
+          "EVD-9fb861a25fd8b48f8ca9",
+          "EVD-91ea2c4aa9aac7450c68",
+          "EVD-610d5007b15fa616a513",
+          "EVD-8c35b56b10b4efabdbf6",
+          "EVD-ac319259a1899b42b0f9",
+          "EVD-33796f8883af8edebc42"
+        ],
+        "handoff_triggers": [
+          "规则冲突导致无法自动生成确认文件",
+          "数据异常或合同信息缺失",
+          "人工抽查发现要点与合同原文不符"
+        ],
+        "human_responsibility": "复核AI生成的要点，处理规则模糊场景并确认最终版本",
         "l4_code": "L4-CDS-01",
-        "process_context": "",
-        "quality_anchor": "",
-        "risks_limits": [],
-        "specific_capabilities": []
+        "process_context": "L3-CDS 权益相关商务合同起草与签订，位于价值流VS-5 权益服务企业客户旅程 S3阶段",
+        "quadrant": "unclassified",
+        "quality_anchor": "确认要点与原始合同数据一致性 ≥100%",
+        "recommended_tier": "Aug",
+        "risks_limits": [
+          "规则覆盖不全可能导致误确认",
+          "API可达性低(1)限制全自动化调用"
+        ],
+        "specific_capabilities": [
+          {
+            "basis": "EVD-61fcfd98758dfba18bdc",
+            "capability": "从合同数据中提取关键条款",
+            "feasibility": "A"
+          },
+          {
+            "basis": "EVD-91ea2c4aa9aac7450c68 (rule_clear=1)",
+            "capability": "验证要点与业务规则匹配",
+            "feasibility": "需人介入"
+          }
+        ]
       },
       {
-        "ai_reshape": "",
-        "ai_responsibility": "",
-        "analysis_status": "PENDING_MODEL",
-        "confidence": "UNASSESSED",
-        "control_gates": [],
-        "current_recommendation": "",
-        "data_basis": [],
-        "deliverable_role": "",
-        "evidence_refs": [
-          "EVD-0d1ed4be9f8a065cfa41",
-          "EVD-249f51dd643206dfe3ed",
-          "EVD-34afe3b3cb277131c0b5",
-          "EVD-5c5baa50201f7edadd79",
-          "EVD-67ec729327354d79916b",
-          "EVD-6a66954025b8d6cd5709",
-          "EVD-8545ca07ca8f379953bf",
-          "EVD-adc2dd8598de0a3737e0",
-          "EVD-cb052bac53767464f972",
-          "EVD-d86da447b22f78fd7205",
-          "EVD-edcc2a930c2ee06a9be9",
-          "EVD-f1a2bbdd0a39b0875cfc"
+        "ai_reshape": "拆分为两个子Skill：签署核对Skill（需人工触发确认）和登记Skill（自动生成），通过编排实现端到端",
+        "ai_responsibility": "核对签署系统中的状态、生成登记表草稿",
+        "analysis_status": "MODEL_DRAFT",
+        "confidence": "MODEL_DRAFT",
+        "control_gates": [
+          {
+            "evidence": "模型推导（对外法律承诺）",
+            "gate": "法律合规控制门",
+            "trigger": "签署为不可逆操作，需授权人最终确认"
+          },
+          {
+            "evidence": "EVD-0d1ed4be9f8a065cfa41 (compliance=2)",
+            "gate": "登记审批门",
+            "trigger": "登记表发布前需合规审核"
+          }
         ],
-        "handoff_triggers": [],
-        "human_responsibility": "",
+        "current_recommendation": "优先自动化登记生成子流程(数据结构化+API可达)，签署核对保留人工确认试点，积累规则后逐步增强自动化",
+        "data_basis": [
+          "电子签署平台API状态",
+          "合同核心条款元数据",
+          "登记表模板"
+        ],
+        "database_tier": "Auto",
+        "deliverable_role": "产出具有法律效力的已签合同和可追溯的登记表，作为权益服务凭证",
+        "evidence_refs": [
+          "EVD-505035778cd9e506b5b9",
+          "EVD-edcc2a930c2ee06a9be9",
+          "EVD-5c5baa50201f7edadd79",
+          "EVD-34afe3b3cb277131c0b5",
+          "EVD-8545ca07ca8f379953bf",
+          "EVD-cb052bac53767464f972",
+          "EVD-67ec729327354d79916b",
+          "EVD-0d1ed4be9f8a065cfa41"
+        ],
+        "handoff_triggers": [
+          "签署状态不一致或缺失",
+          "合同关键字段与业务系统不符",
+          "登记表生成规则冲突"
+        ],
+        "human_responsibility": "确认签署有效性和关键条款，处理异常合同，最终审批登记表",
         "l4_code": "L4-CDS-02",
-        "process_context": "",
-        "quality_anchor": "",
-        "risks_limits": [],
-        "specific_capabilities": []
+        "process_context": "L3-CDS 权益相关商务合同起草与签订，位于价值流VS-5 权益服务企业客户旅程 S3阶段，直接关联价值节点VN-EQ-05(P1)",
+        "quadrant": "unclassified",
+        "quality_anchor": "签署信息零错误，登记表字段完整性100%",
+        "recommended_tier": "Aug",
+        "risks_limits": [
+          "签署错误具有法律风险",
+          "复合动作需先定义拆分边界和协同机制"
+        ],
+        "specific_capabilities": [
+          {
+            "basis": "EVD-edcc2a930c2ee06a9be9",
+            "capability": "签署状态核对",
+            "feasibility": "A（可封装为Skill）"
+          },
+          {
+            "basis": "EVD-edcc2a930c2ee06a9be9 (复合动作需拆分)",
+            "capability": "登记表自动生成",
+            "feasibility": "A（可独立为Skill）"
+          }
+        ]
       }
     ],
     "missing_analysis": [
-      "逐L4交付物与具体能力分析",
-      "逐任务AI分工分析",
-      "逐L4人机协作与控制分析",
-      "逐L4优先级四维分析",
-      "任务级负责人决策建议"
+      "L4-CDS-01 · human_touchpoint · 数据库字段缺失",
+      "L4-CDS-02 · human_touchpoint · 数据库字段缺失",
+      "负责人决策草稿结构不合格，已拒绝1条",
+      "控制链缺少L4定位，已拒绝2条"
     ],
-    "model_run": null,
-    "priority_drafts": [],
+    "model_run": {
+      "generated_at": "2026-08-03T05:51:32.952721+00:00",
+      "input_snapshot_hash": "2073300caa5e0fe922319727492d61a2db4bec16028e0140d23e8a6a95eef2bc",
+      "model_name": "deepseek-v4-pro",
+      "model_version": "deepseek-v4-pro",
+      "prompt_version": "VNW-L3-COM-GOLD-v1.0"
+    },
+    "priority_drafts": [
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "current_recommendation": "优先进入Skill原型池，试点自动生成确认文件，同时人工复核所有输出，待规则积累后升级为Auto",
+        "data_basis": [
+          "合同原始数据字段",
+          "《要点确认》模板规则"
+        ],
+        "evidence_refs": [
+          "EVD-140cc877d30ae9efdb12",
+          "EVD-61fcfd98758dfba18bdc",
+          "EVD-9fb861a25fd8b48f8ca9",
+          "EVD-91ea2c4aa9aac7450c68",
+          "EVD-610d5007b15fa616a513",
+          "EVD-8c35b56b10b4efabdbf6",
+          "EVD-ac319259a1899b42b0f9",
+          "EVD-33796f8883af8edebc42"
+        ],
+        "l4_code": "L4-CDS-01",
+        "process_context": "L3-CDS 权益相关商务合同起草与签订，位于价值流VS-5 权益服务企业客户旅程 S3阶段",
+        "quadrant": "unclassified",
+        "risks_limits": [
+          "规则覆盖不全可能导致误确认",
+          "API可达性低(1)限制全自动化调用"
+        ]
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "current_recommendation": "优先自动化登记生成子流程(数据结构化+API可达)，签署核对保留人工确认试点，积累规则后逐步增强自动化",
+        "data_basis": [
+          "电子签署平台API状态",
+          "合同核心条款元数据",
+          "登记表模板"
+        ],
+        "evidence_refs": [
+          "EVD-505035778cd9e506b5b9",
+          "EVD-edcc2a930c2ee06a9be9",
+          "EVD-5c5baa50201f7edadd79",
+          "EVD-34afe3b3cb277131c0b5",
+          "EVD-8545ca07ca8f379953bf",
+          "EVD-cb052bac53767464f972",
+          "EVD-67ec729327354d79916b",
+          "EVD-0d1ed4be9f8a065cfa41"
+        ],
+        "l4_code": "L4-CDS-02",
+        "process_context": "L3-CDS 权益相关商务合同起草与签订，位于价值流VS-5 权益服务企业客户旅程 S3阶段，直接关联价值节点VN-EQ-05(P1)",
+        "quadrant": "unclassified",
+        "risks_limits": [
+          "签署错误具有法律风险",
+          "复合动作需先定义拆分边界和协同机制"
+        ]
+      }
+    ],
     "rejected_task_sources": [],
     "schema_version": "vnw.l3-analysis.v1",
     "source_scope": {
@@ -86,46 +202,78 @@
     },
     "tasks": [
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-140cc877d30ae9efdb12"
+          "EVD-140cc877d30ae9efdb12",
+          "EVD-61fcfd98758dfba18bdc",
+          "EVD-9fb861a25fd8b48f8ca9"
         ],
         "l4_code": "L4-CDS-01",
-        "next_task_ids": [],
+        "next_task_ids": [
+          "TASK-02",
+          "TASK-03"
+        ],
         "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
+        "relation_type": "SEQUENCE",
         "sequence_no": 1,
         "sequence_status": "SOURCE_CONFIRMED",
         "source_line": 48,
         "source_step_id": "STEP-01",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-CDS-01-T01",
-        "task_name": "L4-CDS-01 → 《起草合同要点确认》(Aug)",
-        "tier_rationale": ""
+        "source_type": "蓝图步骤 + 知识条目",
+        "suggested_tier": "Aug",
+        "task_id": "TASK-01",
+        "task_name": "起草合同要点确认",
+        "tier_rationale": "输入结构化(2)但规则清晰度低(1)、API可达性低(1)，高封装Skill可行但需人工复核规则边界，建议输出自动生成+人工签发。"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-505035778cd9e506b5b9"
+          "EVD-505035778cd9e506b5b9",
+          "EVD-edcc2a930c2ee06a9be9",
+          "EVD-34afe3b3cb277131c0b5"
         ],
         "l4_code": "L4-CDS-02",
         "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
+        "previous_task_ids": [
+          "TASK-01"
+        ],
+        "relation_type": "PARALLEL",
         "sequence_no": 2,
-        "sequence_status": "SOURCE_CONFIRMED",
+        "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 54,
         "source_step_id": "STEP-02",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-CDS-02-T01",
-        "task_name": "L4-CDS-02 → 签署文件/合同(Auto)",
-        "tier_rationale": ""
+        "source_type": "蓝图步骤 + 复合动作拆分",
+        "suggested_tier": "Aug",
+        "task_id": "TASK-02",
+        "task_name": "签署核对",
+        "tier_rationale": "签署核对应对不可逆操作，必须人工确认签署有效性和关键条款；但核对步骤可辅以自动化状态比对，降低人工遗漏。"
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [
+          "EVD-505035778cd9e506b5b9",
+          "EVD-edcc2a930c2ee06a9be9",
+          "EVD-cb052bac53767464f972"
+        ],
+        "l4_code": "L4-CDS-02",
+        "next_task_ids": [],
+        "previous_task_ids": [
+          "TASK-01"
+        ],
+        "relation_type": "PARALLEL",
+        "sequence_no": 2,
+        "sequence_status": "SOURCE_STEP_ONLY",
+        "source_line": 54,
+        "source_step_id": "STEP-02",
+        "source_type": "蓝图步骤 + 复合动作拆分",
+        "suggested_tier": "Auto",
+        "task_id": "TASK-03",
+        "task_name": "完成登记",
+        "tier_rationale": "登记表模板固定、输入结构化(2)且API可达(2)，可全自动生成。输出需经合规审批，但生成过程无需人工干预。"
       }
     ]
   },
-  "analysis_freshness": "PENDING_MODEL",
+  "analysis_freshness": "CURRENT",
   "analysis_input_hash": "2073300caa5e0fe922319727492d61a2db4bec16028e0140d23e8a6a95eef2bc",
   "blueprint": {
     "blueprint_value_nodes": [],
