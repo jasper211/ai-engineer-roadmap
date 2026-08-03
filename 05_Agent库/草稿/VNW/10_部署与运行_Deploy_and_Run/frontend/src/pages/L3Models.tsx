@@ -1,7 +1,42 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router'
-import { AlertTriangle, ArrowRight, CheckCircle2, Database, GitBranch, LoaderCircle, Search, Star } from 'lucide-react'
+import { AlertTriangle, ArrowRight, CheckCircle2, ChevronDown, ChevronUp, Database, GitBranch, LoaderCircle, Search, Star } from 'lucide-react'
 import { loadDeliverableAudit, loadModelIndex, loadPendingSourceUpdate, type DeliverableAudit, type ModelIndex, type ModelIndexItem, type SourceUpdateReport } from '../lib/l3Models'
+
+const scopeLabels: Record<string, string> = {
+  blueprint: '流程蓝图', l4_delivery: 'L4与交付物', value_nodes: '价值节点',
+  vn_l4_mapping: '价值节点-L4映射', l2_capability: 'L2能力', kpi: 'KPI',
+  value_stream: '价值流', readiness: '建模准入', evidence: '证据注册表',
+  l3_removed: 'L3已从源头移除',
+}
+
+function changeMeaning(change: SourceUpdateReport['changes'][number]) {
+  if (change.status === 'ADDED') return {
+    status: '源头新增',
+    impact: '当前已发布前端尚无该L3；应用更新后会新增流程卡片，并按最新硬输入重新判定是否允许建模。',
+    next: change.action === 'BLOCKED_INPUT' ? '先人工核实新增L3及编码，再应用事实更新；应用后进入待补清单，不运行模型。' : '核实新增L3及编码后应用事实更新，再进入统一分析队列。',
+  }
+  if (change.status === 'REMOVED') return {
+    status: '源头移除',
+    impact: '当前已发布前端仍暂时保留该L3；应用后将从当前模型清单移除，既有分析包只保留审计记录。',
+    next: '先确认是正式删除、改名还是编码迁移；确认后再应用，避免误删现有模型入口。',
+  }
+  if (change.action === 'REANALYSIS_REQUIRED') return {
+    status: '既有L3输入变化',
+    impact: `应用后事实面板 ${change.affected_panels.join('/')} 将更新，既有模型分析会标记过期，Demo结论不能继续作为当前结论。`,
+    next: '先核实变化来源，再应用事实更新；随后按影响范围重跑统一模型并完成抽检。',
+  }
+  if (change.action === 'BLOCKED_INPUT') return {
+    status: '输入变化后不满足准入',
+    impact: `应用后面板 ${change.affected_panels.join('/')} 更新，该L3转入待补清单，不生成流程模型。`,
+    next: '核实缺少的蓝图、L4或D1-D6，并定位源头负责人补充；补齐后等待下一轮扫描。',
+  }
+  return {
+    status: '事实变化',
+    impact: `应用后面板 ${change.affected_panels.join('/')} 将更新；当前尚未发布的扫描结果不会直接改动Demo。`,
+    next: '人工核实来源和变化范围后应用事实更新；若分析输入哈希变化，再安排模型重跑。',
+  }
+}
 
 function Gate({ name, status }: { name: string; status: string }) {
   const pass = status === 'PASS'
@@ -77,6 +112,7 @@ export default function L3Models() {
   const [audit, setAudit] = useState<DeliverableAudit | null>(null)
   const [pendingUpdate, setPendingUpdate] = useState<SourceUpdateReport | null>(null)
   const [error, setError] = useState('')
+  const [showUpdateDetails, setShowUpdateDetails] = useState(false)
   const [view, setView] = useState<'all' | 'ready' | 'evaluable' | 'missing' | 'demo' | 'quality'>('all')
   const [query, setQuery] = useState('')
 
@@ -122,44 +158,84 @@ export default function L3Models() {
         </p>
       </div>
 
-      {data.source_update_summary && (
-        <section className={`rounded-2xl border p-4 ${data.source_update_summary.changed_l3_count > 0 ? 'border-rose-200 bg-rose-50' : 'border-emerald-200 bg-emerald-50'}`}>
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="flex items-start gap-3">
-              {data.source_update_summary.changed_l3_count > 0
-                ? <AlertTriangle className="mt-0.5 h-5 w-5 text-rose-600" />
-                : <CheckCircle2 className="mt-0.5 h-5 w-5 text-emerald-600" />}
-              <div>
-                <p className="text-sm font-semibold text-text-primary">阶段2 · 源头更新状态</p>
-                <p className="mt-1 text-xs text-text-secondary">
-                  {data.source_update_summary.changed_l3_count > 0
-                    ? `发现 ${data.source_update_summary.changed_l3_count} 个L3输入变化；${data.source_update_summary.reanalyze_l3_count}个需重跑分析，${data.source_update_summary.blocked_l3_count}个因硬输入不足阻断。`
-                    : '数据库与知识输入已与当前事实快照对齐，没有待发布变化。'}
-                </p>
-              </div>
-            </div>
-            <span className="font-mono text-[10px] text-text-muted">最近应用：{new Date(data.source_update_summary.generated_at).toLocaleString('zh-CN')}
-            </span>
+      {(data.source_update_summary || pendingUpdate) && (
+        <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+          <div className="border-b border-slate-100 px-5 py-4">
+            <p className="text-sm font-semibold text-text-primary">源头变更处理台</p>
+            <p className="mt-1 text-xs text-text-secondary">区分“当前正式版本”与“只读扫描候选变化”。扫描只发现问题，不会自动修改前端、模型或源头。</p>
           </div>
-        </section>
-      )}
 
-      {pendingUpdate && !pendingUpdate.applied && (
-        <section className={`rounded-2xl border p-4 ${pendingUpdate.changed_l3_count > 0 ? 'border-amber-300 bg-amber-50' : 'border-sky-200 bg-sky-50'}`}>
-          <div className="flex flex-wrap items-start justify-between gap-3">
-            <div>
-              <p className="text-sm font-semibold text-text-primary">自动只读扫描 · {pendingUpdate.changed_l3_count > 0 ? '发现待应用变化' : '未发现新变化'}</p>
-              <p className="mt-1 text-xs text-text-secondary">
-                {pendingUpdate.changed_l3_count > 0
-                  ? `影响${pendingUpdate.changed_l3_count}个L3；${pendingUpdate.reanalyze_l3_count}个需重跑分析，${pendingUpdate.blocked_l3_count}个将进入阻断。当前页面尚未应用这些变化。`
-                  : '本次扫描与已发布快照一致，无需操作。'}
-              </p>
-              {pendingUpdate.changes.length > 0 && (
-                <p className="mt-2 text-[11px] text-amber-800">影响L3：{pendingUpdate.changes.slice(0, 8).map(item => item.l3_code).join('、')}{pendingUpdate.changes.length > 8 ? '等' : ''}</p>
+          {data.source_update_summary && (
+            <div className="flex flex-wrap items-start justify-between gap-3 bg-emerald-50/70 px-5 py-3">
+              <div className="flex items-start gap-3">
+                <CheckCircle2 className="mt-0.5 h-4 w-4 text-emerald-600" />
+                <div>
+                  <p className="text-xs font-semibold text-emerald-900">当前正式基线 · 前端正在展示的版本</p>
+                  <p className="mt-1 text-xs text-emerald-800/80">已发布快照包含 {data.models.length} 个 L3。绿色只表示上次应用成功，不代表源头此刻没有新变化。</p>
+                </div>
+              </div>
+              <span className="font-mono text-[10px] text-emerald-800/60">最近应用：{new Date(data.source_update_summary.generated_at).toLocaleString('zh-CN')}</span>
+            </div>
+          )}
+
+          {pendingUpdate && !pendingUpdate.applied && (
+            <div className={`border-t px-5 py-4 ${pendingUpdate.changed_l3_count > 0 ? 'border-amber-200 bg-amber-50/80' : 'border-sky-100 bg-sky-50/70'}`}>
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div className="flex items-start gap-3">
+                  {pendingUpdate.changed_l3_count > 0 ? <AlertTriangle className="mt-0.5 h-5 w-5 text-amber-600" /> : <CheckCircle2 className="mt-0.5 h-5 w-5 text-sky-600" />}
+                  <div>
+                    <p className="text-sm font-semibold text-text-primary">只读扫描候选 · {pendingUpdate.changed_l3_count > 0 ? `${pendingUpdate.changed_l3_count} 个 L3 等待人工处理` : '没有候选变化'}</p>
+                    <p className="mt-1 text-xs text-text-secondary">
+                      {pendingUpdate.changed_l3_count > 0
+                        ? `源头候选为 ${pendingUpdate.after_l3_count} 个 L3，当前正式基线为 ${pendingUpdate.before_l3_count} 个；${pendingUpdate.blocked_l3_count} 个应用后将进入待补，${pendingUpdate.reanalyze_l3_count} 个需要重跑模型。当前前端和Demo尚未改变。`
+                        : '本次扫描与当前正式基线一致，无需人工操作。'}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="font-mono text-[10px] text-text-muted">扫描：{new Date(pendingUpdate.generated_at).toLocaleString('zh-CN')}</span>
+                  {pendingUpdate.changed_l3_count > 0 && (
+                    <button onClick={() => setShowUpdateDetails(value => !value)} className="flex items-center gap-1 rounded-lg border border-amber-300 bg-white px-3 py-2 text-xs font-medium text-amber-800 hover:bg-amber-50">
+                      {showUpdateDetails ? '收起详情' : '查看影响与下一步'}
+                      {showUpdateDetails ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {showUpdateDetails && pendingUpdate.changes.length > 0 && (
+                <div className="mt-4 space-y-3 border-t border-amber-200 pt-4">
+                  <div className="grid gap-2 text-[11px] md:grid-cols-3">
+                    <div className="rounded-lg bg-white/80 p-3"><strong>① 人工核实</strong><p className="mt-1 text-text-muted">确认新增、删除或改名是否符合业务事实。</p></div>
+                    <div className="rounded-lg bg-white/80 p-3"><strong>② 应用事实更新</strong><p className="mt-1 text-text-muted">运行受控更新后，前端事实面板才会变化。</p></div>
+                    <div className="rounded-lg bg-white/80 p-3"><strong>③ 按影响重跑</strong><p className="mt-1 text-text-muted">仅对输入过期且满足准入的 L3 重跑模型。</p></div>
+                  </div>
+                  {pendingUpdate.changes.map(change => {
+                    const meaning = changeMeaning(change)
+                    return (
+                      <article key={change.l3_code} className="rounded-xl border border-amber-200 bg-white p-4">
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <div className="flex items-center gap-2"><span className="font-mono text-xs font-semibold text-blue-700">{change.l3_code}</span><span className="rounded-full bg-amber-100 px-2 py-1 text-[10px] font-medium text-amber-800">{meaning.status}</span></div>
+                          <span className="text-[10px] text-text-muted">影响面板：{change.affected_panels.join(' / ')}</span>
+                        </div>
+                        <div className="mt-3 grid gap-3 text-xs lg:grid-cols-3">
+                          <div><p className="font-semibold text-text-primary">变化内容</p><p className="mt-1 leading-5 text-text-secondary">{change.changed_scopes.map(scope => scopeLabels[scope] ?? scope).join('、')}</p></div>
+                          <div><p className="font-semibold text-text-primary">对前端 / Demo 的影响</p><p className="mt-1 leading-5 text-text-secondary">{meaning.impact}</p></div>
+                          <div><p className="font-semibold text-text-primary">建议人工动作</p><p className="mt-1 leading-5 text-text-secondary">{meaning.next}</p></div>
+                        </div>
+                        {(change.added_source_objects.length > 0 || change.removed_source_objects.length > 0) && (
+                          <div className="mt-3 border-t border-slate-100 pt-3 text-[10px] leading-5 text-text-muted">
+                            {change.added_source_objects.length > 0 && <p>新增来源：{change.added_source_objects.join('、')}</p>}
+                            {change.removed_source_objects.length > 0 && <p>移除来源：{change.removed_source_objects.join('、')}</p>}
+                          </div>
+                        )}
+                      </article>
+                    )
+                  })}
+                </div>
               )}
             </div>
-            <span className="font-mono text-[10px] text-text-muted">最近扫描：{new Date(pendingUpdate.generated_at).toLocaleString('zh-CN')}</span>
-          </div>
+          )}
         </section>
       )}
 

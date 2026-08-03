@@ -1,9 +1,8 @@
-import { useEffect, useState } from 'react'
 import {
   BookOpen, CheckCircle2, ClipboardCheck, Compass, FileText, Footprints,
-  Lightbulb, Link2, Search, X,
+  Lightbulb, Link2, X,
 } from 'lucide-react'
-import { fetchRelatedDocuments, type RelatedDocumentsResponse, type Task } from '../lib/api'
+import { type Task } from '../lib/api'
 
 interface Props {
   task: Task | null
@@ -72,23 +71,6 @@ function Module({ icon: Icon, index, title, children }: {
 }
 
 export function TaskDecisionDrawer({ task, onClose }: Props) {
-  const [related, setRelated] = useState<RelatedDocumentsResponse | null>(null)
-  const [relatedLoading, setRelatedLoading] = useState(false)
-
-  const taskId = task?.task_id
-  const projectName = task?.project_name
-  const relatedFilesKey = task?.related_files.join(',') ?? ''
-
-  useEffect(() => {
-    setRelated(null)
-    if (!taskId || !projectName || !relatedFilesKey) return
-    setRelatedLoading(true)
-    fetchRelatedDocuments(projectName, relatedFilesKey.split(','))
-      .then(setRelated)
-      .catch(() => setRelated({ available: false, ids_found: [], documents: [], error: '请求失败' }))
-      .finally(() => setRelatedLoading(false))
-  }, [taskId, projectName, relatedFilesKey])
-
   if (!task) return null
   const steps = executionReferenceFor(task)
 
@@ -114,39 +96,12 @@ export function TaskDecisionDrawer({ task, onClose }: Props) {
               : <p className="mt-3 text-xs text-accent-warning">当前缺少明确来源文件，执行前需要补充事实证据。</p>}
           </Module>
 
-          <Module icon={Search} index="02" title="关联文档（EA全库索引）">
-            {task.related_files.length === 0 ? (
-              <p className="text-xs text-text-muted">当前任务没有明确来源文件，无法交叉检索关联编号。</p>
-            ) : relatedLoading ? (
-              <p className="text-xs text-text-muted">正在通过 Mark 的 EA 全库索引交叉检索编号引用…</p>
-            ) : !related || !related.available ? (
-              <p className="text-xs text-accent-warning">{related?.error || 'EA全库索引当前不可用（可能是脚本或数据库缺失）。'}</p>
-            ) : related.ids_found.length === 0 ? (
-              <p className="text-xs text-text-muted">来源文件中未识别到可交叉检索的治理编号（如 CUR-/AUD25-/AUD21-/DEC-ACC/GOV-T- 等）。</p>
-            ) : related.documents.length === 0 ? (
-              <p className="text-xs text-text-muted">识别到编号 {related.ids_found.join('、')}，但索引中未找到其他引用同一编号的文档。</p>
-            ) : (
-              <>
-                <p className="text-xs text-text-muted">基于来源文件中识别到的编号（{related.ids_found.join('、')}），在 Mark 的 EA 全库索引中交叉检索到以下文档：</p>
-                <div className="mt-3 space-y-2">
-                  {related.documents.map(doc => (
-                    <div key={doc.path} className="rounded-lg bg-bg-surface px-3 py-2">
-                      <div className="flex items-start gap-2 font-mono text-[11px] text-text-muted"><FileText size={12} className="mt-1 shrink-0"/><span className="break-all">{doc.path}</span></div>
-                      <div className="mt-1 text-[10px] text-accent-secondary">同现编号: {doc.matched_ids.join('、')}</div>
-                      {doc.excerpt && <div className="mt-1 text-[11px] leading-5 text-text-secondary">{doc.excerpt}</div>}
-                    </div>
-                  ))}
-                </div>
-              </>
-            )}
-          </Module>
-
-          <Module icon={Lightbulb} index="03" title="建议">
+          <Module icon={Lightbulb} index="02" title="建议">
             <p>{suggestionFor(task)}</p>
             {task.signal_to?.length > 0 && <p className="mt-2 text-xs text-text-muted">建议协同核对：{task.signal_to.join('、')}</p>}
           </Module>
 
-          <Module icon={Footprints} index="04" title="执行参考">
+          <Module icon={Footprints} index="03" title="执行参考">
             <ol className="space-y-3">
               {steps.map((step, index) => (
                 <li key={step} className="flex items-start gap-3">
@@ -158,7 +113,7 @@ export function TaskDecisionDrawer({ task, onClose }: Props) {
             <div className="mt-4 flex items-start gap-2 rounded-lg border border-border-default p-3 text-xs leading-5 text-text-muted"><Compass size={14} className="mt-0.5 shrink-0"/>这是决策参考，不会从页面自动执行命令、修改文件或发送通知。</div>
           </Module>
 
-          <Module icon={ClipboardCheck} index="05" title="理想化交付">
+          <Module icon={ClipboardCheck} index="04" title="理想化交付">
             <div className="flex items-start gap-3"><CheckCircle2 size={17} className="mt-1 shrink-0 text-accent-success"/><p className="text-text-primary">{idealDeliverableFor(task)}</p></div>
           </Module>
         </div>

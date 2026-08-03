@@ -64,10 +64,14 @@ export interface SourceUpdateReport {
   applied: boolean
   changes: {
     l3_code: string
-    status: string
-    action: string
+    status: 'ADDED' | 'CHANGED' | 'REMOVED'
+    action: 'BLOCKED_INPUT' | 'REANALYSIS_REQUIRED' | 'FACTS_REFRESHED' | 'REMOVE_FROM_CURRENT_SET'
     changed_scopes: string[]
     affected_panels: string[]
+    previous_analysis_input_hash: string
+    current_analysis_input_hash: string
+    added_source_objects: string[]
+    removed_source_objects: string[]
   }[]
 }
 
