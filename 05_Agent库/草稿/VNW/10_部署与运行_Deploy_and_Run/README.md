@@ -70,3 +70,38 @@ npm run dev
 - “恢复建议位置”不修改任何源数据。
 
 VNW 当前只提供显式运行，不安装常驻监听、定时模型调用或自动发布。
+
+## 5. 阶段2·源头更新闭环
+
+只检测并生成L3/面板影响清单，不更新当前系统：
+
+```bash
+python3 04_定义Agent_Define_Agent/agents/agent.py --check-source-updates
+```
+
+检测通过后安全应用新事实快照：
+
+```bash
+python3 04_定义Agent_Define_Agent/agents/agent.py --apply-source-updates
+```
+
+应用步骤固定为：全量只读候选重建 → 逐L3对比分析输入 → 识别变化范围与
+受影响面板 → 归档发布前快照 → 更新事实层与前端。本命令不调用大模型；
+被标记为 `REANALYSIS_REQUIRED/INPUT_CHANGED` 的L3须另行重跑统一分析。
+
+报告位置：`.vnw_workspace/source_updates/latest.json`；历史快照位于
+`.vnw_workspace/source_updates/history/`。
+
+### 5.1 半自动扫描
+
+`scripts/check-source-updates.sh` 是无写回、无模型调用的只读扫描入口。
+macOS任务 `com.jasper.vnw-source-check` 每1800秒执行一次，结果写入：
+
+- `.vnw_workspace/source_updates/latest_check.json`；
+- `frontend/public/data/source_updates/pending.json`。
+
+前端首页会显示最近扫描时间、待应用L3、需重跑分析数和阻断数。
+发现变化后仍需人工执行 `--apply-source-updates`；定时任务永不自动应用。
+
+安装源模板：`com.jasper.vnw-source-check.plist`。实际后台入口使用
+`~/.vnw-agent/check-source-updates.sh`，避免launchd解析中文工程路径异常。

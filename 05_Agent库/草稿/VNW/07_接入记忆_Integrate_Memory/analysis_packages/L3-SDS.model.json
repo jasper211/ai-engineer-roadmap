@@ -1,0 +1,352 @@
+{
+  "schema_version": "vnw.l3-analysis.v1",
+  "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
+  "generation_mode": "UNIFIED_MODEL",
+  "analysis_status": "MODEL_DRAFT",
+  "model_run": {
+    "model_name": "deepseek-v4-pro",
+    "model_version": "deepseek-v4-pro",
+    "prompt_version": "VNW-L3-COM-GOLD-v1.0",
+    "generated_at": "2026-08-03T05:51:53.271427+00:00",
+    "input_snapshot_hash": "fd63b08b6c65eca36bc27d5cb68458d70e42b141d07d3292c30bfbb16577afcd"
+  },
+  "source_scope": {
+    "database": "process_analytics",
+    "knowledge": "ACTIVE supplemental evidence only",
+    "evidence_count": 47
+  },
+  "l4_analysis": [
+    {
+      "l4_code": "L4-SDS-01",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-5fa075d38e508d6ab73c",
+        "EVD-8610bc4da78668d63184",
+        "EVD-9b77e2a57f7dcb2987f6",
+        "EVD-2af7080a40e5eebddffb",
+        "EVD-fbd25fcc74e3d8fe461b",
+        "EVD-ec0cdd0ceb33fd467c75",
+        "EVD-74db4d88ebbbed607dc4"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "起草合同要点确认文档",
+      "specific_capabilities": [
+        "信息提取与整理",
+        "模板匹配",
+        "合同要点结构化输出"
+      ],
+      "ai_reshape": "可封装为确定性Skill，自动提取关键信息生成要点确认草案",
+      "quality_anchor": "要点确认需覆盖所有关键条款，且经业务负责人确认",
+      "ai_responsibility": "自动提取并生成草案",
+      "human_responsibility": "审核确认要点完整性及合规性",
+      "handoff_triggers": [
+        "草案生成后自动通知审核人",
+        "关键条款缺失或异常数据时转人工处理"
+      ],
+      "control_gates": [
+        "合规审查确认（需人工）"
+      ],
+      "data_basis": [
+        "合同模板库",
+        "历史合同要点数据"
+      ],
+      "process_context": "蓝图步骤STEP-01，合同起草初始阶段",
+      "risks_limits": [
+        "合规条款可能不完整",
+        "依赖模板匹配度，对非标合同可能不足"
+      ],
+      "current_recommendation": "建议优先封装为Auto任务，辅以人工确认点。采用Hybrid Tier以保留控制。",
+      "database_tier": "Auto",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-SDS-02",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-2ea81bb983477db9c6b0",
+        "EVD-43ce1a61d37268a39313",
+        "EVD-cefa41aa83618a90c55a",
+        "EVD-706c6ed80503dd917100",
+        "EVD-186dfbe1f1e9fb57c762",
+        "EVD-a7064a33ec505334b8f5",
+        "EVD-9286f0ae277508590064"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "签署核对与完成，生成签署文件及登记表",
+      "specific_capabilities": [
+        "文件信息核对",
+        "签署状态更新",
+        "登记表生成"
+      ],
+      "ai_reshape": "拆分为多个Skill，如自动核对、自动签署记录，需设计子任务序列",
+      "quality_anchor": "核对无误且签署动作合法有效",
+      "ai_responsibility": "执行核对和记录更新",
+      "human_responsibility": "确认签署有效性、处理异常、最终批准",
+      "handoff_triggers": [
+        "核对不一致时转人工",
+        "签署完成后通知登记"
+      ],
+      "control_gates": [
+        "法务合规审查",
+        "签署权限确认"
+      ],
+      "data_basis": [
+        "合同系统",
+        "签署记录"
+      ],
+      "process_context": "蓝图步骤STEP-03，合同签署完成",
+      "risks_limits": [
+        "复合动作需人工协调",
+        "签署流程可能涉及物理签章"
+      ],
+      "current_recommendation": "建议先拆分核对与签署步骤，分别评估自动化程度。核对部分可Auto，签署确认需人控。总体建议Hybrid。",
+      "database_tier": "Auto",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-SDS-03",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-1bb155afc920fdcf7c4b",
+        "EVD-71661a20b9f8e9fc2e74",
+        "EVD-6b3830e693f0fa7474cd",
+        "EVD-ff6f7dd509eb87c9ae21",
+        "EVD-908fe14a393ad53d6435",
+        "EVD-de244d12ac4b328632ff",
+        "EVD-63e816dee5bda373df35"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "生成多方商务谈判纪要",
+      "specific_capabilities": [
+        "多源信息整合",
+        "谈判要点分析",
+        "纪要生成"
+      ],
+      "ai_reshape": "Agent辅助，实时提供条款对比、历史案例，人工主导谈判并决策",
+      "quality_anchor": "纪要准确反映谈判要点与决议，经各方确认",
+      "ai_responsibility": "提供信息支持和纪要草案",
+      "human_responsibility": "主持谈判、做出决策、审核纪要",
+      "handoff_triggers": [
+        "谈判僵局需升级",
+        "纪要生成后审核"
+      ],
+      "control_gates": [
+        "谈判结果需部门负责人审批"
+      ],
+      "data_basis": [
+        "CRM系统",
+        "历史谈判记录"
+      ],
+      "process_context": "蓝图步骤STEP-02，商务谈判阶段",
+      "risks_limits": [
+        "谈判结果高度依赖人的判断和权威",
+        "AI无法替代现场人际互动"
+      ],
+      "current_recommendation": "推荐采用Hybrid模式，AI负责信息准备和记录，人负责决策与执行。不适宜全自动。",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "TASK-L3-SDS-01",
+      "l4_code": "L4-SDS-01",
+      "task_name": "起草合同要点确认",
+      "source_type": "blueprint",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-01",
+      "source_line": 45,
+      "previous_task_ids": [],
+      "next_task_ids": [
+        "TASK-L3-SDS-03"
+      ],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-ec0cdd0ceb33fd467c75",
+        "EVD-5fa075d38e508d6ab73c",
+        "EVD-8610bc4da78668d63184"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "数据库Tier为Auto，但蓝图标注Aug，且合同要点确认需人工审核。结合skill_feasibility A档，可自动化生成，保留人工确认环节，故建议Hybrid。"
+    },
+    {
+      "task_id": "TASK-L3-SDS-03",
+      "l4_code": "L4-SDS-03",
+      "task_name": "多方商务谈判",
+      "source_type": "blueprint",
+      "sequence_no": 2,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-02",
+      "source_line": 50,
+      "previous_task_ids": [
+        "TASK-L3-SDS-01"
+      ],
+      "next_task_ids": [
+        "TASK-L3-SDS-02A",
+        "TASK-L3-SDS-02B"
+      ],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-de244d12ac4b328632ff",
+        "EVD-1bb155afc920fdcf7c4b"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "谈判为判断/策略类，C级封装，需要人工主导，AI辅助提供信息，故推荐Hybrid。"
+    },
+    {
+      "task_id": "TASK-L3-SDS-02A",
+      "l4_code": "L4-SDS-02",
+      "task_name": "签署文件信息核对",
+      "source_type": "blueprint_derived",
+      "sequence_no": 3,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-03",
+      "source_line": 55,
+      "previous_task_ids": [
+        "TASK-L3-SDS-03"
+      ],
+      "next_task_ids": [
+        "TASK-L3-SDS-02B"
+      ],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-a7064a33ec505334b8f5",
+        "EVD-2ea81bb983477db9c6b0",
+        "EVD-43ce1a61d37268a39313",
+        "EVD-706c6ed80503dd917100"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "根据skill_feasibility评估为A档但复合动作，建议拆分。核对部分输入输出规整，可实施Auto，但仍需后续人工确认。"
+    },
+    {
+      "task_id": "TASK-L3-SDS-02B",
+      "l4_code": "L4-SDS-02",
+      "task_name": "完成签署与登记表生成",
+      "source_type": "blueprint_derived",
+      "sequence_no": 3,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-03",
+      "source_line": 55,
+      "previous_task_ids": [
+        "TASK-L3-SDS-02A"
+      ],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-a7064a33ec505334b8f5",
+        "EVD-2ea81bb983477db9c6b0",
+        "EVD-43ce1a61d37268a39313",
+        "EVD-706c6ed80503dd917100"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "签署动作需要人工确认（如打印、签章、归档），可结合AI自动更新状态，人最终执行，故Hybrid。"
+    }
+  ],
+  "priority_drafts": [
+    {
+      "l4_code": "L4-SDS-01",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "合同模板库",
+        "历史合同要点数据"
+      ],
+      "process_context": "蓝图步骤STEP-01，合同起草初始阶段",
+      "risks_limits": [
+        "合规条款可能不完整",
+        "依赖模板匹配度，对非标合同可能不足"
+      ],
+      "current_recommendation": "建议优先封装为Auto任务，辅以人工确认点。采用Hybrid Tier以保留控制。",
+      "evidence_refs": [
+        "EVD-5fa075d38e508d6ab73c",
+        "EVD-8610bc4da78668d63184",
+        "EVD-9b77e2a57f7dcb2987f6",
+        "EVD-2af7080a40e5eebddffb",
+        "EVD-fbd25fcc74e3d8fe461b",
+        "EVD-ec0cdd0ceb33fd467c75",
+        "EVD-74db4d88ebbbed607dc4"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-SDS-02",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "合同系统",
+        "签署记录"
+      ],
+      "process_context": "蓝图步骤STEP-03，合同签署完成",
+      "risks_limits": [
+        "复合动作需人工协调",
+        "签署流程可能涉及物理签章"
+      ],
+      "current_recommendation": "建议先拆分核对与签署步骤，分别评估自动化程度。核对部分可Auto，签署确认需人控。总体建议Hybrid。",
+      "evidence_refs": [
+        "EVD-2ea81bb983477db9c6b0",
+        "EVD-43ce1a61d37268a39313",
+        "EVD-cefa41aa83618a90c55a",
+        "EVD-706c6ed80503dd917100",
+        "EVD-186dfbe1f1e9fb57c762",
+        "EVD-a7064a33ec505334b8f5",
+        "EVD-9286f0ae277508590064"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-SDS-03",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "CRM系统",
+        "历史谈判记录"
+      ],
+      "process_context": "蓝图步骤STEP-02，商务谈判阶段",
+      "risks_limits": [
+        "谈判结果高度依赖人的判断和权威",
+        "AI无法替代现场人际互动"
+      ],
+      "current_recommendation": "推荐采用Hybrid模式，AI负责信息准备和记录，人负责决策与执行。不适宜全自动。",
+      "evidence_refs": [
+        "EVD-1bb155afc920fdcf7c4b",
+        "EVD-71661a20b9f8e9fc2e74",
+        "EVD-6b3830e693f0fa7474cd",
+        "EVD-ff6f7dd509eb87c9ae21",
+        "EVD-908fe14a393ad53d6435",
+        "EVD-de244d12ac4b328632ff",
+        "EVD-63e816dee5bda373df35"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "decision_drafts": [
+    {
+      "priority": "P1",
+      "task_ids": [
+        "TASK-L3-SDS-02A",
+        "TASK-L3-SDS-02B"
+      ],
+      "title": "签署核对自动化试点决策",
+      "pilot_scope": "选择某个BU的标准服务合同签署流程作为试点",
+      "human_boundary": "法务最终审核签署文件，业务负责人确认合同要点已满足",
+      "evidence_refs": [
+        "EVD-a7064a33ec505334b8f5",
+        "EVD-ed244bbe62b0f07c0430"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "control_chain": [],
+  "rejected_task_sources": [],
+  "missing_analysis": [
+    "L4-SDS-01 · agent_human_touchpoint",
+    "L4-SDS-02 · agent_human_touchpoint",
+    "L4-SDS-03 · agent_human_touchpoint",
+    "控制链缺少L4定位，已拒绝3条"
+  ]
+}

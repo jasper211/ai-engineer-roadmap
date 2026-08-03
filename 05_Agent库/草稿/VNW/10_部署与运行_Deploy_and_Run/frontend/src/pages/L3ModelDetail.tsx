@@ -403,6 +403,13 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
         </div>
       </div>
 
+      {model.analysis_freshness === 'INPUT_CHANGED' && (
+        <section className="rounded-2xl border border-rose-300 bg-rose-50 p-4">
+          <p className="text-sm font-semibold text-rose-800">源头输入已变化 · 旧分析不再是当前结论</p>
+          <p className="mt-1 text-xs leading-5 text-rose-700">事实层和面板F已更新；涉及模型推导的内容只作为过期参考，必须基于新快照重跑统一分析后才能恢复为当前草稿。</p>
+        </section>
+      )}
+
       <section className="rounded-2xl border border-indigo-200 bg-indigo-50/60 p-4">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>

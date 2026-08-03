@@ -14,6 +14,7 @@ from skills.l3_model_builder import BlueprintIndex, L3ModelBuilder, d1d6_name_ke
 from skills.l3_analysis_contract import ANALYSIS_STANDARD_ID, analysis_input_hash, eligible_analysis_evidence_ids, validate_analysis_package  # noqa: E402
 from skills.l3_analysis_runner import L3AnalysisRunner, _json_from_text, clear_resolved_l4_missing, normalize_model_package  # noqa: E402
 from skills.blueprint_parser import parse_blueprint  # noqa: E402
+from skills.source_update import compare_snapshot_sets  # noqa: E402
 from tools.evidence import EvidenceClass, EvidenceRecord, EvidenceStatus, SourceRef, authoritative  # noqa: E402
 from tools.obsidian_reader import note_is_eligible  # noqa: E402
 from tools.postgres_reader import BulkPostgresL3Reader, assert_read_only_sql  # noqa: E402
@@ -44,6 +45,25 @@ class FakeReader:
 
 
 class L3ModelSystemTests(unittest.TestCase):
+    def test_source_update_maps_changed_fact_to_l3_and_panels(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            before, after = root / "before", root / "after"
+            before.mkdir(); after.mkdir()
+            base = self.qualified_builder().build("L3-T")
+            (before / "L3-T.json").write_text(json.dumps(base), encoding="utf-8")
+            changed = json.loads(json.dumps(base))
+            changed["l4s"][0]["deliverable"] = "新交付物"
+            changed["analysis_input_hash"] = "new-hash"
+            (after / "L3-T.json").write_text(json.dumps(changed), encoding="utf-8")
+
+            report = compare_snapshot_sets(before, after)
+
+            self.assertEqual(report["changed_l3_count"], 1)
+            self.assertEqual(report["changes"][0]["l3_code"], "L3-T")
+            self.assertIn("l4_delivery", report["changes"][0]["changed_scopes"])
+            self.assertIn("E", report["changes"][0]["affected_panels"])
+
     def test_model_analysis_package_takes_precedence_over_reviewed_fallback(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -76,6 +96,7 @@ class L3ModelSystemTests(unittest.TestCase):
         self.assertEqual(model["analysis"]["analysis_status"], "PENDING_MODEL")
         self.assertEqual(len(model["analysis"]["l4_analysis"]), 2)
         self.assertEqual(model["stale_analysis"]["status"], "ANALYSIS_INPUT_CHANGED")
+        self.assertEqual(model["analysis_freshness"], "INPUT_CHANGED")
         self.assertIn("L4-T-02", model["stale_analysis"]["reason"])
 
     def builder(self, complete_d=True, with_mapping=True):

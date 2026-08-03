@@ -96,6 +96,24 @@ class TestHKIAIntegration(unittest.TestCase):
         values = {r.metric_name: r.value for r in rows}
         self.assertEqual(values.get("此期間的新造直接人壽業務/保單數目/整付保費"), 11001)
 
+    def test_2024q3_insurer_tables_not_empty(self):
+        """回归测试：2024Q3(RBC切换过渡期)那份文件sheet名不是标准的"Table L1"/
+        "Table L1 (channel)"，是"B.LT.QR.1.1 LT QR (NB_Ind)_IND"/"B.LT.QR.5
+        LT QR (channel)_IND"——第一版解析器用exact匹配这两张sheet名，匹配
+        不上就静默把 new_business_by_insurer / new_business_by_insurer_channel
+        存成空列表，不报错，也没被其余测试盯住（其余测试要么只测头条表，要么
+        只抽查特定一期）。已核对过这两张sheet内容结构（保险公司名+保费拆分/
+        保险公司×渠道交叉）跟其余44期的Table L1系列一致，加了对应候选后
+        修复，这里锁定回归。"""
+        for r, _, rows in self.all_rows:
+            if r.year == 2024 and r.quarter == 3:
+                insurer_rows = [row for row in rows if row.table_type == "new_business_by_insurer"]
+                channel_rows = [row for row in rows if row.table_type == "new_business_by_insurer_channel"]
+                self.assertGreater(len(insurer_rows), 0, "2024Q3 new_business_by_insurer 不应为空")
+                self.assertGreater(len(channel_rows), 0, "2024Q3 new_business_by_insurer_channel 不应为空")
+                return
+        self.fail("没有找到2024Q3这期数据")
+
     def test_no_duplicate_category_metric_within_period(self):
         """确定性检查：同一期同一张表里，(category, metric_name)不应该重复
         ——重复意味着有两行数据被错误地合并成了一个key。"""

@@ -106,6 +106,11 @@ class Handler(BaseHTTPRequestHandler):
             self._send_json(200, views.aggregate_tasks(project))
         elif parsed.path == "/api/personal-work":
             self._send_json(200, views.personal_work())
+        elif parsed.path == "/api/file-content":
+            project = query.get("project", [""])[0]
+            relative_file = query.get("file", [""])[0]
+            result = views.read_project_file(project, relative_file)
+            self._send_json(200 if result.get("success") else 404, result)
         elif parsed.path == "/api/activity-feed":
             project = query.get("project", ["all"])[0]
             self._send_json(200, views.activity_feed(project))

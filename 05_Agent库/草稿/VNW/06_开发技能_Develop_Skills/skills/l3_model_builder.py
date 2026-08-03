@@ -804,6 +804,15 @@ class L3ModelBuilder:
                 l4_codes={item["l4_code"] for item in l4s},
             )
         model["analysis_input_hash"] = analysis_input_hash(model)
+        run_hash = (model["analysis"].get("model_run") or {}).get("input_snapshot_hash", "")
+        if model.get("stale_analysis") or (run_hash and run_hash != model["analysis_input_hash"]):
+            model["analysis_freshness"] = "INPUT_CHANGED"
+        elif model["analysis"].get("analysis_status") == "PENDING_MODEL":
+            model["analysis_freshness"] = "PENDING_MODEL"
+        elif run_hash == model["analysis_input_hash"]:
+            model["analysis_freshness"] = "CURRENT"
+        else:
+            model["analysis_freshness"] = "UNVERSIONED_REVIEWED_BASELINE"
         return model
 
     def build_and_write(

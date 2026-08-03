@@ -44,6 +44,31 @@ export interface ModelIndex {
     l4_count: number
   }[]
   prepared_batch: ModelIndex['recommended_batch']
+  source_update_summary?: {
+    generated_at: string
+    changed_l3_count: number
+    reanalyze_l3_count: number
+    blocked_l3_count: number
+    applied: boolean
+  }
+}
+
+export interface SourceUpdateReport {
+  schema_version: string
+  generated_at: string
+  before_l3_count: number
+  after_l3_count: number
+  changed_l3_count: number
+  reanalyze_l3_count: number
+  blocked_l3_count: number
+  applied: boolean
+  changes: {
+    l3_code: string
+    status: string
+    action: string
+    changed_scopes: string[]
+    affected_panels: string[]
+  }[]
 }
 
 export interface DeliverableAuditFinding {
@@ -97,6 +122,7 @@ export interface L3Model {
   schema_version: string
   l3_code: string
   l3_name: string
+  analysis_freshness?: 'CURRENT' | 'INPUT_CHANGED' | 'PENDING_MODEL' | 'UNVERSIONED_REVIEWED_BASELINE'
   has_demo: boolean
   demo_file: string
   source_policy: Record<string, unknown>
@@ -230,6 +256,13 @@ export async function loadModelIndex(): Promise<ModelIndex> {
 export async function loadDeliverableAudit(): Promise<DeliverableAudit> {
   const response = await fetch('/data/l4_deliverable_quality_audit.json')
   if (!response.ok) throw new Error('L4交付物质量审计读取失败')
+  return response.json()
+}
+
+export async function loadPendingSourceUpdate(): Promise<SourceUpdateReport | null> {
+  const response = await fetch('/data/source_updates/pending.json', { cache: 'no-store' })
+  if (response.status === 404) return null
+  if (!response.ok) throw new Error('源头更新检测结果读取失败')
   return response.json()
 }
 

@@ -175,7 +175,11 @@ def test_8_cross_project_task_knowledge(tmp_dir: Path):
     print("-" * 60)
     ext_project = tmp_dir / "fake_external_project"
     ext_project.mkdir(parents=True, exist_ok=True)
-    (ext_project / "pta_tasks.json").write_text(json.dumps({
+    # pta_tasks.json 2026-08起物理隔离进项目专属工作区，不再写进项目自己的
+    # 文件夹（见tools/task_knowledge.py模块顶部迁移记录），fixture要写在
+    # get_project_workspace()真实会去查的地方，不是ext_project本身。
+    ext_workspace = get_project_workspace(ext_project)
+    (ext_workspace / "pta_tasks.json").write_text(json.dumps({
         "ZZ-01": {"name": "外部项目专属任务", "steps": [
             {"action": "ext_step", "tool": "bash", "command": "echo external-project-marker",
              "description": "外部项目自定义步骤"}
@@ -253,18 +257,21 @@ def test_11_merge_suggested_tasks_safety(tmp_dir: Path):
     print("-" * 60)
     root = tmp_dir / "merge_fixture"
     root.mkdir(parents=True, exist_ok=True)
+    # pta_tasks.json物理隔离进项目专属工作区（2026-08迁移），fixture写在
+    # get_project_workspace(root)真实会读写的地方。
+    workspace = get_project_workspace(root)
     fixture = {
         "P1-01": {"name": "人工任务", "steps": [{"action": "x", "tool": "bash",
                                                     "command": "echo hi", "description": "d"}]},
         "RPT-20260714-01": {"name": "旧建议", "steps": []},
     }
-    (root / "pta_tasks.json").write_text(json.dumps(fixture, ensure_ascii=False, indent=2), encoding="utf-8")
+    (workspace / "pta_tasks.json").write_text(json.dumps(fixture, ensure_ascii=False, indent=2), encoding="utf-8")
 
     merged = merge_suggested_tasks(root, {"RPT-20260715-01": {"name": "新建议", "steps": []}})
     check(list(merged.keys()) == ["P1-01", "RPT-20260714-01", "RPT-20260715-01"],
           "已有 key 顺序不变、新 key 追加在末尾", f"key 顺序异常: {list(merged.keys())}")
     check(merged["P1-01"] == fixture["P1-01"], "人工任务原样未被 touch", "人工任务被意外修改")
-    check((root / "pta_tasks.json.bak").exists(), "写入前生成了 .bak 备份", "未生成 .bak 备份")
+    check((workspace / "pta_tasks.json.bak").exists(), "写入前生成了 .bak 备份", "未生成 .bak 备份")
 
     try:
         merge_suggested_tasks(root, {"P9-99": {"name": "非法前缀"}})
@@ -1185,7 +1192,12 @@ def test_36_execution_preparation_dry_run_and_approval(tmp_dir: Path):
     root = tmp_dir / "execution_console_project"
     workspace = tmp_dir / "execution_console_workspace"
     root.mkdir(); workspace.mkdir()
-    (root / "pta_tasks.json").write_text(json.dumps({
+    # prepare_task_execution()内部调用load_task_map(None, root)时，会用真实的
+    # get_project_workspace(root)去找pta_tasks.json（2026-08迁移，物理隔离进
+    # 工作区，不再看项目根目录）——这个真实解析路径不受下面_resolve_workspace_
+    # for_project这个monkeypatch影响（那个patch只影响_find_task_fingerprint
+    # 走哪个workspace，两者是独立的两次工作区解析），fixture要写在真实路径上。
+    (get_project_workspace(root) / "pta_tasks.json").write_text(json.dumps({
         "RPT-TEST-02": {"name": "驾驶舱执行测试", "steps": [{
             "action": "validate", "tool": "bash", "command": "echo should-not-run-for-real",
             "description": "验证执行准备",
@@ -1512,8 +1524,12 @@ def main():
         shutil.rmtree(tmp_dir, ignore_errors=True)
         # Test 7/13 通过 subprocess 调用 agent.py，其专属工作区落在 memory.workspace 的
         # WORKSPACE_ROOT 下（按项目目录名算出来的），不在 tmp_dir 内，需要单独清理，
-        # 否则每次跑测试都会在共享的 项目工作区/ 里留下痕迹。
-        for name in (tmp_project.name, "daily_scan_cli_fixture"):
+        # 否则每次跑测试都会在共享的 项目工作区/ 里留下痕迹。fake_external_project/
+        # merge_fixture/execution_console_project 三个是2026-08 pta_tasks.json
+        # 迁移后，Test 8/11/36 因为要用真实get_project_workspace()解析路径而
+        # 新增的、同样会在共享工作区留痕的名字。
+        for name in (tmp_project.name, "daily_scan_cli_fixture", "fake_external_project",
+                     "merge_fixture", "execution_console_project"):
             shutil.rmtree(get_project_workspace(tmp_dir / name), ignore_errors=True)
 
     print("\n" + "=" * 60)

@@ -30,6 +30,8 @@ python3 04_定义Agent_Define_Agent/agents/agent.py --status
 python3 04_定义Agent_Define_Agent/agents/agent.py --watch-dir /path/to/value-node-list --domain PAY
 python3 04_定义Agent_Define_Agent/agents/agent.py --build-model-snapshots
 python3 04_定义Agent_Define_Agent/agents/agent.py --build-all-model-snapshots
+python3 04_定义Agent_Define_Agent/agents/agent.py --check-source-updates
+python3 04_定义Agent_Define_Agent/agents/agent.py --apply-source-updates
 python3 04_定义Agent_Define_Agent/agents/agent.py --prepare-l3-analysis L3-COM
 python3 04_定义Agent_Define_Agent/agents/agent.py --run-analysis-dir <运行包目录>
 python3 -m unittest discover -s 09_测试与调试_Test_and_Debug/tests -v

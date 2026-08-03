@@ -30,6 +30,7 @@ from typing import Dict, List, Optional
 from tools.file_diff import snapshot_dir, diff_snapshots, unified_diff_text, read_content_truncated, DEFAULT_EXCLUDE_DIRS
 from tools.llm_client import call_deepseek, DEFAULT_MODEL
 from tools.office_text import OFFICE_EXTRACTORS
+from memory import workspace as ws
 
 SKILLS_DIR = Path(__file__).resolve().parent
 PTA_DIR = SKILLS_DIR.parent.parent
@@ -114,7 +115,11 @@ def _read_truncated(path: Path, max_chars: int = MAX_CHARS_PER_FILE) -> str:
 
 
 def _read_pta_focus(project_root: Path) -> Optional[str]:
-    focus_path = Path(project_root) / "pta_focus.md"
+    """2026-08起pta_focus.md物理隔离进项目专属工作区，不再放目标项目自己的
+    根目录——这是Jasper自己驾驶舱用的配置，跟目标项目内容无关（其他人未来
+    有自己的PTA时会是各自独立的实例，不共用这份），不该散落进项目文件夹。
+    只读，PTA代码里没有任何地方会写这份文件，人工维护。"""
+    focus_path = ws.get_project_workspace(Path(project_root)) / "pta_focus.md"
     if focus_path.exists():
         return _read_truncated(focus_path, max_chars=2000)
     return None

@@ -5,7 +5,8 @@ import {
   RotateCcw, Search, SlidersHorizontal, Sparkles, Users,
 } from 'lucide-react'
 import {
-  fetchCommandCenter, type ChangeItem, type CommandCenterResponse,
+  fetchCommandCenter, fetchFileContent, type ChangeItem, type CommandCenterResponse,
+  type FileContentResponse,
   type CommandProject, type CrossProjectRelation, type Task,
 } from '../lib/api'
 import { PriorityBadge } from '../components/StatusBadge'
@@ -55,14 +56,30 @@ function matchesFileQuery(change: ChangeItem, rawQuery: string) {
   return content.includes(query)
 }
 
-function ChangeRow({ change, initiallyOpen = false }: { change: ChangeItem; initiallyOpen?: boolean }) {
-  const [open, setOpen] = useState(initiallyOpen)
+function ChangeRow({ change, projectName }: { change: ChangeItem; projectName: string }) {
+  const [open, setOpen] = useState(false)
+  const [document, setDocument] = useState<FileContentResponse | null>(null)
+  const [documentError, setDocumentError] = useState('')
+  const [documentLoading, setDocumentLoading] = useState(false)
   const meta = CHANGE_META[change.change_type] || CHANGE_META.changed
   const Icon = meta.icon
   const hasDetail = !!(change.diff_text || change.before_excerpt || change.after_excerpt)
+  async function togglePreview() {
+    const willOpen = !open
+    setOpen(willOpen)
+    if (!willOpen || document || documentLoading || documentError) return
+    setDocumentLoading(true)
+    try {
+      setDocument(await fetchFileContent(projectName, change.file))
+    } catch (error) {
+      setDocumentError(error instanceof Error ? error.message.replace(/^.*请求失败: /, '') : String(error))
+    } finally {
+      setDocumentLoading(false)
+    }
+  }
   return (
     <div className="border-b border-border-default/70 last:border-0">
-      <button onClick={() => setOpen(v => !v)} aria-expanded={open} className="group flex w-full items-start gap-3 px-4 py-3 text-left hover:bg-bg-surface/50">
+      <button onClick={togglePreview} aria-expanded={open} className="group flex w-full items-start gap-3 px-4 py-3 text-left hover:bg-bg-surface/50">
         <span className={`mt-0.5 flex items-center gap-1 rounded-md border px-2 py-1 text-[10px] font-medium ${meta.cls}`}><Icon size={11}/>{meta.label}</span>
         <div className="min-w-0 flex-1">
           <div className="break-all font-mono text-[11px] text-text-primary">{change.file}</div>
@@ -72,7 +89,15 @@ function ChangeRow({ change, initiallyOpen = false }: { change: ChangeItem; init
         <span className="mt-0.5 flex shrink-0 items-center gap-1 rounded-md border border-border-default bg-bg-base px-2 py-1 text-[10px] text-text-secondary group-hover:border-border-hover"><span className="hidden sm:inline">{open ? '收起预览' : '预览详情'}</span><ChevronDown size={13} className={`transition ${open ? 'rotate-180' : ''}`}/></span>
       </button>
       {open && (
-        <div className="mx-4 mb-4 overflow-hidden rounded-xl border border-border-default bg-bg-base">
+        <div className="mx-4 mb-4 space-y-3">
+          <section className="overflow-hidden rounded-xl border border-accent-primary/20 bg-white">
+            <header className="flex flex-wrap items-center gap-2 border-b border-border-default bg-accent-primary/5 px-3 py-2"><div className="text-xs font-semibold text-text-primary">当前文件全文</div>{document && <><span className="text-[10px] text-text-muted">{(document.size_bytes / 1024).toFixed(1)} KB</span><span className="text-[10px] text-text-muted">· 最近修改 {formatTime(document.modified_at)}</span></>}</header>
+            {documentLoading && <div className="p-4 text-xs text-text-muted">正在读取文件正文…</div>}
+            {documentError && <div className="p-4"><p className="text-xs text-accent-warning">{documentError}</p><p className="mt-2 text-[10px] text-text-muted">历史巡检摘录仍可在下方查看。</p></div>}
+            {document && <><pre className="max-h-[32rem] overflow-auto whitespace-pre-wrap break-words p-4 font-mono text-xs leading-6 text-text-secondary">{document.content}</pre>{document.truncated && <div className="border-t border-accent-warning/20 bg-accent-warning/5 px-4 py-2 text-[10px] text-accent-warning">文件超过 2 MB，当前预览显示前 2 MB 内容。</div>}</>}
+          </section>
+          <section className="overflow-hidden rounded-xl border border-border-default bg-bg-base">
+            <header className="border-b border-border-default px-3 py-2 text-xs font-semibold text-text-primary">巡检时变化记录</header>
           {!hasDetail && <div className="p-4"><div className="text-xs font-semibold text-text-primary">本次记录没有保存内容快照</div><p className="mt-2 text-xs leading-5 text-text-secondary">可确认的更新摘要：{change.summary || '仅检测到文件发生变化，暂无内容级摘要。'}</p><p className="mt-2 text-[10px] text-text-muted">这通常来自较早版本的巡检报告；系统不会用当前文件内容冒充当时的历史版本。</p></div>}
           {change.change_type === 'changed' && (change.before_excerpt || change.after_excerpt) && (
             <div className="grid md:grid-cols-2">
@@ -82,6 +107,7 @@ function ChangeRow({ change, initiallyOpen = false }: { change: ChangeItem; init
           )}
           {change.change_type !== 'changed' && <div className="p-3"><div className="mb-2 text-[10px] font-semibold text-text-secondary">{change.change_type === 'added' ? '新增内容' : '删除前最后内容'}</div><pre className="max-h-52 overflow-auto whitespace-pre-wrap text-[10px] leading-5 text-text-muted">{change.after_excerpt || change.before_excerpt || change.diff_text}</pre></div>}
           {change.diff_text && change.change_type === 'changed' && <details className="border-t border-border-default"><summary className="cursor-pointer px-3 py-2 text-[10px] text-text-muted">查看原始 diff</summary><pre className="max-h-56 overflow-auto whitespace-pre-wrap px-3 pb-3 text-[10px] leading-5 text-text-secondary">{change.diff_text}</pre></details>}
+          </section>
         </div>
       )}
     </div>
@@ -115,7 +141,7 @@ function ProjectPanel({ project, primary = false, filtering = false }: { project
         </div>
       </header>
       {project.changes.length === 0 ? <div className="px-5 py-10 text-center"><Activity className={`mx-auto ${filtering ? 'text-text-muted' : 'text-accent-success'}`} size={20}/><p className="mt-2 text-xs text-text-secondary">{filtering ? '当前筛选条件下没有匹配文件' : '本周期无文件变化'}</p><p className="mt-1 text-[10px] text-text-muted">{filtering ? '可调整变更类型、成员或文件关键词' : '巡检成功，不是数据缺失'}</p></div> : (
-        <><div>{visible.map((c, i) => <ChangeRow key={`${c.file}-${i}`} change={c} initiallyOpen={primary && i < 2}/>)}</div>{!showAll && project.changes.length > visible.length && <button onClick={() => setShowAll(true)} className="w-full border-t border-border-default px-4 py-3 text-xs text-accent-primary-light hover:bg-bg-surface">查看全部 {project.changes.length} 个匹配文件</button>}</>
+        <><div>{visible.map((c, i) => <ChangeRow key={`${c.file}-${i}`} change={c} projectName={project.project_name}/>)}</div>{!showAll && project.changes.length > visible.length && <button onClick={() => setShowAll(true)} className="w-full border-t border-border-default px-4 py-3 text-xs text-accent-primary-light hover:bg-bg-surface">查看全部 {project.changes.length} 个匹配文件</button>}</>
       )}
       {project.relationships.length > 0 && <div className="border-t border-border-default bg-bg-base/40 px-4 py-3"><div className="mb-2 flex items-center gap-1 text-[10px] font-semibold text-text-secondary"><Link2 size={11}/>与筛选文件相关的变化关系</div>{project.relationships.slice(0, primary ? 4 : 2).map((r, i) => <p key={i} className="mb-1 text-[10px] leading-5 text-text-muted">{r.description}</p>)}</div>}
       {project.related_tasks.length > 0 && <div className="border-t border-border-default px-4 py-4"><div className="mb-3 flex items-center gap-1 text-[10px] font-semibold text-text-secondary"><Sparkles size={11}/>与筛选文件相关的任务</div><div className="space-y-2">{project.related_tasks.slice(0, primary ? 5 : 2).map(t => <TaskSignal key={t.task_id} task={t}/>)}</div></div>}

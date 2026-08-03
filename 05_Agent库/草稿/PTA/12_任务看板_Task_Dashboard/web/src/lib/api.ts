@@ -159,6 +159,16 @@ export interface CommandCenterResponse {
   cross_project_relations: CrossProjectRelation[]
 }
 
+export interface FileContentResponse {
+  success: boolean
+  project_name: string
+  file: string
+  content: string
+  size_bytes: number
+  truncated: boolean
+  modified_at: string
+}
+
 export interface LaunchdJob {
   label: string
   pid: string | null
@@ -238,6 +248,10 @@ export function fetchActivityFeed(project: string = 'all'): Promise<ActivityFeed
 
 export function fetchCommandCenter(days: 1 | 3 | 7 | 30 = 1): Promise<CommandCenterResponse> {
   return getJSON(`/api/command-center?days=${days}`)
+}
+
+export function fetchFileContent(project: string, file: string): Promise<FileContentResponse> {
+  return getJSON(`/api/file-content?project=${encodeURIComponent(project)}&file=${encodeURIComponent(file)}`)
 }
 
 export function fetchAgentMonitor(): Promise<AgentMonitorResponse> {

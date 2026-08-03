@@ -40,6 +40,8 @@ def parse_args():
     parser.add_argument("--status", action="store_true", help="仅显示配置和最近状态")
     parser.add_argument("--build-model-snapshots", action="store_true", help="只读构建L3流程模型基础快照")
     parser.add_argument("--build-all-model-snapshots", action="store_true", help="批量只读构建数据库中的全部L3模型")
+    parser.add_argument("--check-source-updates", action="store_true", help="候选重建并输出L3/面板影响清单，不更新前端")
+    parser.add_argument("--apply-source-updates", action="store_true", help="安全发布源头变化后的事实快照与影响报告")
     parser.add_argument("--l3-code", action="append", help="要构建的L3编码；可重复传入")
     parser.add_argument("--blueprint-index", type=Path, help="L3蓝图覆盖清单CSV")
     parser.add_argument("--prepare-l3-analysis", action="append", help="从现有快照准备统一模型运行包；可重复传入L3编码")
@@ -155,7 +157,7 @@ def main() -> int:
             output = runner.validate_and_publish(args.run_analysis_dir, response)
             print(json.dumps({"status": "published", "analysis_package": str(output)}, ensure_ascii=False, indent=2))
             return 0
-    if args.build_model_snapshots or args.build_all_model_snapshots:
+    if args.build_model_snapshots or args.build_all_model_snapshots or args.check_source_updates or args.apply_source_updates:
         from skills.l3_model_builder import (
             L3ModelBuilder,
             load_blueprint_index,
@@ -170,7 +172,7 @@ def main() -> int:
         from skills.sync_data_foundation import db_query
         from tools.postgres_reader import BulkPostgresL3Reader, PostgresL3Reader
 
-        if args.build_all_model_snapshots:
+        if args.build_all_model_snapshots or args.check_source_updates or args.apply_source_updates:
             reader = BulkPostgresL3Reader.from_query(db_query)
             codes = reader.l3_codes
         else:
@@ -218,8 +220,46 @@ def main() -> int:
                 AGENT_ROOT / "07_接入记忆_Integrate_Memory/analysis_runs"
             ),
         )
-        snapshot_dir = workspace.root / "model_snapshots"
+        source_update_mode = args.check_source_updates or args.apply_source_updates
+        snapshot_dir = workspace.root / ("source_update_candidate" if source_update_mode else "model_snapshots")
+        if source_update_mode and snapshot_dir.exists():
+            shutil.rmtree(snapshot_dir)
         results = builder.build_and_write(codes, snapshot_dir)
+        if source_update_mode:
+            from skills.source_update import compare_snapshot_sets, write_update_report
+
+            current_dir = AGENT_ROOT / "10_部署与运行_Deploy_and_Run/frontend/public/data/model_snapshots"
+            report = compare_snapshot_sets(current_dir, snapshot_dir)
+            index_path = snapshot_dir / "index.json"
+            candidate_index = json.loads(index_path.read_text(encoding="utf-8"))
+            candidate_index["source_update_summary"] = {
+                "generated_at": report["generated_at"],
+                "changed_l3_count": report["changed_l3_count"],
+                "reanalyze_l3_count": report["reanalyze_l3_count"],
+                "blocked_l3_count": report["blocked_l3_count"],
+                "applied": bool(args.apply_source_updates),
+            }
+            index_path.write_text(json.dumps(candidate_index, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+            report_dir = workspace.root / "source_updates"
+            write_update_report(report, report_dir / ("latest.json" if args.apply_source_updates else "latest_check.json"))
+            frontend_update_dir = AGENT_ROOT / "10_部署与运行_Deploy_and_Run/frontend/public/data/source_updates"
+            if args.check_source_updates:
+                write_update_report({**report, "applied": False}, frontend_update_dir / "pending.json")
+                print(json.dumps({"status": "checked", "applied": False, "report": report}, ensure_ascii=False, indent=2))
+                return 0
+            archive_dir = report_dir / "history" / report["generated_at"].replace(":", "").replace("+", "_")
+            if current_dir.exists():
+                shutil.copytree(current_dir, archive_dir / "before_snapshots")
+            frontend_sync = _sync_to_frontend(snapshot_dir)
+            frontend_report = AGENT_ROOT / "10_部署与运行_Deploy_and_Run/frontend/public/data/source_updates/latest.json"
+            write_update_report(report, frontend_report)
+            write_update_report({**report, "applied": True}, frontend_update_dir / "pending.json")
+            canonical_dir = workspace.root / "model_snapshots"
+            if canonical_dir.exists():
+                shutil.rmtree(canonical_dir)
+            shutil.copytree(snapshot_dir, canonical_dir)
+            print(json.dumps({"status": "source_updates_applied", "report": report, "frontend_sync": frontend_sync}, ensure_ascii=False, indent=2))
+            return 0
         frontend_sync = _sync_to_frontend(snapshot_dir)
         print(json.dumps({"status": "built", "snapshots": results, "frontend_sync": frontend_sync}, ensure_ascii=False, indent=2))
         return 0

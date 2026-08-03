@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router'
 import { AlertTriangle, ArrowRight, CheckCircle2, Database, GitBranch, LoaderCircle, Search, Star } from 'lucide-react'
-import { loadDeliverableAudit, loadModelIndex, type DeliverableAudit, type ModelIndex, type ModelIndexItem } from '../lib/l3Models'
+import { loadDeliverableAudit, loadModelIndex, loadPendingSourceUpdate, type DeliverableAudit, type ModelIndex, type ModelIndexItem, type SourceUpdateReport } from '../lib/l3Models'
 
 function Gate({ name, status }: { name: string; status: string }) {
   const pass = status === 'PASS'
@@ -75,13 +75,14 @@ function ModelCard({ model, quality }: { model: ModelIndexItem; quality?: { mixe
 export default function L3Models() {
   const [data, setData] = useState<ModelIndex | null>(null)
   const [audit, setAudit] = useState<DeliverableAudit | null>(null)
+  const [pendingUpdate, setPendingUpdate] = useState<SourceUpdateReport | null>(null)
   const [error, setError] = useState('')
   const [view, setView] = useState<'all' | 'ready' | 'evaluable' | 'missing' | 'demo' | 'quality'>('all')
   const [query, setQuery] = useState('')
 
   useEffect(() => {
-    Promise.all([loadModelIndex(), loadDeliverableAudit()])
-      .then(([modelData, auditData]) => { setData(modelData); setAudit(auditData) })
+    Promise.all([loadModelIndex(), loadDeliverableAudit(), loadPendingSourceUpdate()])
+      .then(([modelData, auditData, sourceUpdate]) => { setData(modelData); setAudit(auditData); setPendingUpdate(sourceUpdate) })
       .catch(error => setError(error.message))
   }, [])
 
@@ -120,6 +121,47 @@ export default function L3Models() {
           先看权威数据是否足以支撑模型。满足标准的进入模型评审；不满足的进入待补清单，不用推测填空。
         </p>
       </div>
+
+      {data.source_update_summary && (
+        <section className={`rounded-2xl border p-4 ${data.source_update_summary.changed_l3_count > 0 ? 'border-rose-200 bg-rose-50' : 'border-emerald-200 bg-emerald-50'}`}>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-start gap-3">
+              {data.source_update_summary.changed_l3_count > 0
+                ? <AlertTriangle className="mt-0.5 h-5 w-5 text-rose-600" />
+                : <CheckCircle2 className="mt-0.5 h-5 w-5 text-emerald-600" />}
+              <div>
+                <p className="text-sm font-semibold text-text-primary">阶段2 · 源头更新状态</p>
+                <p className="mt-1 text-xs text-text-secondary">
+                  {data.source_update_summary.changed_l3_count > 0
+                    ? `发现 ${data.source_update_summary.changed_l3_count} 个L3输入变化；${data.source_update_summary.reanalyze_l3_count}个需重跑分析，${data.source_update_summary.blocked_l3_count}个因硬输入不足阻断。`
+                    : '数据库与知识输入已与当前事实快照对齐，没有待发布变化。'}
+                </p>
+              </div>
+            </div>
+            <span className="font-mono text-[10px] text-text-muted">最近应用：{new Date(data.source_update_summary.generated_at).toLocaleString('zh-CN')}
+            </span>
+          </div>
+        </section>
+      )}
+
+      {pendingUpdate && !pendingUpdate.applied && (
+        <section className={`rounded-2xl border p-4 ${pendingUpdate.changed_l3_count > 0 ? 'border-amber-300 bg-amber-50' : 'border-sky-200 bg-sky-50'}`}>
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <p className="text-sm font-semibold text-text-primary">自动只读扫描 · {pendingUpdate.changed_l3_count > 0 ? '发现待应用变化' : '未发现新变化'}</p>
+              <p className="mt-1 text-xs text-text-secondary">
+                {pendingUpdate.changed_l3_count > 0
+                  ? `影响${pendingUpdate.changed_l3_count}个L3；${pendingUpdate.reanalyze_l3_count}个需重跑分析，${pendingUpdate.blocked_l3_count}个将进入阻断。当前页面尚未应用这些变化。`
+                  : '本次扫描与已发布快照一致，无需操作。'}
+              </p>
+              {pendingUpdate.changes.length > 0 && (
+                <p className="mt-2 text-[11px] text-amber-800">影响L3：{pendingUpdate.changes.slice(0, 8).map(item => item.l3_code).join('、')}{pendingUpdate.changes.length > 8 ? '等' : ''}</p>
+              )}
+            </div>
+            <span className="font-mono text-[10px] text-text-muted">最近扫描：{new Date(pendingUpdate.generated_at).toLocaleString('zh-CN')}</span>
+          </div>
+        </section>
+      )}
 
       {featuredDemo && (
         <Link to={`/models/${featuredDemo.l3_code}`} className="block rounded-2xl border border-violet-400/25 bg-violet-400/5 p-5 transition hover:bg-violet-400/10">

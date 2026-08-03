@@ -118,6 +118,36 @@ def remove_watched_project(name: str) -> dict:
     return {"success": True}
 
 
+TEXT_PREVIEW_EXTENSIONS = {
+    ".md", ".markdown", ".json", ".txt", ".csv", ".tsv", ".yaml", ".yml",
+    ".py", ".js", ".jsx", ".ts", ".tsx", ".html", ".css", ".xml", ".toml",
+}
+MAX_FILE_PREVIEW_BYTES = 2 * 1024 * 1024
+
+
+def read_project_file(project_name: str, relative_file: str) -> dict:
+    """只读已配置项目内的文本文件全文，严格阻止路径穿越。"""
+    project = next((p for p in _load_watched_projects() if p.get("name") == project_name), None)
+    if project is None:
+        return {"success": False, "error": f"未知项目: {project_name}"}
+    root = Path(project.get("project_root", "")).resolve()
+    candidate = (root / relative_file).resolve()
+    if candidate != root and root not in candidate.parents:
+        return {"success": False, "error": "文件路径超出项目范围"}
+    if not candidate.exists() or not candidate.is_file():
+        return {"success": False, "error": "当前文件不存在，可能已删除或移动"}
+    if candidate.suffix.lower() not in TEXT_PREVIEW_EXTENSIONS:
+        return {"success": False, "error": f"暂不支持在线预览 {candidate.suffix or '无扩展名'} 文件"}
+    raw = candidate.read_bytes()
+    truncated = len(raw) > MAX_FILE_PREVIEW_BYTES
+    content = raw[:MAX_FILE_PREVIEW_BYTES].decode("utf-8", errors="replace")
+    return {
+        "success": True, "project_name": project_name, "file": relative_file,
+        "content": content, "size_bytes": len(raw), "truncated": truncated,
+        "modified_at": datetime.fromtimestamp(candidate.stat().st_mtime).isoformat(),
+    }
+
+
 def _resolve_workspace_for_project(project_name: str) -> "tuple[Path, Path] | None":
     """按 name 找 daily_scan_projects.json 里对应的 project_root，再解析出它的
     专属工作区。找不到就返回 None——调用方（dismiss接口）据此返回404，而不是

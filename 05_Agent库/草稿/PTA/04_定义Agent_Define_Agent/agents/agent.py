@@ -193,7 +193,10 @@ def cmd_daily_scan(project_root: str = None, force: bool = False, notify: bool =
 
     if task_map_entries:
         merge_suggested_tasks(resolved_root, task_map_entries)
-        print(f"\n{len(task_map_entries)} 条建议任务已写入: {resolved_root / 'pta_tasks.json'}")
+        # 2026-08起pta_tasks.json物理隔离进项目专属工作区，不再是resolved_root
+        # 下的文件——这里之前打印的是旧的（现已错误的）项目根目录路径，是真实
+        # 会误导用户去错误位置找文件的bug，随迁移一并修正。
+        print(f"\n{len(task_map_entries)} 条建议任务已写入: {workspace / 'pta_tasks.json'}")
 
     state.setdefault("context", {})["last_daily_scan"] = {
         "timestamp": datetime.now().isoformat(), "report_path": str(report_md_path),
@@ -546,7 +549,7 @@ def main():
     parser.add_argument("--message", "-m", help="--sync 时的 git 提交信息")
     parser.add_argument("--project-root",
                          help="目标项目根目录（不传则默认本项目；决定去哪个专属工作区读写状态、"
-                              "去该目录下找 pta_tasks.json）")
+                              "去该项目专属工作区下找 pta_tasks.json，不是项目根目录本身）")
     parser.add_argument("--task-map", help="显式指定任务知识库 JSON 文件路径（优先级高于 --project-root）")
     parser.add_argument("--daily-scan", action="store_true",
                          help="每日主动巡检：检测文件变化+关系分析+提炼建议任务（需 DEEPSEEK_API_KEY），"
