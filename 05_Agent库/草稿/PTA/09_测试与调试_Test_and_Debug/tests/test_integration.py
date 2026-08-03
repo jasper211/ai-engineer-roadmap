@@ -1258,8 +1258,9 @@ def test_37_command_center_file_ssot_is_complete(tmp_dir: Path):
 
     import views as dashboard_views
     original_feed = dashboard_views.activity_feed
+    original_range_feed = dashboard_views.activity_feed_range
     original_tasks = dashboard_views.aggregate_tasks
-    dashboard_views.activity_feed = lambda _filter="all": [
+    fixture_feed = [
         {"project_name": "Rw权益项目", "generated_at": "2026-07-24T10:00:00",
          "files_added": 0, "files_changed": 0, "files_removed": 0, "changes": [],
          "relationships": [], "resolved_tasks": [], "skipped_llm_call": True},
@@ -1272,6 +1273,8 @@ def test_37_command_center_file_ssot_is_complete(tmp_dir: Path):
          "changes": [{"file": "agent.py", "summary": "更新规则Agent", "who": "Jasper", "domain": "规则"}],
          "relationships": [], "resolved_tasks": [], "skipped_llm_call": False},
     ]
+    dashboard_views.activity_feed = lambda _filter="all": fixture_feed
+    dashboard_views.activity_feed_range = lambda _filter="all", _days=1: fixture_feed
     dashboard_views.aggregate_tasks = lambda _filter="all": {"new": [], "aging": [], "resolved_recent": []}
     try:
         command = dashboard_views.command_center()
@@ -1282,6 +1285,7 @@ def test_37_command_center_file_ssot_is_complete(tmp_dir: Path):
               "共同业务域被识别为跨项目关系线索", "未生成EA/Jasper跨项目关系线索")
     finally:
         dashboard_views.activity_feed = original_feed
+        dashboard_views.activity_feed_range = original_range_feed
         dashboard_views.aggregate_tasks = original_tasks
 
     import skills.cross_project_sensing as cross_sensing

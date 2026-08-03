@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import {
-  Activity, ArrowDownToLine, ArrowRight, BarChart3, ChevronDown, Clock3,
+  Activity, ArrowDownToLine, ArrowRight, BarChart3, CalendarDays, ChevronDown, Clock3,
   FileDiff, FileMinus2, FilePlus2, FolderKanban, GitCompareArrows, Link2,
   RotateCcw, Search, SlidersHorizontal, Sparkles, Users,
 } from 'lucide-react'
@@ -11,6 +11,7 @@ import {
 import { PriorityBadge } from '../components/StatusBadge'
 
 type ChangeFilter = 'all' | ChangeItem['change_type']
+type DateRange = 1 | 3 | 7 | 30
 
 const CHANGE_META = {
   added: { label: '新增', icon: FilePlus2, cls: 'text-accent-success bg-accent-success/10 border-accent-success/20' },
@@ -25,6 +26,13 @@ const FILTER_OPTIONS: { value: ChangeFilter; label: string; icon: typeof FileDif
   { value: 'removed', label: '删除', icon: FileMinus2 },
 ]
 
+const DATE_OPTIONS: { value: DateRange; label: string }[] = [
+  { value: 30, label: '过往30天' },
+  { value: 7, label: '过往7天' },
+  { value: 3, label: '过往3天' },
+  { value: 1, label: '过往1天' },
+]
+
 function formatTime(value: string) {
   if (!value) return '尚未成功巡检'
   return new Date(value).toLocaleString('zh-CN', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })
@@ -36,6 +44,17 @@ function peopleFromWho(who: string) {
   return value.split(/[、,，/;；]+/).map(item => item.trim()).filter(Boolean)
 }
 
+function matchesFileQuery(change: ChangeItem, rawQuery: string) {
+  const query = rawQuery.trim().toLocaleLowerCase()
+  if (!query) return true
+  const content = `${change.file} ${change.summary || ''}`.toLocaleLowerCase()
+  // 短英文缩写按词/路径片段匹配，避免 pta 误命中 acceptance 中间的字母。
+  if (/^[a-z0-9]{1,4}$/.test(query)) {
+    return content.split(/[^a-z0-9]+/).some(token => token === query || token.startsWith(query))
+  }
+  return content.includes(query)
+}
+
 function ChangeRow({ change, initiallyOpen = false }: { change: ChangeItem; initiallyOpen?: boolean }) {
   const [open, setOpen] = useState(initiallyOpen)
   const meta = CHANGE_META[change.change_type] || CHANGE_META.changed
@@ -43,17 +62,18 @@ function ChangeRow({ change, initiallyOpen = false }: { change: ChangeItem; init
   const hasDetail = !!(change.diff_text || change.before_excerpt || change.after_excerpt)
   return (
     <div className="border-b border-border-default/70 last:border-0">
-      <button onClick={() => hasDetail && setOpen(v => !v)} className="group flex w-full items-start gap-3 px-4 py-3 text-left hover:bg-bg-surface/50">
+      <button onClick={() => setOpen(v => !v)} aria-expanded={open} className="group flex w-full items-start gap-3 px-4 py-3 text-left hover:bg-bg-surface/50">
         <span className={`mt-0.5 flex items-center gap-1 rounded-md border px-2 py-1 text-[10px] font-medium ${meta.cls}`}><Icon size={11}/>{meta.label}</span>
         <div className="min-w-0 flex-1">
           <div className="break-all font-mono text-[11px] text-text-primary">{change.file}</div>
           <div className="mt-1 text-xs leading-5 text-text-secondary">{change.summary || '已记录文件事实变化'}</div>
-          <div className="mt-1 flex flex-wrap gap-2 text-[10px] text-text-muted"><span>{change.domain || '其他'}</span><span>·</span><span>{change.who || '未知来源'}</span>{!hasDetail && <><span>·</span><span>旧报告未保存内容级 diff</span></>}</div>
+          <div className="mt-1 flex flex-wrap gap-2 text-[10px] text-text-muted"><span>{change.domain || '其他'}</span><span>·</span><span>{change.who || '未知来源'}</span>{change.observed_at && <><span>·</span><span>发现于 {formatTime(change.observed_at)}</span></>}{!hasDetail && <><span>·</span><span>旧报告未保存内容级 diff</span></>}</div>
         </div>
-        {hasDetail && <ChevronDown size={15} className={`mt-1 shrink-0 text-text-muted transition ${open ? 'rotate-180' : ''}`}/>} 
+        <span className="mt-0.5 flex shrink-0 items-center gap-1 rounded-md border border-border-default bg-bg-base px-2 py-1 text-[10px] text-text-secondary group-hover:border-border-hover"><span className="hidden sm:inline">{open ? '收起预览' : '预览详情'}</span><ChevronDown size={13} className={`transition ${open ? 'rotate-180' : ''}`}/></span>
       </button>
-      {open && hasDetail && (
+      {open && (
         <div className="mx-4 mb-4 overflow-hidden rounded-xl border border-border-default bg-bg-base">
+          {!hasDetail && <div className="p-4"><div className="text-xs font-semibold text-text-primary">本次记录没有保存内容快照</div><p className="mt-2 text-xs leading-5 text-text-secondary">可确认的更新摘要：{change.summary || '仅检测到文件发生变化，暂无内容级摘要。'}</p><p className="mt-2 text-[10px] text-text-muted">这通常来自较早版本的巡检报告；系统不会用当前文件内容冒充当时的历史版本。</p></div>}
           {change.change_type === 'changed' && (change.before_excerpt || change.after_excerpt) && (
             <div className="grid md:grid-cols-2">
               <div className="border-b border-border-default p-3 md:border-b-0 md:border-r"><div className="mb-2 text-[10px] font-semibold text-accent-danger">修改前</div><pre className="max-h-44 overflow-auto whitespace-pre-wrap text-[10px] leading-5 text-text-muted">{change.before_excerpt || '无可读内容'}</pre></div>
@@ -137,9 +157,13 @@ export function TaskBoard() {
   const [data, setData] = useState<CommandCenterResponse | null>(null)
   const [error, setError] = useState('')
   const [changeType, setChangeType] = useState<ChangeFilter>('all')
+  const [rangeDays, setRangeDays] = useState<DateRange>(1)
   const [member, setMember] = useState('all')
   const [fileQuery, setFileQuery] = useState('')
-  useEffect(() => { fetchCommandCenter().then(setData).catch(e => setError(String(e))) }, [])
+  useEffect(() => {
+    setData(null)
+    fetchCommandCenter(rangeDays).then(setData).catch(e => setError(String(e)))
+  }, [rangeDays])
 
   const members = useMemo(() => {
     if (!data) return []
@@ -153,7 +177,7 @@ export function TaskBoard() {
       const changes = project.changes.filter(change => {
         const typeMatch = changeType === 'all' || change.change_type === changeType
         const memberMatch = member === 'all' || peopleFromWho(change.who).includes(member)
-        const fileMatch = !query || `${change.file} ${change.summary || ''}`.toLocaleLowerCase().includes(query)
+        const fileMatch = matchesFileQuery(change, query)
         return typeMatch && memberMatch && fileMatch
       })
       const files = new Set(changes.map(change => change.file))
@@ -178,10 +202,11 @@ export function TaskBoard() {
   if (!data) return <div className="p-8 text-text-muted">正在汇总三个项目的最新文件事实…</div>
   return (
     <main className="mx-auto max-w-[1440px] space-y-7 px-5 py-7 lg:px-8">
-      <header className="flex flex-col gap-4 lg:flex-row lg:items-end"><div><div className="eyebrow"><GitCompareArrows size={12}/>PERSONAL PROJECT INTELLIGENCE</div><h1 className="mt-2 font-heading text-2xl font-semibold tracking-tight lg:text-3xl">三项目指挥中心</h1><p className="mt-2 max-w-3xl text-sm leading-6 text-text-secondary">文件事实是唯一源头：筛选谁更新了什么，快速定位文件，再查看筛选范围内的更新分析。</p></div><div className="ml-auto rounded-xl border border-border-default bg-bg-elevated px-4 py-3"><div className="text-2xl font-semibold">{filtering ? filteredTotal : total}</div><div className="text-[10px] text-text-muted">{filtering ? `筛选命中 / 全部 ${total}` : '本周期文件变化'}</div></div></header>
+      <header className="flex flex-col gap-4 lg:flex-row lg:items-end"><div><div className="eyebrow"><GitCompareArrows size={12}/>PERSONAL PROJECT INTELLIGENCE</div><h1 className="mt-2 font-heading text-2xl font-semibold tracking-tight lg:text-3xl">项目指挥中心</h1><p className="mt-2 max-w-3xl text-sm leading-6 text-text-secondary">文件事实是唯一源头：选择时间范围，筛选谁更新了什么，快速定位文件，再查看筛选范围内的更新分析。</p></div><div className="ml-auto rounded-xl border border-border-default bg-bg-elevated px-4 py-3"><div className="text-2xl font-semibold">{filtering ? filteredTotal : total}</div><div className="text-[10px] text-text-muted">{filtering ? `筛选命中 / 全部 ${total}` : `过去 ${rangeDays} 天文件变化`}</div></div></header>
       <div className="rounded-xl border border-accent-secondary/15 bg-accent-secondary/5 px-4 py-3 text-xs text-text-secondary"><b className="text-accent-secondary">SSOT 时间口径：</b>{data.period_basis}</div>
 
       <section className="sticky top-[65px] z-30 rounded-2xl border border-border-default bg-bg-elevated/95 p-4 shadow-xl backdrop-blur-xl">
+        <div className="mb-4 border-b border-border-default pb-4"><div className="mb-2 flex items-center gap-2 text-xs font-semibold"><CalendarDays size={14} className="text-accent-secondary"/>日期范围</div><div className="flex flex-wrap gap-2">{DATE_OPTIONS.map(option => <button key={option.value} onClick={() => setRangeDays(option.value)} aria-pressed={rangeDays === option.value} className={`filter-chip ${rangeDays === option.value ? 'filter-chip-active' : ''}`}>{option.label}</button>)}</div></div>
         <div className="flex flex-col gap-4 xl:flex-row xl:items-end">
           <div className="min-w-0 flex-1"><div className="mb-2 flex items-center gap-2 text-xs font-semibold"><SlidersHorizontal size={14} className="text-accent-secondary"/>变更类型</div><div className="flex flex-wrap gap-2">{FILTER_OPTIONS.map(({ value, label, icon: Icon }) => <button key={value} onClick={() => setChangeType(value)} aria-pressed={changeType === value} className={`filter-chip ${changeType === value ? 'filter-chip-active' : ''}`}><Icon size={13}/>{label}</button>)}</div></div>
           <label className="block min-w-[190px] text-xs font-semibold"><span className="mb-2 flex items-center gap-2"><Users size={14} className="text-accent-secondary"/>项目组成员</span><select value={member} onChange={event => setMember(event.target.value)} className="field h-10 py-0"><option value="all">全部成员</option>{members.map(name => <option key={name} value={name}>{name}</option>)}</select></label>

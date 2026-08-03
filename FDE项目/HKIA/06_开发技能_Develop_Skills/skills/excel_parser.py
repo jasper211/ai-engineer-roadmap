@@ -47,7 +47,12 @@ NB_BY_INSURER_CANDIDATES = {
     # sheet名"Table L1"新旧制度都一样，跟"Form HKLQ1-1" vs "Form LT QR (NB)"
     # 不同——这张表本身分不出schema，直接沿用已经从头条表判定出来的
     # schema_version，不独立猜测（用 None 占位，调用方不使用这个值）。
-    "exact": [("Table L1", None)],
+    # 2024Q3(RBC切换过渡期那份文件)例外：sheet名不是"Table L1"，是带
+    # "B.LT.QR.N "前缀+"_IND"后缀的"B.LT.QR.1.1 LT QR (NB_Ind)_IND"——已经
+    # 打开核对过表格内容，标题一样是"此期間的新造直接個人人壽業務"，跟其余
+    # 44期的"Table L1"结构、口径完全一致，只是这一期单独换了个名字，加一条
+    # exact候选覆盖，不用"NB_Grp"那个团体业务的（不在Table L1的追踪范围内）。
+    "exact": [("Table L1", None), ("B.LT.QR.1.1 LT QR (NB_Ind)_IND", None)],
     "regex": [],
 }
 CCY_CANDIDATES = {
@@ -66,7 +71,10 @@ CHANNEL_BY_INSURER_CANDIDATES = {
     # 旧制度是"Table L1(d)"（按渠道的保费金额，(h)是按渠道的保单数，不用它）；
     # 新制度是"Table L1 (channel)"——两边命名规则完全不同，一样不靠sheet名判
     # schema，沿用头条表已经判定出来的 schema_version。
-    "exact": [("Table L1(d)", None), ("Table L1 (channel)", None)],
+    # 2024Q3过渡期同 NB_BY_INSURER_CANDIDATES，sheet名是"B.LT.QR.5 LT QR
+    # (channel)_IND"，已核对表格结构（保险公司×渠道交叉、"此期間的新造直接
+    # 個人人壽業務"）跟其余44期的"Table L1 (channel)"一致。
+    "exact": [("Table L1(d)", None), ("Table L1 (channel)", None), ("B.LT.QR.5 LT QR (channel)_IND", None)],
     "regex": [],
 }
 

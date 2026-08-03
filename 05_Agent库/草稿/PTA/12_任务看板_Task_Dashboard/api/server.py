@@ -96,7 +96,11 @@ class Handler(BaseHTTPRequestHandler):
         if parsed.path == "/api/projects":
             self._send_json(200, views.list_projects())
         elif parsed.path == "/api/command-center":
-            self._send_json(200, views.command_center())
+            try:
+                days = int(query.get("days", ["1"])[0])
+            except ValueError:
+                days = 1
+            self._send_json(200, views.command_center(days))
         elif parsed.path == "/api/tasks":
             project = query.get("project", ["all"])[0]
             self._send_json(200, views.aggregate_tasks(project))

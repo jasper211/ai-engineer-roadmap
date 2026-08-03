@@ -11,7 +11,7 @@ Task_Dashboard/api/ 下，比 agent.py 深一层，PTA_DIR 的推导多一层 pa
 
 import json
 import sys
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict, List
 
@@ -398,6 +398,72 @@ def activity_feed(project_filter: str = "all") -> List[dict]:
     return result
 
 
+def activity_feed_range(project_filter: str = "all", days: int = 1) -> List[dict]:
+    """聚合最近 N 天内已经落盘的巡检报告，不触发新扫描或 LLM 调用。
+
+    日期口径是报告 generated_at；同一文件在不同报告中重复变化时保留为多条
+    变化事件，并给每条补 observed_at，前端可以区分是哪次巡检发现的。
+    """
+    days = days if days in (1, 3, 7, 30) else 1
+    cutoff = datetime.now() - timedelta(days=days)
+    projects = _load_watched_projects()
+    if project_filter != "all":
+        projects = [p for p in projects if p.get("name") == project_filter]
+
+    result = []
+    for p in projects:
+        name = p.get("name", "")
+        root = Path(p.get("project_root", ""))
+        if not root.exists():
+            continue
+        workspace = ws.get_project_workspace(root)
+        reports_dir = workspace / "reports"
+        selected = []
+        for report_path in sorted(reports_dir.glob("daily-scan-*.json")) if reports_dir.exists() else []:
+            try:
+                report = json.loads(report_path.read_text(encoding="utf-8"))
+                generated_at = datetime.fromisoformat(report.get("generated_at", ""))
+            except (json.JSONDecodeError, ValueError):
+                continue
+            if generated_at >= cutoff:
+                selected.append(report)
+
+        changes, relationships, resolved_tasks = [], [], []
+        for report in selected:
+            observed_at = report.get("generated_at", "")
+            for raw in report.get("changes", []):
+                changes.append({**raw, "observed_at": observed_at})
+            relationships.extend(report.get("relationships", []))
+            resolved_tasks.extend(report.get("resolved_tasks", []))
+
+        # 相同关系描述跨日重复时只展示一次，文件证据取并集。
+        relation_map = {}
+        for relation in relationships:
+            key = relation.get("description", "")
+            if not key:
+                continue
+            if key not in relation_map:
+                relation_map[key] = dict(relation)
+            else:
+                old_files = relation_map[key].get("related_files", [])
+                relation_map[key]["related_files"] = list(dict.fromkeys(
+                    old_files + relation.get("related_files", [])))
+
+        result.append({
+            "project_name": name,
+            "generated_at": selected[-1].get("generated_at", "") if selected else "",
+            "files_added": sum(r.get("files_added", 0) for r in selected),
+            "files_changed": sum(r.get("files_changed", 0) for r in selected),
+            "files_removed": sum(r.get("files_removed", 0) for r in selected),
+            "changes": changes,
+            "relationships": list(relation_map.values()),
+            "resolved_tasks": resolved_tasks,
+            "skipped_llm_call": bool(selected) and all(r.get("skipped_llm_call", False) for r in selected),
+            "reports_in_range": len(selected),
+        })
+    return result
+
+
 PROJECT_ROLES = {
     "EA流程架构项目": {
         "role": "core", "label": "核心业务主线",
@@ -465,9 +531,10 @@ def _build_cross_project_relations(projects: List[dict]) -> List[dict]:
     return result
 
 
-def command_center() -> dict:
+def command_center(days: int = 1) -> dict:
     """个人指挥中心SSOT：三项目最新成功巡检事实 + 下游任务 + 跨项目关系线索。"""
-    feed = activity_feed("all")
+    days = days if days in (1, 3, 7, 30) else 1
+    feed = activity_feed_range("all", days)
     task_buckets = aggregate_tasks("all")
     open_tasks = task_buckets["new"] + task_buckets["aging"]
     project_entries = []
@@ -502,7 +569,8 @@ def command_center() -> dict:
         except json.JSONDecodeError:
             pass
     return {
-        "period_basis": "每个项目从上一次成功巡检到本次巡检之间的全部文件变化",
+        "period_basis": f"巡检报告生成时间位于最近 {days} 天内；同一文件跨日多次变化会分别保留",
+        "range_days": days,
         "projects": project_entries,
         "cross_project_relations": relations,
     }

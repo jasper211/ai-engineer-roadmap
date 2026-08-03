@@ -107,6 +107,7 @@ export interface ChangeItem {
   before_excerpt: string
   after_excerpt: string
   diff_text: string
+  observed_at?: string
 }
 
 export interface RelationshipItem {
@@ -153,6 +154,7 @@ export interface CrossProjectRelation {
 
 export interface CommandCenterResponse {
   period_basis: string
+  range_days?: number
   projects: CommandProject[]
   cross_project_relations: CrossProjectRelation[]
 }
@@ -234,8 +236,8 @@ export function fetchActivityFeed(project: string = 'all'): Promise<ActivityFeed
   return getJSON(`/api/activity-feed?project=${encodeURIComponent(project)}`)
 }
 
-export function fetchCommandCenter(): Promise<CommandCenterResponse> {
-  return getJSON('/api/command-center')
+export function fetchCommandCenter(days: 1 | 3 | 7 | 30 = 1): Promise<CommandCenterResponse> {
+  return getJSON(`/api/command-center?days=${days}`)
 }
 
 export function fetchAgentMonitor(): Promise<AgentMonitorResponse> {
