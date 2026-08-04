@@ -1,0 +1,195 @@
+registry_id: HKIA-SOURCE-REGISTRY
+version: 0.1
+status: draft
+
+source_classes:
+  S1_regulatory_government:
+    default_permissions: [fact, regulatory_event]
+    default_proximity: primary
+  S2_company_primary:
+    default_permissions: [company_fact, company_claim]
+    default_proximity: primary_for_company
+  S3_research_database:
+    default_permissions: [research_fact, research_claim]
+    default_proximity: mixed
+  S4_industry_media:
+    default_permissions: [media_claim, source_lead]
+    default_proximity: secondary
+  S5_expert_social:
+    default_permissions: [expert_opinion, source_lead]
+    default_proximity: primary_opinion
+  S6_internal_experience:
+    default_permissions: [experience, routing_rule_candidate]
+    default_proximity: internal
+  S7_user_supplied:
+    default_permissions: [pending_asset]
+    default_proximity: unknown
+
+sources:
+  - source_id: SRC-REG-IA-LTQ
+    name: IA长期业务季度临时统计
+    publisher: Insurance Authority Hong Kong
+    source_class: S1_regulatory_government
+    channels: [website, excel]
+    base_urls:
+      - https://www.ia.org.hk/tc/infocenter/statistics/quarterly_release_of_provisional_statistics_for_long_term_business.html
+    themes: [T00, T01, T02, T10, T11, T12, T13, T20, T21]
+    acquisition_mode: manual_current
+    target_mode: automated_or_hybrid
+    update_pattern: quarterly
+    access_policy:
+      public: true
+      automation_review_required: true
+      notes: 官网存在访问挑战；自动化前需重新验证允许方式与稳定性
+    quality_profile:
+      authority: primary_official
+      proximity: primary
+      method_transparency: high_with_schema_breaks
+      reproducibility: high
+      bias_profile: regulatory
+      access_stability: fragile
+    evidence_permissions: [fact, regulatory_event]
+    owner: Jasper
+    status: active
+
+  - source_id: SRC-GOV-DATAGOVHK-IA
+    name: data.gov.hk保险业数据集
+    publisher: Government of the HKSAR
+    source_class: S1_regulatory_government
+    channels: [website, csv]
+    base_urls:
+      - https://data.gov.hk/
+    themes: [T00, T01, T10, T11, T12, T13, T20]
+    acquisition_mode: candidate
+    update_pattern: dataset_dependent
+    access_policy:
+      public: true
+      automation_review_required: true
+    quality_profile:
+      authority: official_distribution
+      proximity: primary_or_republished
+      method_transparency: high
+      reproducibility: high
+      bias_profile: government
+      access_stability: to_verify
+    evidence_permissions: [fact]
+    owner: Jasper
+    status: assessed
+
+  - source_id: SRC-REG-IA-LTA
+    name: IA年度长期业务统计
+    publisher: Insurance Authority Hong Kong
+    source_class: S1_regulatory_government
+    channels: [website, excel, pdf]
+    base_urls:
+      - https://www.ia.org.hk/en/infocenter/statistics/annual_long_term_business_statistics.html
+    themes: [T00, T01, T02, T10, T11, T20, T21, T32]
+    acquisition_mode: candidate
+    update_pattern: annual_with_revisions
+    access_policy:
+      public: true
+      automation_review_required: true
+    quality_profile:
+      authority: primary_official
+      proximity: primary
+      method_transparency: high
+      reproducibility: high
+      bias_profile: regulatory
+      access_stability: fragile
+    evidence_permissions: [fact, document_fact, entity_fact]
+    owner: Jasper
+    status: assessed
+
+  - source_id: SRC-REG-IA-INTERMEDIARY
+    name: IA保险中介人牌照统计
+    publisher: Insurance Authority Hong Kong
+    source_class: S1_regulatory_government
+    channels: [website, downloadable_statistics]
+    base_urls:
+      - https://www.ia.org.hk/en/infocenter/statistics/statistics.html
+    themes: [T12, T22, T30]
+    acquisition_mode: candidate
+    update_pattern: monthly_or_periodic
+    access_policy:
+      public: true
+      automation_review_required: true
+    quality_profile:
+      authority: primary_official
+      proximity: primary
+      method_transparency: medium_high
+      reproducibility: high
+      bias_profile: regulatory
+      access_stability: medium
+    evidence_permissions: [fact, document_fact]
+    owner: Jasper
+    status: assessed
+
+  - source_id: SRC-REG-IA-CONDUCT
+    name: IA Conduct in Focus与投诉统计
+    publisher: Insurance Authority Hong Kong
+    source_class: S1_regulatory_government
+    channels: [website, pdf, press_release]
+    base_urls:
+      - https://www.ia.org.hk/en/infocenter/
+    themes: [T02, T12, T22, T30]
+    acquisition_mode: candidate
+    update_pattern: periodic
+    access_policy:
+      public: true
+      automation_review_required: true
+    quality_profile:
+      authority: primary_official
+      proximity: primary_for_regulatory_observations
+      method_transparency: medium_high
+      reproducibility: medium_high
+      bias_profile: regulatory
+      access_stability: medium
+    evidence_permissions: [fact, regulatory_event, regulatory_observation]
+    owner: Jasper
+    status: assessed
+
+  - source_id: SRC-REG-IA-ANNUAL-REPORT
+    name: IA年度报告与监管工作资料
+    publisher: Insurance Authority Hong Kong
+    source_class: S1_regulatory_government
+    channels: [website, pdf]
+    base_urls:
+      - https://www.ia.org.hk/en/infocenter/
+    themes: [T20, T22, T30, T32]
+    acquisition_mode: candidate
+    update_pattern: annual_and_event_driven
+    access_policy:
+      public: true
+      automation_review_required: true
+    quality_profile:
+      authority: primary_official
+      proximity: primary_for_regulatory_actions
+      method_transparency: medium_high
+      reproducibility: medium_high
+      bias_profile: regulatory
+      access_stability: medium
+    evidence_permissions: [document_fact, regulatory_event, regulatory_claim]
+    owner: Jasper
+    status: assessed
+
+watchlist_placeholders:
+  - source_id: SRC-MEDIA-WECHAT-TBD
+    source_class: S4_industry_media
+    requirement: 待按T12/T01/T20筛选具体公众号并逐个完成权限与质量评估
+  - source_id: SRC-EXPERT-LINKEDIN-TBD
+    source_class: S5_expert_social
+    requirement: 待建立专家名单、身份有效期、主题标签和原帖采集协议
+  - source_id: SRC-COMPANY-IR-TBD
+    source_class: S2_company_primary
+    requirement: 待从T20/T21的公司Entity Registry生成IR来源清单
+  - source_id: SRC-INTERNAL-BOSS-KB-TBD
+    source_class: S6_internal_experience
+    requirement: 待确认知识库接口、权限、Experience Card抽取和引用范围
+
+gates:
+  approve_source:
+    required: [publisher, source_class, themes, access_policy, quality_profile, owner]
+  admit_fact:
+    required: [asset_id, original_locator, period, object_scope, metric_or_event, provenance]
+  enable_automation:
+    required: [approved_status, allowed_access, retry_policy, snapshot_policy, failure_alert]

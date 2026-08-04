@@ -1,0 +1,162 @@
+registry_id: HKIA-FEC-EXAMPLE
+version: 0.1
+status: training_example
+purpose: 用Probe-01的一条渠道命题验证对象关系，不代表完整报告
+
+assets:
+  - asset_id: AST-IA-LTQ-2019-FY
+    source_id: SRC-REG-IA-LTQ
+    title: 2019年长期业务第四季度临时统计Excel
+    content_type: xls
+    period: 2019-FY
+    storage_path: 07_接入记忆_Integrate_Memory/raw_data/4q19long.xls
+  - asset_id: AST-IA-LTQ-2025-FY
+    source_id: SRC-REG-IA-LTQ
+    title: 2025年长期业务第四季度临时统计Excel
+    content_type: xlsx
+    period: 2025-FY
+    storage_path: 07_接入记忆_Integrate_Memory/raw_data/4q25long.xlsx
+
+formulas:
+  - formula_id: FRM-NOP
+    expression: annualized_premium + single_premium
+    unit: HKD_thousand
+  - formula_id: FRM-APE
+    expression: annualized_premium + 0.1 * single_premium
+    unit: HKD_thousand
+  - formula_id: FRM-SHARE
+    expression: segment_measure / same_scope_market_measure
+    unit: ratio
+
+facts:
+  - fact_id: F-T12-001
+    fact_type: derived_metric
+    statement: 2019年代理渠道NOP市场份额为34.0%
+    subject: channel_agency
+    metric_or_event: NOP_market_share
+    value: 0.340
+    unit: ratio
+    period: 2019-FY
+    object_scope: HK_new_long_term_business
+    source_id: SRC-REG-IA-LTQ
+    asset_id: AST-IA-LTQ-2019-FY
+    locator: long_term_business/table_type=new_business_by_channel/category=總額
+    method: [FRM-NOP, FRM-SHARE]
+    schema_version: pre_rbc
+    quality_status: verified_from_normalized_fact_table
+    origin_chain_id: ORG-IA-LTQ
+    version: 1
+  - fact_id: F-T12-002
+    fact_type: derived_metric
+    statement: 2025年代理渠道NOP市场份额为23.5%
+    subject: channel_agency
+    metric_or_event: NOP_market_share
+    value: 0.235
+    unit: ratio
+    period: 2025-FY
+    object_scope: HK_new_long_term_business
+    source_id: SRC-REG-IA-LTQ
+    asset_id: AST-IA-LTQ-2025-FY
+    locator: long_term_business/table_type=new_business_by_channel/category=總額
+    method: [FRM-NOP, FRM-SHARE]
+    schema_version: post_rbc
+    quality_status: verified_from_normalized_fact_table
+    origin_chain_id: ORG-IA-LTQ
+    version: 1
+  - fact_id: F-T12-003
+    fact_type: derived_metric
+    statement: 2019至2025年代理渠道NOP份额下降10.5个百分点
+    subject: channel_agency
+    metric_or_event: NOP_share_change
+    value: -0.105
+    unit: percentage_point
+    period: 2019-FY_to_2025-FY
+    object_scope: HK_new_long_term_business
+    input_fact_ids: [F-T12-001, F-T12-002]
+    method: endpoint_difference
+    quality_status: verified
+    origin_chain_id: ORG-IA-LTQ
+    version: 1
+
+claims:
+  - claim_id: C-T12-001
+    theme_id: T12
+    claim_type: comparative
+    statement: 2019至2025年代理渠道的NOP相对市场位置下降
+    scope:
+      start: 2019-FY
+      end: 2025-FY
+      object_scope: HK_new_long_term_business
+      measure: NOP
+    baseline_contract_id: CONTRACT-HKIA-CHANNEL-001
+    grade: A
+    status: supported_A
+    alternative_explanations: []
+    falsification_conditions:
+      - 发现份额分母跨期不一致
+      - 发现渠道映射变化足以改变方向
+      - 2024表式断点导致份额序列不可比
+    unresolved_conflicts: []
+    allowed_surfaces: [chart_insight, page_title, synthesis]
+    owner: Jasper
+    reviewer: pending
+    version: 1
+  - claim_id: C-T12-002
+    theme_id: T12
+    claim_type: mechanism
+    statement: 开放渠道更有效承接配置型需求，是代理相对份额下降的机制之一
+    scope:
+      start: 2019-FY
+      end: 2025-FY
+      object_scope: HK_new_long_term_business
+    baseline_contract_id: CONTRACT-HKIA-CHANNEL-001
+    grade: C
+    status: blocked_C
+    alternative_explanations:
+      - 代理渠道自身供给或产能变化
+      - 公司产品和渠道策略变化
+      - 客群与跨境流量变化
+    falsification_conditions:
+      - 平行结构证据不支持配置型特征
+      - 客户或销售证据显示原因与渠道开放度无关
+    unresolved_conflicts: []
+    evidence_needed:
+      - T10/T11/T13平行结构证据
+      - 公司渠道策略披露
+      - 客户或销售流程证据
+    allowed_surfaces: [research_question, appendix_gap]
+    owner: Jasper
+    reviewer: pending
+    version: 1
+
+evidence_links:
+  - evidence_link_id: EL-001
+    evidence_type: fact
+    evidence_id: F-T12-001
+    claim_id: C-T12-001
+    relation: supports
+    distance: direct
+    origin_chain_id: ORG-IA-LTQ
+  - evidence_link_id: EL-002
+    evidence_type: fact
+    evidence_id: F-T12-002
+    claim_id: C-T12-001
+    relation: supports
+    distance: direct
+    origin_chain_id: ORG-IA-LTQ
+  - evidence_link_id: EL-003
+    evidence_type: fact
+    evidence_id: F-T12-003
+    claim_id: C-T12-001
+    relation: supports
+    distance: direct
+    origin_chain_id: ORG-IA-LTQ
+
+validation_expectations:
+  - all_fact_asset_refs_exist
+  - all_asset_source_refs_exist_in_source_registry
+  - all_claim_theme_refs_exist_in_theme_registry
+  - all_evidence_refs_exist
+  - grade_A_has_direct_fact
+  - blocked_C_not_allowed_in_page_title
+

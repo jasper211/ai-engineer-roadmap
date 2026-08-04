@@ -1,0 +1,133 @@
+registry_id: HKIA-SPEC-REGISTRY
+version: 0.1
+status: draft
+precedence: [L0, L1, L2, L3, L4, L5]
+
+specs:
+  - spec_id: SPEC-L0-SSOT
+    level: L0
+    name: 事实主链与溯源
+    required_inputs: [source_id, asset_id, fact_locator]
+    validation_checks: [source_exists, asset_exists, locator_resolvable]
+  - spec_id: SPEC-L0-GRAIN
+    level: L0
+    name: 数据颗粒度与可观测维度
+    required_inputs: [fact_table, row_grain, observable_dimensions]
+    prohibited: [infer_unobserved_joint_distribution]
+  - spec_id: SPEC-L0-BREAKPOINT
+    level: L0
+    name: 口径断点与双链
+    required_inputs: [breakpoint_register]
+    validation_checks: [cross_period_breakpoint_declared]
+
+  - spec_id: SPEC-L1-TIME
+    level: L1
+    name: 时间与Baseline
+    dependencies: [SPEC-L0-GRAIN, SPEC-L0-BREAKPOINT]
+    required_inputs: [start, end, frequency, same_period_rule, object_set, denominator, measures, breakpoints]
+    prohibited: [append_ytd_to_fy, compare_nonmatching_ytd]
+  - spec_id: SPEC-L1-MEASURE
+    level: L1
+    name: 多口径与价值转换
+    dependencies: [SPEC-L0-SSOT]
+    formulas:
+      NOP: annualized_premium + single_premium
+      APE: annualized_premium + 0.1 * single_premium
+    prohibited: [equate_APE_with_profit_EV_or_capital_return]
+  - spec_id: SPEC-L1-RATIO-MARGIN
+    level: L1
+    name: 份额与边际
+    dependencies: [SPEC-L1-TIME, SPEC-L1-MEASURE]
+    formulas:
+      share: segment_measure / same_scope_market_measure
+      delta: endpoint - startpoint
+      contribution: segment_delta / total_delta
+    validation_checks: [same_denominator, mutually_exclusive_addback]
+
+  - spec_id: SPEC-L2-PRODUCT
+    level: L2
+    name: 产品维度
+    dependencies: [SPEC-L1-TIME, SPEC-L1-MEASURE]
+  - spec_id: SPEC-L2-CHANNEL
+    level: L2
+    name: 渠道维度
+    dependencies: [SPEC-L1-TIME, SPEC-L1-MEASURE, SPEC-L1-RATIO-MARGIN]
+    categories: [agency, bancassurance, broker, direct, other]
+  - spec_id: SPEC-L2-PAYMENT
+    level: L2
+    name: 缴费与年期维度
+    dependencies: [SPEC-L1-MEASURE]
+  - spec_id: SPEC-L2-CURRENCY
+    level: L2
+    name: 币种维度
+    dependencies: [SPEC-L1-TIME, SPEC-L1-MEASURE]
+  - spec_id: SPEC-L2-CUSTOMER-GEO
+    level: L2
+    name: 客群与地域维度
+    dependencies: [SPEC-L0-GRAIN]
+    prohibited: [infer_MCV_from_long_term_quarterly_table]
+  - spec_id: SPEC-L2-STATUS
+    level: L2
+    name: 新造有效终止维度
+    dependencies: [SPEC-L0-GRAIN, SPEC-L1-TIME]
+    prohibited: [equate_in_force_balance_with_persistency_quality]
+
+  - spec_id: SPEC-L3-INSURER
+    level: L3
+    name: 公司实体与具名规则
+    dependencies: [SPEC-L0-SSOT, SPEC-L0-GRAIN]
+    required_inputs: [entity_alias_version]
+  - spec_id: SPEC-L3-PEER
+    level: L3
+    name: Peer与固定动态样本
+    dependencies: [SPEC-L3-INSURER, SPEC-L1-TIME]
+    required_inputs: [peer_rationale, fixed_cohort, rolling_view]
+
+  - spec_id: SPEC-L4-MARKET-2D
+    level: L4
+    name: 市场二维白名单
+    dependencies: [SPEC-L0-GRAIN]
+    allowed_market_crosses:
+      - [product, channel]
+      - [product, payment_term]
+      - [product, currency]
+      - [product, customer_geography]
+    prohibited: [company_multi_dimension_cube]
+  - spec_id: SPEC-L4-NO-FAKE-CUBE
+    level: L4
+    name: 反伪立方
+    dependencies: [SPEC-L4-MARKET-2D]
+    prohibited: [reconstruct_3d_from_parallel_2d]
+
+  - spec_id: SPEC-L5-CLAIM
+    level: L5
+    name: 命题证据与语言权限
+    dependencies: [SPEC-L0-SSOT]
+    validation_checks: [claim_has_evidence, grade_language_match, counterevidence_for_mechanism]
+  - spec_id: SPEC-L5-PAGE
+    level: L5
+    name: 页面合同与DoD
+    dependencies: [SPEC-L5-CLAIM]
+    required_checks: [chart_insight_mapping, synthesis_answers_question, sources_traceable, named_companies, no_grade_violation]
+
+mandatory_base:
+  - SPEC-L0-SSOT
+  - SPEC-L0-GRAIN
+  - SPEC-L0-BREAKPOINT
+  - SPEC-L1-TIME
+  - SPEC-L1-MEASURE
+  - SPEC-L1-RATIO-MARGIN
+  - SPEC-L5-CLAIM
+  - SPEC-L5-PAGE
+
+theme_packages:
+  T12:
+    primary: [SPEC-L2-CHANNEL]
+    optional: [SPEC-L2-PRODUCT, SPEC-L2-PAYMENT, SPEC-L2-CURRENCY, SPEC-L3-INSURER, SPEC-L3-PEER, SPEC-L4-MARKET-2D, SPEC-L4-NO-FAKE-CUBE]
+  T01:
+    primary: [SPEC-L1-MEASURE, SPEC-L2-PAYMENT]
+    optional: [SPEC-L2-PRODUCT, SPEC-L3-INSURER]
+  T20:
+    primary: [SPEC-L3-INSURER, SPEC-L3-PEER]
+    optional: [SPEC-L2-CHANNEL, SPEC-L2-PRODUCT]
+

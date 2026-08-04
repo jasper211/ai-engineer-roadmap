@@ -1,0 +1,65 @@
+schema_id: HKIA-AGENT-RUN-SCHEMA
+version: 0.1
+status: draft
+
+roles:
+  - source_scout
+  - ingestion_agent
+  - data_steward
+  - analysis_planner
+  - evidence_analyst
+  - industry_challenger
+  - report_composer
+  - reviewer_evaluator
+  - methodology_curator
+  - human_business_owner
+
+run_statuses: [created, active, waiting_human, waiting_data, blocked_by_gate, completed, cancelled, superseded]
+step_statuses: [planned, active, completed, failed, reworked, waiting]
+gate_decisions: [pass, conditional_pass, fail, waived, pending]
+handoff_decisions: [accepted, conditionally_accepted, returned, pending]
+incident_classes: [scope, data, reasoning, presentation, tooling, governance, access]
+
+required_run_fields:
+  - run_id
+  - objective
+  - mode
+  - contract_id
+  - current_gate
+  - status
+  - participants
+  - started_at
+
+required_step_fields:
+  - step_id
+  - run_id
+  - role
+  - objective
+  - input_refs
+  - action
+  - output_refs
+  - validation
+  - status
+
+required_incident_fields:
+  - incident_id
+  - run_id
+  - incident_class
+  - detected_at_step
+  - impact
+  - root_cause
+  - correction
+  - prevention_candidate
+
+methodology_candidate_types:
+  - deterministic_check_candidate
+  - workflow_rule_candidate
+  - human_judgment_guide
+
+completion_rules:
+  - all_required_gates_pass_or_valid_waiver
+  - all_handoffs_resolved
+  - all_material_incidents_closed_or_accepted
+  - outputs_reference_registered_objects
+  - retrospective_recorded
+

@@ -1,0 +1,83 @@
+registry_id: HKIA-THEME-REGISTRY
+version: 0.1
+status: draft
+domains:
+  market_outcomes:
+    - id: T00
+      name: 市场规模与周期
+      primary_dimension: time
+      coverage: strong
+      priority: P1
+    - id: T01
+      name: 增长质量与价值转换
+      primary_dimension: measure_payment
+      coverage: medium
+      priority: P0
+    - id: T02
+      name: 业务状态与保有质量
+      primary_dimension: business_status
+      coverage: weak_medium
+      priority: P2
+  structural_mechanisms:
+    - id: T10
+      name: 产品结构与需求承接
+      primary_dimension: product
+      coverage: medium_with_schema_break
+      priority: P1
+    - id: T11
+      name: 缴费方式与量价结构
+      primary_dimension: payment_term
+      coverage: strong
+      priority: P1
+    - id: T12
+      name: 渠道竞争与分销迁移
+      primary_dimension: channel
+      coverage: strong_facts_weak_mechanisms
+      priority: P0
+    - id: T13
+      name: 币种与资金配置
+      primary_dimension: currency
+      coverage: medium_strong
+      priority: P1
+    - id: T14
+      name: 客群与跨境需求
+      primary_dimension: customer_geography
+      coverage: missing
+      priority: P2
+  competitive_capture:
+    - id: T20
+      name: 公司格局与市场集中度
+      primary_dimension: insurer
+      coverage: strong
+      priority: P0
+    - id: T21
+      name: 公司能力与Peer深潜
+      primary_dimension: insurer_peer
+      coverage: medium
+      priority: P1
+    - id: T22
+      name: 渠道组织与中介产能
+      primary_dimension: intermediary_workforce
+      coverage: missing
+      priority: P2
+  external_constraints:
+    - id: T30
+      name: 监管与资本制度
+      primary_dimension: policy_event
+      coverage: weak
+      priority: P1
+    - id: T31
+      name: 宏观与金融环境
+      primary_dimension: macro_event
+      coverage: missing
+      priority: P2
+    - id: T32
+      name: 行业价值链与盈利
+      primary_dimension: value_chain
+      coverage: missing
+      priority: P2
+first_vertical_slice:
+  primary_theme: T12
+  parallel_validation: [T01, T20]
+  rationale: 现有监管事实充分，同时机制解释依赖外部文本与经验，适合验证多源融合与Agent协作
+

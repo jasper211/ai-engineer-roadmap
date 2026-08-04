@@ -1,0 +1,111 @@
+run_id: RUN-HKIA-PROBE-01
+version: 0.1
+objective: 以HKIA验证分析框架与Agent共同搭建过程
+mode: framework_test
+contract_id: CONTRACT-HKIA-CHANNEL-001
+current_gate: G1_contract
+status: waiting_human
+participants:
+  human_business_owner: Jasper
+  ai_roles:
+    - analysis_planner
+    - evidence_analyst
+    - report_composer
+    - reviewer_evaluator
+    - methodology_curator
+started_at: 2026-08-03
+
+steps:
+  - step_id: STEP-001
+    role: analysis_planner
+    objective: 解析三份框架材料并识别首个测试问题
+    input_refs: [training_deck, generic_analysis_framework, analysis_framework_tree]
+    action: 还原七步分析链并提出T12渠道测试题
+    output_refs: [initial_recommendation]
+    validation: human_review_received
+    status: completed
+  - step_id: STEP-002
+    role: report_composer
+    objective: 快速验证公开数据能形成什么单页
+    input_refs: [CONTRACT-HKIA-CHANNEL-001, F-T12-001, F-T12-002, F-T12-003]
+    action: 在完整框架完成前生成Probe单页
+    output_refs: [HKIA代理渠道方法论验证_单页_v0.1]
+    validation: visual_render_and_overflow_check
+    status: reworked
+    incidents: [INC-001, INC-002]
+  - step_id: STEP-003
+    role: methodology_curator
+    objective: 根据用户纠正重构项目目标
+    input_refs: [user_correction_2026-08-03]
+    action: 将报告项目改为多源情报_分析框架_Agent系统标准案例
+    output_refs:
+      - HKIA分析与Agent体系总蓝图_v0.1
+      - HKIA现状与目标缺口矩阵_v0.1
+      - 分阶段建设路线与共同搭建方式_v0.1
+    validation: human_review_passed
+    status: completed
+  - step_id: STEP-004
+    role: methodology_curator
+    objective: 建立Phase A基础对象
+    input_refs: [theme_registry_v0.1, source_registry_v0.1, spec_registry_v0.1]
+    action: 建立Theme_Source_FEC_Spec_Run五类治理对象及跨引用
+    output_refs: [Phase_A_framework_skeleton]
+    validation: registry_reference_checks_passed
+    status: completed
+
+incidents:
+  - incident_id: INC-001
+    incident_class: scope
+    detected_at_step: STEP-002
+    impact: 过早把测试项目推进成报告交付，过程框架未先建立
+    root_cause: 将用户认可首题误读为优先交付结果，而非共同搭建过程
+    correction: Probe单页降级为early_probe，重建十二层目标架构和Phase A路线
+    prevention_candidate:
+      type: workflow_rule_candidate
+      rule: 新分析Agent测试在Framework Gate通过前不得把页面作为主交付
+      status: candidate_1_of_3
+  - incident_id: INC-002
+    incident_class: presentation
+    detected_at_step: STEP-002
+    impact: 百分比数值34与百分比格式组合导致坐标轴显示4000%
+    root_cause: 图表数据类型和显示格式合同未显式校验
+    correction: 改用数值百分点轴并重新渲染，通过无溢出检查
+    prevention_candidate:
+      type: deterministic_check_candidate
+      rule: 百分比图表必须校验底层值域与number format组合
+      status: candidate_1_of_3
+
+gates:
+  - gate_id: G0_intake
+    decision: pass
+    approved_by: Jasper
+    evidence: 项目被确认为分析框架与Agent共同搭建测试
+  - gate_id: G1_contract
+    decision: pending
+    approved_by: null
+    conditions:
+      - 完成Phase A骨架审阅
+      - 明确Phase B事实登记实现方式
+  - gate_id: G2_data_ready
+    decision: pending
+  - gate_id: G3_evidence
+    decision: pending
+  - gate_id: G4_page
+    decision: fail
+    evidence: 早期页面存在范围顺序偏差，且完整Claim/Source映射尚未建立
+    recovery: Phase B完整运行后生成Probe-01 v1.0
+
+methodology_candidates:
+  - candidate_id: MC-001
+    type: workflow_rule_candidate
+    source_incident: INC-001
+    status: candidate_1_of_3
+  - candidate_id: MC-002
+    type: deterministic_check_candidate
+    source_incident: INC-002
+    status: candidate_1_of_3
+
+retrospective:
+  status: in_progress
+  next_decision: Jasper审核Phase A骨架后进入Phase B
+

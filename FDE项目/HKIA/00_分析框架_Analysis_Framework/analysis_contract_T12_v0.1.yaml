@@ -1,0 +1,72 @@
+contract_id: CONTRACT-HKIA-CHANNEL-001
+version: 0.1
+status: draft
+mode: contracted_analysis
+
+decision:
+  decision_user: Jasper
+  decision_action: 验证统一分析方法与多源Agent框架
+  intended_surface: internal_methodology_test
+  primary_question: 代理渠道绝对增长但份额下降意味着什么
+  primary_theme: T12
+  parallel_validation_themes: [T01, T20]
+
+baseline:
+  start: 2019-FY
+  end: 2025-FY
+  frequency: FY
+  same_period_rule: YTD_only_compares_same_period
+  object_set: HK_new_long_term_business
+  denominator: same_period_same_measure_market_total
+  measures: [NOP, APE]
+  breakpoints: [2024Q3_RBC_schema_change]
+
+data:
+  fact_table: long_term_business
+  row_grain: date_category_metric_table_type
+  source_chain: [SRC-REG-IA-LTQ]
+  required_table_types: [new_business_by_channel]
+  mapping_version: current_HKIA_v0.3.1
+  quality_gate: pending_formal_mapping_review
+
+analysis:
+  primary_dimension: channel
+  selected_specs:
+    - SPEC-L0-SSOT
+    - SPEC-L0-GRAIN
+    - SPEC-L0-BREAKPOINT
+    - SPEC-L1-TIME
+    - SPEC-L1-MEASURE
+    - SPEC-L1-RATIO-MARGIN
+    - SPEC-L2-CHANNEL
+    - SPEC-L3-INSURER
+    - SPEC-L5-CLAIM
+    - SPEC-L5-PAGE
+  allowed_crosses: []
+  required_lenses: [structure, trend, ratio]
+  required_models: [endpoint_change, share_change, channel_contribution]
+
+evidence_expression:
+  minimum_grade_for_title: A
+  prohibited_inferences:
+    - customer_preference_without_customer_evidence
+    - agent_productivity_without_workforce_data
+    - profitability_without_value_data
+    - reconstruct_3d_from_parallel_2d
+  required_counterevidence_for_mechanism: true
+
+gates:
+  G0_intake: approved
+  G1_contract: pending
+  G2_data_ready: pending
+  G3_evidence: pending
+  G4_page: pending
+  G5_publish: not_started
+  G6_retrospective: in_progress_from_probe
+
+signoff:
+  business_owner: Jasper
+  data_steward: pending
+  analysis_owner: Jasper
+  reviewer: pending
+
