@@ -1,0 +1,85 @@
+pilot_id: HKIA-PWC-TCF-PILOT-01
+version: 0.1
+status: research_input_admitted_primary_backtrace_pending
+asset_id: AST-PWC-HK-TCF-2024-PDF
+source_id: SRC-RESEARCH-PWC-HK-INSURANCE
+theme_ids: [T02, T10, T12, T22, T30]
+
+research_findings:
+  - finding_id: RF-PWC-TCF-001
+    statement: 公平待客需要覆盖产品设计_营销_销售顾问_中介管理_理赔和服务，而非只由合规职能承担
+    locator: page_1_section_Treating_customers_fairly_is_everybodys_responsibility
+    evidence_type: research_claim
+    allowed_relations: [contextualizes, supports_mechanism_framework]
+  - finding_id: RF-PWC-TCF-002
+    statement: 产品复杂度_选择权条款和风险披露会影响客户结果风险
+    locator: page_1_section_Product_design_and_pricing
+    evidence_type: research_claim
+    allowed_relations: [contextualizes, motivates]
+  - finding_id: RF-PWC-TCF-003
+    statement: 中介报酬结构_非销售KPI和持续培训是公平待客的重要治理机制
+    locator: page_2_section_Intermediaries_are_a_key_part_of_TCF
+    evidence_type: mechanism_hypothesis
+    allowed_relations: [motivates, contextualizes]
+  - finding_id: RF-PWC-TCF-004
+    statement: 理赔拒付率可能同时反映利益说明不足或客户健康披露不足，因此不能单向解释
+    locator: page_2_section_Claims_handling_and_policy_definitions
+    evidence_type: qualified_research_claim
+    allowed_relations: [qualifies, motivates]
+
+primary_source_leads:
+  - lead_id: LEAD-PWC-001
+    named_source: IA Conduct in Focus Issue 8
+    url: https://www.ia.org.hk/en/legislative_framework/files/Eng_Conduct_in_Focus_Issue_8_Dec_2023.pdf
+    target_themes: [T02, T12, T22, T30]
+    retrieval_status: pending
+  - lead_id: LEAD-PWC-002
+    named_source: IA Guidance GL21 Enterprise Risk Management
+    url: https://www.ia.org.hk/en/legislative_framework/files/GL21.pdf
+    target_themes: [T21, T30]
+    retrieval_status: pending
+  - lead_id: LEAD-PWC-003
+    named_source: IA Guidance GL16
+    url: pending_exact_official_locator
+    target_themes: [T12, T22, T30]
+    retrieval_status: pending
+  - lead_id: LEAD-PWC-004
+    named_source: MAS FAA-N20 remuneration framework
+    url: https://www.mas.gov.sg/regulation/notices/notice-faa-n20
+    target_themes: [T12, T22, T30]
+    retrieval_status: pending
+
+claim_candidates:
+  - claim_id: CC-T12-PWC-TCF-001
+    claim_type: mechanism
+    statement: 中介激励和培训设计可能影响销售行为与公平待客结果
+    grade: C
+    status: hypothesis_supported_by_research_primary_backtrace_and_outcome_data_missing
+    evidence_links:
+      - finding_id: RF-PWC-TCF-003
+        relation: supports
+        distance: near_contextual
+    alternative_explanations:
+      - 产品复杂度和披露质量
+      - 客户自身信息披露
+      - 理赔与服务流程
+      - 公司治理和监控能力
+    evidence_needed:
+      - IA_GL16_exact_requirements
+      - Conduct_in_Focus_Issue_8
+      - company_remuneration_and_non_sales_KPI_disclosure
+      - complaint_or_sales_conduct_outcome_data
+    allowed_surfaces: [research_question, mechanism_map, source_plan]
+    prohibited_surfaces: [public_causal_title, recommendation]
+
+gate_results:
+  original_asset_gate: pass
+  visual_and_text_completeness_gate: pass
+  research_finding_gate: pass
+  regulatory_fact_gate: pending_primary_backtrace
+  mechanism_claim_gate: C_only
+
+pilot_learning:
+  - 可公开访问的专业研究网站能够自动提供全文_PDF_图示和引用链
+  - 专业研究最适合补机制框架_不能直接替代IA监管事实
+  - 一篇高质量研究可以生成多个一手来源采集任务

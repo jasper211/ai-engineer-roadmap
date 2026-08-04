@@ -1,0 +1,68 @@
+stack_id: HKIA-INDUSTRY-SOURCE-STACK
+version: 0.1
+status: active_design_with_first_pilot
+purpose: 在IA监管事实之外，提供行业机制_公司动作_专业研究和事件线索
+
+layers:
+  - layer_id: L1_industry_association
+    role: 本地行业共同立场_自律议题_会员行业观察
+    sources: [SRC-ASSOC-HKFI]
+    update_mode: publication_monitor
+    default_evidence_role: contextualizes
+  - layer_id: L2_professional_research
+    role: 机制框架_调查研究_监管落地_宏观保险研究
+    sources: [SRC-RESEARCH-PWC-HK-INSURANCE, SRC-RESEARCH-KPMG-CN-INSURANCE, SRC-RESEARCH-SWISSRE-SIGMA]
+    update_mode: insight_and_pdf_monitor
+    default_evidence_role: supports_or_contextualizes_after_method_review
+  - layer_id: L3_trade_media
+    role: 高频事件_采访_公司与人物动态_来源线索
+    sources: [SRC-MEDIA-INSURANCE-BUSINESS-ASIA]
+    update_mode: daily_headline_monitor
+    default_evidence_role: motivates_or_contextualizes
+  - layer_id: L4_company_primary
+    role: 公司结果_战略动作_产品和渠道披露
+    sources: [SRC-COMPANY-AIA-GROUP]
+    expansion_rule: 从T20_21实体优先级生成更多公司Source Card
+    update_mode: results_calendar_and_press_release_monitor
+    default_evidence_role: direct_for_company_fact_only
+
+theme_coverage:
+  T00: [SRC-RESEARCH-SWISSRE-SIGMA, SRC-MEDIA-INSURANCE-BUSINESS-ASIA]
+  T01: [SRC-RESEARCH-SWISSRE-SIGMA, SRC-RESEARCH-KPMG-CN-INSURANCE, SRC-COMPANY-AIA-GROUP]
+  T02: [SRC-ASSOC-HKFI, SRC-RESEARCH-PWC-HK-INSURANCE]
+  T10: [SRC-RESEARCH-PWC-HK-INSURANCE, SRC-RESEARCH-KPMG-CN-INSURANCE, SRC-COMPANY-AIA-GROUP]
+  T12: [SRC-ASSOC-HKFI, SRC-RESEARCH-PWC-HK-INSURANCE, SRC-MEDIA-INSURANCE-BUSINESS-ASIA, SRC-COMPANY-AIA-GROUP]
+  T14: [SRC-COMPANY-AIA-GROUP, SRC-MEDIA-INSURANCE-BUSINESS-ASIA]
+  T20: [SRC-MEDIA-INSURANCE-BUSINESS-ASIA, SRC-COMPANY-AIA-GROUP]
+  T21: [SRC-RESEARCH-PWC-HK-INSURANCE, SRC-RESEARCH-KPMG-CN-INSURANCE, SRC-MEDIA-INSURANCE-BUSINESS-ASIA, SRC-COMPANY-AIA-GROUP]
+  T22: [SRC-ASSOC-HKFI, SRC-RESEARCH-PWC-HK-INSURANCE, SRC-MEDIA-INSURANCE-BUSINESS-ASIA]
+  T30: [SRC-ASSOC-HKFI, SRC-RESEARCH-PWC-HK-INSURANCE, SRC-RESEARCH-KPMG-CN-INSURANCE]
+  T31: [SRC-RESEARCH-SWISSRE-SIGMA, SRC-RESEARCH-KPMG-CN-INSURANCE]
+  T32: [SRC-RESEARCH-SWISSRE-SIGMA, SRC-RESEARCH-PWC-HK-INSURANCE, SRC-RESEARCH-KPMG-CN-INSURANCE, SRC-COMPANY-AIA-GROUP]
+
+monitoring_priority:
+  P0:
+    - SRC-ASSOC-HKFI
+    - SRC-RESEARCH-PWC-HK-INSURANCE
+    - SRC-MEDIA-INSURANCE-BUSINESS-ASIA
+    - company_primary_sources_for_top_HK_insurers
+  P1:
+    - SRC-RESEARCH-KPMG-CN-INSURANCE
+    - SRC-RESEARCH-SWISSRE-SIGMA
+  P2:
+    - additional_consultancies
+    - additional_trade_media
+
+cross_source_rules:
+  - 行业媒体引用公司时回到公司原文
+  - 研究机构引用IA规则或数字时回到IA原文
+  - 公司主张只证明公司披露_不自动证明全行业
+  - 协会立场不等于每个会员公司的实际行为
+  - 同一新闻稿的转载共享origin_chain_id
+  - 付费墙或不可保存正文的文章只作Source Lead
+
+success_criteria:
+  - every_priority_theme_has_at_least_two_source_classes
+  - every_mechanism_claim_has_non_regulatory_near_evidence_or_is_blocked
+  - all_numeric_claims_backtrace_to_primary_or_method_disclosed_research
+  - daily_monitor_does_not_auto_publish_claims

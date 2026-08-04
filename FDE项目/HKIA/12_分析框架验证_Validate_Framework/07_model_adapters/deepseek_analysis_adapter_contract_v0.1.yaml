@@ -1,0 +1,99 @@
+adapter_id: MODEL-ADAPTER-DEEPSEEK-HKIA
+version: 0.1
+status: design_only_not_connected
+purpose: 对已合法取得的行业文章执行结构化抽取_分类_命题候选和跨文档聚类
+
+provider:
+  name: deepseek
+  model_name: runtime_configuration_required
+  api_base: runtime_configuration_required
+  api_key_handling: environment_or_secret_store_only
+  api_key_must_not_be_written_to_project: true
+  user_label: deepseek_pro
+
+separation_of_responsibilities:
+  collector:
+    responsibilities: [obtain_authorized_original, snapshot, checksum, metadata]
+    may_use_model_api: false
+  model_adapter:
+    responsibilities: [classify, extract, quote_locate, generate_hypothesis, cluster]
+    may_fetch_wechat: false
+  evidence_steward:
+    responsibilities: [fact_backtrace, duplicate_origin_check, grade, conflict_review]
+    may_accept_model_output_as_fact_without_source: false
+
+input_contract:
+  required:
+    - article_id
+    - title
+    - publisher
+    - publication_date
+    - full_text
+    - source_locator
+    - theme_candidates
+    - permitted_external_processing
+  prohibited:
+    - api_keys_in_payload
+    - confidential_internal_experience_without_permission
+    - personal_data_not_required_for_analysis
+
+output_contract:
+  format: strict_json
+  required_objects:
+    - article_summary
+    - theme_routes
+    - quoted_spans
+    - cited_fact_candidates
+    - media_claims
+    - mechanism_hypotheses
+    - case_leads
+    - promotional_language
+    - source_leads
+    - contradictions_and_uncertainties
+  every_extracted_item_requires:
+    - exact_source_span
+    - character_or_section_locator
+    - confidence
+    - object_type
+    - prohibited_inference_flags
+
+model_policy:
+  temperature: low
+  no_external_fact_completion: true
+  no_missing_context_invention: true
+  preserve_author_language_for_quote: true
+  separate_summary_from_evidence: true
+  mark_legal_tax_medical_claims_high_risk: true
+
+quality_gates:
+  deterministic:
+    - output_json_schema_valid
+    - every_item_has_exact_span
+    - quoted_span_exists_in_input
+    - article_id_and_source_locator_match
+    - no_fact_without_backtrace_status
+  model_review:
+    - object_type_consistency
+    - overclaim_detection
+    - duplicate_or_reprint_detection
+  human_review:
+    - sample_quality_acceptance
+    - high_risk_claim_review
+    - public_report_language_approval
+
+evaluation_before_scale:
+  sample_size: 12
+  human_gold_set_required: true
+  metrics:
+    - theme_routing_precision
+    - quote_span_accuracy
+    - fact_vs_opinion_classification_precision
+    - unsupported_claim_rate
+    - duplicate_origin_detection_rate
+  scale_gate: 不达到人工金标准不得批量处理约486篇文章
+
+cost_and_audit:
+  log_fields: [run_id, article_id, provider, model_name, prompt_version, response_hash, token_usage, latency, validation_result]
+  cache_by: [article_checksum, prompt_version, model_name]
+  retry_policy: bounded_with_error_classification
+  raw_response_retention: according_to_data_policy

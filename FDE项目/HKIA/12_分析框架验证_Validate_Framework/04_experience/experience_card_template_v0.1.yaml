@@ -1,0 +1,32 @@
+schema_id: HKIA-EXPERIENCE-CARD
+version: 0.1
+status: draft_for_live_test
+
+required_fields:
+  - experience_id
+  - title
+  - rule_or_judgment
+  - applicable_context
+  - historical_case
+  - counterexample_or_failure_condition
+  - observable_indicators
+  - decision_use
+  - confidentiality
+  - contributor
+  - captured_at
+  - review_status
+
+governance:
+  default_evidence_relation: motivates
+  may_prioritize_questions: true
+  may_rank_mechanism_hypotheses: true
+  may_upgrade_public_claim_without_external_evidence: false
+  required_before_external_use:
+    - contributor_review
+    - confidentiality_check
+    - evidence_link_review
+  prohibited_transformations:
+    - rewrite_opinion_as_fact
+    - omit_applicable_context
+    - omit_counterexample
+    - infer_named_company_or_person_if_not_supplied

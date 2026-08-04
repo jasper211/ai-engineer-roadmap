@@ -1,0 +1,89 @@
+source_card_id: SC-WECHAT-GANGXIAN-BAOBAO-PRO
+version: 0.1
+status: identity_approved_ready_for_sample_corpus
+source_id: SRC-MEDIA-WECHAT-GANGXIAN-BAOBAO-PRO
+display_name: 港险宝宝PRO
+source_class: S4_industry_media
+
+discovery_evidence:
+  search_surface: 搜狗微信搜索
+  exact_query: 港险宝宝 PRO
+  article_results_displayed: approximately_486
+  article_publisher_name_observed: 港险宝宝PRO
+  observed_period: 2017_to_2026
+  latest_indexed_article_candidate:
+    title: 国务院第841号令《出境入境管理规定》全文解读!对香港保险有什么影响?
+    unix_timestamp: 1785726160
+    publication_time_china_standard: 2026-08-03T11:02:40+08:00
+    publisher: 港险宝宝PRO
+    confidence: current_sogou_index_latest_found
+    caveat: 搜索索引并非公众号后台，可能存在收录延迟；需与用户手机端公众号主页最新文章对照
+  examples_observed:
+    - title: 港险宝宝PRO给您拜年啦!
+      date: 2022-01-31
+    - title: 张柏芝小儿子周岁首秀上热搜!港险宝宝:快用2万美金让宝宝成为3亿身价的富豪吧!
+      date: 2019-11-19
+    - title: 「港险」正确运用,可以规避资产披露及税务风险!
+      date: 2018-06-03
+    - title: 有图有真相!2018最新港险理赔案例,22.5万美金,无需赴港!
+      date: 2018-03-16
+  identity_verification:
+    decision: pass
+    verified_at: 2026-08-04
+    method: 用户将手机端最新文章与索引最新候选进行人工对照
+    matched_latest_title: 国务院第841号令《出境入境管理规定》全文解读!对香港保险有什么影响?
+    residual_caveat: 搜索索引仍可能存在收录延迟，但同名账号误匹配风险已显著降低
+
+analytical_value:
+  strong_for:
+    - historical_industry_narratives
+    - product_and_channel_marketing_frames
+    - customer_objection_and_sales_language
+    - case_and_primary_source_leads
+    - mechanism_hypothesis_generation
+    - narrative_change_over_time
+  weak_for:
+    - representative_market_statistics
+    - unbiased_customer_motivation
+    - causal_inference
+    - legal_tax_or_regulatory_conclusions_without_primary_backtrace
+
+bias_and_risk_flags:
+  - commercial_promotion
+  - selection_bias_in_cases
+  - sensational_numeric_titles
+  - historical_articles_may_be_stale
+  - legal_tax_claims_require_current_primary_sources
+  - celebrity_or_case_content_may_not_generalize
+  - republished_material_may_share_origin_chain
+
+article_asset_minimum_fields:
+  - article_id
+  - title
+  - publisher
+  - publication_date
+  - original_url_or_export_reference
+  - full_text_or_complete_render
+  - acquisition_method
+  - checksum
+  - copyright_and_use_scope
+  - theme_routes
+  - extraction_status
+
+content_object_split:
+  cited_fact: 必须回溯原始来源后才可成为Fact
+  publisher_fact: 仅证明发布者披露或展示了什么
+  media_claim: 保存原话_情境_日期和发布者
+  mechanism_hypothesis: 进入待验证问题，不自动成为结论
+  case_lead: 记录对象和材料，但不得由单例推广到行业
+  promotional_copy: 可研究销售叙事，不进入事实层
+
+admission_gates:
+  - identity_and_provenance
+  - original_asset_present
+  - content_completeness
+  - quote_locator_present
+  - fact_backtrace
+  - conflict_and_bias_tagged
+  - freshness_and_applicable_context
+  - copyright_and_external_model_permission

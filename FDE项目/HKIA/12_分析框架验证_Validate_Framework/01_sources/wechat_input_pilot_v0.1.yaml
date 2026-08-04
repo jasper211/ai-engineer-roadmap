@@ -1,0 +1,73 @@
+pilot_id: HKIA-WECHAT-INPUT-PILOT-01
+version: 0.1
+status: partial_discovery_content_blocked
+tested_at: 2026-08-04
+theme_ids: [T12, T14, T21]
+
+discovery:
+  search_surface: 搜狗微信搜索
+  query: 香港保险 渠道
+  result_volume_displayed: about_1000
+  discovery_status: success
+  metadata_obtainable:
+    - article_title
+    - publisher_name
+    - publication_date
+    - search_excerpt
+    - redirect_link
+  original_article_access: blocked_by_runtime_site_safety_policy
+
+sample:
+  asset_candidate_id: AST-WECHAT-GANGXIAN-20260305-IFA
+  source_id: SRC-MEDIA-WECHAT-GANGXIAN-CHANNEL
+  title: 香港保险投保三大渠道怎么选?90%高净值客户都选IFA
+  publisher: 港险渠道
+  publication_date: 2026-03-05
+  discovered_via: https://weixin.sogou.com/weixin?type=2&query=%E9%A6%99%E6%B8%AF%E4%BF%9D%E9%99%A9%20%E6%B8%A0%E9%81%93
+  original_snapshot_present: false
+  checksum_sha256: null
+  acquisition_status: metadata_only
+
+content_decomposition:
+  fact_candidates: []
+  media_claim_candidates:
+    - media_claim_id: MC-WECHAT-001
+      statement_as_published_in_title: 90%高净值客户都选择IFA
+      status: rejected_as_fact
+      reasons:
+        - original_article_not_captured
+        - no_sample_definition
+        - no_denominator
+        - no_method_or_source_visible
+        - publisher_has_channel_promotion_conflict
+      allowed_relation: motivates
+      research_question_created: 高净值客户在代理_银行_IFA之间的实际选择分布和驱动因素是什么
+  mechanism_hypothesis_candidates:
+    - hypothesis_id: MH-T12-WECHAT-001
+      hypothesis: IFA的多产品选择和顾问定位可能影响部分高净值客户的渠道选择
+      status: unverified_C
+      evidence_needed:
+        - independent_customer_or_sales_research
+        - channel_level_policy_or_premium_data
+        - company_or_broker_primary_disclosure
+        - counterexamples_and_applicable_context
+
+gate_results:
+  source_discovery_gate: pass
+  source_quality_gate: conditional_fail
+  original_asset_gate: fail
+  fact_admission_gate: fail
+  opinion_admission_gate: conditional_pass_as_source_lead_only
+
+minimum_user_supplied_material_for_full_test:
+  accepted_inputs:
+    - original_wechat_article_url_shared_by_user
+    - exported_pdf_or_html
+    - complete_screenshots_with_title_publisher_date_and_body
+    - copied_full_text_with_source_metadata
+  next_processing:
+    - preserve_original
+    - split_cited_fact_author_opinion_and_mechanism_hypothesis
+    - backtrace_cited_numbers_to_primary_sources
+    - register_counterevidence_and_conflicts
+    - bind_only_admissible_items_to_claims

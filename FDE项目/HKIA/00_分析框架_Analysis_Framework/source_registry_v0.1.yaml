@@ -24,6 +24,9 @@ source_classes:
   S7_user_supplied:
     default_permissions: [pending_asset]
     default_proximity: unknown
+  S8_industry_association:
+    default_permissions: [industry_position, association_publication, source_lead]
+    default_proximity: primary_for_association_position
 
 sources:
   - source_id: SRC-REG-IA-LTQ
@@ -171,6 +174,224 @@ sources:
     evidence_permissions: [document_fact, regulatory_event, regulatory_claim]
     owner: Jasper
     status: assessed
+
+  - source_id: SRC-REG-IA-QUARTERLY-RELEASES
+    name: IA长期业务季度新闻稿
+    publisher: Insurance Authority Hong Kong
+    source_class: S1_regulatory_government
+    channels: [website, press_release]
+    base_urls:
+      - https://www.ia.org.hk/en/infocenter/press_releases/
+    themes: [T00, T10, T12, T14, T30]
+    acquisition_mode: candidate
+    update_pattern: quarterly_event_driven
+    access_policy:
+      public: true
+      automation_review_required: true
+      notes: 新闻稿可补季度Excel未披露的MCV摘要，但必须与Excel分开登记原始证据链
+    quality_profile:
+      authority: primary_official
+      proximity: primary_for_released_headlines
+      method_transparency: medium
+      reproducibility: medium_high
+      bias_profile: regulatory_communication
+      access_stability: fragile
+    evidence_permissions: [fact, regulatory_event, regulatory_observation]
+    owner: Jasper
+    status: assessed
+
+  - source_id: SRC-MEDIA-WECHAT-GANGXIAN-CHANNEL
+    name: 港险渠道微信公众号
+    publisher: 港险渠道
+    source_class: S4_industry_media
+    channels: [wechat_public_account, sogou_weixin_index]
+    base_urls:
+      - https://weixin.sogou.com/
+    themes: [T12, T14, T21]
+    acquisition_mode: discovery_only_pending_original
+    update_pattern: irregular
+    access_policy:
+      public_index: true
+      original_article_access: blocked_in_current_runtime
+      automation_review_required: true
+      notes: 当前只能取得索引元数据与摘要；必须由用户提供原文URL、导出件或截图后才能进入内容抽取
+    quality_profile:
+      authority: commercial_industry_voice
+      proximity: primary_for_publisher_opinion_only
+      method_transparency: low
+      reproducibility: low_until_original_captured
+      bias_profile: channel_promotion_high_conflict_risk
+      access_stability: fragile
+    evidence_permissions: [media_claim, source_lead]
+    prohibited_permissions: [regulatory_fact, market_fact_without_backtrace, customer_motivation_fact, grade_A_claim]
+    owner: Jasper
+    status: candidate_failed_content_gate
+
+  - source_id: SRC-MEDIA-WECHAT-GANGXIAN-BAOBAO-PRO
+    name: 港险宝宝PRO微信公众号
+    publisher: 港险宝宝PRO
+    source_class: S4_industry_media
+    channels: [wechat_public_account, sogou_weixin_index, user_supplied_export]
+    base_urls:
+      - https://weixin.sogou.com/
+    themes: [T01, T02, T10, T12, T13, T14, T21, T30, T31, T32]
+    acquisition_mode: discovery_verified_original_corpus_pending
+    discovered_article_count: approximately_486
+    discovered_period: 2017_to_2026_current_index
+    latest_indexed_article_candidate:
+      title: 国务院第841号令《出境入境管理规定》全文解读!对香港保险有什么影响?
+      indexed_timestamp: 2026-08-03T11:02:40+08:00
+      verification_status: search_index_latest_not_account_backend_confirmed
+    update_pattern: historical_corpus_plus_irregular_updates
+    identity_status: user_verified_same_account
+    identity_verified_at: 2026-08-04
+    identity_verification_evidence: 用户确认手机端最新文章与索引最新候选一致
+    access_policy:
+      public_index: true
+      original_article_access: blocked_in_current_runtime
+      preferred_ingestion: user_authorized_export_or_supplied_originals
+      automation_review_required: true
+      notes: 不通过技术手段绕过微信限制；原文须通过用户提供_合法导出或获授权接口取得
+    quality_profile:
+      authority: commercial_industry_voice
+      proximity: primary_for_publisher_narrative_and_cases
+      method_transparency: low_variable
+      reproducibility: low_until_original_corpus_captured
+      bias_profile: insurance_distribution_and_product_promotion
+      access_stability: fragile
+    evidence_permissions: [media_claim, case_lead, mechanism_hypothesis, source_lead]
+    prohibited_permissions: [regulatory_fact_without_backtrace, causal_claim, representative_customer_fact, grade_A_claim]
+    owner: Jasper
+    status: identity_approved_ready_for_corpus_pilot
+
+  - source_id: SRC-ASSOC-HKFI
+    name: 香港保险业联会
+    publisher: The Hong Kong Federation of Insurers
+    source_class: S8_industry_association
+    channels: [website, publications, annual_report]
+    base_urls:
+      - https://www.hkfi.org.hk/publications
+      - https://www.hkfi.org.hk/annual-report
+    themes: [T02, T10, T12, T21, T22, T30, T32]
+    acquisition_mode: public_web_monitoring
+    update_pattern: periodic
+    quality_profile:
+      authority: industry_association
+      proximity: primary_for_member_industry_position
+      method_transparency: variable_by_publication
+      reproducibility: medium_high
+      bias_profile: member_industry_representation
+      access_stability: high
+    evidence_permissions: [industry_position, association_publication, source_lead]
+    owner: Jasper
+    status: assessed_automatable
+
+  - source_id: SRC-MEDIA-INSURANCE-BUSINESS-ASIA
+    name: Insurance Business Asia
+    publisher: Key Media
+    source_class: S4_industry_media
+    channels: [website, news, columns, white_papers]
+    base_urls:
+      - https://www.insurancebusinessmag.com/asia/
+    themes: [T10, T12, T20, T21, T22, T30, T31, T32]
+    acquisition_mode: public_web_monitoring
+    update_pattern: daily
+    quality_profile:
+      authority: trade_media
+      proximity: secondary_with_primary_interviews
+      method_transparency: medium
+      reproducibility: high_for_public_pages
+      bias_profile: editorial_and_commercial
+      access_stability: high_with_premium_exceptions
+    evidence_permissions: [media_claim, event_lead, expert_opinion, source_lead]
+    owner: Jasper
+    status: assessed_automatable_with_paywall_filter
+
+  - source_id: SRC-RESEARCH-SWISSRE-SIGMA
+    name: Swiss Re Institute sigma research
+    publisher: Swiss Re Institute
+    source_class: S3_research_database
+    channels: [website, research_publication, pdf, data_platform]
+    base_urls:
+      - https://www.swissre.com/institute/research/sigma-research.html
+    themes: [T00, T01, T10, T31, T32]
+    acquisition_mode: public_web_and_pdf_monitoring
+    update_pattern: periodic
+    quality_profile:
+      authority: established_insurance_research
+      proximity: primary_for_own_research
+      method_transparency: high_variable_by_report
+      reproducibility: high
+      bias_profile: reinsurer_research_perspective
+      access_stability: high
+    evidence_permissions: [research_fact, research_claim, macro_context, source_lead]
+    owner: Jasper
+    status: assessed_automatable
+
+  - source_id: SRC-RESEARCH-PWC-HK-INSURANCE
+    name: PwC Hong Kong Insurance Insights
+    publisher: PwC Hong Kong
+    source_class: S3_research_database
+    channels: [website, insight, pdf]
+    base_urls:
+      - https://www.pwchk.com/en/industries/financial-services/insurance.html
+      - https://www.pwchk.com/en/industries/financial-services/insurance/publications.html
+    themes: [T02, T10, T12, T21, T22, T30, T32]
+    acquisition_mode: public_web_and_pdf_monitoring
+    update_pattern: periodic
+    quality_profile:
+      authority: professional_services_research
+      proximity: primary_for_own_observations_secondary_for_regulatory_facts
+      method_transparency: medium_high
+      reproducibility: high
+      bias_profile: advisory_services
+      access_stability: high
+    evidence_permissions: [research_claim, mechanism_hypothesis, source_lead]
+    owner: Jasper
+    status: active_pilot
+
+  - source_id: SRC-RESEARCH-KPMG-CN-INSURANCE
+    name: KPMG China Insurance Insights
+    publisher: KPMG China
+    source_class: S3_research_database
+    channels: [website, insight, pdf]
+    base_urls:
+      - https://kpmg.com/cn/en/industries/insurance.html
+    themes: [T01, T10, T21, T22, T30, T31, T32]
+    acquisition_mode: public_web_and_pdf_monitoring
+    update_pattern: periodic
+    quality_profile:
+      authority: professional_services_research
+      proximity: primary_for_own_research
+      method_transparency: medium_high
+      reproducibility: high
+      bias_profile: advisory_services
+      access_stability: high
+    evidence_permissions: [research_claim, survey_finding, mechanism_hypothesis, source_lead]
+    owner: Jasper
+    status: assessed_automatable
+
+  - source_id: SRC-COMPANY-AIA-GROUP
+    name: AIA Group Press Releases and Results
+    publisher: AIA Group Limited
+    source_class: S2_company_primary
+    channels: [website, press_release, results_report]
+    base_urls:
+      - https://www.aia.com/en/media-centre/press-releases
+      - https://www.aia.com/en/investor-relations/overview/results-presentations
+    themes: [T01, T10, T12, T14, T20, T21, T22, T32]
+    acquisition_mode: public_web_monitoring
+    update_pattern: event_and_reporting_calendar
+    quality_profile:
+      authority: company_primary
+      proximity: primary_for_AIA_only
+      method_transparency: high_for_reported_metrics
+      reproducibility: high
+      bias_profile: company_management
+      access_stability: high
+    evidence_permissions: [company_fact, company_claim, strategy_statement, event_fact]
+    owner: Jasper
+    status: assessed_automatable
 
 watchlist_placeholders:
   - source_id: SRC-MEDIA-WECHAT-TBD

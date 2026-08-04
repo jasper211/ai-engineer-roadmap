@@ -1,0 +1,94 @@
+catalog_id: IA-MARKET-INDUSTRY-STATISTICS
+version: 0.1
+status: discovered
+discovered_from: https://www.ia.org.hk/tc/infocenter/statistics/statistics.html
+canonical_landing_page: https://www.ia.org.hk/tc/infocenter/statistics/market.html
+discovered_at: 2026-08-04
+
+sections:
+  - section_id: IA-STAT-MARKET-INTRO
+    name: 市场及行业统计数据简介
+    url: https://www.ia.org.hk/tc/infocenter/statistics/market.html
+    primary_routes: [T00]
+  - section_id: IA-STAT-INSURERS
+    name: 保险公司资料
+    url: https://www.ia.org.hk/tc/infocenter/statistics/particulars_of_insurers.html
+    primary_routes: [T20]
+  - section_id: IA-STAT-FINANCIAL
+    name: 保险业的财务资料
+    url: https://www.ia.org.hk/tc/infocenter/statistics/financial_info_on_insurance_industry.html
+    primary_routes: [T01, T32]
+    discovery_note: 页面另路由至保险业季度临时财务资料；需继续拆解附件与指标口径
+  - section_id: IA-STAT-ANNUAL-GENERAL
+    name: 一般业务的年度统计数字
+    url: https://www.ia.org.hk/tc/infocenter/statistics/annual_general_business_statistics.html
+    primary_routes: [T00, T20]
+  - section_id: IA-STAT-ANNUAL-LONG
+    name: 长期业务的年度统计数字
+    url: https://www.ia.org.hk/tc/infocenter/statistics/annual_long_term_business_statistics.html
+    primary_routes: [T00, T01, T02, T10, T20, T21]
+    year_coverage_discovered: 2001-2024
+  - section_id: IA-STAT-QUARTERLY-GENERAL
+    name: 一般业务季度临时统计
+    url: https://www.ia.org.hk/tc/infocenter/statistics/quarterly_release_of_provisional_statistics_for_general_business.html
+    primary_routes: [T00, T20]
+  - section_id: IA-STAT-QUARTERLY-LONG
+    name: 长期业务季度临时统计
+    url: https://www.ia.org.hk/tc/infocenter/statistics/quarterly_release_of_provisional_statistics_for_long_term_business.html
+    primary_routes: [T00, T01, T10, T11, T12, T13, T20]
+  - section_id: IA-STAT-INTERMEDIARY-LICENCE
+    name: 保险中介牌照统计数据
+    url: https://www.ia.org.hk/tc/infocenter/statistics/statistics.html
+    primary_routes: [T22, T30]
+  - section_id: IA-STAT-BROKER-SURVEY
+    name: 保险经纪问卷调查及统计数据
+    url: https://www.ia.org.hk/tc/infocenter/statistics/brokersurvey.html
+    primary_routes: [T12, T22]
+    attachment_coverage_discovered: [BrokerSurvey2018chi.pdf]
+    freshness_limit: 专项调查较旧，不宜代表当前经纪渠道状态
+  - section_id: IA-STAT-AGENCY-SURVEY
+    name: 保险代理机构问卷调查及统计数据
+    url: https://www.ia.org.hk/tc/infocenter/statistics/agencysurvey.html
+    primary_routes: [T12, T22]
+    attachment_coverage_discovered: [AgencySurveyExternalReportChi.PDF]
+    freshness_limit: 单次专项调查，需核验调查期和样本后使用
+  - section_id: IA-STAT-COMPLAINTS
+    name: 投诉统计数字
+    url: https://www.ia.org.hk/tc/infocenter/statistics/Complaint_Statistics.html
+    primary_routes: [T02, T12, T22, T30]
+    attachment_coverage_discovered: 2017-06-26_to_2025-03-31
+    period_basis: fiscal_or_custom_period_not_calendar_year
+    inference_limit: 投诉件数不等于行业发生率，且不能直接证明渠道总体质量
+
+acquisition_policy:
+  discovery_sequence:
+    - canonical_landing_page
+    - section_page
+    - period_detail_page
+    - attachment_link
+    - browser_session_download
+  direct_attachment_guessing: prohibited
+  source_snapshot_required: true
+  checksum_required: true
+  preserve_parent_page: true
+
+completeness_assessment:
+  can_be_primary_regulatory_backbone: true
+  can_be_only_input_for_complete_industry_analysis: false
+  strong_for:
+    - official_market_size_and_structure
+    - insurer_and_intermediary_universe
+    - regulatory_events_and_reported_complaints
+    - annual_and_quarterly_observed_metrics
+  weak_or_missing_for:
+    - customer_motivation
+    - channel_operating_playbook
+    - active_agent_productivity_and_retention
+    - company_internal_execution
+    - profit_value_and_capital_mechanism_at_required_granularity
+  required_complements:
+    - company_primary_disclosures
+    - industry_media_and_expert_opinions
+    - internal_experience_cards
+    - customer_or_sales_research
+    - macro_and_cross_border_data

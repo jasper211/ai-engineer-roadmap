@@ -1,0 +1,65 @@
+schema_id: HKIA-WECHAT-GOLD-ANNOTATION
+version: 0.1
+status: ready
+
+article_record_required:
+  - article_id
+  - asset_id
+  - source_id
+  - title
+  - publisher
+  - publication_date
+  - original_locator
+  - checksum
+  - annotator
+  - annotation_version
+
+annotation_units:
+  cited_fact_candidate:
+    required: [item_id, exact_span, locator, normalized_statement, cited_source, backtrace_status, theme_id]
+    allowed_statuses: [untraced, traced_primary_match, traced_primary_mismatch, source_missing]
+  publisher_fact:
+    required: [item_id, exact_span, locator, statement, scope, theme_id]
+    note: 仅证明发布者披露_展示或声称发生了什么
+  media_claim:
+    required: [item_id, exact_span, locator, statement, claim_type, theme_id, confidence]
+  mechanism_hypothesis:
+    required: [item_id, exact_span, locator, hypothesis, applicable_context, evidence_needed, alternatives]
+  case_lead:
+    required: [item_id, exact_span, locator, case_subject, event, evidence_visible, privacy_status, generalization_prohibited]
+  promotional_language:
+    required: [item_id, exact_span, locator, technique, target_action]
+  source_lead:
+    required: [item_id, exact_span, locator, named_source_or_document, retrieval_status]
+  contradiction_uncertainty:
+    required: [item_id, related_item_ids, issue, resolution_status]
+
+mandatory_separations:
+  - quoted_text_vs_annotator_summary
+  - observed_fact_vs_publisher_claim
+  - current_rule_vs_historical_rule
+  - single_case_vs_representative_pattern
+  - forecast_vs_realized_result
+  - correlation_vs_mechanism_vs_causation
+  - product_promotion_vs_independent_comparison
+
+high_risk_flags:
+  - legal
+  - tax
+  - medical
+  - personal_data
+  - customer_representativeness
+  - causal_language
+  - forecast
+  - regulatory_interpretation
+  - financial_return
+
+article_completion_gate:
+  required:
+    - all_material_numeric_claims_annotated
+    - all_named_sources_recorded
+    - all_high_risk_spans_flagged
+    - every_annotation_has_exact_span
+    - no_fact_admitted_without_backtrace
+    - empty_categories_explicitly_recorded
+  reviewer_decisions: [pass, revise, reject]

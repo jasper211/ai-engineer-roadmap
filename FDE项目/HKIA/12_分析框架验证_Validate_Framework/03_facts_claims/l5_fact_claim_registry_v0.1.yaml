@@ -1,0 +1,155 @@
+registry_id: HKIA-L5-FEC-REGISTRY
+version: 0.1
+status: active_test
+theme_id: T02
+baseline_contract_id: CONTRACT-HKIA-L5-001
+
+assets:
+  - asset_id: AST-IA-LTA-2024-L5-XLSX
+    source_id: SRC-REG-IA-LTA
+    sheet: Table L5
+
+formulas:
+  - formula_id: FRM-PERCENT-POINT-TO-RATIO
+    expression: source_percentage_point_value / 100
+    output_unit: ratio
+  - formula_id: FRM-RATE-GAP
+    expression: linked_rate - non_linked_rate
+    output_unit: percentage_point
+
+facts:
+  - fact_id: F-T02-L5-2023-NONLINKED-ALL
+    fact_type: observed_metric
+    statement: 2023年非相连业务所有保单的自愿终止率为3.8%
+    subject: non_linked_all_policies
+    metric_or_event: individual_life_voluntary_termination_rate
+    value: 0.038
+    source_value: 3.8
+    unit: ratio
+    source_unit: percentage_points
+    period: 2023-FY
+    object_scope: HK_individual_life_all_policies_including_term_and_others
+    source_id: SRC-REG-IA-LTA
+    asset_id: AST-IA-LTA-2024-L5-XLSX
+    locator: "'Table L5'!F14"
+    method: FRM-PERCENT-POINT-TO-RATIO
+    quality_status: verified_from_official_xlsx
+    version: 1
+  - fact_id: F-T02-L5-2024-NONLINKED-ALL
+    fact_type: observed_metric
+    statement: 2024年非相连业务所有保单的自愿终止率为3.7%
+    subject: non_linked_all_policies
+    metric_or_event: individual_life_voluntary_termination_rate
+    value: 0.037
+    source_value: 3.7
+    unit: ratio
+    source_unit: percentage_points
+    period: 2024-FY
+    object_scope: HK_individual_life_all_policies_including_term_and_others
+    source_id: SRC-REG-IA-LTA
+    asset_id: AST-IA-LTA-2024-L5-XLSX
+    locator: "'Table L5'!G14"
+    method: FRM-PERCENT-POINT-TO-RATIO
+    quality_status: verified_from_official_xlsx
+    version: 1
+  - fact_id: F-T02-L5-2023-LINKED-ALL
+    fact_type: observed_metric
+    statement: 2023年相连业务所有保单的自愿终止率为6.2%
+    subject: linked_all_policies
+    metric_or_event: individual_life_voluntary_termination_rate
+    value: 0.062
+    source_value: 6.2
+    unit: ratio
+    source_unit: percentage_points
+    period: 2023-FY
+    object_scope: HK_individual_life_all_policies_including_term_and_others
+    source_id: SRC-REG-IA-LTA
+    asset_id: AST-IA-LTA-2024-L5-XLSX
+    locator: "'Table L5'!F25"
+    method: FRM-PERCENT-POINT-TO-RATIO
+    quality_status: verified_from_official_xlsx
+    version: 1
+  - fact_id: F-T02-L5-2024-LINKED-ALL
+    fact_type: observed_metric
+    statement: 2024年相连业务所有保单的自愿终止率为7.0%
+    subject: linked_all_policies
+    metric_or_event: individual_life_voluntary_termination_rate
+    value: 0.070
+    source_value: 7.0
+    unit: ratio
+    source_unit: percentage_points
+    period: 2024-FY
+    object_scope: HK_individual_life_all_policies_including_term_and_others
+    source_id: SRC-REG-IA-LTA
+    asset_id: AST-IA-LTA-2024-L5-XLSX
+    locator: "'Table L5'!G25"
+    method: FRM-PERCENT-POINT-TO-RATIO
+    quality_status: verified_from_official_xlsx
+    version: 1
+  - fact_id: F-T02-L5-2024-LINKED-GAP
+    fact_type: derived_metric
+    statement: 2024年相连业务所有保单自愿终止率较非相连业务高3.3个百分点
+    subject: linked_vs_non_linked_all_policies
+    metric_or_event: voluntary_termination_rate_gap
+    value: 3.3
+    unit: percentage_point
+    period: 2024-FY
+    object_scope: HK_individual_life_all_policies_including_term_and_others
+    input_fact_ids: [F-T02-L5-2024-LINKED-ALL, F-T02-L5-2024-NONLINKED-ALL]
+    method: FRM-RATE-GAP
+    quality_status: verified
+    version: 1
+
+claims:
+  - claim_id: C-T02-L5-001
+    theme_id: T02
+    claim_type: comparative
+    statement: 2024年相连业务的所有保单自愿终止率高于非相连业务
+    scope:
+      period: 2024-FY
+      object_scope: HK_individual_life_all_policies_including_term_and_others
+    baseline_contract_id: CONTRACT-HKIA-L5-001
+    grade: A
+    status: supported_A_pending_human_review
+    alternative_explanations: []
+    falsification_conditions:
+      - 发现相连与非相连的自愿终止率定义或分母不可比
+      - 官方发布修订版改变G14或G25
+    unresolved_conflicts: []
+    allowed_surfaces: [chart_insight, factual_page_title, synthesis]
+    prohibited_extensions:
+      - 相连业务客户忠诚度更低
+      - 产品特征导致更高终止率
+      - 相连业务价值更低
+    owner: Jasper
+    reviewer: pending
+    version: 1
+
+evidence_links:
+  - evidence_link_id: EL-T02-L5-001
+    evidence_type: fact
+    evidence_id: F-T02-L5-2024-NONLINKED-ALL
+    claim_id: C-T02-L5-001
+    relation: supports
+    distance: direct
+    origin_chain_id: ORG-IA-LTA-L5-2024
+  - evidence_link_id: EL-T02-L5-002
+    evidence_type: fact
+    evidence_id: F-T02-L5-2024-LINKED-ALL
+    claim_id: C-T02-L5-001
+    relation: supports
+    distance: direct
+    origin_chain_id: ORG-IA-LTA-L5-2024
+  - evidence_link_id: EL-T02-L5-003
+    evidence_type: fact
+    evidence_id: F-T02-L5-2024-LINKED-GAP
+    claim_id: C-T02-L5-001
+    relation: supports
+    distance: direct
+    origin_chain_id: ORG-IA-LTA-L5-2024
+
+source_notes:
+  - 所有保单包括定期保单及其他保单
+  - 表内数值以百分数显示，Fact层统一转换为ratio保存并保留source_value
+  - 年份表头存在外部工作簿公式；原始文件只读保存，事实定位使用源文件缓存显示值和具体单元格
+  - 本表可支持描述与比较，不单独支持客户动机、机制、利润或因果结论

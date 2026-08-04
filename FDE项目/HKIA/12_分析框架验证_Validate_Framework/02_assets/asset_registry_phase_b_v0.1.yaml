@@ -1,0 +1,95 @@
+registry_id: HKIA-ASSET-REGISTRY-PHASE-B
+version: 0.1
+status: active_test
+updated_at: 2026-08-04
+
+assets:
+  - asset_id: AST-IA-LTA-2024-L5-PDF
+    source_id: SRC-REG-IA-LTA
+    title: Table L5 - Individual Life Voluntary Termination Rate 2024
+    canonical_url: https://www.ia.org.hk/en/infocenter/statistics/files/Table-L5_2024.pdf
+    parent_page: https://www.ia.org.hk/en/infocenter/statistics/annual_long_term_business_statistics.html
+    content_type: pdf
+    period: 2024-FY
+    intended_storage_path: 01_sources/raw/SRC-REG-IA-LTA/2024/Table-L5_2024.pdf
+    acquisition_status: attachment_located_direct_download_blocked
+    local_file_present: false
+    checksum_sha256: null
+    attempts:
+      - attempted_at: 2026-08-04
+        method: curl_direct
+        result: dns_blocked_in_sandbox
+      - attempted_at: 2026-08-04
+        method: curl_escalated
+        result: http_403
+      - attempted_at: 2026-08-04
+        method: curl_with_browser_headers_and_referer
+        result: http_403
+      - attempted_at: 2026-08-04
+        method: in_app_browser
+        result: cloudflare_interstitial
+    quality_status: not_admitted
+    allowed_use: [source_lead, pending_fact_candidate]
+    prohibited_use: [formal_fact, grade_A_claim, report_title]
+    next_recovery_options:
+      - use_page_session_download_if_pdf_layout_is_required
+      - use_acquired_official_xlsx_for_structured_fact_extraction
+
+  - asset_id: AST-IA-LTA-2024-L5-XLSX
+    source_id: SRC-REG-IA-LTA
+    title: Table L5 - Individual Life Voluntary Termination Rate 2024
+    canonical_url: https://www.ia.org.hk/tc/infocenter/statistics/files/Table-L5_2024.xlsx
+    parent_page: https://www.ia.org.hk/tc/infocenter/statistics/market_5_2024.html
+    content_type: xlsx
+    period: 2024-FY
+    storage_path: 01_sources/raw/SRC-REG-IA-LTA/2024/Table-L5_2024.xlsx
+    acquisition_status: acquired
+    acquisition_method: official_parent_page_browser_session
+    acquired_at: 2026-08-04
+    local_file_present: true
+    file_size_bytes: 34197
+    checksum_sha256: df242399153903af1ded1deacdce89c6079c3ed4278b2aaaae5dc27e33f4cd73
+    workbook_profile:
+      sheets: [Table L5]
+      used_range: "A1:Q28"
+      key_ranges: ["C14:G14", "H14:O14", "C25:G25", "H25:N25"]
+      source_units: percentage_points
+      external_formula_cells: [C9, D9, E9, F9, C20, D20, E20, F20]
+      external_formula_risk: 年份表头含外部工作簿引用，第三方工具重算可能显示NAME错误；不得回写原始文件
+    quality_status: admitted_read_only_source
+    allowed_use: [formal_fact, comparative_claim, trend_fact]
+    prohibited_use: [causal_claim, customer_motivation, profitability_inference]
+
+  - asset_id: AST-IA-PR-2024Q1-MCV-HTML
+    source_id: SRC-REG-IA-QUARTERLY-RELEASES
+    title: IA 2024 Q1 long term business quarterly press release with MCV headline
+    canonical_url: https://www.ia.org.hk/en/infocenter/press_releases/20240531_1.html
+    content_type: html
+    period: 2024-Q1
+    acquisition_status: located_not_snapshotted
+    local_file_present: false
+    checksum_sha256: null
+    quality_status: source_assessed_asset_pending
+    allowed_use: [source_lead, coverage_audit]
+    prohibited_use: [formal_fact, mechanism_claim]
+
+  - asset_id: AST-PWC-HK-TCF-2024-PDF
+    source_id: SRC-RESEARCH-PWC-HK-INSURANCE
+    title: Placing Treating Customers Fairly at the heart of insurance
+    canonical_url: https://www.pwchk.com/en/insurance/publications/placing-treating-customers-fairly-at-heart-of-insurance-feb2024.pdf
+    parent_page: https://www.pwchk.com/en/industries/financial-services/insurance/publications/placing-treating-customers-fairly-at-heart-of-insurance-feb2024.html
+    content_type: pdf
+    publication_date: 2024-02
+    storage_path: 01_sources/raw/SRC-RESEARCH-PWC-HK-INSURANCE/2024/placing-treating-customers-fairly-at-heart-of-insurance-feb2024.pdf
+    acquisition_status: acquired
+    acquisition_method: public_parent_page_browser_session
+    acquired_at: 2026-08-04
+    local_file_present: true
+    file_size_bytes: 283704
+    pages: 3
+    checksum_sha256: 3d052ceac6cd5f1100cbfe1fc5c8782980b3f50e17ccbfd9453678085c2fed55
+    quality_status: admitted_research_source
+    visual_review_status: all_3_pages_verified
+    cited_source_count: 8
+    allowed_use: [research_claim, mechanism_hypothesis, source_lead, analytical_framework]
+    prohibited_use: [regulatory_fact_without_backtrace, market_incidence_fact, causal_claim]

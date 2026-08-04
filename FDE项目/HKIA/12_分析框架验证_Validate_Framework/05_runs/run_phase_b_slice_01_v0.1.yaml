@@ -1,0 +1,200 @@
+run_id: RUN-HKIA-PHASE-B-SLICE-01
+version: 0.1
+objective: 验证监管L5数据与一条行业经验进入分析体系的完整路径
+mode: framework_validation
+contract_id: CONTRACT-HKIA-CHANNEL-001
+current_gate: G2_data_ready
+status: waiting_human
+participants:
+  human_business_owner: Jasper
+  ai_roles: [source_scout, ingestion_agent, data_steward, industry_challenger, methodology_curator]
+started_at: 2026-08-04
+
+steps:
+  - step_id: PB01-STEP-001
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    role: source_scout
+    objective: 定位T02年度L5和T14 MCV监管来源
+    input_refs: [SRC-REG-IA-LTA, SRC-REG-IA-LTQ]
+    action: 审计IA年度统计页、L5 PDF及季度新闻稿
+    output_refs: [AST-IA-LTA-2024-L5-PDF, SRC-REG-IA-QUARTERLY-RELEASES]
+    validation: official_domain_and_source_class_checked
+    status: completed
+  - step_id: PB01-STEP-002
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    role: ingestion_agent
+    objective: 保存L5官方原始资产及校验和
+    input_refs: [AST-IA-LTA-2024-L5-PDF]
+    action: 依次尝试直接下载、带来源页下载和浏览器页面会话
+    output_refs: [AST-IA-LTA-2024-L5-XLSX, INC-PB-001]
+    validation: checksum_and_duplicate_download_match
+    status: reworked
+  - step_id: PB01-STEP-003
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    role: data_steward
+    objective: 在原始资产缺失时控制Fact准入
+    input_refs: [AST-IA-LTA-2024-L5-PDF]
+    action: 先拦截搜索摘要；官方XLSX落库后按单元格定位转正Fact并建立比较命题
+    output_refs: [HKIA-L5-FEC-REGISTRY]
+    validation: asset_gate_and_cell_locator_verified
+    status: reworked
+  - step_id: PB01-STEP-004
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    role: methodology_curator
+    objective: 建立经验输入的最小可运行对象
+    input_refs: [HKIA-EXPERIENCE-CARD]
+    action: 创建空白经验实例并锁定证据权限
+    output_refs: [EXP-T12-SEED-001]
+    validation: no_synthetic_experience_content
+    status: completed
+  - step_id: PB01-STEP-005
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    role: source_scout
+    objective: 评估IA统计资源能否作为完整监管输入
+    input_refs: [IA-MARKET-INDUSTRY-STATISTICS]
+    action: 审计财务_经纪调查_代理调查_投诉四个优先栏目及历史附件
+    output_refs: [IA与公众号输入覆盖评估_v0.1]
+    validation: theme_coverage_and_inference_limits_recorded
+    status: completed
+  - step_id: PB01-STEP-006
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    role: source_scout
+    objective: 验证公众号作为第二类输入的最小链路
+    input_refs: [搜狗微信搜索_香港保险渠道]
+    action: 发现真实文章样本并尝试进入原文，拆分可用元数据和禁止推断
+    output_refs: [HKIA-WECHAT-INPUT-PILOT-01, SRC-MEDIA-WECHAT-GANGXIAN-CHANNEL]
+    validation: promotional_numeric_claim_blocked_from_fact_layer
+    status: completed
+  - step_id: PB01-STEP-007
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    role: source_scout
+    objective: 将港险宝宝PRO建立为长期公众号语料源
+    input_refs: [user_nominated_source_港险宝宝PRO, 搜狗微信索引]
+    action: 核验文章规模_发布者名称_时间跨度_内容类型和商业偏差
+    output_refs: [SC-WECHAT-GANGXIAN-BAOBAO-PRO, 港险宝宝PRO语料试点与规模化路线_v0.1]
+    validation: corpus_discovered_identity_pending_originals
+    status: completed
+  - step_id: PB01-STEP-008
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    role: methodology_curator
+    objective: 设计DeepSeek可替换模型接口
+    input_refs: [user_future_deepseek_api_authorization]
+    action: 将采集_模型抽取_证据治理拆分并定义JSON输出_引用校验_评测和审计
+    output_refs: [MODEL-ADAPTER-DEEPSEEK-HKIA]
+    validation: api_key_not_stored_and_model_output_not_fact_by_default
+    status: completed
+  - step_id: PB01-STEP-009
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    role: human_business_owner
+    objective: 排除港险宝宝PRO同名账号误匹配
+    input_refs: [latest_indexed_article_candidate, user_mobile_account_view]
+    action: 对照手机端和搜索索引的最新文章标题
+    output_refs: [SC-WECHAT-GANGXIAN-BAOBAO-PRO]
+    validation: exact_latest_title_matched
+    status: completed
+  - step_id: PB01-STEP-010
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    role: analysis_planner
+    objective: 建立港险宝宝PRO十二篇人工金标准样本
+    input_refs: [SC-WECHAT-GANGXIAN-BAOBAO-PRO]
+    action: 按监管_产品_市场_案例四组选择十二篇，并平衡时效_数字_单例和高风险主张
+    output_refs: [HKIA-WECHAT-GOLD-SET-01, HKIA-WECHAT-GOLD-ANNOTATION]
+    validation: four_groups_three_articles_each_and_risk_coverage_passed
+    status: completed
+  - step_id: PB01-STEP-011
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    role: reviewer_evaluator
+    objective: 定义DeepSeek从十二篇扩展至五十篇的验收门
+    input_refs: [MODEL-ADAPTER-DEEPSEEK-HKIA, HKIA-WECHAT-GOLD-SET-01]
+    action: 定义八项指标_关键失败和放量决策
+    output_refs: [HKIA-DEEPSEEK-GOLD-EVAL-01]
+    validation: zero_unsupported_fact_and_zero_critical_failure_required
+    status: completed
+  - step_id: PB01-STEP-012
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    role: evidence_analyst
+    objective: 启动最新文章内容级标注
+    input_refs: [WX-GBPRO-001]
+    action: 创建逐篇标注实例并检查原文Asset Gate
+    output_refs: [WX-GBPRO-001_annotation_v0.1]
+    validation: title_or_search_excerpt_not_used_as_original
+    status: waiting
+  - step_id: PB01-STEP-013
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    role: source_scout
+    objective: 寻找IA之外可自动化的行业信息入口
+    input_refs: [HKFI, Insurance_Business_Asia, Swiss_Re_sigma, PwC_HK, KPMG_China, AIA_Group]
+    action: 实际访问协会_媒体_研究和公司目录，检查HTML_PDF_历史和更新能力
+    output_refs: [HKIA-INDUSTRY-SOURCE-STACK, IA之外行业信息第二层输入方案_v0.1]
+    validation: at_least_one_accessible_source_in_each_of_four_layers
+    status: completed
+  - step_id: PB01-STEP-014
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    role: evidence_analyst
+    objective: 用公开专业研究跑通第二层输入
+    input_refs: [AST-PWC-HK-TCF-2024-PDF]
+    action: 下载并核验三页PDF_抽取机制Finding_识别八条引用_建立监管回溯任务
+    output_refs: [HKIA-PWC-TCF-PILOT-01]
+    validation: all_pages_visual_checked_and_regulatory_claims_not_admitted_without_primary_backtrace
+    status: completed
+
+incidents:
+  - incident_id: INC-PB-001
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    incident_class: access
+    detected_at_step: PB01-STEP-002
+    impact: L5原始PDF未能落库，T02候选事实不能转正
+    root_cause: IA官网对机器直连返回403，页面会话进入Cloudflare检查
+    correction: 保留来源定位和失败日志，不伪造Asset；转向版本匹配的data.gov.hk资源或人工下载
+    resolution: 从IA统计入口进入年份详情页后，通过页面会话下载官方XLSX；两次文件校验和一致
+    prevention_candidate:
+      type: workflow_rule_candidate
+      rule: 公开来源的搜索摘要不得替代原始Asset进入正式Fact
+      status: candidate_1_of_3
+  - incident_id: INC-PB-002
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    incident_class: scope
+    detected_at_step: PB01-STEP-001
+    impact: 若仅审计季度Excel，会错误把T14判断为完全缺失
+    root_cause: 将单一数据产品的字段覆盖误当成发布机构的整体信息覆盖
+    correction: 新增季度新闻稿Source并把T14校正为weak_partial，同时保持独立证据链
+    prevention_candidate:
+      type: workflow_rule_candidate
+      rule: Theme缺口判定必须至少区分数据表、新闻稿和监管文件三类发布载体
+      status: candidate_1_of_3
+  - incident_id: INC-PB-003
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    incident_class: access
+    detected_at_step: PB01-STEP-006
+    impact: 可以发现公众号文章元数据，但不能保存和核验原文
+    root_cause: 微信原文在当前运行环境中受到站点访问策略限制
+    correction: 仅登记Source Lead；等待用户提供URL_导出件_截图或全文后再做内容抽取
+    prevention_candidate:
+      type: workflow_rule_candidate
+      rule: 公众号搜索摘要和标题不得替代原文Asset；营销比例无样本与分母不得进入Fact
+      status: candidate_1_of_3
+
+gates:
+  - gate_id: G2_data_ready
+    decision: pass
+    approved_by: methodology_curator
+    evidence:
+      - AST-IA-LTA-2024-L5-XLSX已落库并登记SHA256
+      - G14与G25完成单元格级定位
+      - 外部公式风险已记录且原文件未回写
+  - gate_id: G3_evidence
+    decision: pending
+    conditions:
+      - EXP-T12-SEED-001由人工提供真实内容并完成保密分级
+      - 至少建立一条Experience到Research Question的motivates关系
+
+next_actions:
+  - request_one_real_T12_experience_sentence
+  - expand_IA_catalog_to_attachment_level_by_theme_priority
+  - compare_official_xlsx_with_data_gov_hk_as_distribution_cross_check
+  - receive_one_complete_wechat_article_from_user_for_content_level_pilot
+  - build_12_article_human_gold_set_before_deepseek_scale
+  - receive_complete_original_for_WX-GBPRO-001
+  - complete_human_annotation_before_any_deepseek_blind_test
+  - backtrace_PwC_TCF_IA_Conduct_GL21_GL16
+  - pilot_one_HKFI_one_trade_media_one_company_primary_asset

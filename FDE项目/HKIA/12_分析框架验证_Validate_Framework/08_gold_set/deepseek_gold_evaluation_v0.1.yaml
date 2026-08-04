@@ -1,0 +1,58 @@
+evaluation_id: HKIA-DEEPSEEK-GOLD-EVAL-01
+version: 0.1
+status: ready_not_run
+adapter_id: MODEL-ADAPTER-DEEPSEEK-HKIA
+gold_set_id: HKIA-WECHAT-GOLD-SET-01
+
+evaluation_mode:
+  blind_to_human_labels: true
+  same_original_assets: true
+  same_output_schema: HKIA-WECHAT-GOLD-ANNOTATION
+  prompt_version_locked: true
+  deterministic_checks_before_scoring: true
+
+metrics:
+  - metric_id: M1_theme_routing_precision
+    threshold_12_article_pass: 0.85
+  - metric_id: M2_quote_span_exact_match
+    threshold_12_article_pass: 0.95
+  - metric_id: M3_fact_vs_opinion_precision
+    threshold_12_article_pass: 0.90
+  - metric_id: M4_numeric_claim_recall
+    threshold_12_article_pass: 0.95
+  - metric_id: M5_high_risk_flag_recall
+    threshold_12_article_pass: 1.00
+  - metric_id: M6_unsupported_fact_rate
+    threshold_12_article_pass: 0.00
+  - metric_id: M7_single_case_overgeneralization_rate
+    threshold_12_article_pass: 0.00
+  - metric_id: M8_source_backtrace_accuracy
+    threshold_12_article_pass: 0.90
+
+severity_rules:
+  critical_failures:
+    - invented_quote
+    - invented_source
+    - legal_or_tax_claim_admitted_as_fact_without_primary_backtrace
+    - personal_case_generalized_to_market
+    - confidential_or_personal_data_exposed
+  critical_failure_effect: entire_run_fail
+
+scale_decisions:
+  pass_to_50:
+    requirements:
+      - all_metric_thresholds_met
+      - zero_critical_failures
+      - human_reviewer_pass
+  revise_and_repeat_12:
+    trigger: noncritical_threshold_failure
+  stop_model_use:
+    trigger: repeated_critical_failure_after_one_prompt_revision
+
+audit_outputs:
+  - per_article_confusion_matrix
+  - false_fact_register
+  - missed_numeric_claim_register
+  - high_risk_miss_register
+  - prompt_revision_log
+  - final_scale_decision

@@ -1,0 +1,44 @@
+registry_id: HKIA-L5-FACT-CLAIM-CANDIDATES
+version: 0.1
+status: superseded
+theme_id: T02
+superseded_by: HKIA-L5-FEC-REGISTRY
+superseded_reason: 官方XLSX已通过入口页会话下载并完成校验，候选数值已转入正式Fact登记
+
+candidate_facts:
+  - candidate_id: FC-T02-L5-2024-NONLINKED
+    proposed_fact_type: observed_metric
+    proposed_metric: individual_life_voluntary_termination_rate
+    proposed_subject: non_linked_all_policies
+    candidate_value_from_official_search_index: 0.037
+    unit: ratio
+    period: 2024-FY
+    asset_id: AST-IA-LTA-2024-L5-PDF
+    admission_status: rejected_until_original_asset_verified
+  - candidate_id: FC-T02-L5-2024-LINKED
+    proposed_fact_type: observed_metric
+    proposed_metric: individual_life_voluntary_termination_rate
+    proposed_subject: linked_all_policies
+    candidate_value_from_official_search_index: 0.070
+    unit: ratio
+    period: 2024-FY
+    asset_id: AST-IA-LTA-2024-L5-PDF
+    admission_status: rejected_until_original_asset_verified
+  - candidate_id: FC-T02-L5-DEFINITION
+    proposed_fact_type: document_fact
+    proposed_metric: voluntary_termination_rate_definition
+    candidate_definition: lapses_or_surrenders_during_year_divided_by_average_policies_in_force
+    asset_id: AST-IA-LTA-2024-L5-PDF
+    admission_status: rejected_until_original_asset_and_footnote_verified
+
+candidate_claim:
+  claim_id: CC-T02-L5-001
+  claim_type: comparative
+  statement: 2024年相连业务的自愿终止率高于非相连业务
+  grade: blocked
+  status: not_created
+  missing_requirements:
+    - original_pdf_or_version_matched_official_structured_asset
+    - exact_table_and_footnote_locator
+    - denominator_and_scope_check
+  allowed_surfaces: [research_question, acquisition_backlog]
