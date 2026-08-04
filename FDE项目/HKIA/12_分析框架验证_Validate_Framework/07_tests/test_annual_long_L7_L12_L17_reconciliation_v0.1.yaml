@@ -1,0 +1,55 @@
+test_id: TEST-HKIA-ANNUAL-LONG-L7-COMPANY-001
+version: 0.1
+status: passed_with_period_scope_qualification
+test_type: annuity_market_to_company_cross_grain_reconciliation
+period: 2024
+
+inputs:
+  market_table: L7
+  company_tables: [L12_annuity_inforce, L17_individual_annuity_new_business]
+  insurer_count: 57
+  source_ranges:
+    L7: ["Table L7!D12:L23", "Table L7!D27:I39"]
+    L12: "Table L12!E11:H69"
+    L17: "Table L17!E11:I69"
+
+detail_to_market_total:
+  L12: {checked_metrics: 4, discrepancy_count: 0}
+  L17: {checked_metrics: 4, discrepancy_count: 0}
+
+cross_grain_results:
+  L7a_to_L12:
+    comparable_grain: 2024_grand_total
+    metrics: [policy_count, premium_total, current_estimate]
+    discrepancy_count: 0
+    market_values:
+      policy_count: 1188744
+      premium_total_hkd_million: 36626.8676284
+      current_estimate_hkd_million: 367235.0761475936
+    period_qualification: L7a_2024_total_equals_non_linked_individual_annuity_because_linked_group_and_other_categories_are_NA
+  L7b_to_L17:
+    comparable_grain: payment_basis
+    metrics: [policy_count_single, policy_count_annual, premium_single, premium_annual]
+    discrepancy_count: 0
+    market_values:
+      policy_count_single: 11615
+      policy_count_annual: 80043
+      premium_single_hkd_million: 4784.5064147
+      premium_annual_hkd_million: 7613.1075278013
+
+zero_and_NA_decisions:
+  L7b_linked_new_business_2024: zero
+  L7a_linked_individual_annuity_2024: NA
+  L7a_group_annuity_2024: NA
+  L7a_other_business_2024: NA
+
+semantic_decisions:
+  - L7a_to_L12_equality_is_2024_specific_not_a_historical_blanket_formula
+  - L12_has_no_company_level_counterpart_for_L7_other_business_categories
+  - L17_is_separate_from_L16_and_enters_L19_exactly_once
+  - published_zero_in_L7b_linked_new_business_must_not_be_relabelled_NA
+  - published_NA_in_L7a_must_not_be_relabelled_zero
+
+promotion_candidate:
+  rule: L7_reconciles_to_L12_L17_only_at_shared_2024_annuity_grain
+  status: validated_once_not_cross_year_promoted

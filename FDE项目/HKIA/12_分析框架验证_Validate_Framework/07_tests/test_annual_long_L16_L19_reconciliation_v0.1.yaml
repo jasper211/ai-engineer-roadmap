@@ -1,0 +1,33 @@
+test_id: TEST-HKIA-ANNUAL-LONG-L16-L19-001
+version: 0.1
+status: passed
+test_type: cross_table_reconciliation_and_overlap_detection
+period: 2024
+
+inputs:
+  components: [L16_total_individual_life_new_business, L17_individual_annuity_new_business, L18_non_retirement_group_new_business]
+  control: L19_total_long_term_new_business
+  insurer_count: 57
+  metrics: [policy_count_single, policy_count_annual, premium_single, premium_annual]
+
+validated_formula:
+  expression: L16 + L17 + L18 = L19
+  checked_cells: 228
+  discrepancy_count: 0
+  tolerance: 0.001_source_unit
+
+rejected_formula:
+  expression: L16 + L18 = L19
+  discrepancy_count: 56
+  max_abs_diff: 4259102
+  diagnostic: every_difference_equals_the_corresponding_L17_value
+
+semantic_decision:
+  - L17_individual_annuity_is_not_included_in_L16_total_individual_life
+  - L17_must_be_added_once_when_reconciling_to_L19
+  - L17_must_not_be_treated_as_a_sub_dimension_of_L16_in_the_company_new_business_fact_family
+
+promotion_candidate:
+  rule: L16_plus_L17_plus_L18_reconcile_to_L19_by_insurer_and_metric
+  status: validated_once_not_yet_cross_year_promoted
+

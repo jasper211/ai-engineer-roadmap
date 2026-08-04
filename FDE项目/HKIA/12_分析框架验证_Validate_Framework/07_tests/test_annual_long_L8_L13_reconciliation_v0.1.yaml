@@ -1,0 +1,54 @@
+test_id: TEST-HKIA-ANNUAL-LONG-L8-L13-001
+version: 0.1
+status: passed_with_semantic_qualification
+test_type: cross_table_reconciliation_and_metric_semantics
+period: 2024
+
+inputs:
+  component_tables: [L8, L9, L10, L11, L12]
+  control_table: L13
+  insurer_count: 57
+
+validated_relations:
+  - metric: L13_policy_count_source_label
+    formula: L8_policy_count + L9_policy_count + L10_policy_count + L11_scheme_count + L12_policy_count
+    checked_cells: 57
+    discrepancy_count: 0
+    semantic_qualification: source_total_combines_policy_count_and_scheme_count
+  - metric: sums_assured
+    formula: L8_sums + L9_sums + L10_sums
+    checked_cells: 57
+    discrepancy_count: 0
+  - metric: revenue_premium_single
+    formula: L8_single + L9_single + L10_single + L11_single_contribution + L12_single
+    checked_cells: 57
+    discrepancy_count: 0
+  - metric: revenue_premium_annual
+    formula: L8_annual + L9_annual + L10_annual + L11_annual_contribution + L12_annual
+    checked_cells: 57
+    discrepancy_count: 0
+  - metric: current_estimate
+    formula: L8_current + L9_current + L10_current + L11_current + L12_current
+    checked_cells: 57
+    discrepancy_count: 0
+
+rejected_candidate:
+  metric: L13_policy_count_source_label
+  formula: L8_policy_count + L9_policy_count + L10_policy_count + L12_policy_count
+  discrepancy_count: 12
+  max_abs_diff: 208158
+  interpretation: differences_equal_L11_scheme_count_for_affected_insurers
+
+excluded_metric:
+  metric: L10_lives
+  reason: no_corresponding_L13_total_column_and_not_part_of_policy_or_scheme_count
+
+decision:
+  arithmetic_relation: pass
+  semantic_relation: qualified
+  canonical_metric_rule: preserve_component_metric_types_and_label_L13_total_as_policy_or_scheme_count_source_total
+  prohibited_action: do_not_relabel_L11_scheme_count_as_policy_count_at_component_level
+
+promotion_candidate:
+  rule: L8_to_L12_reconcile_to_L13_by_metric_specific_formula
+  status: validated_2_of_3_periods_with_schema_qualification

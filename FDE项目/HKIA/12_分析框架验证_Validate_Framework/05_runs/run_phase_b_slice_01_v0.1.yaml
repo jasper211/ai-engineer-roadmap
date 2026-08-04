@@ -188,6 +188,96 @@ steps:
     validation: 228_cells_checked_zero_discrepancy
     status: completed
 
+  - step_id: PB01-STEP-020
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    role: qa_reviewer
+    objective: 验证L8至L12与L13公司有效业务对账和数量口径
+    input_refs: [Table-L8_2024, Table-L9_2024, Table-L10_2024, Table-L11_2024, Table-L12_2024, Table-L13_2024]
+    action: 按57家公司验证五项指标公式_并比较是否纳入退休计划数的两种数量候选
+    output_refs: [TEST-HKIA-ANNUAL-LONG-L8-L13-001]
+    validation: five_metric_formulas_zero_discrepancy_and_policy_label_semantic_exception_recorded
+    status: completed
+
+  - step_id: PB01-STEP-021
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    role: qa_reviewer
+    objective: 验证L16_L17_L18到L19新造长期业务总额及重叠边界
+    input_refs: [Table-L16_2024, Table-L17_2024, Table-L18_2024, Table-L19_2024]
+    action: 同时测试含L17和不含L17的两种候选公式
+    output_refs: [TEST-HKIA-ANNUAL-LONG-L16-L19-001]
+    validation: correct_formula_228_cells_zero_discrepancy_rejected_formula_differences_equal_L17
+    status: completed
+
+  - step_id: PB01-STEP-022
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    role: qa_reviewer
+    objective: 验证L1_L2_L3市场有效个人人寿历史关系与缺失值边界
+    input_refs: [Table-L1_2024, Table-L2_2024, Table-L3_2024]
+    action: 按2020至2024及四类指标分别对账_审计外部公式表头_NA_舍入和L1调整行
+    output_refs: [TEST-HKIA-ANNUAL-LONG-L1-L3-001]
+    validation: policy_exact_premium_rounding_2024_liability_exact_historical_adjustments_and_sums_NA_recorded
+    status: completed
+
+  - step_id: PB01-STEP-023
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    role: qa_reviewer
+    objective: 验证L4市场新造个人人寿与L14至L16公司统计的跨粒度跨单位闭环
+    input_refs: [Table-L4_2024, Table-L14_2024, Table-L15_2024, Table-L16_2024]
+    action: 先核对57家公司明细与来源市场总额_再将千元转换为百万元并在共同维度对账
+    output_refs: [TEST-HKIA-ANNUAL-LONG-L4-L16-001]
+    validation: detail_market_totals_and_cross_grain_controls_zero_discrepancy_dimension_exception_recorded
+    status: completed
+
+  - step_id: PB01-STEP-024
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    role: qa_reviewer
+    objective: 验证L6团体退休计划市场表与L10_L11_L18公司表的数量类型和金额控制
+    input_refs: [Table-L6_2024, Table-L10_2024, Table-L11_2024, Table-L18_2024]
+    action: 核对57家公司明细_转换金额单位_分别验证保单数受保人数计划数和金额指标
+    output_refs: [TEST-HKIA-ANNUAL-LONG-L6-COMPANY-001]
+    validation: all_shared_metrics_zero_discrepancy_retirement_NA_and_scheme_count_boundary_recorded
+    status: completed
+
+  - step_id: PB01-STEP-025
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    role: qa_reviewer
+    objective: 验证L7年金及其他业务与L12_L17公司统计的共同业务粒度和时期边界
+    input_refs: [Table-L7_2024, Table-L12_2024, Table-L17_2024]
+    action: 核对57家公司明细_转换金额单位_区分2024年零_NA和无公司级对应的其他业务
+    output_refs: [TEST-HKIA-ANNUAL-LONG-L7-COMPANY-001]
+    validation: shared_2024_annuity_metrics_zero_discrepancy_historical_scope_exception_recorded
+    status: completed
+
+  - step_id: PB01-STEP-026
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    role: source_acquirer
+    objective: 获取2023年度长期业务完整包作为RBC切换前跨年认证期
+    input_refs: [IA_market_5_2023_parent_page]
+    action: 通过官方父页面会话下载L1至L19及Notes_Insurerlist_Definition并校验签名哈希
+    output_refs: [ASTSET-IA-LTA-2023-FULL-XLSX]
+    validation: 22_files_all_standard_xlsx_sha256_generated
+    status: completed
+
+  - step_id: PB01-STEP-027
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    role: qa_reviewer
+    objective: 复验2023核心公司级关系并识别2023_2024表号语义断点
+    input_refs: [Table-L14_2023, Table-L15_2023, Table-L16_2023, Table-L17_2023, Table-L18_2023, Table-L19_2023]
+    action: 动态识别59家公司及市场总额行_分别测试L14_L15_L16和L17_L18_L19
+    output_refs: [TEST-HKIA-ANNUAL-LONG-2023-CROSS-YEAR-001]
+    validation: two_chains_472_cells_zero_discrepancy_L18_L19_schema_break_recorded
+    status: completed
+
+  - step_id: PB01-STEP-028
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    role: qa_reviewer
+    objective: 复验2023年L8至L13有效业务关系和旧制度数量列序
+    input_refs: [Table-L8_2023, Table-L9_2023, Table-L10_2023, Table-L11_2023, Table-L12_2023, Table-L13_2023]
+    action: 动态映射双语列头_按59家公司测试五项指标公式_比较2023_2024业务范围和数量类型
+    output_refs: [TEST-HKIA-ANNUAL-LONG-2023-L8-L13-001]
+    validation: 295_cells_zero_discrepancy_column_order_and_L11_quantity_schema_break_recorded
+    status: completed
+
 incidents:
   - incident_id: INC-PB-004
     run_id: RUN-HKIA-PHASE-B-SLICE-01

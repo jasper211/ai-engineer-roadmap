@@ -98,7 +98,8 @@ table_registry:
     subject: insurer_total_inforce
     schema_id: SCH-LT-COMPANY-INFORCE
     dimensions: [insurer, total_inforce]
-    metrics: [policy_count, sums_assured, revenue_premium_single, revenue_premium_annual, current_estimate]
+    metrics: [policy_or_scheme_count_source_total, sums_assured, revenue_premium_single, revenue_premium_annual, current_estimate]
+    semantic_note: 源表标为保单数_但逐公司对账证明总数包含L11退休计划数
   L14:
     subject: insurer_non_linked_individual_life_new_business
     schema_id: SCH-LT-COMPANY-NEW-BUSINESS
@@ -130,6 +131,34 @@ table_registry:
     dimensions: [insurer, total_long_term]
     metrics: [policy_count_single, policy_count_annual, premium_single, premium_annual]
 
+schema_version_overrides:
+  pre_RBC_2023:
+    applies_to_report_years: [2023]
+    table_semantics:
+      L10: group_life_inforce
+      L11: retirement_scheme_inforce_with_policy_count_and_lives
+      L12: annuity_and_other_inforce
+      L17: non_linked_individual_annuity_new_business
+      L18: linked_individual_annuity_new_business
+      L19: total_individual_annuity_new_business
+    validated_relation: L17_plus_L18_equals_L19
+    test_id: TEST-HKIA-ANNUAL-LONG-2023-CROSS-YEAR-001
+    column_order_rule: annual_before_single
+    inforce_test_id: TEST-HKIA-ANNUAL-LONG-2023-L8-L13-001
+  RBC_2024:
+    applies_to_report_years: [2024]
+    table_semantics:
+      L10: non_retirement_scheme_group_inforce
+      L11: retirement_scheme_inforce_with_scheme_count
+      L12: annuity_inforce
+      L17: individual_annuity_new_business
+      L18: non_retirement_group_new_business
+      L19: total_long_term_new_business
+    validated_relation: L16_plus_L17_plus_L18_equals_L19
+    test_id: TEST-HKIA-ANNUAL-LONG-L16-L19-001
+    column_order_rule: single_before_annual
+    inforce_test_id: TEST-HKIA-ANNUAL-LONG-L8-L13-001
+
 canonical_fact_fields:
   required:
     - fact_id
@@ -151,10 +180,13 @@ canonical_fact_fields:
 
 join_graph:
   reconciliations:
-    - {detail_tables: [L2, L3], control_table: L1, relation: component_to_individual_life_inforce}
+    - {detail_tables: [L2, L3], control_table: L1, relation: metric_and_period_qualified_component_to_individual_life_inforce, test_id: TEST-HKIA-ANNUAL-LONG-L1-L3-001}
     - {detail_tables: [L14, L15], control_table: L16, relation: linked_plus_non_linked_to_total_individual_new_business}
-    - {detail_tables: [L8, L9, L10, L11, L12], control_table: L13, relation: inforce_components_to_total_reconciliation_only}
-    - {detail_tables: [L16, L17, L18], control_table: L19, relation: new_business_components_to_total_reconciliation_only}
+    - {detail_tables: [L14, L15, L16], control_table: L4, relation: validated_cross_grain_cross_unit_at_shared_dimensions, test_id: TEST-HKIA-ANNUAL-LONG-L4-L16-001}
+    - {detail_tables: [L10, L11, L18], control_table: L6, relation: validated_metric_specific_group_and_retirement_cross_grain_control, test_id: TEST-HKIA-ANNUAL-LONG-L6-COMPANY-001}
+    - {detail_tables: [L12, L17], control_table: L7, relation: validated_2024_annuity_shared_grain_control_with_other_business_exclusion, test_id: TEST-HKIA-ANNUAL-LONG-L7-COMPANY-001}
+    - {detail_tables: [L8, L9, L10, L11, L12], control_table: L13, relation: validated_metric_specific_component_to_total, test_id: TEST-HKIA-ANNUAL-LONG-L8-L13-001}
+    - {detail_tables: [L16, L17, L18], control_table: L19, relation: validated_component_to_total_L17_not_in_L16, test_id: TEST-HKIA-ANNUAL-LONG-L16-L19-001}
   entity_join:
     source: Insurerlist_2024
     rule: create_stable_insurer_id_and_alias_history_before_cross_year_join
@@ -166,7 +198,25 @@ prohibited_joins:
   - HKD_million_and_HKD_thousand_must_not_be_union_summed_before_unit_normalization
   - L5_percentage_points_must_not_enter_amount_fact_table
   - current_estimate_must_not_be_relabelled_as_EV_VONB_profit_or_solvency_capital
+  - L11_scheme_count_must_not_be_relabelled_as_policy_count_even_though_L13_source_total_combines_them
+  - L10_lives_must_not_be_added_to_L13_policy_or_scheme_count_source_total
+  - L17_individual_annuity_must_not_be_assumed_included_in_L16_individual_life_total
+  - L17_must_be_added_exactly_once_when_reconciling_L16_L18_to_L19
   - historical_columns_across_RBC_break_must_not_be_treated_as_definitionally_identical_without_notes_check
+  - historical_L1_sums_assured_approximately_equal_to_L2_must_not_be_interpreted_as_linked_sums_assured_zero_when_L1_marks_it_NA
+  - L2_plus_L3_current_estimate_must_not_be_forced_to_L1_for_2020_2023_without_L1_adjustment_rows
+  - L4_non_linked_participating_vs_other_dimension_must_not_be_joined_to_L14_single_vs_annual_payment_basis
+  - L4_and_L14_L16_premiums_must_not_be_compared_before_HKD_million_to_HKD_thousand_normalization
+  - L6b_scheme_count_must_not_be_relabelled_or_imputed_as_policy_count_or_lives
+  - L6b_policy_count_and_lives_NA_must_not_be_converted_to_zero_when_scheme_count_is_available
+  - L7a_total_must_not_be_assumed_equal_to_L12_outside_periods_where_linked_group_and_other_business_are_NA
+  - L7_other_business_categories_must_not_be_imputed_from_L12_annuity_company_rows
+  - L7b_linked_zero_and_L7a_linked_NA_must_remain_distinct
+  - L18_and_L19_table_ids_must_not_be_joined_across_2023_2024_without_schema_version_routing
+  - report_year_and_source_title_must_be_resolved_before_assigning_L17_L18_L19_business_semantics
+  - L11_2023_policy_count_must_not_be_union_mapped_to_L11_2024_scheme_count
+  - annual_and_single_premium_columns_must_not_be_mapped_by_position_across_2023_2024
+  - L12_2023_other_business_scope_must_not_be_silently_relabelled_as_2024_annuity_only
 
 quality_rules:
   - displayed_NAME_errors_in_year_headers_are_external_formula_artifacts_use_sequence_and_source_formula_audit
@@ -174,4 +224,5 @@ quality_rules:
   - retain_market_total_as_control_record_notordinary_detail_record
   - validate_company_sum_against_market_total_with_explicit_tolerance
   - record_negative_current_estimate_values_without_forcing_nonnegative
-
+  - historical_displayed_HKD_million_values_allow_explicit_rounding_tolerance_but_raw_2024_values_do_not
+  - cross_grain_reconciliation_must_use_only_the_intersection_of_dimensions_shared_by_both_tables

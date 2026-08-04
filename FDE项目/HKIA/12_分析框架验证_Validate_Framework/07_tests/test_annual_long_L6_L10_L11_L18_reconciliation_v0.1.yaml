@@ -1,0 +1,62 @@
+test_id: TEST-HKIA-ANNUAL-LONG-L6-COMPANY-001
+version: 0.1
+status: passed_with_metric_type_qualification
+test_type: market_to_company_group_and_retirement_reconciliation
+period: 2024
+
+inputs:
+  market_table: L6
+  company_tables: [L10_non_retirement_group_inforce, L11_retirement_scheme_inforce, L18_non_retirement_group_new_business]
+  insurer_count: 57
+  source_ranges:
+    L6: ["Table L6!P10:R15", "Table L6!N21:P29", "Table L6!N35:P44"]
+    L10: "Table L10!E11:J69"
+    L11: "Table L11!E11:H69"
+    L18: "Table L18!E11:I69"
+
+detail_to_market_total:
+  L10: {checked_metrics: 6, discrepancy_count: 0}
+  L11: {checked_metrics: 4, discrepancy_count: 0}
+  L18: {checked_metrics: 4, discrepancy_count: 0}
+
+cross_grain_results:
+  L6a_to_L10:
+    metrics: [policy_count, lives, sums_assured, premium_single, premium_annual, current_estimate]
+    discrepancy_count: 0
+    market_values:
+      policy_count: 16377
+      lives: 1489871
+      sums_assured_hkd_million: 1162934.4730118124
+      premium_annual_hkd_million: 5953.42669691
+      current_estimate_hkd_million: 836.3373109091
+  L6b_to_L11:
+    metrics: [scheme_count, contribution_single, contribution_annual, current_estimate]
+    discrepancy_count: 0
+    market_values:
+      scheme_count: 365637
+      contribution_single_hkd_million: 28435.503
+      contribution_annual_hkd_million: 7264.06766341
+      current_estimate_hkd_million: 113785.9794848653
+  L6c_to_L18:
+    metrics: [policy_count_single, policy_count_annual, premium_single, premium_annual]
+    discrepancy_count: 0
+    market_values:
+      policy_count_single: 0
+      policy_count_annual: 1971
+      premium_single_hkd_million: 0
+      premium_annual_hkd_million: 454.2635316704
+
+semantic_states:
+  L6b_2024_policy_count: NA
+  L6b_2024_lives: NA
+  L6b_2024_scheme_count: 365637
+
+semantic_decisions:
+  - policy_count_lives_and_scheme_count_are_separate_metric_ids
+  - L6b_scheme_count_must_not_fill_L6b_policy_count_or_lives
+  - NA_is_not_zero_and_is_not_an_absence_of_retirement_business
+  - company_HKD_thousand_values_are_divided_by_1000_before_L6_HKD_million_comparison
+
+promotion_candidate:
+  rule: L6_2024_reconciles_to_L10_L11_L18_at_metric_specific_shared_grain
+  status: validated_once_not_yet_cross_year_promoted

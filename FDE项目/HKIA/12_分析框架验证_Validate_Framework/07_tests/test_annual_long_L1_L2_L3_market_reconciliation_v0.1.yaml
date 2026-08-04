@@ -1,0 +1,46 @@
+test_id: TEST-HKIA-ANNUAL-LONG-L1-L3-001
+version: 0.1
+status: passed_with_temporal_and_semantic_qualifications
+test_type: market_history_cross_table_reconciliation
+report_year: 2024
+observation_years: [2020, 2021, 2022, 2023, 2024]
+
+inputs:
+  components: [L2_non_linked_individual_life_inforce, L3_linked_individual_life_inforce]
+  control: L1_individual_life_inforce
+  source_ranges:
+    L1: ["Table L1!D19:M19", "Table L1!D30:M36"]
+    L2: ["Table L2!D14:O14", "Table L2!D26:O26", "Table L2!D38:O38", "Table L2!D50:O50"]
+    L3: ["Table L3!E13:I13", "Table L3!E24:I24", "Table L3!E35:I35"]
+
+results:
+  policy_count:
+    expression: L2_non_linked + L3_linked = L1_total
+    checked_years: 5
+    discrepancy_count: 0
+  office_or_revenue_premium:
+    expression: L2_non_linked + L3_linked approximately_equals L1_total
+    checked_years: 5
+    max_abs_difference_hkd_million: 0.1
+    interpretation: displayed_historical_values_are_rounded_to_0.1_million
+  net_liability_or_current_estimate:
+    expression_2024: L2_non_linked + L3_linked = L1_total
+    discrepancy_2024: 0
+    expression_2020_2023: L2_non_linked + L3_linked + L1_unlabelled_adjustment_rows = L1_total
+    direct_formula_residuals_hkd_million: [31796.0, 37042.3, 14378.9, 104538.1]
+    interpretation: historical_direct_formula_is_not_promotable_without_L1_adjustment_rows
+  sums_assured:
+    L3_publication_status: not_published
+    L1_linked_status_2020_2023: NA
+    L1_linked_value_2024_hkd_million: 546178.6040449989
+    prohibited_inference: historical_L1_total_approximately_equal_L2_total_does_not_mean_linked_sums_assured_was_zero
+
+header_quality:
+  artifact: L2_2023_header_displays_NAME_error_from_external_formula
+  handling: infer_2023_only_from_order_and_formula_audit_preserve_source_read_only
+
+promotion_decision:
+  policy_count_relation: validated_once_not_cross_year_promoted
+  premium_relation: validated_once_with_rounding_tolerance
+  liability_relation: 2024_only_historical_adjustment_required
+  sums_assured_relation: not_a_direct_L2_plus_L3_test

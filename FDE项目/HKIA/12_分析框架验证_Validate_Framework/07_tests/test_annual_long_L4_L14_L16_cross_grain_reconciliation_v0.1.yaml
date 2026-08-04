@@ -1,0 +1,58 @@
+test_id: TEST-HKIA-ANNUAL-LONG-L4-L16-001
+version: 0.1
+status: passed_with_dimension_qualification
+test_type: market_to_company_cross_grain_and_cross_unit_reconciliation
+period: 2024
+
+inputs:
+  market_history_table: L4_individual_life_new_business
+  company_tables: [L14_non_linked, L15_linked, L16_total_individual_life]
+  insurer_count: 57
+  source_ranges:
+    L4: ["Table L4!D15:O15", "Table L4!D26:O26", "Table L4!D38:O38", "Table L4!D48:O48"]
+    L14: "Table L14!E11:I69"
+    L15: "Table L15!E11:I69"
+    L16: "Table L16!E11:I69"
+
+unit_rule:
+  L4_premium_unit: HKD_million
+  L14_L16_premium_unit: HKD_thousand
+  conversion: company_premium_thousand / 1000 = market_premium_million
+
+detail_to_source_market_total:
+  expression: sum_57_insurer_rows = source_market_total_row
+  tables_checked: [L14, L15, L16]
+  metrics_per_table: [policy_count_single, policy_count_annual, premium_single, premium_annual]
+  checked_cells: 12
+  discrepancy_count: 0
+
+cross_grain_results:
+  L4_non_linked_to_L14:
+    comparable_grain: grand_total_only
+    policy_total: 962413
+    premium_total_hkd_million: 195718.9778747071
+    discrepancy_count: 0
+    dimension_exception: L4_non_linked_uses_participating_vs_other_while_L14_uses_single_vs_annual
+  L4_linked_to_L15:
+    comparable_grain: payment_basis
+    policy_single: 18328
+    policy_annual: 5467
+    premium_single_hkd_million: 9733.52416
+    premium_annual_hkd_million: 1435.22469953
+    checked_cells: 4
+    discrepancy_count: 0
+  L4_total_to_L16:
+    comparable_grain: grand_total_only
+    policy_total: 986208
+    premium_total_hkd_million: 206887.7267342371
+    discrepancy_count: 0
+
+semantic_decisions:
+  - market_total_rows_are_controls_and_must_not_be_added_again_to_the_57_company_rows
+  - L4_non_linked_participation_dimension_must_not_be_relabelled_as_payment_basis
+  - L4_to_L16_total_does_not_validate_a_non_linked_payment_basis_split
+  - unit_conversion_is_required_before_amount_comparison
+
+promotion_candidate:
+  rule: L4_2024_market_total_reconciles_to_company_table_market_totals_after_unit_conversion_at_shared_grain
+  status: validated_once_not_yet_cross_year_promoted

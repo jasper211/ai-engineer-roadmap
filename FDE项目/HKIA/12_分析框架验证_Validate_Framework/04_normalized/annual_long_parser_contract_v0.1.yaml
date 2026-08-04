@@ -11,10 +11,14 @@ pipeline:
     failure: create_incident
   - step: identify_table_id_sheet_and_report_year
     failure: reject_fact_extraction
+  - step: select_year_specific_table_semantics_before_metric_mapping
+    failure: quarantine_schema_version
   - step: detect_subtable_blocks_and_multilevel_headers
     failure: manual_schema_review
   - step: expand_merged_headers_and_normalize_bilingual_labels
     failure: retain_raw_header_path
+  - step: map_payment_basis_and_quantity_metrics_from_labels_not_column_positions
+    failure: quarantine_ambiguous_columns
   - step: convert_wide_observations_to_canonical_long_facts
     failure: no_partial_publish
   - step: normalize_units_metric_ids_dimensions_and_entity_ids
@@ -43,9 +47,53 @@ acceptance_tests:
   - L14_plus_L15_reconciles_to_L16_by_insurer_and_metric_or_exception_is_logged
   - L16_L17_L18_to_L19_relation_is_reconciled_not_assumed
   - external_formula_header_artifacts_do_not_overwrite_source_file
+  - L1_L2_L3_relations_are_validated_by_metric_and_observation_year_not_as_one_blanket_formula
+  - L4_to_L14_L16_cross_grain_checks_normalize_units_and_compare_only_shared_dimensions
+  - L6_group_policy_lives_and_retirement_scheme_counts_remain_separate_metric_types
+  - L7_annuity_controls_apply_only_to_shared_business_categories_and_periods
+  - L17_L18_L19_semantics_are_routed_by_report_year_not_table_number_alone
+  - L8_L13_component_formulas_are_versioned_when_quantity_types_or_business_scope_change
 
 test_evidence:
+  - test_id: TEST-HKIA-ANNUAL-LONG-2023-L8-L13-001
+    result: pass_with_cross_year_metric_semantic_change
+    scope: 59_entities_x_5_metric_formulas_295_cells_zero_discrepancy
+    schema_break: L11_policy_and_lives_change_to_scheme_count_and_payment_column_order_reverses
+  - test_id: TEST-HKIA-ANNUAL-LONG-2023-CROSS-YEAR-001
+    result: pass_with_schema_version_break
+    scope: 59_entities_x_4_metrics_for_two_company_control_chains
+    stable_candidate: L14_plus_L15_equals_L16_validated_in_2023_and_2024
+    schema_break: L18_L19_business_meanings_change_between_2023_and_2024
+  - test_id: TEST-HKIA-ANNUAL-LONG-L7-COMPANY-001
+    result: pass_with_period_scope_qualification
+    scope: L12_L17_company_details_to_market_totals_and_L7_2024_shared_annuity_grain
+    semantic_exception: L7a_other_categories_have_no_L12_counterpart_and_are_NA_in_2024
+    promotion_limit: one_year_only
+  - test_id: TEST-HKIA-ANNUAL-LONG-L6-COMPANY-001
+    result: pass_with_metric_type_qualification
+    scope: L10_L11_L18_company_details_to_market_totals_and_L6_cross_grain_controls
+    semantic_exception: retirement_policy_count_and_lives_are_NA_while_scheme_count_is_available
+    promotion_limit: one_year_only
+  - test_id: TEST-HKIA-ANNUAL-LONG-L4-L16-001
+    result: pass_with_dimension_qualification
+    scope: 57_company_detail_to_market_totals_then_L4_cross_grain_control_after_unit_conversion
+    semantic_exception: non_linked_participation_dimension_does_not_map_to_payment_basis
+    promotion_limit: one_year_only
+  - test_id: TEST-HKIA-ANNUAL-LONG-L1-L3-001
+    result: pass_with_temporal_and_semantic_qualifications
+    scope: five_observation_years_policy_exact_premium_rounding_liability_adjustment_and_sums_NA_boundary
+    promotion_limit: one_report_vintage_only
   - test_id: TEST-HKIA-ANNUAL-LONG-L14-L16-001
     result: pass
     scope: 57_insurers_x_4_metrics_228_cells_zero_discrepancy
+    promotion_limit: one_year_only
+  - test_id: TEST-HKIA-ANNUAL-LONG-L8-L13-001
+    result: pass_with_semantic_qualification
+    scope: 57_insurers_x_5_validated_metric_formulas_zero_discrepancy
+    semantic_exception: L13_policy_count_source_label_includes_L11_scheme_count
+    promotion_limit: one_year_only
+  - test_id: TEST-HKIA-ANNUAL-LONG-L16-L19-001
+    result: pass
+    scope: 57_insurers_x_4_metrics_228_cells_zero_discrepancy
+    overlap_decision: L17_not_included_in_L16
     promotion_limit: one_year_only

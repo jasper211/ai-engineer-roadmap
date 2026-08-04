@@ -1,0 +1,50 @@
+test_id: TEST-HKIA-ANNUAL-LONG-2023-CROSS-YEAR-001
+version: 0.1
+status: passed_with_schema_version_break
+test_type: cross_year_core_company_reconciliation
+period: 2023
+comparison_period: 2024
+
+inputs:
+  individual_life_chain: [L14, L15, L16]
+  annuity_chain: [L17, L18, L19]
+  detected_company_entities: 59
+  market_total_row: 70
+  metrics: [policy_count_annual, policy_count_single, premium_annual, premium_single]
+
+results:
+  individual_life_new_business:
+    expression: L14_non_linked + L15_linked = L16_total_individual_life
+    checked_cells: 236
+    discrepancy_count: 0
+    market_total_discrepancy_count: 0
+    cross_year_decision: same_relation_passed_in_2023_and_2024
+  individual_annuity_new_business:
+    expression: L17_non_linked_annuity + L18_linked_annuity = L19_total_annuity
+    checked_cells: 236
+    discrepancy_count: 0
+    market_total_discrepancy_count: 0
+    cross_year_decision: valid_for_2023_pre_RBC_schema_not_2024
+
+schema_break:
+  affected_tables: [L18, L19]
+  2023_semantics:
+    L17: non_linked_individual_annuity_new_business
+    L18: linked_individual_annuity_new_business
+    L19: total_individual_annuity_new_business
+  2024_semantics:
+    L17: individual_annuity_new_business
+    L18: non_retirement_group_new_business
+    L19: total_long_term_new_business
+
+semantic_decisions:
+  - table_id_alone_is_not_a_stable_cross_year_business_key
+  - parser_must_select_schema_by_report_year_and_source_title_before_mapping_table_id
+  - L16_L17_L18_to_L19_2024_formula_is_prohibited_for_2023
+  - L17_L18_to_L19_2023_formula_is_prohibited_for_2024
+
+promotion_candidates:
+  - rule: L14_plus_L15_equals_L16_by_company_and_metric
+    status: validated_2_of_3_periods
+  - rule: L17_plus_L18_equals_L19
+    status: version_scoped_2023_only

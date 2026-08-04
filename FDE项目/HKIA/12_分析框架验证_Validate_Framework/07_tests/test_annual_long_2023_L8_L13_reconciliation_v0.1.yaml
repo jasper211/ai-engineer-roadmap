@@ -1,0 +1,55 @@
+test_id: TEST-HKIA-ANNUAL-LONG-2023-L8-L13-001
+version: 0.1
+status: passed_with_cross_year_metric_semantic_change
+test_type: pre_RBC_company_inforce_reconciliation
+period: 2023
+
+inputs:
+  component_tables: [L8, L9, L10, L11, L12]
+  control_table: L13
+  detected_company_entities: 59
+  market_total_row: 70
+
+validated_formulas:
+  policy_count: L8_policy + L9_policy + L10_policy + L11_policy + L12_policy = L13_policy
+  sums_assured: L8_sums + L10_sums = L13_sums
+  premium_annual: L8_annual + L9_annual + L10_annual + L11_contribution_annual + L12_annual = L13_annual
+  premium_single: L8_single + L9_single + L12_single = L13_single
+  net_liabilities: L8_net + L9_net + L10_net + L11_net + L12_net = L13_net
+
+results:
+  checked_cells: 295
+  discrepancy_count: 0
+  market_total_discrepancy_count: 0
+  max_abs_difference: 0
+
+excluded_metrics:
+  - L10_lives
+  - L11_lives
+
+cross_year_differences:
+  column_order:
+    2023: annual_before_single
+    2024: single_before_annual
+  L10_scope:
+    2023: group_life_inforce
+    2024: non_retirement_scheme_group_inforce
+  L11_quantity:
+    2023: [policy_count, lives]
+    2024: [scheme_count]
+  L12_scope:
+    2023: annuity_and_other_inforce
+    2024: annuity_inforce
+  liability_label:
+    2023: net_liabilities
+    2024: current_estimate
+
+semantic_decisions:
+  - column_mapping_must_use_header_labels_not_fixed_positions
+  - L11_policy_count_2023_and_L11_scheme_count_2024_are_distinct_metric_ids
+  - L10_and_L11_lives_do_not_enter_L13_policy_total
+  - same_table_addition_graph_does_not_mean_component_metrics_are_semantically_identical_across_years
+
+promotion_candidate:
+  rule: L8_to_L12_reconcile_to_L13_by_versioned_metric_formula
+  status: validated_2_of_3_periods_with_schema_qualification
