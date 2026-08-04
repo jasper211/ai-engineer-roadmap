@@ -1,84 +1,233 @@
 {
   "analysis": {
     "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
-    "analysis_status": "PENDING_MODEL",
-    "decision_drafts": [],
-    "generation_mode": "EVIDENCE_ONLY_BOOTSTRAP",
-    "l4_analysis": [
+    "analysis_status": "MODEL_DRAFT",
+    "control_chain": [],
+    "decision_drafts": [
       {
-        "ai_reshape": "",
-        "ai_responsibility": "",
-        "analysis_status": "PENDING_MODEL",
-        "confidence": "UNASSESSED",
-        "control_gates": [],
-        "current_recommendation": "",
-        "data_basis": [],
-        "deliverable_role": "",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-01312b948a6321808925",
-          "EVD-059baa24ad494d0f6f1b",
-          "EVD-2a8fbe9ed2f17d22cf48",
-          "EVD-2de27666273d2259c992",
-          "EVD-40c61e7c40c92fec9b15",
-          "EVD-598f747700c04d3a92bf",
-          "EVD-a0a6eeab37d19897bdeb",
-          "EVD-a6a935c44e832c6feabe",
-          "EVD-b541f9499818fbe1a7c9",
-          "EVD-c5ca760bf616cdf436ed",
-          "EVD-e0daa925457013eff16e",
-          "EVD-e6aeb1195a13290dff49",
-          "EVD-ebf91950afbf4b447b1a"
+          "EVD-f82b306e59afc9679bd7",
+          "EVD-378e57127e95a547d2ca",
+          "EVD-d95c09b15563630ea2d5"
         ],
-        "handoff_triggers": [],
-        "human_responsibility": "",
-        "l4_code": "L4-BSRV-01",
-        "process_context": "",
-        "quality_anchor": "",
-        "risks_limits": [],
-        "specific_capabilities": []
+        "human_boundary": "金额差异判定、最终核对确认、付款移交审批必须由经代机构合作岗执行，不可交给系统。Agent仅提供比对差异和高亮提示。",
+        "pilot_scope": "选择1-2家经代机构，覆盖结算服务费核对全流程，暂不涉及其他费用类型。由经代机构合作岗执行最终确认和付款移交。",
+        "priority": "高",
+        "task_ids": [
+          "BSRV-02-T3",
+          "BSRV-02-T4"
+        ],
+        "title": "立即试点结算核对Agent辅助，坚决保留人工付款审批"
       },
       {
-        "ai_reshape": "",
-        "ai_responsibility": "",
-        "analysis_status": "PENDING_MODEL",
-        "confidence": "UNASSESSED",
-        "control_gates": [],
-        "current_recommendation": "",
-        "data_basis": [],
-        "deliverable_role": "",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-0068695e622a20a2694e",
-          "EVD-06657ed312fe9c7b50f0",
-          "EVD-148c78c3e53027299ea9",
-          "EVD-4ac63ab6b409b7ab6fa5",
-          "EVD-a0a6eeab37d19897bdeb",
-          "EVD-b05083e110fe7c806e56",
-          "EVD-b97d69aa6f342ca07241",
+          "EVD-059baa24ad494d0f6f1b",
+          "EVD-6071e3d948997d2d34a9"
+        ],
+        "human_boundary": "协调内部资源、决策与对外沟通必须由人工进行。",
+        "pilot_scope": "全团队推行标准问题记录模板，利用Skill自动生成日志和提醒，人工负责跟进与协调。",
+        "priority": "中",
+        "task_ids": [
+          "BSRV-01-T1",
+          "BSRV-01-T3"
+        ],
+        "title": "建立日常运营日志标准化模板并启用Skill辅助"
+      }
+    ],
+    "generation_mode": "UNIFIED_MODEL",
+    "l4_analysis": [
+      {
+        "ai_reshape": "问题记录、分发与日志生成可部分自动化，但协调内部资源和跟进需人工判断，建议采用Skill辅助日志与跟踪，人工负责跟进。",
+        "ai_responsibility": "问题日志记录、跟踪提醒",
+        "analysis_status": "MODEL_DRAFT",
+        "confidence": "MODEL_DRAFT",
+        "control_gates": [
+          "对外承诺或涉及合规敏感事项需主管审批"
+        ],
+        "current_recommendation": "短期：建立标准问题记录模板，由人工执行；中期：实现Skill日志记录与分发，人工跟进；长期：待规则固化和系统集成后验证Skill深度自动化。",
+        "data_basis": [
+          "蓝图步骤STEP-01 (EVD-6071e3d948997d2d34a9): 接收、协调、跟进活动",
+          "Skill可行性评估 (EVD-059baa24ad494d0f6f1b): B级封装, 日志记录可Skill化, 人工跟进",
+          "D1-D6评分: 输入结构化2, 规则清晰1, 输出验证2, API可达1, 降级1, 合规1"
+        ],
+        "database_tier": "Aug",
+        "deliverable_role": "过程活动，无直接交付物；辅助支持角色",
+        "evidence_refs": [
+          "EVD-6071e3d948997d2d34a9",
+          "EVD-059baa24ad494d0f6f1b",
+          "EVD-2de27666273d2259c992",
+          "EVD-01312b948a6321808925",
+          "EVD-ebf91950afbf4b447b1a",
+          "EVD-b541f9499818fbe1a7c9",
+          "EVD-a6a935c44e832c6feabe",
+          "EVD-c5ca760bf616cdf436ed",
+          "EVD-e6aeb1195a13290dff49",
+          "EVD-40c61e7c40c92fec9b15",
+          "EVD-a0a6eeab37d19897bdeb"
+        ],
+        "handoff_triggers": [
+          "需要跨部门协调决策时",
+          "问题升级或超出标准流程时"
+        ],
+        "human_responsibility": "协调内部资源、跟进问题处理、决策解决",
+        "l4_code": "L4-BSRV-01",
+        "process_context": "属于经代机构日常运营支持，确保机构运营顺畅，是机构合作的基础保障环节。",
+        "quadrant": "unclassified",
+        "quality_anchor": "问题及时响应率、解决率、日志完整性",
+        "recommended_tier": "Aug",
+        "risks_limits": [
+          "依赖人工协调，自动化程度低",
+          "系统集成不完善，规则不清晰，Skill深度自动化受限",
+          "外部依赖多，需频繁跨部门沟通"
+        ],
+        "specific_capabilities": [
+          "接收与记录机构日常运营问题/需求",
+          "协调内部资源（IT/合规/财务）",
+          "跟进问题处理进度与日志维护"
+        ]
+      },
+      {
+        "ai_reshape": "AI可辅助金额核对差异提示，但最终确认、异常判定和付款移交必须人工，建议Agent辅助决策支持，不直接封装确定性Skill。",
+        "ai_responsibility": "金额与合同条款的自动比对、差异标注、台账生成",
+        "analysis_status": "MODEL_DRAFT",
+        "confidence": "MODEL_DRAFT",
+        "control_gates": [
+          "资金安全硬关卡：付款移交前必须人工审批",
+          "合规费用需合规部门确认"
+        ],
+        "current_recommendation": "强化人工核对与审批机制，利用AI辅助比对与台账生成，在资金安全前提下逐步提升自动化率。优先补充人机接触点定义和规则库。",
+        "data_basis": [
+          "蓝图步骤STEP-02 (EVD-378e57127e95a547d2ca): 接收、核对、确认、移交、存档活动",
+          "Skill可行性评估 (EVD-f82b306e59afc9679bd7): C级低封装, 判断/策略类, 资金安全硬关卡=true",
+          "D1-D6评分: 输入结构化2, 规则清晰1, 输出验证2, API可达1, 降级1, 合规1",
+          "价值节点VN-BSRV-01 (EVD-3e865387b8f41472b921): 整体判断PARTIAL, 优先级P1"
+        ],
+        "database_tier": "Hybrid",
+        "deliverable_role": "《机构结算核对台账》的数据核对与维护，支持结算付款决策",
+        "evidence_refs": [
+          "EVD-378e57127e95a547d2ca",
+          "EVD-f82b306e59afc9679bd7",
           "EVD-bf3b730bcb5881123690",
-          "EVD-d794b4228035a7d325df",
-          "EVD-d95c09b15563630ea2d5",
           "EVD-e86aabcf60c4995eb094",
           "EVD-f1ec4c009dd811423b5f",
-          "EVD-f82b306e59afc9679bd7"
+          "EVD-06657ed312fe9c7b50f0",
+          "EVD-4ac63ab6b409b7ab6fa5",
+          "EVD-b97d69aa6f342ca07241",
+          "EVD-d794b4228035a7d325df",
+          "EVD-b05083e110fe7c806e56",
+          "EVD-0068695e622a20a2694e",
+          "EVD-a0a6eeab37d19897bdeb",
+          "EVD-3e865387b8f41472b921",
+          "EVD-2364a9794e511817526e",
+          "EVD-d95c09b15563630ea2d5"
         ],
-        "handoff_triggers": [],
-        "human_responsibility": "",
+        "handoff_triggers": [
+          "比对出现差异需人工判定时",
+          "付款移交前须人工审批",
+          "定期复盘核对台账"
+        ],
+        "human_responsibility": "核对结果最终确认、异常处理决策、付款移交审批、台账审核存档",
         "l4_code": "L4-BSRV-02",
-        "process_context": "",
-        "quality_anchor": "",
-        "risks_limits": [],
-        "specific_capabilities": []
+        "process_context": "属于经代机构结算评估，涉及多费用类型核对，最终移交付款，资金安全高度敏感，是机构合作的关键价值环节。",
+        "quadrant": "unclassified",
+        "quality_anchor": "台账核对准确率100%，付款及时性",
+        "recommended_tier": "Hybrid",
+        "risks_limits": [
+          "资金安全风险极高，不可绕过人工审批",
+          "规则清晰度不足（D2=1），完全自动化核对不可靠",
+          "系统接口可用性低（D4=1），自动化获取账单受限",
+          "人机接触点缺失，需尽快明确人工交接规范"
+        ],
+        "specific_capabilities": [
+          "接收各费用类型账单",
+          "按费用类型核对金额与合同条款",
+          "确认核对结果并标注异常项",
+          "移交中台结算付款",
+          "存档结算核对台账"
+        ]
       }
     ],
     "missing_analysis": [
-      "逐L4交付物与具体能力分析",
-      "逐任务AI分工分析",
-      "逐L4人机协作与控制分析",
-      "逐L4优先级四维分析",
-      "任务级负责人决策建议"
+      "L4-BSRV-02 · human_touchpoint",
+      "sop_and_rules"
     ],
-    "model_run": null,
-    "priority_drafts": [],
+    "model_run": {
+      "generated_at": "2026-08-04T16:56:15.930945+00:00",
+      "input_snapshot_hash": "bfbeb1d460386cc715eb24c452cdd00791f52de99643fc66985a74ce08b6b253",
+      "model_name": "deepseek-v4-pro",
+      "model_version": "deepseek-v4-pro",
+      "prompt_version": "VNW-L3-COM-GOLD-v1.0"
+    },
+    "priority_drafts": [
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "current_recommendation": "短期：建立标准问题记录模板，由人工执行；中期：实现Skill日志记录与分发，人工跟进；长期：待规则固化和系统集成后验证Skill深度自动化。",
+        "data_basis": [
+          "蓝图步骤STEP-01 (EVD-6071e3d948997d2d34a9): 接收、协调、跟进活动",
+          "Skill可行性评估 (EVD-059baa24ad494d0f6f1b): B级封装, 日志记录可Skill化, 人工跟进",
+          "D1-D6评分: 输入结构化2, 规则清晰1, 输出验证2, API可达1, 降级1, 合规1"
+        ],
+        "evidence_refs": [
+          "EVD-6071e3d948997d2d34a9",
+          "EVD-059baa24ad494d0f6f1b",
+          "EVD-2de27666273d2259c992",
+          "EVD-01312b948a6321808925",
+          "EVD-ebf91950afbf4b447b1a",
+          "EVD-b541f9499818fbe1a7c9",
+          "EVD-a6a935c44e832c6feabe",
+          "EVD-c5ca760bf616cdf436ed",
+          "EVD-e6aeb1195a13290dff49",
+          "EVD-40c61e7c40c92fec9b15",
+          "EVD-a0a6eeab37d19897bdeb"
+        ],
+        "l4_code": "L4-BSRV-01",
+        "process_context": "属于经代机构日常运营支持，确保机构运营顺畅，是机构合作的基础保障环节。",
+        "quadrant": "unclassified",
+        "risks_limits": [
+          "依赖人工协调，自动化程度低",
+          "系统集成不完善，规则不清晰，Skill深度自动化受限",
+          "外部依赖多，需频繁跨部门沟通"
+        ]
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "current_recommendation": "强化人工核对与审批机制，利用AI辅助比对与台账生成，在资金安全前提下逐步提升自动化率。优先补充人机接触点定义和规则库。",
+        "data_basis": [
+          "蓝图步骤STEP-02 (EVD-378e57127e95a547d2ca): 接收、核对、确认、移交、存档活动",
+          "Skill可行性评估 (EVD-f82b306e59afc9679bd7): C级低封装, 判断/策略类, 资金安全硬关卡=true",
+          "D1-D6评分: 输入结构化2, 规则清晰1, 输出验证2, API可达1, 降级1, 合规1",
+          "价值节点VN-BSRV-01 (EVD-3e865387b8f41472b921): 整体判断PARTIAL, 优先级P1"
+        ],
+        "evidence_refs": [
+          "EVD-378e57127e95a547d2ca",
+          "EVD-f82b306e59afc9679bd7",
+          "EVD-bf3b730bcb5881123690",
+          "EVD-e86aabcf60c4995eb094",
+          "EVD-f1ec4c009dd811423b5f",
+          "EVD-06657ed312fe9c7b50f0",
+          "EVD-4ac63ab6b409b7ab6fa5",
+          "EVD-b97d69aa6f342ca07241",
+          "EVD-d794b4228035a7d325df",
+          "EVD-b05083e110fe7c806e56",
+          "EVD-0068695e622a20a2694e",
+          "EVD-a0a6eeab37d19897bdeb",
+          "EVD-3e865387b8f41472b921",
+          "EVD-2364a9794e511817526e",
+          "EVD-d95c09b15563630ea2d5"
+        ],
+        "l4_code": "L4-BSRV-02",
+        "process_context": "属于经代机构结算评估，涉及多费用类型核对，最终移交付款，资金安全高度敏感，是机构合作的关键价值环节。",
+        "quadrant": "unclassified",
+        "risks_limits": [
+          "资金安全风险极高，不可绕过人工审批",
+          "规则清晰度不足（D2=1），完全自动化核对不可靠",
+          "系统接口可用性低（D4=1），自动化获取账单受限",
+          "人机接触点缺失，需尽快明确人工交接规范"
+        ]
+      }
+    ],
     "rejected_task_sources": [],
     "schema_version": "vnw.l3-analysis.v1",
     "source_scope": {
@@ -88,160 +237,184 @@
     },
     "tasks": [
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-6071e3d948997d2d34a9"
+          "EVD-6071e3d948997d2d34a9",
+          "EVD-059baa24ad494d0f6f1b"
         ],
         "l4_code": "L4-BSRV-01",
         "next_task_ids": [],
         "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
+        "relation_type": "NONE",
         "sequence_no": 1,
-        "sequence_status": "SOURCE_CONFIRMED",
+        "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 69,
         "source_step_id": "STEP-01",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-BSRV-01-T01",
-        "task_name": "接收机构日常运营问题/需求（保单/账单/系统/人员等）",
-        "tier_rationale": ""
+        "source_type": "blueprint_step",
+        "suggested_tier": "Aug",
+        "task_id": "BSRV-01-T1",
+        "task_name": "接收与记录日常运营问题/需求",
+        "tier_rationale": "问题接收和记录可结构化并自动化，但需人工确认问题分类和优先级，适合增强辅助。"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-6071e3d948997d2d34a9"
+          "EVD-6071e3d948997d2d34a9",
+          "EVD-059baa24ad494d0f6f1b"
         ],
         "l4_code": "L4-BSRV-01",
         "next_task_ids": [],
         "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
+        "relation_type": "NONE",
         "sequence_no": 1,
-        "sequence_status": "SOURCE_CONFIRMED",
+        "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 69,
         "source_step_id": "STEP-01",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-BSRV-01-T02",
-        "task_name": "协调内部资源（IT/合规/财务等）响应机构需求",
-        "tier_rationale": ""
+        "source_type": "blueprint_step",
+        "suggested_tier": "Human",
+        "task_id": "BSRV-01-T2",
+        "task_name": "协调内部资源响应机构需求",
+        "tier_rationale": "跨部门协调高度依赖人际沟通和软技能，无法标准化，必须人工执行。"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-6071e3d948997d2d34a9"
+          "EVD-6071e3d948997d2d34a9",
+          "EVD-059baa24ad494d0f6f1b"
         ],
         "l4_code": "L4-BSRV-01",
         "next_task_ids": [],
         "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
+        "relation_type": "NONE",
         "sequence_no": 1,
-        "sequence_status": "SOURCE_CONFIRMED",
+        "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 69,
         "source_step_id": "STEP-01",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-BSRV-01-T03",
-        "task_name": "跟进问题处理进度，确保机构正常运营",
-        "tier_rationale": ""
+        "source_type": "blueprint_step",
+        "suggested_tier": "Aug",
+        "task_id": "BSRV-01-T3",
+        "task_name": "跟进问题处理进度并维护日志",
+        "tier_rationale": "可采用Skill记录和提醒进度，但需人工跟踪确认问题关闭，适合增强辅助。"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-378e57127e95a547d2ca"
+          "EVD-378e57127e95a547d2ca",
+          "EVD-f82b306e59afc9679bd7"
         ],
         "l4_code": "L4-BSRV-02",
-        "next_task_ids": [],
+        "next_task_ids": [
+          "BSRV-02-T2"
+        ],
         "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
+        "relation_type": "SEQUENCE",
+        "sequence_no": 1,
+        "sequence_status": "SOURCE_CONFIRMED",
+        "source_line": 87,
+        "source_step_id": "STEP-02",
+        "source_type": "blueprint_step",
+        "suggested_tier": "Aug",
+        "task_id": "BSRV-02-T1",
+        "task_name": "接收各费用类型账单",
+        "tier_rationale": "账单可通过系统接口获取，但当前API可达性低，需人工触发或整合。"
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [
+          "EVD-378e57127e95a547d2ca",
+          "EVD-f82b306e59afc9679bd7"
+        ],
+        "l4_code": "L4-BSRV-02",
+        "next_task_ids": [
+          "BSRV-02-T3"
+        ],
+        "previous_task_ids": [
+          "BSRV-02-T1"
+        ],
+        "relation_type": "SEQUENCE",
         "sequence_no": 2,
         "sequence_status": "SOURCE_CONFIRMED",
         "source_line": 87,
         "source_step_id": "STEP-02",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-BSRV-02-T01",
-        "task_name": "接收各费用类型账单（结算服务费/权益费/管理费/合规费/邮箱费）",
-        "tier_rationale": ""
+        "source_type": "blueprint_step",
+        "suggested_tier": "Hybrid",
+        "task_id": "BSRV-02-T2",
+        "task_name": "按费用类型核对金额与合同条款",
+        "tier_rationale": "金额比对可自动化，但合同条款解读和差异判定需人工，涉及资金安全，适合人机协作。"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-378e57127e95a547d2ca"
+          "EVD-378e57127e95a547d2ca",
+          "EVD-f82b306e59afc9679bd7"
         ],
         "l4_code": "L4-BSRV-02",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 2,
+        "next_task_ids": [
+          "BSRV-02-T4"
+        ],
+        "previous_task_ids": [
+          "BSRV-02-T2"
+        ],
+        "relation_type": "SEQUENCE",
+        "sequence_no": 3,
         "sequence_status": "SOURCE_CONFIRMED",
         "source_line": 87,
         "source_step_id": "STEP-02",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-BSRV-02-T02",
-        "task_name": "按费用类型逐一核对金额与合同条款",
-        "tier_rationale": ""
+        "source_type": "blueprint_step",
+        "suggested_tier": "Human",
+        "task_id": "BSRV-02-T3",
+        "task_name": "确认核对结果并标注异常项",
+        "tier_rationale": "最终确认和异常标注需专业判断，资金安全硬关卡，必须人工执行。"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-378e57127e95a547d2ca"
+          "EVD-378e57127e95a547d2ca",
+          "EVD-f82b306e59afc9679bd7"
         ],
         "l4_code": "L4-BSRV-02",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 2,
+        "next_task_ids": [
+          "BSRV-02-T5"
+        ],
+        "previous_task_ids": [
+          "BSRV-02-T3"
+        ],
+        "relation_type": "SEQUENCE",
+        "sequence_no": 4,
         "sequence_status": "SOURCE_CONFIRMED",
         "source_line": 87,
         "source_step_id": "STEP-02",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-BSRV-02-T03",
-        "task_name": "确认各费用类型核对结果，标注异常项",
-        "tier_rationale": ""
+        "source_type": "blueprint_step",
+        "suggested_tier": "Human",
+        "task_id": "BSRV-02-T4",
+        "task_name": "移交中台结算L3执行付款",
+        "tier_rationale": "付款移交为资金安全硬关卡，必须人工审批后执行。"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-378e57127e95a547d2ca"
+          "EVD-378e57127e95a547d2ca",
+          "EVD-f82b306e59afc9679bd7"
         ],
         "l4_code": "L4-BSRV-02",
         "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 2,
-        "sequence_status": "SOURCE_CONFIRMED",
-        "source_line": 87,
-        "source_step_id": "STEP-02",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-BSRV-02-T04",
-        "task_name": "核对确认后，移交中台对应结算 L3 执行付款",
-        "tier_rationale": ""
-      },
-      {
-        "analysis_status": "FACT_EXTRACTED",
-        "evidence_refs": [
-          "EVD-378e57127e95a547d2ca"
+        "previous_task_ids": [
+          "BSRV-02-T4"
         ],
-        "l4_code": "L4-BSRV-02",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 2,
+        "relation_type": "SEQUENCE",
+        "sequence_no": 5,
         "sequence_status": "SOURCE_CONFIRMED",
         "source_line": 87,
         "source_step_id": "STEP-02",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-BSRV-02-T05",
+        "source_type": "blueprint_step",
+        "suggested_tier": "Aug",
+        "task_id": "BSRV-02-T5",
         "task_name": "存档结算核对台账",
-        "tier_rationale": ""
+        "tier_rationale": "台账存档可自动生成记录，但需人工复核归档完整性。"
       }
     ]
   },
-  "analysis_freshness": "PENDING_MODEL",
+  "analysis_freshness": "CURRENT",
   "analysis_input_hash": "bfbeb1d460386cc715eb24c452cdd00791f52de99643fc66985a74ce08b6b253",
   "blueprint": {
     "blueprint_value_nodes": [],

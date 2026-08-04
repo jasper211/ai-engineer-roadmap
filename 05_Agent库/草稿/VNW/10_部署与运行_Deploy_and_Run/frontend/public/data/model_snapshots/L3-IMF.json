@@ -1,436 +1,834 @@
 {
   "analysis": {
     "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
-    "analysis_status": "PENDING_MODEL",
+    "analysis_status": "MODEL_DRAFT",
+    "control_chain": [],
     "decision_drafts": [],
-    "generation_mode": "EVIDENCE_ONLY_BOOTSTRAP",
+    "generation_mode": "UNIFIED_MODEL",
     "l4_analysis": [
       {
-        "ai_reshape": "",
-        "ai_responsibility": "",
-        "analysis_status": "PENDING_MODEL",
-        "confidence": "UNASSESSED",
-        "control_gates": [],
-        "current_recommendation": "",
-        "data_basis": [],
-        "deliverable_role": "",
+        "ai_reshape": "将数据采集与质量校验流程封装为确定性Skill，异常时人工介入，实现Auto级自动化",
+        "ai_responsibility": "执行自动化数据管道和校验规则",
+        "analysis_status": "MODEL_DRAFT",
+        "confidence": "MODEL_DRAFT",
+        "control_gates": [
+          "数据源权限验证"
+        ],
+        "current_recommendation": "优先将采集和校验封装为Skill，保留人工复核环节，尽快进入原型验证",
+        "data_basis": [
+          "D1=3 (EVD-75256d336876b2249110)",
+          "Skill可行性A-高封装 (EVD-8eaab7f3e027d9cfc3f9)"
+        ],
+        "database_tier": "Auto",
+        "deliverable_role": "为分析模型运行提供经过校验的多保司原始数据集",
         "evidence_refs": [
-          "EVD-0b428705403a938ea9cc",
-          "EVD-0e8c67287d5fb9320d35",
-          "EVD-1dac8f574881200e02c6",
           "EVD-2881ec844a5581f7826e",
-          "EVD-309c14134d8f91012c10",
-          "EVD-375e3941d381a77f6dba",
           "EVD-607a52ced8d32ab318fb",
-          "EVD-63cd815a508fde638e02",
-          "EVD-6ecb7a678df068c66563",
-          "EVD-75256d336876b2249110",
           "EVD-8eaab7f3e027d9cfc3f9",
-          "EVD-9bd93f71a67bf9019017",
-          "EVD-d9f419afeac6577e1122"
+          "EVD-75256d336876b2249110",
+          "EVD-309c14134d8f91012c10"
         ],
-        "handoff_triggers": [],
-        "human_responsibility": "",
+        "handoff_triggers": [
+          "数据质量校验未通过",
+          "语义模糊需人工判定"
+        ],
+        "human_responsibility": "复核异常数据、处理数据质量争议",
         "l4_code": "L4-IMF-01",
-        "process_context": "",
-        "quality_anchor": "",
-        "risks_limits": [],
-        "specific_capabilities": []
+        "process_context": "STEP-01 数据采集与质量校验，为后续分析提供基础",
+        "quadrant": "unclassified",
+        "quality_anchor": "数据完整性和准确性满足分析模型输入要求",
+        "recommended_tier": "Auto",
+        "risks_limits": [
+          "复合动作需拆分为采集、校验、复核三个子动作",
+          "语义复核仍需人工"
+        ],
+        "specific_capabilities": [
+          "数据管道自动采集",
+          "数据质量自动化校验",
+          "异常数据人工复核与语义判定"
+        ]
       },
       {
-        "ai_reshape": "",
-        "ai_responsibility": "",
-        "analysis_status": "PENDING_MODEL",
-        "confidence": "UNASSESSED",
+        "ai_reshape": "模型运行可自动化，但洞察和决策需Agent辅助，无法全自动",
+        "ai_responsibility": "执行分析模型，生成初步结果",
+        "analysis_status": "MODEL_DRAFT",
+        "confidence": "MODEL_DRAFT",
         "control_gates": [],
-        "current_recommendation": "",
-        "data_basis": [],
-        "deliverable_role": "",
+        "current_recommendation": "使用Agent辅助生成分析，人工审核后输出，不直接封装确定性Skill",
+        "data_basis": [
+          "D1=3, D2=3 (EVD-b15b7b555920d197ca9a, EVD-a739cdace0a11012b054)",
+          "Skill可行性C-低封装 (EVD-129250952f7f38ef39ae)"
+        ],
+        "database_tier": "Hybrid",
+        "deliverable_role": "自动运行分析模型并生成分析结果，包含数据洞察",
         "evidence_refs": [
-          "EVD-129250952f7f38ef39ae",
-          "EVD-34d660d6e406ae8a50b5",
-          "EVD-361f0638b1f95fcc595d",
           "EVD-3982d411feea64638163",
-          "EVD-8e402538c6e1880ee457",
-          "EVD-9b20a0fff78d8ae1ef36",
-          "EVD-9bd93f71a67bf9019017",
-          "EVD-9f080fcd9839896b1b3c",
-          "EVD-a2fffe1c67d939a407bc",
-          "EVD-a739cdace0a11012b054",
+          "EVD-34d660d6e406ae8a50b5",
+          "EVD-129250952f7f38ef39ae",
           "EVD-b15b7b555920d197ca9a",
-          "EVD-cffac968632aa4a2b08d",
-          "EVD-dac0a0ad9ff9e57f0911"
+          "EVD-cffac968632aa4a2b08d"
         ],
-        "handoff_triggers": [],
-        "human_responsibility": "",
+        "handoff_triggers": [
+          "分析结果异常",
+          "需要策略调整建议"
+        ],
+        "human_responsibility": "验证分析结果，提供业务判断",
         "l4_code": "L4-IMF-02",
-        "process_context": "",
-        "quality_anchor": "",
-        "risks_limits": [],
-        "specific_capabilities": []
+        "process_context": "STEP-02 分析模型运行与报告生成，核心分析环节",
+        "quadrant": "unclassified",
+        "quality_anchor": "分析结果准确且覆盖关键KPI",
+        "recommended_tier": "Hybrid",
+        "risks_limits": [
+          "判断/策略类动作难以Skill化",
+          "需人工权威"
+        ],
+        "specific_capabilities": [
+          "分析模型自动运行",
+          "数据洞察生成",
+          "人工判断与验证"
+        ]
       },
       {
-        "ai_reshape": "",
-        "ai_responsibility": "",
-        "analysis_status": "PENDING_MODEL",
-        "confidence": "UNASSESSED",
-        "control_gates": [],
-        "current_recommendation": "",
-        "data_basis": [],
-        "deliverable_role": "",
+        "ai_reshape": "报告生成可模板化加Skill，合规审查需规则化并人工复核",
+        "ai_responsibility": "按模板生成报告草稿，执行合规检查",
+        "analysis_status": "MODEL_DRAFT",
+        "confidence": "MODEL_DRAFT",
+        "control_gates": [
+          "合规审查批准"
+        ],
+        "current_recommendation": "补全报告模板和合规规则，然后封装Skill，保留人工审批控制门",
+        "data_basis": [
+          "D1=2, D3=2 (EVD-b69aee0ad8d1fb9f700b, EVD-aeacc874670e9861f0d7)",
+          "Skill可行性B-中封装 (EVD-0be9be3bbea60d3f78a8)"
+        ],
+        "database_tier": "Aug",
+        "deliverable_role": "生成合规的保司报告，并完成审查",
         "evidence_refs": [
-          "EVD-0be9be3bbea60d3f78a8",
-          "EVD-138ae19ca2da0ccecf7c",
           "EVD-1764cf9d5148614d60c3",
-          "EVD-55c9da602743d4e1e92e",
-          "EVD-56dbaa0ed15f3371572c",
-          "EVD-59cd551bbfc2eb0920c9",
-          "EVD-732b90132a80eac635f1",
-          "EVD-9bd93f71a67bf9019017",
-          "EVD-9f02a33e7324f177364f",
-          "EVD-aeacc874670e9861f0d7",
-          "EVD-b69aee0ad8d1fb9f700b",
           "EVD-e9787606a4ecf92c918d",
-          "EVD-edf18ec5b1a15e20e4b1"
+          "EVD-0be9be3bbea60d3f78a8",
+          "EVD-b69aee0ad8d1fb9f700b",
+          "EVD-56dbaa0ed15f3371572c"
         ],
-        "handoff_triggers": [],
-        "human_responsibility": "",
+        "handoff_triggers": [
+          "合规检查失败",
+          "内容需要人工润色"
+        ],
+        "human_responsibility": "审查报告内容，批准发布",
         "l4_code": "L4-IMF-03",
-        "process_context": "",
-        "quality_anchor": "",
-        "risks_limits": [],
-        "specific_capabilities": []
+        "process_context": "STEP-03 报告合规审查与交付",
+        "quadrant": "unclassified",
+        "quality_anchor": "报告内容合规，无敏感信息泄露",
+        "recommended_tier": "Aug",
+        "risks_limits": [
+          "合规类需人工复核",
+          "需报告模板支持"
+        ],
+        "specific_capabilities": [
+          "报告模板自动填充",
+          "合规规则检查",
+          "人工审查与批准"
+        ]
       },
       {
-        "ai_reshape": "",
-        "ai_responsibility": "",
-        "analysis_status": "PENDING_MODEL",
-        "confidence": "UNASSESSED",
-        "control_gates": [],
-        "current_recommendation": "",
-        "data_basis": [],
-        "deliverable_role": "",
+        "ai_reshape": "会议记录和报告分发可自动化，但沟通和决策需人工",
+        "ai_responsibility": "自动记录会议摘要、分发报告",
+        "analysis_status": "MODEL_DRAFT",
+        "confidence": "MODEL_DRAFT",
+        "control_gates": [
+          "交付确认"
+        ],
+        "current_recommendation": "拆分为会议安排、报告分发、记录填写等子任务，其中安排和分发可Skill化",
+        "data_basis": [
+          "D1=2, D2=0 (EVD-347cfc11ea79101b5711, EVD-316edb0a2f57269b497f)",
+          "Skill可行性A-高封装但复合 (EVD-d3578363aa19f6e8683d)"
+        ],
+        "database_tier": "Auto",
+        "deliverable_role": "负责报告交付和沟通会议，记录保司反馈",
         "evidence_refs": [
-          "EVD-16e2e563d2718f64608d",
-          "EVD-27d3e341c1ac5b5c73f3",
-          "EVD-316edb0a2f57269b497f",
-          "EVD-347cfc11ea79101b5711",
-          "EVD-635c652e4fa013f0434d",
-          "EVD-82ef7ecb8d19f5456f5e",
-          "EVD-87365e866f956e6ef31c",
-          "EVD-9bd93f71a67bf9019017",
-          "EVD-a98d657ef614ea1bdf1d",
           "EVD-b6a73bbb3aee01905faa",
-          "EVD-b8528ecd80c42c47f713",
+          "EVD-635c652e4fa013f0434d",
           "EVD-d3578363aa19f6e8683d",
-          "EVD-fffe56b9f1c5c14800ed"
+          "EVD-347cfc11ea79101b5711",
+          "EVD-87365e866f956e6ef31c"
         ],
-        "handoff_triggers": [],
-        "human_responsibility": "",
+        "handoff_triggers": [
+          "会议安排",
+          "反馈异议"
+        ],
+        "human_responsibility": "主持会议，处理争议，签署交付",
         "l4_code": "L4-IMF-04",
-        "process_context": "",
-        "quality_anchor": "",
-        "risks_limits": [],
-        "specific_capabilities": []
-      },
-      {
-        "ai_reshape": "",
-        "ai_responsibility": "",
-        "analysis_status": "PENDING_MODEL",
-        "confidence": "UNASSESSED",
-        "control_gates": [],
-        "current_recommendation": "",
-        "data_basis": [],
-        "deliverable_role": "",
-        "evidence_refs": [
-          "EVD-0417eadc1a6ad3800c35",
-          "EVD-0fd2d4409cc3aaeb6238",
-          "EVD-1a793a72790dfbe91870",
-          "EVD-40ee54325257c9fb1ffa",
-          "EVD-42769057210e63af41ea",
-          "EVD-464dfffaaa4902cf400f",
-          "EVD-4c48c4430a14c916e390",
-          "EVD-5fc7236cf4408f218746",
-          "EVD-9b5074b6de9ba161b08a",
-          "EVD-9bd93f71a67bf9019017",
-          "EVD-f3552c32a43dc91252d5",
-          "EVD-fb916fd32209cdb3a68b",
-          "EVD-fea264c32cddf02fe8a2"
+        "process_context": "STEP-03 交付与沟通",
+        "quadrant": "unclassified",
+        "quality_anchor": "反馈记录完整，报告按时交付",
+        "recommended_tier": "Auto",
+        "risks_limits": [
+          "复合动作需拆分，会议需人工参与",
+          "D2规则缺失"
         ],
-        "handoff_triggers": [],
-        "human_responsibility": "",
-        "l4_code": "L4-IMF-05",
-        "process_context": "",
-        "quality_anchor": "",
-        "risks_limits": [],
-        "specific_capabilities": []
+        "specific_capabilities": [
+          "沟通会议组织",
+          "反馈记录填写",
+          "报告分发"
+        ]
       },
       {
-        "ai_reshape": "",
-        "ai_responsibility": "",
-        "analysis_status": "PENDING_MODEL",
-        "confidence": "UNASSESSED",
-        "control_gates": [],
-        "current_recommendation": "",
-        "data_basis": [],
-        "deliverable_role": "",
+        "ai_reshape": "Agent辅助整合数据并提供建议，最终决策由人作出",
+        "ai_responsibility": "整合数据，生成建议草案",
+        "analysis_status": "MODEL_DRAFT",
+        "confidence": "MODEL_DRAFT",
+        "control_gates": [
+          "策略调整批准"
+        ],
+        "current_recommendation": "使用Agent辅助决策支持，不封装Skill",
+        "data_basis": [
+          "D1=2, D2=1 (EVD-4c48c4430a14c916e390, EVD-0fd2d4409cc3aaeb6238)",
+          "Skill可行性C-低封装 (EVD-fea264c32cddf02fe8a2)"
+        ],
+        "database_tier": "Hybrid",
+        "deliverable_role": "根据分析结果和保司反馈，生成策略调整建议",
         "evidence_refs": [
-          "EVD-3a5b123cc8872b5dac77",
-          "EVD-6568a225bacb1aa86a3e",
-          "EVD-69d7d7edcbbe62b10676",
-          "EVD-6b9b637b41e31c44e64c",
+          "EVD-40ee54325257c9fb1ffa",
+          "EVD-5fc7236cf4408f218746",
+          "EVD-fea264c32cddf02fe8a2",
+          "EVD-4c48c4430a14c916e390",
+          "EVD-fb916fd32209cdb3a68b"
+        ],
+        "handoff_triggers": [
+          "建议不可行",
+          "需要高层批准"
+        ],
+        "human_responsibility": "审核建议，做出策略调整决策",
+        "l4_code": "L4-IMF-05",
+        "process_context": "STEP-04 策略调整闭环",
+        "quadrant": "unclassified",
+        "quality_anchor": "建议基于数据，逻辑合理",
+        "recommended_tier": "Hybrid",
+        "risks_limits": [
+          "判断/策略类无法自动化",
+          "需要业务权威"
+        ],
+        "specific_capabilities": [
+          "数据整合分析",
+          "策略建议生成",
+          "业务判断与决策"
+        ]
+      },
+      {
+        "ai_reshape": "数据接入和更新可Skill化，看板配置需模板",
+        "ai_responsibility": "自动接入数据，更新看板",
+        "analysis_status": "MODEL_DRAFT",
+        "confidence": "MODEL_DRAFT",
+        "control_gates": [],
+        "current_recommendation": "先固化看板模板和数据接口，再验证Skill",
+        "data_basis": [
+          "D1=3, D3=3 (EVD-6568a225bacb1aa86a3e, EVD-69d7d7edcbbe62b10676)",
+          "Skill可行性B-中封装 (EVD-a79ab44dde30c5f0f028)"
+        ],
+        "database_tier": "Aug",
+        "deliverable_role": "将分析结果实时展示在看板上",
+        "evidence_refs": [
           "EVD-916ec0b74dc7a143451e",
-          "EVD-942e60fc0d69e413c099",
-          "EVD-9b31b9d2a798e42778f2",
-          "EVD-9bd93f71a67bf9019017",
+          "EVD-6b9b637b41e31c44e64c",
           "EVD-a79ab44dde30c5f0f028",
-          "EVD-b891d8ce204dbaff158c",
-          "EVD-e060d7c7359ccb8fe05f",
-          "EVD-e0ea40c79b70995e375d",
+          "EVD-6568a225bacb1aa86a3e",
           "EVD-f6f3d405a78ecee23413"
         ],
-        "handoff_triggers": [],
-        "human_responsibility": "",
+        "handoff_triggers": [
+          "数据异常",
+          "看板配置变更"
+        ],
+        "human_responsibility": "确认看板配置，处理异常",
         "l4_code": "L4-IMF-06",
-        "process_context": "",
-        "quality_anchor": "",
-        "risks_limits": [],
-        "specific_capabilities": []
+        "process_context": "STEP-02 实时看板更新",
+        "quadrant": "unclassified",
+        "quality_anchor": "看板数据实时准确",
+        "recommended_tier": "Aug",
+        "risks_limits": [
+          "需要报告模板和系统集成"
+        ],
+        "specific_capabilities": [
+          "数据接入看板",
+          "实时更新配置",
+          "看板可视化调整"
+        ]
       },
       {
-        "ai_reshape": "",
-        "ai_responsibility": "",
-        "analysis_status": "PENDING_MODEL",
-        "confidence": "UNASSESSED",
-        "control_gates": [],
-        "current_recommendation": "",
-        "data_basis": [],
-        "deliverable_role": "",
+        "ai_reshape": "模板定制和数据填充可封装，合规检查需人工",
+        "ai_responsibility": "自动生成定制报告草稿",
+        "analysis_status": "MODEL_DRAFT",
+        "confidence": "MODEL_DRAFT",
+        "control_gates": [
+          "合规审查"
+        ],
+        "current_recommendation": "补全定制模板和规则，封装Skill，人工复核合规",
+        "data_basis": [
+          "D1=2, D3=2 (EVD-e4dcd71a059b5b72a241, EVD-085a4583b84ea9e2c7d5)",
+          "Skill可行性B-中封装 (EVD-ced94dd1989ecbd0dfdc)"
+        ],
+        "database_tier": "Aug",
+        "deliverable_role": "根据需求生成定制化报告",
         "evidence_refs": [
-          "EVD-085a4583b84ea9e2c7d5",
-          "EVD-0a974511271f0a63d735",
-          "EVD-18b3818840e7ef04e41b",
-          "EVD-36bb596ce3a4de382cff",
-          "EVD-3882ff01f04a01b7e213",
-          "EVD-568a897dd0e4eb29b9dd",
-          "EVD-64f90f22cbfd7c10aa0b",
           "EVD-908f6ca4881b4173851b",
-          "EVD-9bd93f71a67bf9019017",
+          "EVD-3882ff01f04a01b7e213",
           "EVD-ced94dd1989ecbd0dfdc",
           "EVD-e4dcd71a059b5b72a241",
-          "EVD-ed5ae0555bd91891776d",
-          "EVD-f42d0d2adb3143ae714f"
+          "EVD-ed5ae0555bd91891776d"
         ],
-        "handoff_triggers": [],
-        "human_responsibility": "",
+        "handoff_triggers": [
+          "定制需求变更",
+          "合规问题"
+        ],
+        "human_responsibility": "审核报告，确认合规",
         "l4_code": "L4-IMF-07",
-        "process_context": "",
-        "quality_anchor": "",
-        "risks_limits": [],
-        "specific_capabilities": []
+        "process_context": "STEP-02 定制化报告生成",
+        "quadrant": "unclassified",
+        "quality_anchor": "报告符合需求，数据准确",
+        "recommended_tier": "Aug",
+        "risks_limits": [
+          "需报告模板和系统集成"
+        ],
+        "specific_capabilities": [
+          "报告模板定制",
+          "数据填充",
+          "内容合规检查"
+        ]
       },
       {
-        "ai_reshape": "",
-        "ai_responsibility": "",
-        "analysis_status": "PENDING_MODEL",
-        "confidence": "UNASSESSED",
-        "control_gates": [],
-        "current_recommendation": "",
-        "data_basis": [],
-        "deliverable_role": "",
+        "ai_reshape": "脱敏和对标可Skill化，高度自动化",
+        "ai_responsibility": "执行脱敏和对标计算，生成报告",
+        "analysis_status": "MODEL_DRAFT",
+        "confidence": "MODEL_DRAFT",
+        "control_gates": [
+          "脱敏合规检查"
+        ],
+        "current_recommendation": "直接进入Skill原型候选池",
+        "data_basis": [
+          "D1=2, D3=2 (EVD-c60e27afbada2955a2bb, EVD-053c51235a4bf9701fdd)",
+          "Skill可行性A-高封装 (EVD-9871af58352e450a04ad)"
+        ],
+        "database_tier": "Auto",
+        "deliverable_role": "生成脱敏后的竞品对标报告",
         "evidence_refs": [
-          "EVD-000a22f7ba92d78cd5f1",
-          "EVD-053c51235a4bf9701fdd",
-          "EVD-0b03b1e04e1b75a76624",
-          "EVD-18d989e6d9ee4aebcb3c",
-          "EVD-36f0e3d69aec23256c0b",
-          "EVD-3b09fbdd9a009e325561",
-          "EVD-7d87cb8f15b80282f483",
           "EVD-7f0e7b8d0acc5966a9bb",
+          "EVD-3b09fbdd9a009e325561",
           "EVD-9871af58352e450a04ad",
-          "EVD-9bd93f71a67bf9019017",
           "EVD-c60e27afbada2955a2bb",
-          "EVD-d1dfe793dae4d2dc6106",
-          "EVD-feb78ac8b2ed83a157fb"
+          "EVD-d1dfe793dae4d2dc6106"
         ],
-        "handoff_triggers": [],
-        "human_responsibility": "",
+        "handoff_triggers": [
+          "脱敏规则不明确",
+          "对标数据异常"
+        ],
+        "human_responsibility": "审核脱敏结果，确认对标逻辑",
         "l4_code": "L4-IMF-08",
-        "process_context": "",
-        "quality_anchor": "",
-        "risks_limits": [],
-        "specific_capabilities": []
+        "process_context": "STEP-02 竞品对标脱敏处理",
+        "quadrant": "unclassified",
+        "quality_anchor": "脱敏彻底，对标准确",
+        "recommended_tier": "Auto",
+        "risks_limits": [
+          "单一动作，理想Skill候选"
+        ],
+        "specific_capabilities": [
+          "数据脱敏处理",
+          "对标分析",
+          "报告生成"
+        ]
       },
       {
-        "ai_reshape": "",
-        "ai_responsibility": "",
-        "analysis_status": "PENDING_MODEL",
-        "confidence": "UNASSESSED",
+        "ai_reshape": "模型运行可自动化，但预测解读需专业人士",
+        "ai_responsibility": "运行预测模型，输出概率",
+        "analysis_status": "MODEL_DRAFT",
+        "confidence": "MODEL_DRAFT",
         "control_gates": [],
-        "current_recommendation": "",
-        "data_basis": [],
-        "deliverable_role": "",
+        "current_recommendation": "Agent辅助预测解读，不封装Skill",
+        "data_basis": [
+          "D1=3, D3=3 (EVD-dc8db52adde18f62fb2b, EVD-78d59e5696c5d25bd01f)",
+          "Skill可行性C-低封装 (EVD-64de011b48924da217f8)"
+        ],
+        "database_tier": "Hybrid",
+        "deliverable_role": "基于历史数据进行预测分析",
         "evidence_refs": [
-          "EVD-0565fe48dae81fa6063a",
-          "EVD-1135dbe15daeea80984f",
-          "EVD-1db76427c05fe2b4222a",
-          "EVD-42eac4e7a7f3dbc263cb",
-          "EVD-5a51d46d1ecba37a129d",
-          "EVD-64de011b48924da217f8",
-          "EVD-6f443dc984d78d51868b",
-          "EVD-78d59e5696c5d25bd01f",
-          "EVD-943cb83190be033580e1",
-          "EVD-9bd93f71a67bf9019017",
           "EVD-c0faeafa7bcd4bf4d032",
+          "EVD-0565fe48dae81fa6063a",
+          "EVD-64de011b48924da217f8",
           "EVD-dc8db52adde18f62fb2b",
-          "EVD-f8c5accfa317cf4266b8"
+          "EVD-42eac4e7a7f3dbc263cb"
         ],
-        "handoff_triggers": [],
-        "human_responsibility": "",
+        "handoff_triggers": [
+          "预测结果异常",
+          "需要业务决策"
+        ],
+        "human_responsibility": "解释结果，给出业务建议",
         "l4_code": "L4-IMF-09",
-        "process_context": "",
-        "quality_anchor": "",
-        "risks_limits": [],
-        "specific_capabilities": []
+        "process_context": "STEP-02 预测分析",
+        "quadrant": "unclassified",
+        "quality_anchor": "预测结果有统计意义",
+        "recommended_tier": "Hybrid",
+        "risks_limits": [
+          "判断/认知类，无法Skill化"
+        ],
+        "specific_capabilities": [
+          "预测模型运行",
+          "结果解释",
+          "不确定性评估"
+        ]
       },
       {
-        "ai_reshape": "",
-        "ai_responsibility": "",
-        "analysis_status": "PENDING_MODEL",
-        "confidence": "UNASSESSED",
-        "control_gates": [],
-        "current_recommendation": "",
-        "data_basis": [],
-        "deliverable_role": "",
+        "ai_reshape": "异常检测和通报可自动化，语义复核后确认",
+        "ai_responsibility": "检测异常，生成通报草稿",
+        "analysis_status": "MODEL_DRAFT",
+        "confidence": "MODEL_DRAFT",
+        "control_gates": [
+          "通报发布授权"
+        ],
+        "current_recommendation": "优先进入Skill原型候选池，保留人工确认",
+        "data_basis": [
+          "D1=3, D2=3 (EVD-e57954cd7bc837421ff0, EVD-062f466e5fc562a5fd77)",
+          "Skill可行性A-高封装 (EVD-6e90ed4c5537e3670853)"
+        ],
+        "database_tier": "Auto",
+        "deliverable_role": "在数据异常时生成紧急通报并通知相关人员",
         "evidence_refs": [
-          "EVD-062f466e5fc562a5fd77",
           "EVD-1c6931b00e0e1c601f1d",
-          "EVD-227d9abdb3f33fca78dc",
-          "EVD-4ebe3ff6094fa03904ef",
-          "EVD-6e90ed4c5537e3670853",
-          "EVD-7a470ded389d9cb12f78",
-          "EVD-84c620ab63d0d07aebde",
-          "EVD-895b5d2df549868b6465",
-          "EVD-97978dc0d5da8cdfa7f4",
-          "EVD-9bd93f71a67bf9019017",
           "EVD-c10a0b58b24196b69a17",
+          "EVD-6e90ed4c5537e3670853",
           "EVD-e57954cd7bc837421ff0",
-          "EVD-ff33fa41fc898178f2e9"
+          "EVD-895b5d2df549868b6465"
         ],
-        "handoff_triggers": [],
-        "human_responsibility": "",
+        "handoff_triggers": [
+          "异常事件分级高",
+          "通报内容需人工确认"
+        ],
+        "human_responsibility": "审核通报内容，确认发送",
         "l4_code": "L4-IMF-10",
-        "process_context": "",
-        "quality_anchor": "",
-        "risks_limits": [],
-        "specific_capabilities": []
+        "process_context": "STEP-01 异常事件紧急通报（分支）",
+        "quadrant": "unclassified",
+        "quality_anchor": "通报及时，信息准确",
+        "recommended_tier": "Auto",
+        "risks_limits": [
+          "单一动作，理想Skill候选，但需人工确认"
+        ],
+        "specific_capabilities": [
+          "异常检测",
+          "通报生成与发送",
+          "事件跟踪"
+        ]
       },
       {
-        "ai_reshape": "",
-        "ai_responsibility": "",
-        "analysis_status": "PENDING_MODEL",
-        "confidence": "UNASSESSED",
-        "control_gates": [],
-        "current_recommendation": "",
-        "data_basis": [],
-        "deliverable_role": "",
+        "ai_reshape": "合规检查可规则化，但需人工复核",
+        "ai_responsibility": "执行合规审计扫描，生成记录",
+        "analysis_status": "MODEL_DRAFT",
+        "confidence": "MODEL_DRAFT",
+        "control_gates": [
+          "合规检查批准"
+        ],
+        "current_recommendation": "固化合规规则，封装检查部分，人工复核后通过",
+        "data_basis": [
+          "D1=3, D3=3 (EVD-a0684201f9ba10a9bbf0, EVD-3caa34973713d30bc94f)",
+          "Skill可行性B-中封装 (EVD-5802481759d0932dfe22)"
+        ],
+        "database_tier": "Aug",
+        "deliverable_role": "执行数据安全与监管合规检查，生成合规记录",
         "evidence_refs": [
-          "EVD-35bc67b5cbb4962181ac",
-          "EVD-35d67da4bcd9fc23d1f5",
-          "EVD-379891eb0a68dd76cfe5",
-          "EVD-3caa34973713d30bc94f",
-          "EVD-5802481759d0932dfe22",
-          "EVD-5cb280e18842b3ea7296",
-          "EVD-9bd93f71a67bf9019017",
-          "EVD-a0684201f9ba10a9bbf0",
-          "EVD-a4caf75c242f5eb0497e",
-          "EVD-abcc041ed7b948e75deb",
-          "EVD-b6461d7fa606890d32e6",
           "EVD-e65c0acb3103cb40ab18",
-          "EVD-f8ecdad93346f95d0363"
+          "EVD-b6461d7fa606890d32e6",
+          "EVD-5802481759d0932dfe22",
+          "EVD-a0684201f9ba10a9bbf0",
+          "EVD-35bc67b5cbb4962181ac"
         ],
-        "handoff_triggers": [],
-        "human_responsibility": "",
+        "handoff_triggers": [
+          "合规异常",
+          "新监管规则"
+        ],
+        "human_responsibility": "审核合规结果，处理例外",
         "l4_code": "L4-IMF-11",
-        "process_context": "",
-        "quality_anchor": "",
-        "risks_limits": [],
-        "specific_capabilities": []
+        "process_context": "STEP-05 数据安全与监管合规",
+        "quadrant": "unclassified",
+        "quality_anchor": "合规记录完整，无遗漏",
+        "recommended_tier": "Aug",
+        "risks_limits": [
+          "合规类需人工复核",
+          "需规则和系统集成"
+        ],
+        "specific_capabilities": [
+          "合规规则匹配",
+          "数据安全检查",
+          "审计记录生成"
+        ]
       },
       {
-        "ai_reshape": "",
-        "ai_responsibility": "",
-        "analysis_status": "PENDING_MODEL",
-        "confidence": "UNASSESSED",
+        "ai_reshape": "Agent辅助分析数据，提出洞察，人工审批",
+        "ai_responsibility": "分析数据趋势，生成洞察草案",
+        "analysis_status": "MODEL_DRAFT",
+        "confidence": "MODEL_DRAFT",
         "control_gates": [],
-        "current_recommendation": "",
-        "data_basis": [],
-        "deliverable_role": "",
+        "current_recommendation": "使用Agent辅助，不封装Skill",
+        "data_basis": [
+          "D1=2, D3=2 (EVD-96f446a1fddf68b67db3, EVD-2f5abfcfbf0fd0f667d3)",
+          "Skill可行性C-低封装 (EVD-1eacdf83c62724e76edd)"
+        ],
+        "database_tier": "Hybrid",
+        "deliverable_role": "基于反馈数据反向学习，生成洞察",
         "evidence_refs": [
-          "EVD-1eacdf83c62724e76edd",
-          "EVD-2f5abfcfbf0fd0f667d3",
-          "EVD-3df59082439b98ecd3e9",
-          "EVD-48551fcca9bece6e5920",
-          "EVD-59c14cefe0a30a72bb83",
-          "EVD-654f9279d998b59e9ff4",
           "EVD-7ac4c428dba9b62524fb",
-          "EVD-889eeb9c64c8d1bc7125",
-          "EVD-8a722fa61e42f5b4e32c",
+          "EVD-3df59082439b98ecd3e9",
+          "EVD-1eacdf83c62724e76edd",
           "EVD-96f446a1fddf68b67db3",
-          "EVD-9bd93f71a67bf9019017",
-          "EVD-a1f0b201ce1ab07733e8",
-          "EVD-d4cc35a3b611b0ffdb71"
+          "EVD-48551fcca9bece6e5920"
         ],
-        "handoff_triggers": [],
-        "human_responsibility": "",
+        "handoff_triggers": [
+          "洞察质量低",
+          "需要跨部门验证"
+        ],
+        "human_responsibility": "评估洞察价值，决策沉淀",
         "l4_code": "L4-IMF-12",
-        "process_context": "",
-        "quality_anchor": "",
-        "risks_limits": [],
-        "specific_capabilities": []
+        "process_context": "STEP-05 数据反向学习",
+        "quadrant": "unclassified",
+        "quality_anchor": "洞察有据可依，可指导优化",
+        "recommended_tier": "Hybrid",
+        "risks_limits": [
+          "判断/认知类，无法Skill化"
+        ],
+        "specific_capabilities": [
+          "数据分析",
+          "洞察提取",
+          "知识沉淀"
+        ]
       },
       {
-        "ai_reshape": "",
-        "ai_responsibility": "",
-        "analysis_status": "PENDING_MODEL",
-        "confidence": "UNASSESSED",
-        "control_gates": [],
-        "current_recommendation": "",
-        "data_basis": [],
-        "deliverable_role": "",
-        "evidence_refs": [
-          "EVD-06d098d1a54c6aa052d9",
-          "EVD-1f59a7d0be4e60ebe5cd",
-          "EVD-2e951bc66aeeea18a4ab",
-          "EVD-36d0502be4b666298882",
-          "EVD-60b9f6bef163f821fca3",
-          "EVD-66992cf67acf97153c1f",
-          "EVD-6a2b1145d70d3a9c9732",
-          "EVD-7321969d61a7dd6315b6",
-          "EVD-868a73178d21e615278f",
-          "EVD-9ae9789bb4b48812f761",
-          "EVD-9bd93f71a67bf9019017",
-          "EVD-dd1d115fceff47a6d5c8",
-          "EVD-f6a667da0c2f47104c6d"
+        "ai_reshape": "清单更新可自动化，授权确认需人工",
+        "ai_responsibility": "跟踪授权状态，更新清单",
+        "analysis_status": "MODEL_DRAFT",
+        "confidence": "MODEL_DRAFT",
+        "control_gates": [
+          "数据授权审批"
         ],
-        "handoff_triggers": [],
-        "human_responsibility": "",
+        "current_recommendation": "Agent辅助管理授权，不封装Skill",
+        "data_basis": [
+          "D1=2, D2=1 (EVD-66992cf67acf97153c1f, EVD-f6a667da0c2f47104c6d)",
+          "Skill可行性C-低封装 (EVD-868a73178d21e615278f)"
+        ],
+        "database_tier": "Hybrid",
+        "deliverable_role": "确认多保司数据对比授权，输出授权清单",
+        "evidence_refs": [
+          "EVD-2e951bc66aeeea18a4ab",
+          "EVD-dd1d115fceff47a6d5c8",
+          "EVD-868a73178d21e615278f",
+          "EVD-66992cf67acf97153c1f",
+          "EVD-36d0502be4b666298882"
+        ],
+        "handoff_triggers": [
+          "授权变更",
+          "争议"
+        ],
+        "human_responsibility": "审批授权请求，处理争议",
         "l4_code": "L4-IMF-13",
-        "process_context": "",
-        "quality_anchor": "",
-        "risks_limits": [],
-        "specific_capabilities": []
+        "process_context": "STEP-01 多保司数据对比授权",
+        "quadrant": "unclassified",
+        "quality_anchor": "授权清单准确，无未授权数据",
+        "recommended_tier": "Hybrid",
+        "risks_limits": [
+          "判断/关系类，需人工"
+        ],
+        "specific_capabilities": [
+          "授权请求管理",
+          "数据对比授权确认",
+          "清单维护"
+        ]
       }
     ],
     "missing_analysis": [
-      "逐L4交付物与具体能力分析",
-      "逐任务AI分工分析",
-      "逐L4人机协作与控制分析",
-      "逐L4优先级四维分析",
-      "任务级负责人决策建议"
+      "负责人决策草稿结构不合格，已拒绝1条"
     ],
-    "model_run": null,
-    "priority_drafts": [],
+    "model_run": {
+      "generated_at": "2026-08-04T18:07:28.727029+00:00",
+      "input_snapshot_hash": "b55c74303e3e062d75b32aef08e831d30ffa2bb0857ef6a80cd62c3adb0d7770",
+      "model_name": "deepseek-v4-pro",
+      "model_version": "deepseek-v4-pro",
+      "prompt_version": "VNW-L3-COM-GOLD-v1.0"
+    },
+    "priority_drafts": [
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "current_recommendation": "优先将采集和校验封装为Skill，保留人工复核环节，尽快进入原型验证",
+        "data_basis": [
+          "D1=3 (EVD-75256d336876b2249110)",
+          "Skill可行性A-高封装 (EVD-8eaab7f3e027d9cfc3f9)"
+        ],
+        "evidence_refs": [
+          "EVD-2881ec844a5581f7826e",
+          "EVD-607a52ced8d32ab318fb",
+          "EVD-8eaab7f3e027d9cfc3f9",
+          "EVD-75256d336876b2249110",
+          "EVD-309c14134d8f91012c10"
+        ],
+        "l4_code": "L4-IMF-01",
+        "process_context": "STEP-01 数据采集与质量校验，为后续分析提供基础",
+        "quadrant": "unclassified",
+        "risks_limits": [
+          "复合动作需拆分为采集、校验、复核三个子动作",
+          "语义复核仍需人工"
+        ]
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "current_recommendation": "使用Agent辅助生成分析，人工审核后输出，不直接封装确定性Skill",
+        "data_basis": [
+          "D1=3, D2=3 (EVD-b15b7b555920d197ca9a, EVD-a739cdace0a11012b054)",
+          "Skill可行性C-低封装 (EVD-129250952f7f38ef39ae)"
+        ],
+        "evidence_refs": [
+          "EVD-3982d411feea64638163",
+          "EVD-34d660d6e406ae8a50b5",
+          "EVD-129250952f7f38ef39ae",
+          "EVD-b15b7b555920d197ca9a",
+          "EVD-cffac968632aa4a2b08d"
+        ],
+        "l4_code": "L4-IMF-02",
+        "process_context": "STEP-02 分析模型运行与报告生成，核心分析环节",
+        "quadrant": "unclassified",
+        "risks_limits": [
+          "判断/策略类动作难以Skill化",
+          "需人工权威"
+        ]
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "current_recommendation": "补全报告模板和合规规则，然后封装Skill，保留人工审批控制门",
+        "data_basis": [
+          "D1=2, D3=2 (EVD-b69aee0ad8d1fb9f700b, EVD-aeacc874670e9861f0d7)",
+          "Skill可行性B-中封装 (EVD-0be9be3bbea60d3f78a8)"
+        ],
+        "evidence_refs": [
+          "EVD-1764cf9d5148614d60c3",
+          "EVD-e9787606a4ecf92c918d",
+          "EVD-0be9be3bbea60d3f78a8",
+          "EVD-b69aee0ad8d1fb9f700b",
+          "EVD-56dbaa0ed15f3371572c"
+        ],
+        "l4_code": "L4-IMF-03",
+        "process_context": "STEP-03 报告合规审查与交付",
+        "quadrant": "unclassified",
+        "risks_limits": [
+          "合规类需人工复核",
+          "需报告模板支持"
+        ]
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "current_recommendation": "拆分为会议安排、报告分发、记录填写等子任务，其中安排和分发可Skill化",
+        "data_basis": [
+          "D1=2, D2=0 (EVD-347cfc11ea79101b5711, EVD-316edb0a2f57269b497f)",
+          "Skill可行性A-高封装但复合 (EVD-d3578363aa19f6e8683d)"
+        ],
+        "evidence_refs": [
+          "EVD-b6a73bbb3aee01905faa",
+          "EVD-635c652e4fa013f0434d",
+          "EVD-d3578363aa19f6e8683d",
+          "EVD-347cfc11ea79101b5711",
+          "EVD-87365e866f956e6ef31c"
+        ],
+        "l4_code": "L4-IMF-04",
+        "process_context": "STEP-03 交付与沟通",
+        "quadrant": "unclassified",
+        "risks_limits": [
+          "复合动作需拆分，会议需人工参与",
+          "D2规则缺失"
+        ]
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "current_recommendation": "使用Agent辅助决策支持，不封装Skill",
+        "data_basis": [
+          "D1=2, D2=1 (EVD-4c48c4430a14c916e390, EVD-0fd2d4409cc3aaeb6238)",
+          "Skill可行性C-低封装 (EVD-fea264c32cddf02fe8a2)"
+        ],
+        "evidence_refs": [
+          "EVD-40ee54325257c9fb1ffa",
+          "EVD-5fc7236cf4408f218746",
+          "EVD-fea264c32cddf02fe8a2",
+          "EVD-4c48c4430a14c916e390",
+          "EVD-fb916fd32209cdb3a68b"
+        ],
+        "l4_code": "L4-IMF-05",
+        "process_context": "STEP-04 策略调整闭环",
+        "quadrant": "unclassified",
+        "risks_limits": [
+          "判断/策略类无法自动化",
+          "需要业务权威"
+        ]
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "current_recommendation": "先固化看板模板和数据接口，再验证Skill",
+        "data_basis": [
+          "D1=3, D3=3 (EVD-6568a225bacb1aa86a3e, EVD-69d7d7edcbbe62b10676)",
+          "Skill可行性B-中封装 (EVD-a79ab44dde30c5f0f028)"
+        ],
+        "evidence_refs": [
+          "EVD-916ec0b74dc7a143451e",
+          "EVD-6b9b637b41e31c44e64c",
+          "EVD-a79ab44dde30c5f0f028",
+          "EVD-6568a225bacb1aa86a3e",
+          "EVD-f6f3d405a78ecee23413"
+        ],
+        "l4_code": "L4-IMF-06",
+        "process_context": "STEP-02 实时看板更新",
+        "quadrant": "unclassified",
+        "risks_limits": [
+          "需要报告模板和系统集成"
+        ]
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "current_recommendation": "补全定制模板和规则，封装Skill，人工复核合规",
+        "data_basis": [
+          "D1=2, D3=2 (EVD-e4dcd71a059b5b72a241, EVD-085a4583b84ea9e2c7d5)",
+          "Skill可行性B-中封装 (EVD-ced94dd1989ecbd0dfdc)"
+        ],
+        "evidence_refs": [
+          "EVD-908f6ca4881b4173851b",
+          "EVD-3882ff01f04a01b7e213",
+          "EVD-ced94dd1989ecbd0dfdc",
+          "EVD-e4dcd71a059b5b72a241",
+          "EVD-ed5ae0555bd91891776d"
+        ],
+        "l4_code": "L4-IMF-07",
+        "process_context": "STEP-02 定制化报告生成",
+        "quadrant": "unclassified",
+        "risks_limits": [
+          "需报告模板和系统集成"
+        ]
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "current_recommendation": "直接进入Skill原型候选池",
+        "data_basis": [
+          "D1=2, D3=2 (EVD-c60e27afbada2955a2bb, EVD-053c51235a4bf9701fdd)",
+          "Skill可行性A-高封装 (EVD-9871af58352e450a04ad)"
+        ],
+        "evidence_refs": [
+          "EVD-7f0e7b8d0acc5966a9bb",
+          "EVD-3b09fbdd9a009e325561",
+          "EVD-9871af58352e450a04ad",
+          "EVD-c60e27afbada2955a2bb",
+          "EVD-d1dfe793dae4d2dc6106"
+        ],
+        "l4_code": "L4-IMF-08",
+        "process_context": "STEP-02 竞品对标脱敏处理",
+        "quadrant": "unclassified",
+        "risks_limits": [
+          "单一动作，理想Skill候选"
+        ]
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "current_recommendation": "Agent辅助预测解读，不封装Skill",
+        "data_basis": [
+          "D1=3, D3=3 (EVD-dc8db52adde18f62fb2b, EVD-78d59e5696c5d25bd01f)",
+          "Skill可行性C-低封装 (EVD-64de011b48924da217f8)"
+        ],
+        "evidence_refs": [
+          "EVD-c0faeafa7bcd4bf4d032",
+          "EVD-0565fe48dae81fa6063a",
+          "EVD-64de011b48924da217f8",
+          "EVD-dc8db52adde18f62fb2b",
+          "EVD-42eac4e7a7f3dbc263cb"
+        ],
+        "l4_code": "L4-IMF-09",
+        "process_context": "STEP-02 预测分析",
+        "quadrant": "unclassified",
+        "risks_limits": [
+          "判断/认知类，无法Skill化"
+        ]
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "current_recommendation": "优先进入Skill原型候选池，保留人工确认",
+        "data_basis": [
+          "D1=3, D2=3 (EVD-e57954cd7bc837421ff0, EVD-062f466e5fc562a5fd77)",
+          "Skill可行性A-高封装 (EVD-6e90ed4c5537e3670853)"
+        ],
+        "evidence_refs": [
+          "EVD-1c6931b00e0e1c601f1d",
+          "EVD-c10a0b58b24196b69a17",
+          "EVD-6e90ed4c5537e3670853",
+          "EVD-e57954cd7bc837421ff0",
+          "EVD-895b5d2df549868b6465"
+        ],
+        "l4_code": "L4-IMF-10",
+        "process_context": "STEP-01 异常事件紧急通报（分支）",
+        "quadrant": "unclassified",
+        "risks_limits": [
+          "单一动作，理想Skill候选，但需人工确认"
+        ]
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "current_recommendation": "固化合规规则，封装检查部分，人工复核后通过",
+        "data_basis": [
+          "D1=3, D3=3 (EVD-a0684201f9ba10a9bbf0, EVD-3caa34973713d30bc94f)",
+          "Skill可行性B-中封装 (EVD-5802481759d0932dfe22)"
+        ],
+        "evidence_refs": [
+          "EVD-e65c0acb3103cb40ab18",
+          "EVD-b6461d7fa606890d32e6",
+          "EVD-5802481759d0932dfe22",
+          "EVD-a0684201f9ba10a9bbf0",
+          "EVD-35bc67b5cbb4962181ac"
+        ],
+        "l4_code": "L4-IMF-11",
+        "process_context": "STEP-05 数据安全与监管合规",
+        "quadrant": "unclassified",
+        "risks_limits": [
+          "合规类需人工复核",
+          "需规则和系统集成"
+        ]
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "current_recommendation": "使用Agent辅助，不封装Skill",
+        "data_basis": [
+          "D1=2, D3=2 (EVD-96f446a1fddf68b67db3, EVD-2f5abfcfbf0fd0f667d3)",
+          "Skill可行性C-低封装 (EVD-1eacdf83c62724e76edd)"
+        ],
+        "evidence_refs": [
+          "EVD-7ac4c428dba9b62524fb",
+          "EVD-3df59082439b98ecd3e9",
+          "EVD-1eacdf83c62724e76edd",
+          "EVD-96f446a1fddf68b67db3",
+          "EVD-48551fcca9bece6e5920"
+        ],
+        "l4_code": "L4-IMF-12",
+        "process_context": "STEP-05 数据反向学习",
+        "quadrant": "unclassified",
+        "risks_limits": [
+          "判断/认知类，无法Skill化"
+        ]
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "current_recommendation": "Agent辅助管理授权，不封装Skill",
+        "data_basis": [
+          "D1=2, D2=1 (EVD-66992cf67acf97153c1f, EVD-f6a667da0c2f47104c6d)",
+          "Skill可行性C-低封装 (EVD-868a73178d21e615278f)"
+        ],
+        "evidence_refs": [
+          "EVD-2e951bc66aeeea18a4ab",
+          "EVD-dd1d115fceff47a6d5c8",
+          "EVD-868a73178d21e615278f",
+          "EVD-66992cf67acf97153c1f",
+          "EVD-36d0502be4b666298882"
+        ],
+        "l4_code": "L4-IMF-13",
+        "process_context": "STEP-01 多保司数据对比授权",
+        "quadrant": "unclassified",
+        "risks_limits": [
+          "判断/关系类，需人工"
+        ]
+      }
+    ],
     "rejected_task_sources": [],
     "schema_version": "vnw.l3-analysis.v1",
     "source_scope": {
@@ -440,825 +838,368 @@
     },
     "tasks": [
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-a652b399f8e930cc9c35"
+          "EVD-8eaab7f3e027d9cfc3f9",
+          "EVD-75256d336876b2249110"
         ],
         "l4_code": "L4-IMF-01",
         "next_task_ids": [],
         "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 1,
-        "sequence_status": "SOURCE_CONFIRMED",
+        "relation_type": "",
+        "sequence_no": null,
+        "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 40,
         "source_step_id": "STEP-01",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-IMF-01-T01",
-        "task_name": "执行L4-IMF-01：数据管道自动采集+校验 → 输出《各保司数据集》（Auto）",
-        "tier_rationale": ""
+        "source_type": "blueprint_step",
+        "suggested_tier": "Auto",
+        "task_id": "TASK-01",
+        "task_name": "执行数据管道自动采集",
+        "tier_rationale": "数据采集是高度结构化的自动化流程，D1=3，适合封装为Skill"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-a652b399f8e930cc9c35"
+          "EVD-8eaab7f3e027d9cfc3f9",
+          "EVD-0e8c67287d5fb9320d35"
         ],
         "l4_code": "L4-IMF-01",
         "next_task_ids": [],
         "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 1,
-        "sequence_status": "SOURCE_CONFIRMED",
+        "relation_type": "",
+        "sequence_no": null,
+        "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 40,
         "source_step_id": "STEP-01",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-IMF-01-T02",
-        "task_name": "执行L4-IMF-13：多保司数据对比授权确认 → 输出《授权清单》",
-        "tier_rationale": ""
+        "source_type": "blueprint_step",
+        "suggested_tier": "Aug",
+        "task_id": "TASK-02",
+        "task_name": "人工复核数据质量异常",
+        "tier_rationale": "语义复核需要保司关系经理介入，自动化规则无法完全替代人工判断"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-a652b399f8e930cc9c35"
-        ],
-        "l4_code": "L4-IMF-01",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 1,
-        "sequence_status": "SOURCE_CONFIRMED",
-        "source_line": 40,
-        "source_step_id": "STEP-01",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-IMF-01-T03",
-        "task_name": "异常 → 执行L4-IMF-10紧急通报 + 返回Carrie修复数据管道",
-        "tier_rationale": ""
-      },
-      {
-        "analysis_status": "FACT_EXTRACTED",
-        "evidence_refs": [
-          "EVD-a652b399f8e930cc9c35"
+          "EVD-868a73178d21e615278f",
+          "EVD-9ae9789bb4b48812f761"
         ],
         "l4_code": "L4-IMF-13",
         "next_task_ids": [],
         "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 1,
-        "sequence_status": "SOURCE_CONFIRMED",
+        "relation_type": "",
+        "sequence_no": null,
+        "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 40,
         "source_step_id": "STEP-01",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-IMF-13-T01",
-        "task_name": "执行L4-IMF-01：数据管道自动采集+校验 → 输出《各保司数据集》（Auto）",
-        "tier_rationale": ""
+        "source_type": "blueprint_step",
+        "suggested_tier": "Hybrid",
+        "task_id": "TASK-03",
+        "task_name": "确认多保司数据对比授权",
+        "tier_rationale": "授权确认涉及关系判断，需Agent辅助并人工决策"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-a652b399f8e930cc9c35"
-        ],
-        "l4_code": "L4-IMF-13",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 1,
-        "sequence_status": "SOURCE_CONFIRMED",
-        "source_line": 40,
-        "source_step_id": "STEP-01",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-IMF-13-T02",
-        "task_name": "执行L4-IMF-13：多保司数据对比授权确认 → 输出《授权清单》",
-        "tier_rationale": ""
-      },
-      {
-        "analysis_status": "FACT_EXTRACTED",
-        "evidence_refs": [
-          "EVD-a652b399f8e930cc9c35"
-        ],
-        "l4_code": "L4-IMF-13",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 1,
-        "sequence_status": "SOURCE_CONFIRMED",
-        "source_line": 40,
-        "source_step_id": "STEP-01",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-IMF-13-T03",
-        "task_name": "异常 → 执行L4-IMF-10紧急通报 + 返回Carrie修复数据管道",
-        "tier_rationale": ""
-      },
-      {
-        "analysis_status": "FACT_EXTRACTED",
-        "evidence_refs": [
-          "EVD-a652b399f8e930cc9c35"
+          "EVD-6e90ed4c5537e3670853",
+          "EVD-97978dc0d5da8cdfa7f4"
         ],
         "l4_code": "L4-IMF-10",
         "next_task_ids": [],
         "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 1,
-        "sequence_status": "SOURCE_CONFIRMED",
-        "source_line": 40,
+        "relation_type": "",
+        "sequence_no": null,
+        "sequence_status": "SOURCE_STEP_ONLY",
+        "source_line": 46,
         "source_step_id": "STEP-01",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-IMF-10-T01",
-        "task_name": "执行L4-IMF-01：数据管道自动采集+校验 → 输出《各保司数据集》（Auto）",
-        "tier_rationale": ""
+        "source_type": "blueprint_step",
+        "suggested_tier": "Auto",
+        "task_id": "TASK-04",
+        "task_name": "生成并发送异常事件紧急通报",
+        "tier_rationale": "异常检测和通报生成可自动化，人工确认后可发送"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-a652b399f8e930cc9c35"
-        ],
-        "l4_code": "L4-IMF-10",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 1,
-        "sequence_status": "SOURCE_CONFIRMED",
-        "source_line": 40,
-        "source_step_id": "STEP-01",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-IMF-10-T02",
-        "task_name": "执行L4-IMF-13：多保司数据对比授权确认 → 输出《授权清单》",
-        "tier_rationale": ""
-      },
-      {
-        "analysis_status": "FACT_EXTRACTED",
-        "evidence_refs": [
-          "EVD-a652b399f8e930cc9c35"
-        ],
-        "l4_code": "L4-IMF-10",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 1,
-        "sequence_status": "SOURCE_CONFIRMED",
-        "source_line": 40,
-        "source_step_id": "STEP-01",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-IMF-10-T03",
-        "task_name": "异常 → 执行L4-IMF-10紧急通报 + 返回Carrie修复数据管道",
-        "tier_rationale": ""
-      },
-      {
-        "analysis_status": "FACT_EXTRACTED",
-        "evidence_refs": [
-          "EVD-b30b9c461f9dc657ab0a"
+          "EVD-129250952f7f38ef39ae",
+          "EVD-b15b7b555920d197ca9a"
         ],
         "l4_code": "L4-IMF-02",
         "next_task_ids": [],
         "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 2,
-        "sequence_status": "SOURCE_CONFIRMED",
+        "relation_type": "",
+        "sequence_no": null,
+        "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 48,
         "source_step_id": "STEP-02",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-IMF-02-T01",
-        "task_name": "执行L4-IMF-02：分析模型自动运行 → 输出《分析结果》（Auto）",
-        "tier_rationale": ""
+        "source_type": "blueprint_step",
+        "suggested_tier": "Auto",
+        "task_id": "TASK-05",
+        "task_name": "运行分析模型生成初步结果",
+        "tier_rationale": "模型运行是确定性计算，可完全自动化"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-b30b9c461f9dc657ab0a"
+          "EVD-129250952f7f38ef39ae",
+          "EVD-9b20a0fff78d8ae1ef36"
         ],
         "l4_code": "L4-IMF-02",
         "next_task_ids": [],
         "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 2,
-        "sequence_status": "SOURCE_CONFIRMED",
+        "relation_type": "",
+        "sequence_no": null,
+        "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 48,
         "source_step_id": "STEP-02",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-IMF-02-T02",
-        "task_name": "执行L4-IMF-06：实时看板更新 → 输出《实时看板》（Auto）",
-        "tier_rationale": ""
+        "source_type": "blueprint_step",
+        "suggested_tier": "Aug",
+        "task_id": "TASK-06",
+        "task_name": "人工审核分析结果并提炼洞察",
+        "tier_rationale": "判断/策略类需要人工权威，Agent提供辅助"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-b30b9c461f9dc657ab0a"
-        ],
-        "l4_code": "L4-IMF-02",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 2,
-        "sequence_status": "SOURCE_CONFIRMED",
-        "source_line": 48,
-        "source_step_id": "STEP-02",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-IMF-02-T03",
-        "task_name": "执行L4-IMF-07：定制化报告生成 → 输出《定制报告配置》",
-        "tier_rationale": ""
-      },
-      {
-        "analysis_status": "FACT_EXTRACTED",
-        "evidence_refs": [
-          "EVD-b30b9c461f9dc657ab0a"
-        ],
-        "l4_code": "L4-IMF-02",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 2,
-        "sequence_status": "SOURCE_CONFIRMED",
-        "source_line": 48,
-        "source_step_id": "STEP-02",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-IMF-02-T04",
-        "task_name": "执行L4-IMF-08：竞品对标脱敏处理 → 输出《对标报告》",
-        "tier_rationale": ""
-      },
-      {
-        "analysis_status": "FACT_EXTRACTED",
-        "evidence_refs": [
-          "EVD-b30b9c461f9dc657ab0a"
-        ],
-        "l4_code": "L4-IMF-02",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 2,
-        "sequence_status": "SOURCE_CONFIRMED",
-        "source_line": 48,
-        "source_step_id": "STEP-02",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-IMF-02-T05",
-        "task_name": "执行L4-IMF-09：预测分析 → 输出《预测报告》（Auto）",
-        "tier_rationale": ""
-      },
-      {
-        "analysis_status": "FACT_EXTRACTED",
-        "evidence_refs": [
-          "EVD-b30b9c461f9dc657ab0a"
+          "EVD-a79ab44dde30c5f0f028",
+          "EVD-6568a225bacb1aa86a3e"
         ],
         "l4_code": "L4-IMF-06",
         "next_task_ids": [],
         "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 2,
-        "sequence_status": "SOURCE_CONFIRMED",
-        "source_line": 48,
+        "relation_type": "",
+        "sequence_no": null,
+        "sequence_status": "SOURCE_STEP_ONLY",
+        "source_line": 50,
         "source_step_id": "STEP-02",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-IMF-06-T01",
-        "task_name": "执行L4-IMF-02：分析模型自动运行 → 输出《分析结果》（Auto）",
-        "tier_rationale": ""
+        "source_type": "blueprint_step",
+        "suggested_tier": "Auto",
+        "task_id": "TASK-07",
+        "task_name": "更新实时看板数据",
+        "tier_rationale": "看板更新是确定性操作，可自动化"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-b30b9c461f9dc657ab0a"
-        ],
-        "l4_code": "L4-IMF-06",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 2,
-        "sequence_status": "SOURCE_CONFIRMED",
-        "source_line": 48,
-        "source_step_id": "STEP-02",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-IMF-06-T02",
-        "task_name": "执行L4-IMF-06：实时看板更新 → 输出《实时看板》（Auto）",
-        "tier_rationale": ""
-      },
-      {
-        "analysis_status": "FACT_EXTRACTED",
-        "evidence_refs": [
-          "EVD-b30b9c461f9dc657ab0a"
-        ],
-        "l4_code": "L4-IMF-06",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 2,
-        "sequence_status": "SOURCE_CONFIRMED",
-        "source_line": 48,
-        "source_step_id": "STEP-02",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-IMF-06-T03",
-        "task_name": "执行L4-IMF-07：定制化报告生成 → 输出《定制报告配置》",
-        "tier_rationale": ""
-      },
-      {
-        "analysis_status": "FACT_EXTRACTED",
-        "evidence_refs": [
-          "EVD-b30b9c461f9dc657ab0a"
-        ],
-        "l4_code": "L4-IMF-06",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 2,
-        "sequence_status": "SOURCE_CONFIRMED",
-        "source_line": 48,
-        "source_step_id": "STEP-02",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-IMF-06-T04",
-        "task_name": "执行L4-IMF-08：竞品对标脱敏处理 → 输出《对标报告》",
-        "tier_rationale": ""
-      },
-      {
-        "analysis_status": "FACT_EXTRACTED",
-        "evidence_refs": [
-          "EVD-b30b9c461f9dc657ab0a"
-        ],
-        "l4_code": "L4-IMF-06",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 2,
-        "sequence_status": "SOURCE_CONFIRMED",
-        "source_line": 48,
-        "source_step_id": "STEP-02",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-IMF-06-T05",
-        "task_name": "执行L4-IMF-09：预测分析 → 输出《预测报告》（Auto）",
-        "tier_rationale": ""
-      },
-      {
-        "analysis_status": "FACT_EXTRACTED",
-        "evidence_refs": [
-          "EVD-b30b9c461f9dc657ab0a"
+          "EVD-ced94dd1989ecbd0dfdc",
+          "EVD-e4dcd71a059b5b72a241"
         ],
         "l4_code": "L4-IMF-07",
         "next_task_ids": [],
         "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 2,
-        "sequence_status": "SOURCE_CONFIRMED",
-        "source_line": 48,
+        "relation_type": "",
+        "sequence_no": null,
+        "sequence_status": "SOURCE_STEP_ONLY",
+        "source_line": 51,
         "source_step_id": "STEP-02",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-IMF-07-T01",
-        "task_name": "执行L4-IMF-02：分析模型自动运行 → 输出《分析结果》（Auto）",
-        "tier_rationale": ""
+        "source_type": "blueprint_step",
+        "suggested_tier": "Aug",
+        "task_id": "TASK-08",
+        "task_name": "生成定制化报告配置",
+        "tier_rationale": "需要模板和规则支持，人工确认定制需求"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-b30b9c461f9dc657ab0a"
-        ],
-        "l4_code": "L4-IMF-07",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 2,
-        "sequence_status": "SOURCE_CONFIRMED",
-        "source_line": 48,
-        "source_step_id": "STEP-02",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-IMF-07-T02",
-        "task_name": "执行L4-IMF-06：实时看板更新 → 输出《实时看板》（Auto）",
-        "tier_rationale": ""
-      },
-      {
-        "analysis_status": "FACT_EXTRACTED",
-        "evidence_refs": [
-          "EVD-b30b9c461f9dc657ab0a"
-        ],
-        "l4_code": "L4-IMF-07",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 2,
-        "sequence_status": "SOURCE_CONFIRMED",
-        "source_line": 48,
-        "source_step_id": "STEP-02",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-IMF-07-T03",
-        "task_name": "执行L4-IMF-07：定制化报告生成 → 输出《定制报告配置》",
-        "tier_rationale": ""
-      },
-      {
-        "analysis_status": "FACT_EXTRACTED",
-        "evidence_refs": [
-          "EVD-b30b9c461f9dc657ab0a"
-        ],
-        "l4_code": "L4-IMF-07",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 2,
-        "sequence_status": "SOURCE_CONFIRMED",
-        "source_line": 48,
-        "source_step_id": "STEP-02",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-IMF-07-T04",
-        "task_name": "执行L4-IMF-08：竞品对标脱敏处理 → 输出《对标报告》",
-        "tier_rationale": ""
-      },
-      {
-        "analysis_status": "FACT_EXTRACTED",
-        "evidence_refs": [
-          "EVD-b30b9c461f9dc657ab0a"
-        ],
-        "l4_code": "L4-IMF-07",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 2,
-        "sequence_status": "SOURCE_CONFIRMED",
-        "source_line": 48,
-        "source_step_id": "STEP-02",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-IMF-07-T05",
-        "task_name": "执行L4-IMF-09：预测分析 → 输出《预测报告》（Auto）",
-        "tier_rationale": ""
-      },
-      {
-        "analysis_status": "FACT_EXTRACTED",
-        "evidence_refs": [
-          "EVD-b30b9c461f9dc657ab0a"
+          "EVD-9871af58352e450a04ad",
+          "EVD-c60e27afbada2955a2bb"
         ],
         "l4_code": "L4-IMF-08",
         "next_task_ids": [],
         "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 2,
-        "sequence_status": "SOURCE_CONFIRMED",
+        "relation_type": "",
+        "sequence_no": null,
+        "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 48,
         "source_step_id": "STEP-02",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-IMF-08-T01",
-        "task_name": "执行L4-IMF-02：分析模型自动运行 → 输出《分析结果》（Auto）",
-        "tier_rationale": ""
+        "source_type": "blueprint_step",
+        "suggested_tier": "Auto",
+        "task_id": "TASK-09",
+        "task_name": "执行竞品对标脱敏处理",
+        "tier_rationale": "单一信息处理动作，适合Skill化"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-b30b9c461f9dc657ab0a"
-        ],
-        "l4_code": "L4-IMF-08",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 2,
-        "sequence_status": "SOURCE_CONFIRMED",
-        "source_line": 48,
-        "source_step_id": "STEP-02",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-IMF-08-T02",
-        "task_name": "执行L4-IMF-06：实时看板更新 → 输出《实时看板》（Auto）",
-        "tier_rationale": ""
-      },
-      {
-        "analysis_status": "FACT_EXTRACTED",
-        "evidence_refs": [
-          "EVD-b30b9c461f9dc657ab0a"
-        ],
-        "l4_code": "L4-IMF-08",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 2,
-        "sequence_status": "SOURCE_CONFIRMED",
-        "source_line": 48,
-        "source_step_id": "STEP-02",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-IMF-08-T03",
-        "task_name": "执行L4-IMF-07：定制化报告生成 → 输出《定制报告配置》",
-        "tier_rationale": ""
-      },
-      {
-        "analysis_status": "FACT_EXTRACTED",
-        "evidence_refs": [
-          "EVD-b30b9c461f9dc657ab0a"
-        ],
-        "l4_code": "L4-IMF-08",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 2,
-        "sequence_status": "SOURCE_CONFIRMED",
-        "source_line": 48,
-        "source_step_id": "STEP-02",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-IMF-08-T04",
-        "task_name": "执行L4-IMF-08：竞品对标脱敏处理 → 输出《对标报告》",
-        "tier_rationale": ""
-      },
-      {
-        "analysis_status": "FACT_EXTRACTED",
-        "evidence_refs": [
-          "EVD-b30b9c461f9dc657ab0a"
-        ],
-        "l4_code": "L4-IMF-08",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 2,
-        "sequence_status": "SOURCE_CONFIRMED",
-        "source_line": 48,
-        "source_step_id": "STEP-02",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-IMF-08-T05",
-        "task_name": "执行L4-IMF-09：预测分析 → 输出《预测报告》（Auto）",
-        "tier_rationale": ""
-      },
-      {
-        "analysis_status": "FACT_EXTRACTED",
-        "evidence_refs": [
-          "EVD-b30b9c461f9dc657ab0a"
+          "EVD-64de011b48924da217f8",
+          "EVD-dc8db52adde18f62fb2b"
         ],
         "l4_code": "L4-IMF-09",
         "next_task_ids": [],
         "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 2,
-        "sequence_status": "SOURCE_CONFIRMED",
+        "relation_type": "",
+        "sequence_no": null,
+        "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 48,
         "source_step_id": "STEP-02",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-IMF-09-T01",
-        "task_name": "执行L4-IMF-02：分析模型自动运行 → 输出《分析结果》（Auto）",
-        "tier_rationale": ""
+        "source_type": "blueprint_step",
+        "suggested_tier": "Auto",
+        "task_id": "TASK-10",
+        "task_name": "运行预测模型输出结果",
+        "tier_rationale": "模型运行可自动化，但预测解读需人工"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-b30b9c461f9dc657ab0a"
-        ],
-        "l4_code": "L4-IMF-09",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 2,
-        "sequence_status": "SOURCE_CONFIRMED",
-        "source_line": 48,
-        "source_step_id": "STEP-02",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-IMF-09-T02",
-        "task_name": "执行L4-IMF-06：实时看板更新 → 输出《实时看板》（Auto）",
-        "tier_rationale": ""
-      },
-      {
-        "analysis_status": "FACT_EXTRACTED",
-        "evidence_refs": [
-          "EVD-b30b9c461f9dc657ab0a"
-        ],
-        "l4_code": "L4-IMF-09",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 2,
-        "sequence_status": "SOURCE_CONFIRMED",
-        "source_line": 48,
-        "source_step_id": "STEP-02",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-IMF-09-T03",
-        "task_name": "执行L4-IMF-07：定制化报告生成 → 输出《定制报告配置》",
-        "tier_rationale": ""
-      },
-      {
-        "analysis_status": "FACT_EXTRACTED",
-        "evidence_refs": [
-          "EVD-b30b9c461f9dc657ab0a"
-        ],
-        "l4_code": "L4-IMF-09",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 2,
-        "sequence_status": "SOURCE_CONFIRMED",
-        "source_line": 48,
-        "source_step_id": "STEP-02",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-IMF-09-T04",
-        "task_name": "执行L4-IMF-08：竞品对标脱敏处理 → 输出《对标报告》",
-        "tier_rationale": ""
-      },
-      {
-        "analysis_status": "FACT_EXTRACTED",
-        "evidence_refs": [
-          "EVD-b30b9c461f9dc657ab0a"
-        ],
-        "l4_code": "L4-IMF-09",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 2,
-        "sequence_status": "SOURCE_CONFIRMED",
-        "source_line": 48,
-        "source_step_id": "STEP-02",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-IMF-09-T05",
-        "task_name": "执行L4-IMF-09：预测分析 → 输出《预测报告》（Auto）",
-        "tier_rationale": ""
-      },
-      {
-        "analysis_status": "FACT_EXTRACTED",
-        "evidence_refs": [
-          "EVD-999061a574eac0cf7621"
+          "EVD-0be9be3bbea60d3f78a8",
+          "EVD-b69aee0ad8d1fb9f700b"
         ],
         "l4_code": "L4-IMF-03",
         "next_task_ids": [],
         "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 3,
-        "sequence_status": "SOURCE_CONFIRMED",
+        "relation_type": "",
+        "sequence_no": null,
+        "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 55,
         "source_step_id": "STEP-03",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-IMF-03-T01",
-        "task_name": "执行L4-IMF-03：报告脱敏+合规审查 → 输出《保司报告》",
-        "tier_rationale": ""
+        "source_type": "blueprint_step",
+        "suggested_tier": "Auto",
+        "task_id": "TASK-11",
+        "task_name": "按模板生成保司报告草稿",
+        "tier_rationale": "模板化报告生成可Skill化"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-999061a574eac0cf7621"
+          "EVD-0be9be3bbea60d3f78a8",
+          "EVD-732b90132a80eac635f1"
         ],
         "l4_code": "L4-IMF-03",
         "next_task_ids": [],
         "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 3,
-        "sequence_status": "SOURCE_CONFIRMED",
+        "relation_type": "",
+        "sequence_no": null,
+        "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 55,
         "source_step_id": "STEP-03",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-IMF-03-T02",
-        "task_name": "执行L4-IMF-04：B族与保司举行沟通会议 → 输出《保司反馈记录》",
-        "tier_rationale": ""
+        "source_type": "blueprint_step",
+        "suggested_tier": "Aug",
+        "task_id": "TASK-12",
+        "task_name": "合规审查并批准报告",
+        "tier_rationale": "合规需人工复核，不能完全自动化"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-999061a574eac0cf7621"
+          "EVD-d3578363aa19f6e8683d",
+          "EVD-b8528ecd80c42c47f713"
         ],
         "l4_code": "L4-IMF-04",
         "next_task_ids": [],
         "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 3,
-        "sequence_status": "SOURCE_CONFIRMED",
+        "relation_type": "",
+        "sequence_no": null,
+        "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 55,
         "source_step_id": "STEP-03",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-IMF-04-T01",
-        "task_name": "执行L4-IMF-03：报告脱敏+合规审查 → 输出《保司报告》",
-        "tier_rationale": ""
+        "source_type": "blueprint_step",
+        "suggested_tier": "Human",
+        "task_id": "TASK-13",
+        "task_name": "组织报告交付沟通会议",
+        "tier_rationale": "沟通会议高度依赖人际互动，无法自动化"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-999061a574eac0cf7621"
+          "EVD-d3578363aa19f6e8683d",
+          "EVD-347cfc11ea79101b5711"
         ],
         "l4_code": "L4-IMF-04",
         "next_task_ids": [],
         "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 3,
-        "sequence_status": "SOURCE_CONFIRMED",
+        "relation_type": "",
+        "sequence_no": null,
+        "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 55,
         "source_step_id": "STEP-03",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-IMF-04-T02",
-        "task_name": "执行L4-IMF-04：B族与保司举行沟通会议 → 输出《保司反馈记录》",
-        "tier_rationale": ""
+        "source_type": "blueprint_step",
+        "suggested_tier": "Auto",
+        "task_id": "TASK-14",
+        "task_name": "记录保司反馈会议纪要",
+        "tier_rationale": "记录可自动生成摘要，适合Skill化"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-e3e496bafc000a76c5eb"
+          "EVD-fea264c32cddf02fe8a2",
+          "EVD-4c48c4430a14c916e390"
         ],
         "l4_code": "L4-IMF-05",
         "next_task_ids": [],
         "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 4,
-        "sequence_status": "SOURCE_CONFIRMED",
+        "relation_type": "",
+        "sequence_no": null,
+        "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 63,
         "source_step_id": "STEP-04",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-IMF-05-T01",
-        "task_name": "执行L4-IMF-05：整合数据+提议 → 输出《调整建议书》",
-        "tier_rationale": ""
+        "source_type": "blueprint_step",
+        "suggested_tier": "Aug",
+        "task_id": "TASK-15",
+        "task_name": "整合数据生成调整建议草案",
+        "tier_rationale": "Agent辅助生成建议，人工决策调整"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-bfe8721599f27eaf3f40"
+          "EVD-5802481759d0932dfe22",
+          "EVD-a0684201f9ba10a9bbf0"
         ],
         "l4_code": "L4-IMF-11",
         "next_task_ids": [],
         "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 5,
-        "sequence_status": "SOURCE_CONFIRMED",
+        "relation_type": "",
+        "sequence_no": null,
+        "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 68,
         "source_step_id": "STEP-05",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-IMF-11-T01",
-        "task_name": "执行L4-IMF-11：合规审计记录 → 输出《合规记录》（Auto）",
-        "tier_rationale": ""
+        "source_type": "blueprint_step",
+        "suggested_tier": "Auto",
+        "task_id": "TASK-16",
+        "task_name": "执行数据安全与监管合规检查",
+        "tier_rationale": "合规规则匹配可自动化执行"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-bfe8721599f27eaf3f40"
+          "EVD-5802481759d0932dfe22",
+          "EVD-5cb280e18842b3ea7296"
         ],
         "l4_code": "L4-IMF-11",
         "next_task_ids": [],
         "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 5,
-        "sequence_status": "SOURCE_CONFIRMED",
+        "relation_type": "",
+        "sequence_no": null,
+        "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 68,
         "source_step_id": "STEP-05",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-IMF-11-T02",
-        "task_name": "执行L4-IMF-12：数据反向学习沉淀 → 更新《反向学习洞察》",
-        "tier_rationale": ""
+        "source_type": "blueprint_step",
+        "suggested_tier": "Aug",
+        "task_id": "TASK-17",
+        "task_name": "人工复核合规结果，批准记录",
+        "tier_rationale": "合规复核需人工权威，无法完全自动化"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-bfe8721599f27eaf3f40"
+          "EVD-1eacdf83c62724e76edd",
+          "EVD-96f446a1fddf68b67db3"
         ],
         "l4_code": "L4-IMF-12",
         "next_task_ids": [],
         "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 5,
-        "sequence_status": "SOURCE_CONFIRMED",
+        "relation_type": "",
+        "sequence_no": null,
+        "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 68,
         "source_step_id": "STEP-05",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-IMF-12-T01",
-        "task_name": "执行L4-IMF-11：合规审计记录 → 输出《合规记录》（Auto）",
-        "tier_rationale": ""
-      },
-      {
-        "analysis_status": "FACT_EXTRACTED",
-        "evidence_refs": [
-          "EVD-bfe8721599f27eaf3f40"
-        ],
-        "l4_code": "L4-IMF-12",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 5,
-        "sequence_status": "SOURCE_CONFIRMED",
-        "source_line": 68,
-        "source_step_id": "STEP-05",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-IMF-12-T02",
-        "task_name": "执行L4-IMF-12：数据反向学习沉淀 → 更新《反向学习洞察》",
-        "tier_rationale": ""
+        "source_type": "blueprint_step",
+        "suggested_tier": "Aug",
+        "task_id": "TASK-18",
+        "task_name": "反向学习分析并提取洞察",
+        "tier_rationale": "Agent辅助分析，人工审批洞察"
       }
     ]
   },
-  "analysis_freshness": "PENDING_MODEL",
+  "analysis_freshness": "CURRENT",
   "analysis_input_hash": "b55c74303e3e062d75b32aef08e831d30ffa2bb0857ef6a80cd62c3adb0d7770",
   "blueprint": {
     "blueprint_value_nodes": [],

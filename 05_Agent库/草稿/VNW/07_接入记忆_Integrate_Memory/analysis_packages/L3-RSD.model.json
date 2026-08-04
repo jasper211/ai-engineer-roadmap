@@ -1,0 +1,221 @@
+{
+  "schema_version": "vnw.l3-analysis.v1",
+  "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
+  "generation_mode": "UNIFIED_MODEL",
+  "analysis_status": "MODEL_DRAFT",
+  "model_run": {
+    "model_name": "deepseek-v4-pro",
+    "model_version": "deepseek-v4-pro",
+    "prompt_version": "VNW-L3-COM-GOLD-v1.0",
+    "generated_at": "2026-08-04T19:11:50.039241+00:00",
+    "input_snapshot_hash": "a83533da32f704836ecb6b109de35b6fffc94a5abf04a89e8c324d76ea31ef4a"
+  },
+  "source_scope": {
+    "database": "process_analytics",
+    "knowledge": "ACTIVE supplemental evidence only",
+    "evidence_count": 21
+  },
+  "l4_analysis": [
+    {
+      "l4_code": "L4-RSD-01",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-30d0aeee43feece2072f",
+        "EVD-beac904f6ca442d77011",
+        "EVD-5dfb7171bfe359ff0b7d",
+        "EVD-61842221526585e0e97b",
+        "EVD-6c75cd78bdb789f954d7",
+        "EVD-5e5de39c3508065a347a",
+        "EVD-4f39162ff03496103612",
+        "EVD-651e2c2fc86f68136cb8",
+        "EVD-35d0e9886a628bb154f3",
+        "EVD-f829162524f703dee5b6",
+        "EVD-b65764cd881af07fc2d6",
+        "EVD-ba53502295d541ab052a"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "初版权益规划方案、成本测算表、测算模型表及商务财务路径图，构成权益设计的框架基础",
+      "specific_capabilities": [
+        "需求分析与拆解",
+        "权益方案策略设计",
+        "成本测算与建模",
+        "商务路径规划",
+        "策略性判断与决策"
+      ],
+      "ai_reshape": "通过Agent辅助进行需求分析、数据整理和方案比对，但核心策略判断和框架设计保留人工决策",
+      "quality_anchor": "",
+      "ai_responsibility": "结构化需求信息提取；成本测算初步建模；历史方案数据检索与比对",
+      "human_responsibility": "方案设计决策；商务路径规划判断；策略性权衡；最终方案审批",
+      "handoff_triggers": [
+        "需求模糊需权威判断",
+        "策略性取舍无法自动决定",
+        "成本测算异常",
+        "合规审查介入"
+      ],
+      "control_gates": [],
+      "data_basis": [
+        "EVD-4f39162ff03496103612",
+        "EVD-651e2c2fc86f68136cb8",
+        "EVD-35d0e9886a628bb154f3",
+        "EVD-f829162524f703dee5b6",
+        "EVD-b65764cd881af07fc2d6",
+        "EVD-ba53502295d541ab052a"
+      ],
+      "process_context": "该L4是服务与权益设计流程中的框架设计环节，负责产出初版权益规划方案、成本测算及商务财务路径图，为后续详细设计提供基础。",
+      "risks_limits": [
+        "复合动作导致AI执行连贯性不足",
+        "策略性判断高度依赖人工经验",
+        "规则清晰度低，易产生偏差"
+      ],
+      "current_recommendation": "将L4拆分为需求分析、框架设计、成本测算、路径设计等子任务；对数据整理与初步测算采用Agent辅助，策略判断保留人工；优先试点需求分析Agent辅助以降低人工负荷。",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "TASK-L3-RSD-01-1",
+      "l4_code": "L4-RSD-01",
+      "task_name": "权益方案需求收集与分析",
+      "source_type": "blueprint_step",
+      "sequence_no": 1,
+      "sequence_status": "UNCONFIRMED",
+      "source_step_id": "STEP-01",
+      "source_line": 50,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-017ac538f57eb8b94959",
+        "EVD-6c75cd78bdb789f954d7",
+        "EVD-beac904f6ca442d77011"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "需求收集可借助Agent提取结构化信息（D1=2），但需求模糊性与策略判断需人工介入（skill_feasibility C级），建议Aug模式"
+    },
+    {
+      "task_id": "TASK-L3-RSD-01-2",
+      "l4_code": "L4-RSD-01",
+      "task_name": "权益方案框架设计（初稿）",
+      "source_type": "blueprint_step",
+      "sequence_no": 1,
+      "sequence_status": "UNCONFIRMED",
+      "source_step_id": "STEP-01",
+      "source_line": 50,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-017ac538f57eb8b94959",
+        "EVD-6c75cd78bdb789f954d7",
+        "EVD-beac904f6ca442d77011"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "框架设计需策略性判断与权威决策（复合动作，C级），AI可辅助方案比对与数据支撑，但设计核心由人完成，建议Aug"
+    },
+    {
+      "task_id": "TASK-L3-RSD-01-3",
+      "l4_code": "L4-RSD-01",
+      "task_name": "权益成本测算与模型搭建",
+      "source_type": "deliverable_decomposition",
+      "sequence_no": null,
+      "sequence_status": "UNCONFIRMED",
+      "source_step_id": "STEP-01",
+      "source_line": 50,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-beac904f6ca442d77011",
+        "EVD-6c75cd78bdb789f954d7",
+        "EVD-35d0e9886a628bb154f3"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "成本测算涉及数据建模与计算，可部分自动化（D3=2），但需人工验证与调整，建议Hybrid"
+    },
+    {
+      "task_id": "TASK-L3-RSD-01-4",
+      "l4_code": "L4-RSD-01",
+      "task_name": "权益商务&财务路径图设计",
+      "source_type": "deliverable_decomposition",
+      "sequence_no": null,
+      "sequence_status": "UNCONFIRMED",
+      "source_step_id": "STEP-01",
+      "source_line": 50,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-beac904f6ca442d77011",
+        "EVD-6c75cd78bdb789f954d7"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "路径图设计需商务判断与策略规划，依赖人工经验（C级），AI可辅助数据整合与可视化，建议Aug"
+    }
+  ],
+  "priority_drafts": [
+    {
+      "l4_code": "L4-RSD-01",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "EVD-4f39162ff03496103612",
+        "EVD-651e2c2fc86f68136cb8",
+        "EVD-35d0e9886a628bb154f3",
+        "EVD-f829162524f703dee5b6",
+        "EVD-b65764cd881af07fc2d6",
+        "EVD-ba53502295d541ab052a"
+      ],
+      "process_context": "该L4是服务与权益设计流程中的框架设计环节，负责产出初版权益规划方案、成本测算及商务财务路径图，为后续详细设计提供基础。",
+      "risks_limits": [
+        "复合动作导致AI执行连贯性不足",
+        "策略性判断高度依赖人工经验",
+        "规则清晰度低，易产生偏差"
+      ],
+      "current_recommendation": "将L4拆分为需求分析、框架设计、成本测算、路径设计等子任务；对数据整理与初步测算采用Agent辅助，策略判断保留人工；优先试点需求分析Agent辅助以降低人工负荷。",
+      "evidence_refs": [
+        "EVD-30d0aeee43feece2072f",
+        "EVD-beac904f6ca442d77011",
+        "EVD-5dfb7171bfe359ff0b7d",
+        "EVD-61842221526585e0e97b",
+        "EVD-6c75cd78bdb789f954d7",
+        "EVD-5e5de39c3508065a347a",
+        "EVD-4f39162ff03496103612",
+        "EVD-651e2c2fc86f68136cb8",
+        "EVD-35d0e9886a628bb154f3",
+        "EVD-f829162524f703dee5b6",
+        "EVD-b65764cd881af07fc2d6",
+        "EVD-ba53502295d541ab052a"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "decision_drafts": [
+    {
+      "priority": "P0 (试点)",
+      "task_ids": [
+        "TASK-L3-RSD-01-1"
+      ],
+      "title": "启动需求分析Agent辅助试点",
+      "pilot_scope": "选择一条业务线的权益方案需求，使用Agent辅助进行信息收集、整理与初步分析，人工负责异常判断和框架确认",
+      "human_boundary": "需求模糊或超出预设规则时升级人工；框架初稿需人工审核；所有策略性决定由权益战略岗拍板",
+      "evidence_refs": [
+        "EVD-6c75cd78bdb789f954d7",
+        "EVD-4f39162ff03496103612",
+        "EVD-651e2c2fc86f68136cb8",
+        "EVD-017ac538f57eb8b94959"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "control_chain": [],
+  "rejected_task_sources": [],
+  "missing_analysis": [
+    "L4-RSD-01 · l4_analysis.quality_anchor · 缺少验收标准或SOP明确的质量标准证据",
+    "L4-RSD-01 · l4_analysis.control_gates · 未找到资金关卡、合规强制控制门等证据"
+  ]
+}

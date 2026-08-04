@@ -1,0 +1,243 @@
+{
+  "schema_version": "vnw.l3-analysis.v1",
+  "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
+  "generation_mode": "UNIFIED_MODEL",
+  "analysis_status": "MODEL_DRAFT",
+  "model_run": {
+    "model_name": "deepseek-v4-pro",
+    "model_version": "deepseek-v4-pro",
+    "prompt_version": "VNW-L3-COM-GOLD-v1.0",
+    "generated_at": "2026-08-04T19:31:41.081600+00:00",
+    "input_snapshot_hash": "d6387e7f8977afcc7440cf5127f798000e82cdae4469fe9918822a1e99ba4acc"
+  },
+  "source_scope": {
+    "database": "process_analytics",
+    "knowledge": "ACTIVE supplemental evidence only",
+    "evidence_count": 35
+  },
+  "l4_analysis": [
+    {
+      "l4_code": "L4-SSD-01",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-34975bca7ecc8758006f",
+        "EVD-fa9d1930a1ae4c37818b",
+        "EVD-4b4ef5f6b89102f33f03",
+        "EVD-117e7d99cb013189f8bf",
+        "EVD-2813b1f63a1e175a4463"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "服务方案框架设计：产出同行经代服务方案（Word/PPT）",
+      "specific_capabilities": [
+        "方案框架设计能力",
+        "策略判断与认知决策",
+        "根据技能可行性为单一动作，属于判断/策略/认知类，C-低封装"
+      ],
+      "ai_reshape": "采用Agent辅助模式，AI提供框架草案与历史模板建议，人工确认并授权下一步",
+      "quality_anchor": "框架方案须通过内部合规审查",
+      "ai_responsibility": "AI辅助生成方案框架草案，提供数据引用与模板",
+      "human_responsibility": "人工负责确认框架设计完整性、合规性，并做出最终批准",
+      "handoff_triggers": [
+        "AI生成框架不满足合规要求或数据不完整时触发人工介入"
+      ],
+      "control_gates": [
+        "内部合规审查（Q1决策）为必须通过的人工控制门"
+      ],
+      "data_basis": [
+        "需要合作方基本信息、历史方案案例、内部合规要求等（具体数据项无证据）"
+      ],
+      "process_context": "流程蓝图第一步，为后续个性化方案编写提供基础框架，直接关联价值节点VN-EQ-01",
+      "risks_limits": [
+        "低封装度需依赖人工权威判断，完全自动化风险高",
+        "数据缺失或合规不通过可能导致返工"
+      ],
+      "current_recommendation": "推荐以Agent辅助方式进行框架设计，人工确认后进入下一步，不建议全自动化",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Aug",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-SSD-02",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-84b1be05c3daaa03b66e",
+        "EVD-fae187f7c94aa9ce1f7c",
+        "EVD-31a67f0d1c9cc90c981c",
+        "EVD-0c62765d8ff8a38dffb9"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "个性化方案编写与评审：产出《个性化方案》",
+      "specific_capabilities": [
+        "个性化方案编写能力（基于框架）",
+        "方案评审与决策能力",
+        "技能可行性评为复合动作，需拆分为编写与评审"
+      ],
+      "ai_reshape": "将L4拆分为两个阶段：AI辅助编写个性化方案草稿，随后人工评审并定稿；Agent辅助决策支持",
+      "quality_anchor": "方案须符合框架要求并通过评审",
+      "ai_responsibility": "AI根据框架和客户数据生成方案草稿，提供修改建议",
+      "human_responsibility": "人工完成方案评审、修改及最终确认",
+      "handoff_triggers": [
+        "AI生成方案质量不佳或需要重大修改时转人工",
+        "评审中发现重大缺陷转人工修正"
+      ],
+      "control_gates": [
+        "方案评审为人工控制点（无资金关卡）"
+      ],
+      "data_basis": [
+        "需要客户个性化需求数据、框架方案、历史方案案例等（无明确证据）"
+      ],
+      "process_context": "流程蓝图第二步，依赖第一步框架方案，完成后形成最终交付物",
+      "risks_limits": [
+        "复合动作导致单点自动化困难，必须拆分",
+        "评审依赖专家判断，AI仅起辅助作用"
+      ],
+      "current_recommendation": "拆分为编写（Agent辅助）和评审（Hybrid/人工主导）两个独立任务，以提高可控性",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "T1",
+      "l4_code": "L4-SSD-01",
+      "task_name": "设计服务方案框架",
+      "source_type": "SOURCE_STEP",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-01",
+      "source_line": 49,
+      "previous_task_ids": [],
+      "next_task_ids": [
+        "T2",
+        "T3"
+      ],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-58900078e340cdec1083",
+        "EVD-4b4ef5f6b89102f33f03",
+        "EVD-34975bca7ecc8758006f",
+        "EVD-117e7d99cb013189f8bf"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "C-低封装单一判断动作，推荐Agent辅助决策，人工确认框架设计，不适宜全自动"
+    },
+    {
+      "task_id": "T2",
+      "l4_code": "L4-SSD-02",
+      "task_name": "编写个性化方案",
+      "source_type": "SOURCE_STEP",
+      "sequence_no": 2,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-02",
+      "source_line": 57,
+      "previous_task_ids": [
+        "T1"
+      ],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-dec4bc3fcee105bc0e9e",
+        "EVD-31a67f0d1c9cc90c981c",
+        "EVD-84b1be05c3daaa03b66e"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "复合动作拆分出的编写部分，AI可辅助生成草稿，人工修改确认，Agent辅助模式"
+    },
+    {
+      "task_id": "T3",
+      "l4_code": "L4-SSD-02",
+      "task_name": "评审个性化方案",
+      "source_type": "SOURCE_STEP",
+      "sequence_no": 2,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-02",
+      "source_line": 57,
+      "previous_task_ids": [
+        "T1"
+      ],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-dec4bc3fcee105bc0e9e",
+        "EVD-31a67f0d1c9cc90c981c",
+        "EVD-84b1be05c3daaa03b66e"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "评审依赖专家判断，AI辅助检查合规性与完整性，但最终决策需人工确认，半自动化模式"
+    }
+  ],
+  "priority_drafts": [
+    {
+      "l4_code": "L4-SSD-01",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "需要合作方基本信息、历史方案案例、内部合规要求等（具体数据项无证据）"
+      ],
+      "process_context": "流程蓝图第一步，为后续个性化方案编写提供基础框架，直接关联价值节点VN-EQ-01",
+      "risks_limits": [
+        "低封装度需依赖人工权威判断，完全自动化风险高",
+        "数据缺失或合规不通过可能导致返工"
+      ],
+      "current_recommendation": "推荐以Agent辅助方式进行框架设计，人工确认后进入下一步，不建议全自动化",
+      "evidence_refs": [
+        "EVD-34975bca7ecc8758006f",
+        "EVD-fa9d1930a1ae4c37818b",
+        "EVD-4b4ef5f6b89102f33f03",
+        "EVD-117e7d99cb013189f8bf",
+        "EVD-2813b1f63a1e175a4463"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-SSD-02",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "需要客户个性化需求数据、框架方案、历史方案案例等（无明确证据）"
+      ],
+      "process_context": "流程蓝图第二步，依赖第一步框架方案，完成后形成最终交付物",
+      "risks_limits": [
+        "复合动作导致单点自动化困难，必须拆分",
+        "评审依赖专家判断，AI仅起辅助作用"
+      ],
+      "current_recommendation": "拆分为编写（Agent辅助）和评审（Hybrid/人工主导）两个独立任务，以提高可控性",
+      "evidence_refs": [
+        "EVD-84b1be05c3daaa03b66e",
+        "EVD-fae187f7c94aa9ce1f7c",
+        "EVD-31a67f0d1c9cc90c981c",
+        "EVD-0c62765d8ff8a38dffb9"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "decision_drafts": [
+    {
+      "priority": "P1熔断",
+      "task_ids": [
+        "T1",
+        "T2",
+        "T3"
+      ],
+      "title": "试点服务方案框架设计，控制合规审查边界",
+      "pilot_scope": "选择一个合作经代机构作为试点，执行完整的框架设计流程（T1）和个性化方案编写（T2），评审（T3）由内部权益服务族人员负责",
+      "human_boundary": "框架设计必须经过内部合规审查（Q1决策）并由授权角色批准后，才允许进入个性化方案阶段；资金相关操作需另行评估",
+      "evidence_refs": [
+        "EVD-117e7d99cb013189f8bf",
+        "EVD-4b4ef5f6b89102f33f03",
+        "EVD-31a67f0d1c9cc90c981c",
+        "EVD-af8951db0438364ce509"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "control_chain": [],
+  "rejected_task_sources": [],
+  "missing_analysis": [
+    "l4_analysis.L4-SSD-01.handoff_triggers · 缺少人工接触点证据(EVD-2813b1f63a1e175a4463状态MISSING)，转人工条件需补充",
+    "l4_analysis.L4-SSD-02.handoff_triggers · 缺少人工接触点证据(EVD-0c62765d8ff8a38dffb9状态MISSING)，转人工条件需补充",
+    "控制链缺少L4定位，已拒绝1条"
+  ]
+}

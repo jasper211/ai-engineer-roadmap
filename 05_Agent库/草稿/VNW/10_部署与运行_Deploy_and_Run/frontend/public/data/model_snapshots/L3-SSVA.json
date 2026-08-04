@@ -1,148 +1,253 @@
 {
   "analysis": {
     "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
-    "analysis_status": "PENDING_MODEL",
-    "decision_drafts": [],
-    "generation_mode": "EVIDENCE_ONLY_BOOTSTRAP",
+    "analysis_status": "MODEL_DRAFT",
+    "control_chain": [],
+    "decision_drafts": [
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [
+          "EVD-a40dcc1d8ea18dae8d4b",
+          "EVD-21dd7707a0eb0a6f6d72",
+          "EVD-678b251ed4f4007c040c"
+        ],
+        "human_boundary": "人工必须审批激励结算和资金支付，并确定核算口径",
+        "pilot_scope": "以标准服务合同为试点，自动生成对账单和结算单",
+        "priority": "P0",
+        "task_ids": [
+          "T-SSVA-01",
+          "T-SSVA-02"
+        ],
+        "title": "授权服务对账与激励结算自动化试点"
+      }
+    ],
+    "generation_mode": "UNIFIED_MODEL",
     "l4_analysis": [
       {
-        "ai_reshape": "",
+        "ai_reshape": "封装为确定性Skill，实现服务对账单自动生成，并嵌入资金安全硬关卡 (EVD-a40dcc1d8ea18dae8d4b)",
         "ai_responsibility": "",
-        "analysis_status": "PENDING_MODEL",
-        "confidence": "UNASSESSED",
-        "control_gates": [],
-        "current_recommendation": "",
-        "data_basis": [],
+        "analysis_status": "MODEL_DRAFT",
+        "confidence": "MODEL_DRAFT",
+        "control_gates": [
+          "资金安全硬关卡 (funds_safety_hard_gate: true, EVD-a40dcc1d8ea18dae8d4b)"
+        ],
+        "current_recommendation": "基于Skill可行性A-高封装，优先进入Skill原型候选池，设计必要的资金安全控制门 (EVD-a40dcc1d8ea18dae8d4b)",
+        "data_basis": [
+          "D1-D6评分: 输入结构2, 规则清晰2, 输出可验证2, API可达2, 降级1, 合规2 (EVD-1404757c1f12d5126830)"
+        ],
+        "database_tier": "Auto",
         "deliverable_role": "",
         "evidence_refs": [
-          "EVD-1404757c1f12d5126830",
-          "EVD-25196a44524a7befe4da",
-          "EVD-2b5815b9ce6c4785dd25",
-          "EVD-327037494daa33f37890",
-          "EVD-73d48efa9d4ee835bc06",
-          "EVD-a22d64c42b403ddb045e",
           "EVD-a40dcc1d8ea18dae8d4b",
-          "EVD-b2c92dbdf81801da9ae7",
-          "EVD-beef195b5f826c2b3f10",
-          "EVD-c0ee2cced3c812f5b0b1",
-          "EVD-f1c16f31bdabe89cf692",
-          "EVD-f516bb531885e92d96a7",
-          "EVD-fd4fa03a1e01e759b128"
+          "EVD-c2fd40163901fb23f848",
+          "EVD-a22d64c42b403ddb045e",
+          "EVD-c0ee2cced3c812f5b0b1"
         ],
         "handoff_triggers": [],
         "human_responsibility": "",
         "l4_code": "L4-SSVA-01",
-        "process_context": "",
+        "process_context": "位于流程蓝图 STEP-01 服务对账，是结算流程的起始步骤 (EVD-c2fd40163901fb23f848)",
+        "quadrant": "unclassified",
         "quality_anchor": "",
-        "risks_limits": [],
-        "specific_capabilities": []
+        "recommended_tier": "Auto",
+        "risks_limits": [
+          "涉及资金安全，需确保对账准确性，单一动作风险可控 (EVD-a40dcc1d8ea18dae8d4b)"
+        ],
+        "specific_capabilities": [
+          "信息处理/事务类 (EVD-a40dcc1d8ea18dae8d4b)"
+        ]
       },
       {
-        "ai_reshape": "",
+        "ai_reshape": "优先进入Skill原型候选池，实现激励结算单自动生成，但需嵌入人工复核节点 (EVD-21dd7707a0eb0a6f6d72)",
         "ai_responsibility": "",
-        "analysis_status": "PENDING_MODEL",
-        "confidence": "UNASSESSED",
-        "control_gates": [],
-        "current_recommendation": "",
-        "data_basis": [],
+        "analysis_status": "MODEL_DRAFT",
+        "confidence": "MODEL_DRAFT",
+        "control_gates": [
+          "资金安全硬关卡 (funds_safety_hard_gate: true, EVD-21dd7707a0eb0a6f6d72)"
+        ],
+        "current_recommendation": "整体可行性A-高封装，但需保留人工语义复核环节，确保激励准确性 (EVD-21dd7707a0eb0a6f6d72)",
+        "data_basis": [
+          "D1-D6评分: 输入结构2, 规则清晰1, 输出可验证2, API可达1, 降级1, 合规1 (EVD-67d4b6fbb6e85938d79b)"
+        ],
+        "database_tier": "Auto",
         "deliverable_role": "",
         "evidence_refs": [
-          "EVD-21cf87f3f48fd46ac10d",
           "EVD-21dd7707a0eb0a6f6d72",
-          "EVD-35bd0159e1936c666ebd",
-          "EVD-6180d6d0a8fe6aa2f792",
-          "EVD-67d4b6fbb6e85938d79b",
-          "EVD-78eed7ed034e5b09ed08",
+          "EVD-3c1e369018ee83c78ecc",
           "EVD-9a176dfd8dad70f0b6b6",
-          "EVD-a210b1f2ec1a97bd8e07",
-          "EVD-abc49bebb36ef796f26c",
-          "EVD-c4cd219799d2c62d378d",
-          "EVD-f705b45a48452e7b2e04",
-          "EVD-f7ec73c2af0eecfdb3ca",
-          "EVD-fd4fa03a1e01e759b128"
+          "EVD-abc49bebb36ef796f26c"
         ],
         "handoff_triggers": [],
         "human_responsibility": "",
         "l4_code": "L4-SSVA-02",
-        "process_context": "",
+        "process_context": "位于流程蓝图 STEP-02 激励结算 (EVD-3c1e369018ee83c78ecc)",
+        "quadrant": "unclassified",
         "quality_anchor": "",
-        "risks_limits": [],
-        "specific_capabilities": []
+        "recommended_tier": "Auto",
+        "risks_limits": [
+          "涉及资金安全且激励规则可能变化，需要结合语义复核 (EVD-21dd7707a0eb0a6f6d72)"
+        ],
+        "specific_capabilities": [
+          "语义复核判定 (EVD-21dd7707a0eb0a6f6d72)"
+        ]
       },
       {
-        "ai_reshape": "",
+        "ai_reshape": "不直接封装确定性Skill，建议采用Agent辅助模式：系统测算草稿，人工决策预算 (EVD-9978dd310d9d99d2b94b)",
         "ai_responsibility": "",
-        "analysis_status": "PENDING_MODEL",
-        "confidence": "UNASSESSED",
+        "analysis_status": "MODEL_DRAFT",
+        "confidence": "MODEL_DRAFT",
         "control_gates": [],
-        "current_recommendation": "",
-        "data_basis": [],
+        "current_recommendation": "按Skill可行性C-低封装评估，采用Agent辅助+人工决策路径，优先拆分自动化测算与预算决策 (EVD-9978dd310d9d99d2b94b)",
+        "data_basis": [
+          "D1-D6评分: 输入结构2, 规则清晰1, 输出可验证2, API可达1, 降级1, 合规1 (EVD-ca2e59fa6cdcd5e3b1aa)"
+        ],
+        "database_tier": "Hybrid",
         "deliverable_role": "",
         "evidence_refs": [
-          "EVD-54c21aae9184de8d9695",
-          "EVD-6f733ef4254b473bd6cd",
-          "EVD-85ea4f11b84c8d901406",
-          "EVD-8e68842b0a6b94a030dd",
           "EVD-9978dd310d9d99d2b94b",
-          "EVD-b930b553cbf6203ebd5c",
-          "EVD-c92aa14d09bb1585114c",
-          "EVD-ca2e59fa6cdcd5e3b1aa",
-          "EVD-d6de16bb3a3ccb353d46",
+          "EVD-a428eb4aae6a2ce0ecd2",
           "EVD-db282bce13b136dda2ed",
-          "EVD-e38738430572c63d9677",
-          "EVD-f0a4e7632630191aa647",
-          "EVD-fd4fa03a1e01e759b128"
+          "EVD-b930b553cbf6203ebd5c"
         ],
         "handoff_triggers": [],
         "human_responsibility": "",
         "l4_code": "L4-SSVA-03",
-        "process_context": "",
+        "process_context": "位于流程蓝图 STEP-03 成本测算及预算 (EVD-a428eb4aae6a2ce0ecd2)",
+        "quadrant": "unclassified",
         "quality_anchor": "",
-        "risks_limits": [],
-        "specific_capabilities": []
+        "recommended_tier": "Hybrid",
+        "risks_limits": [
+          "涉及多变量判断与策略选择，不宜全自动；动作复合度高，需先拆分为可执行子任务 (EVD-9978dd310d9d99d2b94b)"
+        ],
+        "specific_capabilities": [
+          "语义复核判定，复合动作需拆分 (EVD-9978dd310d9d99d2b94b)"
+        ]
       },
       {
-        "ai_reshape": "",
+        "ai_reshape": "封装为Skill，自动生成预算计划方案 (EVD-536f48c4ab265b985f03)",
         "ai_responsibility": "",
-        "analysis_status": "PENDING_MODEL",
-        "confidence": "UNASSESSED",
+        "analysis_status": "MODEL_DRAFT",
+        "confidence": "MODEL_DRAFT",
         "control_gates": [],
-        "current_recommendation": "",
-        "data_basis": [],
+        "current_recommendation": "Skill可行性A-高封装，直接进入原型候选池，可先行自动化 (EVD-536f48c4ab265b985f03)",
+        "data_basis": [
+          "D1-D6评分: 输入结构2, 规则清晰1, 输出可验证2, API可达1, 降级1, 合规1 (EVD-387d3934794a0b2f823e)"
+        ],
+        "database_tier": "Auto",
         "deliverable_role": "",
         "evidence_refs": [
-          "EVD-1b618d946426da8fc4f2",
-          "EVD-387d3934794a0b2f823e",
-          "EVD-3fa2db9c79f57ced297a",
-          "EVD-4d296bb49ec2b9971d86",
           "EVD-536f48c4ab265b985f03",
-          "EVD-5fa79ed0b13d630e1b91",
+          "EVD-317c606552594c1937c4",
           "EVD-6e507e2f583fd2041724",
-          "EVD-80428b84b29f9625195a",
-          "EVD-891e94a662a42638d996",
-          "EVD-cead14d3e272f642abe6",
-          "EVD-d9443617580037af0ccb",
-          "EVD-da8fd4a9ebcafd6aff29",
-          "EVD-fd4fa03a1e01e759b128"
+          "EVD-5fa79ed0b13d630e1b91"
         ],
         "handoff_triggers": [],
         "human_responsibility": "",
         "l4_code": "L4-SSVA-04",
-        "process_context": "",
+        "process_context": "位于流程蓝图 STEP-04 制定预算计划 (EVD-317c606552594c1937c4)",
+        "quadrant": "unclassified",
         "quality_anchor": "",
-        "risks_limits": [],
-        "specific_capabilities": []
+        "recommended_tier": "Auto",
+        "risks_limits": [
+          "本身不涉及资金操作，但需上游测算准确；可独立自动化 (EVD-536f48c4ab265b985f03)"
+        ],
+        "specific_capabilities": [
+          "信息处理/事务类 (EVD-536f48c4ab265b985f03)"
+        ]
       }
     ],
     "missing_analysis": [
-      "逐L4交付物与具体能力分析",
-      "逐任务AI分工分析",
-      "逐L4人机协作与控制分析",
-      "逐L4优先级四维分析",
-      "任务级负责人决策建议"
+      "deliverable_role · 交付物角色无直接证据来源",
+      "quality_anchor · 质量锚点无明确定义或证据",
+      "ai_responsibility / human_responsibility · 未提供具体的AI/人类责任划分证据",
+      "handoff_triggers · 无转人工条件的正式证据",
+      "控制链缺少L4定位，已拒绝2条"
     ],
-    "model_run": null,
-    "priority_drafts": [],
+    "model_run": {
+      "generated_at": "2026-08-04T19:33:42.131703+00:00",
+      "input_snapshot_hash": "95ba1769a6fbdc900c26785f506fb69e17c6637276c8088c744b24a3eabcc3e9",
+      "model_name": "deepseek-v4-pro",
+      "model_version": "deepseek-v4-pro",
+      "prompt_version": "VNW-L3-COM-GOLD-v1.0"
+    },
+    "priority_drafts": [
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "current_recommendation": "基于Skill可行性A-高封装，优先进入Skill原型候选池，设计必要的资金安全控制门 (EVD-a40dcc1d8ea18dae8d4b)",
+        "data_basis": [
+          "D1-D6评分: 输入结构2, 规则清晰2, 输出可验证2, API可达2, 降级1, 合规2 (EVD-1404757c1f12d5126830)"
+        ],
+        "evidence_refs": [
+          "EVD-a40dcc1d8ea18dae8d4b",
+          "EVD-c2fd40163901fb23f848",
+          "EVD-a22d64c42b403ddb045e",
+          "EVD-c0ee2cced3c812f5b0b1"
+        ],
+        "l4_code": "L4-SSVA-01",
+        "process_context": "位于流程蓝图 STEP-01 服务对账，是结算流程的起始步骤 (EVD-c2fd40163901fb23f848)",
+        "quadrant": "unclassified",
+        "risks_limits": [
+          "涉及资金安全，需确保对账准确性，单一动作风险可控 (EVD-a40dcc1d8ea18dae8d4b)"
+        ]
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "current_recommendation": "整体可行性A-高封装，但需保留人工语义复核环节，确保激励准确性 (EVD-21dd7707a0eb0a6f6d72)",
+        "data_basis": [
+          "D1-D6评分: 输入结构2, 规则清晰1, 输出可验证2, API可达1, 降级1, 合规1 (EVD-67d4b6fbb6e85938d79b)"
+        ],
+        "evidence_refs": [
+          "EVD-21dd7707a0eb0a6f6d72",
+          "EVD-3c1e369018ee83c78ecc",
+          "EVD-9a176dfd8dad70f0b6b6",
+          "EVD-abc49bebb36ef796f26c"
+        ],
+        "l4_code": "L4-SSVA-02",
+        "process_context": "位于流程蓝图 STEP-02 激励结算 (EVD-3c1e369018ee83c78ecc)",
+        "quadrant": "unclassified",
+        "risks_limits": [
+          "涉及资金安全且激励规则可能变化，需要结合语义复核 (EVD-21dd7707a0eb0a6f6d72)"
+        ]
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "current_recommendation": "按Skill可行性C-低封装评估，采用Agent辅助+人工决策路径，优先拆分自动化测算与预算决策 (EVD-9978dd310d9d99d2b94b)",
+        "data_basis": [
+          "D1-D6评分: 输入结构2, 规则清晰1, 输出可验证2, API可达1, 降级1, 合规1 (EVD-ca2e59fa6cdcd5e3b1aa)"
+        ],
+        "evidence_refs": [
+          "EVD-9978dd310d9d99d2b94b",
+          "EVD-a428eb4aae6a2ce0ecd2",
+          "EVD-db282bce13b136dda2ed",
+          "EVD-b930b553cbf6203ebd5c"
+        ],
+        "l4_code": "L4-SSVA-03",
+        "process_context": "位于流程蓝图 STEP-03 成本测算及预算 (EVD-a428eb4aae6a2ce0ecd2)",
+        "quadrant": "unclassified",
+        "risks_limits": [
+          "涉及多变量判断与策略选择，不宜全自动；动作复合度高，需先拆分为可执行子任务 (EVD-9978dd310d9d99d2b94b)"
+        ]
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "current_recommendation": "Skill可行性A-高封装，直接进入原型候选池，可先行自动化 (EVD-536f48c4ab265b985f03)",
+        "data_basis": [
+          "D1-D6评分: 输入结构2, 规则清晰1, 输出可验证2, API可达1, 降级1, 合规1 (EVD-387d3934794a0b2f823e)"
+        ],
+        "evidence_refs": [
+          "EVD-536f48c4ab265b985f03",
+          "EVD-317c606552594c1937c4",
+          "EVD-6e507e2f583fd2041724",
+          "EVD-5fa79ed0b13d630e1b91"
+        ],
+        "l4_code": "L4-SSVA-04",
+        "process_context": "位于流程蓝图 STEP-04 制定预算计划 (EVD-317c606552594c1937c4)",
+        "quadrant": "unclassified",
+        "risks_limits": [
+          "本身不涉及资金操作，但需上游测算准确；可独立自动化 (EVD-536f48c4ab265b985f03)"
+        ]
+      }
+    ],
     "rejected_task_sources": [],
     "schema_version": "vnw.l3-analysis.v1",
     "source_scope": {
@@ -152,84 +257,129 @@
     },
     "tasks": [
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-c2fd40163901fb23f848"
+          "EVD-c2fd40163901fb23f848",
+          "EVD-a40dcc1d8ea18dae8d4b",
+          "EVD-a22d64c42b403ddb045e"
         ],
         "l4_code": "L4-SSVA-01",
-        "next_task_ids": [],
+        "next_task_ids": [
+          "T-SSVA-02"
+        ],
         "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
+        "relation_type": "SEQUENCE",
         "sequence_no": 1,
         "sequence_status": "SOURCE_CONFIRMED",
         "source_line": 46,
         "source_step_id": "STEP-01",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-SSVA-01-T01",
-        "task_name": "L4-SSVA-01 → 服务对账单(Auto) **{VN-SSVA-01}**",
-        "tier_rationale": ""
+        "source_type": "BLUEPRINT_STEP",
+        "suggested_tier": "Auto",
+        "task_id": "T-SSVA-01",
+        "task_name": "生成服务对账单",
+        "tier_rationale": "数据库Tier为Auto，Skill可行性A-高封装，仅单一信息处理动作，可全自动完成 (EVD-a40dcc1d8ea18dae8d4b)"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-3c1e369018ee83c78ecc"
+          "EVD-3c1e369018ee83c78ecc",
+          "EVD-21dd7707a0eb0a6f6d72",
+          "EVD-9a176dfd8dad70f0b6b6"
         ],
         "l4_code": "L4-SSVA-02",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
+        "next_task_ids": [
+          "T-SSVA-03a",
+          "T-SSVA-03b"
+        ],
+        "previous_task_ids": [
+          "T-SSVA-01"
+        ],
+        "relation_type": "SEQUENCE",
         "sequence_no": 2,
         "sequence_status": "SOURCE_CONFIRMED",
         "source_line": 53,
         "source_step_id": "STEP-02",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-SSVA-02-T01",
-        "task_name": "L4-SSVA-02 → 《激励结算单》(Aug) **{VN-SSVA-02}**",
-        "tier_rationale": ""
+        "source_type": "BLUEPRINT_STEP",
+        "suggested_tier": "Auto",
+        "task_id": "T-SSVA-02",
+        "task_name": "生成激励结算单",
+        "tier_rationale": "数据库Tier为Auto，Skill可行性A-高封装，虽需语义复核但整体可自动化，建议嵌入人工复核节点 (EVD-21dd7707a0eb0a6f6d72)"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
+          "EVD-9978dd310d9d99d2b94b",
           "EVD-a428eb4aae6a2ce0ecd2"
         ],
         "l4_code": "L4-SSVA-03",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
+        "next_task_ids": [
+          "T-SSVA-04"
+        ],
+        "previous_task_ids": [
+          "T-SSVA-02"
+        ],
+        "relation_type": "",
         "sequence_no": 3,
-        "sequence_status": "SOURCE_CONFIRMED",
+        "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 58,
         "source_step_id": "STEP-03",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-SSVA-03-T01",
-        "task_name": "L4-SSVA-03 → 《成本测算及预算》(Aug)",
-        "tier_rationale": ""
+        "source_type": "COMPOUND_SPLIT",
+        "suggested_tier": "Auto",
+        "task_id": "T-SSVA-03a",
+        "task_name": "执行成本测算并输出草稿",
+        "tier_rationale": "复合动作中的系统测算部分，基于规则和结构化数据可自动化生成草稿 (EVD-9978dd310d9d99d2b94b)"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-317c606552594c1937c4"
+          "EVD-9978dd310d9d99d2b94b",
+          "EVD-a428eb4aae6a2ce0ecd2"
+        ],
+        "l4_code": "L4-SSVA-03",
+        "next_task_ids": [
+          "T-SSVA-04"
+        ],
+        "previous_task_ids": [
+          "T-SSVA-02"
+        ],
+        "relation_type": "",
+        "sequence_no": 3,
+        "sequence_status": "SOURCE_STEP_ONLY",
+        "source_line": 58,
+        "source_step_id": "STEP-03",
+        "source_type": "COMPOUND_SPLIT",
+        "suggested_tier": "Human",
+        "task_id": "T-SSVA-03b",
+        "task_name": "复核测算草稿并确定预算",
+        "tier_rationale": "复合动作中需要判断策略、预算分配的人工决策部分，不宜自动化，建议Agent辅助但人拍板 (EVD-9978dd310d9d99d2b94b)"
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [
+          "EVD-317c606552594c1937c4",
+          "EVD-536f48c4ab265b985f03",
+          "EVD-6e507e2f583fd2041724"
         ],
         "l4_code": "L4-SSVA-04",
         "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 4,
+        "previous_task_ids": [
+          "T-SSVA-03a",
+          "T-SSVA-03b"
+        ],
+        "relation_type": "SEQUENCE",
+        "sequence_no": 5,
         "sequence_status": "SOURCE_CONFIRMED",
         "source_line": 63,
         "source_step_id": "STEP-04",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-SSVA-04-T01",
-        "task_name": "L4-SSVA-04 → 《制定预算计划》(Aug)",
-        "tier_rationale": ""
+        "source_type": "BLUEPRINT_STEP",
+        "suggested_tier": "Auto",
+        "task_id": "T-SSVA-04",
+        "task_name": "制定预算计划方案",
+        "tier_rationale": "数据库Tier为Auto，Skill可行性A-高封装，单一事务处理，可全自动生成方案 (EVD-536f48c4ab265b985f03)"
       }
     ]
   },
-  "analysis_freshness": "PENDING_MODEL",
+  "analysis_freshness": "CURRENT",
   "analysis_input_hash": "95ba1769a6fbdc900c26785f506fb69e17c6637276c8088c744b24a3eabcc3e9",
   "blueprint": {
     "blueprint_value_nodes": [],

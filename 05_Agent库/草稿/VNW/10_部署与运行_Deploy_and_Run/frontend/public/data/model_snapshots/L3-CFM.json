@@ -7,371 +7,497 @@
       {
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-35d6c0ea081b3e1d1038",
-          "EVD-5d5f1934d78d34c5fdd6"
+          "EVD-2b5bc827c6f564d852f0",
+          "EVD-77b695bb4bd9c072af99",
+          "EVD-db4e16f65153d364c311"
         ],
-        "human_boundary": "方案制定与审批全由人工完成，系统仅提供建议和合规检查",
-        "pilot_scope": "限定从NGM到天领的调拨试点，每次调拨均须资金经理双重签署",
+        "human_boundary": "预警阈值设定、调度方案最终选择、跨主体/大额调拨的审批必须由财务负责人执行。AI提供的方案仅供决策参考，不可直接执行。",
+        "pilot_scope": "选择1-2个主要业务线或主体，部署缺口预警Skill和调度方案Agent辅助，运行2个支付周期。",
         "priority": "P0",
         "task_ids": [
-          "T-CFM-04"
+          "T-CFM-03a",
+          "T-CFM-03b"
         ],
-        "title": "跨主体资金调拨审批必须人工执行"
+        "title": "优先试点现金缺口识别自动化与调度决策支持"
       },
       {
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-77b695bb4bd9c072af99"
+          "EVD-28f7ca1a908770cb87af",
+          "EVD-8839fe8f962f40ecda66",
+          "EVD-d390aa582fec6bed7ee6"
         ],
-        "human_boundary": "AI可推荐三种方案，但最终选择与执行须人工确认",
-        "pilot_scope": "缺口超过上月日均余额30%时触发集体决策，试点期间由CFO直接审批",
-        "priority": "P0",
+        "human_boundary": "付款审批权不得下放至系统，所有付款须经财务经理签字；规则制定与更新须由财务部和合规部联合批准。",
+        "pilot_scope": "选取一个业务量中等的业务线，试行‘AI汇总计划→人工审批→银企直连付款’的Hybrid流程1个月。",
+        "priority": "P1",
         "task_ids": [
-          "T-CFM-03b"
+          "T-CFM-02"
         ],
-        "title": "资金调度方案决策须由CFO或授权人批准"
+        "title": "建立付款审批控制门，补齐规则"
       }
     ],
     "generation_mode": "UNIFIED_MODEL",
     "l4_analysis": [
       {
-        "ai_reshape": "确定性Skill执行，将数据收集标准化并自动汇总",
-        "ai_responsibility": "自动化采集、校验和汇总预测数据",
+        "ai_reshape": "Skill封装为确定性执行（A级建议），但受限于输入结构与规则，当前阶段宜采用Agent辅助收集提醒与自动汇总，人工确认模式。未来输入标准化后可转为Auto。",
+        "ai_responsibility": "无直接AI责任。AI可辅助：定时发送收集通知、自动校验数据格式、整合多源数据至模板。",
         "analysis_status": "MODEL_DRAFT",
         "confidence": "MODEL_DRAFT",
         "control_gates": [
-          "业务收款预测收集目前由人工执行，自动化需保留人工确认环节"
+          "预测表必须由财务管理岗签字确认后进入下一环节"
         ],
-        "current_recommendation": "优先进入Skill原型候选池，实现自动化汇总，保留人工异常处理接口",
+        "current_recommendation": "优先建立标准化收集模板和线上填报通道，降低D1/D2阻力；同时引入Agent辅助提醒与校验，过渡期采用Aug模式，待标准化完成后向Auto演进。",
         "data_basis": [
-          "agent_d1_input_struct=1 结构化输入",
-          "agent_d3_output_verify=2 输出需人工验证"
+          "EVD-87244dbe1b474fa09b92: D1输入结构化程度=1（低）",
+          "EVD-83327b10746cab7fd544: D2规则清晰度=1（低）",
+          "EVD-2443db4155a6e0599fb5: D4 API可达性=1（低）",
+          "EVD-f68c97abb141e72eb947: D3输出可验证性=2（高）",
+          "EVD-fcb2e068bd14958557d5: D5兜底策略=2（高）",
+          "EVD-aadc242bfa17e26ca4db: D6合规性=2（高）",
+          "EVD-6e5b3acbfc780fe45268: 明确标注“人工执行”",
+          "EVD-cab82864189bfdb123cb: Skill可行性A级（单一信息处理动作，资金安全无硬门）"
         ],
         "database_tier": "Auto",
-        "deliverable_role": "收集各业务线收款预测数据，输出《各业务线收款预测表》",
+        "deliverable_role": "输出《各业务线收款预测表》，职责为收集并初步汇总各业务线预测数据，为现金缺口分析提供基础。由财务管理岗执行，定位于目标态核心。",
         "evidence_refs": [
           "EVD-cab82864189bfdb123cb",
-          "EVD-b00de3d084202e358502",
-          "EVD-4af179421b1794d2b83b",
+          "EVD-87244dbe1b474fa09b92",
+          "EVD-83327b10746cab7fd544",
+          "EVD-f68c97abb141e72eb947",
+          "EVD-2443db4155a6e0599fb5",
+          "EVD-fcb2e068bd14958557d5",
+          "EVD-aadc242bfa17e26ca4db",
+          "EVD-6e5b3acbfc780fe45268",
+          "EVD-ace3fe74318f987853ab",
           "EVD-7776f5d2971f8d92fc69",
-          "EVD-ace3fe74318f987853ab"
+          "EVD-4d9a53131dad2741d9f1",
+          "EVD-4af179421b1794d2b83b",
+          "EVD-a5ae0cb0fde0bead5c8e"
         ],
         "handoff_triggers": [
-          "业务线未按时提交",
-          "数据格式不符预设模板",
-          "预测偏差超过阈值"
+          "业务线未在截止日前提交预测",
+          "提交数据明显偏离历史基线或业务计划",
+          "系统无法自动解析的格式（如特殊附件）"
         ],
-        "human_responsibility": "确认异常或缺失数据，对预测结果作最终确认",
+        "human_responsibility": "负责联系业务线获取预测、审核预测合理性、对明显异常数据进行人工确认、最终签发预测表。",
         "l4_code": "L4-CFM-01",
-        "process_context": "流程蓝图STEP-01：收款预测收集（目前完全缺失，需从各业务线手工获取）",
+        "process_context": "蓝图STEP-01，标记为🔴 P0完全缺失，是现金流预测流程的起点，缺失风险极高。",
         "quadrant": "unclassified",
-        "quality_anchor": "各业务线提交数据的完整性和及时性",
-        "recommended_tier": "Auto",
+        "quality_anchor": "预测表数据准确性、完整性与时效性，需与历史收款趋势及业务计划比对验证。",
+        "recommended_tier": "Aug",
         "risks_limits": [
-          "信息处理单一动作，封装度高，但需确保数据源接入可靠"
+          "预测不准将直接导致现金缺口误判和调度失误",
+          "当前完全依赖人工收集，周期长且质量不稳定",
+          "输入格式多样，标准化改造工作量大"
         ],
         "specific_capabilities": [
-          "信息处理/事务类",
-          "单一动作：汇总预测数据"
+          "单一信息处理动作：可封装为Skill（Skill可行性评估A级）",
+          "当前输入高度依赖人工（D1=1），规则清晰度低（D2=1），API可达性差（D4=1），因此实际可自动化能力弱",
+          "能力项：向业务线发起预测请求、汇总Excel/邮件等多元数据、基础校验"
         ]
       },
       {
-        "ai_reshape": "确定性Skill执行，自动汇总并生成标准审批单",
-        "ai_responsibility": "自动汇总、核对原始凭证与申请金额",
+        "ai_reshape": "由于规则缺失（D2=0），AI直接生成审批单风险极高。需先补充付款审批规则，再考虑Agent辅助生成计划与人工审批的Hybrid模式。当前不宜直接封装确定性Skill。",
+        "ai_responsibility": "规则明确后，AI可自动汇总并依据规则生成付款计划草案，但资金安全相关。",
         "analysis_status": "MODEL_DRAFT",
         "confidence": "MODEL_DRAFT",
         "control_gates": [
-          "当前无业务审批，资金付款完全听业务，需建立人工审批控制门"
+          "资金付款审批单必须经过财务负责人签字（当前缺失，为P1高优先级缺失事项）"
         ],
-        "current_recommendation": "先建立基本审批流程，再封装为Skill；同步制定资金付款规则",
+        "current_recommendation": "立即暂停将付款流程自动化，优先建立人工审批控制门和付款规则（P0优先）。之后引入Agent辅助生成待审计划（Hybrid），最终在规则稳定后向Auto演进。",
         "data_basis": [
-          "agent_d1_input_struct=2 部分结构化",
-          "agent_d2_rule_clear=0 规则不清晰"
+          "EVD-793060f1312340225aa1: D1=2",
+          "EVD-8839fe8f962f40ecda66: D2=0（关键风险）",
+          "EVD-81b3b8054ae76c12f089: D3=1",
+          "EVD-433502769e191fa64470: D4=1",
+          "EVD-95dfc7f5641976582dad: D5=1",
+          "EVD-d390aa582fec6bed7ee6: D6=1",
+          "EVD-d11cba3b8b7288f2911a: Skill可行性A级",
+          "EVD-28f7ca1a908770cb87af: 明确标注“当前无业务审批，资金付款完全听业务的”",
+          "EVD-237f774e8777a10b3dc7: agentifiability=Auto"
         ],
         "database_tier": "Auto",
-        "deliverable_role": "汇总未来4周资金付款计划，生成《资金付款审批单》",
+        "deliverable_role": "输出《资金付款审批单》，汇总未来4周付款计划，当前无业务审批，资金付款完全听业务，财务管理岗缺乏控制手段。",
         "evidence_refs": [
           "EVD-d11cba3b8b7288f2911a",
-          "EVD-526793308e4258995c46",
-          "EVD-312f5af3b6e9a76db066",
+          "EVD-793060f1312340225aa1",
+          "EVD-8839fe8f962f40ecda66",
+          "EVD-81b3b8054ae76c12f089",
+          "EVD-433502769e191fa64470",
+          "EVD-95dfc7f5641976582dad",
+          "EVD-d390aa582fec6bed7ee6",
           "EVD-28f7ca1a908770cb87af",
+          "EVD-cbfabacd64f3858df0c8",
+          "EVD-312f5af3b6e9a76db066",
+          "EVD-a5ae0cb0fde0bead5c8e",
           "EVD-237f774e8777a10b3dc7"
         ],
         "handoff_triggers": [
-          "付款金额超预算",
-          "凭证缺失",
-          "付款对象不在白名单"
+          "付款金额超出预设阈值",
+          "收款方账户变更",
+          "付款计划与预算严重偏离",
+          "系统无法匹配规则的情况"
         ],
-        "human_responsibility": "审批付款计划，确认不存在超付、重复支付",
+        "human_responsibility": "制定付款规则，审批每一笔付款，确保资金安全。当前无人工控制门需建立。",
         "l4_code": "L4-CFM-02",
-        "process_context": "流程蓝图STEP-02：付款计划汇总（P0完全缺失，当前无规范流程）",
+        "process_context": "蓝图STEP-02，🔴 P0完全缺失，付款计划是现金缺口计算的关键输入，缺失使缺口识别沦为形式。",
         "quadrant": "unclassified",
-        "quality_anchor": "付款计划金额、时间与原始凭证一致，无遗漏",
-        "recommended_tier": "Hybrid",
-        "risks_limits": [
-          "封装度虽高，但缺乏资金审批控制，需引入人工审批闸门"
-        ],
-        "specific_capabilities": [
-          "信息处理/事务类",
-          "单一动作：将各付款申请汇总为付款计划"
-        ]
-      },
-      {
-        "ai_reshape": "Agent辅助：自动计算缺口并预警，生成调度选项，由人工确认方案",
-        "ai_responsibility": "实时计算资金缺口，基于规则推荐调度策略",
-        "analysis_status": "MODEL_DRAFT",
-        "confidence": "MODEL_DRAFT",
-        "control_gates": [
-          "资金调度方案必须经资金负责人审批"
-        ],
-        "current_recommendation": "优先考虑Agent辅助：自动预警+人工调度确认，不直接封装确定性Skill",
-        "data_basis": [
-          "agent_d1_input_struct=2 部分结构化",
-          "agent_d2_rule_clear=2 规则清晰"
-        ],
-        "database_tier": "Hybrid",
-        "deliverable_role": "识别现金缺口、提出资金调度方案，输出《缺口预警》和《资金调度方案》",
-        "evidence_refs": [
-          "EVD-77b695bb4bd9c072af99",
-          "EVD-4282a2849c8c21967d2d",
-          "EVD-52a30400fc3b99328e8b",
-          "EVD-3eaaf29877bd3c81168c",
-          "EVD-3e60214b98abb08478e5"
-        ],
-        "handoff_triggers": [
-          "缺口超过预警阈值",
-          "调度涉及跨体系资金移动",
-          "方案违反内部政策"
-        ],
-        "human_responsibility": "审批调度方案，确定最终调拨金额与路径",
-        "l4_code": "L4-CFM-03",
-        "process_context": "流程蓝图STEP-03：现金缺口预警与调度（P0完全缺失），依赖Q1决策分支",
-        "quadrant": "unclassified",
-        "quality_anchor": "缺口计算准确性，调度方案合规且可执行",
-        "recommended_tier": "Hybrid",
-        "risks_limits": [
-          "判断/策略类动作，语义复核要求高，不能完全自动化"
-        ],
-        "specific_capabilities": [
-          "语义复核/判定类",
-          "复合动作：缺口识别自动计算 + 调度方案人工决策"
-        ]
-      },
-      {
-        "ai_reshape": "半自动化：自动生成调拨方案草稿，强制人工审批",
-        "ai_responsibility": "自动计算最优调拨路线，生成审批单",
-        "analysis_status": "MODEL_DRAFT",
-        "confidence": "MODEL_DRAFT",
-        "control_gates": [
-          "跨主体资金调拨方案制定为人工执行，不可绕过审批"
-        ],
-        "current_recommendation": "采用Human-in-the-loop模式，自动起草+人工审批，不做全自动Skill",
-        "data_basis": [
-          "agent_d1_input_struct=1 结构化",
-          "agent_d4_api_reach=1 有限API"
-        ],
-        "database_tier": "Auto",
-        "deliverable_role": "制定跨主体资金调拨方案，生成《跨主体资金调拨审批单》",
-        "evidence_refs": [
-          "EVD-5d5f1934d78d34c5fdd6",
-          "EVD-5c3e08c975a1a857ea33",
-          "EVD-4ff2b01c47e2c37b35c6",
-          "EVD-8fc7914aff7d680de889",
-          "EVD-35d6c0ea081b3e1d1038"
-        ],
-        "handoff_triggers": [
-          "任何跨主体资金调拨均需人工审批"
-        ],
-        "human_responsibility": "审核调拨方案，签署审批单，控制资金安全",
-        "l4_code": "L4-CFM-04",
-        "process_context": "流程蓝图STEP-04：跨主体资金调拨（P1流程待建立）",
-        "quadrant": "unclassified",
-        "quality_anchor": "调拨金额、主体、路径准确，符合法规与内控要求",
+        "quality_anchor": "付款计划需符合预算与资金池实际余额，所有付款必须经审批，否则为无效流程。",
         "recommended_tier": "Human",
         "risks_limits": [
-          "资金安全硬门，即使封装度高也必须人工最终确认",
-          "API可达性低，可能无法全自动执行"
+          "无审批机制，资金安全风险极高",
+          "规则为0，AI无法做出合规判断",
+          "输出验证能力弱（D3=1），易产生错误付款"
         ],
         "specific_capabilities": [
-          "信息处理/事务类，但涉及资金安全硬门",
-          "单一动作：生成调拨审批单"
+          "单一信息处理动作：Skill可行性A级，可封装",
+          "但规则极不清晰（D2=0），输入结构较好（D1=2），输出验证低（D3=1）",
+          "能力项：汇总各业务线付款申请、按规则生成付款计划、基础校验"
         ]
       },
       {
-        "ai_reshape": "先拆分为归集Skill与监控Skill，分别自动化",
-        "ai_responsibility": "自动执行归集操作，定时刷出监控表",
+        "ai_reshape": "AI可承担‘识别缺口’部分的计算与预警（确定性Skill），但‘制定调度方案’涉及策略选择、外部谈判等，宜采用Agent辅助决策支持，输出多方案供人选择。整体采用Hybrid模式，识别部分可接近Auto。",
+        "ai_responsibility": "负责实时计算现金缺口并触发预警，生成不同风险场景下的调度方案草案。",
         "analysis_status": "MODEL_DRAFT",
         "confidence": "MODEL_DRAFT",
         "control_gates": [
-          "目前无明确控制门，自动化归集需引入审批"
+          "调度方案必须经财务经理或授权角色审批后方可执行"
         ],
-        "current_recommendation": "优先进入Skill原型候选池，但必须拆分为独立的归集Skill和监控Skill",
+        "current_recommendation": "优先将‘缺口识别’部分封装为确定性Skill，实现自动化预警；‘调度方案’部分采用Agent辅助设计，人审模式。随着历史数据积累，可逐步提升算法建议的采纳率。",
         "data_basis": [
-          "agent_d1_input_struct=2 部分结构化",
-          "agent_d4_api_reach=2 API较完善"
+          "EVD-77b695bb4bd9c072af99: Skill可行性C级，复合动作，语义复核",
+          "EVD-067e30f91b7f7a0f45de: D1=2",
+          "EVD-1f574d4f4a114ed04a05: D2=2",
+          "EVD-cbd2e1bb75855b323314: D3=2",
+          "EVD-db4e16f65153d364c311: D4=2",
+          "EVD-534da7aaa6752425c4b1: D5=1",
+          "EVD-9f2b855315ee3fe9f9bf: D6=1",
+          "EVD-2b5bc827c6f564d852f0: 存在分支决策Q1（是否存在缺口）"
+        ],
+        "database_tier": "Hybrid",
+        "deliverable_role": "产出《缺口预警》和《资金调度方案》，是现金流管理的核心决策环节，直接决定后续调拨与报告。",
+        "evidence_refs": [
+          "EVD-77b695bb4bd9c072af99",
+          "EVD-067e30f91b7f7a0f45de",
+          "EVD-1f574d4f4a114ed04a05",
+          "EVD-cbd2e1bb75855b323314",
+          "EVD-db4e16f65153d364c311",
+          "EVD-534da7aaa6752425c4b1",
+          "EVD-9f2b855315ee3fe9f9bf",
+          "EVD-3eaaf29877bd3c81168c",
+          "EVD-4a9c37c9e90c914b9c6c",
+          "EVD-52a30400fc3b99328e8b",
+          "EVD-a5ae0cb0fde0bead5c8e",
+          "EVD-3e60214b98abb08478e5",
+          "EVD-2b5bc827c6f564d852f0"
+        ],
+        "handoff_triggers": [
+          "缺口金额超过预设授权范围",
+          "AI生成的方案可行性评分低于阈值",
+          "出现新的外部融资或回款变化"
+        ],
+        "human_responsibility": "审核AI的缺口计算结果，选择合适的调度方案，必要时亲自主导方案制定（如紧急大额调度）。",
+        "l4_code": "L4-CFM-03",
+        "process_context": "蓝图STEP-03，🔴 P0完全缺失，是现金流管理的核心决策点，缺失将导致资金断链或过度闲置。",
+        "quadrant": "unclassified",
+        "quality_anchor": "预警阈值合理性、调度方案执行可行性及资金成本最优。",
+        "recommended_tier": "Hybrid",
+        "risks_limits": [
+          "复合动作中‘调度方案制定’属于高判断领域，AI无法独立承担",
+          "资金调度涉及金融合规与利益权衡，一旦失误损失巨大",
+          "预警阈值需人工设定并定期调整"
+        ],
+        "specific_capabilities": [
+          "复合动作，Skill可行性C级（判断/策略/关系类），需语义复核",
+          "输入结构化高（D1=2），规则清晰（D2=2），输出可验证（D3=2），API可达（D4=2），但兜底与合规中等",
+          "能力项：基于收付款预测计算缺口、设定预警阈值、生成缺口预警；拟定资金调度方案（需人工决策）"
+        ]
+      },
+      {
+        "ai_reshape": "由于资金硬门，即使Skill候选，也必须人审。AI可生成建议方案并自动完成合规校验，但最终审批和执行必须由人发起。模式为Agent辅助+人工控制门（Hybrid）。",
+        "ai_responsibility": "根据资金池余额和头寸计算调拨方案，自动校验合规性（如关联交易限制）。",
+        "analysis_status": "MODEL_DRAFT",
+        "confidence": "MODEL_DRAFT",
+        "control_gates": [
+          "资金调拨必须由财务负责人审批，并完成银行双签"
+        ],
+        "current_recommendation": "优先建立跨主体调拨的标准规则和审批权限矩阵，然后引入AI调拨建议与合规自动校验，保留人工最终签发（Hybrid）。不可直接 Auto。",
+        "data_basis": [
+          "EVD-5d5f1934d78d34c5fdd6: Skill A级，但funds_safety_hard_gate=true",
+          "EVD-ac7793bda69a0d4c490a: D1=1",
+          "EVD-a559254a5c114ad22e78: D2=1",
+          "EVD-35d6c0ea081b3e1d1038: 明确人工执行",
+          "EVD-d175a85942f33eb638cd: agentifiability=Auto"
         ],
         "database_tier": "Auto",
-        "deliverable_role": "监控资金池余额，输出《资金池余额监控表》",
+        "deliverable_role": "产出《跨主体资金调拨审批单》，在多个法律实体间调拨资金，确保资金安全与合规。当前人工执行。",
+        "evidence_refs": [
+          "EVD-5d5f1934d78d34c5fdd6",
+          "EVD-ac7793bda69a0d4c490a",
+          "EVD-a559254a5c114ad22e78",
+          "EVD-61b73e3c63ac3f3201c0",
+          "EVD-5590e59f9b1866219012",
+          "EVD-5733400f5a6d31ea811c",
+          "EVD-a97a0d0d0db42515672f",
+          "EVD-35d6c0ea081b3e1d1038",
+          "EVD-d175a85942f33eb638cd",
+          "EVD-8fc7914aff7d680de889",
+          "EVD-beb96fe749f4105672af",
+          "EVD-4ff2b01c47e2c37b35c6",
+          "EVD-a5ae0cb0fde0bead5c8e"
+        ],
+        "handoff_triggers": [
+          "调拨金额超过授权界限",
+          "跨境外币调拨涉及外汇管制",
+          "系统无法确认收款方账户"
+        ],
+        "human_responsibility": "审核并签发调拨指令，监控执行状态，处理异常。当前明确标注“人工执行：跨主体资金调拨方案制定”。",
+        "l4_code": "L4-CFM-04",
+        "process_context": "蓝图STEP-04，🟡 P1流程待建立，在发生缺口且需要跨主体调拨时执行。",
+        "quadrant": "unclassified",
+        "quality_anchor": "调拨成本最低、到账时效符合需求、资金安全无事故。",
+        "recommended_tier": "Hybrid",
+        "risks_limits": [
+          "资金硬门，任何自动化故障可能导致资金损失",
+          "当前规则不清晰（D2=1），需先建立标准操作规程",
+          "人工执行容易出错，需与多家银行交互"
+        ],
+        "specific_capabilities": [
+          "单一信息处理动作，Skill可行性A级，但资金安全硬门=true",
+          "输入结构（D1=1）、规则（D2=1）较低，API可达性（D4=1）差",
+          "能力项：计算最优调拨路径、生成调拨指令、合规校验"
+        ]
+      },
+      {
+        "ai_reshape": "可拆分为两个确定性Skill：‘资金池归集’和‘余额监控’。监控部分可完全Auto，归集部分由于涉及真实资金划拨，即使无硬门也需人工确认，可采用Agent辅助触发+人工审批的Hybrid模式。",
+        "ai_responsibility": "负责自动执行余额监控和预警，生成归集建议。",
+        "analysis_status": "MODEL_DRAFT",
+        "confidence": "MODEL_DRAFT",
+        "control_gates": [
+          "归集操作须经财务人员确认，系统保留操作日志"
+        ],
+        "current_recommendation": "优先按‘归集’和‘监控’两个方向拆分实施。监控部分直接采用Auto Skill，归集部分设计为Agent辅助+人工确认的Hybrid流程。",
+        "data_basis": [
+          "EVD-e73a215fb8aa3858989a: Skill A级，复合动作，需先拆分",
+          "EVD-8150afee7f3767b9533a: D1=2",
+          "EVD-518d9672699e3576ee87: D2=2",
+          "EVD-6870fabff24293a07cf0: D3=2",
+          "EVD-05fb4414fbc747e61413: D4=2",
+          "EVD-c048c6f55ce3154c9f6a: agentifiability=Auto"
+        ],
+        "database_tier": "Auto",
+        "deliverable_role": "产出《资金池余额监控表》，实现资金集中归集与水位监控。",
         "evidence_refs": [
           "EVD-e73a215fb8aa3858989a",
-          "EVD-7362b707f05eaa0b167c",
-          "EVD-a35bb6b2d6f00ae9c23d",
+          "EVD-8150afee7f3767b9533a",
+          "EVD-518d9672699e3576ee87",
+          "EVD-6870fabff24293a07cf0",
+          "EVD-05fb4414fbc747e61413",
+          "EVD-9d8a0c1834aa76a4bcf1",
+          "EVD-da9e5e71f27658d7c226",
           "EVD-286d813b1e28109417d7",
+          "EVD-2ff6bcfd9d6e5bb90b04",
+          "EVD-a35bb6b2d6f00ae9c23d",
+          "EVD-a5ae0cb0fde0bead5c8e",
           "EVD-c048c6f55ce3154c9f6a"
         ],
         "handoff_triggers": [
-          "归集失败",
-          "余额低于安全线",
-          "银行接口异常"
+          "余额低于预警阈值",
+          "归集指令执行失败",
+          "监控数据源断连"
         ],
-        "human_responsibility": "监控异常警报，确认归集失败或不完整事件",
+        "human_responsibility": "审批归集操作，运维监控系统，处理异常冻结或银行故障。",
         "l4_code": "L4-CFM-05",
-        "process_context": "流程蓝图STEP-05：资金池归集监控（P1完全缺失）",
+        "process_context": "蓝图STEP-05，🟡 P1完全缺失，是资金池管理的日常操作。",
         "quadrant": "unclassified",
-        "quality_anchor": "余额数据实时准确，归集操作及时无遗漏",
-        "recommended_tier": "Auto",
+        "quality_anchor": "资金池余额始终高于警戒线，归集准确率100%，监控无盲区。",
+        "recommended_tier": "Hybrid",
         "risks_limits": [
-          "复合动作，需先定义子Skill边界，避免全部自动导致误操作"
+          "归集操作涉及资金划转，误操作可能造成流动性风险",
+          "复合动作需先合理拆分，避免耦合导致故障",
+          "监控丢点可能延误风险发现"
         ],
         "specific_capabilities": [
-          "信息处理/事务类",
-          "复合动作：资金池归集 + 余额监控"
+          "复合动作（需先拆分），Skill可行性A级但动作复合，可拆为归集与监控两个子Skill",
+          "输入结构化高（D1=2），规则清晰（D2=2），输出可验证（D3=2），API可达（D4=2）",
+          "能力项：自动归集闲置资金、实时监控余额、触发补足/调剂提醒"
         ]
       },
       {
-        "ai_reshape": "确定性Skill执行，自动匹配与核对账目",
-        "ai_responsibility": "自动抓取双方账单并匹配差异",
+        "ai_reshape": "由于D4=1，自动化对账受限于外部数据获取；可封装为Skill自动执行标准API对接部分，对无法自动获取的渠道，采用Agent辅助提醒人工上传文件并自动对账的Hybrid模式。",
+        "ai_responsibility": "自动执行已有直连的渠道对账，生成差异清单。",
         "analysis_status": "MODEL_DRAFT",
         "confidence": "MODEL_DRAFT",
         "control_gates": [
-          "当前为人工执行，需保留人工最终确认"
+          "对账差异明细须经财务专员复核后关闭"
         ],
-        "current_recommendation": "优先进入Skill原型候选池，实现自动对账，人工仅处理差异",
+        "current_recommendation": "优先打通主要外部渠道的API，将大部分对账转为Auto Skill；剩余人工部分用Agent辅助提升效率，整体向Aug/Hybrid过渡。",
         "data_basis": [
-          "agent_d1_input_struct=2 部分结构化",
-          "agent_d3_output_verify=2 输出需人工验证"
+          "EVD-98ee7e399116ad4a504d: Skill A级",
+          "EVD-168438889911bcdcfa4f: D1=2",
+          "EVD-7e844c3afa15538a4f1c: D2=2",
+          "EVD-2464dc1321c627ce7379: D4=1 (关键限制)",
+          "EVD-60bf12e49e3475a543a8: 明确人工执行",
+          "EVD-b4fcee70fe63d0083ec9: agentifiability=Auto"
         ],
         "database_tier": "Auto",
-        "deliverable_role": "完成体系外资金对账，输出《体系外资金对账表》",
+        "deliverable_role": "产出《体系外资金对账表》，核对NGM→Apass→宿安→天领等外部渠道资金流水。",
         "evidence_refs": [
           "EVD-98ee7e399116ad4a504d",
-          "EVD-d32e7718093ed83fac1c",
-          "EVD-f2238a21eba1dddcc4cc",
+          "EVD-168438889911bcdcfa4f",
+          "EVD-7e844c3afa15538a4f1c",
+          "EVD-3c437072e45435c7f9af",
+          "EVD-2464dc1321c627ce7379",
+          "EVD-b6025292461415793ed8",
+          "EVD-2ff8eb7cb5fc7fdaf4db",
+          "EVD-60bf12e49e3475a543a8",
+          "EVD-b4fcee70fe63d0083ec9",
           "EVD-5e9ee77ca63a1142d651",
-          "EVD-60bf12e49e3475a543a8"
+          "EVD-32bd2b7081b7ac484e8d",
+          "EVD-f2238a21eba1dddcc4cc",
+          "EVD-a5ae0cb0fde0bead5c8e"
         ],
         "handoff_triggers": [
-          "对账不平",
-          "差异超过阈值",
-          "数据源缺失"
+          "对账差异超过警戒线",
+          "外部数据源中断",
+          "自动勾稽置信度低"
         ],
-        "human_responsibility": "审核差异原因，确认对账结果",
+        "human_responsibility": "处理系统无法自动获取的对账渠道，确认并处理差异项。当前标注“人工执行：体系外资金对账”。",
         "l4_code": "L4-CFM-06",
-        "process_context": "流程蓝图STEP-06：体系外资金对账（P1周期过长）",
+        "process_context": "蓝图STEP-06，🟡 P1周期过长，是唯一涉及体系外资金对账的环节，直接影响资金准确性。",
         "quadrant": "unclassified",
-        "quality_anchor": "对账差异为零或差异有合理解释",
-        "recommended_tier": "Auto",
+        "quality_anchor": "对账差异率低于1%，差异项均有处理记录。",
+        "recommended_tier": "Aug",
         "risks_limits": [
-          "封装度高，但外部数据源格式可能不稳定"
+          "体系外渠道无标准API，自动化推进慢",
+          "人工对账周期长，可能掩盖资金风险",
+          "差异处理不及时可能导致调账错误"
         ],
         "specific_capabilities": [
-          "信息处理/事务类",
-          "单一动作：核对体系内外资金账目"
+          "单一信息处理动作，Skill可行性A级",
+          "输入结构化高（D1=2），规则清晰（D2=2），输出可验证（D3=2），但API可达性低（D4=1）",
+          "能力项：获取外部账单、自动勾稽、生成差异报告"
         ]
       },
       {
-        "ai_reshape": "Agent辅助：自动更新台账，提供预测建议，由人工确认",
-        "ai_responsibility": "自动抓取银行流水并更新台账，生成预测模型",
+        "ai_reshape": "虽然技术指标优异，但因涉及余额预测和异常判断，需人工权威复核。可采用AIAgent辅助生成预测与异常提示，人工确认并维护台账的Hybrid模式。未来可尝试将低风险判断项转为Auto。",
+        "ai_responsibility": "负责数据拉取、清洗、初始预测模型计算。",
         "analysis_status": "MODEL_DRAFT",
         "confidence": "MODEL_DRAFT",
         "control_gates": [
-          "预测模型输出需资金分析师确认"
+          "台账发布前必须经财务负责人确认预测假设"
         ],
-        "current_recommendation": "优先考虑Agent辅助：自动台账维护+预测建议，保留人工决策",
+        "current_recommendation": "引入Agent辅助预测与异常检测，保留人工复核与最终确认权（Hybrid）。当预测准确率连续达标并经过审计后，可考虑放权部分场景为Auto。",
         "data_basis": [
-          "agent_d1_input_struct=3 非结构化程度高",
-          "agent_d2_rule_clear=2 规则相对清晰"
+          "EVD-ab56e349e1a9084fb695: Skill C级，判断/策略/认知类",
+          "EVD-902158cd51e030916c2d: D1=3",
+          "EVD-4ab04b54b7cbdaa849e2: D2=2",
+          "EVD-43a6435f1f82a573adef: D4=2",
+          "EVD-f12d8c2782c8ff968fb8: agentifiability=Hybrid"
         ],
         "database_tier": "Hybrid",
-        "deliverable_role": "维护银行结余台账并输出预测，交付《银行结余台账》",
+        "deliverable_role": "维护《银行结余台账》，包含各银行账户实时余额与未来预测，支持现金流预测。",
         "evidence_refs": [
           "EVD-ab56e349e1a9084fb695",
-          "EVD-3ba90d4fa031ad04fb11",
-          "EVD-99765cd3f7f8b2f5adf1",
+          "EVD-902158cd51e030916c2d",
+          "EVD-4ab04b54b7cbdaa849e2",
+          "EVD-493ac97797eba34f7564",
+          "EVD-43a6435f1f82a573adef",
+          "EVD-cc0788292ce9f67d95ba",
+          "EVD-9e34557ab342728451e2",
           "EVD-ad4bb3ae310d9cc143d5",
+          "EVD-36b4d8b9ac95ab3b4303",
+          "EVD-99765cd3f7f8b2f5adf1",
+          "EVD-a5ae0cb0fde0bead5c8e",
           "EVD-f12d8c2782c8ff968fb8"
         ],
         "handoff_triggers": [
-          "银行数据异常",
-          "预测偏差过大",
-          "新开银行账户"
+          "预测偏差持续超过阈值",
+          "银行账户出现未映射的新字段",
+          "监控发现大额可疑流水"
         ],
-        "human_responsibility": "审核预测合理性，调整参数，确认台账准确性",
+        "human_responsibility": "审核AI的预测结果，调整异常项，维护台账权威性。",
         "l4_code": "L4-CFM-07",
-        "process_context": "流程蓝图STEP-07：银行结余台账升级（P1现有但需升级）",
+        "process_context": "蓝图STEP-07，🟡 P1现有但需升级，是现金流预测模型的数据基础。",
         "quadrant": "unclassified",
-        "quality_anchor": "台账与银行流水一致，预测符合历史趋势",
+        "quality_anchor": "台账余额与银行实际一致，预测偏差在可接受范围。",
         "recommended_tier": "Hybrid",
         "risks_limits": [
-          "认知类判断较多，难以完全自动化"
+          "预测模型需要持续训练和人工校准",
+          "过度依赖AI可能导致错误预测被用作决策依据",
+          "银行接口变更可能造成数据断供"
         ],
         "specific_capabilities": [
-          "判断/策略/认知类",
-          "单一动作：维护台账并基于判断做预测"
+          "单一动作但属判断/策略/认知类，Skill可行性C级（需判断/权威）",
+          "输入结构化极高（D1=3），规则清晰（D2=2），输出可验证（D3=2），API可达（D4=2）",
+          "能力项：自动获取银行余额、根据历史模式预测未来余额、识别异常波动"
         ]
       },
       {
-        "ai_reshape": "先拆分为子Skill：自动生成报告与自动校验，人工复核后发布",
-        "ai_responsibility": "自动提取数据、生成报告并校验格式",
+        "ai_reshape": "拆分为‘报告编制’和‘报告报送’。编制部分可完全Auto（拉数据→填充模板→生成可视化），报送部分需人审后发出（Hybrid），避免错误信息外泄。",
+        "ai_responsibility": "负责定时生成报告初稿，完成数据校验和格式标准化。",
         "analysis_status": "MODEL_DRAFT",
         "confidence": "MODEL_DRAFT",
         "control_gates": [
-          "报告需经现金流负责人签字确认"
+          "报告发送前须经负责人签字确认"
         ],
-        "current_recommendation": "优先进入Skill原型候选池，但须拆分为生成Skill和校验Skill，报送仍由人工执行",
+        "current_recommendation": "优先实现报告编制Auto Skill，报送环节保留人工最终确认（Hybrid）。逐步标准化报告模板，减少人工调整工作。",
         "data_basis": [
-          "agent_d1_input_struct=2 部分结构化",
-          "agent_d2_rule_clear=2 规则清晰"
+          "EVD-f8d9b5b67936d56ab890: Skill A级，但复合动作",
+          "EVD-8a85ff7d75c8b9683473: D1=2",
+          "EVD-0d60976975b856dcab9e: D2=2",
+          "EVD-e9dd8972f1e2eaba39c8: D4=2",
+          "EVD-10b8bfbe75c67969aa95: agentifiability=Auto"
         ],
         "database_tier": "Auto",
-        "deliverable_role": "编制现金流报告并报送，交付《周度结余报表》与《月度现金流预测报告》",
+        "deliverable_role": "编制《周度结余报表》和《月度现金流预测报告》，向上级汇报现金流状况。",
         "evidence_refs": [
           "EVD-f8d9b5b67936d56ab890",
-          "EVD-e17fbb2c11312321bc5b",
-          "EVD-6b796c0ca0e7a887e4cb",
+          "EVD-8a85ff7d75c8b9683473",
+          "EVD-0d60976975b856dcab9e",
+          "EVD-81dca5f03563fa2338fe",
+          "EVD-e9dd8972f1e2eaba39c8",
+          "EVD-23a101cd03c97ff56735",
+          "EVD-8eb3710d33e29973ed5d",
           "EVD-483192412f87c3ceab70",
+          "EVD-d687c6703e2b3b8b7e1d",
+          "EVD-6b796c0ca0e7a887e4cb",
+          "EVD-a5ae0cb0fde0bead5c8e",
           "EVD-10b8bfbe75c67969aa95"
         ],
         "handoff_triggers": [
-          "校验错误",
-          "数据异常波动",
-          "未通过格式审查"
+          "关键数据异常（如重大偏差）",
+          "报告生成失败",
+          "定稿前未通过人工确认"
         ],
-        "human_responsibility": "审核报告内容，确认无误后报送",
+        "human_responsibility": "审核报告内容，添加定性分析，确认发送对象并发出。",
         "l4_code": "L4-CFM-08",
-        "process_context": "流程蓝图STEP-08：现金流报告（P1格式待标准化）",
+        "process_context": "蓝图STEP-08，🟡 P1格式待标准化，是现金流管理的最终可见输出。",
         "quadrant": "unclassified",
-        "quality_anchor": "报告数据准确，格式符合报送要求",
-        "recommended_tier": "Auto",
+        "quality_anchor": "报告数据与源系统一致，无逻辑错误，按时提交。",
+        "recommended_tier": "Hybrid",
         "risks_limits": [
-          "复合动作，报告生成与报送机制需先行标准化"
+          "自动生成报告若未经人审可能发出错误信息给管理层",
+          "报送环节对外发布，需遵循IT安全与信息控制",
+          "模板变动可能影响自动化脚本"
         ],
         "specific_capabilities": [
-          "信息处理/事务类",
-          "复合动作：报告生成 + 审核报送"
+          "复合动作（需先拆分），Skill可行性A级但动作复合，可拆为编制与报送两个子Skill",
+          "输入结构化高（D1=2），规则清晰（D2=2），输出可验证（D3=2），API可达（D4=2）",
+          "能力项：自动提取数据生成报表、按模板格式化、发送给相关方"
         ]
       }
     ],
     "missing_analysis": [
-      "l4_analysis.deliverable_role 缺少官方证据，由流程名称推导",
-      "l4_analysis.specific_capabilities 依赖skill_feasibility证据",
-      "l4_analysis.ai_reshape 依赖recommended_path",
-      "tasks中部分任务先后关系为SOURCE_STEP_ONLY，因蓝图未明确定义子步骤顺序",
-      "控制链缺少L4定位，已拒绝2条"
+      "L4-CFM-02 · human_touchpoint",
+      "L4-CFM-03 · human_touchpoint",
+      "L4-CFM-05 · human_touchpoint",
+      "L4-CFM-07 · human_touchpoint",
+      "L4-CFM-08 · human_touchpoint"
     ],
     "model_run": {
-      "generated_at": "2026-08-03T06:16:15.758303+00:00",
-      "input_snapshot_hash": "4c7f646d6042e8a2f6b6494406d1f89be2785eef88774937e3fd1f0f26879709",
+      "generated_at": "2026-08-04T17:04:19.061180+00:00",
+      "input_snapshot_hash": "d1b9c06845c68815ac00288e956d4e226afb3edd37d3207618431cb9f1456fc5",
       "model_name": "deepseek-v4-pro",
       "model_version": "deepseek-v4-pro",
       "prompt_version": "VNW-L3-COM-GOLD-v1.0"
@@ -379,171 +505,282 @@
     "priority_drafts": [
       {
         "analysis_status": "MODEL_DRAFT",
-        "current_recommendation": "优先进入Skill原型候选池，实现自动化汇总，保留人工异常处理接口",
+        "current_recommendation": "优先建立标准化收集模板和线上填报通道，降低D1/D2阻力；同时引入Agent辅助提醒与校验，过渡期采用Aug模式，待标准化完成后向Auto演进。",
         "data_basis": [
-          "agent_d1_input_struct=1 结构化输入",
-          "agent_d3_output_verify=2 输出需人工验证"
+          "EVD-87244dbe1b474fa09b92: D1输入结构化程度=1（低）",
+          "EVD-83327b10746cab7fd544: D2规则清晰度=1（低）",
+          "EVD-2443db4155a6e0599fb5: D4 API可达性=1（低）",
+          "EVD-f68c97abb141e72eb947: D3输出可验证性=2（高）",
+          "EVD-fcb2e068bd14958557d5: D5兜底策略=2（高）",
+          "EVD-aadc242bfa17e26ca4db: D6合规性=2（高）",
+          "EVD-6e5b3acbfc780fe45268: 明确标注“人工执行”",
+          "EVD-cab82864189bfdb123cb: Skill可行性A级（单一信息处理动作，资金安全无硬门）"
         ],
         "evidence_refs": [
           "EVD-cab82864189bfdb123cb",
-          "EVD-b00de3d084202e358502",
-          "EVD-4af179421b1794d2b83b",
+          "EVD-87244dbe1b474fa09b92",
+          "EVD-83327b10746cab7fd544",
+          "EVD-f68c97abb141e72eb947",
+          "EVD-2443db4155a6e0599fb5",
+          "EVD-fcb2e068bd14958557d5",
+          "EVD-aadc242bfa17e26ca4db",
+          "EVD-6e5b3acbfc780fe45268",
+          "EVD-ace3fe74318f987853ab",
           "EVD-7776f5d2971f8d92fc69",
-          "EVD-ace3fe74318f987853ab"
+          "EVD-4d9a53131dad2741d9f1",
+          "EVD-4af179421b1794d2b83b",
+          "EVD-a5ae0cb0fde0bead5c8e"
         ],
         "l4_code": "L4-CFM-01",
-        "process_context": "流程蓝图STEP-01：收款预测收集（目前完全缺失，需从各业务线手工获取）",
+        "process_context": "蓝图STEP-01，标记为🔴 P0完全缺失，是现金流预测流程的起点，缺失风险极高。",
         "quadrant": "unclassified",
         "risks_limits": [
-          "信息处理单一动作，封装度高，但需确保数据源接入可靠"
+          "预测不准将直接导致现金缺口误判和调度失误",
+          "当前完全依赖人工收集，周期长且质量不稳定",
+          "输入格式多样，标准化改造工作量大"
         ]
       },
       {
         "analysis_status": "MODEL_DRAFT",
-        "current_recommendation": "先建立基本审批流程，再封装为Skill；同步制定资金付款规则",
+        "current_recommendation": "立即暂停将付款流程自动化，优先建立人工审批控制门和付款规则（P0优先）。之后引入Agent辅助生成待审计划（Hybrid），最终在规则稳定后向Auto演进。",
         "data_basis": [
-          "agent_d1_input_struct=2 部分结构化",
-          "agent_d2_rule_clear=0 规则不清晰"
+          "EVD-793060f1312340225aa1: D1=2",
+          "EVD-8839fe8f962f40ecda66: D2=0（关键风险）",
+          "EVD-81b3b8054ae76c12f089: D3=1",
+          "EVD-433502769e191fa64470: D4=1",
+          "EVD-95dfc7f5641976582dad: D5=1",
+          "EVD-d390aa582fec6bed7ee6: D6=1",
+          "EVD-d11cba3b8b7288f2911a: Skill可行性A级",
+          "EVD-28f7ca1a908770cb87af: 明确标注“当前无业务审批，资金付款完全听业务的”",
+          "EVD-237f774e8777a10b3dc7: agentifiability=Auto"
         ],
         "evidence_refs": [
           "EVD-d11cba3b8b7288f2911a",
-          "EVD-526793308e4258995c46",
-          "EVD-312f5af3b6e9a76db066",
+          "EVD-793060f1312340225aa1",
+          "EVD-8839fe8f962f40ecda66",
+          "EVD-81b3b8054ae76c12f089",
+          "EVD-433502769e191fa64470",
+          "EVD-95dfc7f5641976582dad",
+          "EVD-d390aa582fec6bed7ee6",
           "EVD-28f7ca1a908770cb87af",
+          "EVD-cbfabacd64f3858df0c8",
+          "EVD-312f5af3b6e9a76db066",
+          "EVD-a5ae0cb0fde0bead5c8e",
           "EVD-237f774e8777a10b3dc7"
         ],
         "l4_code": "L4-CFM-02",
-        "process_context": "流程蓝图STEP-02：付款计划汇总（P0完全缺失，当前无规范流程）",
+        "process_context": "蓝图STEP-02，🔴 P0完全缺失，付款计划是现金缺口计算的关键输入，缺失使缺口识别沦为形式。",
         "quadrant": "unclassified",
         "risks_limits": [
-          "封装度虽高，但缺乏资金审批控制，需引入人工审批闸门"
+          "无审批机制，资金安全风险极高",
+          "规则为0，AI无法做出合规判断",
+          "输出验证能力弱（D3=1），易产生错误付款"
         ]
       },
       {
         "analysis_status": "MODEL_DRAFT",
-        "current_recommendation": "优先考虑Agent辅助：自动预警+人工调度确认，不直接封装确定性Skill",
+        "current_recommendation": "优先将‘缺口识别’部分封装为确定性Skill，实现自动化预警；‘调度方案’部分采用Agent辅助设计，人审模式。随着历史数据积累，可逐步提升算法建议的采纳率。",
         "data_basis": [
-          "agent_d1_input_struct=2 部分结构化",
-          "agent_d2_rule_clear=2 规则清晰"
+          "EVD-77b695bb4bd9c072af99: Skill可行性C级，复合动作，语义复核",
+          "EVD-067e30f91b7f7a0f45de: D1=2",
+          "EVD-1f574d4f4a114ed04a05: D2=2",
+          "EVD-cbd2e1bb75855b323314: D3=2",
+          "EVD-db4e16f65153d364c311: D4=2",
+          "EVD-534da7aaa6752425c4b1: D5=1",
+          "EVD-9f2b855315ee3fe9f9bf: D6=1",
+          "EVD-2b5bc827c6f564d852f0: 存在分支决策Q1（是否存在缺口）"
         ],
         "evidence_refs": [
           "EVD-77b695bb4bd9c072af99",
-          "EVD-4282a2849c8c21967d2d",
-          "EVD-52a30400fc3b99328e8b",
+          "EVD-067e30f91b7f7a0f45de",
+          "EVD-1f574d4f4a114ed04a05",
+          "EVD-cbd2e1bb75855b323314",
+          "EVD-db4e16f65153d364c311",
+          "EVD-534da7aaa6752425c4b1",
+          "EVD-9f2b855315ee3fe9f9bf",
           "EVD-3eaaf29877bd3c81168c",
-          "EVD-3e60214b98abb08478e5"
+          "EVD-4a9c37c9e90c914b9c6c",
+          "EVD-52a30400fc3b99328e8b",
+          "EVD-a5ae0cb0fde0bead5c8e",
+          "EVD-3e60214b98abb08478e5",
+          "EVD-2b5bc827c6f564d852f0"
         ],
         "l4_code": "L4-CFM-03",
-        "process_context": "流程蓝图STEP-03：现金缺口预警与调度（P0完全缺失），依赖Q1决策分支",
+        "process_context": "蓝图STEP-03，🔴 P0完全缺失，是现金流管理的核心决策点，缺失将导致资金断链或过度闲置。",
         "quadrant": "unclassified",
         "risks_limits": [
-          "判断/策略类动作，语义复核要求高，不能完全自动化"
+          "复合动作中‘调度方案制定’属于高判断领域，AI无法独立承担",
+          "资金调度涉及金融合规与利益权衡，一旦失误损失巨大",
+          "预警阈值需人工设定并定期调整"
         ]
       },
       {
         "analysis_status": "MODEL_DRAFT",
-        "current_recommendation": "采用Human-in-the-loop模式，自动起草+人工审批，不做全自动Skill",
+        "current_recommendation": "优先建立跨主体调拨的标准规则和审批权限矩阵，然后引入AI调拨建议与合规自动校验，保留人工最终签发（Hybrid）。不可直接 Auto。",
         "data_basis": [
-          "agent_d1_input_struct=1 结构化",
-          "agent_d4_api_reach=1 有限API"
+          "EVD-5d5f1934d78d34c5fdd6: Skill A级，但funds_safety_hard_gate=true",
+          "EVD-ac7793bda69a0d4c490a: D1=1",
+          "EVD-a559254a5c114ad22e78: D2=1",
+          "EVD-35d6c0ea081b3e1d1038: 明确人工执行",
+          "EVD-d175a85942f33eb638cd: agentifiability=Auto"
         ],
         "evidence_refs": [
           "EVD-5d5f1934d78d34c5fdd6",
-          "EVD-5c3e08c975a1a857ea33",
-          "EVD-4ff2b01c47e2c37b35c6",
+          "EVD-ac7793bda69a0d4c490a",
+          "EVD-a559254a5c114ad22e78",
+          "EVD-61b73e3c63ac3f3201c0",
+          "EVD-5590e59f9b1866219012",
+          "EVD-5733400f5a6d31ea811c",
+          "EVD-a97a0d0d0db42515672f",
+          "EVD-35d6c0ea081b3e1d1038",
+          "EVD-d175a85942f33eb638cd",
           "EVD-8fc7914aff7d680de889",
-          "EVD-35d6c0ea081b3e1d1038"
+          "EVD-beb96fe749f4105672af",
+          "EVD-4ff2b01c47e2c37b35c6",
+          "EVD-a5ae0cb0fde0bead5c8e"
         ],
         "l4_code": "L4-CFM-04",
-        "process_context": "流程蓝图STEP-04：跨主体资金调拨（P1流程待建立）",
+        "process_context": "蓝图STEP-04，🟡 P1流程待建立，在发生缺口且需要跨主体调拨时执行。",
         "quadrant": "unclassified",
         "risks_limits": [
-          "资金安全硬门，即使封装度高也必须人工最终确认",
-          "API可达性低，可能无法全自动执行"
+          "资金硬门，任何自动化故障可能导致资金损失",
+          "当前规则不清晰（D2=1），需先建立标准操作规程",
+          "人工执行容易出错，需与多家银行交互"
         ]
       },
       {
         "analysis_status": "MODEL_DRAFT",
-        "current_recommendation": "优先进入Skill原型候选池，但必须拆分为独立的归集Skill和监控Skill",
+        "current_recommendation": "优先按‘归集’和‘监控’两个方向拆分实施。监控部分直接采用Auto Skill，归集部分设计为Agent辅助+人工确认的Hybrid流程。",
         "data_basis": [
-          "agent_d1_input_struct=2 部分结构化",
-          "agent_d4_api_reach=2 API较完善"
+          "EVD-e73a215fb8aa3858989a: Skill A级，复合动作，需先拆分",
+          "EVD-8150afee7f3767b9533a: D1=2",
+          "EVD-518d9672699e3576ee87: D2=2",
+          "EVD-6870fabff24293a07cf0: D3=2",
+          "EVD-05fb4414fbc747e61413: D4=2",
+          "EVD-c048c6f55ce3154c9f6a: agentifiability=Auto"
         ],
         "evidence_refs": [
           "EVD-e73a215fb8aa3858989a",
-          "EVD-7362b707f05eaa0b167c",
-          "EVD-a35bb6b2d6f00ae9c23d",
+          "EVD-8150afee7f3767b9533a",
+          "EVD-518d9672699e3576ee87",
+          "EVD-6870fabff24293a07cf0",
+          "EVD-05fb4414fbc747e61413",
+          "EVD-9d8a0c1834aa76a4bcf1",
+          "EVD-da9e5e71f27658d7c226",
           "EVD-286d813b1e28109417d7",
+          "EVD-2ff6bcfd9d6e5bb90b04",
+          "EVD-a35bb6b2d6f00ae9c23d",
+          "EVD-a5ae0cb0fde0bead5c8e",
           "EVD-c048c6f55ce3154c9f6a"
         ],
         "l4_code": "L4-CFM-05",
-        "process_context": "流程蓝图STEP-05：资金池归集监控（P1完全缺失）",
+        "process_context": "蓝图STEP-05，🟡 P1完全缺失，是资金池管理的日常操作。",
         "quadrant": "unclassified",
         "risks_limits": [
-          "复合动作，需先定义子Skill边界，避免全部自动导致误操作"
+          "归集操作涉及资金划转，误操作可能造成流动性风险",
+          "复合动作需先合理拆分，避免耦合导致故障",
+          "监控丢点可能延误风险发现"
         ]
       },
       {
         "analysis_status": "MODEL_DRAFT",
-        "current_recommendation": "优先进入Skill原型候选池，实现自动对账，人工仅处理差异",
+        "current_recommendation": "优先打通主要外部渠道的API，将大部分对账转为Auto Skill；剩余人工部分用Agent辅助提升效率，整体向Aug/Hybrid过渡。",
         "data_basis": [
-          "agent_d1_input_struct=2 部分结构化",
-          "agent_d3_output_verify=2 输出需人工验证"
+          "EVD-98ee7e399116ad4a504d: Skill A级",
+          "EVD-168438889911bcdcfa4f: D1=2",
+          "EVD-7e844c3afa15538a4f1c: D2=2",
+          "EVD-2464dc1321c627ce7379: D4=1 (关键限制)",
+          "EVD-60bf12e49e3475a543a8: 明确人工执行",
+          "EVD-b4fcee70fe63d0083ec9: agentifiability=Auto"
         ],
         "evidence_refs": [
           "EVD-98ee7e399116ad4a504d",
-          "EVD-d32e7718093ed83fac1c",
-          "EVD-f2238a21eba1dddcc4cc",
+          "EVD-168438889911bcdcfa4f",
+          "EVD-7e844c3afa15538a4f1c",
+          "EVD-3c437072e45435c7f9af",
+          "EVD-2464dc1321c627ce7379",
+          "EVD-b6025292461415793ed8",
+          "EVD-2ff8eb7cb5fc7fdaf4db",
+          "EVD-60bf12e49e3475a543a8",
+          "EVD-b4fcee70fe63d0083ec9",
           "EVD-5e9ee77ca63a1142d651",
-          "EVD-60bf12e49e3475a543a8"
+          "EVD-32bd2b7081b7ac484e8d",
+          "EVD-f2238a21eba1dddcc4cc",
+          "EVD-a5ae0cb0fde0bead5c8e"
         ],
         "l4_code": "L4-CFM-06",
-        "process_context": "流程蓝图STEP-06：体系外资金对账（P1周期过长）",
+        "process_context": "蓝图STEP-06，🟡 P1周期过长，是唯一涉及体系外资金对账的环节，直接影响资金准确性。",
         "quadrant": "unclassified",
         "risks_limits": [
-          "封装度高，但外部数据源格式可能不稳定"
+          "体系外渠道无标准API，自动化推进慢",
+          "人工对账周期长，可能掩盖资金风险",
+          "差异处理不及时可能导致调账错误"
         ]
       },
       {
         "analysis_status": "MODEL_DRAFT",
-        "current_recommendation": "优先考虑Agent辅助：自动台账维护+预测建议，保留人工决策",
+        "current_recommendation": "引入Agent辅助预测与异常检测，保留人工复核与最终确认权（Hybrid）。当预测准确率连续达标并经过审计后，可考虑放权部分场景为Auto。",
         "data_basis": [
-          "agent_d1_input_struct=3 非结构化程度高",
-          "agent_d2_rule_clear=2 规则相对清晰"
+          "EVD-ab56e349e1a9084fb695: Skill C级，判断/策略/认知类",
+          "EVD-902158cd51e030916c2d: D1=3",
+          "EVD-4ab04b54b7cbdaa849e2: D2=2",
+          "EVD-43a6435f1f82a573adef: D4=2",
+          "EVD-f12d8c2782c8ff968fb8: agentifiability=Hybrid"
         ],
         "evidence_refs": [
           "EVD-ab56e349e1a9084fb695",
-          "EVD-3ba90d4fa031ad04fb11",
-          "EVD-99765cd3f7f8b2f5adf1",
+          "EVD-902158cd51e030916c2d",
+          "EVD-4ab04b54b7cbdaa849e2",
+          "EVD-493ac97797eba34f7564",
+          "EVD-43a6435f1f82a573adef",
+          "EVD-cc0788292ce9f67d95ba",
+          "EVD-9e34557ab342728451e2",
           "EVD-ad4bb3ae310d9cc143d5",
+          "EVD-36b4d8b9ac95ab3b4303",
+          "EVD-99765cd3f7f8b2f5adf1",
+          "EVD-a5ae0cb0fde0bead5c8e",
           "EVD-f12d8c2782c8ff968fb8"
         ],
         "l4_code": "L4-CFM-07",
-        "process_context": "流程蓝图STEP-07：银行结余台账升级（P1现有但需升级）",
+        "process_context": "蓝图STEP-07，🟡 P1现有但需升级，是现金流预测模型的数据基础。",
         "quadrant": "unclassified",
         "risks_limits": [
-          "认知类判断较多，难以完全自动化"
+          "预测模型需要持续训练和人工校准",
+          "过度依赖AI可能导致错误预测被用作决策依据",
+          "银行接口变更可能造成数据断供"
         ]
       },
       {
         "analysis_status": "MODEL_DRAFT",
-        "current_recommendation": "优先进入Skill原型候选池，但须拆分为生成Skill和校验Skill，报送仍由人工执行",
+        "current_recommendation": "优先实现报告编制Auto Skill，报送环节保留人工最终确认（Hybrid）。逐步标准化报告模板，减少人工调整工作。",
         "data_basis": [
-          "agent_d1_input_struct=2 部分结构化",
-          "agent_d2_rule_clear=2 规则清晰"
+          "EVD-f8d9b5b67936d56ab890: Skill A级，但复合动作",
+          "EVD-8a85ff7d75c8b9683473: D1=2",
+          "EVD-0d60976975b856dcab9e: D2=2",
+          "EVD-e9dd8972f1e2eaba39c8: D4=2",
+          "EVD-10b8bfbe75c67969aa95: agentifiability=Auto"
         ],
         "evidence_refs": [
           "EVD-f8d9b5b67936d56ab890",
-          "EVD-e17fbb2c11312321bc5b",
-          "EVD-6b796c0ca0e7a887e4cb",
+          "EVD-8a85ff7d75c8b9683473",
+          "EVD-0d60976975b856dcab9e",
+          "EVD-81dca5f03563fa2338fe",
+          "EVD-e9dd8972f1e2eaba39c8",
+          "EVD-23a101cd03c97ff56735",
+          "EVD-8eb3710d33e29973ed5d",
           "EVD-483192412f87c3ceab70",
+          "EVD-d687c6703e2b3b8b7e1d",
+          "EVD-6b796c0ca0e7a887e4cb",
+          "EVD-a5ae0cb0fde0bead5c8e",
           "EVD-10b8bfbe75c67969aa95"
         ],
         "l4_code": "L4-CFM-08",
-        "process_context": "流程蓝图STEP-08：现金流报告（P1格式待标准化）",
+        "process_context": "蓝图STEP-08，🟡 P1格式待标准化，是现金流管理的最终可见输出。",
         "quadrant": "unclassified",
         "risks_limits": [
-          "复合动作，报告生成与报送机制需先行标准化"
+          "自动生成报告若未经人审可能发出错误信息给管理层",
+          "报送环节对外发布，需遵循IT安全与信息控制",
+          "模板变动可能影响自动化脚本"
         ]
       }
     ],
@@ -551,14 +788,16 @@
     "schema_version": "vnw.l3-analysis.v1",
     "source_scope": {
       "database": "process_analytics",
-      "evidence_count": 128,
+      "evidence_count": 129,
       "knowledge": "ACTIVE supplemental evidence only"
     },
     "tasks": [
       {
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-b00de3d084202e358502"
+          "EVD-b00de3d084202e358502",
+          "EVD-6e5b3acbfc780fe45268",
+          "EVD-cab82864189bfdb123cb"
         ],
         "l4_code": "L4-CFM-01",
         "next_task_ids": [
@@ -570,16 +809,18 @@
         "sequence_status": "SOURCE_CONFIRMED",
         "source_line": 72,
         "source_step_id": "STEP-01",
-        "source_type": "BLUEPRINT_STEP",
-        "suggested_tier": "Auto",
+        "source_type": "blueprint_step",
+        "suggested_tier": "Human",
         "task_id": "T-CFM-01",
         "task_name": "收集各业务线收款预测数据",
-        "tier_rationale": "高度结构化、单一动作，可直接Skill自动化"
+        "tier_rationale": "明确标记为人工执行，输入结构低(D1=1)，规则不清晰(D2=1)，当前无法自动化。人工负责收集与审核，未来可能引入Agent辅助提醒与校验(Aug)。"
       },
       {
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-526793308e4258995c46"
+          "EVD-526793308e4258995c46",
+          "EVD-d11cba3b8b7288f2911a",
+          "EVD-2b5bc827c6f564d852f0"
         ],
         "l4_code": "L4-CFM-02",
         "next_task_ids": [
@@ -589,22 +830,24 @@
         "previous_task_ids": [
           "T-CFM-01"
         ],
-        "relation_type": "SEQUENCE_WITH_DECISION",
+        "relation_type": "DECISION",
         "sequence_no": 2,
         "sequence_status": "SOURCE_CONFIRMED",
         "source_line": 78,
         "source_step_id": "STEP-02",
-        "source_type": "BLUEPRINT_STEP",
-        "suggested_tier": "Hybrid",
+        "source_type": "blueprint_step",
+        "suggested_tier": "Human",
         "task_id": "T-CFM-02",
         "task_name": "汇总4周付款计划并生成审批单",
-        "tier_rationale": "自动化汇总但需人工审批控制，因当前无业务审批"
+        "tier_rationale": "规则空白(D2=0)，且当前无审批控制门，资金风险极高。暂不宜自动化，必须先建立人工审批流程和规则，再考虑Hybrid助理。"
       },
       {
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
+          "EVD-4282a2849c8c21967d2d",
           "EVD-77b695bb4bd9c072af99",
-          "EVD-4282a2849c8c21967d2d"
+          "EVD-1f574d4f4a114ed04a05",
+          "EVD-db4e16f65153d364c311"
         ],
         "l4_code": "L4-CFM-03",
         "next_task_ids": [
@@ -618,17 +861,19 @@
         "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 87,
         "source_step_id": "STEP-03",
-        "source_type": "BLUEPRINT_STEP",
+        "source_type": "blueprint_step",
         "suggested_tier": "Auto",
         "task_id": "T-CFM-03a",
-        "task_name": "自动计算现金缺口并生成预警",
-        "tier_rationale": "缺口计算为确定性任务，可自动化"
+        "task_name": "计算现金缺口并触发预警",
+        "tier_rationale": "缺口识别部分规则清晰(D2=2)，输入结构化高(D1=2)，API可达(D4=2)，可封装为确定性Skill实现自动预警。"
       },
       {
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
+          "EVD-4282a2849c8c21967d2d",
           "EVD-77b695bb4bd9c072af99",
-          "EVD-4282a2849c8c21967d2d"
+          "EVD-534da7aaa6752425c4b1",
+          "EVD-9f2b855315ee3fe9f9bf"
         ],
         "l4_code": "L4-CFM-03",
         "next_task_ids": [
@@ -642,41 +887,42 @@
         "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 87,
         "source_step_id": "STEP-03",
-        "source_type": "BLUEPRINT_STEP",
+        "source_type": "blueprint_step",
         "suggested_tier": "Human",
         "task_id": "T-CFM-03b",
-        "task_name": "评审缺口预警并制定/确认调度方案",
-        "tier_rationale": "调度方案涉及判断与策略，需人工决策"
+        "task_name": "制定资金调度方案",
+        "tier_rationale": "调度方案涉及复杂策略和语义判定(Skill可行性C级)，需人工审核或制定。AI可辅助生成备选方案，但最终决策由人做出。"
       },
       {
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
+          "EVD-5c3e08c975a1a857ea33",
           "EVD-5d5f1934d78d34c5fdd6",
-          "EVD-5c3e08c975a1a857ea33"
+          "EVD-35d6c0ea081b3e1d1038"
         ],
         "l4_code": "L4-CFM-04",
         "next_task_ids": [
-          "T-CFM-05"
+          "T-CFM-05a"
         ],
         "previous_task_ids": [
           "T-CFM-03b"
         ],
         "relation_type": "SEQUENCE",
-        "sequence_no": 5,
+        "sequence_no": 4,
         "sequence_status": "SOURCE_CONFIRMED",
         "source_line": 93,
         "source_step_id": "STEP-04",
-        "source_type": "BLUEPRINT_STEP",
+        "source_type": "blueprint_step",
         "suggested_tier": "Human",
         "task_id": "T-CFM-04",
-        "task_name": "制定跨主体资金调拨方案并提交审批",
-        "tier_rationale": "涉及资金安全硬门，必须人工审批"
+        "task_name": "制定跨主体资金调拨方案并办理审批",
+        "tier_rationale": "资金安全硬门，当前人工执行。AI可辅助方案生成与合规校验，但审批和最终执行须由人完成(Hybrid演进)。"
       },
       {
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-e73a215fb8aa3858989a",
-          "EVD-7362b707f05eaa0b167c"
+          "EVD-7362b707f05eaa0b167c",
+          "EVD-e73a215fb8aa3858989a"
         ],
         "l4_code": "L4-CFM-05",
         "next_task_ids": [
@@ -690,17 +936,18 @@
         "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 100,
         "source_step_id": "STEP-05",
-        "source_type": "BLUEPRINT_STEP",
-        "suggested_tier": "Auto",
+        "source_type": "blueprint_step",
+        "suggested_tier": "Hybrid",
         "task_id": "T-CFM-05a",
-        "task_name": "自动执行资金池归集",
-        "tier_rationale": "归集动作为事务型，可封装Skill"
+        "task_name": "执行资金池归集操作",
+        "tier_rationale": "复合动作之一，涉及实际资金划拨，无硬门但需人工确认。AI生成归集指令，人审批后执行。"
       },
       {
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
+          "EVD-7362b707f05eaa0b167c",
           "EVD-e73a215fb8aa3858989a",
-          "EVD-7362b707f05eaa0b167c"
+          "EVD-6870fabff24293a07cf0"
         ],
         "l4_code": "L4-CFM-05",
         "next_task_ids": [
@@ -714,17 +961,18 @@
         "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 100,
         "source_step_id": "STEP-05",
-        "source_type": "BLUEPRINT_STEP",
-        "suggested_tier": "Aug",
+        "source_type": "blueprint_step",
+        "suggested_tier": "Auto",
         "task_id": "T-CFM-05b",
-        "task_name": "监控资金池余额并处理异常",
-        "tier_rationale": "监控可由系统自动执行，但异常需人工干预"
+        "task_name": "监控资金池余额",
+        "tier_rationale": "余额监控为信息处理，输出可验证(D3=2)，可封装为纯Auto Skill，实时报警。"
       },
       {
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
+          "EVD-d32e7718093ed83fac1c",
           "EVD-98ee7e399116ad4a504d",
-          "EVD-d32e7718093ed83fac1c"
+          "EVD-60bf12e49e3475a543a8"
         ],
         "l4_code": "L4-CFM-06",
         "next_task_ids": [
@@ -734,46 +982,48 @@
           "T-CFM-05b"
         ],
         "relation_type": "SEQUENCE",
-        "sequence_no": 8,
+        "sequence_no": 6,
         "sequence_status": "SOURCE_CONFIRMED",
         "source_line": 107,
         "source_step_id": "STEP-06",
-        "source_type": "BLUEPRINT_STEP",
-        "suggested_tier": "Auto",
+        "source_type": "blueprint_step",
+        "suggested_tier": "Aug",
         "task_id": "T-CFM-06",
         "task_name": "执行体系外资金对账",
-        "tier_rationale": "对账匹配为重复性事务，可全自动处理"
+        "tier_rationale": "当前人工执行，但Skill可行性A级。因API可达性低(D4=1)，完全Auto受限；宜采用AI自动勾稽+人工复核差异的Aug模式。"
       },
       {
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
+          "EVD-3ba90d4fa031ad04fb11",
           "EVD-ab56e349e1a9084fb695",
-          "EVD-3ba90d4fa031ad04fb11"
+          "EVD-902158cd51e030916c2d"
         ],
         "l4_code": "L4-CFM-07",
         "next_task_ids": [
-          "T-CFM-08"
+          "T-CFM-08a"
         ],
         "previous_task_ids": [
-          "T-CFM-06",
-          "T-CFM-02"
+          "T-CFM-02",
+          "T-CFM-06"
         ],
-        "relation_type": "SEQUENCE",
-        "sequence_no": 9,
+        "relation_type": "DECISION",
+        "sequence_no": 7,
         "sequence_status": "SOURCE_CONFIRMED",
         "source_line": 114,
         "source_step_id": "STEP-07",
-        "source_type": "BLUEPRINT_STEP",
+        "source_type": "blueprint_step",
         "suggested_tier": "Hybrid",
         "task_id": "T-CFM-07",
         "task_name": "维护银行结余台账并生成预测",
-        "tier_rationale": "涉及判断与认知，建议Agent辅助"
+        "tier_rationale": "判断/认知类(C级)，需权威复核。AI自动拉取数据并初步预测，人工审核并维护台账，保障准确性。"
       },
       {
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
+          "EVD-e17fbb2c11312321bc5b",
           "EVD-f8d9b5b67936d56ab890",
-          "EVD-e17fbb2c11312321bc5b"
+          "EVD-81dca5f03563fa2338fe"
         ],
         "l4_code": "L4-CFM-08",
         "next_task_ids": [
@@ -787,17 +1037,18 @@
         "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 120,
         "source_step_id": "STEP-08",
-        "source_type": "BLUEPRINT_STEP",
+        "source_type": "blueprint_step",
         "suggested_tier": "Auto",
         "task_id": "T-CFM-08a",
-        "task_name": "自动生成现金流报告",
-        "tier_rationale": "报告生成为数据提取与模板填充，可Skill化"
+        "task_name": "编制现金流报告草案",
+        "tier_rationale": "编制部分为数据提取与格式化，可封装确定性Skill自动生成报告初稿。"
       },
       {
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
+          "EVD-e17fbb2c11312321bc5b",
           "EVD-f8d9b5b67936d56ab890",
-          "EVD-e17fbb2c11312321bc5b"
+          "EVD-8eb3710d33e29973ed5d"
         ],
         "l4_code": "L4-CFM-08",
         "next_task_ids": [],
@@ -809,15 +1060,15 @@
         "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 120,
         "source_step_id": "STEP-08",
-        "source_type": "BLUEPRINT_STEP",
+        "source_type": "blueprint_step",
         "suggested_tier": "Human",
         "task_id": "T-CFM-08b",
-        "task_name": "审核现金流报告并报送",
-        "tier_rationale": "报告审核与报送需负责人确认，不可自动化"
+        "task_name": "审核并报送现金流报告",
+        "tier_rationale": "报送为对外发布环节，需人工审核报告内容与发送对象，确保准确和合规。"
       }
     ]
   },
-  "analysis_freshness": "INPUT_CHANGED",
+  "analysis_freshness": "CURRENT",
   "analysis_input_hash": "d1b9c06845c68815ac00288e956d4e226afb3edd37d3207618431cb9f1456fc5",
   "blueprint": {
     "blueprint_value_nodes": [],

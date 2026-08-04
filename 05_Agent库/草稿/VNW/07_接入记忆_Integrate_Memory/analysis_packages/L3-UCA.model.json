@@ -1,0 +1,569 @@
+{
+  "schema_version": "vnw.l3-analysis.v1",
+  "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
+  "generation_mode": "UNIFIED_MODEL",
+  "analysis_status": "MODEL_DRAFT",
+  "model_run": {
+    "model_name": "deepseek-v4-pro",
+    "model_version": "deepseek-v4-pro",
+    "prompt_version": "VNW-L3-COM-GOLD-v1.0",
+    "generated_at": "2026-08-04T19:36:54.130242+00:00",
+    "input_snapshot_hash": "b2c1169692081d6cec1832ba70daad682144e6c95dd6083885c4f7f44f90b6bd"
+  },
+  "source_scope": {
+    "database": "process_analytics",
+    "knowledge": "ACTIVE supplemental evidence only",
+    "evidence_count": 74
+  },
+  "l4_analysis": [
+    {
+      "l4_code": "L4-UCA-01",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-a86e5b01841dc22d24b1",
+        "EVD-4476aebe2d3c7efeee0b",
+        "EVD-27747600dd3d01f7a577",
+        "EVD-7027a7493ca22cf16c07",
+        "EVD-ee591702144d74063124",
+        "EVD-ce9c235f46be670d5a9f",
+        "EVD-1191d6a9302780df71af",
+        "EVD-eb355034896c8f690533"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "生成《合同草案V1》",
+      "specific_capabilities": [
+        "动态条款库配置与匹配",
+        "合同条款自动填充"
+      ],
+      "ai_reshape": "确定性Skill执行：基于参数从条款库选取并填充条款，生成合同草案",
+      "quality_anchor": "条款库准确性、草案完整性与一致性",
+      "ai_responsibility": "根据输入参数自动生成合同草案",
+      "human_responsibility": "",
+      "handoff_triggers": [],
+      "control_gates": [],
+      "data_basis": [
+        "D1=2（结构化输入良好）",
+        "D2=1（规则清晰度一般）",
+        "D3=2（输出可验证）",
+        "D4=1（API可达）",
+        "D5=1（具备降级方案）",
+        "D6=1（合规性中等）"
+      ],
+      "process_context": "流程起点，条款库配置为后续审批和附件准备提供合同基础（蓝图STEP-01）",
+      "risks_limits": [
+        "规则清晰度不足（D2=1）可能导致条款选取偏差",
+        "合规性得分中等（D6=1）需人工审核确保合规"
+      ],
+      "current_recommendation": "优先自动化生成草案，建立人工合规复核控制门；同时推动条款库规则标准化，提升D2分值",
+      "database_tier": "Auto",
+      "recommended_tier": "Auto",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-UCA-02",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-79176423486c59ed8a7b",
+        "EVD-7ec2ac8381346b8d4728",
+        "EVD-1eba63949a7d33e0bf9d"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "生成《审批节点配置说明》",
+      "specific_capabilities": [
+        "审批规则分析与建模",
+        "审批节点参数配置"
+      ],
+      "ai_reshape": "Agent辅助：AI提供审批规则建议与合规检查，最终配置由人决策",
+      "quality_anchor": "审批流程符合内控要求，节点角色与权限正确",
+      "ai_responsibility": "提供常见审批模式建议和规则检查报告",
+      "human_responsibility": "",
+      "handoff_triggers": [
+        "规则不明确",
+        "配置方案需要跨部门协调"
+      ],
+      "control_gates": [
+        "审批节点配置必须经业务负责人确认"
+      ],
+      "data_basis": [
+        "D1=2",
+        "D2=1（规则不明确）",
+        "D3=2",
+        "D4=1",
+        "D5=1",
+        "D6=1"
+      ],
+      "process_context": "紧随动态条款库配置之后（STEP-02），审批节点设置直接影响后续合同签署路径",
+      "risks_limits": [
+        "规则清晰度低（D2=1）依赖人工判断",
+        "决策类动作封装度低（Skill C级）"
+      ],
+      "current_recommendation": "采用Agent辅助模式，人机协同积累审批规则库，逐步提升规则清晰度后向自动化演进",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-UCA-03",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-d586d827648f8d20a4b8",
+        "EVD-bf6b8195b813fa3266d6",
+        "EVD-be0cbe25562302580cb2"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "生成合同/协议文件（含附件）",
+      "specific_capabilities": [
+        "附件模板调用",
+        "标准化字段填充"
+      ],
+      "ai_reshape": "确定性Skill执行：自动选取模板并填充附件内容",
+      "quality_anchor": "附件与主合同条款一致，格式规范",
+      "ai_responsibility": "自动生成合同附件",
+      "human_responsibility": "",
+      "handoff_triggers": [],
+      "control_gates": [],
+      "data_basis": [
+        "D1=2",
+        "D2=1",
+        "D3=2",
+        "D4=1",
+        "D5=1",
+        "D6=1"
+      ],
+      "process_context": "审批节点确定后进入附件准备（STEP-03），输出受Q1决策影响，可能返回条款库修改",
+      "risks_limits": [
+        "规则清晰度一般可能造成附件内容偏差",
+        "合规性需人工抽查"
+      ],
+      "current_recommendation": "自动化生成附件，辅以人工抽查关键附件；优先固化常见附件模板与填充规则",
+      "database_tier": "Auto",
+      "recommended_tier": "Auto",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-UCA-04",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-c4fd8e26b074823401b2",
+        "EVD-aec2e0334259b97a11f4",
+        "EVD-a68ced6652c095e14b24"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "确保合同文件通过终验并签署",
+      "specific_capabilities": [
+        "合规规则检查（可执行性校验）",
+        "合规报告生成",
+        "签署授权管理"
+      ],
+      "ai_reshape": "Agent辅助：自动扫描合规性并生成报告，人工终审后签署",
+      "quality_anchor": "100%合规通过率，签署授权不可绕过",
+      "ai_responsibility": "执行合规规则检查并生成合规报告",
+      "human_responsibility": "",
+      "handoff_triggers": [
+        "合规检查不通过",
+        "规则模糊需裁定"
+      ],
+      "control_gates": [
+        "签署必须由授权岗位人工完成，不得自动化"
+      ],
+      "data_basis": [
+        "D1=2",
+        "D2=1",
+        "D3=2",
+        "D4=1",
+        "D5=1",
+        "D6=1"
+      ],
+      "process_context": "质量终验关卡，承接Q1决策后进入（STEP-04），完成后流转至交付包整合",
+      "risks_limits": [
+        "合规性得分中等，合规检查规则库尚不完善",
+        "复合动作需拆分为自动扫描与人工终审"
+      ],
+      "current_recommendation": "优先建设合规规则库和报告模板，实现合规自动扫描；签署环节保留Human control，不可自动化",
+      "database_tier": "Aug",
+      "recommended_tier": "Aug",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-UCA-05",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-5ff95c04fc49653be1dd",
+        "EVD-4ea86b943ac70550145f",
+        "EVD-a01d61a39832d994ef62",
+        "EVD-f7500113025d65257769"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "整合交付物包并组织知识转移会议",
+      "specific_capabilities": [
+        "文档收集与格式统一",
+        "关键知识提炼与转移材料编制",
+        "内部评审会议组织"
+      ],
+      "ai_reshape": "Agent辅助：AI负责信息收集和格式转换，人工主导知识转移活动",
+      "quality_anchor": "交付物包完整、知识转移材料清晰可落地",
+      "ai_responsibility": "收集各前置步骤输出，格式化为标准交付物包",
+      "human_responsibility": "审核整合内容、主持知识转移会议",
+      "handoff_triggers": [
+        "待讨论：交付包部分内容需人工确认"
+      ],
+      "control_gates": [
+        "知识转移会议必须由经代机构合作岗主持，确保关键信息传达"
+      ],
+      "data_basis": [
+        "D1=1（结构化输入差）",
+        "D2=0（规则不清）",
+        "D3=1（输出验证差）",
+        "D4=0（无API）",
+        "D5=0（无降级）",
+        "D6=1"
+      ],
+      "process_context": "流程终点（STEP-05），交付包移交前的最后整合与知识转移",
+      "risks_limits": [
+        "D1/D2/D4多项评分低，自动化基础薄弱",
+        "复合动作需拆分为AI辅助信息收集和人工知识转移"
+      ],
+      "current_recommendation": "拆分为两个子任务：AI辅助的信息收集与编撰，以及人工主导的知识转移策划与执行；先固化交付物模板，逐步提升AI整合成熟度",
+      "database_tier": "Auto",
+      "recommended_tier": "Aug",
+      "quadrant": "unclassified"
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "T1",
+      "l4_code": "L4-UCA-01",
+      "task_name": "配置动态条款库并生成合同草案V1",
+      "source_type": "BLUEPRINT_STEP",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-01",
+      "source_line": 52,
+      "previous_task_ids": [],
+      "next_task_ids": [
+        "T2"
+      ],
+      "relation_type": "NEXT",
+      "evidence_refs": [
+        "EVD-c62d4bee00d04ef7a831",
+        "EVD-a86e5b01841dc22d24b1",
+        "EVD-eb355034896c8f690533"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "数据库Tier Auto，skill feasibility A-高封装单一动作，D1=2/D3=2支持自动化生成；但D6=1合规性需后续人工审核控制门"
+    },
+    {
+      "task_id": "T2",
+      "l4_code": "L4-UCA-02",
+      "task_name": "审查并配置经代机构审批节点",
+      "source_type": "BLUEPRINT_STEP",
+      "sequence_no": 2,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-02",
+      "source_line": 58,
+      "previous_task_ids": [
+        "T1"
+      ],
+      "next_task_ids": [
+        "T3"
+      ],
+      "relation_type": "NEXT",
+      "evidence_refs": [
+        "EVD-7ec2ac8381346b8d4728",
+        "EVD-79176423486c59ed8a7b",
+        "EVD-1eba63949a7d33e0bf9d"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "Skill feasibility C-低封装需判断/策略，数据库Tier Hybrid；D2=1规则不清晰，AI辅助建议、人决策配置"
+    },
+    {
+      "task_id": "T3",
+      "l4_code": "L4-UCA-03",
+      "task_name": "准备合同附件文档",
+      "source_type": "BLUEPRINT_STEP",
+      "sequence_no": 3,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-03",
+      "source_line": 63,
+      "previous_task_ids": [
+        "T2"
+      ],
+      "next_task_ids": [
+        "D1"
+      ],
+      "relation_type": "NEXT",
+      "evidence_refs": [
+        "EVD-bf6b8195b813fa3266d6",
+        "EVD-d586d827648f8d20a4b8",
+        "EVD-be0cbe25562302580cb2"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "Skill A高封装单一动作，数据库Auto；可自动生成附件，但需人工抽查关键内容"
+    },
+    {
+      "task_id": "T4",
+      "l4_code": "L4-UCA-04",
+      "task_name": "执行合同合规性自动扫描",
+      "source_type": "SUB_STEP",
+      "sequence_no": 4,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-04",
+      "source_line": 69,
+      "previous_task_ids": [
+        "D1"
+      ],
+      "next_task_ids": [
+        "T5"
+      ],
+      "relation_type": "NEXT",
+      "evidence_refs": [
+        "EVD-aec2e0334259b97a11f4",
+        "EVD-c4fd8e26b074823401b2"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "合规检查可基于固化规则实现自动化扫描，skill feasibility B中封装建议先补充规则库与报告模板"
+    },
+    {
+      "task_id": "T5",
+      "l4_code": "L4-UCA-04",
+      "task_name": "人工终审合同并签署",
+      "source_type": "SUB_STEP",
+      "sequence_no": 4,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-04",
+      "source_line": 69,
+      "previous_task_ids": [
+        "T4"
+      ],
+      "next_task_ids": [
+        "T6"
+      ],
+      "relation_type": "NEXT",
+      "evidence_refs": [
+        "EVD-aec2e0334259b97a11f4",
+        "EVD-a68ced6652c095e14b24"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "签署不可自动化，需授权岗位人工执行；合规终验后必须由人控制签署环节"
+    },
+    {
+      "task_id": "T6",
+      "l4_code": "L4-UCA-05",
+      "task_name": "收集并格式化交付物包",
+      "source_type": "SUB_STEP",
+      "sequence_no": 5,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-05",
+      "source_line": 74,
+      "previous_task_ids": [
+        "T5"
+      ],
+      "next_task_ids": [
+        "T7"
+      ],
+      "relation_type": "NEXT",
+      "evidence_refs": [
+        "EVD-4ea86b943ac70550145f",
+        "EVD-5ff95c04fc49653be1dd"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "D1=1/D4=0缺乏结构化输入和API，AI辅助格式转换与汇总，人工最终确认"
+    },
+    {
+      "task_id": "T7",
+      "l4_code": "L4-UCA-05",
+      "task_name": "执行知识转移准备与内部评审",
+      "source_type": "SUB_STEP",
+      "sequence_no": 5,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-05",
+      "source_line": 74,
+      "previous_task_ids": [
+        "T6"
+      ],
+      "next_task_ids": [],
+      "relation_type": "NONE",
+      "evidence_refs": [
+        "EVD-4ea86b943ac70550145f",
+        "EVD-a01d61a39832d994ef62"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "人工接触点明确为人工执行；知识转移会议与评审必须由经代机构合作岗主导"
+    }
+  ],
+  "priority_drafts": [
+    {
+      "l4_code": "L4-UCA-01",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "D1=2（结构化输入良好）",
+        "D2=1（规则清晰度一般）",
+        "D3=2（输出可验证）",
+        "D4=1（API可达）",
+        "D5=1（具备降级方案）",
+        "D6=1（合规性中等）"
+      ],
+      "process_context": "流程起点，条款库配置为后续审批和附件准备提供合同基础（蓝图STEP-01）",
+      "risks_limits": [
+        "规则清晰度不足（D2=1）可能导致条款选取偏差",
+        "合规性得分中等（D6=1）需人工审核确保合规"
+      ],
+      "current_recommendation": "优先自动化生成草案，建立人工合规复核控制门；同时推动条款库规则标准化，提升D2分值",
+      "evidence_refs": [
+        "EVD-a86e5b01841dc22d24b1",
+        "EVD-4476aebe2d3c7efeee0b",
+        "EVD-27747600dd3d01f7a577",
+        "EVD-7027a7493ca22cf16c07",
+        "EVD-ee591702144d74063124",
+        "EVD-ce9c235f46be670d5a9f",
+        "EVD-1191d6a9302780df71af",
+        "EVD-eb355034896c8f690533"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-UCA-02",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "D1=2",
+        "D2=1（规则不明确）",
+        "D3=2",
+        "D4=1",
+        "D5=1",
+        "D6=1"
+      ],
+      "process_context": "紧随动态条款库配置之后（STEP-02），审批节点设置直接影响后续合同签署路径",
+      "risks_limits": [
+        "规则清晰度低（D2=1）依赖人工判断",
+        "决策类动作封装度低（Skill C级）"
+      ],
+      "current_recommendation": "采用Agent辅助模式，人机协同积累审批规则库，逐步提升规则清晰度后向自动化演进",
+      "evidence_refs": [
+        "EVD-79176423486c59ed8a7b",
+        "EVD-7ec2ac8381346b8d4728",
+        "EVD-1eba63949a7d33e0bf9d"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-UCA-03",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "D1=2",
+        "D2=1",
+        "D3=2",
+        "D4=1",
+        "D5=1",
+        "D6=1"
+      ],
+      "process_context": "审批节点确定后进入附件准备（STEP-03），输出受Q1决策影响，可能返回条款库修改",
+      "risks_limits": [
+        "规则清晰度一般可能造成附件内容偏差",
+        "合规性需人工抽查"
+      ],
+      "current_recommendation": "自动化生成附件，辅以人工抽查关键附件；优先固化常见附件模板与填充规则",
+      "evidence_refs": [
+        "EVD-d586d827648f8d20a4b8",
+        "EVD-bf6b8195b813fa3266d6",
+        "EVD-be0cbe25562302580cb2"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-UCA-04",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "D1=2",
+        "D2=1",
+        "D3=2",
+        "D4=1",
+        "D5=1",
+        "D6=1"
+      ],
+      "process_context": "质量终验关卡，承接Q1决策后进入（STEP-04），完成后流转至交付包整合",
+      "risks_limits": [
+        "合规性得分中等，合规检查规则库尚不完善",
+        "复合动作需拆分为自动扫描与人工终审"
+      ],
+      "current_recommendation": "优先建设合规规则库和报告模板，实现合规自动扫描；签署环节保留Human control，不可自动化",
+      "evidence_refs": [
+        "EVD-c4fd8e26b074823401b2",
+        "EVD-aec2e0334259b97a11f4",
+        "EVD-a68ced6652c095e14b24"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-UCA-05",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "D1=1（结构化输入差）",
+        "D2=0（规则不清）",
+        "D3=1（输出验证差）",
+        "D4=0（无API）",
+        "D5=0（无降级）",
+        "D6=1"
+      ],
+      "process_context": "流程终点（STEP-05），交付包移交前的最后整合与知识转移",
+      "risks_limits": [
+        "D1/D2/D4多项评分低，自动化基础薄弱",
+        "复合动作需拆分为AI辅助信息收集和人工知识转移"
+      ],
+      "current_recommendation": "拆分为两个子任务：AI辅助的信息收集与编撰，以及人工主导的知识转移策划与执行；先固化交付物模板，逐步提升AI整合成熟度",
+      "evidence_refs": [
+        "EVD-5ff95c04fc49653be1dd",
+        "EVD-4ea86b943ac70550145f",
+        "EVD-a01d61a39832d994ef62",
+        "EVD-f7500113025d65257769"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "decision_drafts": [
+    {
+      "priority": 1,
+      "task_ids": [
+        "T5"
+      ],
+      "title": "合同签署授权控制",
+      "pilot_scope": "L4-UCA-04中的签署环节，人工终审并签署",
+      "human_boundary": "签署动作不可由AI替代；仅授权岗位可执行签署，AI仅提供合规扫描结果供参考",
+      "evidence_refs": [
+        "EVD-c4fd8e26b074823401b2"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "priority": 2,
+      "task_ids": [
+        "T1",
+        "T2"
+      ],
+      "title": "条款库与审批规则增强计划",
+      "pilot_scope": "L4-UCA-01和L4-UCA-02的自动化探索，初期须保留人工复核节点",
+      "human_boundary": "条款匹配结果与审批节点建议须经经代机构合作岗确认后生效，不得全自动发布",
+      "evidence_refs": [
+        "EVD-a86e5b01841dc22d24b1",
+        "EVD-79176423486c59ed8a7b"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "control_chain": [],
+  "rejected_task_sources": [],
+  "missing_analysis": [
+    "L4-UCA-01 · human_responsibility · 证据EVD-226e1259f3ae2c359ae5 状态MISSING，无法确定具体人工职责",
+    "L4-UCA-02 · human_responsibility · 证据EVD-6a7250d10f6b5b86cfd7 状态MISSING",
+    "L4-UCA-03 · human_responsibility · 证据EVD-5d78e84e8b0c88b74da1 状态MISSING",
+    "L4-UCA-04 · human_responsibility · 证据EVD-7b20ce12fb7ac83e9fe3 状态MISSING",
+    "L4-UCA-05 · handoff_triggers · 部分拆分子任务需工作坊进一步澄清转人工具体条件",
+    "控制链缺少L4定位，已拒绝4条"
+  ]
+}

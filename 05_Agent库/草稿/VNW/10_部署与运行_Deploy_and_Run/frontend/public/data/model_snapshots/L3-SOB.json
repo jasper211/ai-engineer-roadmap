@@ -7,178 +7,143 @@
       {
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-83ca2b34f374aedc383f"
+          "EVD-5bfb9f1ecbf6d4be57ee",
+          "EVD-8d15cef0d54d62539664",
+          "EVD-65bf01c6eaaa4fbce9f2"
         ],
-        "human_boundary": "上架发布权限归集到服务管理岗，不可委托至AI或自动化流程。",
-        "pilot_scope": "从服务上架任务开始，明确授权决策角色，暂定由服务管理岗执行。",
+        "human_boundary": "最终报告审核与签字必须由服务寻源与供应商管理岗执行；试点期间AI推荐结论仅作参考，不得直接进入设计环节",
+        "pilot_scope": "先在一条机构业务服务线试行，范围限于非敏感常规服务寻源，试点周期1个月",
         "priority": "HIGH",
         "task_ids": [
-          "T-SOB-003"
+          "TASK-001"
         ],
-        "title": "确认人工上架控制门责任人"
+        "title": "批准服务寻源Agent辅助试点"
       }
     ],
     "generation_mode": "UNIFIED_MODEL",
     "l4_analysis": [
       {
-        "ai_reshape": "Agent辅助：AI搜集数据、生成报告草稿，人工复核并做最终寻源决策。",
-        "ai_responsibility": "搜集市场数据，生成初步评估报告。",
+        "ai_reshape": "Agent辅助的信息收集与初步判断，人负责最终决策",
+        "ai_responsibility": "信息收集、初步分析和推荐",
         "analysis_status": "MODEL_DRAFT",
         "confidence": "MODEL_DRAFT",
         "control_gates": [],
-        "current_recommendation": "建议采用Agent辅助模式，AI生成报告草案，人审核并决策。后续可根据数据积累提升封装度。",
-        "data_basis": [
-          "EVD-74ef1b: agent_d1_input_struct=2，输入结构化程度较高",
-          "EVD-ace098f: agent_d2_rule_clear=1，部分有规则",
-          "EVD-29263e: agent_d3_output_verify=2，输出可验证"
-        ],
+        "current_recommendation": "优先考虑Agent辅助或决策支持，不直接封装确定性Skill",
+        "data_basis": [],
         "database_tier": "Hybrid",
-        "deliverable_role": "《服务寻源报告》是服务寻源的输出，为后续服务设计提供输入。",
+        "deliverable_role": "服务寻源与供应商管理岗负责产出《服务寻源报告》",
         "evidence_refs": [
           "EVD-801e44a9e51e45871f9a",
           "EVD-b89f2b3be38ace584230",
           "EVD-c203a4639989f430efaa",
-          "EVD-d4a75ccb1c3b60cb2843",
+          "EVD-65bf01c6eaaa4fbce9f2",
           "EVD-8d15cef0d54d62539664",
           "EVD-74ef1b809e8f117bac9c",
           "EVD-ace098f3dc0284078aec",
-          "EVD-29263e1f6b9da3861d58",
-          "EVD-06dbebade476cc5e13df",
-          "EVD-794017a2403357454754",
-          "EVD-6104b14866358e50d818"
+          "EVD-29263e1f6b9da3861d58"
         ],
-        "handoff_triggers": [
-          "AI无法确定最优供应商时",
-          "遇到异常报价",
-          "关键信息缺失"
-        ],
-        "human_responsibility": "审核AI生成的评估报告，做出最终寻源选择，确保符合公司策略。",
+        "handoff_triggers": [],
+        "human_responsibility": "最终判断和报告确认",
         "l4_code": "L4-SOB-01",
-        "process_context": "服务寻源是服务项寻源与上架的第一步，位于流程蓝图的STEP-01（EVD-5bfb9f1ecbf6d4be57ee）。",
+        "process_context": "位于服务项寻源与上架的寻源阶段，是上游步骤",
         "quadrant": "unclassified",
-        "quality_anchor": "报告必须包含关键供应商信息与评估维度，由经验员工审核。",
-        "recommended_tier": "Aug",
+        "quality_anchor": "",
+        "recommended_tier": "Hybrid",
         "risks_limits": [
-          "技能可行性C级：低封装，判断/策略类，AI不能替代人的决策",
-          "理论天花板，需保留人工判断"
+          "技能封装度低，依赖人工判断",
+          "不适用于确定性Skill封装"
         ],
         "specific_capabilities": [
-          "信息搜集与供应商初步评估能力",
-          "语义复核判定",
-          "单一动作，但需要人类判断与策略介入"
+          "语义复核与判断能力",
+          "信息结构化与整合能力"
         ]
       },
       {
-        "ai_reshape": "Agent辅助：AI提供模板、参考案例，生成初步设计，人进行创意与决策。",
-        "ai_responsibility": "生成设计草案，整理规范与参考信息。",
+        "ai_reshape": "Agent辅助的策略建议与方案生成，人负责审核",
+        "ai_responsibility": "方案建议生成和初步设计",
         "analysis_status": "MODEL_DRAFT",
         "confidence": "MODEL_DRAFT",
         "control_gates": [],
-        "current_recommendation": "采用Agent辅助模式，可提升效率，但核心设计决策仍须人工完成。",
-        "data_basis": [
-          "EVD-dc9dea: agent_d1_input_struct=2，输入结构化程度较高",
-          "EVD-097bac: agent_d2_rule_clear=1，规则部分可循",
-          "EVD-4397755: agent_d3_output_verify=2，输出可验证"
-        ],
+        "current_recommendation": "优先考虑Agent辅助或决策支持，不直接封装确定性Skill",
+        "data_basis": [],
         "database_tier": "Hybrid",
-        "deliverable_role": "《服务设计文档》是服务设计阶段的输出，定义服务细节与规格。",
+        "deliverable_role": "服务寻源与供应商管理岗负责产出《服务设计文档》",
         "evidence_refs": [
           "EVD-c93223a191fedef2ae79",
           "EVD-407a48267df7ed2f6030",
           "EVD-b90badc7442d00875e03",
-          "EVD-414d524ccc951636aa73",
+          "EVD-65bf01c6eaaa4fbce9f2",
           "EVD-adb5e140825584f2e96e",
           "EVD-dc9dea52ae03b9b3cb9f",
           "EVD-097bac806690c9c320c9",
-          "EVD-4397755a3bd7d921277a",
-          "EVD-b2b87b663583f627d48a",
-          "EVD-13faa170a022e81e63f3",
-          "EVD-8fd76e9ade9013614f94"
+          "EVD-4397755a3bd7d921277a"
         ],
-        "handoff_triggers": [
-          "设计需要创新元素",
-          "涉及新业务线或重大服务变更"
-        ],
-        "human_responsibility": "进行服务设计决策，审批最终文档。",
+        "handoff_triggers": [],
+        "human_responsibility": "最终审核和设计确认",
         "l4_code": "L4-SOB-02",
-        "process_context": "服务设计紧接服务寻源，位于流程蓝图的STEP-02（EVD-0a43bcfd33ab146bdd55）。",
+        "process_context": "位于服务寻源与上架的设计阶段，承接寻源结果",
         "quadrant": "unclassified",
-        "quality_anchor": "设计文档需符合公司标准并经过业务审批。",
-        "recommended_tier": "Aug",
+        "quality_anchor": "",
+        "recommended_tier": "Hybrid",
         "risks_limits": [
-          "技能可行性C级：仍低封装度，需判断/权威",
-          "设计质量高度依赖人的经验与创造力"
+          "封装度低，依赖专家判断",
+          "不适用于完全自动化"
         ],
         "specific_capabilities": [
-          "服务设计能力，需创造性判断与策略制定",
-          "判断/策略/认知类动作",
-          "单一动作但高度依赖人类权威"
+          "判断与策略制定能力",
+          "方案设计能力"
         ]
       },
       {
-        "ai_reshape": "Skill候选：可自动化生成发布通知，但上架最终确认须人工干预。",
-        "ai_responsibility": "自动生成标准通知文本，提交上架请求。",
+        "ai_reshape": "自动化生成发布通知，人工确认上架",
+        "ai_responsibility": "生成发布通知、校验信息",
         "analysis_status": "MODEL_DRAFT",
         "confidence": "MODEL_DRAFT",
         "control_gates": [
-          "对外发布人工控制门：任何对外通知须经授权人员批准",
-          "合规审核：发布内容须符合相关法规"
+          "服务上架由人工执行，作为不可绕过控制门"
         ],
-        "current_recommendation": "优先尝试Skill原型，但需先解决API可达性和人工确认点。初期建议Hybrid，待API成熟后转Auto。",
-        "data_basis": [
-          "EVD-40e480: agent_d1_input_struct=1，输入结构化一般",
-          "EVD-f3469c: agent_d2_rule_clear=0，无明确规则",
-          "EVD-4cb77a: agent_d3_output_verify=1，输出可验证性有限",
-          "EVD-2230de: agent_d4_api_reach=0，API不可达",
-          "EVD-ef1d28: agent_d5_fallback=0，无回退机制"
-        ],
+        "current_recommendation": "优先进入Skill原型候选池，但上架动作保留人工确认",
+        "data_basis": [],
         "database_tier": "Auto",
-        "deliverable_role": "发布通知/上架确认，标志服务正式可用，涉及对外发布。",
+        "deliverable_role": "服务寻源与供应商管理岗负责发布通知/上架确认",
         "evidence_refs": [
           "EVD-7f5d417793cfe13213a7",
           "EVD-e6f0e960c1215fb87f26",
           "EVD-5bac5013db5214ba92c7",
-          "EVD-723295ca859ac3b419dd",
+          "EVD-65bf01c6eaaa4fbce9f2",
           "EVD-604b315600e10f443a19",
+          "EVD-83ca2b34f374aedc383f",
           "EVD-40e480a6f4f7ce6c5699",
           "EVD-f3469cdeb4ff1ae9aa8c",
-          "EVD-4cb77ab169f23f122287",
-          "EVD-2230de15ce5b7cae28be",
-          "EVD-ef1d2890eacf4895e4d2",
-          "EVD-86be4081ea5c37bc938c",
-          "EVD-83ca2b34f374aedc383f"
+          "EVD-4cb77ab169f23f122287"
         ],
         "handoff_triggers": [
-          "上架请求失败或异常",
-          "通知内容需合规审查"
+          "信息校验不通过时转人工"
         ],
-        "human_responsibility": "人工最终确认上架操作，确保合规与准确性。",
+        "human_responsibility": "最终上架确认操作",
         "l4_code": "L4-SOB-03",
-        "process_context": "服务上架是最后一步，位于流程蓝图的STEP-03（EVD-370e5e2f3be8c76a59d4）。",
+        "process_context": "服务上架是最后一步，完成服务发布",
         "quadrant": "unclassified",
-        "quality_anchor": "通知内容必须准确无误，上架操作零缺陷。",
+        "quality_anchor": "",
         "recommended_tier": "Hybrid",
         "risks_limits": [
-          "技能可行性A级，但实际环境受限：API不可达、无规则、无fallback",
-          "对外发布操作不可逆，必须人工控制"
+          "上架操作不可逆，需人工确认",
+          "自动化部分需确保通知准确性"
         ],
         "specific_capabilities": [
-          "信息发布与确认动作",
-          "语义复核判定（技能A）",
-          "单一动作，但当前API可达性低"
+          "信息发布与通知能力",
+          "上架操作确认"
         ]
       }
     ],
     "missing_analysis": [
-      "L4-SOB-01 · human_touchpoint · 数据库 human_touchpoint 为 null，事实包中无此证据",
-      "L4-SOB-02 · human_touchpoint · 数据库 human_touchpoint 为 null，事实包中无此证据",
-      "L4-SOB-01 · control_gates · 无资金、合规或对外发布操作，事实包未提供控制门证据",
-      "L4-SOB-02 · control_gates · 无资金、合规或对外发布操作，事实包未提供控制门证据",
-      "控制链缺少L4定位，已拒绝1条"
+      "L4-SOB-01 · fact_pack中无相关证据",
+      "L4-SOB-02 · fact_pack中无相关证据",
+      "L4-SOB-03 · fact_pack中无相关证据"
     ],
     "model_run": {
-      "generated_at": "2026-08-03T06:16:17.124741+00:00",
-      "input_snapshot_hash": "21b6532b98ad8ce210db1b7c05c660eda4b87982be5e6a8f7bf5bd2227041375",
+      "generated_at": "2026-08-04T19:21:06.132194+00:00",
+      "input_snapshot_hash": "7c0ca4ecfc3afc4a816d4add633e467f58c92ac589adcc9429a9a6942d600639",
       "model_name": "deepseek-v4-pro",
       "model_version": "deepseek-v4-pro",
       "prompt_version": "VNW-L3-COM-GOLD-v1.0"
@@ -186,92 +151,69 @@
     "priority_drafts": [
       {
         "analysis_status": "MODEL_DRAFT",
-        "current_recommendation": "建议采用Agent辅助模式，AI生成报告草案，人审核并决策。后续可根据数据积累提升封装度。",
-        "data_basis": [
-          "EVD-74ef1b: agent_d1_input_struct=2，输入结构化程度较高",
-          "EVD-ace098f: agent_d2_rule_clear=1，部分有规则",
-          "EVD-29263e: agent_d3_output_verify=2，输出可验证"
-        ],
+        "current_recommendation": "优先考虑Agent辅助或决策支持，不直接封装确定性Skill",
+        "data_basis": [],
         "evidence_refs": [
           "EVD-801e44a9e51e45871f9a",
           "EVD-b89f2b3be38ace584230",
           "EVD-c203a4639989f430efaa",
-          "EVD-d4a75ccb1c3b60cb2843",
+          "EVD-65bf01c6eaaa4fbce9f2",
           "EVD-8d15cef0d54d62539664",
           "EVD-74ef1b809e8f117bac9c",
           "EVD-ace098f3dc0284078aec",
-          "EVD-29263e1f6b9da3861d58",
-          "EVD-06dbebade476cc5e13df",
-          "EVD-794017a2403357454754",
-          "EVD-6104b14866358e50d818"
+          "EVD-29263e1f6b9da3861d58"
         ],
         "l4_code": "L4-SOB-01",
-        "process_context": "服务寻源是服务项寻源与上架的第一步，位于流程蓝图的STEP-01（EVD-5bfb9f1ecbf6d4be57ee）。",
+        "process_context": "位于服务项寻源与上架的寻源阶段，是上游步骤",
         "quadrant": "unclassified",
         "risks_limits": [
-          "技能可行性C级：低封装，判断/策略类，AI不能替代人的决策",
-          "理论天花板，需保留人工判断"
+          "技能封装度低，依赖人工判断",
+          "不适用于确定性Skill封装"
         ]
       },
       {
         "analysis_status": "MODEL_DRAFT",
-        "current_recommendation": "采用Agent辅助模式，可提升效率，但核心设计决策仍须人工完成。",
-        "data_basis": [
-          "EVD-dc9dea: agent_d1_input_struct=2，输入结构化程度较高",
-          "EVD-097bac: agent_d2_rule_clear=1，规则部分可循",
-          "EVD-4397755: agent_d3_output_verify=2，输出可验证"
-        ],
+        "current_recommendation": "优先考虑Agent辅助或决策支持，不直接封装确定性Skill",
+        "data_basis": [],
         "evidence_refs": [
           "EVD-c93223a191fedef2ae79",
           "EVD-407a48267df7ed2f6030",
           "EVD-b90badc7442d00875e03",
-          "EVD-414d524ccc951636aa73",
+          "EVD-65bf01c6eaaa4fbce9f2",
           "EVD-adb5e140825584f2e96e",
           "EVD-dc9dea52ae03b9b3cb9f",
           "EVD-097bac806690c9c320c9",
-          "EVD-4397755a3bd7d921277a",
-          "EVD-b2b87b663583f627d48a",
-          "EVD-13faa170a022e81e63f3",
-          "EVD-8fd76e9ade9013614f94"
+          "EVD-4397755a3bd7d921277a"
         ],
         "l4_code": "L4-SOB-02",
-        "process_context": "服务设计紧接服务寻源，位于流程蓝图的STEP-02（EVD-0a43bcfd33ab146bdd55）。",
+        "process_context": "位于服务寻源与上架的设计阶段，承接寻源结果",
         "quadrant": "unclassified",
         "risks_limits": [
-          "技能可行性C级：仍低封装度，需判断/权威",
-          "设计质量高度依赖人的经验与创造力"
+          "封装度低，依赖专家判断",
+          "不适用于完全自动化"
         ]
       },
       {
         "analysis_status": "MODEL_DRAFT",
-        "current_recommendation": "优先尝试Skill原型，但需先解决API可达性和人工确认点。初期建议Hybrid，待API成熟后转Auto。",
-        "data_basis": [
-          "EVD-40e480: agent_d1_input_struct=1，输入结构化一般",
-          "EVD-f3469c: agent_d2_rule_clear=0，无明确规则",
-          "EVD-4cb77a: agent_d3_output_verify=1，输出可验证性有限",
-          "EVD-2230de: agent_d4_api_reach=0，API不可达",
-          "EVD-ef1d28: agent_d5_fallback=0，无回退机制"
-        ],
+        "current_recommendation": "优先进入Skill原型候选池，但上架动作保留人工确认",
+        "data_basis": [],
         "evidence_refs": [
           "EVD-7f5d417793cfe13213a7",
           "EVD-e6f0e960c1215fb87f26",
           "EVD-5bac5013db5214ba92c7",
-          "EVD-723295ca859ac3b419dd",
+          "EVD-65bf01c6eaaa4fbce9f2",
           "EVD-604b315600e10f443a19",
+          "EVD-83ca2b34f374aedc383f",
           "EVD-40e480a6f4f7ce6c5699",
           "EVD-f3469cdeb4ff1ae9aa8c",
-          "EVD-4cb77ab169f23f122287",
-          "EVD-2230de15ce5b7cae28be",
-          "EVD-ef1d2890eacf4895e4d2",
-          "EVD-86be4081ea5c37bc938c",
-          "EVD-83ca2b34f374aedc383f"
+          "EVD-4cb77ab169f23f122287"
         ],
         "l4_code": "L4-SOB-03",
-        "process_context": "服务上架是最后一步，位于流程蓝图的STEP-03（EVD-370e5e2f3be8c76a59d4）。",
+        "process_context": "服务上架是最后一步，完成服务发布",
         "quadrant": "unclassified",
         "risks_limits": [
-          "技能可行性A级，但实际环境受限：API不可达、无规则、无fallback",
-          "对外发布操作不可逆，必须人工控制"
+          "上架操作不可逆，需人工确认",
+          "自动化部分需确保通知准确性"
         ]
       }
     ],
@@ -279,7 +221,7 @@
     "schema_version": "vnw.l3-analysis.v1",
     "source_scope": {
       "database": "process_analytics",
-      "evidence_count": 40,
+      "evidence_count": 41,
       "knowledge": "ACTIVE supplemental evidence only"
     },
     "tasks": [
@@ -288,11 +230,12 @@
         "evidence_refs": [
           "EVD-5bfb9f1ecbf6d4be57ee",
           "EVD-801e44a9e51e45871f9a",
-          "EVD-b89f2b3be38ace584230"
+          "EVD-b89f2b3be38ace584230",
+          "EVD-8d15cef0d54d62539664"
         ],
         "l4_code": "L4-SOB-01",
         "next_task_ids": [
-          "T-SOB-002"
+          "TASK-002"
         ],
         "previous_task_ids": [],
         "relation_type": "SEQUENCE",
@@ -300,36 +243,37 @@
         "sequence_status": "SOURCE_CONFIRMED",
         "source_line": 44,
         "source_step_id": "STEP-01",
-        "source_type": "BLUEPRINT_STEP",
-        "suggested_tier": "Aug",
-        "task_id": "T-SOB-001",
+        "source_type": "blueprint_step",
+        "suggested_tier": "Hybrid",
+        "task_id": "TASK-001",
         "task_name": "执行服务寻源并生成《服务寻源报告》",
-        "tier_rationale": "技能可行性C级，低封装，建议Agent辅助，由人做最终决策。"
+        "tier_rationale": "技能封装度C，需人工判断，建议Agent辅助模式"
       },
       {
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
           "EVD-0a43bcfd33ab146bdd55",
           "EVD-c93223a191fedef2ae79",
-          "EVD-407a48267df7ed2f6030"
+          "EVD-407a48267df7ed2f6030",
+          "EVD-adb5e140825584f2e96e"
         ],
         "l4_code": "L4-SOB-02",
         "next_task_ids": [
-          "T-SOB-003"
+          "TASK-003"
         ],
         "previous_task_ids": [
-          "T-SOB-001"
+          "TASK-001"
         ],
         "relation_type": "SEQUENCE",
         "sequence_no": 2,
         "sequence_status": "SOURCE_CONFIRMED",
         "source_line": 50,
         "source_step_id": "STEP-02",
-        "source_type": "BLUEPRINT_STEP",
-        "suggested_tier": "Aug",
-        "task_id": "T-SOB-002",
+        "source_type": "blueprint_step",
+        "suggested_tier": "Hybrid",
+        "task_id": "TASK-002",
         "task_name": "执行服务设计并生成《服务设计文档》",
-        "tier_rationale": "技能可行性C级，需人工判断和策略设计，AI辅助生成草案。"
+        "tier_rationale": "技能封装度C，依赖专家判断，建议Agent辅助模式"
       },
       {
         "analysis_status": "MODEL_DRAFT",
@@ -337,27 +281,28 @@
           "EVD-370e5e2f3be8c76a59d4",
           "EVD-7f5d417793cfe13213a7",
           "EVD-e6f0e960c1215fb87f26",
+          "EVD-604b315600e10f443a19",
           "EVD-83ca2b34f374aedc383f"
         ],
         "l4_code": "L4-SOB-03",
         "next_task_ids": [],
         "previous_task_ids": [
-          "T-SOB-002"
+          "TASK-002"
         ],
         "relation_type": "SEQUENCE",
         "sequence_no": 3,
         "sequence_status": "SOURCE_CONFIRMED",
         "source_line": 55,
         "source_step_id": "STEP-03",
-        "source_type": "BLUEPRINT_STEP",
+        "source_type": "blueprint_step",
         "suggested_tier": "Hybrid",
-        "task_id": "T-SOB-003",
-        "task_name": "执行服务上架并发布通知",
-        "tier_rationale": "技能可行性A级，但API可达性低、无规则、有人工执行要求，需人工确认发布，建议Hybrid模式。"
+        "task_id": "TASK-003",
+        "task_name": "执行服务上架并发布通知/确认上架",
+        "tier_rationale": "技能封装A，但存在人工上架控制门，建议混合模式"
       }
     ]
   },
-  "analysis_freshness": "INPUT_CHANGED",
+  "analysis_freshness": "CURRENT",
   "analysis_input_hash": "7c0ca4ecfc3afc4a816d4add633e467f58c92ac589adcc9429a9a6942d600639",
   "blueprint": {
     "blueprint_value_nodes": [],

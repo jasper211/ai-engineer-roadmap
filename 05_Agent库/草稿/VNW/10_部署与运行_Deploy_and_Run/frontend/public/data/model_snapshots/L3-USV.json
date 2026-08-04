@@ -1,148 +1,386 @@
 {
   "analysis": {
     "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
-    "analysis_status": "PENDING_MODEL",
-    "decision_drafts": [],
-    "generation_mode": "EVIDENCE_ONLY_BOOTSTRAP",
+    "analysis_status": "MODEL_DRAFT",
+    "control_chain": [],
+    "decision_drafts": [
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [
+          "EVD-0ad16f6c0d02f91a5f36",
+          "EVD-4c32ada0dba0bb0e6570",
+          "EVD-e15c485091cd1c614655",
+          "EVD-62e7f000a118b180fd07"
+        ],
+        "human_boundary": "OWNER确认（Amanda）和外发等级标注（Teresa）必须由指定授权人员执行，不得通过AI或低权限人员代办；内部价值证明底稿的最终判断仍由人做出，AI仅提供数据辅助。",
+        "pilot_scope": "选择2个保司作为试点，完整执行L4-USV-01至L4-USV-02的MVP构建和内部评审，但仅限于VN-USV-01包内容。",
+        "priority": "P1",
+        "task_ids": [
+          "TASK-USV-01-01",
+          "TASK-USV-01-02",
+          "TASK-USV-02-01"
+        ],
+        "title": "启动MVP构建与OWNER确认试点，明确人工边界"
+      }
+    ],
+    "generation_mode": "UNIFIED_MODEL",
     "l4_analysis": [
       {
-        "ai_reshape": "",
-        "ai_responsibility": "",
-        "analysis_status": "PENDING_MODEL",
-        "confidence": "UNASSESSED",
-        "control_gates": [],
-        "current_recommendation": "",
-        "data_basis": [],
-        "deliverable_role": "",
+        "ai_reshape": "AI可作为信息搜集和初步盘点的辅助工具，通过NLP提取候选权益项并生成结构化原料池。OWNER确认和外发等级判定依赖语义复核，应由人判断，AI输出仅作建议。",
+        "ai_responsibility": "自动采集有效知识条目，生成结构化权益池草案；提供外发等级初步标注建议（需人工复核）。",
+        "analysis_status": "MODEL_DRAFT",
+        "confidence": "MODEL_DRAFT",
+        "control_gates": [
+          "OWNER确认（不可绕过）：必须由具有TOI内容权限的授权角色逐项确认",
+          "外发等级标注（不可绕过）：涉及对外传播的内容须经授权人员核定"
+        ],
+        "current_recommendation": "采用人机协作（Hybrid）模式，AI负责信息整理与初筛，OWNER保留最终确认权。建议先构建可复用的信息结构化Skill，但仅作为辅助，不替代人工语义复核。",
+        "data_basis": [
+          "D1-D6 评分为 2,1,2,1,1,1（来源: 数据库）",
+          "skill_feasibility 评级 C，单一动作，语义复核判定（来源: 正式补充材料）",
+          "蓝图步骤 STEP-01 活动描述（来源: 补充材料）"
+        ],
+        "database_tier": "Hybrid",
+        "deliverable_role": "方案",
         "evidence_refs": [
-          "EVD-2ce0c57b5c32b83bed8f",
           "EVD-2ecdbcf60ee8ed103077",
-          "EVD-3be4c3406e0bcaa252c8",
-          "EVD-5c247c7423195287bd47",
+          "EVD-e15c485091cd1c614655",
           "EVD-60fd3378cfad820f5feb",
-          "EVD-6240678c589378164f29",
-          "EVD-6c60b7ba72b183f0b00c",
-          "EVD-9ce3fe0dadb232bbe6e3",
           "EVD-c2a6af2bcf041fe552b9",
           "EVD-dab8e774e12895470058",
-          "EVD-e15c485091cd1c614655",
-          "EVD-e253d2efd3c9e67060ab",
-          "EVD-e553f9fd389ea1faa0f9"
+          "EVD-2ce0c57b5c32b83bed8f",
+          "EVD-9ce3fe0dadb232bbe6e3",
+          "EVD-6c60b7ba72b183f0b00c",
+          "EVD-5c247c7423195287bd47",
+          "EVD-6240678c589378164f29",
+          "EVD-3be4c3406e0bcaa252c8",
+          "EVD-0ad16f6c0d02f91a5f36"
         ],
-        "handoff_triggers": [],
-        "human_responsibility": "",
+        "handoff_triggers": [
+          "语义冲突或AI无法判定的领域知识缺口",
+          "涉及外发等级临界情形的候选内容",
+          "OWNER确认前任何自动化步骤的输出均需人工检查"
+        ],
+        "human_responsibility": "OWNER最终确认权益项存在性与外发等级；Teresa确认合规标注；对AI建议的语义复核结果负最终责任。",
         "l4_code": "L4-USV-01",
-        "process_context": "",
-        "quality_anchor": "",
-        "risks_limits": [],
-        "specific_capabilities": []
+        "process_context": "L3-USV流程是运营服务事项设计验证，L4-USV-01为初始构建阶段，输入依赖多源调研，输出为后续评审的输入。",
+        "quadrant": "unclassified",
+        "quality_anchor": "MVP原型须覆盖TOI-L0~L5五层，且产品卡映射准确；OWNER确认通过视为质量基准。",
+        "recommended_tier": "Hybrid",
+        "risks_limits": [
+          "多源数据一致性差，AI抽取可能误判",
+          "OWNER确认若滞后将阻塞整个L3流程",
+          "合规标签误标可能导致后续外发风险"
+        ],
+        "specific_capabilities": [
+          "语义复核判定能力",
+          "信息结构化（D1=2，结构化程度中等）",
+          "多源数据抽取与校验（来自RW合同、TOC权益体系、保司诉求）"
+        ]
       },
       {
-        "ai_reshape": "",
-        "ai_responsibility": "",
-        "analysis_status": "PENDING_MODEL",
-        "confidence": "UNASSESSED",
-        "control_gates": [],
-        "current_recommendation": "",
-        "data_basis": [],
-        "deliverable_role": "",
+        "ai_reshape": "拆分为两个主要集群：a) 信息处理集群（编制证据包、数据评估）可由AI辅助事实核查与模板填充；b) 判断集群（价值证明底稿定稿、内部评审）须由人主导，AI仅提供数据摘要。",
+        "ai_responsibility": "自动匹配案例证据、计算Source Readiness指标、生成事实性底稿草稿；不能做出价值判断。",
+        "analysis_status": "MODEL_DRAFT",
+        "confidence": "MODEL_DRAFT",
+        "control_gates": [
+          "内部评审（不可绕过）：必须经过授权审批链，任何基于AI底稿的评审都必须有人工核验环节"
+        ],
+        "current_recommendation": "必须拆分任务，对信息密集型工作用Agent辅助（如自动化数据状态检测），对判断型工作保留全人工。在拆分后，仅允许可封装的子任务进入Skill候选池。",
+        "data_basis": [
+          "D1-D6 评分为 2,1,2,1,1,1",
+          "skill_feasibility 评级 C，复合动作，判断/策略/认知类",
+          "蓝图步骤 STEP-02 活动描述"
+        ],
+        "database_tier": "Hybrid",
+        "deliverable_role": "方案",
         "evidence_refs": [
           "EVD-0952b318bf6bc3bbf6b4",
-          "EVD-0a9594139780e4abe6da",
-          "EVD-3be4c3406e0bcaa252c8",
-          "EVD-3d2b3b03f7871cc01033",
-          "EVD-4b9250ccfbde1eb99d61",
-          "EVD-4e18a601910feae01e77",
-          "EVD-5fb7e802e2e7b69912e5",
           "EVD-62e7f000a118b180fd07",
-          "EVD-8091762ad19079e2e99b",
+          "EVD-3d2b3b03f7871cc01033",
           "EVD-af26d69bb5101d905e73",
-          "EVD-c6f50b006c4c13d3ea2a",
+          "EVD-4b9250ccfbde1eb99d61",
+          "EVD-0a9594139780e4abe6da",
           "EVD-f2844dc94fd279e28b21",
-          "EVD-fc677dde9ad53eaa83b1"
+          "EVD-c6f50b006c4c13d3ea2a",
+          "EVD-5fb7e802e2e7b69912e5",
+          "EVD-fc677dde9ad53eaa83b1",
+          "EVD-3be4c3406e0bcaa252c8",
+          "EVD-4c32ada0dba0bb0e6570"
         ],
-        "handoff_triggers": [],
-        "human_responsibility": "",
+        "handoff_triggers": [
+          "数据源状态不明或冲突",
+          "底稿中需要解释业务逻辑或提出价值主张",
+          "评审意见需要融入判断时"
+        ],
+        "human_responsibility": "最终底稿的叙事和判断由人完成；内部评审由授权人员签批；任何涉及定性结论的修改由人执行。",
         "l4_code": "L4-USV-02",
-        "process_context": "",
-        "quality_anchor": "",
-        "risks_limits": [],
-        "specific_capabilities": []
-      },
-      {
-        "ai_reshape": "",
-        "ai_responsibility": "",
-        "analysis_status": "PENDING_MODEL",
-        "confidence": "UNASSESSED",
-        "control_gates": [],
-        "current_recommendation": "",
-        "data_basis": [],
-        "deliverable_role": "",
-        "evidence_refs": [
-          "EVD-02fcbe505ceb3580ccae",
-          "EVD-0c2081073927f298f8b6",
-          "EVD-1e56699995a256b77ad0",
-          "EVD-2f917b6e173f7a355a34",
-          "EVD-3be4c3406e0bcaa252c8",
-          "EVD-4f91b8f8fc20262b6e05",
-          "EVD-6d866e766e05fbc3e86b",
-          "EVD-711a8098f1b5f2bdecb4",
-          "EVD-a9de57415780927a96b9",
-          "EVD-b496cddee8a1ed5328b7",
-          "EVD-ccaf4c5f0819fe2a1c0c",
-          "EVD-eb32b876962c3ad65e45",
-          "EVD-f2e8fa0d618c4ad55d35"
+        "process_context": "位于联合评审与迭代优化环节，上接MVP原型，下接合规验证。本步骤产出的底稿将作为内部验收和后续合规审查的依据。",
+        "quadrant": "unclassified",
+        "quality_anchor": "证据包完整、数据源状态明确、内部价值证明底稿通过Teresa评审。",
+        "recommended_tier": "Hybrid",
+        "risks_limits": [
+          "复合动作中判断部分难以自动化，若强行封装将引入错误",
+          "价值证明底稿的定性部分若由AI生成，可能导致内部信任度下降",
+          "评审滞后会影响流程整体节奏"
         ],
-        "handoff_triggers": [],
-        "human_responsibility": "",
-        "l4_code": "L4-USV-03",
-        "process_context": "",
-        "quality_anchor": "",
-        "risks_limits": [],
-        "specific_capabilities": []
+        "specific_capabilities": [
+          "判断/策略/认知类任务（评级C）",
+          "复合动作需拆分：证据包编制、Source Readiness评估、价值证明底稿、内部评审",
+          "数据校对与事实核查"
+        ]
       },
       {
-        "ai_reshape": "",
-        "ai_responsibility": "",
-        "analysis_status": "PENDING_MODEL",
-        "confidence": "UNASSESSED",
-        "control_gates": [],
-        "current_recommendation": "",
-        "data_basis": [],
-        "deliverable_role": "",
+        "ai_reshape": "脱敏动作可封装为确定性Skill；合规对比与外发标注属合规判断，仅建议AI提供对照清单以供人复核；审批链必须保留全人工。",
+        "ai_responsibility": "执行脱敏规则（自动屏蔽敏感字段）；生成合规红线对照表；不能自主决定外发等级或替代审批。",
+        "analysis_status": "MODEL_DRAFT",
+        "confidence": "MODEL_DRAFT",
+        "control_gates": [
+          "合规红线审查（不可绕过）：必须由具备合规权限的人员逐条确认",
+          "外发等级标注与审批（不可绕过）：Teresa/MARK 多级签批，涉及对外发布必须走完整链",
+          "OB-G7 Gate（不可绕过）：Gate状态未就绪时不能放行"
+        ],
+        "current_recommendation": "封装脱敏子Skill，以达到自动化；合规对比用Agent辅助生成对照表，但人工复核后签字。在未通过全部控制门前，所有内容视为内部草稿。整体流程为Hybrid，部分子任务可达Auto。",
+        "data_basis": [
+          "D1-D6 评分为 1,0,1,0,0,1",
+          "skill_feasibility 评级 A，复合动作，信息处理/事务类",
+          "human_touchpoint 明确为“人工执行”",
+          "蓝图步骤 STEP-03 活动描述"
+        ],
+        "database_tier": "Auto",
+        "deliverable_role": "方案",
         "evidence_refs": [
-          "EVD-17fe9d8eeeffe09d5bd1",
-          "EVD-1fc83b4860664a5b272e",
-          "EVD-22404e8eb4c9489c98a2",
-          "EVD-2c2f6cee9f3a59ef98c4",
+          "EVD-f2e8fa0d618c4ad55d35",
+          "EVD-1e56699995a256b77ad0",
+          "EVD-0c2081073927f298f8b6",
+          "EVD-ccaf4c5f0819fe2a1c0c",
+          "EVD-02fcbe505ceb3580ccae",
+          "EVD-a9de57415780927a96b9",
+          "EVD-6d866e766e05fbc3e86b",
+          "EVD-eb32b876962c3ad65e45",
+          "EVD-b496cddee8a1ed5328b7",
+          "EVD-4f91b8f8fc20262b6e05",
           "EVD-3be4c3406e0bcaa252c8",
-          "EVD-4a095ac40629c45e8a98",
+          "EVD-b3c5e00c2fc0c96fcca5"
+        ],
+        "handoff_triggers": [
+          "脱敏规则覆盖不到的复杂字段",
+          "合规判断存在歧义或例外情形",
+          "审批链中任何节点需要解释时"
+        ],
+        "human_responsibility": "合规红线终判；外发等级标注；Teresa审批链的实际签批；OB-G7 Gate状态确认。",
+        "l4_code": "L4-USV-03",
+        "process_context": "在确认MVP和服务质量之后，进入合规环节。本步骤输出是最终交付物的前置条件，涉及敏感数据和对外发布边界，为高风险环节。",
+        "quadrant": "unclassified",
+        "quality_anchor": "所有内容不触碰11条禁止口径，脱敏彻底，外发等级经Teresa审批。",
+        "recommended_tier": "Hybrid",
+        "risks_limits": [
+          "脱敏不彻底导致数据泄露",
+          "合规红线判断错误将造成监管风险",
+          "审批链断裂或绕过会导致不可逆外发事故"
+        ],
+        "specific_capabilities": [
+          "合规红线逐条对比（判断类）",
+          "脱敏处理（信息处理类，可自动化）",
+          "外发等级标注（合规判断）",
+          "审批链路由（需多级签批）"
+        ]
+      },
+      {
+        "ai_reshape": "Gate检测和交付物版本管理可自动化；OWNER确认需要分角色决策，AI提供汇总视图；知识转移为人工主导，AI可生成培训材料草案。",
+        "ai_responsibility": "自动采集Gate状态并生成通过性报告；维护版本控制与归档清单；不能代行决策或放行。",
+        "analysis_status": "MODEL_DRAFT",
+        "confidence": "MODEL_DRAFT",
+        "control_gates": [
+          "OWNER逐项确认（不可绕过）：Amanda (内容), Roy (财务), Teresa (合规), MARK (最终放行)",
+          "Phase Gate放行决策（不可绕过）：必须由MARK基于全量信息做出"
+        ],
+        "current_recommendation": "自动化Gate状态检测和归档，但保留全部人工控制门。整体为Hybrid，最终放行决策不可削减人的参与。",
+        "data_basis": [
+          "D1-D6 评分为 2,1,2,1,1,1",
+          "skill_feasibility 评级 A，复合动作，信息处理/事务类",
+          "蓝图步骤 STEP-04 活动描述"
+        ],
+        "database_tier": "Auto",
+        "deliverable_role": "方案",
+        "evidence_refs": [
+          "EVD-887a61fa6d5a842600d4",
+          "EVD-22404e8eb4c9489c98a2",
+          "EVD-c2fa5bb0051ea97fbe65",
           "EVD-63aa666589f29bd8a1fd",
+          "EVD-1fc83b4860664a5b272e",
           "EVD-712848345a679ef949c4",
           "EVD-77330715d742b9f0f10d",
-          "EVD-887a61fa6d5a842600d4",
-          "EVD-9fc2ba1252b1d85bf43f",
-          "EVD-c2fa5bb0051ea97fbe65",
-          "EVD-f48720bd2b138ea3844a"
+          "EVD-2c2f6cee9f3a59ef98c4",
+          "EVD-17fe9d8eeeffe09d5bd1",
+          "EVD-f48720bd2b138ea3844a",
+          "EVD-3be4c3406e0bcaa252c8",
+          "EVD-7a307c4e07e271e634b6"
         ],
-        "handoff_triggers": [],
-        "human_responsibility": "",
+        "handoff_triggers": [
+          "任一Gate未通过",
+          "OWNER对确认项提出异议",
+          "放行决策需综合判断时"
+        ],
+        "human_responsibility": "OWNER针对各自领域做出确认；MARK做出最终放行/退回/有条件通过决策；知识转移中传递经验与判断。",
         "l4_code": "L4-USV-04",
-        "process_context": "",
-        "quality_anchor": "",
-        "risks_limits": [],
-        "specific_capabilities": []
+        "process_context": "流程终点，承接收尾验证与最终决策，决定交付物是否可外发。涉及跨角色协同和最终责任认定。",
+        "quadrant": "unclassified",
+        "quality_anchor": "所有前置Gate通过，OWNER确认链完整，放行决策经MARK签批。",
+        "recommended_tier": "Hybrid",
+        "risks_limits": [
+          "Gate检测遗漏导致不合格品放行",
+          "OWNER确认路由不完整引发责任缺失",
+          "放行决策的信息不充分导致误判"
+        ],
+        "specific_capabilities": [
+          "全量Gate Review状态检查（信息收集类）",
+          "OWNER多维确认（判断类：内容/财务/合规/放行）",
+          "交付物封装与归档（事务类）",
+          "知识转移（沟通类）"
+        ]
       }
     ],
     "missing_analysis": [
-      "逐L4交付物与具体能力分析",
-      "逐任务AI分工分析",
-      "逐L4人机协作与控制分析",
-      "逐L4优先级四维分析",
-      "任务级负责人决策建议"
+      "L4-USV-01 · agent_human_touchpoint · 数据库记录为null，状态MISSING。无法确定官方定义的人工接触点，当前分析基于蓝图活动推断OWNER确认为人工控制门。",
+      "L4-USV-02 · agent_human_touchpoint · 数据库记录为null，状态MISSING。分析中已指出内部评审为人工控制门，但缺少系统侧明确声明。",
+      "L4-USV-04 · agent_human_touchpoint · 数据库记录为null，状态MISSING。分析中依赖蓝图描述的OWNER确认和放行决策，待补全正式证据。",
+      "控制链缺少L4定位，已拒绝6条"
     ],
-    "model_run": null,
-    "priority_drafts": [],
+    "model_run": {
+      "generated_at": "2026-08-04T19:40:57.972557+00:00",
+      "input_snapshot_hash": "7026faf16b90fc36bad09583cfd94475dcc439d9856fa15f0496cffe72f81a60",
+      "model_name": "deepseek-v4-pro",
+      "model_version": "deepseek-v4-pro",
+      "prompt_version": "VNW-L3-COM-GOLD-v1.0"
+    },
+    "priority_drafts": [
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "current_recommendation": "采用人机协作（Hybrid）模式，AI负责信息整理与初筛，OWNER保留最终确认权。建议先构建可复用的信息结构化Skill，但仅作为辅助，不替代人工语义复核。",
+        "data_basis": [
+          "D1-D6 评分为 2,1,2,1,1,1（来源: 数据库）",
+          "skill_feasibility 评级 C，单一动作，语义复核判定（来源: 正式补充材料）",
+          "蓝图步骤 STEP-01 活动描述（来源: 补充材料）"
+        ],
+        "evidence_refs": [
+          "EVD-2ecdbcf60ee8ed103077",
+          "EVD-e15c485091cd1c614655",
+          "EVD-60fd3378cfad820f5feb",
+          "EVD-c2a6af2bcf041fe552b9",
+          "EVD-dab8e774e12895470058",
+          "EVD-2ce0c57b5c32b83bed8f",
+          "EVD-9ce3fe0dadb232bbe6e3",
+          "EVD-6c60b7ba72b183f0b00c",
+          "EVD-5c247c7423195287bd47",
+          "EVD-6240678c589378164f29",
+          "EVD-3be4c3406e0bcaa252c8",
+          "EVD-0ad16f6c0d02f91a5f36"
+        ],
+        "l4_code": "L4-USV-01",
+        "process_context": "L3-USV流程是运营服务事项设计验证，L4-USV-01为初始构建阶段，输入依赖多源调研，输出为后续评审的输入。",
+        "quadrant": "unclassified",
+        "risks_limits": [
+          "多源数据一致性差，AI抽取可能误判",
+          "OWNER确认若滞后将阻塞整个L3流程",
+          "合规标签误标可能导致后续外发风险"
+        ]
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "current_recommendation": "必须拆分任务，对信息密集型工作用Agent辅助（如自动化数据状态检测），对判断型工作保留全人工。在拆分后，仅允许可封装的子任务进入Skill候选池。",
+        "data_basis": [
+          "D1-D6 评分为 2,1,2,1,1,1",
+          "skill_feasibility 评级 C，复合动作，判断/策略/认知类",
+          "蓝图步骤 STEP-02 活动描述"
+        ],
+        "evidence_refs": [
+          "EVD-0952b318bf6bc3bbf6b4",
+          "EVD-62e7f000a118b180fd07",
+          "EVD-3d2b3b03f7871cc01033",
+          "EVD-af26d69bb5101d905e73",
+          "EVD-4b9250ccfbde1eb99d61",
+          "EVD-0a9594139780e4abe6da",
+          "EVD-f2844dc94fd279e28b21",
+          "EVD-c6f50b006c4c13d3ea2a",
+          "EVD-5fb7e802e2e7b69912e5",
+          "EVD-fc677dde9ad53eaa83b1",
+          "EVD-3be4c3406e0bcaa252c8",
+          "EVD-4c32ada0dba0bb0e6570"
+        ],
+        "l4_code": "L4-USV-02",
+        "process_context": "位于联合评审与迭代优化环节，上接MVP原型，下接合规验证。本步骤产出的底稿将作为内部验收和后续合规审查的依据。",
+        "quadrant": "unclassified",
+        "risks_limits": [
+          "复合动作中判断部分难以自动化，若强行封装将引入错误",
+          "价值证明底稿的定性部分若由AI生成，可能导致内部信任度下降",
+          "评审滞后会影响流程整体节奏"
+        ]
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "current_recommendation": "封装脱敏子Skill，以达到自动化；合规对比用Agent辅助生成对照表，但人工复核后签字。在未通过全部控制门前，所有内容视为内部草稿。整体流程为Hybrid，部分子任务可达Auto。",
+        "data_basis": [
+          "D1-D6 评分为 1,0,1,0,0,1",
+          "skill_feasibility 评级 A，复合动作，信息处理/事务类",
+          "human_touchpoint 明确为“人工执行”",
+          "蓝图步骤 STEP-03 活动描述"
+        ],
+        "evidence_refs": [
+          "EVD-f2e8fa0d618c4ad55d35",
+          "EVD-1e56699995a256b77ad0",
+          "EVD-0c2081073927f298f8b6",
+          "EVD-ccaf4c5f0819fe2a1c0c",
+          "EVD-02fcbe505ceb3580ccae",
+          "EVD-a9de57415780927a96b9",
+          "EVD-6d866e766e05fbc3e86b",
+          "EVD-eb32b876962c3ad65e45",
+          "EVD-b496cddee8a1ed5328b7",
+          "EVD-4f91b8f8fc20262b6e05",
+          "EVD-3be4c3406e0bcaa252c8",
+          "EVD-b3c5e00c2fc0c96fcca5"
+        ],
+        "l4_code": "L4-USV-03",
+        "process_context": "在确认MVP和服务质量之后，进入合规环节。本步骤输出是最终交付物的前置条件，涉及敏感数据和对外发布边界，为高风险环节。",
+        "quadrant": "unclassified",
+        "risks_limits": [
+          "脱敏不彻底导致数据泄露",
+          "合规红线判断错误将造成监管风险",
+          "审批链断裂或绕过会导致不可逆外发事故"
+        ]
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "current_recommendation": "自动化Gate状态检测和归档，但保留全部人工控制门。整体为Hybrid，最终放行决策不可削减人的参与。",
+        "data_basis": [
+          "D1-D6 评分为 2,1,2,1,1,1",
+          "skill_feasibility 评级 A，复合动作，信息处理/事务类",
+          "蓝图步骤 STEP-04 活动描述"
+        ],
+        "evidence_refs": [
+          "EVD-887a61fa6d5a842600d4",
+          "EVD-22404e8eb4c9489c98a2",
+          "EVD-c2fa5bb0051ea97fbe65",
+          "EVD-63aa666589f29bd8a1fd",
+          "EVD-1fc83b4860664a5b272e",
+          "EVD-712848345a679ef949c4",
+          "EVD-77330715d742b9f0f10d",
+          "EVD-2c2f6cee9f3a59ef98c4",
+          "EVD-17fe9d8eeeffe09d5bd1",
+          "EVD-f48720bd2b138ea3844a",
+          "EVD-3be4c3406e0bcaa252c8",
+          "EVD-7a307c4e07e271e634b6"
+        ],
+        "l4_code": "L4-USV-04",
+        "process_context": "流程终点，承接收尾验证与最终决策，决定交付物是否可外发。涉及跨角色协同和最终责任认定。",
+        "quadrant": "unclassified",
+        "risks_limits": [
+          "Gate检测遗漏导致不合格品放行",
+          "OWNER确认路由不完整引发责任缺失",
+          "放行决策的信息不充分导致误判"
+        ]
+      }
+    ],
     "rejected_task_sources": [],
     "schema_version": "vnw.l3-analysis.v1",
     "source_scope": {
@@ -152,388 +390,231 @@
     },
     "tasks": [
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-0ad16f6c0d02f91a5f36"
+          "EVD-0ad16f6c0d02f91a5f36",
+          "EVD-e15c485091cd1c614655"
+        ],
+        "l4_code": "L4-USV-01",
+        "next_task_ids": [
+          "TASK-USV-01-02"
+        ],
+        "previous_task_ids": [],
+        "relation_type": "SEQUENCE",
+        "sequence_no": 1,
+        "sequence_status": "SOURCE_STEP_ONLY",
+        "source_line": 102,
+        "source_step_id": "STEP-01",
+        "source_type": "blueprint_step",
+        "suggested_tier": "Hybrid",
+        "task_id": "TASK-USV-01-01",
+        "task_name": "多源调研与服务层级定义并编制权益项原料池",
+        "tier_rationale": "信息搜集与结构化可AI辅助，但语义复核判定需要人工；skill_feasibility C，推荐Agent辅助路径。"
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [
+          "EVD-0ad16f6c0d02f91a5f36",
+          "EVD-6240678c589378164f29"
         ],
         "l4_code": "L4-USV-01",
         "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 1,
-        "sequence_status": "SOURCE_CONFIRMED",
-        "source_line": 102,
-        "source_step_id": "STEP-01",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-USV-01-T01",
-        "task_name": "多源调研与权益项候选盘点：从RW合同、TOC权益体系、保司诉求中提取TOI权益项候选",
-        "tier_rationale": ""
-      },
-      {
-        "analysis_status": "FACT_EXTRACTED",
-        "evidence_refs": [
-          "EVD-0ad16f6c0d02f91a5f36"
+        "previous_task_ids": [
+          "TASK-USV-01-01"
         ],
-        "l4_code": "L4-USV-01",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
+        "relation_type": "SEQUENCE",
         "sequence_no": 1,
-        "sequence_status": "SOURCE_CONFIRMED",
+        "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 102,
         "source_step_id": "STEP-01",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-USV-01-T02",
-        "task_name": "服务层级定义：按TOI-L0~L5五层分层（合规底座→权益激活→渠道赋能→活动运营→价值证明→战略升级）",
-        "tier_rationale": ""
+        "source_type": "blueprint_step",
+        "suggested_tier": "Human",
+        "task_id": "TASK-USV-01-02",
+        "task_name": "OWNER确认权益项与外发等级标注",
+        "tier_rationale": "OWNER确认是不可绕过的控制门，必须由授权人员根据业务判断执行，无自动化可能。"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-0ad16f6c0d02f91a5f36"
+          "EVD-4c32ada0dba0bb0e6570",
+          "EVD-62e7f000a118b180fd07"
         ],
-        "l4_code": "L4-USV-01",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 1,
-        "sequence_status": "SOURCE_CONFIRMED",
-        "source_line": 102,
-        "source_step_id": "STEP-01",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-USV-01-T03",
-        "task_name": "权益项原料池编制：字段包括主题、权益项、价值型、合规、档位、战略角色、成本、载体、时机、证据分级",
-        "tier_rationale": ""
-      },
-      {
-        "analysis_status": "FACT_EXTRACTED",
-        "evidence_refs": [
-          "EVD-0ad16f6c0d02f91a5f36"
+        "l4_code": "L4-USV-02",
+        "next_task_ids": [
+          "TASK-USV-02-02"
         ],
-        "l4_code": "L4-USV-01",
-        "next_task_ids": [],
         "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 1,
-        "sequence_status": "SOURCE_CONFIRMED",
-        "source_line": 102,
-        "source_step_id": "STEP-01",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-USV-01-T04",
-        "task_name": "产品卡打包规划：按保司价值语言打包权益项，定义PC-TOI-01~06六张产品卡",
-        "tier_rationale": ""
+        "relation_type": "SEQUENCE",
+        "sequence_no": 2,
+        "sequence_status": "SOURCE_STEP_ONLY",
+        "source_line": 116,
+        "source_step_id": "STEP-02",
+        "source_type": "blueprint_step",
+        "suggested_tier": "Hybrid",
+        "task_id": "TASK-USV-02-01",
+        "task_name": "编制案例证据包与Source Readiness评估",
+        "tier_rationale": "数据采集和指标计算可由AI执行，但证据包的有效性判断需人审阅；属于复合动作中可部分封装部分。"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-0ad16f6c0d02f91a5f36"
-        ],
-        "l4_code": "L4-USV-01",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 1,
-        "sequence_status": "SOURCE_CONFIRMED",
-        "source_line": 102,
-        "source_step_id": "STEP-01",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-USV-01-T05",
-        "task_name": "OWNER初步确认：Amanda确认哪些权益项存在、哪些仅候选；Teresa标注外发等级",
-        "tier_rationale": ""
-      },
-      {
-        "analysis_status": "FACT_EXTRACTED",
-        "evidence_refs": [
-          "EVD-4c32ada0dba0bb0e6570"
+          "EVD-4c32ada0dba0bb0e6570",
+          "EVD-62e7f000a118b180fd07"
         ],
         "l4_code": "L4-USV-02",
         "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 2,
-        "sequence_status": "SOURCE_CONFIRMED",
-        "source_line": 116,
-        "source_step_id": "STEP-02",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-USV-02-T01",
-        "task_name": "案例证据包编制：选取已有TOI运营场景（如代理人课程CASE005、保司活动CASE004），编制证据包",
-        "tier_rationale": ""
-      },
-      {
-        "analysis_status": "FACT_EXTRACTED",
-        "evidence_refs": [
-          "EVD-4c32ada0dba0bb0e6570"
+        "previous_task_ids": [
+          "TASK-USV-02-01"
         ],
-        "l4_code": "L4-USV-02",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
+        "relation_type": "SEQUENCE",
         "sequence_no": 2,
-        "sequence_status": "SOURCE_CONFIRMED",
+        "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 116,
         "source_step_id": "STEP-02",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-USV-02-T02",
-        "task_name": "Source Readiness评估：逐项确认每张产品卡的数据源状态（已有/部分/缺源），建立台账",
-        "tier_rationale": ""
+        "source_type": "blueprint_step",
+        "suggested_tier": "Aug",
+        "task_id": "TASK-USV-02-02",
+        "task_name": "内部价值证明底稿编制、内部评审与修订",
+        "tier_rationale": "AI提供底稿草案和评审对比，但最终定稿和评审签批由人完成；判断密集型，属于Agent辅助典型场景。"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-4c32ada0dba0bb0e6570"
+          "EVD-b3c5e00c2fc0c96fcca5",
+          "EVD-1e56699995a256b77ad0"
         ],
-        "l4_code": "L4-USV-02",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 2,
-        "sequence_status": "SOURCE_CONFIRMED",
-        "source_line": 116,
-        "source_step_id": "STEP-02",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-USV-02-T03",
-        "task_name": "内部价值证明底稿：编制TOI内部价值证明模板，含激活数、使用率、完成率、宣导覆盖、例外/投诉数",
-        "tier_rationale": ""
-      },
-      {
-        "analysis_status": "FACT_EXTRACTED",
-        "evidence_refs": [
-          "EVD-4c32ada0dba0bb0e6570"
+        "l4_code": "L4-USV-03",
+        "next_task_ids": [
+          "TASK-USV-03-02",
+          "TASK-USV-03-03"
         ],
-        "l4_code": "L4-USV-02",
-        "next_task_ids": [],
         "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 2,
-        "sequence_status": "SOURCE_CONFIRMED",
-        "source_line": 116,
-        "source_step_id": "STEP-02",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-USV-02-T04",
-        "task_name": "内部评审：Teresa审阅证据包和底稿的质量、完整性和合规性",
-        "tier_rationale": ""
+        "relation_type": "SEQUENCE",
+        "sequence_no": 3,
+        "sequence_status": "SOURCE_STEP_ONLY",
+        "source_line": 130,
+        "source_step_id": "STEP-03",
+        "source_type": "blueprint_step",
+        "suggested_tier": "Hybrid",
+        "task_id": "TASK-USV-03-01",
+        "task_name": "合规红线审查与脱敏处理",
+        "tier_rationale": "脱敏部分可达到Auto（封装Skill），但合规红线审查需人逐条判断；整体仍为Hybrid但允许子任务自动化。"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-4c32ada0dba0bb0e6570"
-        ],
-        "l4_code": "L4-USV-02",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 2,
-        "sequence_status": "SOURCE_CONFIRMED",
-        "source_line": 116,
-        "source_step_id": "STEP-02",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-USV-02-T05",
-        "task_name": "修订完善：根据评审意见修订证据包和底稿，达到内部验收标准",
-        "tier_rationale": ""
-      },
-      {
-        "analysis_status": "FACT_EXTRACTED",
-        "evidence_refs": [
-          "EVD-b3c5e00c2fc0c96fcca5"
+          "EVD-b3c5e00c2fc0c96fcca5",
+          "EVD-4f91b8f8fc20262b6e05"
         ],
         "l4_code": "L4-USV-03",
         "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
+        "previous_task_ids": [
+          "TASK-USV-03-01"
+        ],
+        "relation_type": "SEQUENCE",
         "sequence_no": 3,
-        "sequence_status": "SOURCE_CONFIRMED",
+        "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 130,
         "source_step_id": "STEP-03",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-USV-03-T01",
-        "task_name": "合规红线逐条审查：按11条禁止口径逐条对比验证包内容，确认不踩红线",
-        "tier_rationale": ""
+        "source_type": "blueprint_step",
+        "suggested_tier": "Human",
+        "task_id": "TASK-USV-03-02",
+        "task_name": "外发等级标注与Teresa审批",
+        "tier_rationale": "合规判断与审批链不可自动化，必须全人工执行；AI仅能提供建议，无决策权。"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-b3c5e00c2fc0c96fcca5"
+          "EVD-b3c5e00c2fc0c96fcca5",
+          "EVD-eb32b876962c3ad65e45"
         ],
         "l4_code": "L4-USV-03",
         "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
+        "previous_task_ids": [
+          "TASK-USV-03-01"
+        ],
+        "relation_type": "SEQUENCE",
         "sequence_no": 3,
-        "sequence_status": "SOURCE_CONFIRMED",
+        "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 130,
         "source_step_id": "STEP-03",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-USV-03-T02",
-        "task_name": "脱敏规则应用：将敏感字段（客户明细、佣金数据、利润数据）脱敏处理，建立脱敏映射表",
-        "tier_rationale": ""
+        "source_type": "blueprint_step",
+        "suggested_tier": "Auto",
+        "task_id": "TASK-USV-03-03",
+        "task_name": "OB-G7 Gate状态跟踪与就绪确认",
+        "tier_rationale": "状态采集和就绪判断可自动化，不涉及决策；但最终放行仍需依赖人工审批，此任务仅做信息汇总。"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-b3c5e00c2fc0c96fcca5"
+          "EVD-7a307c4e07e271e634b6",
+          "EVD-22404e8eb4c9489c98a2"
         ],
-        "l4_code": "L4-USV-03",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 3,
-        "sequence_status": "SOURCE_CONFIRMED",
-        "source_line": 130,
-        "source_step_id": "STEP-03",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-USV-03-T03",
-        "task_name": "外发等级标注：为每项内容标注外发等级（内部/受控沟通/禁止外发/正式可外发候选）",
-        "tier_rationale": ""
-      },
-      {
-        "analysis_status": "FACT_EXTRACTED",
-        "evidence_refs": [
-          "EVD-b3c5e00c2fc0c96fcca5"
+        "l4_code": "L4-USV-04",
+        "next_task_ids": [
+          "TASK-USV-04-02"
         ],
-        "l4_code": "L4-USV-03",
-        "next_task_ids": [],
         "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 3,
-        "sequence_status": "SOURCE_CONFIRMED",
-        "source_line": 130,
-        "source_step_id": "STEP-03",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-USV-03-T04",
-        "task_name": "Teresa审批链确认：分级审批——内部报告Teresa签批，受控沟通Teresa+Amanda签批，禁止外发MARK确认，可外发候选MARK最终签批",
-        "tier_rationale": ""
+        "relation_type": "SEQUENCE",
+        "sequence_no": 4,
+        "sequence_status": "SOURCE_STEP_ONLY",
+        "source_line": 144,
+        "source_step_id": "STEP-04",
+        "source_type": "blueprint_step",
+        "suggested_tier": "Hybrid",
+        "task_id": "TASK-USV-04-01",
+        "task_name": "全量Gate Review与OWNER多维确认",
+        "tier_rationale": "Gate状态检测可自动化，OWNER确认属于判断；整体依赖人，AI辅助汇总报告。"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-b3c5e00c2fc0c96fcca5"
+          "EVD-7a307c4e07e271e634b6",
+          "EVD-22404e8eb4c9489c98a2"
         ],
-        "l4_code": "L4-USV-03",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 3,
-        "sequence_status": "SOURCE_CONFIRMED",
-        "source_line": 130,
-        "source_step_id": "STEP-03",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-USV-03-T05",
-        "task_name": "OB-G7 Gate状态跟踪：确认TOI正式匿名汇总报表源是否已从source_absent转为就绪",
-        "tier_rationale": ""
+        "l4_code": "L4-USV-04",
+        "next_task_ids": [
+          "TASK-USV-04-03"
+        ],
+        "previous_task_ids": [
+          "TASK-USV-04-01"
+        ],
+        "relation_type": "SEQUENCE",
+        "sequence_no": 4,
+        "sequence_status": "SOURCE_STEP_ONLY",
+        "source_line": 144,
+        "source_step_id": "STEP-04",
+        "source_type": "blueprint_step",
+        "suggested_tier": "Hybrid",
+        "task_id": "TASK-USV-04-02",
+        "task_name": "Phase Gate放行决策、交付物封装与归档",
+        "tier_rationale": "放行决策全人工，封装归档可自动；综合为Hybrid。"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-7a307c4e07e271e634b6"
+          "EVD-7a307c4e07e271e634b6",
+          "EVD-22404e8eb4c9489c98a2"
         ],
         "l4_code": "L4-USV-04",
         "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 4,
-        "sequence_status": "SOURCE_CONFIRMED",
-        "source_line": 144,
-        "source_step_id": "STEP-04",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-USV-04-T01",
-        "task_name": "全量Gate Review：逐项检查OB-G0~G12 Gate状态，确认所有前置Gate已通过",
-        "tier_rationale": ""
-      },
-      {
-        "analysis_status": "FACT_EXTRACTED",
-        "evidence_refs": [
-          "EVD-7a307c4e07e271e634b6"
+        "previous_task_ids": [
+          "TASK-USV-04-02"
         ],
-        "l4_code": "L4-USV-04",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
+        "relation_type": "SEQUENCE",
         "sequence_no": 4,
-        "sequence_status": "SOURCE_CONFIRMED",
+        "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 144,
         "source_step_id": "STEP-04",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-USV-04-T02",
-        "task_name": "OWNER逐项确认：Amanda（TOI内容）、Roy（财务字段）、Teresa（合规外发）、MARK（最终放行）分别确认负责项",
-        "tier_rationale": ""
-      },
-      {
-        "analysis_status": "FACT_EXTRACTED",
-        "evidence_refs": [
-          "EVD-7a307c4e07e271e634b6"
-        ],
-        "l4_code": "L4-USV-04",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 4,
-        "sequence_status": "SOURCE_CONFIRMED",
-        "source_line": 144,
-        "source_step_id": "STEP-04",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-USV-04-T03",
-        "task_name": "Phase Gate放行决策：MARK基于Gate状态+OWNER确认+合规审查结果，做出放行/退回/有条件通过决策",
-        "tier_rationale": ""
-      },
-      {
-        "analysis_status": "FACT_EXTRACTED",
-        "evidence_refs": [
-          "EVD-7a307c4e07e271e634b6"
-        ],
-        "l4_code": "L4-USV-04",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 4,
-        "sequence_status": "SOURCE_CONFIRMED",
-        "source_line": 144,
-        "source_step_id": "STEP-04",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-USV-04-T04",
-        "task_name": "交付物封装与归档：将验证通过的TOI服务产品包归档，标注版本、放行日期、外发等级",
-        "tier_rationale": ""
-      },
-      {
-        "analysis_status": "FACT_EXTRACTED",
-        "evidence_refs": [
-          "EVD-7a307c4e07e271e634b6"
-        ],
-        "l4_code": "L4-USV-04",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 4,
-        "sequence_status": "SOURCE_CONFIRMED",
-        "source_line": 144,
-        "source_step_id": "STEP-04",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-USV-04-T05",
-        "task_name": "知识转移：面向TOB运营团队和保司对接人，传递经验证的产品包内容、外发边界和使用指南",
-        "tier_rationale": ""
+        "source_type": "blueprint_step",
+        "suggested_tier": "Aug",
+        "task_id": "TASK-USV-04-03",
+        "task_name": "知识转移材料准备与传递",
+        "tier_rationale": "AI可辅助生成培训材料草稿，但知识传递和最终答疑必须由人主导；属于Agent辅助。"
       }
     ]
   },
-  "analysis_freshness": "PENDING_MODEL",
+  "analysis_freshness": "CURRENT",
   "analysis_input_hash": "7026faf16b90fc36bad09583cfd94475dcc439d9856fa15f0496cffe72f81a60",
   "blueprint": {
     "blueprint_value_nodes": [

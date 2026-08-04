@@ -1,0 +1,246 @@
+{
+  "schema_version": "vnw.l3-analysis.v1",
+  "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
+  "generation_mode": "UNIFIED_MODEL",
+  "analysis_status": "MODEL_DRAFT",
+  "model_run": null,
+  "source_scope": {
+    "database": "process_analytics",
+    "knowledge": "ACTIVE supplemental evidence only",
+    "evidence_count": 35
+  },
+  "l4_analysis": [
+    {
+      "l4_code": "L4-URF-01",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-835f436bda30a0a876c6",
+        "EVD-0ca5775ac07196204052",
+        "EVD-5862a1aa453076a10493",
+        "EVD-54f4e7c0bbc6d3324c34",
+        "EVD-19f92f92e2b99f4cb27e",
+        "EVD-b1795924cef83cff3b6f",
+        "EVD-2e75f9f151a28efdc611",
+        "EVD-5ed229806a1ff274f93e",
+        "EVD-f2cc4bd60934648979ce",
+        "EVD-ef78e993f94016cb6ba9",
+        "EVD-3953783c7ba92ce76ddf"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "联合运营框架方案",
+      "specific_capabilities": [
+        "标准化资源库调用",
+        "语义匹配与复核判定",
+        "框架方案结构化生成"
+      ],
+      "ai_reshape": "确定性Skill执行资源库调用+语义匹配，自动生成方案草稿；人工仅复核语义判定与例外处理。",
+      "quality_anchor": "方案内容与标准资源库的语义一致性，输出模板的完整性与合规性",
+      "ai_responsibility": "执行资源检索、语义计算、方案草稿生成",
+      "human_responsibility": "审核语义匹配结果，确认方案适用性，处理未覆盖场景及例外",
+      "handoff_triggers": [
+        "语义匹配置信度低于阈值",
+        "遇到资源库未覆盖的机构/产品类型",
+        "方案草稿包含冲突条款需人工裁定"
+      ],
+      "control_gates": [
+        "方案发布前需人工最终审批（无直接资金关卡，但涉及对外交付）"
+      ],
+      "data_basis": [
+        "D1(输入结构化)=2，来源EVD-b1795924",
+        "D2(规则清晰度)=1，来源EVD-2e75f9f151a28efdc611",
+        "D3(输出验证)=2，来源EVD-5ed229806a1ff274f93e",
+        "D4(API可达)=1，来源EVD-f2cc4bd60934648979ce",
+        "D5(回落)=1，来源EVD-ef78e993f94016cb6ba9",
+        "D6(合规)=1，来源EVD-3953783c7ba92ce76ddf"
+      ],
+      "process_context": "蓝图Step01标准化资源库调用，作为联合运营资源规整的第一步，输出《联合运营框架方案》",
+      "risks_limits": [
+        "资源库覆盖不全或规则更新滞后导致方案不匹配",
+        "API可达性低可能影响实时数据获取",
+        "回退机制不完善时自动化可能中断",
+        "Skill封装需先解决规则清晰度与API集成"
+      ],
+      "current_recommendation": "建议采用Augmented（增强自动化）模式：AI Skill生成方案草稿并标注置信度，人工快速复核后发布。鉴于skill_feasibility为A级，优先进入Skill原型候选池，但需配套提升规则清晰度与API连通性。",
+      "database_tier": "Auto",
+      "recommended_tier": "Aug",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-URF-02",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-ccfc6b537a9c821eff3a",
+        "EVD-5a2420dfa04e56b85cfd",
+        "EVD-19980664e43271472cf1",
+        "EVD-17ad73bb201e754ddec7",
+        "EVD-550f7b642ac3e60a4329",
+        "EVD-3d6ebf891b93a81dcfc0",
+        "EVD-bf8956bc99fa069d1e53",
+        "EVD-a64c89b792635baec3d5",
+        "EVD-c8aa056e2deb841a0a58",
+        "EVD-3b29b32324a0f2a0a864",
+        "EVD-d223ed458f8048168ce0"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "定制化内容方案设计",
+      "specific_capabilities": [
+        "客户需求理解与策略判定",
+        "非标内容组合与创意设计",
+        "方案商业可行性评估"
+      ],
+      "ai_reshape": "Agent辅助工作台：AI提供知识检索、案例匹配、模板推荐；人主导方案设计、策略权衡与最终拍板。",
+      "quality_anchor": "方案与客户定制化需求的精准匹配，商业合理性与创新性",
+      "ai_responsibility": "提供历史数据、类似案例、内容片段、合规条款参考",
+      "human_responsibility": "整体方案架构、策略判断、商业条款决策、客户对接与最终确认",
+      "handoff_triggers": [
+        "客户需求超出系统知识范围",
+        "涉及高风险商业条款或合规例外",
+        "方案需要跨部门/高层决策"
+      ],
+      "control_gates": [
+        "所有对外发布的定制方案需人工最终审核",
+        "涉及财务承诺时须经授权审批（如Q1判断后的合同调整）"
+      ],
+      "data_basis": [
+        "D1=2，来源EVD-3d6ebf891b93a81dcfc0",
+        "D2=1，来源EVD-bf8956bc99fa069d1e53",
+        "D3=2，来源EVD-a64c89b792635baec3d5",
+        "D4=1，来源EVD-c8aa056e2deb841a0a58",
+        "D5=1，来源EVD-3b29b32324a0f2a0a864",
+        "D6=1，来源EVD-d223ed458f8048168ce0"
+      ],
+      "process_context": "蓝图Step02，发生在服务费覆盖成本判断（Q1可覆盖分支）之后，输出《定制化内容方案设计》",
+      "risks_limits": [
+        "AI辅助内容缺乏对客户隐性需求的洞察，过度依赖模板可能降低方案竞争力",
+        "C级封装天花板，不适合完全自动化",
+        "判断错误可导致商业损失或合规风险"
+      ],
+      "current_recommendation": "保持Hybrid人机混合模式，AI作为增强工具提供信息支撑，由联合运营管理岗人员主导设计与决策。可探索Agent辅助深度，但不应追求确定性Skill封装。",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "T-URF-01",
+      "l4_code": "L4-URF-01",
+      "task_name": "调用标准化资源库生成联合运营框架方案草稿",
+      "source_type": "blueprint_step",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-01",
+      "source_line": 51,
+      "previous_task_ids": [],
+      "next_task_ids": ["T-URF-02"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-19f92f92e2b99f4cb27e",
+        "EVD-0ca5775ac07196204052",
+        "EVD-835f436bda30a0a876c6"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "D2/D4/D5仅1分，且human_touchpoint缺失，需人工复核语义匹配与例外；Skill效率高但质量依赖监督，建议Augmented兼顾速度与可靠性。"
+    },
+    {
+      "task_id": "T-URF-02",
+      "l4_code": "L4-URF-02",
+      "task_name": "基于服务费覆盖判断设计定制化内容方案",
+      "source_type": "blueprint_step",
+      "sequence_no": 2,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-02",
+      "source_line": 59,
+      "previous_task_ids": ["T-URF-01"],
+      "next_task_ids": [],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-550f7b642ac3e60a4329",
+        "EVD-5a2420dfa04e56b85cfd",
+        "EVD-ccfc6b537a9c821eff3a"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "C级判断/策略/认知类活动，需人工主导创意与决策；AI辅助提供数据、模板，无法替代商业判断，维持Hybrid以确保方案质量与合规。"
+    }
+  ],
+  "priority_drafts": [
+    {
+      "priority": "P0-紧急",
+      "l3_scope": "L3-URF",
+      "title": "优先解除价值节点VN-MGA-02熔断：解决数据连接与规则可追溯问题",
+      "rationale": "VN-MGA-02（联合运营框架方案）当前判定为FAIL，gate1_data_linked=FAIL且gate3_traceable=FAIL，阻塞整个L3流程。在任务自动化和方案正式交付前，必须完成数据源接入（如财务已付数据）并使L4步骤规则可定位。",
+      "evidence_refs": [
+        "EVD-e3a7c8be965633899725",
+        "EVD-a378988e680957b61f08",
+        "EVD-cdae9247e574632d9e68",
+        "EVD-96d61b59dd6c1b98aa49"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "decision_drafts": [
+    {
+      "priority": "P0",
+      "task_ids": ["T-URF-01", "T-URF-02"],
+      "title": "先行试点标准化资源库调用任务，并定义Q1判断的人工控制边界",
+      "pilot_scope": "选取2-3个已有标准数据的机构，完成从资源库调用→方案生成→人工复核的全链路跑通，验证Skill封装可行性；同步推动财务侧提供RW已付数据以支持Q1判断。",
+      "human_boundary": "Q1成本覆盖判断结果（可覆盖/不可覆盖/数据缺失）必须由授权决策角色（如机构业务族经理）最终确认；所有对外交付的方案须经审批。",
+      "evidence_refs": [
+        "EVD-e8a3f73540d236544d92",
+        "EVD-19f92f92e2b99f4cb27e",
+        "EVD-550f7b642ac3e60a4329"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "control_chain": [
+    {
+      "control_id": "CTL-Q1",
+      "control_name": "服务费覆盖成本判断",
+      "trigger": "STEP-01完成后立即触发",
+      "decision_question": "服务费能否覆盖RW固定成本",
+      "outcomes": [
+        {
+          "label": "可覆盖",
+          "target": "STEP-02（T-URF-02）",
+          "authority": "系统自动计算+人工确认"
+        },
+        {
+          "label": "不可覆盖",
+          "target": "上报Mark调整合同结构（依赖A-02裁定）",
+          "authority": "机构业务族高层决策"
+        },
+        {
+          "label": "数据缺失",
+          "target": "等待财务侧提供已付数据（P0阻塞项）",
+          "authority": "财务/运营协同"
+        }
+      ],
+      "evidence_refs": ["EVD-e8a3f73540d236544d92"],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "rejected_task_sources": [],
+  "missing_analysis": [
+    {
+      "field": "agent_human_touchpoint",
+      "l4_code": "L4-URF-01",
+      "detail": "数据库中标记为MISSING，无法确定预设人工触点位置；当前分析基于D2/D4/D5及Skill可行性推理建议人工复核点。",
+      "evidence_ref_attempted": "EVD-694a9c3472fc8aa268cf"
+    },
+    {
+      "field": "agent_human_touchpoint",
+      "l4_code": "L4-URF-02",
+      "detail": "数据库中标记为MISSING；当前人工触点基于任务性质推断为方案终审与高风险决策交互。",
+      "evidence_ref_attempted": "EVD-69bc102250d6fea60cfa"
+    },
+    {
+      "field": "蓝图规则可定位",
+      "l4_codes": ["L4-URF-01", "L4-URF-02"],
+      "detail": "Gate E-007显示两个L4均无可关联的规则记录，影响自动化中的规则清晰度评估与SOP编写。",
+      "evidence_ref_attempted": "E-007"
+    }
+  ]
+}

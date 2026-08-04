@@ -1,116 +1,236 @@
 {
   "analysis": {
     "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
-    "analysis_status": "PENDING_MODEL",
-    "decision_drafts": [],
-    "generation_mode": "EVIDENCE_ONLY_BOOTSTRAP",
+    "analysis_status": "MODEL_DRAFT",
+    "control_chain": [],
+    "decision_drafts": [
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [
+          "EVD-555ce78f159de386e7d5",
+          "EVD-980c7fab4d81ab564638",
+          "EVD-c99709588f78e7c1eadc"
+        ],
+        "human_boundary": "自动生成后必须由权益服务族岗位人员（如服务执行与跟踪岗）复核条款，确认无误后方可发布",
+        "pilot_scope": "选取一个子业务线的标准权益包，首批试点5家企业客户",
+        "priority": "P1",
+        "task_ids": [
+          "T-L4-COB-01-01"
+        ],
+        "title": "服务使用规则生成Skill原型试点"
+      }
+    ],
+    "generation_mode": "UNIFIED_MODEL",
     "l4_analysis": [
       {
-        "ai_reshape": "",
-        "ai_responsibility": "",
-        "analysis_status": "PENDING_MODEL",
-        "confidence": "UNASSESSED",
-        "control_gates": [],
-        "current_recommendation": "",
-        "data_basis": [],
-        "deliverable_role": "",
-        "evidence_refs": [
-          "EVD-247e65108d7f70e6c299",
-          "EVD-290e14e2a9d271e4cf89",
-          "EVD-3e347631c92fd8607633",
-          "EVD-41257964c12214eb344d",
-          "EVD-555ce78f159de386e7d5",
-          "EVD-6ffc247c040b59e4c75a",
-          "EVD-911d8d9b72d45bd0d8b7",
-          "EVD-980c7fab4d81ab564638",
-          "EVD-a2756bb98937687ba53c",
-          "EVD-c99709588f78e7c1eadc",
-          "EVD-e33548f03b84aa7ddc10",
-          "EVD-e655119dc4ade35046cc",
-          "EVD-f6c633fc6b98302c4625"
+        "ai_reshape": "通过确定性Skill执行，从合同和权益包数据自动生成服务使用规则，减少人工编写",
+        "ai_responsibility": "生成服务使用规则初稿",
+        "analysis_status": "MODEL_DRAFT",
+        "confidence": "MODEL_DRAFT",
+        "control_gates": [
+          "合规审核：服务使用规则需经法务或业务负责人确认"
         ],
-        "handoff_triggers": [],
-        "human_responsibility": "",
+        "current_recommendation": "推荐纳入Skill原型候选池，利用已有结构化输入快速实现自动化，并设置人工复核节点",
+        "data_basis": [
+          "客户合同数据",
+          "权益包配置参数"
+        ],
+        "database_tier": "Auto",
+        "deliverable_role": "服务使用规则",
+        "evidence_refs": [
+          "EVD-555ce78f159de386e7d5",
+          "EVD-980c7fab4d81ab564638",
+          "EVD-c99709588f78e7c1eadc",
+          "EVD-6ffc247c040b59e4c75a",
+          "EVD-247e65108d7f70e6c299",
+          "EVD-e33548f03b84aa7ddc10",
+          "EVD-d05e7159e76f2c5f2127"
+        ],
+        "handoff_triggers": [
+          "当规则中存在例外条款或系统无法判定时，转人工处理"
+        ],
+        "human_responsibility": "审核规则内容并确认发布",
         "l4_code": "L4-COB-01",
-        "process_context": "",
-        "quality_anchor": "",
-        "risks_limits": [],
-        "specific_capabilities": []
+        "process_context": "作为客户入驻权益服务启动的首个步骤，为后续系统配置和客户赋能提供规则基础",
+        "quadrant": "自动化原型",
+        "quality_anchor": "规则完整性、条款合规性",
+        "recommended_tier": "Auto",
+        "risks_limits": [
+          "合规风险：需确保规则符合监管要求 (D6=1)",
+          "无资金关卡和物理执行限制"
+        ],
+        "specific_capabilities": [
+          "根据客户合同和权益包信息自动生成服务使用规则文档"
+        ]
       },
       {
-        "ai_reshape": "",
-        "ai_responsibility": "",
-        "analysis_status": "PENDING_MODEL",
-        "confidence": "UNASSESSED",
-        "control_gates": [],
-        "current_recommendation": "",
-        "data_basis": [],
-        "deliverable_role": "",
+        "ai_reshape": "拆分复合动作为子Skill：账户配置Skill和权益包配置Skill，各自执行",
+        "ai_responsibility": "执行账户创建和权益包参数计算",
+        "analysis_status": "MODEL_DRAFT",
+        "confidence": "MODEL_DRAFT",
+        "control_gates": [
+          "权限控制：账户创建需经审批",
+          "合规检查：配置表需复核"
+        ],
+        "current_recommendation": "优先拆分为两个独立子任务，分别封装为Skill，并通过人工确认节点保障正确性",
+        "data_basis": [
+          "客户组织架构数据",
+          "权益包业务规则"
+        ],
+        "database_tier": "Auto",
+        "deliverable_role": "RW权益包配置表",
         "evidence_refs": [
-          "EVD-02a4d6cc4cfad1125e1d",
           "EVD-15b1aca6be9b0439c95a",
-          "EVD-290e14e2a9d271e4cf89",
           "EVD-307f6238a3c376b4084e",
           "EVD-56fae339eb0148976860",
-          "EVD-6932f40a18611cadd31c",
-          "EVD-74b017a4585c9c67bcc8",
-          "EVD-99b7b4ba531e36a4ff83",
-          "EVD-a394f745e43e76ef39d9",
           "EVD-ba83f829c6d9d5853bea",
-          "EVD-ece73f08b4cb57a9e986",
-          "EVD-f2f4033a1700940f3883",
-          "EVD-f802da0147c13e89bcc8"
+          "EVD-a394f745e43e76ef39d9",
+          "EVD-2ce70545f0965666a5b1"
         ],
-        "handoff_triggers": [],
-        "human_responsibility": "",
+        "handoff_triggers": [
+          "配置异常或权益包校验失败时转人工"
+        ],
+        "human_responsibility": "确认账户配置无误，验证权益包参数",
         "l4_code": "L4-COB-02",
-        "process_context": "",
-        "quality_anchor": "",
-        "risks_limits": [],
-        "specific_capabilities": []
+        "process_context": "基于服务使用规则，完成系统端配置，为后续客户赋能提供技术基础",
+        "quadrant": "半自动化协作",
+        "quality_anchor": "账户配置准确性、权益包参数完整",
+        "recommended_tier": "Hybrid",
+        "risks_limits": [
+          "配置错误可能导致服务不可用",
+          "复合动作需谨慎拆分，避免遗漏子步骤"
+        ],
+        "specific_capabilities": [
+          "配置系统账户结构",
+          "生成并填充权益包配置参数表"
+        ]
       },
       {
-        "ai_reshape": "",
-        "ai_responsibility": "",
-        "analysis_status": "PENDING_MODEL",
-        "confidence": "UNASSESSED",
-        "control_gates": [],
-        "current_recommendation": "",
-        "data_basis": [],
-        "deliverable_role": "",
-        "evidence_refs": [
-          "EVD-07b30b25b5665533f6e1",
-          "EVD-1d97b4a865c3ec749dae",
-          "EVD-28cb8b7b52f25a69f4d0",
-          "EVD-290e14e2a9d271e4cf89",
-          "EVD-45d18e7f7a9c9813187d",
-          "EVD-5bd9a422144cc92ee0ac",
-          "EVD-62a2dadb2ca660c280e3",
-          "EVD-84ce2994bc8aeb6ffbc2",
-          "EVD-a3d5b304d207c38a099a",
-          "EVD-b5829298d6d2549bd5be",
-          "EVD-c5190aa9d7aee4136c0e",
-          "EVD-e27626b2bece9f15dade",
-          "EVD-f2c9ce6b8dcab64230be"
+        "ai_reshape": "Agent辅助生成培训材料初稿和规则汇编，人工语义复核",
+        "ai_responsibility": "自动提取规则并生成文档框架",
+        "analysis_status": "MODEL_DRAFT",
+        "confidence": "MODEL_DRAFT",
+        "control_gates": [
+          "发布前需业务负责人审批"
         ],
-        "handoff_triggers": [],
-        "human_responsibility": "",
+        "current_recommendation": "优先补充标准培训模板和规则审核清单，再尝试部分自动化；当前阶段建议人工主导，AI辅助",
+        "data_basis": [
+          "服务使用规则文档",
+          "权益包配置表",
+          "培训模板"
+        ],
+        "database_tier": "Aug",
+        "deliverable_role": "内训素材；权益包使用规则；服务使用规则",
+        "evidence_refs": [
+          "EVD-62a2dadb2ca660c280e3",
+          "EVD-f2c9ce6b8dcab64230be",
+          "EVD-84ce2994bc8aeb6ffbc2",
+          "EVD-28cb8b7b52f25a69f4d0",
+          "EVD-e27626b2bece9f15dade",
+          "EVD-4ed26d19679a01c5e839"
+        ],
+        "handoff_triggers": [
+          "语义模糊或客户特殊需求时转人工修订"
+        ],
+        "human_responsibility": "审核内容，确保培训效果和规则无误",
         "l4_code": "L4-COB-03",
-        "process_context": "",
-        "quality_anchor": "",
-        "risks_limits": [],
-        "specific_capabilities": []
+        "process_context": "作为客户入驻的最后一步，将配置和规则传递给客户，确保有效使用",
+        "quadrant": "增强辅助",
+        "quality_anchor": "材料准确性、易理解性",
+        "recommended_tier": "Aug",
+        "risks_limits": [
+          "语义理解偏差可能导致客户误解",
+          "物理执行需线下培训，AI无法替代"
+        ],
+        "specific_capabilities": [
+          "收集并整合权益包使用规则和服务使用规则",
+          "编制内部培训材料"
+        ]
       }
     ],
     "missing_analysis": [
-      "逐L4交付物与具体能力分析",
-      "逐任务AI分工分析",
-      "逐L4人机协作与控制分析",
-      "逐L4优先级四维分析",
-      "任务级负责人决策建议"
+      "控制链缺少L4定位，已拒绝3条"
     ],
-    "model_run": null,
-    "priority_drafts": [],
+    "model_run": {
+      "generated_at": "2026-08-04T19:44:20.481520+00:00",
+      "input_snapshot_hash": "dbf1a986c8e9df261907f9325a26ca5607b6c1c31fec6b24dcd3dc3b48e55c85",
+      "model_name": "deepseek-v4-pro",
+      "model_version": "deepseek-v4-pro",
+      "prompt_version": "VNW-L3-COM-GOLD-v1.0"
+    },
+    "priority_drafts": [
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "current_recommendation": "推荐纳入Skill原型候选池，利用已有结构化输入快速实现自动化，并设置人工复核节点",
+        "data_basis": [
+          "客户合同数据",
+          "权益包配置参数"
+        ],
+        "evidence_refs": [
+          "EVD-555ce78f159de386e7d5",
+          "EVD-980c7fab4d81ab564638",
+          "EVD-c99709588f78e7c1eadc",
+          "EVD-6ffc247c040b59e4c75a",
+          "EVD-247e65108d7f70e6c299",
+          "EVD-e33548f03b84aa7ddc10",
+          "EVD-d05e7159e76f2c5f2127"
+        ],
+        "l4_code": "L4-COB-01",
+        "process_context": "作为客户入驻权益服务启动的首个步骤，为后续系统配置和客户赋能提供规则基础",
+        "quadrant": "unclassified",
+        "risks_limits": [
+          "合规风险：需确保规则符合监管要求 (D6=1)",
+          "无资金关卡和物理执行限制"
+        ]
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "current_recommendation": "优先拆分为两个独立子任务，分别封装为Skill，并通过人工确认节点保障正确性",
+        "data_basis": [
+          "客户组织架构数据",
+          "权益包业务规则"
+        ],
+        "evidence_refs": [
+          "EVD-15b1aca6be9b0439c95a",
+          "EVD-307f6238a3c376b4084e",
+          "EVD-56fae339eb0148976860",
+          "EVD-ba83f829c6d9d5853bea",
+          "EVD-a394f745e43e76ef39d9",
+          "EVD-2ce70545f0965666a5b1"
+        ],
+        "l4_code": "L4-COB-02",
+        "process_context": "基于服务使用规则，完成系统端配置，为后续客户赋能提供技术基础",
+        "quadrant": "unclassified",
+        "risks_limits": [
+          "配置错误可能导致服务不可用",
+          "复合动作需谨慎拆分，避免遗漏子步骤"
+        ]
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "current_recommendation": "优先补充标准培训模板和规则审核清单，再尝试部分自动化；当前阶段建议人工主导，AI辅助",
+        "data_basis": [
+          "服务使用规则文档",
+          "权益包配置表",
+          "培训模板"
+        ],
+        "evidence_refs": [
+          "EVD-62a2dadb2ca660c280e3",
+          "EVD-f2c9ce6b8dcab64230be",
+          "EVD-84ce2994bc8aeb6ffbc2",
+          "EVD-28cb8b7b52f25a69f4d0",
+          "EVD-e27626b2bece9f15dade",
+          "EVD-4ed26d19679a01c5e839"
+        ],
+        "l4_code": "L4-COB-03",
+        "process_context": "作为客户入驻的最后一步，将配置和规则传递给客户，确保有效使用",
+        "quadrant": "unclassified",
+        "risks_limits": [
+          "语义理解偏差可能导致客户误解",
+          "物理执行需线下培训，AI无法替代"
+        ]
+      }
+    ],
     "rejected_task_sources": [],
     "schema_version": "vnw.l3-analysis.v1",
     "source_scope": {
@@ -120,65 +240,103 @@
     },
     "tasks": [
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-d05e7159e76f2c5f2127"
+          "EVD-d05e7159e76f2c5f2127",
+          "EVD-555ce78f159de386e7d5",
+          "EVD-980c7fab4d81ab564638"
         ],
         "l4_code": "L4-COB-01",
-        "next_task_ids": [],
+        "next_task_ids": [
+          "T-L4-COB-02-01",
+          "T-L4-COB-02-02"
+        ],
         "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
+        "relation_type": "SEQUENCE",
         "sequence_no": 1,
         "sequence_status": "SOURCE_CONFIRMED",
         "source_line": 46,
         "source_step_id": "STEP-01",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-COB-01-T01",
-        "task_name": "L4-COB-01 → 服务使用规则(Aug)",
-        "tier_rationale": ""
+        "source_type": "L4",
+        "suggested_tier": "Auto",
+        "task_id": "T-L4-COB-01-01",
+        "task_name": "生成服务使用规则",
+        "tier_rationale": "单一信息处理动作，结构化输入完整，高封装Skill候选，建议全自动化执行"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-2ce70545f0965666a5b1"
+          "EVD-2ce70545f0965666a5b1",
+          "EVD-15b1aca6be9b0439c95a"
         ],
         "l4_code": "L4-COB-02",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
+        "next_task_ids": [
+          "T-L4-COB-03-01"
+        ],
+        "previous_task_ids": [
+          "T-L4-COB-01-01"
+        ],
+        "relation_type": "PARALLEL",
         "sequence_no": 2,
-        "sequence_status": "SOURCE_CONFIRMED",
+        "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 52,
         "source_step_id": "STEP-02",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-COB-02-T01",
-        "task_name": "L4-COB-02 → RW权益包配置表(Auto)",
-        "tier_rationale": ""
+        "source_type": "L4",
+        "suggested_tier": "Aug",
+        "task_id": "T-L4-COB-02-01",
+        "task_name": "配置系统账户",
+        "tier_rationale": "复合动作的一部分，账户配置需人工确认权限和合规性，Agent执行后由人复核"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-4ed26d19679a01c5e839"
+          "EVD-2ce70545f0965666a5b1",
+          "EVD-15b1aca6be9b0439c95a"
+        ],
+        "l4_code": "L4-COB-02",
+        "next_task_ids": [
+          "T-L4-COB-03-01"
+        ],
+        "previous_task_ids": [
+          "T-L4-COB-01-01"
+        ],
+        "relation_type": "PARALLEL",
+        "sequence_no": 2,
+        "sequence_status": "SOURCE_STEP_ONLY",
+        "source_line": 52,
+        "source_step_id": "STEP-02",
+        "source_type": "L4",
+        "suggested_tier": "Aug",
+        "task_id": "T-L4-COB-02-02",
+        "task_name": "初始化权益包配置",
+        "tier_rationale": "复合动作的一部分，权益包参数计算可自动化，但最终配置表需人工审核"
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [
+          "EVD-4ed26d19679a01c5e839",
+          "EVD-62a2dadb2ca660c280e3"
         ],
         "l4_code": "L4-COB-03",
         "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
+        "previous_task_ids": [
+          "T-L4-COB-02-01",
+          "T-L4-COB-02-02"
+        ],
+        "relation_type": "SEQUENCE",
         "sequence_no": 3,
         "sequence_status": "SOURCE_CONFIRMED",
         "source_line": 58,
         "source_step_id": "STEP-03",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-COB-03-T01",
-        "task_name": "L4-COB-03 → 内训素材；权益包使用规则；服务使用规则(Aug)",
-        "tier_rationale": ""
+        "source_type": "L4",
+        "suggested_tier": "Aug",
+        "task_id": "T-L4-COB-03-01",
+        "task_name": "编制客户赋能交付物（内训素材、规则文档）",
+        "tier_rationale": "材料整合可AI辅助，但语义复核和内容确认依赖人工，建议增强辅助模式"
       }
     ]
   },
-  "analysis_freshness": "PENDING_MODEL",
+  "analysis_freshness": "CURRENT",
   "analysis_input_hash": "dbf1a986c8e9df261907f9325a26ca5607b6c1c31fec6b24dcd3dc3b48e55c85",
   "blueprint": {
     "blueprint_value_nodes": [],

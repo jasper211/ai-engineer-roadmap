@@ -1,0 +1,350 @@
+{
+  "schema_version": "vnw.l3-analysis.v1",
+  "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
+  "generation_mode": "UNIFIED_MODEL",
+  "analysis_status": "MODEL_DRAFT",
+  "model_run": null,
+  "source_scope": {
+    "database": "process_analytics",
+    "knowledge": "ACTIVE supplemental evidence only",
+    "evidence_count": 48
+  },
+  "l4_analysis": [
+    {
+      "l4_code": "L4-VP-01",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-65023c9a9e82c61c439b",
+        "EVD-9f83e4cd35f045a7c566",
+        "EVD-a5bac91c8ee34f8d193d",
+        "EVD-b96150cffca5d1abbcba",
+        "EVD-d611b3ab6ebcd217e0eb",
+        "EVD-ed5894c20e2709792278",
+        "EVD-722da331719690a0673b",
+        "EVD-8ac5bfa7e521431219dd",
+        "EVD-b3ea88f428e00f268d32",
+        "EVD-ca2752d64bc74f574cc4"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "生成价值主张创意方案，为后续验证和批准提供初始选项",
+      "specific_capabilities": [
+        "基于客户痛点地图和企业能力清单进行脑暴引导（要求市场进入策略岗专业判断）",
+        "提炼和结构化价值主张声明",
+        "语义复核与创意质量判定"
+      ],
+      "ai_reshape": "Agent辅助：AI工具可辅助整理客户痛点与企业能力数据、提供创意启发模板，但核心创意生成和语义复核仍需人工主导，因为判断/策略类动作理论天花板低（C档），不适合直接封装为确定性Skill。",
+      "quality_anchor": "输出方案需涵盖清晰的客户核心痛点与对应价值主张陈述，逻辑自洽，可被后续验证步骤使用。",
+      "ai_responsibility": "AI可辅助：提供结构化输入模板、自动抽取客户痛点清单、生成初步创意草案供人选择。",
+      "human_responsibility": "主导工作坊讨论，进行创意筛选和最终语义确认，确保价值主张与战略方向一致。",
+      "handoff_triggers": [
+        "当创意方案涉及高风险或法务合规敏感点，需要人工决策交接"
+      ],
+      "control_gates": [
+        "人工签字确认创意方案可作为验证输入"
+      ],
+      "data_basis": [
+        "蓝图步骤STEP-01活动描述（EVD-a5bac91c8ee34f8d193d）",
+        "skill_feasibility评估为C档（EVD-9f83e4cd35f045a7c566）"
+      ],
+      "process_context": "价值主张设计与验证流程的首个环节，依赖跨职能共创，体现战略定性判断。",
+      "risks_limits": [
+        "创意质量高度依赖参与人员经验和业务理解，难以标准化",
+        "可能产生过于空泛或不符合企业能力的主张，需人工把关"
+      ],
+      "current_recommendation": "采用Agent辅助模式，由AI提供信息整合与草案生成，人工进行创意决策和最终确认。不建议封装为Skill。",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "human_judgment_required"
+    },
+    {
+      "l4_code": "L4-VP-02",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-21c2d67b16ed1726a601",
+        "EVD-95424f3792baea1a864f",
+        "EVD-17ca307c0514ef393107",
+        "EVD-6f8c99564a84b7f24504",
+        "EVD-80bdf86606d7588aa2ca",
+        "EVD-ecdf7886cdff485b7ef3",
+        "EVD-c0c3b32aecbe53de0f6a",
+        "EVD-847f04576275ea6c9743",
+        "EVD-17ac60eac526eaaacf1d",
+        "EVD-eb53a28f6b4d0c5696e5"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "通过内部可行性评审和目标客户概念测试，生成经过验证的价值主张草案及相关报告",
+      "specific_capabilities": [
+        "跨职能评审组织与引导（需要市场进入策略岗协调）",
+        "设计概念测试方案并执行（需定义标准化输入与规则）",
+        "整合多源反馈优化主张（涉及判断，但可部分结构化）"
+      ],
+      "ai_reshape": "先拆分为子Skill再封装：整体为复合动作，但内部“概念测试反馈收集与分析”等子任务结构化程度高，可封装为确定性Skill（A档候选）；跨职能评审和最终判断仍需Agent辅助。",
+      "quality_anchor": "概念测试目标客户认可度>70%（质量标准），评审报告需明确可行性结论。",
+      "ai_responsibility": "AI可承担：收集测试反馈数据、统计分析、根据预设规则生成可行性报告初稿。",
+      "human_responsibility": "主持评审会议；对测试结果进行定性解读和最终决策；批准优化后的价值主张草案。",
+      "handoff_triggers": [
+        "当测试反馈出现矛盾或异常，或评审中出现重大分歧时，转由人工介入"
+      ],
+      "control_gates": [
+        "人工核准可行性评审结论和概念测试结果"
+      ],
+      "data_basis": [
+        "蓝图步骤STEP-02活动描述（EVD-17ca307c0514ef393107）",
+        "skill_feasibility评估为A档但需先拆分（EVD-95424f3792baea1a864f）",
+        "agentifiability为Auto（EVD-29e296ad3c7ace05ebe9）"
+      ],
+      "process_context": "验证环节将创意主张量化测试与专家评审结合，是确保价值主张可行性的关键步骤。",
+      "risks_limits": [
+        "复合动作若整体封装会不可控，必须先拆分为独立子任务",
+        "概念测试结果可能受样本偏差影响，需人工结合经验判断"
+      ],
+      "current_recommendation": "按评估建议，将可结构化的测试反馈分析等拆出为单独Skill进行Auto化；评审与优化部分保留Hybrid模式，由Agent辅助决策。",
+      "database_tier": "Auto",
+      "recommended_tier": "Hybrid",
+      "quadrant": "skill_candidate_needs_split"
+    },
+    {
+      "l4_code": "L4-VP-03",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-524574ed0033a963bf6d",
+        "EVD-123345d750b591eb6e52",
+        "EVD-932097cf20392cae5464",
+        "EVD-3a5c1e239b9d252c9ca3",
+        "EVD-1c996bc659dd5e880ea7",
+        "EVD-e28a16f984f74515804f",
+        "EVD-f92b3e02ef36b60ae670",
+        "EVD-a20887f4b5e7223ec740",
+        "EVD-88f216e90eeb73b86df2",
+        "EVD-57852b7d5a065ff10172"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "制定沟通指南并将价值主张文档推向管理层批准，输出正式批准的价值主张文档",
+      "specific_capabilities": [
+        "面向不同受众定制沟通信息（语义复核与策略判断）",
+        "准备正式的批准文件并管理签批流程",
+        "确保主交付物（VN-SMPS-02）通过审批"
+      ],
+      "ai_reshape": "Agent辅助：沟通指引制定涉及语境理解和受众适配，判断/策略类核心动作难封装（C档）；批准环节涉及管理层决策，必须保留人工控制门。",
+      "quality_anchor": "沟通指南须覆盖核心信息和至少一个受众适配版本；批准文档需获得管理层正式签批记录（EVD-5d34fd7449bd845c4ede）。",
+      "ai_responsibility": "AI可辅助生成沟通指南草案、不同受众版本初稿，以及批准文档模板填充。",
+      "human_responsibility": "人工最终定稿并推送签批流程；管理层审批的不可逆动作完全由人负责。",
+      "handoff_triggers": [
+        "当批准流程中出现异议或要求修改时，人工介入处理"
+      ],
+      "control_gates": [
+        "管理层签批为强制性不可绕过控制门",
+        "对外发布前须人工合规终审"
+      ],
+      "data_basis": [
+        "蓝图步骤STEP-03及价值节点映射（EVD-932097cf20392cae5464, EVD-5d34fd7449bd845c4ede）",
+        "skill_feasibility评估为C档（EVD-123345d750b591eb6e52）"
+      ],
+      "process_context": "输出节点直接对应P0价值节点“批准的价值主张文档”，是流程的最终交付环节，具有不可逆的对外影响。",
+      "risks_limits": [
+        "复合动作（沟通指引+批准）需拆分处理，不可混为一谈",
+        "批准为对外发布前置控制点，必须人工确认",
+        "沟通指南的受众适配需谨慎，避免信息失真"
+      ],
+      "current_recommendation": "将沟通指南草拟和批准文档准备部分拆分为Agent辅助，管理层批准环节严格保留Human Tier，且需设计无可绕过的控制门。",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "human_control_gate"
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "TASK-001",
+      "l4_code": "L4-VP-01",
+      "task_name": "召开价值主张共创工作坊",
+      "source_type": "BLUEPRINT_ACTIVITY",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-01",
+      "source_line": 69,
+      "previous_task_ids": [],
+      "next_task_ids": ["TASK-002"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": ["EVD-a5bac91c8ee34f8d193d"],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "工作坊执行需要市场进入策略岗主导创意讨论，AI可提供辅助工具但无法替代人类判断，与数据库Tier和Skill评估一致。"
+    },
+    {
+      "task_id": "TASK-002",
+      "l4_code": "L4-VP-01",
+      "task_name": "雕琢与结构化价值主张声明",
+      "source_type": "BLUEPRINT_ACTIVITY",
+      "sequence_no": 2,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-01",
+      "source_line": 69,
+      "previous_task_ids": ["TASK-001"],
+      "next_task_ids": ["TASK-003"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": ["EVD-a5bac91c8ee34f8d193d"],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "结构化声明仍需人工进行语义复核和策略判断，尽管可使用模板辅助，但最终确认依赖人。"
+    },
+    {
+      "task_id": "TASK-003",
+      "l4_code": "L4-VP-01",
+      "task_name": "输出价值主张创意方案",
+      "source_type": "BLUEPRINT_DELIVERABLE",
+      "sequence_no": 3,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-01",
+      "source_line": 69,
+      "previous_task_ids": ["TASK-002"],
+      "next_task_ids": ["TASK-004"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": ["EVD-a5bac91c8ee34f8d193d", "EVD-b96150cffca5d1abbcba"],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "文档生成可部分自动化，但终稿需人工审核确认，符合Hybrid定位。"
+    },
+    {
+      "task_id": "TASK-004",
+      "l4_code": "L4-VP-02",
+      "task_name": "进行内部能力与主张可行性评审",
+      "source_type": "BLUEPRINT_ACTIVITY",
+      "sequence_no": 4,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-02",
+      "source_line": 81,
+      "previous_task_ids": ["TASK-003"],
+      "next_task_ids": ["TASK-005"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": ["EVD-17ca307c0514ef393107"],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "评审涉及跨职能协调与专业判断，不可完全自动化；AI可辅助记录和汇总意见。"
+    },
+    {
+      "task_id": "TASK-005",
+      "l4_code": "L4-VP-02",
+      "task_name": "执行价值主张概念测试",
+      "source_type": "BLUEPRINT_ACTIVITY",
+      "sequence_no": 5,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-02",
+      "source_line": 81,
+      "previous_task_ids": ["TASK-004"],
+      "next_task_ids": ["TASK-006"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": ["EVD-17ca307c0514ef393107", "EVD-95424f3792baea1a864f"],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "Skill可行性评估为A档候选，且该子任务输入结构化、规则清晰（认可度>70%），测试执行与分析可封装为独立Skill实现Auto，但人工设置测试参数与监控。"
+    },
+    {
+      "task_id": "TASK-006",
+      "l4_code": "L4-VP-02",
+      "task_name": "整合反馈并优化价值主张草案",
+      "source_type": "BLUEPRINT_ACTIVITY",
+      "sequence_no": 6,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-02",
+      "source_line": 81,
+      "previous_task_ids": ["TASK-005"],
+      "next_task_ids": ["TASK-007"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": ["EVD-17ca307c0514ef393107"],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "优化需要综合评审和测试结果进行决策，涉及判断，不可自动执行。"
+    },
+    {
+      "task_id": "TASK-007",
+      "l4_code": "L4-VP-02",
+      "task_name": "输出结构化价值主张草案及报告",
+      "source_type": "BLUEPRINT_DELIVERABLE",
+      "sequence_no": 7,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-02",
+      "source_line": 81,
+      "previous_task_ids": ["TASK-006"],
+      "next_task_ids": ["TASK-008"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": ["EVD-17ca307c0514ef393107", "EVD-6f8c99564a84b7f24504"],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "报告汇编可由AI辅助生成，但最终质量和一致性需要人工确认。"
+    },
+    {
+      "task_id": "TASK-008",
+      "l4_code": "L4-VP-03",
+      "task_name": "制定价值主张沟通指引",
+      "source_type": "BLUEPRINT_ACTIVITY",
+      "sequence_no": 8,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-03",
+      "source_line": 94,
+      "previous_task_ids": ["TASK-007"],
+      "next_task_ids": ["TASK-009"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": ["EVD-932097cf20392cae5464"],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "沟通指引需要策略判断和受众适配，低封装（C档），适合Agent辅助。"
+    },
+    {
+      "task_id": "TASK-009",
+      "l4_code": "L4-VP-03",
+      "task_name": "完成价值主张文档并提交批准",
+      "source_type": "BLUEPRINT_ACTIVITY",
+      "sequence_no": 9,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-03",
+      "source_line": 94,
+      "previous_task_ids": ["TASK-008"],
+      "next_task_ids": [],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": ["EVD-932097cf20392cae5464", "EVD-3a5c1e239b9d252c9ca3"],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "批准环节为不可逆人工控制门，必须确保管理层亲自确认，不可完全自动化。"
+    }
+  ],
+  "priority_drafts": [
+    {
+      "priority": "P0",
+      "rationale": "唯一P0价值节点VN-SMPS-02贯穿三个L4，其最终批准环节（TASK-009）和前置验证任务（TASK-005）应优先决策。TASK-005为高自动化潜力且可快速见效，TASK-009为关键控制点。",
+      "task_ids": ["TASK-005", "TASK-009"],
+      "evidence_refs": ["EVD-e1d3df0713871c91d75a", "EVD-95424f3792baea1a864f", "EVD-5d34fd7449bd845c4ede"]
+    }
+  ],
+  "decision_drafts": [
+    {
+      "priority": "P0",
+      "task_ids": ["TASK-005"],
+      "title": "试点概念测试Auto Skill",
+      "pilot_scope": "选取一个细分市场的价值主张概念测试，将测试执行、数据收集和达标判定自动化，人工设置测试参数并审核结果。",
+      "human_boundary": "测试方案设计、样本选择、异常结果处理需人工批准；自动判断达标后仍需人工确认才能进入下一步。",
+      "evidence_refs": ["EVD-95424f3792baea1a864f", "EVD-c0c3b32aecbe53de0f6a", "EVD-80bdf86606d7588aa2ca"],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "priority": "P0",
+      "task_ids": ["TASK-009"],
+      "title": "固化批准控制门及签批流程",
+      "pilot_scope": "针对批准的价值主张文档签批流程，实现线上化审批流，确保每步有痕迹；试点一个业务线。",
+      "human_boundary": "审批操作完全由授权管理层执行，不可委派或自动触发；批准结果作为不可绕过关卡。",
+      "evidence_refs": ["EVD-5d34fd7449bd845c4ede", "EVD-3a5c1e239b9d252c9ca3"],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "control_chain": [
+    {
+      "control_id": "GATE-01",
+      "type": "APPROVAL",
+      "description": "管理层批准价值主张文档",
+      "triggering_tasks": ["TASK-009"],
+      "evidence_refs": ["EVD-5d34fd7449bd845c4ede"],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "rejected_task_sources": [],
+  "missing_analysis": []
+}

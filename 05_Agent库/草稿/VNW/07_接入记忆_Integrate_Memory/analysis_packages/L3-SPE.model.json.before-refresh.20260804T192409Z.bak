@@ -1,0 +1,454 @@
+{
+  "schema_version": "vnw.l3-analysis.v1",
+  "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
+  "generation_mode": "UNIFIED_MODEL",
+  "analysis_status": "MODEL_DRAFT",
+  "model_run": {
+    "model_name": "deepseek-v4-pro",
+    "model_version": "deepseek-v4-pro",
+    "prompt_version": "VNW-L3-COM-GOLD-v1.0",
+    "generated_at": "2026-07-31T02:23:57.411592+00:00",
+    "input_snapshot_hash": "2a0074cdef7d508e8875b36eb849a168d1873406df7f0a5686102349c8f4aac2"
+  },
+  "source_scope": {
+    "database": "process_analytics",
+    "knowledge": "ACTIVE supplemental evidence only",
+    "evidence_count": 64
+  },
+  "l4_analysis": [
+    {
+      "l4_code": "L4-SPE-01",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-22721417f2c79545dc70",
+        "EVD-2295f8be2a832833139d",
+        "EVD-9fd462c71fe54af55341",
+        "EVD-5530fe3bb58c35b29e4e",
+        "EVD-2beade5f3fddf8970132",
+        "EVD-853f682685cca69f39e2",
+        "EVD-b4bd86d99b4b62afeac3",
+        "EVD-f745505ffe34391838d0",
+        "EVD-06a728e93dd10826c9b7",
+        "EVD-9322e0478fa1fbdac2c9",
+        "EVD-364a9e61b0d9c99c57a6",
+        "EVD-e755bd008ee87d7f27a9"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "业务目标分解方案输出者",
+      "specific_capabilities": [
+        "结构化数据整理与分析 (D1=2)",
+        "规则部分清晰的分解逻辑 (D2=1)",
+        "输出可自动校验 (D3=2)"
+      ],
+      "ai_reshape": "增强型：AI辅助收集整理业务数据，生成初步目标分解方案；人工负责行业判断与终审。",
+      "quality_anchor": "方案需经业务专家审核确认，与战略目标对齐。",
+      "ai_responsibility": "自动汇总多维度业务数据，按预设模板输出分解方案草案。",
+      "human_responsibility": "审核分解方案的合理性与可行性，确认行业逻辑与市场细分判断。",
+      "handoff_triggers": [
+        "当数据异常或模板匹配置信度低于阈值时转人工",
+        "涉及新市场或定制化细分场景"
+      ],
+      "control_gates": [
+        "方案最终审批需有权限的业务部门负责人签字确认"
+      ],
+      "data_basis": [
+        "EVD-5530fe3bb58c35b29e4e (输入结构评分为2)",
+        "EVD-2beade5f3fddf8970132 (规则清晰度评分为1)",
+        "EVD-853f682685cca69f39e2 (输出可验证评分为2)",
+        "EVD-2295f8be2a832833139d (交付物为业务目标分解方案)"
+      ],
+      "process_context": "属于L3-SPE人员绩效管理流程的第一步（STEP-01），为后续指标系统建立和管理机制提供基础。",
+      "risks_limits": [
+        "行业知识难以完全结构化，细分市场判断依赖人工经验",
+        "API集成度低(D4=1)，部分数据需人工收集",
+        "降级能力有限(D5=1)，故障时可能停滞"
+      ],
+      "current_recommendation": "建议作为增强型任务，优先开发数据整理与模板生成Skill，保留人工终审环节。",
+      "database_tier": "Aug",
+      "recommended_tier": "Aug",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-SPE-02",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-ead46eb572462e820080",
+        "EVD-36ee694b0b1c9a2906b3",
+        "EVD-2c2984a802cf03f27323",
+        "EVD-0adf3760ccb97a803840",
+        "EVD-374577fcc49785b133e9",
+        "EVD-0f1c70f04a2c082f6f23",
+        "EVD-c767c544692ab96ff8bb",
+        "EVD-9553487afa1055c7ed8c",
+        "EVD-ad692889b0a80c3e2c55",
+        "EVD-4aa2bb65fde1f95e8600",
+        "EVD-c2d48329067fee098293",
+        "EVD-0fb8d39e24977505f3ea"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "岗位KPI指标方案输出者",
+      "specific_capabilities": [
+        "输出可部分校验 (D3=1)",
+        "合规性要求存在 (D6=1)"
+      ],
+      "ai_reshape": "人工主导：输入结构化和规则清晰度极低，AI暂以辅助信息检索或格式校验为主。",
+      "quality_anchor": "指标方案需与业务目标和岗位职责严格对齐，由业务负责人审核。",
+      "ai_responsibility": "提供历史KPI数据查询、模板填空和格式检查。",
+      "human_responsibility": "根据岗位要求和战略目标，设计指标及其权重，撰写方案。",
+      "handoff_triggers": [
+        "当AI无法理解非结构化输入或规则时转人工处理"
+      ],
+      "control_gates": [
+        "指标方案需经部门主管和人力资源共同审批"
+      ],
+      "data_basis": [
+        "EVD-0adf3760ccb97a803840 (输入结构评分为0)",
+        "EVD-374577fcc49785b133e9 (规则清晰评分为0)",
+        "EVD-36ee694b0b1c9a2906b3 (交付物为岗位KPI指标方案)"
+      ],
+      "process_context": "属于L3-SPE第二步（STEP-02），承接目标体系设计，为绩效管理机制提供指标基础。",
+      "risks_limits": [
+        "输入高度非结构化，依赖人工判断和沟通",
+        "规则模糊，难以全自动生成",
+        "API集成差(D4=0)，系统间数据同步困难"
+      ],
+      "current_recommendation": "当前阶段建议以人工执行为主，可逐步积累结构化数据和规则，为未来增强准备。",
+      "database_tier": "Aug",
+      "recommended_tier": "Human",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-SPE-03",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-99d8f04545780ee643bd",
+        "EVD-fc608c1305c715fa54a5",
+        "EVD-dcfa61d7250d0c212353",
+        "EVD-1cd3ef498f081afcf8b1",
+        "EVD-25b8e1ccb60adf60d213",
+        "EVD-d12ae37f8108fa396bb3",
+        "EVD-4589b89a256366312085",
+        "EVD-6fb8136a99fca00fe108",
+        "EVD-50d52e975434b8dccdb1",
+        "EVD-910eb1d082d91f352863",
+        "EVD-1e032af3c9d027765aa0",
+        "EVD-0524cfd301a257e06fff"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "绩效方案（按岗位/板块下发）输出者",
+      "specific_capabilities": [
+        "高度结构化输入 (D1=2) 与清晰规则 (D2=2)",
+        "输出可自动验证 (D3=2) 且系统可达 (D4=2)",
+        "降级能力尚可 (D5=1)，合规要求高 (D6=2)"
+      ],
+      "ai_reshape": "可向Hybrid演进：AI完成数据计算、模板生成和预审，人工负责例外处理和最终确认。",
+      "quality_anchor": "方案下发前需通过人力资源总监审核，并与各板块负责人确认。",
+      "ai_responsibility": "自动拉取岗位数据，按规则计算KPI并生成报告草案。",
+      "human_responsibility": "处理AI标记的异常案例，审核并调整权重，进行部门沟通确认。",
+      "handoff_triggers": [
+        "数据源缺失或计算结果超出预设阈值时标记人工",
+        "新岗位或新板块模板不适用时转人工定义"
+      ],
+      "control_gates": [
+        "涉及薪酬或降级等敏感条目需双人复核",
+        "最终报告须经授权管理层电子签批"
+      ],
+      "data_basis": [
+        "EVD-1cd3ef498f081afcf8b1 (输入结构评分为2)",
+        "EVD-25b8e1ccb60adf60d213 (规则清晰评分为2)",
+        "EVD-d12ae37f8108fa396bb3 (输出可验证评分为2)",
+        "EVD-4589b89a256366312085 (API可达评分为2)",
+        "EVD-50d52e975434b8dccdb1 (合规评分为2)"
+      ],
+      "process_context": "作为L3-SPE最后一步（STEP-03），综合前两步输出生成可下发的绩效方案，属于流程核心交付环节。",
+      "risks_limits": [
+        "报告模板需与业务方持续对齐，避免自动生成内容误读",
+        "降级方案(D5=1)可能中断下游派发流程",
+        "涉及资金核算部分需严守合规底线"
+      ],
+      "current_recommendation": "鉴于D1-D6高分，建议优先推进Hybrid自动化，逐步放开自动派发范围，但保留人工复核关卡。",
+      "database_tier": "Aug",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "T-SPE-01",
+      "l4_code": "L4-SPE-01",
+      "task_name": "目标体系设计",
+      "source_type": "blueprint_step",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-01",
+      "source_line": 53,
+      "previous_task_ids": [],
+      "next_task_ids": [
+        "T-SPE-02"
+      ],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-22721417f2c79545dc70"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "基于蓝图STEP-01直接映射；输入结构化程度高但行业判断依赖人工，沿用数据库Aug分级。"
+    },
+    {
+      "task_id": "T-SPE-02",
+      "l4_code": "L4-SPE-02",
+      "task_name": "指标系统建立",
+      "source_type": "blueprint_step",
+      "sequence_no": 2,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-02",
+      "source_line": 58,
+      "previous_task_ids": [
+        "T-SPE-01"
+      ],
+      "next_task_ids": [
+        "T-SPE-03"
+      ],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-ead46eb572462e820080"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "蓝图STEP-02直接映射；输入无结构、规则模糊，当前阶段以人工主导为宜。"
+    },
+    {
+      "task_id": "T-SPE-03",
+      "l4_code": "L4-SPE-03",
+      "task_name": "绩效管理机制建立",
+      "source_type": "blueprint_step",
+      "sequence_no": 3,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-03",
+      "source_line": 63,
+      "previous_task_ids": [
+        "T-SPE-02"
+      ],
+      "next_task_ids": [],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-99d8f04545780ee643bd"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "蓝图STEP-03直接映射；所有D维度高分，适合提高自动化层级，但保留人工复核。"
+    },
+    {
+      "task_id": "T-SPE-04",
+      "l4_code": "L4-SPE-01",
+      "task_name": "新签劳动合同临时存放",
+      "source_type": "rule",
+      "sequence_no": 4,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "",
+      "source_line": null,
+      "previous_task_ids": [],
+      "next_task_ids": [
+        "T-SPE-05"
+      ],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-7b70677c330b821dac3a"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "规则HR-R003派生；可系统登记临时存放位置，但实物接收需人工，建议增强记录自动化。"
+    },
+    {
+      "task_id": "T-SPE-05",
+      "l4_code": "L4-SPE-01",
+      "task_name": "定期梳理临时存放合同",
+      "source_type": "rule",
+      "sequence_no": 5,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "",
+      "source_line": null,
+      "previous_task_ids": [
+        "T-SPE-04"
+      ],
+      "next_task_ids": [
+        "T-SPE-06"
+      ],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-7b70677c330b821dac3a"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "规则HR-R003派生；系统可提示到期清单，人工核对实物后更新状态。"
+    },
+    {
+      "task_id": "T-SPE-06",
+      "l4_code": "L4-SPE-01",
+      "task_name": "扫描生成电子扫描件并归档",
+      "source_type": "rule",
+      "sequence_no": 6,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "",
+      "source_line": null,
+      "previous_task_ids": [
+        "T-SPE-05"
+      ],
+      "next_task_ids": [
+        "T-SPE-07"
+      ],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-7b70677c330b821dac3a"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "规则HR-R003派生；批量扫描及电子归档可全自动化，需硬件接口支持。"
+    },
+    {
+      "task_id": "T-SPE-07",
+      "l4_code": "L4-SPE-01",
+      "task_name": "纸质版合同原件单独指定地点存放",
+      "source_type": "rule",
+      "sequence_no": 7,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "",
+      "source_line": null,
+      "previous_task_ids": [
+        "T-SPE-06"
+      ],
+      "next_task_ids": [],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-7b70677c330b821dac3a"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "规则HR-R003派生；物理存放必须由人执行，系统可记录位置但无法替代人工。"
+    }
+  ],
+  "priority_drafts": [
+    {
+      "l4_code": "L4-SPE-01",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "EVD-5530fe3bb58c35b29e4e (输入结构评分为2)",
+        "EVD-2beade5f3fddf8970132 (规则清晰度评分为1)",
+        "EVD-853f682685cca69f39e2 (输出可验证评分为2)",
+        "EVD-2295f8be2a832833139d (交付物为业务目标分解方案)"
+      ],
+      "process_context": "属于L3-SPE人员绩效管理流程的第一步（STEP-01），为后续指标系统建立和管理机制提供基础。",
+      "risks_limits": [
+        "行业知识难以完全结构化，细分市场判断依赖人工经验",
+        "API集成度低(D4=1)，部分数据需人工收集",
+        "降级能力有限(D5=1)，故障时可能停滞"
+      ],
+      "current_recommendation": "建议作为增强型任务，优先开发数据整理与模板生成Skill，保留人工终审环节。",
+      "evidence_refs": [
+        "EVD-22721417f2c79545dc70",
+        "EVD-2295f8be2a832833139d",
+        "EVD-9fd462c71fe54af55341",
+        "EVD-5530fe3bb58c35b29e4e",
+        "EVD-2beade5f3fddf8970132",
+        "EVD-853f682685cca69f39e2",
+        "EVD-b4bd86d99b4b62afeac3",
+        "EVD-f745505ffe34391838d0",
+        "EVD-06a728e93dd10826c9b7",
+        "EVD-9322e0478fa1fbdac2c9",
+        "EVD-364a9e61b0d9c99c57a6",
+        "EVD-e755bd008ee87d7f27a9"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-SPE-02",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "EVD-0adf3760ccb97a803840 (输入结构评分为0)",
+        "EVD-374577fcc49785b133e9 (规则清晰评分为0)",
+        "EVD-36ee694b0b1c9a2906b3 (交付物为岗位KPI指标方案)"
+      ],
+      "process_context": "属于L3-SPE第二步（STEP-02），承接目标体系设计，为绩效管理机制提供指标基础。",
+      "risks_limits": [
+        "输入高度非结构化，依赖人工判断和沟通",
+        "规则模糊，难以全自动生成",
+        "API集成差(D4=0)，系统间数据同步困难"
+      ],
+      "current_recommendation": "当前阶段建议以人工执行为主，可逐步积累结构化数据和规则，为未来增强准备。",
+      "evidence_refs": [
+        "EVD-ead46eb572462e820080",
+        "EVD-36ee694b0b1c9a2906b3",
+        "EVD-2c2984a802cf03f27323",
+        "EVD-0adf3760ccb97a803840",
+        "EVD-374577fcc49785b133e9",
+        "EVD-0f1c70f04a2c082f6f23",
+        "EVD-c767c544692ab96ff8bb",
+        "EVD-9553487afa1055c7ed8c",
+        "EVD-ad692889b0a80c3e2c55",
+        "EVD-4aa2bb65fde1f95e8600",
+        "EVD-c2d48329067fee098293",
+        "EVD-0fb8d39e24977505f3ea"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-SPE-03",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "EVD-1cd3ef498f081afcf8b1 (输入结构评分为2)",
+        "EVD-25b8e1ccb60adf60d213 (规则清晰评分为2)",
+        "EVD-d12ae37f8108fa396bb3 (输出可验证评分为2)",
+        "EVD-4589b89a256366312085 (API可达评分为2)",
+        "EVD-50d52e975434b8dccdb1 (合规评分为2)"
+      ],
+      "process_context": "作为L3-SPE最后一步（STEP-03），综合前两步输出生成可下发的绩效方案，属于流程核心交付环节。",
+      "risks_limits": [
+        "报告模板需与业务方持续对齐，避免自动生成内容误读",
+        "降级方案(D5=1)可能中断下游派发流程",
+        "涉及资金核算部分需严守合规底线"
+      ],
+      "current_recommendation": "鉴于D1-D6高分，建议优先推进Hybrid自动化，逐步放开自动派发范围，但保留人工复核关卡。",
+      "evidence_refs": [
+        "EVD-99d8f04545780ee643bd",
+        "EVD-fc608c1305c715fa54a5",
+        "EVD-dcfa61d7250d0c212353",
+        "EVD-1cd3ef498f081afcf8b1",
+        "EVD-25b8e1ccb60adf60d213",
+        "EVD-d12ae37f8108fa396bb3",
+        "EVD-4589b89a256366312085",
+        "EVD-6fb8136a99fca00fe108",
+        "EVD-50d52e975434b8dccdb1",
+        "EVD-910eb1d082d91f352863",
+        "EVD-1e032af3c9d027765aa0",
+        "EVD-0524cfd301a257e06fff"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "decision_drafts": [
+    {
+      "priority": "P1",
+      "task_ids": [
+        "T-SPE-03"
+      ],
+      "title": "启动绩效管理机制自动化试点",
+      "pilot_scope": "选择1-2个标准化程度高的岗位板块，试行全自动报告生成及下发，人工仅处理异常case。",
+      "human_boundary": "资金核算条目、岗位降级指标及最终电子签批必须有人工复核。",
+      "evidence_refs": [
+        "EVD-99d8f04545780ee643bd",
+        "EVD-1cd3ef498f081afcf8b1",
+        "EVD-25b8e1ccb60adf60d213",
+        "EVD-d12ae37f8108fa396bb3",
+        "EVD-4589b89a256366312085"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "control_chain": [],
+  "rejected_task_sources": [],
+  "missing_analysis": [
+    "skill_feasibility · 所有L4的skill_feasibility证据状态为PROVISIONAL_NOT_ELIGIBLE/UNVERIFIED，无法用于分析，故本模型中未体现相关封装能力影响。",
+    "handoff_triggers · 基于D1-D6评分推导，缺少实际系统触发阈值记录。",
+    "控制链缺少L4定位，已拒绝2条"
+  ]
+}

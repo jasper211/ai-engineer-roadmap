@@ -1,0 +1,311 @@
+{
+  "schema_version": "vnw.l3-analysis.v1",
+  "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
+  "generation_mode": "UNIFIED_MODEL",
+  "analysis_status": "MODEL_DRAFT",
+  "model_run": null,
+  "source_scope": {
+    "database": "process_analytics",
+    "knowledge": "ACTIVE supplemental evidence only",
+    "evidence_count": 41
+  },
+  "l4_analysis": [
+    {
+      "l4_code": "L4-SPO-01",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-82388ed79c86cd740681",
+        "EVD-8e0e3ede4ac1ef0eba00",
+        "EVD-4a8d1eb83f9da7e56993",
+        "EVD-212b04900895adac03f5",
+        "EVD-1930193d70ee1a7d3e6b",
+        "EVD-1321c304958d11a9f010",
+        "EVD-d378ccf572966895f6d1",
+        "EVD-0e02de9b8f7a760dbdf6",
+        "EVD-6f4739b93f1468e21e4d",
+        "EVD-449865163d844ef2ea75",
+        "EVD-4dea749e86347cbe8797",
+        "EVD-6939c3e357f4c8d77824"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "监控报告为后续服务过程管理和问题管理提供输入，驱动SLA监控与异常识别。",
+      "specific_capabilities": [
+        "系统监控数据采集",
+        "异常检测规则配置",
+        "自动化报告生成",
+        "人工规则配置（应对低规则清晰度）"
+      ],
+      "ai_reshape": "Skill全自动化执行：定时采集监控数据，基于预设规则生成报告并触发告警，人工仅处理例外。",
+      "quality_anchor": "SLA响应达成率≥目标值、监控覆盖率100%、误报率<5%。",
+      "ai_responsibility": "数据采集、报告生成、基于已知规则的异常检测。",
+      "human_responsibility": "维护监控规则、处理复杂异常、升级审批。",
+      "handoff_triggers": [
+        "异常超过阈值",
+        "系统无法自动分类的告警",
+        "规则缺失导致无法判断"
+      ],
+      "control_gates": [
+        "异常升级审批",
+        "报告发布前人工抽检"
+      ],
+      "data_basis": [
+        "业务系统日志",
+        "SLA定义表",
+        "历史故障模式"
+      ],
+      "process_context": "三步流程的起始步骤，为后续服务过程管理和问题变更管理提供监控数据基础。",
+      "risks_limits": [
+        "监控规则清晰度低(D2=1)，可能影响自动化准确率，需持续维护",
+        "人工触点证据缺失，需明确定义例外处理流程"
+      ],
+      "current_recommendation": "优先进入Skill原型候选池，同步完善监控规则清晰度，明确人工复核边界。",
+      "database_tier": "Auto",
+      "recommended_tier": "Auto",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-SPO-02",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-262fe15735670e9b7f2b",
+        "EVD-ef3b1f4034b13eafc2f3",
+        "EVD-3d402267b04cc09e810a",
+        "EVD-2bcf74f065aebdded386",
+        "EVD-ff988e0c0a26efc508ac",
+        "EVD-9c2df9ab869cad77903a",
+        "EVD-3f7b1ec580c9be1e3f5d",
+        "EVD-3f84668a79b89b1d197c",
+        "EVD-252b30850a56fec13764",
+        "EVD-298f60b636ddcbad711f",
+        "EVD-4dea749e86347cbe8797",
+        "EVD-2b56082e567612147147"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "《服务过程管理记录》是服务执行的核心文档，记录过程细节和异常，为服务质量分析与问题追踪提供依据。",
+      "specific_capabilities": [
+        "服务过程数据跟踪",
+        "记录表格的填写与维护",
+        "语义判断与异常识别"
+      ],
+      "ai_reshape": "Agent辅助模式：系统自动采集服务过程数据并生成记录草稿，人工进行语义复核和确认，修正后归档。",
+      "quality_anchor": "服务过程记录完整性≥98%、SLA响应达成率达标。",
+      "ai_responsibility": "过程数据自动采集、记录草稿生成、系统性校验。",
+      "human_responsibility": "语义复核、异常处理决策、最终确认记录。",
+      "handoff_triggers": [
+        "系统生成的记录包含不确定字段",
+        "检测到潜在违规",
+        "规则缺失"
+      ],
+      "control_gates": [
+        "人工复核确认门",
+        "异常服务记录升级门"
+      ],
+      "data_basis": [
+        "服务过程日志",
+        "SLA规则库",
+        "客户协议"
+      ],
+      "process_context": "第二步，承接监控数据，对服务执行过程进行跟踪、记录和初步处理。",
+      "risks_limits": [
+        "报告模板不成熟，需补充标准化模板",
+        "规则清晰度低(D2=1)，影响自动填写准确性",
+        "系统集成能力弱(D4=1)，部分数据需手动获取"
+      ],
+      "current_recommendation": "优先补充报告模板和规则固化，实现Agent辅助的Aug模式，人工复核后验证Skill可行性。",
+      "database_tier": "Aug",
+      "recommended_tier": "Aug",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-SPO-03",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-1e94c4d1a12f9d4ff1e9",
+        "EVD-be81ee0c089a474af28a",
+        "EVD-834b006a6fed474ba315",
+        "EVD-06c4ba30c2949f0817ec",
+        "EVD-598ef30427dff453c332",
+        "EVD-2793e7bf415db4dddecb",
+        "EVD-59a1611077c9b763c17d",
+        "EVD-914b01d4d7960123dfd1",
+        "EVD-86f788d38f511106ab73",
+        "EVD-da0212de782261fa5212",
+        "EVD-4dea749e86347cbe8797",
+        "EVD-65e3dd511da140d3e08f"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "系统问题反馈表是记录和驱动系统变更的关键凭证，用于问题的分类、分配和闭环跟踪。",
+      "specific_capabilities": [
+        "问题信息结构化录入",
+        "问题分类与严重性评估",
+        "变更决策与协调"
+      ],
+      "ai_reshape": "拆分为子Skill：①反馈表自动填写与流程触发（确定性Skill）；②问题评估与变更决策（人工主导，可Agent辅助信息聚合）。",
+      "quality_anchor": "问题反馈及时率>90%、变更闭环率100%。",
+      "ai_responsibility": "反馈表自动填充、按模板生成、流程触发。",
+      "human_responsibility": "评估问题影响、决策变更方案、审批执行。",
+      "handoff_triggers": [
+        "需要决策的问题",
+        "无法自动分类的问题",
+        "变更审批节点"
+      ],
+      "control_gates": [
+        "变更方案审批",
+        "问题优先级评估门"
+      ],
+      "data_basis": [
+        "监控告警记录",
+        "服务过程管理记录",
+        "历史变更记录"
+      ],
+      "process_context": "最后一步，处理监控或过程管理中发现的系统问题，驱动变更，并确保闭环。",
+      "risks_limits": [
+        "复合动作需先拆分，否则自动化风险高",
+        "规则清晰度低(D2=1)，分类准确性受影响",
+        "涉及变更决策，必须有人工控制门"
+      ],
+      "current_recommendation": "按建议拆分为子Skill，优先开发反馈表自动填写部分，决策部分保留人工控制，待规则完善后逐步增强。",
+      "database_tier": "Auto",
+      "recommended_tier": "Aug",
+      "quadrant": "unclassified"
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "TASK-SPO-01",
+      "l4_code": "L4-SPO-01",
+      "task_name": "执行例行服务监控并生成报告",
+      "source_type": "BLUEPRINT_STEP",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-01",
+      "source_line": 44,
+      "previous_task_ids": [],
+      "next_task_ids": ["TASK-SPO-02"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-212b04900895adac03f5",
+        "EVD-4a8d1eb83f9da7e56993",
+        "EVD-82388ed79c86cd740681",
+        "EVD-8e0e3ede4ac1ef0eba00"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "单一信息处理动作，高封装Skill候选，数据库Tier为Auto；建议全自动执行，人工仅处理例外。"
+    },
+    {
+      "task_id": "TASK-SPO-02",
+      "l4_code": "L4-SPO-02",
+      "task_name": "跟踪服务过程并维护管理记录",
+      "source_type": "BLUEPRINT_STEP",
+      "sequence_no": 2,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-02",
+      "source_line": 49,
+      "previous_task_ids": ["TASK-SPO-01"],
+      "next_task_ids": ["TASK-SPO-03a", "TASK-SPO-03b"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-2bcf74f065aebdded386",
+        "EVD-3d402267b04cc09e810a",
+        "EVD-262fe15735670e9b7f2b",
+        "EVD-ef3b1f4034b13eafc2f3"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "包含语义复核判定，需人工确认；系统辅助生成记录草稿，D2/D4较低，增强阶段需补充模板和接口。"
+    },
+    {
+      "task_id": "TASK-SPO-03a",
+      "l4_code": "L4-SPO-03",
+      "task_name": "自动填写系统问题反馈表并启动流程",
+      "source_type": "SKILL_FEASIBILITY_SPLIT",
+      "sequence_no": 3,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-03",
+      "source_line": 54,
+      "previous_task_ids": ["TASK-SPO-02"],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-06c4ba30c2949f0817ec",
+        "EVD-834b006a6fed474ba315",
+        "EVD-1e94c4d1a12f9d4ff1e9",
+        "EVD-be81ee0c089a474af28a"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "拆分后的信息处理子任务，属于高封装操作，建议自动执行。"
+    },
+    {
+      "task_id": "TASK-SPO-03b",
+      "l4_code": "L4-SPO-03",
+      "task_name": "评估问题严重性并决策变更方案",
+      "source_type": "SKILL_FEASIBILITY_SPLIT",
+      "sequence_no": 4,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-03",
+      "source_line": 54,
+      "previous_task_ids": ["TASK-SPO-02"],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-06c4ba30c2949f0817ec",
+        "EVD-834b006a6fed474ba315",
+        "EVD-1e94c4d1a12f9d4ff1e9",
+        "EVD-be81ee0c089a474af28a"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "涉及决策和评估，需要人工判断，未来规则完善后可逐步增强为Aug。"
+    }
+  ],
+  "priority_drafts": [
+    {
+      "priority": "P1",
+      "task_ids": ["TASK-SPO-01"],
+      "title": "优先落地例行服务监控Skill",
+      "pilot_scope": "在权益服务族-服务执行与跟踪岗范围内，选择一个服务团队进行试点，实现监控报告自动生成，人工仅审核例外。",
+      "human_boundary": "监控规则维护、复杂异常处理、审批升级由岗位经理负责。",
+      "evidence_refs": [
+        "EVD-4a8d1eb83f9da7e56993",
+        "EVD-212b04900895adac03f5",
+        "EVD-1930193d70ee1a7d3e6b"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "decision_drafts": [
+    {
+      "task_ids": ["TASK-SPO-01"],
+      "title": "批准例行监控为Skill原型一号候选，启动开发",
+      "pilot_scope": "服务执行与跟踪岗试点，一个月内完成Skill原型开发并上线试运行。",
+      "human_boundary": "客服主管负责规则维护，每周抽检报告准确性，确认无重大遗漏。",
+      "evidence_refs": [
+        "EVD-4a8d1eb83f9da7e56993",
+        "EVD-212b04900895adac03f5"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "control_chain": [],
+  "rejected_task_sources": [],
+  "missing_analysis": [
+    {
+      "field": "human_touchpoint",
+      "l4_codes": ["L4-SPO-01", "L4-SPO-02", "L4-SPO-03"],
+      "impact": "无法明确人工交互点和控制门定义，需后续补充。",
+      "evidence_refs": [
+        "EVD-6939c3e357f4c8d77824",
+        "EVD-2b56082e567612147147",
+        "EVD-65e3dd511da140d3e08f"
+      ]
+    },
+    {
+      "field": "value_nodes",
+      "l3_code": "L3-SPO",
+      "impact": "缺少价值节点导致无法进行基于价值的优先级量化，当前优先级基于可行性证据推导。",
+      "evidence_refs": []
+    }
+  ]
+}

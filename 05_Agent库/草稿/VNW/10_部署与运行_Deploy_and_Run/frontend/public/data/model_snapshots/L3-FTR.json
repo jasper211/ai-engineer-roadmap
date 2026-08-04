@@ -7,188 +7,215 @@
       {
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-6e466ba3cbdc4681bf2f",
-          "EVD-9bad8034ee1b8ddca987"
+          "EVD-d236dd74be66e88a0f27",
+          "EVD-2009b0398573b967d6ed"
         ],
-        "human_boundary": "所有AI生成的合规培训内容必须经过合规岗人工终审并签字确认，方可使用；发布至一线理财师前需总部培训主管审批。",
-        "pilot_scope": "仅限于总部合规培训组，针对标准合规课程（如反洗钱、销售适当性）生成培训初稿，由合规岗复核修改后入资料库。",
+        "human_boundary": "需求评估的最终判定、课程合规审批必须由主管人工确认；AI只提供推荐与数据支持",
+        "pilot_scope": "试点范围限定在理财师辅导与发展岗，选择1-2个区域团队",
         "priority": "P1",
         "task_ids": [
-          "TASK-FTR-03"
+          "T-FTR-01-01",
+          "T-FTR-01-02"
         ],
-        "title": "试点合规培训资料AI生成"
+        "title": "启动培训需求AI辅助分析试点"
       }
     ],
     "generation_mode": "UNIFIED_MODEL",
     "l4_analysis": [
       {
-        "ai_reshape": "不直接封装确定性Skill，仅通过Agent辅助方案推荐和需求总结，最终决策留给人",
-        "ai_responsibility": "无独立决策责任，仅提供建议",
+        "ai_reshape": "Agent辅助：AI提供需求分析数据、课程推荐与模板生成，人工决策最终课程编排",
+        "ai_responsibility": "汇总理财师历史绩效与培训记录，推荐课程组合，生成初步计划草案",
         "analysis_status": "MODEL_DRAFT",
         "confidence": "MODEL_DRAFT",
         "control_gates": [
-          "培训计划批准必须由业务负责人签字"
+          "主管审批《培训安排计划》"
         ],
-        "current_recommendation": "引入AI辅助需求分析和课程推荐（Agent模式），但所有输出必须人工确认；不要跳过人工决策环节",
+        "current_recommendation": "保持Hybrid模式，优先投资需求分析AI辅助工具，课程安排保留人工决策；积累规则后可提升自动化",
         "data_basis": [
-          "历史培训记录、业务目标、理财师能力档案"
+          "理财师历史数据",
+          "培训需求调查",
+          "课程资源库"
         ],
         "database_tier": "Hybrid",
-        "deliverable_role": "培训岗（生成《培训安排计划》）",
+        "deliverable_role": "制定培训方案与课程计划，产出配套工具和表格",
         "evidence_refs": [
-          "EVD-2009b0398573b967d6ed",
-          "EVD-8a482b33c1d346db416e",
           "EVD-d236dd74be66e88a0f27",
-          "EVD-63f466a099e47e8bcd40"
+          "EVD-8a482b33c1d346db416e",
+          "EVD-63f466a099e47e8bcd40",
+          "EVD-e0d3adf2022e3708cc90",
+          "EVD-2d2a1359308cd9cd6817",
+          "EVD-b44daacd6746a7a4b88e",
+          "EVD-2009b0398573b967d6ed"
         ],
         "handoff_triggers": [
-          "AI生成的课程推荐与业务目标明显不符",
-          "需求访谈数据冲突且无法自动消解"
+          "AI预测模型置信度低于阈值",
+          "涉及新合规要求",
+          "课程资源冲突无法自动解决"
         ],
-        "human_responsibility": "全程主导：判断培训需求、选择课程、编制计划并最终审批",
+        "human_responsibility": "评估培训需求真实性与紧迫性，审批课程安排，保证合规性",
         "l4_code": "L4-FTR-01",
-        "process_context": "流程起始步骤，为后续培训和演练奠定内容基础",
+        "process_context": "作为培训流程起点，为后续产品合规培训与实战演练提供计划基础，影响培训效果与合规达标",
         "quadrant": "unclassified",
-        "quality_anchor": "《培训安排计划》需经业务负责人审批确认",
+        "quality_anchor": "交付《培训安排计划》并通过主管审批",
         "recommended_tier": "Hybrid",
         "risks_limits": [
-          "需求误判将导致整个培训无效",
-          "复合动作，目前封装度低，强行自动化风险高"
+          "需求误判导致培训无效",
+          "课程安排与业务脱节",
+          "AI推荐忽略地域差异"
         ],
         "specific_capabilities": [
-          "培训需求访谈与数据分析",
-          "课程体系匹配与方案制定",
-          "AI可辅助生成课程推荐草案"
+          "判断需求优先级（需人工）",
+          "匹配课程资源（可部分规则化）",
+          "制作培训材料（可模板化）"
         ]
       },
       {
-        "ai_reshape": "先生成合规培训资料初稿，配合规则固化和报告模板；授课环节保持人工",
-        "ai_responsibility": "生成材料初稿，不承担合规终审责任",
+        "ai_reshape": "Aug模式：AI承担内容分发、考核自动化与合规报告生成，人工负责讲解、合规判定与互动",
+        "ai_responsibility": "推送标准化培训材料，自动化测试，记录出席数据，生成初步合规达标报告",
         "analysis_status": "MODEL_DRAFT",
         "confidence": "MODEL_DRAFT",
         "control_gates": [
-          "合规内容必须经合规部终审签字方可使用",
-          "关键合规课程未完成者不得转介签约（补课强制门）"
+          "合规培训完成后必须人工确认合规状态"
         ],
-        "current_recommendation": "优先补充报告模板、固化合规规则、集成系统接口，然后试点AI生成合规培训初稿；授课和最终审核保持人工",
+        "current_recommendation": "建议Aug模式，先固化培训规则和报告模板，AI处理分发与考核，人工复核关键合规点；未来向Auto过渡需系统集成",
         "data_basis": [
-          "合规要求文档、产品知识库、监管政策"
+          "产品资料",
+          "合规手册",
+          "培训系统"
         ],
         "database_tier": "Aug",
-        "deliverable_role": "合规培训岗（生成《培训出席记录》）",
+        "deliverable_role": "执行产品与合规培训，记录出席与考核结果",
         "evidence_refs": [
-          "EVD-a0feefb5a1df0dfceee1",
+          "EVD-6e466ba3cbdc4681bf2f",
           "EVD-9bad8034ee1b8ddca987",
-          "EVD-6e466ba3cbdc4681bf2f"
+          "EVD-cdc4c606a1eb6e328ea6",
+          "EVD-5cb2f9e1aaa0c08f615d",
+          "EVD-eed9fb9229c4767630e9",
+          "EVD-78db83322fb74f98afd2",
+          "EVD-a0feefb5a1df0dfceee1"
         ],
         "handoff_triggers": [
-          "AI生成内容出现合规模糊或错误",
-          "现场授课出现设备/内容异常"
+          "学员提问超出AI知识库",
+          "合规判定模糊需人工确认",
+          "考核异常情况"
         ],
-        "human_responsibility": "复核所有AI生成的合规内容，执行现场授课，记录出席情况",
+        "human_responsibility": "讲解复杂合规案例，回答现场问题，确认合规理解，签署合规证明",
         "l4_code": "L4-FTR-02",
-        "process_context": "核心合规环节，直接关联销售适当性和监管风险",
+        "process_context": "合规出单前提，培训结果直接决定理财师展业资格，是风险控制关键环节",
         "quadrant": "unclassified",
-        "quality_anchor": "合规内容准确率100%，出席记录完整度100%",
+        "quality_anchor": "培训出席率达标，合规考核通过",
         "recommended_tier": "Aug",
         "risks_limits": [
-          "合规风险高，内容错误可能导致监管处罚",
-          "仍需人工授课，部分自动化后仍需人力投入"
+          "AI可能忽略最新监管变化",
+          "合规判定依赖人工解释",
+          "自动化考核可能规避实际理解"
         ],
         "specific_capabilities": [
-          "合规材料结构化生成（B级：需模板与规则）",
-          "现场授课执行",
-          "AI可生成初稿但需合规复核"
+          "合规培训执行（强监管，需人主导）",
+          "培训内容分发（可自动化）",
+          "考核测试与报告（可固化规则）"
         ]
       },
       {
-        "ai_reshape": "Agent辅助生成配对建议和演练日程，但不替代物理执行和最终配对决策",
-        "ai_responsibility": "提供配对建议和日程优化",
+        "ai_reshape": "Hybrid：AI辅助配对匹配、日程协调与记录归档，人主导现场演练与效果评判",
+        "ai_responsibility": "基于能力模型推荐陪访配对，优化日程，生成演练记录模板",
         "analysis_status": "MODEL_DRAFT",
         "confidence": "MODEL_DRAFT",
-        "control_gates": [
-          "无资金或合规硬门，但陪访质量直接影响转化，需由资深人员把关"
-        ],
-        "current_recommendation": "先构建理财师能力标签体系，再尝试AI推荐配对（Agent辅助）；演练部分保持纯人工",
+        "control_gates": [],
+        "current_recommendation": "Hybrid模式，优先Agent辅助配对与日程，人工主导现场；不建议Skill封装，因物理执行与主观判断多",
         "data_basis": [
-          "理财师能力画像、客户特征数据"
+          "理财师能力档案",
+          "客户信息",
+          "日程系统"
         ],
         "database_tier": "Hybrid",
-        "deliverable_role": "教练/陪访岗（生成《实战演练记录》）",
+        "deliverable_role": "组织实战演练，安排陪访配对，记录演练情况",
         "evidence_refs": [
-          "EVD-c3e0229f27e5156cf241",
+          "EVD-33f7d70bd5a6b4c455df",
           "EVD-bc0c0cf0bc2f415364c1",
-          "EVD-33f7d70bd5a6b4c455df"
+          "EVD-19ebf94facc1763082e1",
+          "EVD-42be75871edcca9fb556",
+          "EVD-6f74297f228410a34904",
+          "EVD-579bb7c94d29b5e117f3",
+          "EVD-c3e0229f27e5156cf241"
         ],
         "handoff_triggers": [
-          "AI推荐配对明显不合理或与客户特征冲突",
-          "演练现场突发状况"
+          "配对冲突无法解决",
+          "演练评估需要主观判断",
+          "异常表现需人工介入"
         ],
-        "human_responsibility": "组织演练、确认配对名单、陪同拜访",
+        "human_responsibility": "实施现场陪访，评估实战表现，提供个性化反馈，确定后续辅导方向",
         "l4_code": "L4-FTR-03",
-        "process_context": "能力转化与实战阶段，是培训效果的落地环节",
+        "process_context": "实战巩固培训效果，陪访直接影响理财师成长与客户体验",
         "quadrant": "unclassified",
-        "quality_anchor": "演练完成度和配对匹配度（需人工事后评估）",
+        "quality_anchor": "每位理财师完成规定实战演练次数，陪访记录完整",
         "recommended_tier": "Hybrid",
         "risks_limits": [
-          "物理执行无法自动化",
-          "配对依赖隐性知识和关系判断，封装天花板低"
+          "AI配对可能忽视人际匹配",
+          "物理执行必须人参与",
+          "记录不完整影响后续辅导"
         ],
         "specific_capabilities": [
-          "物理实战演练组织",
-          "陪访配对决策（语义复核判定）",
-          "AI可推荐配对方案"
+          "现场观察与辅导（必须人工）",
+          "陪访配对（可AI推荐）",
+          "演练记录（可模板化）"
         ]
       },
       {
-        "ai_reshape": "可实现自动化分发（带审批流），内容更新由AI检测并建议，但人工决策是否更新",
-        "ai_responsibility": "识别过期资料、执行分发任务",
+        "ai_reshape": "Hybrid：AI负责版本管理、去重与自动推送，人工审核内容质量与合规性",
+        "ai_responsibility": "自动同步内容、检测过期、分发通知，推荐更新",
         "analysis_status": "MODEL_DRAFT",
         "confidence": "MODEL_DRAFT",
         "control_gates": [
-          "所有资料分发前需经内容审核岗确认",
-          "对外发布的培训材料必须经多级审批"
+          "对外分发前内容审核"
         ],
-        "current_recommendation": "先实现资料自动化分发（保留人工审批节点）；内容更新功能先做AI建议，后评估是否逐步放权",
+        "current_recommendation": "Hybrid模式，AI管理版本与分发，人负责内容审核与更新决策；考虑建立审核工作流",
         "data_basis": [
-          "资料库元数据、用户反馈、业务规则"
+          "内容管理系统",
+          "合规政策",
+          "产品更新日志"
         ],
         "database_tier": "Hybrid",
-        "deliverable_role": "知识管理岗（生成《培训课程体系》+配套工具）",
+        "deliverable_role": "维护培训资料库，确保内容更新与分发",
         "evidence_refs": [
-          "EVD-35f5d280aa6fb21c9ab7",
           "EVD-224fe44eddb9e6c68044",
-          "EVD-7e89df79aace69357e3d"
+          "EVD-c1b223d3f043f06a9a7d",
+          "EVD-7d2d9a106b7660dac0e0",
+          "EVD-90b891ea716066d75522",
+          "EVD-bb8096a010f5462ac233",
+          "EVD-35f5d280aa6fb21c9ab7"
         ],
         "handoff_triggers": [
-          "AI建议更新但无明确依据",
-          "涉及关键合规或敏感内容的更新/分发"
+          "内容合规存疑",
+          "重大更新需管理层决策",
+          "用户反馈异常"
         ],
-        "human_responsibility": "判断更新必要性、审批分发、最终内容校准",
+        "human_responsibility": "审核内容合规性与准确性，确定更新优先级，处理例外",
         "l4_code": "L4-FTR-04",
-        "process_context": "持续运营支持，确保一线理财师始终使用最新材料",
+        "missing_note": "human_touchpoint is MISSING in database, default assigned to manual review",
+        "process_context": "支撑所有培训环节的内容基础，资料库质量直接影响培训效果和合规水平",
         "quadrant": "unclassified",
-        "quality_anchor": "资料时效性和准确性（以使用反馈和业务变化为准）",
+        "quality_anchor": "资料库内容准确、版本最新，分发及时",
         "recommended_tier": "Hybrid",
         "risks_limits": [
-          "错误或过时资料分发可能造成业务风险和合规问题",
-          "内容更新需权威判断，目前封装度低"
+          "内容更新滞后导致使用过时信息",
+          "自动化分发可能覆盖权限问题",
+          "AI误判内容优先级"
         ],
         "specific_capabilities": [
-          "内容过期检测与更新建议（需人工判断）",
-          "资料自动化分发",
-          "AI可自动分发但需审批"
+          "内容审核与合规检查（人工）",
+          "版本管理与自动分发（可AI）",
+          "更新策略决策（需权威）"
         ]
       }
     ],
     "missing_analysis": [
-      "L4-FTR-04 · agent_human_touchpoint",
-      "L3-FTR · sop_details",
-      "控制链缺少L4定位，已拒绝4条"
+      "L4-FTR-04 · human_touchpoint",
+      "控制链缺少L4定位，已拒绝3条"
     ],
     "model_run": {
-      "generated_at": "2026-08-03T06:07:55.145877+00:00",
-      "input_snapshot_hash": "ed0ffa02ecf4c43698c74b3500812ce0684eeb022cb761151afe409575e18db6",
+      "generated_at": "2026-08-04T17:34:08.205316+00:00",
+      "input_snapshot_hash": "536902185c099be6ca30ecba05272d69dc12600a412112288460c59522e5f74c",
       "model_name": "deepseek-v4-pro",
       "model_version": "deepseek-v4-pro",
       "prompt_version": "VNW-L3-COM-GOLD-v1.0"
@@ -196,79 +223,105 @@
     "priority_drafts": [
       {
         "analysis_status": "MODEL_DRAFT",
-        "current_recommendation": "引入AI辅助需求分析和课程推荐（Agent模式），但所有输出必须人工确认；不要跳过人工决策环节",
+        "current_recommendation": "保持Hybrid模式，优先投资需求分析AI辅助工具，课程安排保留人工决策；积累规则后可提升自动化",
         "data_basis": [
-          "历史培训记录、业务目标、理财师能力档案"
+          "理财师历史数据",
+          "培训需求调查",
+          "课程资源库"
         ],
         "evidence_refs": [
-          "EVD-2009b0398573b967d6ed",
-          "EVD-8a482b33c1d346db416e",
           "EVD-d236dd74be66e88a0f27",
-          "EVD-63f466a099e47e8bcd40"
+          "EVD-8a482b33c1d346db416e",
+          "EVD-63f466a099e47e8bcd40",
+          "EVD-e0d3adf2022e3708cc90",
+          "EVD-2d2a1359308cd9cd6817",
+          "EVD-b44daacd6746a7a4b88e",
+          "EVD-2009b0398573b967d6ed"
         ],
         "l4_code": "L4-FTR-01",
-        "process_context": "流程起始步骤，为后续培训和演练奠定内容基础",
+        "process_context": "作为培训流程起点，为后续产品合规培训与实战演练提供计划基础，影响培训效果与合规达标",
         "quadrant": "unclassified",
         "risks_limits": [
-          "需求误判将导致整个培训无效",
-          "复合动作，目前封装度低，强行自动化风险高"
+          "需求误判导致培训无效",
+          "课程安排与业务脱节",
+          "AI推荐忽略地域差异"
         ]
       },
       {
         "analysis_status": "MODEL_DRAFT",
-        "current_recommendation": "优先补充报告模板、固化合规规则、集成系统接口，然后试点AI生成合规培训初稿；授课和最终审核保持人工",
+        "current_recommendation": "建议Aug模式，先固化培训规则和报告模板，AI处理分发与考核，人工复核关键合规点；未来向Auto过渡需系统集成",
         "data_basis": [
-          "合规要求文档、产品知识库、监管政策"
+          "产品资料",
+          "合规手册",
+          "培训系统"
         ],
         "evidence_refs": [
-          "EVD-a0feefb5a1df0dfceee1",
+          "EVD-6e466ba3cbdc4681bf2f",
           "EVD-9bad8034ee1b8ddca987",
-          "EVD-6e466ba3cbdc4681bf2f"
+          "EVD-cdc4c606a1eb6e328ea6",
+          "EVD-5cb2f9e1aaa0c08f615d",
+          "EVD-eed9fb9229c4767630e9",
+          "EVD-78db83322fb74f98afd2",
+          "EVD-a0feefb5a1df0dfceee1"
         ],
         "l4_code": "L4-FTR-02",
-        "process_context": "核心合规环节，直接关联销售适当性和监管风险",
+        "process_context": "合规出单前提，培训结果直接决定理财师展业资格，是风险控制关键环节",
         "quadrant": "unclassified",
         "risks_limits": [
-          "合规风险高，内容错误可能导致监管处罚",
-          "仍需人工授课，部分自动化后仍需人力投入"
+          "AI可能忽略最新监管变化",
+          "合规判定依赖人工解释",
+          "自动化考核可能规避实际理解"
         ]
       },
       {
         "analysis_status": "MODEL_DRAFT",
-        "current_recommendation": "先构建理财师能力标签体系，再尝试AI推荐配对（Agent辅助）；演练部分保持纯人工",
+        "current_recommendation": "Hybrid模式，优先Agent辅助配对与日程，人工主导现场；不建议Skill封装，因物理执行与主观判断多",
         "data_basis": [
-          "理财师能力画像、客户特征数据"
+          "理财师能力档案",
+          "客户信息",
+          "日程系统"
         ],
         "evidence_refs": [
-          "EVD-c3e0229f27e5156cf241",
+          "EVD-33f7d70bd5a6b4c455df",
           "EVD-bc0c0cf0bc2f415364c1",
-          "EVD-33f7d70bd5a6b4c455df"
+          "EVD-19ebf94facc1763082e1",
+          "EVD-42be75871edcca9fb556",
+          "EVD-6f74297f228410a34904",
+          "EVD-579bb7c94d29b5e117f3",
+          "EVD-c3e0229f27e5156cf241"
         ],
         "l4_code": "L4-FTR-03",
-        "process_context": "能力转化与实战阶段，是培训效果的落地环节",
+        "process_context": "实战巩固培训效果，陪访直接影响理财师成长与客户体验",
         "quadrant": "unclassified",
         "risks_limits": [
-          "物理执行无法自动化",
-          "配对依赖隐性知识和关系判断，封装天花板低"
+          "AI配对可能忽视人际匹配",
+          "物理执行必须人参与",
+          "记录不完整影响后续辅导"
         ]
       },
       {
         "analysis_status": "MODEL_DRAFT",
-        "current_recommendation": "先实现资料自动化分发（保留人工审批节点）；内容更新功能先做AI建议，后评估是否逐步放权",
+        "current_recommendation": "Hybrid模式，AI管理版本与分发，人负责内容审核与更新决策；考虑建立审核工作流",
         "data_basis": [
-          "资料库元数据、用户反馈、业务规则"
+          "内容管理系统",
+          "合规政策",
+          "产品更新日志"
         ],
         "evidence_refs": [
-          "EVD-35f5d280aa6fb21c9ab7",
           "EVD-224fe44eddb9e6c68044",
-          "EVD-7e89df79aace69357e3d"
+          "EVD-c1b223d3f043f06a9a7d",
+          "EVD-7d2d9a106b7660dac0e0",
+          "EVD-90b891ea716066d75522",
+          "EVD-bb8096a010f5462ac233",
+          "EVD-35f5d280aa6fb21c9ab7"
         ],
         "l4_code": "L4-FTR-04",
-        "process_context": "持续运营支持，确保一线理财师始终使用最新材料",
+        "process_context": "支撑所有培训环节的内容基础，资料库质量直接影响培训效果和合规水平",
         "quadrant": "unclassified",
         "risks_limits": [
-          "错误或过时资料分发可能造成业务风险和合规问题",
-          "内容更新需权威判断，目前封装度低"
+          "内容更新滞后导致使用过时信息",
+          "自动化分发可能覆盖权限问题",
+          "AI误判内容优先级"
         ]
       }
     ],
@@ -276,240 +329,195 @@
     "schema_version": "vnw.l3-analysis.v1",
     "source_scope": {
       "database": "process_analytics",
-      "evidence_count": 61,
+      "evidence_count": 62,
       "knowledge": "ACTIVE supplemental evidence only"
     },
     "tasks": [
       {
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-2009b0398573b967d6ed",
-          "EVD-8a482b33c1d346db416e",
-          "EVD-d236dd74be66e88a0f27"
+          "EVD-2009b0398573b967d6ed"
         ],
         "l4_code": "L4-FTR-01",
-        "next_task_ids": [],
+        "next_task_ids": [
+          "T-FTR-02-01"
+        ],
         "previous_task_ids": [],
-        "relation_type": "",
+        "relation_type": "PARALLEL",
         "sequence_no": 1,
         "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 52,
         "source_step_id": "STEP-01",
-        "source_type": "blueprint_step",
+        "source_type": "BLUEPRINT_STEP",
         "suggested_tier": "Human",
-        "task_id": "TASK-FTR-01",
-        "task_name": "评估培训需求",
-        "tier_rationale": "需求评估需要结合业务目标和理财师现状进行专业判断，skill_feasibility判定为C-低封装，建议保持纯人工。引用EVD-d236dd74be66e88a0f27。"
+        "task_id": "T-FTR-01-01",
+        "task_name": "收集与评估培训需求",
+        "tier_rationale": "需求评估涉及主观判断、业务背景理解与权威决策，必须由理财师辅导与发展岗完成"
       },
       {
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-2009b0398573b967d6ed",
-          "EVD-8a482b33c1d346db416e",
-          "EVD-d236dd74be66e88a0f27",
-          "EVD-63f466a099e47e8bcd40"
+          "EVD-2009b0398573b967d6ed"
         ],
         "l4_code": "L4-FTR-01",
-        "next_task_ids": [],
+        "next_task_ids": [
+          "T-FTR-02-01"
+        ],
         "previous_task_ids": [],
-        "relation_type": "",
+        "relation_type": "PARALLEL",
         "sequence_no": 1,
         "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 52,
         "source_step_id": "STEP-01",
-        "source_type": "blueprint_step",
-        "suggested_tier": "Hybrid",
-        "task_id": "TASK-FTR-02",
-        "task_name": "制定课程安排方案",
-        "tier_rationale": "课程匹配和方案编制可由AI推荐，但仍需培训主管确认，保持Hybrid。数据库tier为Hybrid，与skill_feasibility的Agent辅助建议一致。"
-      },
-      {
-        "analysis_status": "MODEL_DRAFT",
-        "evidence_refs": [
-          "EVD-a0feefb5a1df0dfceee1",
-          "EVD-6e466ba3cbdc4681bf2f",
-          "EVD-9bad8034ee1b8ddca987"
-        ],
-        "l4_code": "L4-FTR-02",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "",
-        "sequence_no": 2,
-        "sequence_status": "SOURCE_STEP_ONLY",
-        "source_line": 58,
-        "source_step_id": "STEP-02",
-        "source_type": "blueprint_step",
+        "source_type": "BLUEPRINT_STEP",
         "suggested_tier": "Aug",
-        "task_id": "TASK-FTR-03",
-        "task_name": "准备合规培训资料",
-        "tier_rationale": "skill_feasibility为B-中封装，可借助模板和规则自动化生成初稿，但需合规人员复核，符合Aug层级。引用EVD-6e466ba3cbdc4681bf2f。"
+        "task_id": "T-FTR-01-02",
+        "task_name": "匹配与制定课程计划",
+        "tier_rationale": "课程库匹配与排课可借助AI推荐，但最终确认与合规调整需人工介入"
       },
       {
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-a0feefb5a1df0dfceee1",
-          "EVD-9bad8034ee1b8ddca987",
-          "EVD-6e466ba3cbdc4681bf2f"
-        ],
-        "l4_code": "L4-FTR-02",
-        "next_task_ids": [
-          "TASK-FTR-05"
-        ],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENCE",
-        "sequence_no": 2,
-        "sequence_status": "SOURCE_STEP_ONLY",
-        "source_line": 58,
-        "source_step_id": "STEP-02",
-        "source_type": "blueprint_step",
-        "suggested_tier": "Human",
-        "task_id": "TASK-FTR-04",
-        "task_name": "执行产品与合规培训授课",
-        "tier_rationale": "现场授课需要讲师互动和实时答疑，无法自动化，必须纯人工。"
-      },
-      {
-        "analysis_status": "MODEL_DRAFT",
-        "evidence_refs": [
-          "EVD-1445ca9adcf699878bb4",
-          "EVD-a0feefb5a1df0dfceee1",
-          "EVD-6e466ba3cbdc4681bf2f"
-        ],
-        "l4_code": "L4-FTR-02",
-        "next_task_ids": [
-          "TASK-FTR-06",
-          "TASK-FTR-07"
-        ],
-        "previous_task_ids": [
-          "TASK-FTR-04"
-        ],
-        "relation_type": "DECISION",
-        "sequence_no": 5,
-        "sequence_status": "SOURCE_CONFIRMED",
-        "source_line": 83,
-        "source_step_id": "Q1",
-        "source_type": "blueprint_decision",
-        "suggested_tier": "Hybrid",
-        "task_id": "TASK-FTR-05",
-        "task_name": "检查培训出席率并判断是否达标",
-        "tier_rationale": "系统可自动统计出席数据，但达标阈值和补课必要性需人工判断（如合规课程必须全部完成），故采用Hybrid。"
-      },
-      {
-        "analysis_status": "MODEL_DRAFT",
-        "evidence_refs": [
-          "EVD-1445ca9adcf699878bb4",
           "EVD-a0feefb5a1df0dfceee1"
         ],
         "l4_code": "L4-FTR-02",
-        "next_task_ids": [],
-        "previous_task_ids": [
-          "TASK-FTR-05"
+        "next_task_ids": [
+          "T-FTR-03-01"
         ],
-        "relation_type": "DECISION",
-        "sequence_no": 6,
-        "sequence_status": "SOURCE_CONFIRMED",
-        "source_line": 87,
-        "source_step_id": "Q1",
-        "source_type": "blueprint_decision",
-        "suggested_tier": "Human",
-        "task_id": "TASK-FTR-06",
-        "task_name": "安排补课",
-        "tier_rationale": "补课安排需协调讲师、教室和学员时间，涉及多方沟通，不宜自动化。"
+        "previous_task_ids": [
+          "T-FTR-01-01",
+          "T-FTR-01-02"
+        ],
+        "relation_type": "PARALLEL",
+        "sequence_no": 2,
+        "sequence_status": "SOURCE_STEP_ONLY",
+        "source_line": 58,
+        "source_step_id": "STEP-02",
+        "source_type": "BLUEPRINT_STEP",
+        "suggested_tier": "Aug",
+        "task_id": "T-FTR-02-01",
+        "task_name": "执行产品培训并记录出席",
+        "tier_rationale": "产品知识讲授可标准化内容分发与考核，但互动答疑仍需人工；出席记录可自动化"
       },
       {
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-c3e0229f27e5156cf241",
-          "EVD-bc0c0cf0bc2f415364c1",
-          "EVD-33f7d70bd5a6b4c455df"
+          "EVD-a0feefb5a1df0dfceee1"
+        ],
+        "l4_code": "L4-FTR-02",
+        "next_task_ids": [
+          "T-FTR-03-01"
+        ],
+        "previous_task_ids": [
+          "T-FTR-01-01",
+          "T-FTR-01-02"
+        ],
+        "relation_type": "PARALLEL",
+        "sequence_no": 2,
+        "sequence_status": "SOURCE_STEP_ONLY",
+        "source_line": 58,
+        "source_step_id": "STEP-02",
+        "source_type": "BLUEPRINT_STEP",
+        "suggested_tier": "Human",
+        "task_id": "T-FTR-02-02",
+        "task_name": "实施合规培训与人工确认",
+        "tier_rationale": "合规培训涉及监管解读、案例分析与合规判定，必须由具备资质的人员执行并签字确认"
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [
+          "EVD-c3e0229f27e5156cf241"
         ],
         "l4_code": "L4-FTR-03",
-        "next_task_ids": [],
-        "previous_task_ids": [
-          "TASK-FTR-05"
+        "next_task_ids": [
+          "T-FTR-04-01"
         ],
-        "relation_type": "DECISION",
+        "previous_task_ids": [
+          "T-FTR-02-01",
+          "T-FTR-02-02"
+        ],
+        "relation_type": "PARALLEL",
         "sequence_no": 3,
         "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 66,
         "source_step_id": "STEP-03",
-        "source_type": "blueprint_step",
+        "source_type": "BLUEPRINT_STEP",
         "suggested_tier": "Human",
-        "task_id": "TASK-FTR-07",
-        "task_name": "组织实战演练",
-        "tier_rationale": "实战演练为物理执行动作，skill_feasibility明确physical_execution=true，必须人工组织。"
+        "task_id": "T-FTR-03-01",
+        "task_name": "组织实战演练与现场观察",
+        "tier_rationale": "实战演练需人际互动、情景判断与实时反馈，无法自动化"
       },
       {
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-c3e0229f27e5156cf241",
-          "EVD-bc0c0cf0bc2f415364c1",
-          "EVD-33f7d70bd5a6b4c455df"
+          "EVD-c3e0229f27e5156cf241"
         ],
         "l4_code": "L4-FTR-03",
         "next_task_ids": [
-          "TASK-FTR-09"
+          "T-FTR-04-01"
         ],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENCE",
+        "previous_task_ids": [
+          "T-FTR-02-01",
+          "T-FTR-02-02"
+        ],
+        "relation_type": "PARALLEL",
         "sequence_no": 3,
         "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 66,
         "source_step_id": "STEP-03",
-        "source_type": "blueprint_step",
-        "suggested_tier": "Hybrid",
-        "task_id": "TASK-FTR-08",
-        "task_name": "进行陪访配对",
-        "tier_rationale": "配对需语义复核和关系判断，AI可提供推荐，但最终确认需教练凭经验决定，适合Hybrid。skill_feasibility建议Agent辅助。"
+        "source_type": "BLUEPRINT_STEP",
+        "suggested_tier": "Aug",
+        "task_id": "T-FTR-03-02",
+        "task_name": "安排陪访配对并跟进记录",
+        "tier_rationale": "配对推荐与日程协调可由AI辅助，但确认需人工；记录表单可自动化"
       },
       {
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-35f5d280aa6fb21c9ab7",
-          "EVD-224fe44eddb9e6c68044"
-        ],
-        "l4_code": "L4-FTR-04",
-        "next_task_ids": [
-          "TASK-FTR-10"
-        ],
-        "previous_task_ids": [
-          "TASK-FTR-08"
-        ],
-        "relation_type": "SEQUENCE",
-        "sequence_no": 4,
-        "sequence_status": "SOURCE_STEP_ONLY",
-        "source_line": 72,
-        "source_step_id": "STEP-04",
-        "source_type": "blueprint_step",
-        "suggested_tier": "Hybrid",
-        "task_id": "TASK-FTR-09",
-        "task_name": "更新资料库内容",
-        "tier_rationale": "资料更新需要判断哪些内容过时或缺失，AI可辅助检测，但决定权在人，符合Hybrid。"
-      },
-      {
-        "analysis_status": "MODEL_DRAFT",
-        "evidence_refs": [
-          "EVD-35f5d280aa6fb21c9ab7",
-          "EVD-224fe44eddb9e6c68044"
+          "EVD-35f5d280aa6fb21c9ab7"
         ],
         "l4_code": "L4-FTR-04",
         "next_task_ids": [],
         "previous_task_ids": [
-          "TASK-FTR-09"
+          "T-FTR-03-01",
+          "T-FTR-03-02"
         ],
-        "relation_type": "SEQUENCE",
+        "relation_type": "PARALLEL",
         "sequence_no": 4,
         "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 72,
         "source_step_id": "STEP-04",
-        "source_type": "blueprint_step",
-        "suggested_tier": "Hybrid",
-        "task_id": "TASK-FTR-10",
-        "task_name": "分发培训资料",
-        "tier_rationale": "自动分发技术可行，但需保留人工审批以满足合规和质量管理要求，因此建议Hybrid。"
+        "source_type": "BLUEPRINT_STEP",
+        "suggested_tier": "Human",
+        "task_id": "T-FTR-04-01",
+        "task_name": "审核与更新培训资料内容",
+        "tier_rationale": "内容合规性、准确性与策略方向必须由理财师辅导与发展岗审核，不可自动化"
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [
+          "EVD-35f5d280aa6fb21c9ab7"
+        ],
+        "l4_code": "L4-FTR-04",
+        "next_task_ids": [],
+        "previous_task_ids": [
+          "T-FTR-03-01",
+          "T-FTR-03-02"
+        ],
+        "relation_type": "PARALLEL",
+        "sequence_no": 4,
+        "sequence_status": "SOURCE_STEP_ONLY",
+        "source_line": 72,
+        "source_step_id": "STEP-04",
+        "source_type": "BLUEPRINT_STEP",
+        "suggested_tier": "Auto",
+        "task_id": "T-FTR-04-02",
+        "task_name": "分发培训材料与版本控制",
+        "tier_rationale": "明确的分发规则与权限管理可实现全自动化，但需人工触发关键更新"
       }
     ]
   },
-  "analysis_freshness": "INPUT_CHANGED",
+  "analysis_freshness": "CURRENT",
   "analysis_input_hash": "536902185c099be6ca30ecba05272d69dc12600a412112288460c59522e5f74c",
   "blueprint": {
     "blueprint_value_nodes": [],

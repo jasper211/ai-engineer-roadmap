@@ -7,458 +7,375 @@
       {
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-b45332adb39a6c84b8b0",
-          "EVD-af13c5eecaf202f111ee"
+          "EVD-e5e340f500ac63681c12",
+          "EVD-c3a7075e79df98f2014d",
+          "EVD-b6f520f6e330ebc31112"
         ],
-        "human_boundary": "试点期间所有报告必须经过人力分析经理和BP负责人双签，改善建议最终决策权归事业部负责人",
-        "pilot_scope": "在2个事业部并行试点：一套现有指标的直接自动化；另一套引入诊断模型。为期1个季度，产出对比报告。",
-        "priority": "P0",
+        "human_boundary": "人力资源部门负责人需最终审核盘点报告的完整性和标签定义合理性；若发现标签缺失或定义错误，由人负责更新知识库后重新运行，模型不直接修改业务规则。",
+        "pilot_scope": "选取1-2个事业部，以当前HR主数据为基础，运行自动盘点Skill原型，输出人员素质结构报告并与现有手工报告对比。试点周期4周。",
+        "priority": "立即试点",
         "task_ids": [
-          "TASK-010",
-          "TASK-011"
+          "T-HRA-07"
         ],
-        "title": "启动P0级人力诊断报告自动化试点决策"
+        "title": "试点人员素质结构自动化盘点（Skill候选）"
       },
       {
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-b6f520f6e330ebc31112",
-          "EVD-743de64796b8720e8efc"
+          "EVD-81523023062455ab727b",
+          "EVD-af13c5eecaf202f111ee",
+          "EVD-b45332adb39a6c84b8b0"
         ],
-        "human_boundary": "数据治理岗拥有最终数据发布权限，ETL流水线变更需经过变更管理委员会批准",
-        "pilot_scope": "聚焦1个典型区域的人力数据清洗，先完成ETL工具部署，再逐步扩展至全公司。配备专职数据治理岗。",
-        "priority": "P1",
+        "human_boundary": "所有对外发布的诊断结论和建议必须经过总监级授权审批。Agent仅提供初稿和选项，不替代人类做出最终决策。",
+        "pilot_scope": "由HR COE团队与IT联合设计L4-HRA-07的Agent辅助工作台，定义数据聚合模板和改善建议树，在1个月内产出原型供管理层体验。",
+        "priority": "战略预留",
         "task_ids": [
-          "TASK-001",
-          "TASK-002"
+          "T-HRA-10",
+          "T-HRA-11"
         ],
-        "title": "启动人效数据基础自动化项目决策"
+        "title": "启动人力诊断报告人机协作流程设计"
       }
     ],
     "generation_mode": "UNIFIED_MODEL",
     "l4_analysis": [
       {
-        "ai_reshape": "AI可全自动完成固定模式的ETL和基础清洗，但对于涉及语境理解的语义复核，需引入人工确认节点。整体设计为技能型（Skill）流水线辅以人工质检。",
-        "ai_responsibility": "执行预定义的数据抽取、转换、加载脚本；应用已测试的清洗规则；生成数据质量报告与异常清单。",
+        "ai_reshape": "由Agent执行数据采集、结构化和规则式清洗，对清洗结果进行语义异常标记并自动生成复核清单，转交人工做最终语义判定",
+        "ai_responsibility": "数据源连接、ETL编排、规则化清洗、异常数据标记与分类",
         "analysis_status": "MODEL_DRAFT",
         "confidence": "MODEL_DRAFT",
-        "control_gates": [
-          "数据脱敏（去标识化）通过合规检查",
-          "数据完整性审计通过",
-          "最终数据发布需经数据治理岗审批"
-        ],
-        "current_recommendation": "将该L4拆分为两个具体任务：1)自动化ETL流水线(Auto)，2)数据质量核验(Hybrid)。核验节点设置人工确认，并纳入数据治理审批门。采用双轴设计：技能轴(Skill)覆盖确定性ETL，人工轴覆盖合规与异常裁决。",
+        "control_gates": [],
+        "current_recommendation": "按双轴设计：确定性采集与规则清洗部分进入Skill原型池（A级），语义复核部分设计为Augmented任务并配置异常规则阈值。建议先拆分任务再评估自动化边界，不宜直接Auto",
         "data_basis": [
-          "D1输入结构化程度2：数据字段明确，可直接映射",
-          "D2规则清晰度2：清洗规则可枚举且逻辑清晰",
-          "D3输出可验证性2：输出数据表可自动化校验",
-          "D4接口可达性2：数据源提供稳定API",
-          "D5降级风险1：存在接口不可用等降级场景",
-          "D6合规要求1：涉及员工个人数据，需脱敏控制"
+          "HR核心数据库、考勤系统、外包管理平台、行业薪酬报告接口（待确认）"
         ],
         "database_tier": "Auto",
-        "deliverable_role": "为后续人效分析流程提供标准化、清洁的人力数据底表，属于数据采集与预处理环节，交付物为结构化数据表。",
+        "deliverable_role": "提供结构化、清洗后的人力数据底表，作为后续多维度分析的数据输入基础",
         "evidence_refs": [
-          "EVD-3380ef21d0fc063826f7",
-          "EVD-f94bb260636e8bdf76a6",
-          "EVD-522ce61a5ffed2af0b65",
-          "EVD-a2f700d0f2f357b90d20",
           "EVD-3c0909d62089f87b3d08",
           "EVD-a6dfe51fac223cae5c54",
           "EVD-04c12a2dbe0e14a839e8",
           "EVD-671d3f905483575bd85e",
           "EVD-6bafc7cc3e4c97cbae04",
           "EVD-49785ae73fe703397188",
-          "EVD-c5f2e43b11a640017ab7"
+          "EVD-c69457ea65586fac7690",
+          "EVD-c5f2e43b11a640017ab7",
+          "EVD-f94bb260636e8bdf76a6",
+          "EVD-522ce61a5ffed2af0b65",
+          "EVD-3380ef21d0fc063826f7",
+          "EVD-ca4b9f5930b420962084",
+          "EVD-a2f700d0f2f357b90d20",
+          "EVD-743de64796b8720e8efc"
         ],
-        "handoff_triggers": [
-          "数据源格式或接口变更导致ETL失败",
-          "清洗后异常记录数量超过阈值",
-          "合规扫描检出个人敏感信息",
-          "数据所有者请求手动干预"
-        ],
-        "human_responsibility": "复核AI无法自动判定的异常数据；确认清洗规则的持续有效性；批准最终数据发布。",
+        "handoff_triggers": [],
+        "human_responsibility": "行业术语映射、企业自定义数据标准维护、高置信度清洗规则的定期更新、语义级数据纠正与确认",
         "l4_code": "L4-HRA-01",
-        "process_context": "蓝图步骤STEP-01，名称为“人效数据采集与清洗”，是整个L3-HRA人力分析流程的起点，其输出为后续L4提供数据输入。",
+        "process_context": "L3-HRA流程首位步骤，输出直接影响后续所有分析主题的数据质量。蓝图标注为Aug，D1-D6显示输入结构性和API可达性高，但合规与兜底能力较低",
         "quadrant": "unclassified",
-        "quality_anchor": "数据完整性≥95%，字段映射准确率100%，无历史累积异常未被标记。",
+        "quality_anchor": "数据完整性≥99%、字段映射准确率≥95%、清洗规则覆盖率≥90%、语义异常标记召回率≥85%",
         "recommended_tier": "Hybrid",
         "risks_limits": [
-          "数据源变更可能导致ETL中断",
-          "过度自动清洗可能去除有分析价值的边缘数据",
-          "员工隐私数据泄露风险，必须保留人工审计轨迹",
-          "技能包需定期维护以适应业务规则变化"
+          "复合动作强制拆分：自动化清洗可能误处理非标准化字段，需保留人工语义复核",
+          "无外部API接入现状下，部分数据源可能仍需手动导入，Skill封装效果有限",
+          "agent_d5_fallback=1意味着兜底机制不完善，宕机或异常时需人工接管"
         ],
         "specific_capabilities": [
-          "跨系统数据源识别与连接",
-          "结构化数据抽取（ETL）",
-          "数据清洗规则定义与应用",
-          "异常数据检测与标记",
-          "数据标准化（字段映射、值域统一）",
-          "语义复核与数据质量判定"
+          "跨系统数据自动抓取与格式标准化",
+          "数据质量规则检查与异常记录",
+          "业务语义清洗判定（需拆分）"
         ]
       },
       {
-        "ai_reshape": "AI可承担指标计算、基准比对和初步趋势可视化，但最终的分析结论解释和业务建议需人类专家判断。适合Agent辅助模式，AI提供数据洞察，人做决策。",
-        "ai_responsibility": "自动聚合人效数据，按规则计算KPI，生成标准化报告图表；监测与基准偏差，触发预警。",
+        "ai_reshape": "Agent自动完成指标计算和初步对标，生成“数字面”报告；人工聚焦于偏离解读、行业特殊性归因和策略建议撰写",
+        "ai_responsibility": "指标公式维护、多维度数据聚合、对标基准库更新、偏离标记和可视化作图",
         "analysis_status": "MODEL_DRAFT",
         "confidence": "MODEL_DRAFT",
-        "control_gates": [
-          "报告数据源经过数据治理确认",
-          "行业基准数据来源需备案",
-          "最终报告需经HR分析与业务负责人双签"
-        ],
-        "current_recommendation": "拆分为指标计算与对标分析（Hybrid）以及结论解读与建议（Aug）。前者结合自动化Skill与人工复核，后者由Agent提供数据洞察，人类专家做最终判断。建议先用历史数据测试指标计算流水线。",
+        "control_gates": [],
+        "current_recommendation": "优先分离确定性计算与主观解读：指标计算与初步对标部分可封装为Agent辅助工具（Hybrid），策略解读部分保留为Human主导。通过Agent提供差异化分析初稿，辅助人力专家决策",
         "data_basis": [
-          "D1输入结构化2：人效指标数据可从清洗后底表获得",
-          "D2规则清晰度2：人效公式、对标规则较明确",
-          "D3输出可验证2：报告可自动校验指标值",
-          "D4接口可达性2：可对接行业数据API",
-          "D5降级风险1：行业数据API可能费用或延迟",
-          "D6合规要求1：报告涉及内部敏感信息，限制知悉范围"
+          "L4-HRA-01输出的清洗后人力数据底表、行业薪酬人效报告数据库（若有）、企业历史基准库"
         ],
         "database_tier": "Hybrid",
-        "deliverable_role": "生成人效分析报告，通过指标计算与行业对标为管理层提供人力效能洞察，属于决策支持类交付物。",
+        "deliverable_role": "生成人效指标计算和对标分析结果，帮助管理层识别效能瓶颈和改善方向",
         "evidence_refs": [
-          "EVD-b71140f10ba0f0188d1f",
-          "EVD-0d2ce78ee0f23a3238c6",
-          "EVD-a5f558ac2c273e83a8bd",
-          "EVD-23876a616306673f8907",
           "EVD-44241221b2d808b0190e",
           "EVD-189063532ba8ae8d2172",
           "EVD-2b36213ccfec5e990a0f",
           "EVD-26a0f13f9a71c1376ffd",
           "EVD-61fe504a5debd9372281",
           "EVD-80c090dd46c8756cfef8",
-          "EVD-9a082e2c3723ba8fa5f2"
+          "EVD-5a6e5c7b3ea3520de0ab",
+          "EVD-9a082e2c3723ba8fa5f2",
+          "EVD-0d2ce78ee0f23a3238c6",
+          "EVD-a5f558ac2c273e83a8bd",
+          "EVD-b71140f10ba0f0188d1f",
+          "EVD-ca4b9f5930b420962084",
+          "EVD-23876a616306673f8907",
+          "EVD-1101ee32516723c4efe0"
         ],
-        "handoff_triggers": [
-          "关键指标出现显著异常（偏离历史均值>2σ）",
-          "行业基准数据缺失或置信度不足",
-          "分析结论建议涉及组织重大调整或成本变动",
-          "需跨部门协作决策"
-        ],
-        "human_responsibility": "验证数据源和计算逻辑；解读分析结果，结合业务know-how提出改进建议；审批最终报告。",
+        "handoff_triggers": [],
+        "human_responsibility": "行业数据可比性判断、特殊业务场景的指标调整、策略建议的制定与审批",
         "l4_code": "L4-HRA-02",
-        "process_context": "蓝图步骤STEP-02，承接数据清洗后的人效数据，产出分析报告，为后续成本、薪酬等专项分析提供输入。",
+        "process_context": "在数据准备完成后执行，属于分析链的核心环节，为后续成本、薪酬对标等提供指标输入。蓝图展示为Aug，D1-D6显示结构化程度高、规则相对明确，但skill_feasibility判定为C级复合动作",
         "quadrant": "unclassified",
-        "quality_anchor": "指标计算准确率100%；行业对标数据源权威且定期更新；报告结论必须有数据支撑。",
+        "quality_anchor": "指标计算准确率100%（基于清洗后数据）、对标数据源权威性≥90%、解读逻辑一致性可追溯",
         "recommended_tier": "Hybrid",
         "risks_limits": [
-          "行业对标数据的时效性和准确性依赖外部供应商",
-          "自动生成的解读可能无法捕捉业务背景，导致误判",
-          "敏感数据在分析过程中存在泄露风险",
-          "复杂业务环境变化可能使预设分析模型失效"
+          "复合动作强制拆分：纯自动对标容易忽略行业特殊性和业务背景，可能导致错误解读",
+          "外部对标数据权限与质量不稳定，AI自动对标结果仍需人工调校",
+          "当前缺少明确的人机交互点（human_touchpoint缺失），需要定义转人工条件"
         ],
         "specific_capabilities": [
-          "人效指标定义与计算（如人均营收、人均利润）",
-          "行业基准数据获取与校准",
-          "多维度趋势分析（部门、地区、岗位序列）",
-          "偏差分析与根因推理",
-          "管理建议提炼"
+          "人效指标（人均产出、工时利用率等）自动计算",
+          "行业/历史对标数据的匹配与偏离度分析",
+          "策略解读与根因推理（需拆分）"
         ]
       },
       {
-        "ai_reshape": "可自动化完成成本数据聚合与标准化报告生成，但成本分摊规则的设定、特殊性调整和最终建议需依赖人类财务与HR判断。适合Hybrid，AI完成计算与展示，人做规则评审。",
-        "ai_responsibility": "按预设映射规则汇总成本数据，生成多维度报表，计算同比环比率。",
+        "ai_reshape": "Agent自动执行数据抽取、规则计算和可视化报告生成，结果提交给人力分析岗位做业务合理性质疑和修正",
+        "ai_responsibility": "成本数据采集、分摊规则执行、报表自动生成和异常标签推送",
         "analysis_status": "MODEL_DRAFT",
         "confidence": "MODEL_DRAFT",
-        "control_gates": [
-          "成本数据需与财务系统月末对账",
-          "最终报告需HR负责人和财务负责人共同审批",
-          "敏感薪酬明细禁止在报告中直接呈现"
-        ],
-        "current_recommendation": "作为单一判断型动作，建议保持Hybrid模式：AI执行计算和报告，人进行规则维护和最终审批。先试点一两个标准部门，验证分摊逻辑和自动对账流程。",
+        "control_gates": [],
+        "current_recommendation": "采用Hybrid模式：自动计算与异常标记由Agent完成，人工负责分摊规则的业务调整、异常解释和最终报告确认。不建议直接追求全自动Auto",
         "data_basis": [
-          "D1输入结构化2：成本数据可从ERP/HR系统直接抽取",
-          "D2规则清晰度2：成本分摊规则有书面文档",
-          "D3输出可验证2：报告可自动对账",
-          "D4接口可达性2：系统提供标准API",
-          "D5降级风险1：系统接口故障时需手动导入",
-          "D6合规要求1：薪酬成本数据为高度机密"
+          "财务系统中的薪酬、福利、招聘成本数据，L4-HRA-01数据底表"
         ],
         "database_tier": "Hybrid",
-        "deliverable_role": "产出人员成本分析报告，揭示人力成本构成与趋势，支持预算控制和人力规划决策。",
+        "deliverable_role": "产出人员成本结构、人均成本趋势及成本效益分析报告，用于预算编制和成本优化决策",
         "evidence_refs": [
-          "EVD-8b0a8b3b8fb1d267decf",
-          "EVD-425d6668c93762fd0815",
-          "EVD-66692728cf2798d417c2",
-          "EVD-deceb648757d93ccb4e4",
           "EVD-75629f731e09ea4f1892",
           "EVD-ef9f801977e57d6e0000",
           "EVD-f38208d4429a7fb611c1",
           "EVD-52b47350f0274823cfc3",
           "EVD-203f6539400630b40330",
           "EVD-9ac73edd7d0e469df99f",
-          "EVD-f328f1d025055de99ddf"
+          "EVD-f3bc74fc155743082f7f",
+          "EVD-f328f1d025055de99ddf",
+          "EVD-425d6668c93762fd0815",
+          "EVD-66692728cf2798d417c2",
+          "EVD-8b0a8b3b8fb1d267decf",
+          "EVD-ca4b9f5930b420962084",
+          "EVD-deceb648757d93ccb4e4",
+          "EVD-3d7cfb16632ffb7153a4"
         ],
-        "handoff_triggers": [
-          "成本科目变更或组织架构调整导致分摊规则失效",
-          "实际成本与预算偏差>20%",
-          "新业务线或重组要求重新定义核算维度",
-          "财务审计发现数据源不一致"
-        ],
-        "human_responsibility": "审核成本分摊逻辑是否符合业务实际，处理例外调整，结合业务计划提出预算建议。",
+        "handoff_triggers": [],
+        "human_responsibility": "分摊规则合理性审核、成本解释与业务对策建议、审批报告发布",
         "l4_code": "L4-HRA-03",
-        "process_context": "蓝图步骤STEP-03，在人效分析之后进行专项成本分析，为后续薪酬对标和整体人力规划提供财务视角。",
+        "process_context": "在完成人效分析和数据清洗后执行，聚焦成本视角。蓝图步骤03，skill_feasibility判定为C级单一动作（判断类），要求人工审核",
         "quadrant": "unclassified",
-        "quality_anchor": "成本核算符合公司财务口径，数据追溯可至薪资系统明细，趋势预测误差≤15%。",
+        "quality_anchor": "成本计算口径一致，分摊规则映射准确率≥98%，异常波动识别率≥90%",
         "recommended_tier": "Hybrid",
         "risks_limits": [
-          "分摊规则变更前后保持一致性困难",
-          "预测模型过于简化可能忽略非线性因素",
-          "敏感数据在分析过程中需严格控制访问",
-          "自动化成本计算可能遗漏临时性或调整项"
+          "单一动作但属判断/策略类，C级封装理论天花板，自动化仅限于规则明确的计算部分",
+          "成本分摊规则可能存在主观性和部门间争议，AI无法代替协商",
+          "agent_d5_fallback=1，异常时仍需人工全面接管"
         ],
         "specific_capabilities": [
-          "人力成本科目归集与分摊规则定义",
-          "多维度成本核算（按部门、项目、级别）",
-          "成本趋势预测（基于历史增长）",
-          "盈亏平衡点与投入产出分析"
+          "成本科目归集与分摊规则引擎",
+          "多维度成本对比（部门、项目、时间）自动化",
+          "成本异常识别与预警"
         ]
       },
       {
-        "ai_reshape": "AI可辅助外部数据的清洗、基准比对和差距可视化，但岗位匹配、数据可信度判断和策略建议需要专员介入。建议Agent辅助模式，AI提供数据支撑，人做匹配和决策。",
-        "ai_responsibility": "自动化处理外部报告数据，整理为标准格式；计算各分位值并生成初稿对比图表。",
+        "ai_reshape": "Agent自动抓取外部市场报告数据，进行标准化和分位值对照，生成初步对标图表；人工复核并确定对标口径和调整建议",
+        "ai_responsibility": "市场数据接入、岗位映射、分位值统计、可视化生成",
         "analysis_status": "MODEL_DRAFT",
         "confidence": "MODEL_DRAFT",
-        "control_gates": [
-          "外部数据采购需符合合规流程",
-          "岗位匹配和校准由薪酬专员和业务经理联合签字",
-          "最终报告仅供授权薪酬决策者查阅"
-        ],
-        "current_recommendation": "作为C级封装能力，建议保持Hybrid。重点投资于外部数据标准化和AI辅助匹配原型，但岗位匹配和最终建议保留人工。可先从标准岗位序列试点。",
+        "control_gates": [],
+        "current_recommendation": "建议采用Hybrid，先建立自动化数据预处理和基础对照表，保留人工干预窗口用于市场数据源确认和策略建议。在API条件满足前不追求Auto",
         "data_basis": [
-          "D1输入结构化2：内外部数据格式相对固定",
-          "D2规则清晰度1：岗位匹配规则部分依赖人工判断",
-          "D3输出可验证2：对标结果可交叉验证",
-          "D4接口可达性1：外部数据需手动获取或按时购买",
-          "D5降级风险1：外部数据延迟或断供时需预案",
-          "D6合规要求1：薪酬数据为高度敏感信息"
+          "第三方薪酬调查报告（API或文件）、内部薪酬数据、L4-HRA-01底表"
         ],
         "database_tier": "Hybrid",
-        "deliverable_role": "生成薪酬市场对标报告，将内部薪酬水平与外部市场数据对比，为薪酬策略调整提供量化依据。",
+        "deliverable_role": "提供企业当前薪酬水平与市场的对标结果，支持薪酬调整策略和人才吸引竞争力评估",
         "evidence_refs": [
-          "EVD-598ad35ef75b276f8aba",
-          "EVD-b99301d850f493915964",
-          "EVD-ed2c748987fef27953f2",
-          "EVD-79b56f6f5b0adbb1eb8b",
           "EVD-0ea0ad8f24e6ca6ea31f",
           "EVD-b0b1d3dd270fb38c03f6",
           "EVD-4e0ce89088fccc4f181b",
           "EVD-a607309435414ca05517",
           "EVD-d262d6e71b5e68adcbdd",
           "EVD-fb14847794653e05597b",
-          "EVD-75e751ab5154bd8e1039"
+          "EVD-c2bbc5d00d63896cb252",
+          "EVD-75e751ab5154bd8e1039",
+          "EVD-b99301d850f493915964",
+          "EVD-ed2c748987fef27953f2",
+          "EVD-598ad35ef75b276f8aba",
+          "EVD-ca4b9f5930b420962084",
+          "EVD-79b56f6f5b0adbb1eb8b",
+          "EVD-cfcac004d2ba6ffb9d1b"
         ],
-        "handoff_triggers": [
-          "外部数据样本不足或置信区间过宽",
-          "关键岗位匹配存在歧义",
-          "内部薪酬数据与外部差异超过30%",
-          "业务需求调整导致岗位体系变更"
-        ],
-        "human_responsibility": "验证外部数据来源及有效性；执行岗位匹配和等级校准；解读对标结果并提出薪酬调整方案。",
+        "handoff_triggers": [],
+        "human_responsibility": "市场数据源选择与可信度判断、特殊岗位映射调整、薪酬策略建议与经济性评估",
         "l4_code": "L4-HRA-04",
-        "process_context": "蓝图步骤STEP-04，在人员成本分析后进行，聚焦外部市场竞争力，为薪酬决策提供外部视角。",
+        "process_context": "在人员成本分析之后或并行执行，为薪酬决策提供外部视角。蓝图步骤04，skill_feasibility判定为C级单一动作，agent_d2_rule_clear=1表明确规则不完全",
         "quadrant": "unclassified",
-        "quality_anchor": "外部数据来源可靠且样本量可接受；岗位匹配准确率≥90%；薪酬数据保密。",
+        "quality_anchor": "市场数据源权威性（购买报告或API）、匹配精度（岗位对标一致率≥90%）、报告时效性",
         "recommended_tier": "Hybrid",
         "risks_limits": [
-          "岗位匹配主观性强，自动化匹配可能不准确",
-          "外部数据供应商变动影响连续性",
-          "薪酬数据泄露可能导致严重负面后果",
-          "对标结论可能引发内部公平性争议"
+          "C级低封装，对标分析依赖主观选择（市场分位、样本范围），全自动结果可能误导",
+          "外部数据获取接口现状不佳（agent_d4_api_reach=1），当前依赖手动导入，自动化程度受限",
+          "humans_touchpoint缺失，需补全异常情况转交机制"
         ],
         "specific_capabilities": [
-          "外部薪酬数据采集（市场报告、行业调研）",
-          "岗位匹配与等级校准（Job Matching）",
-          "分位值计算与差距分析",
-          "薪酬竞争力评估"
+          "市场薪酬数据清洗与分位值计算",
+          "内部薪酬结构与市场分位匹配",
+          "薪酬竞争力热力图与分析报告生成"
         ]
       },
       {
-        "ai_reshape": "此L4被评估为A-高封装，属于信息处理事务类，全流程可自动化生成标准盘点报告。但考虑合规与数据校验需求，建议Automated流水线嵌入人工复核点以确保数据准确和合规。",
-        "ai_responsibility": "从HR系统自动抽取人员数据，按预设维度生成盘点图表和结构分析，提供人才缺口预警。",
+        "ai_reshape": "将该单一信息处理动作封装为Skill，按预定规则自动生成人员素质结构报表和仪表盘，仅在数据异常或业务定义变更时触发人工干预",
+        "ai_responsibility": "数据抽取、标签规则执行、结构计算与可视化输出",
         "analysis_status": "MODEL_DRAFT",
         "confidence": "MODEL_DRAFT",
-        "control_gates": [
-          "数据脱敏确保不泄露个人详细绩效信息",
-          "定期合规审查盘点报告使用范围",
-          "报告发布前需HR信息管理岗审核"
-        ],
-        "current_recommendation": "尽管技能评级为A，但合规和降级风险要求嵌入人工节点。建议构建Auto流水线，设置关键数据校验阀和合规扫描，并将最终发布审批权归于HR管理岗。优先开发标准化数据接口。",
+        "control_gates": [],
+        "current_recommendation": "优先封装为Skill，作为L3-HRA流程中快速见效的自动化节点。推荐tier: Auto，并设置定期数据校验任务确保标签体系更新",
         "data_basis": [
-          "D1输入结构化2：人员数据来自统一HR系统",
-          "D2规则清晰度2：盘点维度和统计规则明确",
-          "D3输出可验证2：报告可编程校验",
-          "D4接口可达性2：HR系统有完善API",
-          "D5降级风险1：系统中断时需冗余方案",
-          "D6合规要求1：涉及大量员工隐私数据"
+          "HR主数据（职位、职级、学历、技能标签等）、培训系统、绩效系统"
         ],
         "database_tier": "Auto",
-        "deliverable_role": "产出人员素质结构盘点报告，展示人才存量与质量分布，支持人才规划、培训和继任管理。",
+        "deliverable_role": "产出人员学历、技能、经验、绩效等静态结构的可视化盘点报告，支持人才发展、梯队建设和岗位匹配",
         "evidence_refs": [
-          "EVD-9020d1f77d377843246c",
-          "EVD-bbc9fb93cda57fa0d077",
-          "EVD-28b2911ab943d14f283a",
-          "EVD-e5e340f500ac63681c12",
           "EVD-826a396a8ddef75f71f3",
           "EVD-970e6a1ed9e2f8451d73",
           "EVD-995c452d0e34c8e58a1b",
           "EVD-eb704dc6c37c2a3b6638",
           "EVD-b91f72d02063b67834c3",
           "EVD-eb529c05718e415f1849",
-          "EVD-3bc87c36a2e0946416ef"
+          "EVD-abede5888f566d632c0a",
+          "EVD-3bc87c36a2e0946416ef",
+          "EVD-bbc9fb93cda57fa0d077",
+          "EVD-28b2911ab943d14f283a",
+          "EVD-9020d1f77d377843246c",
+          "EVD-ca4b9f5930b420962084",
+          "EVD-e5e340f500ac63681c12",
+          "EVD-c3a7075e79df98f2014d"
         ],
-        "handoff_triggers": [
-          "数据源系统变更导致抽取失败",
-          "质量检查发现数据不一致率超过1%",
-          "盘点结果显示关键岗位人才缺口>预警阈值",
-          "合规审计要求人工数据核查"
-        ],
-        "human_responsibility": "校验数据一致性，确认关键人才标签的准确性，对AI生成的洞察进行补充和完善。",
+        "handoff_triggers": [],
+        "human_responsibility": "新技能标签定义、层级分类标准维护、业务解读与盘点后的行动计划",
         "l4_code": "L4-HRA-05",
-        "process_context": "蓝图步骤STEP-05，独立的人员盘点活动，为后续流失分析、继任计划和培训需求提供基础。",
+        "process_context": "在数据准备和主要分析完成后，提供静态跨部门视角。蓝图步骤05，skill_feasibility判定为A级单一动作（信息处理类），高度可封装",
         "quadrant": "unclassified",
-        "quality_anchor": "人员数据与HR系统一致；盘点维度覆盖所有关键字段；报告定期自动更新。",
-        "recommended_tier": "Hybrid",
+        "quality_anchor": "标签准确率≥95%、报表生成时效性（T+0）、分布结果可追溯至人员记录",
+        "recommended_tier": "Auto",
         "risks_limits": [
-          "数据源不一致可能导致报告偏差",
-          "过度依赖自动化可能忽略非结构化信息",
-          "合规风险：个人隐私数据保护法规要求",
-          "静态盘点无法实时反映人员动态变化"
+          "虽然高封装，但若人员标签体系维护不到位，自动报告容易产生过时或错误视图",
+          "需确保基础数据质量（依赖L4-HRA-01）",
+          "无资金、合规硬门，物理动作无，适合Agent自动执行"
         ],
         "specific_capabilities": [
-          "多维度人才数据汇总（学历、技能、绩效、经验）",
-          "人员结构统计（年龄、司龄、职级等）",
-          "关键岗位人才池缺口识别",
-          "数据可视化与仪表板创建"
+          "多维标签体系维护与自动化人员画像",
+          "素质结构分布统计及缺口分析",
+          "可视化仪表盘生成"
         ]
       },
       {
-        "ai_reshape": "AI可承担历史数据驱动的趋势计算和预测模型训练，但预测结果需要专家进行因果解释，预警触发后的干预决策必定需要人类。建议拆分为指标监控（Hybrid）与决策响应（Aug）。",
-        "ai_responsibility": "自动采集离职数据，计算各维度流失率；运行预测模型，识别高风险群体；触发分级预警。",
+        "ai_reshape": "Agent自动运行流失预测模型并推送预警，同时生成流失报告初稿；人工负责原因深度分析和保留措施制定",
+        "ai_responsibility": "离职数据采集、统计模型维护、预警触发和初步报告生成",
         "analysis_status": "MODEL_DRAFT",
         "confidence": "MODEL_DRAFT",
-        "control_gates": [
-          "预警信息只发送给受限群体",
-          "保留措施涉及薪酬调整需走审批",
-          "模型更新后需业务专家组评审"
-        ],
-        "current_recommendation": "按照复合动作拆分建议：1)流失率计算与趋势监控（Hybrid）可由AI定期生成，2)预警研判与干预决策（Aug）必须由HRBP团队主导。先构建指标的自动化看板，再逐步引入预测模型。",
+        "control_gates": [],
+        "current_recommendation": "采用Hybrid模式，将数据统计与模型运行封装为Automated任务，预警推送后由人力业务主管进行人工分析与决策。不追求全自动Report，保留人工审查",
         "data_basis": [
-          "D1输入结构化2：离职数据可从HR系统提取",
-          "D2规则清晰度2：流失率公式明确",
-          "D3输出可验证2：预警输出可事后验证",
-          "D4接口可达性2：可集成内部系统",
-          "D5降级风险1：系统故障导致数据延迟",
-          "D6合规要求1：涉及个人离职原因隐私"
+          "HR离职记录、员工满意度调查、外部劳动力市场数据"
         ],
         "database_tier": "Hybrid",
-        "deliverable_role": "生成流失率分析报告与预警，监测人员流失趋势，识别关键离职驱动力，触发保留措施。",
+        "deliverable_role": "提供流失率趋势、关键部门/岗位预警和流失原因分析，辅助制定员工保留策略",
         "evidence_refs": [
-          "EVD-2e840541d01d4a1acda0",
-          "EVD-bef88ea056623444f112",
-          "EVD-d6fefb0aeb315132e9f9",
-          "EVD-ba50d73047981cceeaf5",
           "EVD-8c0f1626892fdda15e38",
           "EVD-d05d269d70beb99895c5",
           "EVD-1e261053f56a3ea57723",
           "EVD-c0ca87830b9ecca27bb5",
           "EVD-da9a21166b0dfc7b7ed1",
           "EVD-c98f0d1a6db236a44b90",
-          "EVD-277f4814a18bc524f8af"
+          "EVD-4b6f840c1870338f3a22",
+          "EVD-277f4814a18bc524f8af",
+          "EVD-bef88ea056623444f112",
+          "EVD-d6fefb0aeb315132e9f9",
+          "EVD-2e840541d01d4a1acda0",
+          "EVD-ca4b9f5930b420962084",
+          "EVD-ba50d73047981cceeaf5",
+          "EVD-efe49fe93dc58e734ce1"
         ],
-        "handoff_triggers": [
-          "关键部门流失率超过历史均值+2σ",
-          "预测模型性能下降（AUC<0.7）",
-          "重要岗位人员突然大量流失",
-          "模型预测的离职原因与员工调研矛盾"
-        ],
-        "human_responsibility": "验证模型产出，解释业务逻辑；对预警进行定性评估；设计并执行保留方案。",
+        "handoff_triggers": [],
+        "human_responsibility": "预警阈值调整、关键岗位流失人工研判、保留计划与成本审批",
         "l4_code": "L4-HRA-06",
-        "process_context": "蓝图步骤STEP-06，属于持续性监控活动，其输出为人力诊断报告提供数据输入。",
+        "process_context": "在多个分析主题之后，为管理层提供前瞻性风险视图。蓝图步骤06，skill_feasibility判定为C级复合动作，判断/策略类",
         "quadrant": "unclassified",
-        "quality_anchor": "流失率数据与HR离职记录一致；预警准确率≥70%且减少漏报；分析报告每季度更新。",
+        "quality_anchor": "预测模型准确率（如>=80%）、预警及时性（事件T+1内）、流失原因分类一致性≥85%",
         "recommended_tier": "Hybrid",
         "risks_limits": [
-          "预测模型可能产生偏差，引发错误的保留投入",
-          "隐私数据使用需符合劳动法规",
-          "过度依赖AI预警可能延误人为判断",
-          "预警阈值设定不当导致误报频繁"
+          "复合动作需拆分：预测模型输出需人工校验，避免误报（cry wolf）",
+          "流失原因分析依赖定性数据，自动聚类准确度有限",
+          "涉及人员流失应对策略，不可逆操作需人工决策"
         ],
         "specific_capabilities": [
-          "流失率计算（整体、部门、岗位、年限）",
-          "离职预测模型构建与验证",
-          "关键离职原因分析（薪酬、发展、文化）",
-          "预警阈值设定与升级流程"
+          "离职数据统计、趋势预测模型运行",
+          "预警阈值设定与自动通知",
+          "流失原因标签聚类与洞察提取（需拆分）"
         ]
       },
       {
-        "ai_reshape": "AI可整合各专项报告数据，生成诊断指标仪表板，并给出基于规则的初步建议选项，但最终报告的核心论断、改善建议和优先顺序必须由资深HR和管理层协商确定。典型Augmented模式。",
-        "ai_responsibility": "聚合前序L4产出，计算综合诊断指数；生成现状描述和标准解决方案库匹配；输出结构化报告草案。",
+        "ai_reshape": "Agent自动汇总前序分析结果，依据预定义逻辑生成诊断初稿和建议清单；人工负责审核结论合理性、补充高阶策略并最终签发",
+        "ai_responsibility": "异构报告数据抽取、交叉分析、模板化建议生成和报告排版",
         "analysis_status": "MODEL_DRAFT",
         "confidence": "MODEL_DRAFT",
         "control_gates": [
-          "最终报告须经过数据真实性验证",
-          "长期组织调整建议需经CEO/HRVP批准",
-          "报告分发范围受到严格控制"
+          "报告对外发布前必须经授权决策角色人工审批"
         ],
-        "current_recommendation": "按复合动作拆分：1)诊断数据整合与指标生成（Hybrid）使用Agent辅助，2)报告撰写与方案建议（Aug）由高级人力专家主导。试点时从标准模板和少量业务单元开始，逐步优化诊断模型。",
+        "current_recommendation": "采用强烈的Hybrid甚至Human主导模式：Agent负责信息聚合和初稿撰写，所有结论和建议必须经资深HRBP审阅修改并签字。避免在没有人工闭环的情况下使用AI直接输出最终报告",
         "data_basis": [
-          "D1输入结构化2：整合多方报告，结构相对固定",
-          "D2规则清晰度1：诊断规则部分依赖专家经验",
-          "D3输出可验证2：报告结论可归因至数据",
-          "D4接口可达性1：跨系统数据汇聚可能存在壁垒",
-          "D5降级风险1：数据缺失时需人工补充",
-          "D6合规要求1：报告包含高度敏感的战略性内容"
+          "L4-HRA-02~06输出的所有分析报告，企业战略方向文件"
         ],
         "database_tier": "Hybrid",
-        "deliverable_role": "产出综合性人力资源诊断与改善建议报告，整合前序多维度分析，提出系统性的组织能力提升方案。",
+        "deliverable_role": "综合所有分析结果，形成人力资源诊断报告和改善建议，直接支持高管层决策",
         "evidence_refs": [
-          "EVD-f96d7ac6a54dc2197dab",
-          "EVD-1cc832d965b5c5eca6b2",
-          "EVD-8933cb193faca63ddc2c",
-          "EVD-81523023062455ab727b",
           "EVD-6567ebaae695382ed2d2",
           "EVD-8909e44ce6130d7a01a4",
           "EVD-4b5a2987beaf74531d51",
           "EVD-3d34cb4181d8fae7f173",
           "EVD-1cc2419684791eee79ed",
           "EVD-74015d05386878106b1d",
-          "EVD-7027f0fcedff87591886"
+          "EVD-30e1b9b7c3714ad18b9b",
+          "EVD-7027f0fcedff87591886",
+          "EVD-1cc832d965b5c5eca6b2",
+          "EVD-8933cb193faca63ddc2c",
+          "EVD-f96d7ac6a54dc2197dab",
+          "EVD-ca4b9f5930b420962084",
+          "EVD-81523023062455ab727b",
+          "EVD-af13c5eecaf202f111ee"
         ],
-        "handoff_triggers": [
-          "数据源之间出现重大矛盾（如人员成本高但流失率低）",
-          "诊断模型输出的健康度得分与业务感知严重不符",
-          "建议方案涉及组织架构调整或重大预算",
-          "高管要求人工调整模型参数"
-        ],
-        "human_responsibility": "审定诊断模型的有效性；结合战略方向调整建议优先级；撰写决策者摘要并汇报；负责最终方案落地推动。",
+        "handoff_triggers": [],
+        "human_responsibility": "诊断结论验证、改善建议的可行性评估与排序、报告签字发布",
         "l4_code": "L4-HRA-07",
-        "process_context": "蓝图步骤STEP-07，是L3-HRA的最终步骤，输出面向高管的人力诊断与改善建议，直接映射价值节点VN-HR-05（P0）。",
+        "process_context": "L3流程的最后一步，是价值节点VN-HR-05（P0）的直接对应步骤。蓝图步骤07，skill_feasibility判定为C级复合动作，agent_d2_rule_clear=1反映规则完善度不足",
         "quadrant": "unclassified",
-        "quality_anchor": "诊断结论有数据支撑且逻辑自洽；建议方案具备可行性；报告含明确行动计划和责任人。",
-        "recommended_tier": "Hybrid",
+        "quality_anchor": "诊断逻辑覆盖所有前序L4结论、建议项可执行性≥80%、报告格式符合企业标准",
+        "recommended_tier": "Human",
         "risks_limits": [
-          "数据整合错误可能导致错误诊断",
-          "模型过度简化复杂组织现实",
-          "自动生成方案可能脱离组织文化",
-          "建议实施的政治和组织阻力"
+          "复合判断、策略建议高度依赖业务直觉和战略眼光，AI生成内容仅作为初稿",
+          "错误诊断可能引发错误决策，需强制人工控制门",
+          "API可达性低（agent_d4_api_reach=1），自动化数据获取受限"
         ],
         "specific_capabilities": [
-          "多源分析结果合成与交叉验证",
-          "组织健康度模型构建与评估",
-          "改善方案设计与优先级排序",
-          "投资回报（ROI）估算与风险分析",
-          "高管沟通与汇报"
+          "跨模块发现汇总与关联分析",
+          "改善建议模板库与优先排序",
+          "报告叙事生成与可视化整合"
         ]
       }
     ],
-    "missing_analysis": [],
+    "missing_analysis": [
+      "L4-HRA-01 · handoff_triggers · human_touchpoint证据缺失（EVD-c69457ea65586fac7690状态MISSING），无法确定明确的转人工条件",
+      "L4-HRA-02 · handoff_triggers · human_touchpoint证据缺失（EVD-5a6e5c7b3ea3520de0ab状态MISSING）",
+      "L4-HRA-03 · handoff_triggers · human_touchpoint证据缺失（EVD-f3bc74fc155743082f7f状态MISSING）",
+      "L4-HRA-04 · handoff_triggers · human_touchpoint证据缺失（EVD-c2bbc5d00d63896cb252状态MISSING）",
+      "L4-HRA-05 · handoff_triggers · human_touchpoint证据缺失（EVD-abede5888f566d632c0a状态MISSING）",
+      "L4-HRA-06 · handoff_triggers · human_touchpoint证据缺失（EVD-4b6f840c1870338f3a22状态MISSING）",
+      "L4-HRA-07 · handoff_triggers · human_touchpoint证据缺失（EVD-30e1b9b7c3714ad18b9b状态MISSING）",
+      "控制链缺少L4定位，已拒绝2条"
+    ],
     "model_run": {
-      "generated_at": "2026-07-30T08:22:58.105753+00:00",
-      "input_snapshot_hash": "ccd8442ee330e3fce94475724959d5409ef2a93689a8f2551a64d8479cd2a29e",
+      "generated_at": "2026-08-04T17:38:13.002536+00:00",
+      "input_snapshot_hash": "b9f5454453c8a30279c26fe7ec488f8111ab6152c492bc49f0488ac93ac9aa26",
       "model_name": "deepseek-v4-pro",
       "model_version": "deepseek-v4-pro",
       "prompt_version": "VNW-L3-COM-GOLD-v1.0"
@@ -466,240 +383,219 @@
     "priority_drafts": [
       {
         "analysis_status": "MODEL_DRAFT",
-        "current_recommendation": "将该L4拆分为两个具体任务：1)自动化ETL流水线(Auto)，2)数据质量核验(Hybrid)。核验节点设置人工确认，并纳入数据治理审批门。采用双轴设计：技能轴(Skill)覆盖确定性ETL，人工轴覆盖合规与异常裁决。",
+        "current_recommendation": "按双轴设计：确定性采集与规则清洗部分进入Skill原型池（A级），语义复核部分设计为Augmented任务并配置异常规则阈值。建议先拆分任务再评估自动化边界，不宜直接Auto",
         "data_basis": [
-          "D1输入结构化程度2：数据字段明确，可直接映射",
-          "D2规则清晰度2：清洗规则可枚举且逻辑清晰",
-          "D3输出可验证性2：输出数据表可自动化校验",
-          "D4接口可达性2：数据源提供稳定API",
-          "D5降级风险1：存在接口不可用等降级场景",
-          "D6合规要求1：涉及员工个人数据，需脱敏控制"
+          "HR核心数据库、考勤系统、外包管理平台、行业薪酬报告接口（待确认）"
         ],
         "evidence_refs": [
-          "EVD-3380ef21d0fc063826f7",
-          "EVD-f94bb260636e8bdf76a6",
-          "EVD-522ce61a5ffed2af0b65",
-          "EVD-a2f700d0f2f357b90d20",
           "EVD-3c0909d62089f87b3d08",
           "EVD-a6dfe51fac223cae5c54",
           "EVD-04c12a2dbe0e14a839e8",
           "EVD-671d3f905483575bd85e",
           "EVD-6bafc7cc3e4c97cbae04",
           "EVD-49785ae73fe703397188",
-          "EVD-c5f2e43b11a640017ab7"
+          "EVD-c69457ea65586fac7690",
+          "EVD-c5f2e43b11a640017ab7",
+          "EVD-f94bb260636e8bdf76a6",
+          "EVD-522ce61a5ffed2af0b65",
+          "EVD-3380ef21d0fc063826f7",
+          "EVD-ca4b9f5930b420962084",
+          "EVD-a2f700d0f2f357b90d20",
+          "EVD-743de64796b8720e8efc"
         ],
         "l4_code": "L4-HRA-01",
-        "process_context": "蓝图步骤STEP-01，名称为“人效数据采集与清洗”，是整个L3-HRA人力分析流程的起点，其输出为后续L4提供数据输入。",
+        "process_context": "L3-HRA流程首位步骤，输出直接影响后续所有分析主题的数据质量。蓝图标注为Aug，D1-D6显示输入结构性和API可达性高，但合规与兜底能力较低",
         "quadrant": "unclassified",
         "risks_limits": [
-          "数据源变更可能导致ETL中断",
-          "过度自动清洗可能去除有分析价值的边缘数据",
-          "员工隐私数据泄露风险，必须保留人工审计轨迹",
-          "技能包需定期维护以适应业务规则变化"
+          "复合动作强制拆分：自动化清洗可能误处理非标准化字段，需保留人工语义复核",
+          "无外部API接入现状下，部分数据源可能仍需手动导入，Skill封装效果有限",
+          "agent_d5_fallback=1意味着兜底机制不完善，宕机或异常时需人工接管"
         ]
       },
       {
         "analysis_status": "MODEL_DRAFT",
-        "current_recommendation": "拆分为指标计算与对标分析（Hybrid）以及结论解读与建议（Aug）。前者结合自动化Skill与人工复核，后者由Agent提供数据洞察，人类专家做最终判断。建议先用历史数据测试指标计算流水线。",
+        "current_recommendation": "优先分离确定性计算与主观解读：指标计算与初步对标部分可封装为Agent辅助工具（Hybrid），策略解读部分保留为Human主导。通过Agent提供差异化分析初稿，辅助人力专家决策",
         "data_basis": [
-          "D1输入结构化2：人效指标数据可从清洗后底表获得",
-          "D2规则清晰度2：人效公式、对标规则较明确",
-          "D3输出可验证2：报告可自动校验指标值",
-          "D4接口可达性2：可对接行业数据API",
-          "D5降级风险1：行业数据API可能费用或延迟",
-          "D6合规要求1：报告涉及内部敏感信息，限制知悉范围"
+          "L4-HRA-01输出的清洗后人力数据底表、行业薪酬人效报告数据库（若有）、企业历史基准库"
         ],
         "evidence_refs": [
-          "EVD-b71140f10ba0f0188d1f",
-          "EVD-0d2ce78ee0f23a3238c6",
-          "EVD-a5f558ac2c273e83a8bd",
-          "EVD-23876a616306673f8907",
           "EVD-44241221b2d808b0190e",
           "EVD-189063532ba8ae8d2172",
           "EVD-2b36213ccfec5e990a0f",
           "EVD-26a0f13f9a71c1376ffd",
           "EVD-61fe504a5debd9372281",
           "EVD-80c090dd46c8756cfef8",
-          "EVD-9a082e2c3723ba8fa5f2"
+          "EVD-5a6e5c7b3ea3520de0ab",
+          "EVD-9a082e2c3723ba8fa5f2",
+          "EVD-0d2ce78ee0f23a3238c6",
+          "EVD-a5f558ac2c273e83a8bd",
+          "EVD-b71140f10ba0f0188d1f",
+          "EVD-ca4b9f5930b420962084",
+          "EVD-23876a616306673f8907",
+          "EVD-1101ee32516723c4efe0"
         ],
         "l4_code": "L4-HRA-02",
-        "process_context": "蓝图步骤STEP-02，承接数据清洗后的人效数据，产出分析报告，为后续成本、薪酬等专项分析提供输入。",
+        "process_context": "在数据准备完成后执行，属于分析链的核心环节，为后续成本、薪酬对标等提供指标输入。蓝图展示为Aug，D1-D6显示结构化程度高、规则相对明确，但skill_feasibility判定为C级复合动作",
         "quadrant": "unclassified",
         "risks_limits": [
-          "行业对标数据的时效性和准确性依赖外部供应商",
-          "自动生成的解读可能无法捕捉业务背景，导致误判",
-          "敏感数据在分析过程中存在泄露风险",
-          "复杂业务环境变化可能使预设分析模型失效"
+          "复合动作强制拆分：纯自动对标容易忽略行业特殊性和业务背景，可能导致错误解读",
+          "外部对标数据权限与质量不稳定，AI自动对标结果仍需人工调校",
+          "当前缺少明确的人机交互点（human_touchpoint缺失），需要定义转人工条件"
         ]
       },
       {
         "analysis_status": "MODEL_DRAFT",
-        "current_recommendation": "作为单一判断型动作，建议保持Hybrid模式：AI执行计算和报告，人进行规则维护和最终审批。先试点一两个标准部门，验证分摊逻辑和自动对账流程。",
+        "current_recommendation": "采用Hybrid模式：自动计算与异常标记由Agent完成，人工负责分摊规则的业务调整、异常解释和最终报告确认。不建议直接追求全自动Auto",
         "data_basis": [
-          "D1输入结构化2：成本数据可从ERP/HR系统直接抽取",
-          "D2规则清晰度2：成本分摊规则有书面文档",
-          "D3输出可验证2：报告可自动对账",
-          "D4接口可达性2：系统提供标准API",
-          "D5降级风险1：系统接口故障时需手动导入",
-          "D6合规要求1：薪酬成本数据为高度机密"
+          "财务系统中的薪酬、福利、招聘成本数据，L4-HRA-01数据底表"
         ],
         "evidence_refs": [
-          "EVD-8b0a8b3b8fb1d267decf",
-          "EVD-425d6668c93762fd0815",
-          "EVD-66692728cf2798d417c2",
-          "EVD-deceb648757d93ccb4e4",
           "EVD-75629f731e09ea4f1892",
           "EVD-ef9f801977e57d6e0000",
           "EVD-f38208d4429a7fb611c1",
           "EVD-52b47350f0274823cfc3",
           "EVD-203f6539400630b40330",
           "EVD-9ac73edd7d0e469df99f",
-          "EVD-f328f1d025055de99ddf"
+          "EVD-f3bc74fc155743082f7f",
+          "EVD-f328f1d025055de99ddf",
+          "EVD-425d6668c93762fd0815",
+          "EVD-66692728cf2798d417c2",
+          "EVD-8b0a8b3b8fb1d267decf",
+          "EVD-ca4b9f5930b420962084",
+          "EVD-deceb648757d93ccb4e4",
+          "EVD-3d7cfb16632ffb7153a4"
         ],
         "l4_code": "L4-HRA-03",
-        "process_context": "蓝图步骤STEP-03，在人效分析之后进行专项成本分析，为后续薪酬对标和整体人力规划提供财务视角。",
+        "process_context": "在完成人效分析和数据清洗后执行，聚焦成本视角。蓝图步骤03，skill_feasibility判定为C级单一动作（判断类），要求人工审核",
         "quadrant": "unclassified",
         "risks_limits": [
-          "分摊规则变更前后保持一致性困难",
-          "预测模型过于简化可能忽略非线性因素",
-          "敏感数据在分析过程中需严格控制访问",
-          "自动化成本计算可能遗漏临时性或调整项"
+          "单一动作但属判断/策略类，C级封装理论天花板，自动化仅限于规则明确的计算部分",
+          "成本分摊规则可能存在主观性和部门间争议，AI无法代替协商",
+          "agent_d5_fallback=1，异常时仍需人工全面接管"
         ]
       },
       {
         "analysis_status": "MODEL_DRAFT",
-        "current_recommendation": "作为C级封装能力，建议保持Hybrid。重点投资于外部数据标准化和AI辅助匹配原型，但岗位匹配和最终建议保留人工。可先从标准岗位序列试点。",
+        "current_recommendation": "建议采用Hybrid，先建立自动化数据预处理和基础对照表，保留人工干预窗口用于市场数据源确认和策略建议。在API条件满足前不追求Auto",
         "data_basis": [
-          "D1输入结构化2：内外部数据格式相对固定",
-          "D2规则清晰度1：岗位匹配规则部分依赖人工判断",
-          "D3输出可验证2：对标结果可交叉验证",
-          "D4接口可达性1：外部数据需手动获取或按时购买",
-          "D5降级风险1：外部数据延迟或断供时需预案",
-          "D6合规要求1：薪酬数据为高度敏感信息"
+          "第三方薪酬调查报告（API或文件）、内部薪酬数据、L4-HRA-01底表"
         ],
         "evidence_refs": [
-          "EVD-598ad35ef75b276f8aba",
-          "EVD-b99301d850f493915964",
-          "EVD-ed2c748987fef27953f2",
-          "EVD-79b56f6f5b0adbb1eb8b",
           "EVD-0ea0ad8f24e6ca6ea31f",
           "EVD-b0b1d3dd270fb38c03f6",
           "EVD-4e0ce89088fccc4f181b",
           "EVD-a607309435414ca05517",
           "EVD-d262d6e71b5e68adcbdd",
           "EVD-fb14847794653e05597b",
-          "EVD-75e751ab5154bd8e1039"
+          "EVD-c2bbc5d00d63896cb252",
+          "EVD-75e751ab5154bd8e1039",
+          "EVD-b99301d850f493915964",
+          "EVD-ed2c748987fef27953f2",
+          "EVD-598ad35ef75b276f8aba",
+          "EVD-ca4b9f5930b420962084",
+          "EVD-79b56f6f5b0adbb1eb8b",
+          "EVD-cfcac004d2ba6ffb9d1b"
         ],
         "l4_code": "L4-HRA-04",
-        "process_context": "蓝图步骤STEP-04，在人员成本分析后进行，聚焦外部市场竞争力，为薪酬决策提供外部视角。",
+        "process_context": "在人员成本分析之后或并行执行，为薪酬决策提供外部视角。蓝图步骤04，skill_feasibility判定为C级单一动作，agent_d2_rule_clear=1表明确规则不完全",
         "quadrant": "unclassified",
         "risks_limits": [
-          "岗位匹配主观性强，自动化匹配可能不准确",
-          "外部数据供应商变动影响连续性",
-          "薪酬数据泄露可能导致严重负面后果",
-          "对标结论可能引发内部公平性争议"
+          "C级低封装，对标分析依赖主观选择（市场分位、样本范围），全自动结果可能误导",
+          "外部数据获取接口现状不佳（agent_d4_api_reach=1），当前依赖手动导入，自动化程度受限",
+          "humans_touchpoint缺失，需补全异常情况转交机制"
         ]
       },
       {
         "analysis_status": "MODEL_DRAFT",
-        "current_recommendation": "尽管技能评级为A，但合规和降级风险要求嵌入人工节点。建议构建Auto流水线，设置关键数据校验阀和合规扫描，并将最终发布审批权归于HR管理岗。优先开发标准化数据接口。",
+        "current_recommendation": "优先封装为Skill，作为L3-HRA流程中快速见效的自动化节点。推荐tier: Auto，并设置定期数据校验任务确保标签体系更新",
         "data_basis": [
-          "D1输入结构化2：人员数据来自统一HR系统",
-          "D2规则清晰度2：盘点维度和统计规则明确",
-          "D3输出可验证2：报告可编程校验",
-          "D4接口可达性2：HR系统有完善API",
-          "D5降级风险1：系统中断时需冗余方案",
-          "D6合规要求1：涉及大量员工隐私数据"
+          "HR主数据（职位、职级、学历、技能标签等）、培训系统、绩效系统"
         ],
         "evidence_refs": [
-          "EVD-9020d1f77d377843246c",
-          "EVD-bbc9fb93cda57fa0d077",
-          "EVD-28b2911ab943d14f283a",
-          "EVD-e5e340f500ac63681c12",
           "EVD-826a396a8ddef75f71f3",
           "EVD-970e6a1ed9e2f8451d73",
           "EVD-995c452d0e34c8e58a1b",
           "EVD-eb704dc6c37c2a3b6638",
           "EVD-b91f72d02063b67834c3",
           "EVD-eb529c05718e415f1849",
-          "EVD-3bc87c36a2e0946416ef"
+          "EVD-abede5888f566d632c0a",
+          "EVD-3bc87c36a2e0946416ef",
+          "EVD-bbc9fb93cda57fa0d077",
+          "EVD-28b2911ab943d14f283a",
+          "EVD-9020d1f77d377843246c",
+          "EVD-ca4b9f5930b420962084",
+          "EVD-e5e340f500ac63681c12",
+          "EVD-c3a7075e79df98f2014d"
         ],
         "l4_code": "L4-HRA-05",
-        "process_context": "蓝图步骤STEP-05，独立的人员盘点活动，为后续流失分析、继任计划和培训需求提供基础。",
+        "process_context": "在数据准备和主要分析完成后，提供静态跨部门视角。蓝图步骤05，skill_feasibility判定为A级单一动作（信息处理类），高度可封装",
         "quadrant": "unclassified",
         "risks_limits": [
-          "数据源不一致可能导致报告偏差",
-          "过度依赖自动化可能忽略非结构化信息",
-          "合规风险：个人隐私数据保护法规要求",
-          "静态盘点无法实时反映人员动态变化"
+          "虽然高封装，但若人员标签体系维护不到位，自动报告容易产生过时或错误视图",
+          "需确保基础数据质量（依赖L4-HRA-01）",
+          "无资金、合规硬门，物理动作无，适合Agent自动执行"
         ]
       },
       {
         "analysis_status": "MODEL_DRAFT",
-        "current_recommendation": "按照复合动作拆分建议：1)流失率计算与趋势监控（Hybrid）可由AI定期生成，2)预警研判与干预决策（Aug）必须由HRBP团队主导。先构建指标的自动化看板，再逐步引入预测模型。",
+        "current_recommendation": "采用Hybrid模式，将数据统计与模型运行封装为Automated任务，预警推送后由人力业务主管进行人工分析与决策。不追求全自动Report，保留人工审查",
         "data_basis": [
-          "D1输入结构化2：离职数据可从HR系统提取",
-          "D2规则清晰度2：流失率公式明确",
-          "D3输出可验证2：预警输出可事后验证",
-          "D4接口可达性2：可集成内部系统",
-          "D5降级风险1：系统故障导致数据延迟",
-          "D6合规要求1：涉及个人离职原因隐私"
+          "HR离职记录、员工满意度调查、外部劳动力市场数据"
         ],
         "evidence_refs": [
-          "EVD-2e840541d01d4a1acda0",
-          "EVD-bef88ea056623444f112",
-          "EVD-d6fefb0aeb315132e9f9",
-          "EVD-ba50d73047981cceeaf5",
           "EVD-8c0f1626892fdda15e38",
           "EVD-d05d269d70beb99895c5",
           "EVD-1e261053f56a3ea57723",
           "EVD-c0ca87830b9ecca27bb5",
           "EVD-da9a21166b0dfc7b7ed1",
           "EVD-c98f0d1a6db236a44b90",
-          "EVD-277f4814a18bc524f8af"
+          "EVD-4b6f840c1870338f3a22",
+          "EVD-277f4814a18bc524f8af",
+          "EVD-bef88ea056623444f112",
+          "EVD-d6fefb0aeb315132e9f9",
+          "EVD-2e840541d01d4a1acda0",
+          "EVD-ca4b9f5930b420962084",
+          "EVD-ba50d73047981cceeaf5",
+          "EVD-efe49fe93dc58e734ce1"
         ],
         "l4_code": "L4-HRA-06",
-        "process_context": "蓝图步骤STEP-06，属于持续性监控活动，其输出为人力诊断报告提供数据输入。",
+        "process_context": "在多个分析主题之后，为管理层提供前瞻性风险视图。蓝图步骤06，skill_feasibility判定为C级复合动作，判断/策略类",
         "quadrant": "unclassified",
         "risks_limits": [
-          "预测模型可能产生偏差，引发错误的保留投入",
-          "隐私数据使用需符合劳动法规",
-          "过度依赖AI预警可能延误人为判断",
-          "预警阈值设定不当导致误报频繁"
+          "复合动作需拆分：预测模型输出需人工校验，避免误报（cry wolf）",
+          "流失原因分析依赖定性数据，自动聚类准确度有限",
+          "涉及人员流失应对策略，不可逆操作需人工决策"
         ]
       },
       {
         "analysis_status": "MODEL_DRAFT",
-        "current_recommendation": "按复合动作拆分：1)诊断数据整合与指标生成（Hybrid）使用Agent辅助，2)报告撰写与方案建议（Aug）由高级人力专家主导。试点时从标准模板和少量业务单元开始，逐步优化诊断模型。",
+        "current_recommendation": "采用强烈的Hybrid甚至Human主导模式：Agent负责信息聚合和初稿撰写，所有结论和建议必须经资深HRBP审阅修改并签字。避免在没有人工闭环的情况下使用AI直接输出最终报告",
         "data_basis": [
-          "D1输入结构化2：整合多方报告，结构相对固定",
-          "D2规则清晰度1：诊断规则部分依赖专家经验",
-          "D3输出可验证2：报告结论可归因至数据",
-          "D4接口可达性1：跨系统数据汇聚可能存在壁垒",
-          "D5降级风险1：数据缺失时需人工补充",
-          "D6合规要求1：报告包含高度敏感的战略性内容"
+          "L4-HRA-02~06输出的所有分析报告，企业战略方向文件"
         ],
         "evidence_refs": [
-          "EVD-f96d7ac6a54dc2197dab",
-          "EVD-1cc832d965b5c5eca6b2",
-          "EVD-8933cb193faca63ddc2c",
-          "EVD-81523023062455ab727b",
           "EVD-6567ebaae695382ed2d2",
           "EVD-8909e44ce6130d7a01a4",
           "EVD-4b5a2987beaf74531d51",
           "EVD-3d34cb4181d8fae7f173",
           "EVD-1cc2419684791eee79ed",
           "EVD-74015d05386878106b1d",
-          "EVD-7027f0fcedff87591886"
+          "EVD-30e1b9b7c3714ad18b9b",
+          "EVD-7027f0fcedff87591886",
+          "EVD-1cc832d965b5c5eca6b2",
+          "EVD-8933cb193faca63ddc2c",
+          "EVD-f96d7ac6a54dc2197dab",
+          "EVD-ca4b9f5930b420962084",
+          "EVD-81523023062455ab727b",
+          "EVD-af13c5eecaf202f111ee"
         ],
         "l4_code": "L4-HRA-07",
-        "process_context": "蓝图步骤STEP-07，是L3-HRA的最终步骤，输出面向高管的人力诊断与改善建议，直接映射价值节点VN-HR-05（P0）。",
+        "process_context": "L3流程的最后一步，是价值节点VN-HR-05（P0）的直接对应步骤。蓝图步骤07，skill_feasibility判定为C级复合动作，agent_d2_rule_clear=1反映规则完善度不足",
         "quadrant": "unclassified",
         "risks_limits": [
-          "数据整合错误可能导致错误诊断",
-          "模型过度简化复杂组织现实",
-          "自动生成方案可能脱离组织文化",
-          "建议实施的政治和组织阻力"
+          "复合判断、策略建议高度依赖业务直觉和战略眼光，AI生成内容仅作为初稿",
+          "错误诊断可能引发错误决策，需强制人工控制门",
+          "API可达性低（agent_d4_api_reach=1），自动化数据获取受限"
         ]
       }
     ],
@@ -707,7 +603,7 @@
     "schema_version": "vnw.l3-analysis.v1",
     "source_scope": {
       "database": "process_analytics",
-      "evidence_count": 107,
+      "evidence_count": 108,
       "knowledge": "ACTIVE supplemental evidence only"
     },
     "tasks": [
@@ -717,16 +613,23 @@
           "EVD-743de64796b8720e8efc",
           "EVD-a2f700d0f2f357b90d20",
           "EVD-3c0909d62089f87b3d08",
-          "EVD-a6dfe51fac223cae5c54",
-          "EVD-04c12a2dbe0e14a839e8",
           "EVD-671d3f905483575bd85e"
         ],
         "l4_code": "L4-HRA-01",
-        "source_type": "blueprint_step, skill_feasibility",
+        "next_task_ids": [
+          "T-HRA-02"
+        ],
+        "previous_task_ids": [],
+        "relation_type": "SEQUENCE",
+        "sequence_no": 1,
+        "sequence_status": "SOURCE_CONFIRMED",
+        "source_line": 51,
+        "source_step_id": "STEP-01",
+        "source_type": "BLUEPRINT_STEP",
         "suggested_tier": "Auto",
-        "task_id": "TASK-001",
-        "task_name": "人效数据自动化采集与ETL",
-        "tier_rationale": "基于D1-D4的高分（2）和Skill可行性A级评级，数据抽取、转换、加载过程规则明确、接口可达，可全自动执行，但需配套异常监控机制。"
+        "task_id": "T-HRA-01",
+        "task_name": "人力数据自动化采集与预处理",
+        "tier_rationale": "数据采集、结构化和规则清洗属于确定性信息处理，skill_feasibility为A级高封装，输入结构化程度高（D1=2），API可达性好（D4=2），符合Auto条件。但需注意D5_fallback=1，建议增加监控报警"
       },
       {
         "analysis_status": "MODEL_DRAFT",
@@ -737,156 +640,258 @@
           "EVD-49785ae73fe703397188"
         ],
         "l4_code": "L4-HRA-01",
-        "source_type": "blueprint_step, skill_feasibility",
-        "suggested_tier": "Hybrid",
-        "task_id": "TASK-002",
-        "task_name": "人效数据清洗质量核验",
-        "tier_rationale": "清洗涉及语义复核和合规检查（D5=1, D6=1），无法完全自动化，需人工设定规则和抽查结果，因此采用Hybrid。"
-      },
-      {
-        "analysis_status": "MODEL_DRAFT",
-        "evidence_refs": [
-          "EVD-1101ee32516723c4efe0",
-          "EVD-23876a616306673f8907"
+        "next_task_ids": [
+          "T-HRA-03"
         ],
-        "l4_code": "L4-HRA-02",
-        "source_type": "blueprint_step, skill_feasibility",
-        "suggested_tier": "Hybrid",
-        "task_id": "TASK-003",
-        "task_name": "人效指标计算与行业对标分析",
-        "tier_rationale": "指标计算可自动化（D2=2, D4=2），但行业对标数据需人工校正，整体适合混合模式。"
-      },
-      {
-        "analysis_status": "MODEL_DRAFT",
-        "evidence_refs": [
-          "EVD-1101ee32516723c4efe0",
-          "EVD-23876a616306673f8907"
+        "previous_task_ids": [
+          "T-HRA-01"
         ],
-        "l4_code": "L4-HRA-02",
-        "source_type": "blueprint_step, skill_feasibility",
+        "relation_type": "SEQUENCE",
+        "sequence_no": 1,
+        "sequence_status": "SOURCE_STEP_ONLY",
+        "source_line": 51,
+        "source_step_id": "STEP-01",
+        "source_type": "BLUEPRINT_STEP",
         "suggested_tier": "Aug",
-        "task_id": "TASK-004",
-        "task_name": "分析结论解读与业务应用建议",
-        "tier_rationale": "结论解读高度依赖业务上下文和专家判断（C级封装），AI提供数据洞察，决策由人主导，符合增强模式。"
+        "task_id": "T-HRA-02",
+        "task_name": "数据清洗结果语义复核与确认",
+        "tier_rationale": "语义复核要求业务语境理解，属于skill_feasibility中“语义复核后确认”部分，封装度受限于复合动作性质。D5_fallback=1表明异常时需人工接管，适合Agent辅助标注、人工批量确认模式"
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [
+          "EVD-1101ee32516723c4efe0",
+          "EVD-23876a616306673f8907",
+          "EVD-44241221b2d808b0190e",
+          "EVD-26a0f13f9a71c1376ffd"
+        ],
+        "l4_code": "L4-HRA-02",
+        "next_task_ids": [
+          "T-HRA-04"
+        ],
+        "previous_task_ids": [
+          "T-HRA-02"
+        ],
+        "relation_type": "SEQUENCE",
+        "sequence_no": 3,
+        "sequence_status": "SOURCE_CONFIRMED",
+        "source_line": 55,
+        "source_step_id": "STEP-02",
+        "source_type": "BLUEPRINT_STEP",
+        "suggested_tier": "Auto",
+        "task_id": "T-HRA-03",
+        "task_name": "人效指标计算与对标初稿生成",
+        "tier_rationale": "指标计算和对标数据匹配具有明确公式和规则，D1=2, D2=2，适合自动化。属于复合动作中可拆分的确定性部分，建议封装为Agent自动任务，为后续人工解读提供干净数据"
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [
+          "EVD-1101ee32516723c4efe0",
+          "EVD-23876a616306673f8907",
+          "EVD-61fe504a5debd9372281",
+          "EVD-80c090dd46c8756cfef8"
+        ],
+        "l4_code": "L4-HRA-02",
+        "next_task_ids": [
+          "T-HRA-05"
+        ],
+        "previous_task_ids": [
+          "T-HRA-03"
+        ],
+        "relation_type": "SEQUENCE",
+        "sequence_no": 2,
+        "sequence_status": "SOURCE_STEP_ONLY",
+        "source_line": 55,
+        "source_step_id": "STEP-02",
+        "source_type": "BLUEPRINT_STEP",
+        "suggested_tier": "Aug",
+        "task_id": "T-HRA-04",
+        "task_name": "人效对标结果策略解读与调整",
+        "tier_rationale": "策略解读属于判断/认知类，skill_feasibility为C级，理论天花板低。适合Agent提供交互式探索分析和建议选项，由人力分析专家进行最终解读和策略制定"
       },
       {
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
           "EVD-3d7cfb16632ffb7153a4",
-          "EVD-deceb648757d93ccb4e4"
+          "EVD-deceb648757d93ccb4e4",
+          "EVD-75629f731e09ea4f1892",
+          "EVD-52b47350f0274823cfc3"
         ],
         "l4_code": "L4-HRA-03",
-        "source_type": "blueprint_step",
+        "next_task_ids": [
+          "T-HRA-06"
+        ],
+        "previous_task_ids": [
+          "T-HRA-04"
+        ],
+        "relation_type": "SEQUENCE",
+        "sequence_no": 5,
+        "sequence_status": "SOURCE_CONFIRMED",
+        "source_line": 60,
+        "source_step_id": "STEP-03",
+        "source_type": "BLUEPRINT_STEP",
         "suggested_tier": "Hybrid",
-        "task_id": "TASK-005",
-        "task_name": "人员成本计算与报告输出",
-        "tier_rationale": "计算和报表生成可自动化，但分摊规则需财务背景人员维护，且报告含敏感数据需审批，维持人机混合。"
+        "task_id": "T-HRA-05",
+        "task_name": "人员成本分析报告自动生成",
+        "tier_rationale": "成本计算部分合规明确（D2=2），可自动执行，但分摊规则解释和异常处理需要人工判断。C级单一动作且agent_d5_fallback=1，建议Hybrid：Agent自动计算并标记异常，人工审核后发布"
       },
       {
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
           "EVD-cfcac004d2ba6ffb9d1b",
-          "EVD-79b56f6f5b0adbb1eb8b"
+          "EVD-79b56f6f5b0adbb1eb8b",
+          "EVD-0ea0ad8f24e6ca6ea31f",
+          "EVD-a607309435414ca05517"
         ],
         "l4_code": "L4-HRA-04",
-        "source_type": "blueprint_step",
+        "next_task_ids": [
+          "T-HRA-07"
+        ],
+        "previous_task_ids": [
+          "T-HRA-05"
+        ],
+        "relation_type": "SEQUENCE",
+        "sequence_no": 6,
+        "sequence_status": "SOURCE_CONFIRMED",
+        "source_line": 65,
+        "source_step_id": "STEP-04",
+        "source_type": "BLUEPRINT_STEP",
         "suggested_tier": "Hybrid",
-        "task_id": "TASK-006",
-        "task_name": "薪酬市场数据采集与对标报告生成",
-        "tier_rationale": "外部数据需人工判断可信度，岗位匹配依赖专业知识，因此整体需人工干预与AI辅助结合。"
+        "task_id": "T-HRA-06",
+        "task_name": "薪酬市场对标分析报告生成",
+        "tier_rationale": "数据标准化和分位值计算可自动，但市场数据源依赖人工确认，且策略建议属C级判断。agent_d4_api_reach=1限制自动接入，建议Hybrid并优先解决数据接口"
       },
       {
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
           "EVD-c3a7075e79df98f2014d",
-          "EVD-e5e340f500ac63681c12"
+          "EVD-e5e340f500ac63681c12",
+          "EVD-826a396a8ddef75f71f3",
+          "EVD-eb704dc6c37c2a3b6638"
         ],
         "l4_code": "L4-HRA-05",
-        "source_type": "blueprint_step, skill_feasibility",
+        "next_task_ids": [
+          "T-HRA-08"
+        ],
+        "previous_task_ids": [
+          "T-HRA-06"
+        ],
+        "relation_type": "SEQUENCE",
+        "sequence_no": 7,
+        "sequence_status": "SOURCE_CONFIRMED",
+        "source_line": 70,
+        "source_step_id": "STEP-05",
+        "source_type": "BLUEPRINT_STEP",
         "suggested_tier": "Auto",
-        "task_id": "TASK-007",
-        "task_name": "人员素质数据盘点与结构分析",
-        "tier_rationale": "A级封装，单一信息处理动作，可全自动生成报告；但考虑到D5/D6降级风险，需内置校验和合规扫描，日常运行可设为Auto。"
+        "task_id": "T-HRA-07",
+        "task_name": "人员素质结构自动盘点",
+        "tier_rationale": "纯信息处理单一步骤，skill_feasibility为A级，D1=2, D2=2, D4=2，符合Skill封装条件。可直接自动化，仅需定期更新标签定义"
       },
       {
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
           "EVD-efe49fe93dc58e734ce1",
-          "EVD-ba50d73047981cceeaf5"
+          "EVD-ba50d73047981cceeaf5",
+          "EVD-8c0f1626892fdda15e38",
+          "EVD-c0ca87830b9ecca27bb5"
         ],
         "l4_code": "L4-HRA-06",
-        "source_type": "blueprint_step, skill_feasibility",
-        "suggested_tier": "Hybrid",
-        "task_id": "TASK-008",
-        "task_name": "流失率趋势计算与预警阈值监控",
-        "tier_rationale": "计算和监测可自动化，但阈值的设定和调整需业务专家参与，并验证数据完整性，适合混合。"
+        "next_task_ids": [
+          "T-HRA-09"
+        ],
+        "previous_task_ids": [
+          "T-HRA-07"
+        ],
+        "relation_type": "SEQUENCE",
+        "sequence_no": 8,
+        "sequence_status": "SOURCE_CONFIRMED",
+        "source_line": 75,
+        "source_step_id": "STEP-06",
+        "source_type": "BLUEPRINT_STEP",
+        "suggested_tier": "Auto",
+        "task_id": "T-HRA-08",
+        "task_name": "流失率数据统计与预警模型运行",
+        "tier_rationale": "数据统计和模型运行是确定性任务，D1=2, D2=2，可自动执行。拆分后将预测部分自动化，预警结果作为通知触发后续人工分析"
       },
       {
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
           "EVD-efe49fe93dc58e734ce1",
-          "EVD-ba50d73047981cceeaf5"
+          "EVD-ba50d73047981cceeaf5",
+          "EVD-da9a21166b0dfc7b7ed1",
+          "EVD-c98f0d1a6db236a44b90"
         ],
         "l4_code": "L4-HRA-06",
-        "source_type": "blueprint_step, skill_feasibility",
+        "next_task_ids": [
+          "T-HRA-10"
+        ],
+        "previous_task_ids": [
+          "T-HRA-08"
+        ],
+        "relation_type": "SEQUENCE",
+        "sequence_no": 6,
+        "sequence_status": "SOURCE_STEP_ONLY",
+        "source_line": 75,
+        "source_step_id": "STEP-06",
+        "source_type": "BLUEPRINT_STEP",
         "suggested_tier": "Aug",
-        "task_id": "TASK-009",
-        "task_name": "预警触发与干预措施决策",
-        "tier_rationale": "预警后的行动涉及人员保留投入，需主观判断和业务权衡，必须由人主导，AI扮演辅助角色。"
+        "task_id": "T-HRA-09",
+        "task_name": "流失原因分析与预警人工复核",
+        "tier_rationale": "流失原因归类需业务理解，C级判断。Agent提供聚类和初步标签，人工确认并决定预警级别及应对措施。人工控制门用于关键流失决策"
       },
       {
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
           "EVD-af13c5eecaf202f111ee",
-          "EVD-81523023062455ab727b"
+          "EVD-81523023062455ab727b",
+          "EVD-6567ebaae695382ed2d2",
+          "EVD-3d34cb4181d8fae7f173"
         ],
         "l4_code": "L4-HRA-07",
-        "source_type": "blueprint_step, skill_feasibility",
-        "suggested_tier": "Hybrid",
-        "task_id": "TASK-010",
-        "task_name": "人力诊断数据整合与指标生成",
-        "tier_rationale": "多数据源整合和标准指标计算可半自动化，但数据质量和合并规则需人工校验，因此混合。"
+        "next_task_ids": [
+          "T-HRA-11"
+        ],
+        "previous_task_ids": [
+          "T-HRA-09"
+        ],
+        "relation_type": "SEQUENCE",
+        "sequence_no": 10,
+        "sequence_status": "SOURCE_CONFIRMED",
+        "source_line": 80,
+        "source_step_id": "STEP-07",
+        "source_type": "BLUEPRINT_STEP",
+        "suggested_tier": "Aug",
+        "task_id": "T-HRA-10",
+        "task_name": "人力诊断汇总与改善建议草拟",
+        "tier_rationale": "跨模块摘要和模板化建议可自动，但策略逻辑和叙事需人工。Agent辅助草拟，人力专家修改定稿。D2=1表明规则不完善，适合Aug"
       },
       {
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
           "EVD-af13c5eecaf202f111ee",
-          "EVD-81523023062455ab727b"
+          "EVD-81523023062455ab727b",
+          "EVD-1cc2419684791eee79ed",
+          "EVD-74015d05386878106b1d"
         ],
         "l4_code": "L4-HRA-07",
-        "source_type": "blueprint_step, skill_feasibility",
-        "suggested_tier": "Aug",
-        "task_id": "TASK-011",
-        "task_name": "诊断报告撰写与改善建议提出",
-        "tier_rationale": "报告是对组织的战略诊断，建议需结合业务洞察和变革管理经验，必须由高级人力专家主导，AI增强信息处理。"
-      },
-      {
-        "analysis_status": "MODEL_DRAFT",
-        "evidence_refs": [
-          "EVD-37bf083836a248c64c6c"
+        "next_task_ids": [],
+        "previous_task_ids": [
+          "T-HRA-10"
         ],
-        "l4_code": "L4-HRA-02",
-        "source_type": "rule",
-        "suggested_tier": "Auto",
-        "task_id": "TASK-012",
-        "task_name": "绩效考核结果汇总至历史Excel表",
-        "tier_rationale": "根据HR-R004规则，绩效考核结果可自动化汇总存档，后续人工决策时回顾即可，该任务属于确定性数据操作。"
-      },
-      {
-        "analysis_status": "MODEL_DRAFT",
-        "evidence_refs": [
-          "EVD-5133ea748af6f8dffa78"
-        ],
-        "l4_code": "L4-HRA-02",
-        "source_type": "sop",
-        "suggested_tier": "Hybrid",
-        "task_id": "TASK-013",
-        "task_name": "遵循SOP执行绩效考核结果存档与晋调薪流程",
-        "tier_rationale": "SOP定义了流程步骤，存档部分可自动化，但晋调薪评估需人工判断，整体为混合模式。"
+        "relation_type": "SEQUENCE",
+        "sequence_no": 7,
+        "sequence_status": "SOURCE_STEP_ONLY",
+        "source_line": 80,
+        "source_step_id": "STEP-07",
+        "source_type": "BLUEPRINT_STEP",
+        "suggested_tier": "Human",
+        "task_id": "T-HRA-11",
+        "task_name": "诊断报告与改善建议人工确认与发布",
+        "tier_rationale": "最终诊断和改善建议具有高度业务风险和决策影响力，必须由有授权的决策角色签字确认。属于控制门，遵循人类最终决策原则"
       }
     ]
   },
-  "analysis_freshness": "INPUT_CHANGED",
+  "analysis_freshness": "CURRENT",
   "analysis_input_hash": "b9f5454453c8a30279c26fe7ec488f8111ab6152c492bc49f0488ac93ac9aa26",
   "blueprint": {
     "blueprint_value_nodes": [],

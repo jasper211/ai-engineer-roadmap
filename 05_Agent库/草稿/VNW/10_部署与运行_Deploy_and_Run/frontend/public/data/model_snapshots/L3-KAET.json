@@ -1,148 +1,293 @@
 {
   "analysis": {
     "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
-    "analysis_status": "PENDING_MODEL",
-    "decision_drafts": [],
-    "generation_mode": "EVIDENCE_ONLY_BOOTSTRAP",
+    "analysis_status": "MODEL_DRAFT",
+    "control_chain": [],
+    "decision_drafts": [
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [
+          "EVD-e112c5439e9b13434002",
+          "EVD-e1f4932f99af282d756e",
+          "EVD-66dd9ed9b7a9940625f4"
+        ],
+        "human_boundary": "自动采集结果提交前由业务发展BD岗抽查10%数据，异常数据人工修正；后台监控采集成功率。",
+        "pilot_scope": "选取已有外部数据源的KA样本，试点自动采集准确性，试点期1个月",
+        "priority": 1,
+        "task_ids": [
+          "T-01"
+        ],
+        "title": "优先试点KA背景信息自动收集Skill"
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [
+          "EVD-489c148f2a932800c1b6",
+          "EVD-808b763ee69cf92641e2",
+          "EVD-fb15986ad7dd2ebeadb1"
+        ],
+        "human_boundary": "模板和规则由业务团队确认，自动生成结果须人工确认后生效",
+        "pilot_scope": "基于历史数据制定评估模板，试点自动化生成定级记录，由BD岗复核",
+        "priority": 2,
+        "task_ids": [
+          "T-04A"
+        ],
+        "title": "建设KA评估定级模板并试点自动化生成定级记录"
+      }
+    ],
+    "generation_mode": "UNIFIED_MODEL",
     "l4_analysis": [
       {
-        "ai_reshape": "",
-        "ai_responsibility": "",
-        "analysis_status": "PENDING_MODEL",
-        "confidence": "UNASSESSED",
+        "ai_reshape": "封装为确定性Skill自动采集并填充KA背景信息表",
+        "ai_responsibility": "自动采集数据并生成标准化的背景信息表",
+        "analysis_status": "MODEL_DRAFT",
+        "confidence": "MODEL_DRAFT",
         "control_gates": [],
-        "current_recommendation": "",
-        "data_basis": [],
-        "deliverable_role": "",
+        "current_recommendation": "优先进入Skill原型候选池，开发自动采集Skill并保留人工覆盖接口",
+        "data_basis": [
+          "D1-D6得分均较高，输入结构化、规则清晰、输出可验证"
+        ],
+        "database_tier": "Auto",
+        "deliverable_role": "《KA背景信息表》作为后续评估的依据",
         "evidence_refs": [
-          "EVD-039b898e44ced67b3af2",
-          "EVD-222528353ad5605bca62",
           "EVD-2f55bd5796b7c1ad1ea6",
-          "EVD-3d107cbcae117e385889",
-          "EVD-5eb24324f096776c655b",
           "EVD-729e82f25a9c59c1ab81",
-          "EVD-a8638b240ebec848afb1",
-          "EVD-bd2c408a3a7d2e459c61",
-          "EVD-cac24f3320edb8744e3e",
           "EVD-e112c5439e9b13434002",
-          "EVD-e1ed4ea074a571ed0e3e",
           "EVD-e1f4932f99af282d756e",
-          "EVD-f51a28054e3dc7bc754f"
+          "EVD-5eb24324f096776c655b",
+          "EVD-66dd9ed9b7a9940625f4",
+          "EVD-3d107cbcae117e385889"
         ],
-        "handoff_triggers": [],
-        "human_responsibility": "",
+        "handoff_triggers": [
+          "系统无法获取所需信息或信息冲突时转人工"
+        ],
+        "human_responsibility": "当前人工执行背景收集，自动化后需监控数据质量并处理异常",
         "l4_code": "L4-KAET-01",
-        "process_context": "",
+        "process_context": "KA评估定级流程的第一步，为后续资质核查和潜力判断提供输入",
+        "quadrant": "unclassified",
         "quality_anchor": "",
-        "risks_limits": [],
-        "specific_capabilities": []
+        "recommended_tier": "Auto",
+        "risks_limits": [
+          "依赖外部数据接口可用性"
+        ],
+        "specific_capabilities": [
+          "信息收集与录入"
+        ]
       },
       {
-        "ai_reshape": "",
-        "ai_responsibility": "",
-        "analysis_status": "PENDING_MODEL",
-        "confidence": "UNASSESSED",
+        "ai_reshape": "通过规则引擎结合报告模板自动核查资质，人工复核特殊项",
+        "ai_responsibility": "自动比对资质规则，生成核查记录",
+        "analysis_status": "MODEL_DRAFT",
+        "confidence": "MODEL_DRAFT",
         "control_gates": [],
-        "current_recommendation": "",
-        "data_basis": [],
-        "deliverable_role": "",
+        "current_recommendation": "先补报告模板和规则固化，再验证Skill，最终以Aug模式运行",
+        "data_basis": [
+          "D1-D6评分较高，规则清晰，输入结构化"
+        ],
+        "database_tier": "Aug",
+        "deliverable_role": "《资质核查记录》作为合规性审查结果",
         "evidence_refs": [
-          "EVD-2fc0d78475c129215502",
-          "EVD-3085033e54ea2f17b128",
-          "EVD-3aa9f25e7f2f46e9673f",
-          "EVD-46e27cff97cdd65127e1",
           "EVD-4c421e21629796427539",
-          "EVD-74eeae11646ef4436512",
-          "EVD-7913abe7d07b3549fd01",
-          "EVD-9037c83844530f0b4188",
-          "EVD-b43ee63f71218bedb82e",
-          "EVD-bbdcfa68d89dd6eedd3b",
-          "EVD-c02290cf192739a3e750",
           "EVD-e95c296d4a96cb629d66",
-          "EVD-f51a28054e3dc7bc754f"
+          "EVD-9037c83844530f0b4188",
+          "EVD-3aa9f25e7f2f46e9673f",
+          "EVD-2fc0d78475c129215502",
+          "EVD-c224588248f6dad7afa1"
         ],
-        "handoff_triggers": [],
-        "human_responsibility": "",
+        "handoff_triggers": [
+          "规则无法覆盖或资质存疑时转人工"
+        ],
+        "human_responsibility": "审核特殊资质或存疑结果，确认合规",
         "l4_code": "L4-KAET-02",
-        "process_context": "",
+        "process_context": "第二步，依赖第一步采集的背景信息",
+        "quadrant": "unclassified",
         "quality_anchor": "",
-        "risks_limits": [],
-        "specific_capabilities": []
+        "recommended_tier": "Aug",
+        "risks_limits": [
+          "需先补充报告模板、固化规则并完成系统接口"
+        ],
+        "specific_capabilities": [
+          "资质合规比对",
+          "规则匹配"
+        ]
       },
       {
-        "ai_reshape": "",
-        "ai_responsibility": "",
-        "analysis_status": "PENDING_MODEL",
-        "confidence": "UNASSESSED",
+        "ai_reshape": "Agent辅助提供数据整合与预测分析，人做最终判断",
+        "ai_responsibility": "整合多源数据，提供潜力评分和推荐意见",
+        "analysis_status": "MODEL_DRAFT",
+        "confidence": "MODEL_DRAFT",
         "control_gates": [],
-        "current_recommendation": "",
-        "data_basis": [],
-        "deliverable_role": "",
+        "current_recommendation": "采用Agent辅助决策模式，不直接封装确定性Skill",
+        "data_basis": [
+          "D1-D6评分中等，规则不够清晰，需要人工判断"
+        ],
+        "database_tier": "Hybrid",
+        "deliverable_role": "《KA潜力判断记录》作为分级决策参考",
         "evidence_refs": [
-          "EVD-08bf763c6c69f6c62d07",
-          "EVD-090b2638aee70cac6fb2",
-          "EVD-10d7d25ca9907fe52e76",
-          "EVD-151c498607d00c28907f",
-          "EVD-1f05aeee3fa3de68aab2",
-          "EVD-26a75a0cf9dad0225e16",
-          "EVD-50841edc0ae890d5e878",
           "EVD-db670e2eeaf98712c9e0",
-          "EVD-dc7fecaadc8fd7991cad",
-          "EVD-de0b411201840f5e093f",
           "EVD-e3b3024b2681bb7f528f",
-          "EVD-f51a28054e3dc7bc754f",
-          "EVD-f9aeb1e1c13395d57072"
+          "EVD-de0b411201840f5e093f",
+          "EVD-26a75a0cf9dad0225e16",
+          "EVD-10d7d25ca9907fe52e76",
+          "EVD-af5a0dd820e4348cdd27"
         ],
-        "handoff_triggers": [],
-        "human_responsibility": "",
+        "handoff_triggers": [
+          "数据不足或模型置信度低时转人工"
+        ],
+        "human_responsibility": "基于经验对AI建议进行审查并做出最终权威判断",
         "l4_code": "L4-KAET-03",
-        "process_context": "",
+        "process_context": "第三步，基于前两步的结果综合判断KA潜力",
+        "quadrant": "unclassified",
         "quality_anchor": "",
-        "risks_limits": [],
-        "specific_capabilities": []
+        "recommended_tier": "Hybrid",
+        "risks_limits": [
+          "判断主观性强，依赖专家经验，模型可能不准确"
+        ],
+        "specific_capabilities": [
+          "KA潜力判断",
+          "业务决策支持"
+        ]
       },
       {
-        "ai_reshape": "",
-        "ai_responsibility": "",
-        "analysis_status": "PENDING_MODEL",
-        "confidence": "UNASSESSED",
-        "control_gates": [],
-        "current_recommendation": "",
-        "data_basis": [],
-        "deliverable_role": "",
-        "evidence_refs": [
-          "EVD-1fb423e187abac5a6ebf",
-          "EVD-3dc8a2f4f3839fcbae7c",
-          "EVD-489c148f2a932800c1b6",
-          "EVD-561382b3a41527b19533",
-          "EVD-808b763ee69cf92641e2",
-          "EVD-9ca15dd5b18cfbdae0f2",
-          "EVD-a0b30c989a909410003a",
-          "EVD-aded0e82636a9740ffdd",
-          "EVD-b01581e9b4e83b6242b5",
-          "EVD-c0d0a8543195f238f612",
-          "EVD-f3c57c1febb349d3e9a6",
-          "EVD-f51a28054e3dc7bc754f",
-          "EVD-f6f6cef142397b84727b"
+        "ai_reshape": "拆分为两部分：定级计算自动化+推进决策Agent辅助",
+        "ai_responsibility": "自动计算定级并生成建议方案",
+        "analysis_status": "MODEL_DRAFT",
+        "confidence": "MODEL_DRAFT",
+        "control_gates": [
+          "定级结果传递到下游L3-KASC前须业务发展BD岗授权"
         ],
-        "handoff_triggers": [],
-        "human_responsibility": "",
+        "current_recommendation": "优先拆分任务，自动化定级计算部分，决策使用Agent辅助；需先建设评估模板和规则",
+        "data_basis": [
+          "D1-D6评分低，缺乏规则模板，依赖经验"
+        ],
+        "database_tier": "Hybrid",
+        "deliverable_role": "《KA评估定级记录》作为最终定级及推进决策依据",
+        "evidence_refs": [
+          "EVD-489c148f2a932800c1b6",
+          "EVD-9ca15dd5b18cfbdae0f2",
+          "EVD-808b763ee69cf92641e2",
+          "EVD-c0d0a8543195f238f612",
+          "EVD-1fb423e187abac5a6ebf",
+          "EVD-fb15986ad7dd2ebeadb1"
+        ],
+        "handoff_triggers": [
+          "定级结果边界模糊或出现异常需升级时转人工"
+        ],
+        "human_responsibility": "审核定级结果，拍板推进决策",
         "l4_code": "L4-KAET-04",
-        "process_context": "",
+        "process_context": "最后一步，综合前序信息形成定级并决策推进路径",
+        "quadrant": "unclassified",
         "quality_anchor": "",
-        "risks_limits": [],
-        "specific_capabilities": []
+        "recommended_tier": "Hybrid",
+        "risks_limits": [
+          "评估模板缺失，当前全凭经验，易产生偏差"
+        ],
+        "specific_capabilities": [
+          "定级计算",
+          "推进策略制定"
+        ]
       }
     ],
     "missing_analysis": [
-      "逐L4交付物与具体能力分析",
-      "逐任务AI分工分析",
-      "逐L4人机协作与控制分析",
-      "逐L4优先级四维分析",
-      "任务级负责人决策建议"
+      "L4-KAET-01",
+      "L4-KAET-02",
+      "L4-KAET-04",
+      "控制链缺少L4定位，已拒绝2条"
     ],
-    "model_run": null,
-    "priority_drafts": [],
+    "model_run": {
+      "generated_at": "2026-08-04T18:36:07.620349+00:00",
+      "input_snapshot_hash": "643640308ece9855e4aece371e7f282fb5b067abeee90b4c641d9c0bbe412688",
+      "model_name": "deepseek-v4-pro",
+      "model_version": "deepseek-v4-pro",
+      "prompt_version": "VNW-L3-COM-GOLD-v1.0"
+    },
+    "priority_drafts": [
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "current_recommendation": "优先进入Skill原型候选池，开发自动采集Skill并保留人工覆盖接口",
+        "data_basis": [
+          "D1-D6得分均较高，输入结构化、规则清晰、输出可验证"
+        ],
+        "evidence_refs": [
+          "EVD-2f55bd5796b7c1ad1ea6",
+          "EVD-729e82f25a9c59c1ab81",
+          "EVD-e112c5439e9b13434002",
+          "EVD-e1f4932f99af282d756e",
+          "EVD-5eb24324f096776c655b",
+          "EVD-66dd9ed9b7a9940625f4",
+          "EVD-3d107cbcae117e385889"
+        ],
+        "l4_code": "L4-KAET-01",
+        "process_context": "KA评估定级流程的第一步，为后续资质核查和潜力判断提供输入",
+        "quadrant": "unclassified",
+        "risks_limits": [
+          "依赖外部数据接口可用性"
+        ]
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "current_recommendation": "先补报告模板和规则固化，再验证Skill，最终以Aug模式运行",
+        "data_basis": [
+          "D1-D6评分较高，规则清晰，输入结构化"
+        ],
+        "evidence_refs": [
+          "EVD-4c421e21629796427539",
+          "EVD-e95c296d4a96cb629d66",
+          "EVD-9037c83844530f0b4188",
+          "EVD-3aa9f25e7f2f46e9673f",
+          "EVD-2fc0d78475c129215502",
+          "EVD-c224588248f6dad7afa1"
+        ],
+        "l4_code": "L4-KAET-02",
+        "process_context": "第二步，依赖第一步采集的背景信息",
+        "quadrant": "unclassified",
+        "risks_limits": [
+          "需先补充报告模板、固化规则并完成系统接口"
+        ]
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "current_recommendation": "采用Agent辅助决策模式，不直接封装确定性Skill",
+        "data_basis": [
+          "D1-D6评分中等，规则不够清晰，需要人工判断"
+        ],
+        "evidence_refs": [
+          "EVD-db670e2eeaf98712c9e0",
+          "EVD-e3b3024b2681bb7f528f",
+          "EVD-de0b411201840f5e093f",
+          "EVD-26a75a0cf9dad0225e16",
+          "EVD-10d7d25ca9907fe52e76",
+          "EVD-af5a0dd820e4348cdd27"
+        ],
+        "l4_code": "L4-KAET-03",
+        "process_context": "第三步，基于前两步的结果综合判断KA潜力",
+        "quadrant": "unclassified",
+        "risks_limits": [
+          "判断主观性强，依赖专家经验，模型可能不准确"
+        ]
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "current_recommendation": "优先拆分任务，自动化定级计算部分，决策使用Agent辅助；需先建设评估模板和规则",
+        "data_basis": [
+          "D1-D6评分低，缺乏规则模板，依赖经验"
+        ],
+        "evidence_refs": [
+          "EVD-489c148f2a932800c1b6",
+          "EVD-9ca15dd5b18cfbdae0f2",
+          "EVD-808b763ee69cf92641e2",
+          "EVD-c0d0a8543195f238f612",
+          "EVD-1fb423e187abac5a6ebf",
+          "EVD-fb15986ad7dd2ebeadb1"
+        ],
+        "l4_code": "L4-KAET-04",
+        "process_context": "最后一步，综合前序信息形成定级并决策推进路径",
+        "quadrant": "unclassified",
+        "risks_limits": [
+          "评估模板缺失，当前全凭经验，易产生偏差"
+        ]
+      }
+    ],
     "rejected_task_sources": [],
     "schema_version": "vnw.l3-analysis.v1",
     "source_scope": {
@@ -152,84 +297,128 @@
     },
     "tasks": [
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-66dd9ed9b7a9940625f4"
+          "EVD-66dd9ed9b7a9940625f4",
+          "EVD-e112c5439e9b13434002",
+          "EVD-e1f4932f99af282d756e"
         ],
         "l4_code": "L4-KAET-01",
-        "next_task_ids": [],
+        "next_task_ids": [
+          "T-02"
+        ],
         "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
+        "relation_type": "SEQUENCE",
         "sequence_no": 1,
         "sequence_status": "SOURCE_CONFIRMED",
         "source_line": 53,
         "source_step_id": "STEP-01",
         "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-KAET-01-T01",
-        "task_name": "L4-KAET-01 KA背景信息收集 → 《KA背景信息表》(Human)",
-        "tier_rationale": ""
+        "suggested_tier": "Auto",
+        "task_id": "T-01",
+        "task_name": "收集KA背景信息",
+        "tier_rationale": "信息处理单一动作，D1-D6高分，skill_feasibility为A，适合封装为Skill"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-c224588248f6dad7afa1"
+          "EVD-c224588248f6dad7afa1",
+          "EVD-9037c83844530f0b4188",
+          "EVD-3aa9f25e7f2f46e9673f"
         ],
         "l4_code": "L4-KAET-02",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
+        "next_task_ids": [
+          "T-03"
+        ],
+        "previous_task_ids": [
+          "T-01"
+        ],
+        "relation_type": "SEQUENCE",
         "sequence_no": 2,
         "sequence_status": "SOURCE_CONFIRMED",
         "source_line": 60,
         "source_step_id": "STEP-02",
         "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-KAET-02-T01",
-        "task_name": "L4-KAET-02 KA资质合规核查 → 《资质核查记录》(Human)",
-        "tier_rationale": ""
+        "suggested_tier": "Aug",
+        "task_id": "T-02",
+        "task_name": "核查KA资质合规",
+        "tier_rationale": "合规类动作可部分自动化，但需人工复核，skill_feasibility为B"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-af5a0dd820e4348cdd27"
+          "EVD-af5a0dd820e4348cdd27",
+          "EVD-de0b411201840f5e093f",
+          "EVD-26a75a0cf9dad0225e16"
         ],
         "l4_code": "L4-KAET-03",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
+        "next_task_ids": [
+          "T-04A",
+          "T-04B"
+        ],
+        "previous_task_ids": [
+          "T-02"
+        ],
+        "relation_type": "TRANSITION",
         "sequence_no": 3,
         "sequence_status": "SOURCE_CONFIRMED",
         "source_line": 66,
         "source_step_id": "STEP-03",
         "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-KAET-03-T01",
-        "task_name": "L4-KAET-03 KA潜力综合判断 → 《KA潜力判断记录》(Human)",
-        "tier_rationale": ""
+        "suggested_tier": "Hybrid",
+        "task_id": "T-03",
+        "task_name": "判断KA潜在价值",
+        "tier_rationale": "判断/策略类动作，知识密集，skill_feasibility为C，适合Agent辅助"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-fb15986ad7dd2ebeadb1"
+          "EVD-fb15986ad7dd2ebeadb1",
+          "EVD-808b763ee69cf92641e2"
         ],
         "l4_code": "L4-KAET-04",
         "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
+        "previous_task_ids": [
+          "T-03"
+        ],
+        "relation_type": "",
         "sequence_no": 4,
-        "sequence_status": "SOURCE_CONFIRMED",
+        "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 73,
         "source_step_id": "STEP-04",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-KAET-04-T01",
-        "task_name": "L4-KAET-04 定级记录与推进 → 《KA评估定级记录》(Human)",
-        "tier_rationale": ""
+        "source_type": "BLUEPRINT_DERIVED",
+        "suggested_tier": "Aug",
+        "task_id": "T-04A",
+        "task_name": "生成KA评估定级记录",
+        "tier_rationale": "定级录入动作可基于规则自动化，但需人工确认数据完整性和规则适用性；复合动作拆分后此部分封装度提升"
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [
+          "EVD-fb15986ad7dd2ebeadb1",
+          "EVD-489c148f2a932800c1b6",
+          "EVD-808b763ee69cf92641e2"
+        ],
+        "l4_code": "L4-KAET-04",
+        "next_task_ids": [],
+        "previous_task_ids": [
+          "T-03",
+          "T-04A"
+        ],
+        "relation_type": "",
+        "sequence_no": 4,
+        "sequence_status": "SOURCE_STEP_ONLY",
+        "source_line": 73,
+        "source_step_id": "STEP-04",
+        "source_type": "BLUEPRINT_DERIVED",
+        "suggested_tier": "Hybrid",
+        "task_id": "T-04B",
+        "task_name": "制定KA推进决策",
+        "tier_rationale": "决策依赖专家判断和业务策略，需人拍板，适合Agent提供建议"
       }
     ]
   },
-  "analysis_freshness": "PENDING_MODEL",
+  "analysis_freshness": "CURRENT",
   "analysis_input_hash": "643640308ece9855e4aece371e7f282fb5b067abeee90b4c641d9c0bbe412688",
   "blueprint": {
     "blueprint_value_nodes": [],

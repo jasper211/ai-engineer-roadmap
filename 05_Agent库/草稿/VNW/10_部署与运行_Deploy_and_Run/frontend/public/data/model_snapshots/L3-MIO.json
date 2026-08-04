@@ -1,116 +1,259 @@
 {
   "analysis": {
     "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
-    "analysis_status": "PENDING_MODEL",
-    "decision_drafts": [],
-    "generation_mode": "EVIDENCE_ONLY_BOOTSTRAP",
+    "analysis_status": "MODEL_DRAFT",
+    "control_chain": [],
+    "decision_drafts": [
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [
+          "EVD-6ebbd028a3c60c685ac5",
+          "EVD-e4dbf0421476009be2ba",
+          "EVD-7ac9f8a4b018f4b56a4c"
+        ],
+        "human_boundary": "自动化扫描边界：仅限已认证的内部和市场公开数据源；参数设置和异常处理须由市场进入策略岗负责人批准；试点报告生成后须人工验证并标注。",
+        "pilot_scope": "选择1-2个重点细分市场，使用现有市场数据API和内部销售数据，进行为期2个月的小规模试点。",
+        "priority": "P0",
+        "task_ids": [
+          "T-04",
+          "T-05",
+          "T-06"
+        ],
+        "title": "启动市场定量验证自动化试点决策"
+      }
+    ],
+    "generation_mode": "UNIFIED_MODEL",
     "l4_analysis": [
       {
-        "ai_reshape": "",
-        "ai_responsibility": "",
-        "analysis_status": "PENDING_MODEL",
-        "confidence": "UNASSESSED",
-        "control_gates": [],
-        "current_recommendation": "",
-        "data_basis": [],
-        "deliverable_role": "",
+        "ai_reshape": "Agent辅助生成研究计划草案和访谈提纲，自动转录访谈内容并提取关键主题，但最终判断需人工确认",
+        "ai_responsibility": "生成计划草案、记录的转录与结构化、初步洞察点提取",
+        "analysis_status": "MODEL_DRAFT",
+        "confidence": "MODEL_DRAFT",
+        "control_gates": [
+          "最终洞察报告对外发布前须经市场进入策略岗负责人审核"
+        ],
+        "current_recommendation": "推动Agent辅助设计研究方案并自动转录访谈，但研究策略和深度访谈仍由经验丰富的市场人员主导。建议先拆分为计划制定、执行、报告三个子任务，逐步评估自动化可行性。",
+        "data_basis": [
+          "历史市场数据",
+          "客户名单与画像",
+          "前期商业假设",
+          "SOP模板"
+        ],
+        "database_tier": "Hybrid",
+        "deliverable_role": "为后续定量验证和竞争扫描提供市场假设与定性洞察基础",
         "evidence_refs": [
-          "EVD-03e79f0bc48393654d45",
-          "EVD-207caac00a60799c00ea",
-          "EVD-2d2bcfea7c0458f3d904",
-          "EVD-35d690a2ef065d48dc6a",
-          "EVD-78b2474a63cbde2d3924",
-          "EVD-8e36f33045c1ea34df8e",
-          "EVD-a939d7da475b9048baa6",
-          "EVD-b564033d9be4306e9a52",
-          "EVD-c44cf80354f4be31d01d",
-          "EVD-d47f8b3c5382ae006516",
-          "EVD-db21520af44b3f950884",
           "EVD-ee5eb1c9876fd1952962",
-          "EVD-f7def5e25935002959dd"
+          "EVD-d47f8b3c5382ae006516",
+          "EVD-b564033d9be4306e9a52",
+          "EVD-35d690a2ef065d48dc6a",
+          "EVD-8e36f33045c1ea34df8e",
+          "EVD-4a4e5a3da688e189d3f8",
+          "EVD-02816e07290478a8dfb1"
         ],
-        "handoff_triggers": [],
-        "human_responsibility": "",
+        "handoff_triggers": [
+          "AI生成的访谈主题与业务假设冲突时",
+          "访谈中出现复杂情感或矛盾信号时",
+          "洞察报告需要战略解读时"
+        ],
+        "human_responsibility": "审定研究计划、亲自执行或监督访谈、基于经验进行洞察整合与判断",
         "l4_code": "L4-MA-01",
-        "process_context": "",
-        "quality_anchor": "",
-        "risks_limits": [],
-        "specific_capabilities": []
+        "process_context": "L3-MIO流程的第一步，为后续定量扫描和洞察整合奠定定性基础",
+        "quadrant": "Augmented-Strategy",
+        "quality_anchor": "计划书覆盖所有市场假设，访谈记录准确反映客户原意，洞察分析与业务目标对齐",
+        "recommended_tier": "Aug",
+        "risks_limits": [
+          "定性研究受样本量限制，可能无法代表整体市场",
+          "访谈者偏差影响数据质量",
+          "研究与执行依赖专家，规模化受限"
+        ],
+        "specific_capabilities": [
+          "市场研究计划制定（策略性）",
+          "深度访谈执行与需求挖掘",
+          "定性数据整理与洞察提炼"
+        ]
       },
       {
-        "ai_reshape": "",
-        "ai_responsibility": "",
-        "analysis_status": "PENDING_MODEL",
-        "confidence": "UNASSESSED",
+        "ai_reshape": "拆分复合动作为独立Skill：自动化扫描外部数据源、建模市场规模、自动生成竞争报告草稿。Agent协助协调多个Skill执行。",
+        "ai_responsibility": "执行数据抓取、清洗、模型运算和报告初稿生成",
+        "analysis_status": "MODEL_DRAFT",
+        "confidence": "MODEL_DRAFT",
         "control_gates": [],
-        "current_recommendation": "",
-        "data_basis": [],
-        "deliverable_role": "",
+        "current_recommendation": "L4-MA-02具备高封装潜力，但当前复合动作需先拆分为独立的扫描、建模和报告Skill。建议优先将市场扫描和规模测算封装为确定性Skill，竞争分析报告暂由Agent辅助生成。拆分后各子任务可达Auto，但仍需人工定义参数和审核。",
+        "data_basis": [
+          "市场数据库API",
+          "内部销售数据",
+          "行业报告"
+        ],
+        "database_tier": "Auto",
+        "deliverable_role": "为最终市场洞察报告提供定量数据支撑和竞争格局分析",
         "evidence_refs": [
-          "EVD-35efa48c97e08bd8ca75",
-          "EVD-6733cc4317e8bcd08929",
-          "EVD-79315dfa40c03fda943e",
-          "EVD-87d45c5cb63aca7dd252",
-          "EVD-8e36f33045c1ea34df8e",
-          "EVD-a22d0cecc3a859db0dba",
-          "EVD-a3a5bd23cc994f9c7a80",
-          "EVD-a3ed82939a08c4501619",
-          "EVD-d64d3f0c2268a39f20e9",
-          "EVD-da0864f777576e44bc7e",
           "EVD-e4dbf0421476009be2ba",
-          "EVD-e658e5182451571eabb2",
-          "EVD-ec042acb6d9bbcdbc431"
+          "EVD-35efa48c97e08bd8ca75",
+          "EVD-a3a5bd23cc994f9c7a80",
+          "EVD-8e36f33045c1ea34df8e",
+          "EVD-6ebbd028a3c60c685ac5"
         ],
-        "handoff_triggers": [],
-        "human_responsibility": "",
+        "handoff_triggers": [
+          "数据源异常或缺失时",
+          "模型结果与预期严重偏离时",
+          "竞争洞察需要战略解读时"
+        ],
+        "human_responsibility": "定义扫描范围和模型参数，审核数据质量，验证结论合理性，最终报告确认",
         "l4_code": "L4-MA-02",
-        "process_context": "",
-        "quality_anchor": "",
-        "risks_limits": [],
-        "specific_capabilities": []
+        "process_context": "承接定性研究的假设，通过定量数据验证市场规模并分析竞争态势，为洞察整合提供定量基础",
+        "quadrant": "Automation-Ready",
+        "quality_anchor": "数据来源可靠，模型假设透明，报告结论可追溯",
+        "recommended_tier": "Hybrid",
+        "risks_limits": [
+          "API数据延迟或不可用",
+          "市场定义边界模糊可能导致测算偏差",
+          "自动化模型缺乏业务直觉修正"
+        ],
+        "specific_capabilities": [
+          "市场扫描与数据抓取（信息处理）",
+          "市场规模测算（定量分析）",
+          "竞争分析报告生成"
+        ]
       },
       {
-        "ai_reshape": "",
-        "ai_responsibility": "",
-        "analysis_status": "PENDING_MODEL",
-        "confidence": "UNASSESSED",
-        "control_gates": [],
-        "current_recommendation": "",
-        "data_basis": [],
-        "deliverable_role": "",
-        "evidence_refs": [
-          "EVD-00244819b587333f1bfd",
-          "EVD-082a609c06f5bf7fff34",
-          "EVD-3ace9556797648753055",
-          "EVD-4fc79dc28ae29eb69eef",
-          "EVD-557d5d582df9c8f98fa4",
-          "EVD-568fb198d2f4ed3ba593",
-          "EVD-8e36f33045c1ea34df8e",
-          "EVD-8f48c2b9a754d5ac6229",
-          "EVD-9e8d7fbcf2ae6886ac10",
-          "EVD-a8bc6f48e99ef2c5b116",
-          "EVD-ceafed4573978388c3e3",
-          "EVD-ed5191376d48adb9f134",
-          "EVD-f54654cea991c8aed61c"
+        "ai_reshape": "Agent辅助准备整合工作坊材料、自动生成报告框架和知识库条目，但洞察优先级和战略叙事需人工主导。",
+        "ai_responsibility": "收集并预处理前期洞察数据，自动生成报告初稿和知识库格式，管理知识库存储",
+        "analysis_status": "MODEL_DRAFT",
+        "confidence": "MODEL_DRAFT",
+        "control_gates": [
+          "市场深度分析报告正式提交决策层前须经市场进入策略岗负责人审批"
         ],
-        "handoff_triggers": [],
-        "human_responsibility": "",
+        "current_recommendation": "在skill_feasibility低封装背景下，不建议全自动化。采用Agent辅助模式：AI准备材料、生成初稿，人工负责洞察整合和最终报告。知识库更新可部分自动化，但需人工审批。继续维持Hybrid tier，但未来可探索动态知识库的自动更新。",
+        "data_basis": [
+          "前序L4产出：调研计划书、客户访谈、竞争报告等",
+          "内部历史洞察库",
+          "行业参考"
+        ],
+        "database_tier": "Hybrid",
+        "deliverable_role": "综合定性定量洞察，生成战略决策依据和可重用知识",
+        "evidence_refs": [
+          "EVD-4fc79dc28ae29eb69eef",
+          "EVD-568fb198d2f4ed3ba593",
+          "EVD-082a609c06f5bf7fff34",
+          "EVD-ed5191376d48adb9f134",
+          "EVD-8e36f33045c1ea34df8e",
+          "EVD-283ac340b52a86f0d397",
+          "EVD-02816e07290478a8dfb1"
+        ],
+        "handoff_triggers": [
+          "洞察之间存在重大矛盾时",
+          "战略叙事需高层判断时",
+          "知识库条目涉及敏感信息时"
+        ],
+        "human_responsibility": "主持共创工作坊，评判洞察优先级，撰写战略叙事，审核报告终稿，确认知识库内容",
         "l4_code": "L4-MA-03",
-        "process_context": "",
-        "quality_anchor": "",
-        "risks_limits": [],
-        "specific_capabilities": []
+        "process_context": "是市场洞察流程的最终整合阶段，产出作为决策依据的核心报告",
+        "quadrant": "Judgment-Heavy",
+        "quality_anchor": "洞察结论有证据支撑，报告符合管理层决策需求，知识库条目准确且可检索",
+        "recommended_tier": "Hybrid",
+        "risks_limits": [
+          "洞察整合高度依赖专家经验，难以完全标准化",
+          "知识库更新可能滞后或遗漏",
+          "报告倾向性可能影响决策客观性"
+        ],
+        "specific_capabilities": [
+          "洞察整合工作坊引导（需判断）",
+          "报告编制与叙事构建（语义复核判定）",
+          "知识库更新（信息处理）"
+        ]
       }
     ],
     "missing_analysis": [
-      "逐L4交付物与具体能力分析",
-      "逐任务AI分工分析",
-      "逐L4人机协作与控制分析",
-      "逐L4优先级四维分析",
-      "任务级负责人决策建议"
+      "L4-MA-02 human_touchpoint",
+      "L3-MIO gate E-008",
+      "L3-MIO gate E-009"
     ],
-    "model_run": null,
-    "priority_drafts": [],
+    "model_run": {
+      "generated_at": "2026-08-04T19:00:26.005233+00:00",
+      "input_snapshot_hash": "359603e7b19e5880757b0fc2a47357b41568726b9a368a0cfc8ec5ef35453916",
+      "model_name": "deepseek-v4-pro",
+      "model_version": "deepseek-v4-pro",
+      "prompt_version": "VNW-L3-COM-GOLD-v1.0"
+    },
+    "priority_drafts": [
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "current_recommendation": "推动Agent辅助设计研究方案并自动转录访谈，但研究策略和深度访谈仍由经验丰富的市场人员主导。建议先拆分为计划制定、执行、报告三个子任务，逐步评估自动化可行性。",
+        "data_basis": [
+          "历史市场数据",
+          "客户名单与画像",
+          "前期商业假设",
+          "SOP模板"
+        ],
+        "evidence_refs": [
+          "EVD-ee5eb1c9876fd1952962",
+          "EVD-d47f8b3c5382ae006516",
+          "EVD-b564033d9be4306e9a52",
+          "EVD-35d690a2ef065d48dc6a",
+          "EVD-8e36f33045c1ea34df8e",
+          "EVD-4a4e5a3da688e189d3f8",
+          "EVD-02816e07290478a8dfb1"
+        ],
+        "l4_code": "L4-MA-01",
+        "process_context": "L3-MIO流程的第一步，为后续定量扫描和洞察整合奠定定性基础",
+        "quadrant": "unclassified",
+        "risks_limits": [
+          "定性研究受样本量限制，可能无法代表整体市场",
+          "访谈者偏差影响数据质量",
+          "研究与执行依赖专家，规模化受限"
+        ]
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "current_recommendation": "L4-MA-02具备高封装潜力，但当前复合动作需先拆分为独立的扫描、建模和报告Skill。建议优先将市场扫描和规模测算封装为确定性Skill，竞争分析报告暂由Agent辅助生成。拆分后各子任务可达Auto，但仍需人工定义参数和审核。",
+        "data_basis": [
+          "市场数据库API",
+          "内部销售数据",
+          "行业报告"
+        ],
+        "evidence_refs": [
+          "EVD-e4dbf0421476009be2ba",
+          "EVD-35efa48c97e08bd8ca75",
+          "EVD-a3a5bd23cc994f9c7a80",
+          "EVD-8e36f33045c1ea34df8e",
+          "EVD-6ebbd028a3c60c685ac5"
+        ],
+        "l4_code": "L4-MA-02",
+        "process_context": "承接定性研究的假设，通过定量数据验证市场规模并分析竞争态势，为洞察整合提供定量基础",
+        "quadrant": "unclassified",
+        "risks_limits": [
+          "API数据延迟或不可用",
+          "市场定义边界模糊可能导致测算偏差",
+          "自动化模型缺乏业务直觉修正"
+        ]
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "current_recommendation": "在skill_feasibility低封装背景下，不建议全自动化。采用Agent辅助模式：AI准备材料、生成初稿，人工负责洞察整合和最终报告。知识库更新可部分自动化，但需人工审批。继续维持Hybrid tier，但未来可探索动态知识库的自动更新。",
+        "data_basis": [
+          "前序L4产出：调研计划书、客户访谈、竞争报告等",
+          "内部历史洞察库",
+          "行业参考"
+        ],
+        "evidence_refs": [
+          "EVD-4fc79dc28ae29eb69eef",
+          "EVD-568fb198d2f4ed3ba593",
+          "EVD-082a609c06f5bf7fff34",
+          "EVD-ed5191376d48adb9f134",
+          "EVD-8e36f33045c1ea34df8e",
+          "EVD-283ac340b52a86f0d397",
+          "EVD-02816e07290478a8dfb1"
+        ],
+        "l4_code": "L4-MA-03",
+        "process_context": "是市场洞察流程的最终整合阶段，产出作为决策依据的核心报告",
+        "quadrant": "unclassified",
+        "risks_limits": [
+          "洞察整合高度依赖专家经验，难以完全标准化",
+          "知识库更新可能滞后或遗漏",
+          "报告倾向性可能影响决策客观性"
+        ]
+      }
+    ],
     "rejected_task_sources": [],
     "schema_version": "vnw.l3-analysis.v1",
     "source_scope": {
@@ -120,179 +263,182 @@
     },
     "tasks": [
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
           "EVD-4a4e5a3da688e189d3f8"
         ],
         "l4_code": "L4-MA-01",
         "next_task_ids": [],
         "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
+        "relation_type": null,
         "sequence_no": 1,
-        "sequence_status": "SOURCE_CONFIRMED",
+        "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 69,
         "source_step_id": "STEP-01",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-MA-01-T01",
-        "task_name": "制定市场洞察研究计划（OP-MA-01，MKT-SOP-001）",
-        "tier_rationale": ""
+        "source_type": "blueprint_step",
+        "suggested_tier": "Human",
+        "task_id": "T-01",
+        "task_name": "制定市场洞察研究计划",
+        "tier_rationale": "制定研究计划涉及策略判断和行业假设，当前AI仅可辅助生成草案，最终确认需人工决策，故建议Human。"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
           "EVD-4a4e5a3da688e189d3f8"
         ],
         "l4_code": "L4-MA-01",
         "next_task_ids": [],
         "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
+        "relation_type": null,
         "sequence_no": 1,
-        "sequence_status": "SOURCE_CONFIRMED",
+        "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 69,
         "source_step_id": "STEP-01",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-MA-01-T02",
-        "task_name": "执行定性客户洞察研究（OP-MA-02，MKT-SOP-002）：客户访谈+需求挖掘",
-        "tier_rationale": ""
+        "source_type": "blueprint_step",
+        "suggested_tier": "Human",
+        "task_id": "T-02",
+        "task_name": "执行定性客户洞察研究",
+        "tier_rationale": "客户访谈需要人际互动和深层需求挖掘，目前不适合自动化，必须由市场人员执行。"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
           "EVD-4a4e5a3da688e189d3f8"
         ],
         "l4_code": "L4-MA-01",
         "next_task_ids": [],
         "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
+        "relation_type": null,
         "sequence_no": 1,
-        "sequence_status": "SOURCE_CONFIRMED",
+        "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 69,
         "source_step_id": "STEP-01",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-MA-01-T03",
-        "task_name": "输出市场调研计划书 + 客户访谈记录与洞察分析",
-        "tier_rationale": ""
+        "source_type": "blueprint_step",
+        "suggested_tier": "Aug",
+        "task_id": "T-03",
+        "task_name": "输出市场调研计划书与客户访谈洞察分析",
+        "tier_rationale": "文档生成可由AI辅助完成初稿，人工基于前序洞察进行审核与修改，建议Aug。"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-6ebbd028a3c60c685ac5"
+          "EVD-6ebbd028a3c60c685ac5",
+          "EVD-e4dbf0421476009be2ba"
         ],
         "l4_code": "L4-MA-02",
         "next_task_ids": [],
         "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
+        "relation_type": null,
         "sequence_no": 2,
-        "sequence_status": "SOURCE_CONFIRMED",
+        "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 81,
         "source_step_id": "STEP-02",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-MA-02-T01",
-        "task_name": "执行市场与竞争环境扫描（OP-MA-03，MKT-SOP-003）",
-        "tier_rationale": ""
+        "source_type": "blueprint_step",
+        "suggested_tier": "Auto",
+        "task_id": "T-04",
+        "task_name": "执行市场与竞争环境扫描",
+        "tier_rationale": "数据源API可自动化抓取和初步清洗，符合A级skill封装条件，建议Auto。"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-6ebbd028a3c60c685ac5"
+          "EVD-6ebbd028a3c60c685ac5",
+          "EVD-e4dbf0421476009be2ba"
         ],
         "l4_code": "L4-MA-02",
         "next_task_ids": [],
         "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
+        "relation_type": null,
         "sequence_no": 2,
-        "sequence_status": "SOURCE_CONFIRMED",
+        "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 81,
         "source_step_id": "STEP-02",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-MA-02-T02",
-        "task_name": "执行定量市场验证研究（OP-MA-04，MKT-SOP-004）：市场规模/增速/份额测算",
-        "tier_rationale": ""
+        "source_type": "blueprint_step",
+        "suggested_tier": "Auto",
+        "task_id": "T-05",
+        "task_name": "执行定量市场验证研究",
+        "tier_rationale": "市场规模测算可基于模型自动执行，但参数需人工定义。建议Auto，并预设人工复核触发条件。"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-6ebbd028a3c60c685ac5"
+          "EVD-6ebbd028a3c60c685ac5",
+          "EVD-e4dbf0421476009be2ba"
         ],
         "l4_code": "L4-MA-02",
         "next_task_ids": [],
         "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
+        "relation_type": null,
         "sequence_no": 2,
-        "sequence_status": "SOURCE_CONFIRMED",
+        "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 81,
         "source_step_id": "STEP-02",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-MA-02-T03",
-        "task_name": "输出竞争分析报告 + 市场规模验证报告",
-        "tier_rationale": ""
+        "source_type": "blueprint_step",
+        "suggested_tier": "Hybrid",
+        "task_id": "T-06",
+        "task_name": "输出竞争分析报告与市场规模验证报告",
+        "tier_rationale": "报告框架可自动生成，但竞争分析和市场解读需人工判断，建议Hybrid以确保质量。"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
           "EVD-283ac340b52a86f0d397"
         ],
         "l4_code": "L4-MA-03",
         "next_task_ids": [],
         "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
+        "relation_type": null,
         "sequence_no": 3,
-        "sequence_status": "SOURCE_CONFIRMED",
+        "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 93,
         "source_step_id": "STEP-03",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-MA-03-T01",
-        "task_name": "组织洞察整合与共创工作坊（OP-MA-06，MKT-SOP-006）",
-        "tier_rationale": ""
+        "source_type": "blueprint_step",
+        "suggested_tier": "Human",
+        "task_id": "T-07",
+        "task_name": "组织洞察整合与共创工作坊",
+        "tier_rationale": "工作坊引导需要人为互动和即时判断，无法自动化，建议Human。"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
           "EVD-283ac340b52a86f0d397"
         ],
         "l4_code": "L4-MA-03",
         "next_task_ids": [],
         "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
+        "relation_type": null,
         "sequence_no": 3,
-        "sequence_status": "SOURCE_CONFIRMED",
+        "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 93,
         "source_step_id": "STEP-03",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-MA-03-T02",
-        "task_name": "编制与交付市场洞察报告（OP-MA-07，MKT-SOP-007）：含客户旅程图+痛点地图",
-        "tier_rationale": ""
+        "source_type": "blueprint_step",
+        "suggested_tier": "Aug",
+        "task_id": "T-08",
+        "task_name": "编制与交付市场洞察报告",
+        "tier_rationale": "AI可整合前期数据生成报告初稿，人工负责战略叙事和终稿，建议Aug。"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
           "EVD-283ac340b52a86f0d397"
         ],
         "l4_code": "L4-MA-03",
         "next_task_ids": [],
         "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
+        "relation_type": null,
         "sequence_no": 3,
-        "sequence_status": "SOURCE_CONFIRMED",
+        "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 93,
         "source_step_id": "STEP-03",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-MA-03-T03",
-        "task_name": "更新市场洞察知识库（OP-MA-05，MKT-SOP-005）",
-        "tier_rationale": ""
+        "source_type": "blueprint_step",
+        "suggested_tier": "Aug",
+        "task_id": "T-09",
+        "task_name": "更新市场洞察知识库",
+        "tier_rationale": "知识库条目可由AI自动抽取和归类，人工确认后入库，建议Aug。"
       }
     ]
   },
-  "analysis_freshness": "PENDING_MODEL",
+  "analysis_freshness": "CURRENT",
   "analysis_input_hash": "359603e7b19e5880757b0fc2a47357b41568726b9a368a0cfc8ec5ef35453916",
   "blueprint": {
     "blueprint_value_nodes": [

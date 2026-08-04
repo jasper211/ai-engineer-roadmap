@@ -1,0 +1,381 @@
+{
+  "schema_version": "vnw.l3-analysis.v1",
+  "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
+  "generation_mode": "UNIFIED_MODEL",
+  "analysis_status": "MODEL_DRAFT",
+  "model_run": null,
+  "source_scope": {
+    "database": "process_analytics",
+    "knowledge": "ACTIVE supplemental evidence only",
+    "evidence_count": 48
+  },
+  "l4_analysis": [
+    {
+      "l4_code": "L4-RM-01",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-872c12a689938b6b3878",
+        "EVD-e88203046c3c7a741119",
+        "EVD-1d02978675159f56e4f9",
+        "EVD-1029a7e37832fc8964fb",
+        "EVD-bcd41687b952f911921c",
+        "EVD-d8fa654e7335e40b6e82",
+        "EVD-833438df84718ac75056"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "识别内外部战略风险并进行量化评估，输出初步风险清单和评级矩阵，作为后续风险应对的输入。",
+      "specific_capabilities": [
+        "召开跨部门风险识别工作坊",
+        "对外部/内部/财务/运营风险进行系统扫描",
+        "使用概率×影响矩阵进行风险评分",
+        "输出结构化风险清单与评级矩阵"
+      ],
+      "ai_reshape": "AI可自动采集行业风险数据、历史损失数据，辅助生成风险列表草稿；使用规则引擎计算风险评分并生成矩阵；但工作坊主持和最终评级仍需人工判断。",
+      "quality_anchor": "风险清单完整性（覆盖四类风险）、评分矩阵与业务目标对齐程度、工作坊参与方覆盖度。",
+      "ai_responsibility": "自动抓取公开风险报告与数据库，计算初步评分，生成标准化风险清单模板。",
+      "human_responsibility": "组织工作坊、识别定性风险、调整评分参数、批准最终清单和评级。",
+      "handoff_triggers": [
+        "AI抓取的数据存在冲突或不完整时",
+        "风险评分超出预设置信区间时",
+        "涉及新业务领域或监管敏感风险时"
+      ],
+      "control_gates": [
+        "工作坊签到记录与SOP合规检查",
+        "最终风险清单需由市场进入策略岗复核确认"
+      ],
+      "data_basis": [
+        "公开行业风险数据库、新闻舆情（D1：EVD-d358abab7ac776f744b1）",
+        "风险评分矩阵规则（D2：EVD-86119402a1d4b47bc2d0）",
+        "历史风险评估记录（D3：EVD-fc63620ee0c1e9b6dc0d）"
+      ],
+      "process_context": "这是战略风险评价流程的第一步，其输出将直接影响风险应对策略的制定。目前缺失SOP草稿和部分规则记录，但核心评分规则已明确。",
+      "risks_limits": [
+        "高度依赖领域专家经验，工作坊可能产生群体思维偏差",
+        "外部风险数据可能存在滞后或噪音",
+        "复合动作拆分后，任务交接复杂度增加"
+      ],
+      "current_recommendation": "建议先以‘人工主导+AI辅助’的Hybrid模式运行；明确工作坊标准流程后，可逐步将风险扫描和评分计算自动化；当前仅在非关键风险类别试点。",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-RM-02",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-64dbe5fae87ec4799cd0",
+        "EVD-f91f932df62c0473c304",
+        "EVD-2dadca70558b448169ad",
+        "EVD-1029a7e37832fc8964fb",
+        "EVD-10639b0a3e38c1b31d8c",
+        "EVD-0d2539f9426ade26d8f0",
+        "EVD-65b180768e3c5b2ed89c"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "基于风险识别结果制定具体的应对策略与预案，明确责任分配，最终形成可执行的应对预案集。",
+      "specific_capabilities": [
+        "对风险选择规避/减轻/转移/接受策略",
+        "制定详细应急预案",
+        "分配风险责任人",
+        "整合为标准化应对预案文档"
+      ],
+      "ai_reshape": "AI可基于规则库推荐策略选项、自动起草预案模板；但策略选择需管理层决策，预案细节需业务专家填充。",
+      "quality_anchor": "策略与风险等级匹配度、预案可操作性、责任人明确性。",
+      "ai_responsibility": "提供风险应对策略的决策树、生成预案草稿、自动分配临时责任人建议。",
+      "human_responsibility": "最终确定应对策略、审批预案内容、确认责任人。",
+      "handoff_triggers": [
+        "当策略推荐与业务连续性计划冲突时",
+        "预案涉及资金或法律合规时",
+        "AI信心度不足时"
+      ],
+      "control_gates": [
+        "所有预案需经战略族负责人审批",
+        "涉及财务支出的预案需财务复核"
+      ],
+      "data_basis": [
+        "风险评级矩阵（来自L4-RM-01）",
+        "历史应对措施库（D1：EVD-ee7d7a99470a2975af07）",
+        "企业风险偏好策略（D2：EVD-90f920eac68675c1390f）"
+      ],
+      "process_context": "作为流程第二环，承接风险清单，输出预案集。当前无SOP草稿与规则库，需尽快补充以固化策略选择逻辑。",
+      "risks_limits": [
+        "过度依赖AI推荐可能忽略业务隐性约束",
+        "责任人分配若未与组织结构同步可能失效",
+        "新风险类型缺乏历史数据"
+      ],
+      "current_recommendation": "保持人工决策权，AI仅作为信息整合和模板生成工具；优先建立风险应对策略规则库，再逐步自动化预案生成环节。",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-RM-03",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-8c6b54473fccfa8821bd",
+        "EVD-cff647d2f60634c14003",
+        "EVD-58be75885d7ac390a195",
+        "EVD-1029a7e37832fc8964fb",
+        "EVD-0eae58a9edbaae9be1c8",
+        "EVD-816b1f9e3c3989b60ab3",
+        "EVD-b8d8d59a728ab4775ffb"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "将风险应对措施整合入项目计划，进行沟通与评审，最终输出正式风险登记册并更新项目计划。",
+      "specific_capabilities": [
+        "更新项目计划中的风险措施",
+        "组织风险沟通会议",
+        "正式化风险登记册（含元数据）",
+        "维护审计痕迹"
+      ],
+      "ai_reshape": "AI可自动生成风险登记册条目、合并措施到计划模板、提醒沟通节点；但会议主持、跨部门协商仍需人工。Skill可行性建议先拆分为独立子技能，登记册生成部分可实现高自动化。",
+      "quality_anchor": "登记册完整性、措施与计划版本一致性、沟通记录可追溯性。",
+      "ai_responsibility": "自动从预案生成登记册草稿、更新项目计划中的风险信息、发送沟通通知。",
+      "human_responsibility": "主持评审会议、调解冲突、最终签发风险登记册。",
+      "handoff_triggers": [
+        "当不同部门对措施有异议时",
+        "登记册条目无法自动关联系统数据时",
+        "外部审计要求时"
+      ],
+      "control_gates": [
+        "正式风险登记册须经市场进入策略岗签字确认",
+        "项目计划更新须经PMO审批"
+      ],
+      "data_basis": [
+        "风险应对预案（来自L4-RM-02）",
+        "项目计划模板（D1：EVD-0d761eedd5c4037e0192）",
+        "风险登记册结构（D2：EVD-fdf3f4ee164c727b4c8d）"
+      ],
+      "process_context": "流程最终环节，产出主交付物VN-SMPS-05。目前Tier为Auto，但人工接触点仍存在，尤其是沟通与审批环节。需先拆分复合动作。",
+      "risks_limits": [
+        "沟通审批流程可能成为瓶颈",
+        "项目计划集成若手工操作易出错",
+        "复合动作拆分后任务依赖关系需明确"
+      ],
+      "current_recommendation": "立即对L4进行任务拆分；优先将登记册生成和计划更新封装为Skill进入原型池；沟通环节保持人工，待SOP固化后探索Agent辅助。",
+      "database_tier": "Auto",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "T1",
+      "l4_code": "L4-RM-01",
+      "task_name": "开展战略风险识别工作坊",
+      "source_type": "BLUEPRINT_STEP",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-01",
+      "source_line": 70,
+      "previous_task_ids": [],
+      "next_task_ids": ["T4","T5","T6"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-13f75a99856659071d44",
+        "EVD-833438df84718ac75056"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "工作坊需要跨部门协作和专家经验，AI无法替代人类主持和现场判断。"
+    },
+    {
+      "task_id": "T2",
+      "l4_code": "L4-RM-01",
+      "task_name": "分析评估风险暴露并打分评级",
+      "source_type": "BLUEPRINT_STEP",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-01",
+      "source_line": 70,
+      "previous_task_ids": [],
+      "next_task_ids": ["T4","T5","T6"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-13f75a99856659071d44",
+        "EVD-833438df84718ac75056"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "评分矩阵可由AI计算，但风险暴露程度评估依赖上下文理解，需人机协同。"
+    },
+    {
+      "task_id": "T3",
+      "l4_code": "L4-RM-01",
+      "task_name": "输出初步风险清单与评级矩阵",
+      "source_type": "BLUEPRINT_STEP",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-01",
+      "source_line": 70,
+      "previous_task_ids": [],
+      "next_task_ids": ["T4","T5","T6"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-13f75a99856659071d44",
+        "EVD-e88203046c3c7a741119"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "清单和矩阵生成基于规则和数据，在人工确认输入后可全自动化。"
+    },
+    {
+      "task_id": "T4",
+      "l4_code": "L4-RM-02",
+      "task_name": "制定优先级风险应对策略与预案",
+      "source_type": "BLUEPRINT_STEP",
+      "sequence_no": 2,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-02",
+      "source_line": 82,
+      "previous_task_ids": ["T1","T2","T3"],
+      "next_task_ids": ["T7","T8","T9"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-b4e43691607dc3bb8fdf",
+        "EVD-65b180768e3c5b2ed89c"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "策略制定属于核心判断，需管理层经验，AI仅能提供参考。"
+    },
+    {
+      "task_id": "T5",
+      "l4_code": "L4-RM-02",
+      "task_name": "明确风险责任人并分配应对任务",
+      "source_type": "BLUEPRINT_STEP",
+      "sequence_no": 2,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-02",
+      "source_line": 82,
+      "previous_task_ids": ["T1","T2","T3"],
+      "next_task_ids": ["T7","T8","T9"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-b4e43691607dc3bb8fdf",
+        "EVD-65b180768e3c5b2ed89c"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "AI可根据组织架构和历史任务自动推荐责任人，但最终分配需人工确认。"
+    },
+    {
+      "task_id": "T6",
+      "l4_code": "L4-RM-02",
+      "task_name": "输出风险应对预案集",
+      "source_type": "BLUEPRINT_STEP",
+      "sequence_no": 2,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-02",
+      "source_line": 82,
+      "previous_task_ids": ["T1","T2","T3"],
+      "next_task_ids": ["T7","T8","T9"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-b4e43691607dc3bb8fdf",
+        "EVD-f91f932df62c0473c304"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "文档生成高度结构化，在策略确认后可自动完成。"
+    },
+    {
+      "task_id": "T7",
+      "l4_code": "L4-RM-03",
+      "task_name": "整合风险应对措施入项目计划",
+      "source_type": "BLUEPRINT_STEP",
+      "sequence_no": 3,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-03",
+      "source_line": 94,
+      "previous_task_ids": ["T4","T5","T6"],
+      "next_task_ids": [],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-9be541ad19e858349c2a",
+        "EVD-b8d8d59a728ab4775ffb"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "计划更新可自动化，但需人工确认变更影响。"
+    },
+    {
+      "task_id": "T8",
+      "l4_code": "L4-RM-03",
+      "task_name": "进行风险沟通与预案评审",
+      "source_type": "BLUEPRINT_STEP",
+      "sequence_no": 3,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-03",
+      "source_line": 94,
+      "previous_task_ids": ["T4","T5","T6"],
+      "next_task_ids": [],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-9be541ad19e858349c2a",
+        "EVD-b8d8d59a728ab4775ffb"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "沟通评审涉及跨部门协商，依赖人际互动，不适合自动化。"
+    },
+    {
+      "task_id": "T9",
+      "l4_code": "L4-RM-03",
+      "task_name": "输出正式风险登记册并更新项目计划",
+      "source_type": "BLUEPRINT_STEP",
+      "sequence_no": 3,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-03",
+      "source_line": 94,
+      "previous_task_ids": ["T4","T5","T6"],
+      "next_task_ids": [],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-9be541ad19e858349c2a",
+        "EVD-cff647d2f60634c14003"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "登记册生成可基于模板和现有数据全自动完成，但需人工最终签发。"
+    }
+  ],
+  "priority_drafts": [
+    {
+      "priority": "P1",
+      "task_ids": ["T7","T8","T9"],
+      "reason": "L4-RM-03直接产出主交付物VN-SMPS-05，且数据库Tier为Auto但当前人工接触点多，自动化改造收益高；其子任务中T7和T9可率先封装为Skill，T8保持人工可快速提升整体效率，符合价值节点P1优先级。",
+      "evidence_refs": [
+        "EVD-9aada7d7b69660666a94",
+        "EVD-b8d8d59a728ab4775ffb"
+      ]
+    }
+  ],
+  "decision_drafts": [
+    {
+      "priority": 1,
+      "task_ids": ["T7","T9"],
+      "title": "优先试点L4-RM-03中可自动化任务",
+      "pilot_scope": "选择1个非关键项目，将T7和T9作为试点，对照人工执行评估效率与质量；T8仍由原岗位负责，确保沟通质量。",
+      "human_boundary": "市场进入策略岗必须审批AI生成的登记册草案，并主持T8沟通评审会；任何项目计划变更需经PMO复核。",
+      "evidence_refs": [
+        "EVD-b8d8d59a728ab4775ffb",
+        "EVD-816b1f9e3c3989b60ab3"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "control_chain": [
+    "STEP-01工作坊签到与SOP合规（人工）",
+    "风险清单由JF-01市场进入策略岗复核",
+    "STEP-02预案需战略族负责人审批",
+    "STEP-03登记册签字、项目计划PMO审批"
+  ],
+  "rejected_task_sources": [],
+  "missing_analysis": [
+    "EVD-E-007: 规则可定位L4为0/3，部分规则缺失，影响自动化判断的精确度",
+    "EVD-E-008: 缺少SOP草稿或同等任务执行材料",
+    "EVD-E-009: 缺少可关联的规则记录",
+    "L4-RM-01和L4-RM-02的人力洞察数据未提供，无法评估具体瓶颈"
+  ]
+}

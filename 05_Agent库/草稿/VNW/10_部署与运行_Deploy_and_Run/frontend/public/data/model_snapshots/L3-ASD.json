@@ -1,52 +1,125 @@
 {
   "analysis": {
     "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
-    "analysis_status": "PENDING_MODEL",
-    "decision_drafts": [],
-    "generation_mode": "EVIDENCE_ONLY_BOOTSTRAP",
+    "analysis_status": "MODEL_DRAFT",
+    "control_chain": [],
+    "decision_drafts": [
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [
+          "EVD-bdb2f1113c41348acbb8",
+          "EVD-2b2330dbe1c69fccd26b",
+          "EVD-6e2c8c639b77601d6577"
+        ],
+        "human_boundary": "投诉面部决策和上诉处理必须由人负责，AI不可直接与客户交互投诉事宜",
+        "pilot_scope": "在合作机构群内选取投诉率较高的2家机构，由Agent自动建档、生成面谈提示，面谈仍由经代机构合作岗执行",
+        "priority": "P1",
+        "task_ids": [
+          "T-ASD-05",
+          "T-ASD-06"
+        ],
+        "title": "投诉处理试点AI辅助档案与人工面谈"
+      }
+    ],
+    "generation_mode": "UNIFIED_MODEL",
     "l4_analysis": [
       {
-        "ai_reshape": "",
-        "ai_responsibility": "",
-        "analysis_status": "PENDING_MODEL",
-        "confidence": "UNASSESSED",
-        "control_gates": [],
-        "current_recommendation": "",
-        "data_basis": [],
-        "deliverable_role": "",
-        "evidence_refs": [
-          "EVD-2b2330dbe1c69fccd26b",
-          "EVD-8d1a5d17563d5b6e2235",
-          "EVD-993bee960e86a513bb63",
-          "EVD-9aea74009fc6697e54ad",
-          "EVD-a7aa15c2762f15a9083a",
-          "EVD-b05488ed3f28b286793c",
-          "EVD-bdb2f1113c41348acbb8",
-          "EVD-c5a3c5a4c7b19eb5f8c3",
-          "EVD-d2b0fd3eaeb42adda575",
-          "EVD-def226e1e50cb0b5ae67",
-          "EVD-e425a5075ecc9ef071ef",
-          "EVD-f2c9d134063b0595f7d8",
-          "EVD-fc661cb5c5d4b8bc19bb"
+        "ai_reshape": "将复合动作拆分为多个独立Skill和人工协作任务。信息处理类（身份核实、台账录入、报告生成）封装为确定性Skill；投诉面谈、上诉处理等需判断与共情的环节保留人工，并由Agent辅助信息聚合与合规提醒。整体设计为‘自动化处理+人工例外干预’的Hybrid模式。",
+        "ai_responsibility": "自动核实客户身份与保单信息；自动生成服务反馈、台账记录及监控报告；自动理赔文件模板校验与提交；自动投诉建档与CRC材料分发。",
+        "analysis_status": "MODEL_DRAFT",
+        "confidence": "MODEL_DRAFT",
+        "control_gates": [
+          "投诉处理须全程录音且存档合规",
+          "理赔文件提交前须经人工最终确认",
+          "监控报告对外发布前须经岗位负责人审批"
         ],
-        "handoff_triggers": [],
-        "human_responsibility": "",
+        "current_recommendation": "优先将报告生成、受理核实、台账录入等结构化子任务封装为Skill进行试点；投诉处理采用Agent辅助人工模式，先在小范围（如某一合作机构）试运行，积累知识库后再扩展。整体推进路径遵循‘先Skill后Agent’的双轴设计。",
+        "data_basis": [
+          "保单系统与客户信息库",
+          "理赔进度API接口",
+          "投诉管理平台记录",
+          "服务台账历史数据"
+        ],
+        "database_tier": "Auto",
+        "deliverable_role": "生成并输出售后服务质量监控报告，支撑经代机构合作岗对服务质量的持续追踪",
+        "evidence_refs": [
+          "EVD-bdb2f1113c41348acbb8",
+          "EVD-6e2c8c639b77601d6577",
+          "EVD-def226e1e50cb0b5ae67",
+          "EVD-a7aa15c2762f15a9083a",
+          "EVD-c5a3c5a4c7b19eb5f8c3",
+          "EVD-2b2330dbe1c69fccd26b"
+        ],
+        "handoff_triggers": [
+          "客户对自动回复表示异议或升级投诉",
+          "理赔审核结果存在争议或需进一步说明",
+          "投诉案件需进入面谈环节",
+          "AI无法确认的异常保单信息"
+        ],
+        "human_responsibility": "进行客户联合面谈与投诉调解；对理赔争议、投诉上诉作出最终决策；审核并确认服务敏感回复内容；签署最终监控报告。",
         "l4_code": "L4-ASD-01",
-        "process_context": "",
-        "quality_anchor": "",
-        "risks_limits": [],
-        "specific_capabilities": []
+        "process_context": "位于经代机构售后服务流程的末端，连接客户、经代机构和保司，覆盖从理赔问题到投诉处理的全旅程，是机构合作伙伴旅程中联合运营BAU的关键交付环节。",
+        "quadrant": "unclassified",
+        "quality_anchor": "客户身份核实准确率、投诉响应时效、理赔材料完整性、监控报告数据准确性、合规录音存档完备性",
+        "recommended_tier": "Hybrid",
+        "risks_limits": [
+          "投诉面谈与上诉处理涉及复杂情绪和法规解释，AI无法完全替代",
+          "理赔争议处理权限受保司策略约束，自动化空间有限",
+          "复合动作拆分需投入分析资源，初期试点范围需严格限定",
+          "外部API可达性依赖保司系统开放程度，存在集成风险"
+        ],
+        "specific_capabilities": [
+          "结构化服务请求受理（热线/邮件/企微）与客户身份、保单信息自动核实",
+          "服务请求处理分类与标准化反馈生成",
+          "售后服务台账自动录入及数据清洗",
+          "理赔申请材料模板化接收、整理与保司提交",
+          "保司理赔审核进度自动查询与通知生成",
+          "投诉接收的渠道分流与投诉档案标准化创建",
+          "联合面谈的调度与合规录音存档",
+          "投诉上诉流程发起与CRC材料自动分发",
+          "售后服务质量监控指标计算与报告自动生成"
+        ]
       }
     ],
     "missing_analysis": [
-      "逐L4交付物与具体能力分析",
-      "逐任务AI分工分析",
-      "逐L4人机协作与控制分析",
-      "逐L4优先级四维分析",
-      "任务级负责人决策建议"
+      "L4-ASD-01.human_touchpoint 缺失，无法细化人工介入点设计；已按照蓝图活动及岗位族推导。"
     ],
-    "model_run": null,
-    "priority_drafts": [],
+    "model_run": {
+      "generated_at": "2026-08-04T16:53:02.468490+00:00",
+      "input_snapshot_hash": "5250fdddc70061f7c3c3e5dae767c640a4ff27fe4cff245aa9ad71639b1bae5c",
+      "model_name": "deepseek-v4-pro",
+      "model_version": "deepseek-v4-pro",
+      "prompt_version": "VNW-L3-COM-GOLD-v1.0"
+    },
+    "priority_drafts": [
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "current_recommendation": "优先将报告生成、受理核实、台账录入等结构化子任务封装为Skill进行试点；投诉处理采用Agent辅助人工模式，先在小范围（如某一合作机构）试运行，积累知识库后再扩展。整体推进路径遵循‘先Skill后Agent’的双轴设计。",
+        "data_basis": [
+          "保单系统与客户信息库",
+          "理赔进度API接口",
+          "投诉管理平台记录",
+          "服务台账历史数据"
+        ],
+        "evidence_refs": [
+          "EVD-bdb2f1113c41348acbb8",
+          "EVD-6e2c8c639b77601d6577",
+          "EVD-def226e1e50cb0b5ae67",
+          "EVD-a7aa15c2762f15a9083a",
+          "EVD-c5a3c5a4c7b19eb5f8c3",
+          "EVD-2b2330dbe1c69fccd26b"
+        ],
+        "l4_code": "L4-ASD-01",
+        "process_context": "位于经代机构售后服务流程的末端，连接客户、经代机构和保司，覆盖从理赔问题到投诉处理的全旅程，是机构合作伙伴旅程中联合运营BAU的关键交付环节。",
+        "quadrant": "unclassified",
+        "risks_limits": [
+          "投诉面谈与上诉处理涉及复杂情绪和法规解释，AI无法完全替代",
+          "理赔争议处理权限受保司策略约束，自动化空间有限",
+          "复合动作拆分需投入分析资源，初期试点范围需严格限定",
+          "外部API可达性依赖保司系统开放程度，存在集成风险"
+        ]
+      }
+    ],
     "rejected_task_sources": [],
     "schema_version": "vnw.l3-analysis.v1",
     "source_scope": {
@@ -56,293 +129,155 @@
     },
     "tasks": [
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-6e2c8c639b77601d6577"
+          "EVD-6e2c8c639b77601d6577",
+          "EVD-bdb2f1113c41348acbb8",
+          "EVD-a7aa15c2762f15a9083a"
         ],
         "l4_code": "L4-ASD-01",
         "next_task_ids": [],
         "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
+        "relation_type": "NONE",
         "sequence_no": 1,
-        "sequence_status": "SOURCE_CONFIRMED",
+        "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 47,
         "source_step_id": "STEP-01",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-ASD-01-T01",
-        "task_name": "接收服务请求（热线 / 邮件 / 企微）",
-        "tier_rationale": ""
+        "source_type": "BLUEPRINT_STEP",
+        "suggested_tier": "Auto",
+        "task_id": "T-ASD-01",
+        "task_name": "服务受理与身份核实",
+        "tier_rationale": "输入结构化程度高（D1=2），客户身份与保单信息可通过系统自动校验，输出验证明确（D3=2），适合封装为确定性Skill。"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-6e2c8c639b77601d6577"
+          "EVD-6e2c8c639b77601d6577",
+          "EVD-bdb2f1113c41348acbb8",
+          "EVD-993bee960e86a513bb63"
         ],
         "l4_code": "L4-ASD-01",
         "next_task_ids": [],
         "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
+        "relation_type": "NONE",
         "sequence_no": 1,
-        "sequence_status": "SOURCE_CONFIRMED",
+        "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 47,
         "source_step_id": "STEP-01",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-ASD-01-T02",
-        "task_name": "核实客户身份与保单信息",
-        "tier_rationale": ""
+        "source_type": "BLUEPRINT_STEP",
+        "suggested_tier": "Aug",
+        "task_id": "T-ASD-02",
+        "task_name": "服务请求处理与反馈",
+        "tier_rationale": "处理规则部分明确（D2=1），但查询变更等动作依赖多种系统接口（D4=1），且回复内容需兼顾客情，建议由Agent提供草案，人工确认后发送。"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-6e2c8c639b77601d6577"
+          "EVD-6e2c8c639b77601d6577",
+          "EVD-bdb2f1113c41348acbb8",
+          "EVD-b05488ed3f28b286793c"
         ],
         "l4_code": "L4-ASD-01",
         "next_task_ids": [],
         "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
+        "relation_type": "NONE",
         "sequence_no": 1,
-        "sequence_status": "SOURCE_CONFIRMED",
+        "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 47,
         "source_step_id": "STEP-01",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-ASD-01-T03",
-        "task_name": "处理请求（查询/协助变更/转交保司）",
-        "tier_rationale": ""
+        "source_type": "BLUEPRINT_STEP",
+        "suggested_tier": "Auto",
+        "task_id": "T-ASD-03",
+        "task_name": "售后服务台账录入",
+        "tier_rationale": "台账字段固定，信息来源已有结构化服务记录，合规要求仅需记录完整性，可全自动触发与归档。"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-6e2c8c639b77601d6577"
+          "EVD-6e2c8c639b77601d6577",
+          "EVD-bdb2f1113c41348acbb8",
+          "EVD-8d1a5d17563d5b6e2235"
         ],
         "l4_code": "L4-ASD-01",
         "next_task_ids": [],
         "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
+        "relation_type": "NONE",
         "sequence_no": 1,
-        "sequence_status": "SOURCE_CONFIRMED",
+        "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 47,
         "source_step_id": "STEP-01",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-ASD-01-T04",
-        "task_name": "回复客户，确认服务完成",
-        "tier_rationale": ""
+        "source_type": "BLUEPRINT_STEP",
+        "suggested_tier": "Hybrid",
+        "task_id": "T-ASD-04",
+        "task_name": "理赔协办与跟进",
+        "tier_rationale": "材料整理可标准化，但理赔文件合规判断和保司对接接口可达性有限（D4=1），需人机混合：自动校验与递交，人工处理例外和疑难件。"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-6e2c8c639b77601d6577"
+          "EVD-6e2c8c639b77601d6577",
+          "EVD-bdb2f1113c41348acbb8",
+          "EVD-c5a3c5a4c7b19eb5f8c3"
         ],
         "l4_code": "L4-ASD-01",
         "next_task_ids": [],
         "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
+        "relation_type": "NONE",
         "sequence_no": 1,
-        "sequence_status": "SOURCE_CONFIRMED",
+        "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 47,
         "source_step_id": "STEP-01",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-ASD-01-T05",
-        "task_name": "录入售后服务台账",
-        "tier_rationale": ""
+        "source_type": "BLUEPRINT_STEP",
+        "suggested_tier": "Aug",
+        "task_id": "T-ASD-05",
+        "task_name": "投诉接收与档案建立",
+        "tier_rationale": "投诉信息结构化录入可自动化，但诉求领会和情绪安抚仍需人工；Agent提供档案草稿和分类建议，由经代机构合作岗确认。"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-6e2c8c639b77601d6577"
+          "EVD-6e2c8c639b77601d6577",
+          "EVD-bdb2f1113c41348acbb8",
+          "EVD-2b2330dbe1c69fccd26b"
         ],
         "l4_code": "L4-ASD-01",
         "next_task_ids": [],
         "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
+        "relation_type": "NONE",
         "sequence_no": 1,
-        "sequence_status": "SOURCE_CONFIRMED",
+        "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 47,
         "source_step_id": "STEP-01",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-ASD-01-T06",
-        "task_name": "客户提交理赔申请材料",
-        "tier_rationale": ""
+        "source_type": "BLUEPRINT_STEP",
+        "suggested_tier": "Human",
+        "task_id": "T-ASD-06",
+        "task_name": "投诉面谈与上诉处理",
+        "tier_rationale": "面谈涉及复杂人际沟通和法律决策，全程录音存档合规要求严格（D6=1），且上诉处理需主观判断与机构授权，不可委托AI。"
       },
       {
-        "analysis_status": "FACT_EXTRACTED",
+        "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-6e2c8c639b77601d6577"
+          "EVD-6e2c8c639b77601d6577",
+          "EVD-bdb2f1113c41348acbb8",
+          "EVD-def226e1e50cb0b5ae67"
         ],
         "l4_code": "L4-ASD-01",
         "next_task_ids": [],
         "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
+        "relation_type": "NONE",
         "sequence_no": 1,
-        "sequence_status": "SOURCE_CONFIRMED",
+        "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 47,
         "source_step_id": "STEP-01",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-ASD-01-T07",
-        "task_name": "协助客户整理理赔文件包",
-        "tier_rationale": ""
-      },
-      {
-        "analysis_status": "FACT_EXTRACTED",
-        "evidence_refs": [
-          "EVD-6e2c8c639b77601d6577"
-        ],
-        "l4_code": "L4-ASD-01",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 1,
-        "sequence_status": "SOURCE_CONFIRMED",
-        "source_line": 47,
-        "source_step_id": "STEP-01",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-ASD-01-T08",
-        "task_name": "提交至保司，跟进审核进度",
-        "tier_rationale": ""
-      },
-      {
-        "analysis_status": "FACT_EXTRACTED",
-        "evidence_refs": [
-          "EVD-6e2c8c639b77601d6577"
-        ],
-        "l4_code": "L4-ASD-01",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 1,
-        "sequence_status": "SOURCE_CONFIRMED",
-        "source_line": 47,
-        "source_step_id": "STEP-01",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-ASD-01-T09",
-        "task_name": "收到保司理赔决定，通知客户",
-        "tier_rationale": ""
-      },
-      {
-        "analysis_status": "FACT_EXTRACTED",
-        "evidence_refs": [
-          "EVD-6e2c8c639b77601d6577"
-        ],
-        "l4_code": "L4-ASD-01",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 1,
-        "sequence_status": "SOURCE_CONFIRMED",
-        "source_line": 47,
-        "source_step_id": "STEP-01",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-ASD-01-T10",
-        "task_name": "异议处理（如客户对结果有异议，转投诉子场景）",
-        "tier_rationale": ""
-      },
-      {
-        "analysis_status": "FACT_EXTRACTED",
-        "evidence_refs": [
-          "EVD-6e2c8c639b77601d6577"
-        ],
-        "l4_code": "L4-ASD-01",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 1,
-        "sequence_status": "SOURCE_CONFIRMED",
-        "source_line": 47,
-        "source_step_id": "STEP-01",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-ASD-01-T11",
-        "task_name": "接收投诉：热线 / 电邮渠道接入，记录投诉事项与诉求",
-        "tier_rationale": ""
-      },
-      {
-        "analysis_status": "FACT_EXTRACTED",
-        "evidence_refs": [
-          "EVD-6e2c8c639b77601d6577"
-        ],
-        "l4_code": "L4-ASD-01",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 1,
-        "sequence_status": "SOURCE_CONFIRMED",
-        "source_line": 47,
-        "source_step_id": "STEP-01",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-ASD-01-T12",
-        "task_name": "建立投诉档案：录入投诉事项、诉求、相关文件、客户信息",
-        "tier_rationale": ""
-      },
-      {
-        "analysis_status": "FACT_EXTRACTED",
-        "evidence_refs": [
-          "EVD-6e2c8c639b77601d6577"
-        ],
-        "l4_code": "L4-ASD-01",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 1,
-        "sequence_status": "SOURCE_CONFIRMED",
-        "source_line": 47,
-        "source_step_id": "STEP-01",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-ASD-01-T13",
-        "task_name": "联合面谈：约见客户，全程录音（CO保存，获知情同意）",
-        "tier_rationale": ""
-      },
-      {
-        "analysis_status": "FACT_EXTRACTED",
-        "evidence_refs": [
-          "EVD-6e2c8c639b77601d6577"
-        ],
-        "l4_code": "L4-ASD-01",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 1,
-        "sequence_status": "SOURCE_CONFIRMED",
-        "source_line": 47,
-        "source_step_id": "STEP-01",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-ASD-01-T14",
-        "task_name": "上诉处理：若客户不接受初步结论，启动上诉流程",
-        "tier_rationale": ""
-      },
-      {
-        "analysis_status": "FACT_EXTRACTED",
-        "evidence_refs": [
-          "EVD-6e2c8c639b77601d6577"
-        ],
-        "l4_code": "L4-ASD-01",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "SEQUENTIAL",
-        "sequence_no": 1,
-        "sequence_status": "SOURCE_CONFIRMED",
-        "source_line": 47,
-        "source_step_id": "STEP-01",
-        "source_type": "BLUEPRINT",
-        "suggested_tier": "",
-        "task_id": "L4-ASD-01-T15",
-        "task_name": "CRC材料分发与决议执行：整理投诉材料，提交CRC委员会，执行决议",
-        "tier_rationale": ""
+        "source_type": "DELIVERABLE",
+        "suggested_tier": "Auto",
+        "task_id": "T-ASD-07",
+        "task_name": "售后服务质量监控报告生成",
+        "tier_rationale": "报告基于台账和KPI数据自动生成，格式固定，数据验证规则明确，可封装为Skill全自动输出。"
       }
     ]
   },
-  "analysis_freshness": "PENDING_MODEL",
+  "analysis_freshness": "CURRENT",
   "analysis_input_hash": "5250fdddc70061f7c3c3e5dae767c640a4ff27fe4cff245aa9ad71639b1bae5c",
   "blueprint": {
     "blueprint_value_nodes": [],
