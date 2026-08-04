@@ -1,0 +1,1058 @@
+{
+  "instruction": "只使用fact_pack。严格返回output_contract同结构JSON；所有MODEL_DRAFT结论必须引用fact_pack中的evidence_id。没有证据则留空并写入missing_analysis。",
+  "output_contract": {
+    "schema_version": "vnw.l3-analysis.v1",
+    "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
+    "generation_mode": "UNIFIED_MODEL",
+    "analysis_status": "MODEL_DRAFT",
+    "model_run": null,
+    "source_scope": {
+      "database": "process_analytics",
+      "knowledge": "ACTIVE supplemental evidence only",
+      "evidence_count": 34
+    },
+    "l4_analysis": [
+      {
+        "l4_code": "L4-BSRV-01",
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [],
+        "confidence": "MODEL_DRAFT",
+        "deliverable_role": "",
+        "specific_capabilities": [],
+        "ai_reshape": "",
+        "quality_anchor": "",
+        "ai_responsibility": "",
+        "human_responsibility": "",
+        "handoff_triggers": [],
+        "control_gates": [],
+        "data_basis": [],
+        "process_context": "",
+        "risks_limits": [],
+        "current_recommendation": "",
+        "database_tier": "Aug",
+        "recommended_tier": "",
+        "quadrant": "unclassified"
+      },
+      {
+        "l4_code": "L4-BSRV-02",
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [],
+        "confidence": "MODEL_DRAFT",
+        "deliverable_role": "",
+        "specific_capabilities": [],
+        "ai_reshape": "",
+        "quality_anchor": "",
+        "ai_responsibility": "",
+        "human_responsibility": "",
+        "handoff_triggers": [],
+        "control_gates": [],
+        "data_basis": [],
+        "process_context": "",
+        "risks_limits": [],
+        "current_recommendation": "",
+        "database_tier": "Hybrid",
+        "recommended_tier": "",
+        "quadrant": "unclassified"
+      }
+    ],
+    "tasks": [],
+    "priority_drafts": [],
+    "decision_drafts": [],
+    "control_chain": [],
+    "rejected_task_sources": [],
+    "missing_analysis": []
+  },
+  "fact_pack": {
+    "l3_code": "L3-BSRV",
+    "l3_name": "经代机构结算与日常运营评估",
+    "snapshot_hash": "bfbeb1d460386cc715eb24c452cdd00791f52de99643fc66985a74ce08b6b253",
+    "source_policy": {
+      "consensus_separate": true,
+      "database_authority": "process_analytics",
+      "reverse_writeback": false,
+      "supplemental_requires_active": true
+    },
+    "gates": {
+      "A": {
+        "checks": [
+          {
+            "detail": "Gate E=CONDITIONAL",
+            "passed": true,
+            "rule_id": "A-001"
+          },
+          {
+            "detail": "D1-D6完整=2/2",
+            "passed": true,
+            "rule_id": "A-002"
+          },
+          {
+            "detail": "价值节点-L4映射=1",
+            "passed": true,
+            "rule_id": "A-003"
+          },
+          {
+            "detail": "无熔断节点",
+            "passed": true,
+            "rule_id": "A-004"
+          }
+        ],
+        "status": "PASS"
+      },
+      "E": {
+        "checks": [
+          {
+            "detail": "Gate M=PASS",
+            "passed": true,
+            "rule_id": "E-001"
+          },
+          {
+            "detail": "交付物完整=2/2（完整门槛90%）",
+            "passed": true,
+            "rule_id": "E-002"
+          },
+          {
+            "detail": "Tier合法",
+            "passed": true,
+            "rule_id": "E-003"
+          },
+          {
+            "detail": "可追溯任务覆盖=2/2（完整门槛80%）",
+            "passed": true,
+            "rule_id": "E-004"
+          },
+          {
+            "detail": "关键L4任务覆盖=0/0",
+            "passed": true,
+            "rule_id": "E-005"
+          },
+          {
+            "detail": "价值节点-L4映射=1",
+            "passed": true,
+            "rule_id": "E-006"
+          },
+          {
+            "detail": "规则可定位L4=0/2",
+            "passed": false,
+            "rule_id": "E-007"
+          },
+          {
+            "detail": "缺少SOP草稿或同等任务执行材料（不阻断建模）",
+            "passed": false,
+            "rule_id": "E-008"
+          },
+          {
+            "detail": "缺少可关联的规则记录（不阻断建模）",
+            "passed": false,
+            "rule_id": "E-009"
+          }
+        ],
+        "status": "CONDITIONAL"
+      },
+      "M": {
+        "checks": [
+          {
+            "detail": "L4数量=2",
+            "passed": true,
+            "rule_id": "M-001"
+          },
+          {
+            "detail": "流程蓝图_L3-BSRV_经代机构结算与日常运营评估_V1.0.md",
+            "passed": true,
+            "rule_id": "M-002"
+          },
+          {
+            "detail": "L4名称完整",
+            "passed": true,
+            "rule_id": "M-003"
+          },
+          {
+            "detail": "交付物完整=2/2（最低门槛70%）",
+            "passed": true,
+            "rule_id": "M-004"
+          },
+          {
+            "detail": "D1-D6完整=2/2",
+            "passed": true,
+            "rule_id": "M-005"
+          }
+        ],
+        "status": "PASS"
+      }
+    },
+    "l2_capabilities": [
+      {
+        "l2_code": "L2-04.4",
+        "l2_name": "绩效监控与增长驱动",
+        "l3_code": "L3-BSRV"
+      }
+    ],
+    "l4s": [
+      {
+        "business_evidence": [],
+        "d1_d6": {
+          "agent_d1_input_struct": 2,
+          "agent_d2_rule_clear": 1,
+          "agent_d3_output_verify": 2,
+          "agent_d4_api_reach": 1,
+          "agent_d5_fallback": 1,
+          "agent_d6_compliance": 1
+        },
+        "deliverable": "无（过程活动）",
+        "deliverable_type": "方案",
+        "evidence_refs": {
+          "agent_d1_input_struct": "EVD-2de27666273d2259c992",
+          "agent_d2_rule_clear": "EVD-01312b948a6321808925",
+          "agent_d3_output_verify": "EVD-ebf91950afbf4b447b1a",
+          "agent_d4_api_reach": "EVD-b541f9499818fbe1a7c9",
+          "agent_d5_fallback": "EVD-a6a935c44e832c6feabe",
+          "agent_d6_compliance": "EVD-c5ca760bf616cdf436ed",
+          "agent_human_touchpoint": "EVD-e6aeb1195a13290dff49",
+          "agentifiability": "EVD-40c61e7c40c92fec9b15",
+          "l4_deliverable": "EVD-e0daa925457013eff16e",
+          "l4_deliverable_type": "EVD-2a8fbe9ed2f17d22cf48",
+          "l4_name": "EVD-598f747700c04d3a92bf",
+          "position_family": "EVD-a0a6eeab37d19897bdeb",
+          "skill_feasibility": "EVD-059baa24ad494d0f6f1b"
+        },
+        "human_touchpoint": "人工执行：日常运营协同",
+        "l4_code": "L4-BSRV-01",
+        "l4_name": "日常运营协同",
+        "position_family": {
+          "category_name": "经代机构合作岗",
+          "category_type": "目标态核心",
+          "family_code": "JF-03",
+          "family_name": "机构业务族"
+        },
+        "skill_feasibility": {
+          "action_nature": "语义复核判定",
+          "action_singularity": "单一动作",
+          "funds_safety_hard_gate": false,
+          "grade": "B-中封装(需报告模板/系统集成配合)",
+          "judgment_basis": "业务方确认：日常运营执行日志，运营体系搭建后由人工维护跟进——Skill负责日志记录，人工负责跟进维护",
+          "physical_execution": false,
+          "recommended_path": "先补报告模板、规则固化或系统接口，再验证Skill",
+          "verification_status": "VERIFIED"
+        },
+        "tier": "Aug"
+      },
+      {
+        "business_evidence": [],
+        "d1_d6": {
+          "agent_d1_input_struct": 2,
+          "agent_d2_rule_clear": 1,
+          "agent_d3_output_verify": 2,
+          "agent_d4_api_reach": 1,
+          "agent_d5_fallback": 1,
+          "agent_d6_compliance": 1
+        },
+        "deliverable": "《机构结算核对台账》（按费用类型：结算服务费/权益费/管理费/合规费/邮箱费）",
+        "deliverable_type": "数据表",
+        "evidence_refs": {
+          "agent_d1_input_struct": "EVD-bf3b730bcb5881123690",
+          "agent_d2_rule_clear": "EVD-e86aabcf60c4995eb094",
+          "agent_d3_output_verify": "EVD-f1ec4c009dd811423b5f",
+          "agent_d4_api_reach": "EVD-06657ed312fe9c7b50f0",
+          "agent_d5_fallback": "EVD-4ac63ab6b409b7ab6fa5",
+          "agent_d6_compliance": "EVD-b97d69aa6f342ca07241",
+          "agent_human_touchpoint": "EVD-d95c09b15563630ea2d5",
+          "agentifiability": "EVD-0068695e622a20a2694e",
+          "l4_deliverable": "EVD-d794b4228035a7d325df",
+          "l4_deliverable_type": "EVD-b05083e110fe7c806e56",
+          "l4_name": "EVD-148c78c3e53027299ea9",
+          "position_family": "EVD-a0a6eeab37d19897bdeb",
+          "skill_feasibility": "EVD-f82b306e59afc9679bd7"
+        },
+        "human_touchpoint": null,
+        "l4_code": "L4-BSRV-02",
+        "l4_name": "结算与评估",
+        "position_family": {
+          "category_name": "经代机构合作岗",
+          "category_type": "目标态核心",
+          "family_code": "JF-03",
+          "family_name": "机构业务族"
+        },
+        "skill_feasibility": {
+          "action_nature": "判断/策略/认知类",
+          "action_singularity": "单一动作",
+          "funds_safety_hard_gate": true,
+          "grade": "C-低封装(判断/策略/关系类,理论天花板)",
+          "judgment_basis": "C-仍低封装度(需判断/权威)",
+          "physical_execution": false,
+          "recommended_path": "优先考虑Agent辅助或决策支持，不直接封装确定性Skill",
+          "verification_status": "VERIFIED"
+        },
+        "tier": "Hybrid"
+      }
+    ],
+    "value_nodes": [
+      {
+        "evidence_refs": {
+          "gate1_data_linked": "EVD-81fc33be39070fec5b16",
+          "gate2_grounded": "EVD-0d8030ad58f21ca8b7ce",
+          "gate3_traceable": "EVD-89ac21ab95a21e058da7",
+          "is_fused": "EVD-e899e11253532b70cd88",
+          "overall_judgment": "EVD-3e865387b8f41472b921",
+          "priority": "EVD-2364a9794e511817526e",
+          "vn_name": "EVD-9e32a9e3bf46dcb6ed55"
+        },
+        "is_fused": false,
+        "overall_judgment": "PARTIAL",
+        "priority": "P1",
+        "vn_id": "VN-BSRV-01",
+        "vn_name": "机构结算核对台账"
+      }
+    ],
+    "vn_l4_mappings": [
+      {
+        "l3_code": "L3-BSRV",
+        "l4_code": "L4-BSRV-02",
+        "mapping_status": "direct",
+        "vn_id": "VN-BSRV-01"
+      }
+    ],
+    "kpi_mappings": [
+      {
+        "kpi_code": "KPI_19",
+        "kpi_formula": null,
+        "kpi_name": "结算转化率 (Settle Conv.)",
+        "kpi_target": null,
+        "kpi_unit": null,
+        "measurement_cycle": "月",
+        "source_type": "definition"
+      },
+      {
+        "kpi_code": "KPI_21",
+        "kpi_formula": null,
+        "kpi_name": "结算周期 (Payment TAT)",
+        "kpi_target": null,
+        "kpi_unit": null,
+        "measurement_cycle": "月",
+        "source_type": "definition"
+      }
+    ],
+    "value_stream_mappings": [
+      {
+        "l3_code": "L3-BSRV",
+        "mapping_type": "primary",
+        "stage_code": "S7",
+        "stage_name": "结算与绩效评估",
+        "stage_sequence": 7,
+        "vs_code": "VS-2",
+        "vs_name": "机构合作伙伴旅程",
+        "vs_stakeholder": "TOB机构/经代/家办/同行经代"
+      }
+    ],
+    "blueprint": {
+      "blueprint_value_nodes": [],
+      "coverage": "INDEXED",
+      "decisions": [],
+      "diagnostics": {
+        "blueprint_l4_count": 2,
+        "db_l4_count": 2,
+        "extra_in_blueprint": [],
+        "missing_in_blueprint": [],
+        "parsed_step_l4_count": 2,
+        "retired_l4s_ignored": [],
+        "unmapped_step_count": 0
+      },
+      "edges": [
+        {
+          "edge_id": "SEQ-STEP-01-STEP-02",
+          "edge_type": "SEQUENCE",
+          "from": "STEP-01",
+          "label": "",
+          "source_rule": "蓝图显式编号步骤的相邻顺序",
+          "to": "STEP-02"
+        }
+      ],
+      "filename": "流程蓝图_L3-BSRV_经代机构结算与日常运营评估_V1.0.md",
+      "note": "已从蓝图正文解析；步骤顺序边由显式步骤编号派生，判断分支保留原文行号",
+      "raci": [],
+      "source_hash": "a15ba98e4f1bc20cdfdcd23f672c750b37323d1ccf0c05748661f9b98603d4e8",
+      "source_path": "/Users/a112233/Desktop/流程架构项目_jasper/02_过程成果-工作产出/L3流程库/流程蓝图_L3-BSRV_经代机构结算与日常运营评估_V1.0.md",
+      "steps": [
+        {
+          "activities": [
+            "接收机构日常运营问题/需求（保单/账单/系统/人员等）",
+            "协调内部资源（IT/合规/财务等）响应机构需求",
+            "跟进问题处理进度，确保机构正常运营"
+          ],
+          "evidence_ref": "EVD-6071e3d948997d2d34a9",
+          "l4_codes": [
+            "L4-BSRV-01"
+          ],
+          "sequence": 1,
+          "source_line": 69,
+          "step_id": "STEP-01",
+          "step_name": "日常运营协同"
+        },
+        {
+          "activities": [
+            "接收各费用类型账单（结算服务费/权益费/管理费/合规费/邮箱费）",
+            "按费用类型逐一核对金额与合同条款",
+            "确认各费用类型核对结果，标注异常项",
+            "核对确认后，移交中台对应结算 L3 执行付款",
+            "存档结算核对台账"
+          ],
+          "evidence_ref": "EVD-378e57127e95a547d2ca",
+          "l4_codes": [
+            "L4-BSRV-02"
+          ],
+          "sequence": 2,
+          "source_line": 87,
+          "step_id": "STEP-02",
+          "step_name": "结算与评估"
+        }
+      ],
+      "structure_status": "PARSED",
+      "version": "V1.0"
+    },
+    "evidence_registry": [
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-0068695e622a20a2694e",
+        "field_name": "agentifiability",
+        "source": {
+          "observed_at": "",
+          "source_field": "agentifiability",
+          "source_key": "L4-BSRV-02",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "Hybrid"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-01312b948a6321808925",
+        "field_name": "agent_d2_rule_clear",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d2_rule_clear",
+          "source_key": "L4-BSRV-01",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 1
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-059baa24ad494d0f6f1b",
+        "field_name": "skill_feasibility",
+        "source": {
+          "observed_at": "",
+          "source_field": "L4明细_最终确认版:A:N",
+          "source_key": "L4-BSRV-01@row:14",
+          "source_object": "L4流程_Skill封装可行性评估_确认最终版_v2.xlsx",
+          "source_system": "OB知识库",
+          "source_version": "v2"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "action_nature": "语义复核判定",
+          "action_singularity": "单一动作",
+          "funds_safety_hard_gate": false,
+          "grade": "B-中封装(需报告模板/系统集成配合)",
+          "judgment_basis": "业务方确认：日常运营执行日志，运营体系搭建后由人工维护跟进——Skill负责日志记录，人工负责跟进维护",
+          "physical_execution": false,
+          "recommended_path": "先补报告模板、规则固化或系统接口，再验证Skill",
+          "verification_status": "VERIFIED"
+        }
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-06657ed312fe9c7b50f0",
+        "field_name": "agent_d4_api_reach",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d4_api_reach",
+          "source_key": "L4-BSRV-02",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 1
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-0d8030ad58f21ca8b7ce",
+        "field_name": "gate2_grounded",
+        "source": {
+          "observed_at": "",
+          "source_field": "gate2_grounded",
+          "source_key": "VN-BSRV-01",
+          "source_object": "process_analytics.dim_vn",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "PARTIAL"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-148c78c3e53027299ea9",
+        "field_name": "l4_name",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_name",
+          "source_key": "L4-BSRV-02",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "结算与评估"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-2364a9794e511817526e",
+        "field_name": "priority",
+        "source": {
+          "observed_at": "",
+          "source_field": "priority",
+          "source_key": "VN-BSRV-01",
+          "source_object": "process_analytics.dim_vn",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "P1"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-2a8fbe9ed2f17d22cf48",
+        "field_name": "l4_deliverable_type",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_deliverable_type",
+          "source_key": "L4-BSRV-01",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "方案"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-2de27666273d2259c992",
+        "field_name": "agent_d1_input_struct",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d1_input_struct",
+          "source_key": "L4-BSRV-01",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-378e57127e95a547d2ca",
+        "field_name": "blueprint.steps.STEP-02",
+        "source": {
+          "observed_at": "",
+          "source_field": "step",
+          "source_key": "line:87",
+          "source_object": "流程蓝图_L3-BSRV_经代机构结算与日常运营评估_V1.0.md",
+          "source_system": "L3流程库",
+          "source_version": "V1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "l4_codes": [
+            "L4-BSRV-02"
+          ],
+          "step_name": "结算与评估"
+        }
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-3e865387b8f41472b921",
+        "field_name": "overall_judgment",
+        "source": {
+          "observed_at": "",
+          "source_field": "overall_judgment",
+          "source_key": "VN-BSRV-01",
+          "source_object": "process_analytics.dim_vn",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "PARTIAL"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-40c61e7c40c92fec9b15",
+        "field_name": "agentifiability",
+        "source": {
+          "observed_at": "",
+          "source_field": "agentifiability",
+          "source_key": "L4-BSRV-01",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "Aug"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-4ac63ab6b409b7ab6fa5",
+        "field_name": "agent_d5_fallback",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d5_fallback",
+          "source_key": "L4-BSRV-02",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 1
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-598f747700c04d3a92bf",
+        "field_name": "l4_name",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_name",
+          "source_key": "L4-BSRV-01",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "日常运营协同"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-6071e3d948997d2d34a9",
+        "field_name": "blueprint.steps.STEP-01",
+        "source": {
+          "observed_at": "",
+          "source_field": "step",
+          "source_key": "line:69",
+          "source_object": "流程蓝图_L3-BSRV_经代机构结算与日常运营评估_V1.0.md",
+          "source_system": "L3流程库",
+          "source_version": "V1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "l4_codes": [
+            "L4-BSRV-01"
+          ],
+          "step_name": "日常运营协同"
+        }
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-81fc33be39070fec5b16",
+        "field_name": "gate1_data_linked",
+        "source": {
+          "observed_at": "",
+          "source_field": "gate1_data_linked",
+          "source_key": "VN-BSRV-01",
+          "source_object": "process_analytics.dim_vn",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "PARTIAL"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-89ac21ab95a21e058da7",
+        "field_name": "gate3_traceable",
+        "source": {
+          "observed_at": "",
+          "source_field": "gate3_traceable",
+          "source_key": "VN-BSRV-01",
+          "source_object": "process_analytics.dim_vn",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "PARTIAL"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-9e32a9e3bf46dcb6ed55",
+        "field_name": "vn_name",
+        "source": {
+          "observed_at": "",
+          "source_field": "vn_name",
+          "source_key": "VN-BSRV-01",
+          "source_object": "process_analytics.dim_vn",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "机构结算核对台账"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-a0a6eeab37d19897bdeb",
+        "field_name": "position_family",
+        "source": {
+          "observed_at": "",
+          "source_field": "各族详细映射",
+          "source_key": "L3-BSRV",
+          "source_object": "2026-07-20_68L3岗位族归属设计_v6.1_SUBMITTED.md",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v6.1"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "category_name": "经代机构合作岗",
+          "category_type": "目标态核心",
+          "family_code": "JF-03",
+          "family_name": "机构业务族"
+        }
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-a6a935c44e832c6feabe",
+        "field_name": "agent_d5_fallback",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d5_fallback",
+          "source_key": "L4-BSRV-01",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 1
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-b05083e110fe7c806e56",
+        "field_name": "l4_deliverable_type",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_deliverable_type",
+          "source_key": "L4-BSRV-02",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "数据表"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-b541f9499818fbe1a7c9",
+        "field_name": "agent_d4_api_reach",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d4_api_reach",
+          "source_key": "L4-BSRV-01",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 1
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-b97d69aa6f342ca07241",
+        "field_name": "agent_d6_compliance",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d6_compliance",
+          "source_key": "L4-BSRV-02",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 1
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-bf3b730bcb5881123690",
+        "field_name": "agent_d1_input_struct",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d1_input_struct",
+          "source_key": "L4-BSRV-02",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-c5ca760bf616cdf436ed",
+        "field_name": "agent_d6_compliance",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d6_compliance",
+          "source_key": "L4-BSRV-01",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 1
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-d794b4228035a7d325df",
+        "field_name": "l4_deliverable",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_deliverable",
+          "source_key": "L4-BSRV-02",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "《机构结算核对台账》（按费用类型：结算服务费/权益费/管理费/合规费/邮箱费）"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-d95c09b15563630ea2d5",
+        "field_name": "agent_human_touchpoint",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_human_touchpoint",
+          "source_key": "L4-BSRV-02",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "MISSING",
+        "transform_rule": "",
+        "value": null
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-e0daa925457013eff16e",
+        "field_name": "l4_deliverable",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_deliverable",
+          "source_key": "L4-BSRV-01",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "无（过程活动）"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-e6aeb1195a13290dff49",
+        "field_name": "agent_human_touchpoint",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_human_touchpoint",
+          "source_key": "L4-BSRV-01",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "人工执行：日常运营协同"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-e86aabcf60c4995eb094",
+        "field_name": "agent_d2_rule_clear",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d2_rule_clear",
+          "source_key": "L4-BSRV-02",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 1
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-e899e11253532b70cd88",
+        "field_name": "is_fused",
+        "source": {
+          "observed_at": "",
+          "source_field": "is_fused",
+          "source_key": "VN-BSRV-01",
+          "source_object": "process_analytics.dim_vn",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": false
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-ebf91950afbf4b447b1a",
+        "field_name": "agent_d3_output_verify",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d3_output_verify",
+          "source_key": "L4-BSRV-01",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-f1ec4c009dd811423b5f",
+        "field_name": "agent_d3_output_verify",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d3_output_verify",
+          "source_key": "L4-BSRV-02",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-f82b306e59afc9679bd7",
+        "field_name": "skill_feasibility",
+        "source": {
+          "observed_at": "",
+          "source_field": "L4明细_最终确认版:A:N",
+          "source_key": "L4-BSRV-02@row:15",
+          "source_object": "L4流程_Skill封装可行性评估_确认最终版_v2.xlsx",
+          "source_system": "OB知识库",
+          "source_version": "v2"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "action_nature": "判断/策略/认知类",
+          "action_singularity": "单一动作",
+          "funds_safety_hard_gate": true,
+          "grade": "C-低封装(判断/策略/关系类,理论天花板)",
+          "judgment_basis": "C-仍低封装度(需判断/权威)",
+          "physical_execution": false,
+          "recommended_path": "优先考虑Agent辅助或决策支持，不直接封装确定性Skill",
+          "verification_status": "VERIFIED"
+        }
+      }
+    ]
+  }
+}

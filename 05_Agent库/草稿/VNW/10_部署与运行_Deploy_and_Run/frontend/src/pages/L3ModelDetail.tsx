@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router'
-import { AlertTriangle, ArrowLeft, ArrowRight, Bot, GitBranch, GripVertical, Info, Layers3, LoaderCircle, RotateCcw, Save, ShieldCheck } from 'lucide-react'
+import { AlertTriangle, ArrowLeft, ArrowRight, Bot, Download, GitBranch, GripVertical, Info, Layers3, LoaderCircle, RotateCcw, Save, ShieldCheck } from 'lucide-react'
 import { loadL3Model, type L3Model } from '../lib/l3Models'
 
 const COLUMNS = [
@@ -210,6 +210,72 @@ function deliverableQuality(rawDeliverable: string, sameValueCount: number) {
     }
   }
   return null
+}
+
+function buildMarkdownReport(model: L3Model): string {
+  const ua = model.unified_analysis
+  const lines: string[] = []
+  lines.push(`# ${model.l3_code} · ${model.l3_name} · VNW统一分析报告`)
+  lines.push('')
+  lines.push(`> 状态：**${ua.status === 'CONFIRMED' ? `已确认（${ua.confirmed_by ?? ''} · ${ua.confirmed_at ?? ''}）` : '草稿 · 尚未人工确认，不可作为最终投入决策依据'}**`)
+  lines.push(`> 依据：VNW统一分析Spec v1.0 · 快照 ${model.snapshot_hash.slice(0, 12)} · Gate M/E/A = ${model.gates.M.status}/${model.gates.E.status}/${model.gates.A.status}`)
+  lines.push('')
+  lines.push('## 一、分析基线')
+  lines.push(`- 数据快照：\`${model.snapshot_hash}\``)
+  lines.push(`- 蓝图版本：${model.blueprint.version || '未覆盖'}`)
+  lines.push(`- L4总数：${model.l4s.length} · 价值节点：${model.value_nodes.length}`)
+  lines.push('')
+  lines.push('## 二、受控维度')
+  lines.push(`- L2业务能力：${model.l2_capabilities.length > 0 ? model.l2_capabilities.map(row => String((row as Record<string, unknown>).l2_name ?? '')).join('、') : '待补'}`)
+  lines.push(`- 价值流位置：${model.value_stream_mappings.length > 0 ? model.value_stream_mappings.map(row => { const r = row as Record<string, unknown>; return `${r.vs_name}·${r.stage_name}` }).join('、') : '未定位到客户旅程/价值流阶段'}`)
+  lines.push(`- 关联KPI：${model.kpi_mappings.length > 0 ? model.kpi_mappings.map(kpi => `${kpi.kpi_name}${kpi.source_type === 'mark_priority_draft' ? '(战略权重草稿)' : ''}`).join('、') : '待补'}`)
+  lines.push(`- 岗位归属：${ua.coverage.position_covered}/${ua.coverage.l4_total} 个L4已归口`)
+  lines.push(`- 业务数据证据：${ua.coverage.business_evidence_covered}/${ua.coverage.l4_total} 个L4定位到业务数据仓库表`)
+  lines.push('')
+  lines.push('## 三、双轴声明（D1-D6/Tier轴 与 候选Agent封装轴，禁止合并）')
+  if (ua.axis_conflicts.length > 0) {
+    lines.push(`⚠️ 两轴方向冲突：${ua.axis_conflicts.join('、')} —— 需业务方澄清，本报告不自动选边。`)
+  } else {
+    lines.push('本L3当前两轴方向一致，无冲突。')
+  }
+  lines.push('')
+  lines.push('## 四、逐L4根因阶梯（事实→机制→结构→策略）')
+  for (const l4 of model.l4s) {
+    const ladder = ua.root_cause_ladders[l4.l4_code]
+    lines.push(`### ${l4.l4_code} · ${l4.l4_name}`)
+    if (ladder) {
+      for (const layer of ladder) {
+        lines.push(`- **[${layer.layer}·${layer.grade}级]** ${layer.statement}`)
+      }
+    } else {
+      lines.push('- 待补')
+    }
+    lines.push('')
+  }
+  lines.push('## 五、Definition of Done')
+  for (const item of ua.dod_checklist) {
+    lines.push(`- [${item.satisfied ? 'x' : ' '}] ${item.item}`)
+  }
+  lines.push('')
+  lines.push('## 六、综合判断')
+  lines.push(ua.status === 'DRAFT'
+    ? '本报告为VNW自动生成的草稿，仅供参考，须经Jasper/L3业务负责人复核并写入决策确认记录后才可作为最终投入依据。'
+    : `本报告已由${ua.confirmed_by ?? '业务负责人'}于${ua.confirmed_at ?? ''}确认。${ua.confirmation_notes ?? ''}`)
+  lines.push('')
+  lines.push('---')
+  lines.push(`来源：03_规划项目结构_Plan_Project_Structure/VNW统一分析Spec_v1.0.md`)
+  return lines.join('\n')
+}
+
+function downloadMarkdown(model: L3Model) {
+  const content = buildMarkdownReport(model)
+  const blob = new Blob([content], { type: 'text/markdown;charset=utf-8' })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = `${model.l3_code}_统一分析报告.md`
+  link.click()
+  URL.revokeObjectURL(url)
 }
 
 export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}) {
@@ -450,8 +516,16 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
             <p className="mt-2 text-[11px] text-text-muted">当前未关联KPI（数据库dim_kpi/bridge_kpi_l3未覆盖该L3）</p>
           )}
         </div>
-        <div className="flex gap-2">
-          {(['M', 'E', 'A'] as const).map(gate => <span key={gate} className={`rounded-lg border px-3 py-2 font-mono text-xs ${gateTone(model.gates[gate].status)}`}>Gate {gate} · {model.gates[gate].status}</span>)}
+        <div className="flex flex-col items-end gap-2">
+          <div className="flex gap-2">
+            {(['M', 'E', 'A'] as const).map(gate => <span key={gate} className={`rounded-lg border px-3 py-2 font-mono text-xs ${gateTone(model.gates[gate].status)}`}>Gate {gate} · {model.gates[gate].status}</span>)}
+          </div>
+          <button
+            onClick={() => downloadMarkdown(model)}
+            className="flex items-center gap-1.5 rounded-lg border border-border-default bg-bg-surface px-3 py-2 text-xs text-text-secondary hover:bg-bg-elevated"
+          >
+            <Download className="h-3.5 w-3.5" /> 导出统一分析报告（.md）
+          </button>
         </div>
       </div>
 
@@ -1009,6 +1083,80 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
             </table>
           </div>
         </details>
+      </section>
+
+      <section className="panel p-5">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border-default pb-3">
+          <h2 className="text-sm font-semibold">综合判断 · VNW统一分析Spec v1.0</h2>
+          <span className={`rounded-full px-3 py-1.5 text-xs font-medium ${model.unified_analysis.status === 'CONFIRMED' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}`}>
+            {model.unified_analysis.status === 'CONFIRMED' ? `已确认 · ${model.unified_analysis.confirmed_by ?? ''}` : '草稿 · 尚未人工确认'}
+          </span>
+        </div>
+        {model.unified_analysis.status === 'DRAFT' ? (
+          <p className="mt-3 text-xs leading-5 text-amber-700">草稿状态的综合判断不能作为最终结论用于投入决策，需Jasper/L3业务负责人复核后写入决策确认记录（07_接入记忆_Integrate_Memory/analysis_confirmations/{model.l3_code}.json）。</p>
+        ) : (
+          <p className="mt-3 text-xs leading-5 text-emerald-700">{model.unified_analysis.confirmed_at} 由 {model.unified_analysis.confirmed_by} 确认。{model.unified_analysis.confirmation_notes}</p>
+        )}
+
+        <div className="mt-4 grid gap-3 grid-cols-2 lg:grid-cols-5">
+          {[
+            ['L4总数', model.unified_analysis.coverage.l4_total, 'text-text-primary'],
+            ['业务数据覆盖', model.unified_analysis.coverage.business_evidence_covered, 'text-emerald-700'],
+            ['岗位归属覆盖', model.unified_analysis.coverage.position_covered, 'text-cyan-700'],
+            ['关联KPI', model.unified_analysis.coverage.kpi_count, 'text-amber-700'],
+            ['价值流位置', model.unified_analysis.coverage.value_stream_count, 'text-teal-700'],
+          ].map(([label, value, tone]) => (
+            <div key={String(label)} className="rounded-lg border border-border-default bg-bg-surface p-3 text-center">
+              <p className={`font-mono text-xl ${tone}`}>{value}</p>
+              <p className="mt-1 text-[10px] text-text-muted">{label}</p>
+            </div>
+          ))}
+        </div>
+
+        {model.unified_analysis.axis_conflicts.length > 0 ? (
+          <div className="mt-4 rounded-lg border border-rose-300 bg-rose-50 p-3">
+            <p className="text-xs font-semibold text-rose-800">双轴冲突（D1-D6/Tier轴 与 候选Agent封装轴方向相反）</p>
+            <p className="mt-1 text-[11px] leading-5 text-rose-700">{model.unified_analysis.axis_conflicts.join('、')} —— 需业务方澄清，不自动选边，不合并成单一自动化分数。</p>
+          </div>
+        ) : (
+          <p className="mt-4 text-[11px] text-text-muted">本L3当前无双轴冲突（D1-D6/Tier轴与候选Agent封装轴方向一致）。</p>
+        )}
+
+        <details className="mt-4">
+          <summary className="cursor-pointer text-xs font-semibold text-text-primary">Definition of Done · 10项发布前检查</summary>
+          <div className="mt-2 space-y-1.5">
+            {model.unified_analysis.dod_checklist.map((item, index) => (
+              <p key={index} className="flex items-start gap-2 text-[11px] leading-4 text-text-secondary">
+                <span className={item.satisfied ? 'text-emerald-600' : 'text-rose-600'}>{item.satisfied ? '✓' : '✗'}</span>
+                {item.item}
+              </p>
+            ))}
+          </div>
+        </details>
+
+        <details className="mt-3">
+          <summary className="cursor-pointer text-xs font-semibold text-text-primary">逐L4根因阶梯（事实 → 机制 → 结构 → 策略）</summary>
+          <div className="mt-3 grid gap-3 md:grid-cols-2">
+            {model.l4s.map(l4 => {
+              const ladder = model.unified_analysis.root_cause_ladders[l4.l4_code]
+              if (!ladder) return null
+              return (
+                <div key={l4.l4_code} className="rounded-lg border border-border-default bg-bg-surface p-3">
+                  <p className="font-mono text-[11px] text-accent-primary-light">{l4.l4_code} · {l4.l4_name}</p>
+                  <div className="mt-2 space-y-1">
+                    {ladder.map((layer, i) => (
+                      <p key={i} className="text-[10px] leading-4 text-text-secondary">
+                        <span className="font-semibold">[{layer.layer}·{layer.grade}级]</span> {layer.statement}
+                      </p>
+                    ))}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </details>
+
+        <p className="mt-3 text-[9px] text-text-muted">SSOT：03_规划项目结构_Plan_Project_Structure/VNW统一分析Spec_v1.0.md</p>
       </section>
 
       <div className="flex items-start gap-2 rounded-xl border border-sky-400/20 bg-sky-400/5 p-4 text-xs text-sky-800">

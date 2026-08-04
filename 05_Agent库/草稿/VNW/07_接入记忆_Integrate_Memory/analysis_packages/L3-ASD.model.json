@@ -1,0 +1,278 @@
+{
+  "schema_version": "vnw.l3-analysis.v1",
+  "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
+  "generation_mode": "UNIFIED_MODEL",
+  "analysis_status": "MODEL_DRAFT",
+  "model_run": {
+    "model_name": "deepseek-v4-pro",
+    "model_version": "deepseek-v4-pro",
+    "prompt_version": "VNW-L3-COM-GOLD-v1.0",
+    "generated_at": "2026-08-04T16:53:02.468490+00:00",
+    "input_snapshot_hash": "5250fdddc70061f7c3c3e5dae767c640a4ff27fe4cff245aa9ad71639b1bae5c"
+  },
+  "source_scope": {
+    "database": "process_analytics",
+    "knowledge": "ACTIVE supplemental evidence only",
+    "evidence_count": 28
+  },
+  "l4_analysis": [
+    {
+      "l4_code": "L4-ASD-01",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-bdb2f1113c41348acbb8",
+        "EVD-6e2c8c639b77601d6577",
+        "EVD-def226e1e50cb0b5ae67",
+        "EVD-a7aa15c2762f15a9083a",
+        "EVD-c5a3c5a4c7b19eb5f8c3",
+        "EVD-2b2330dbe1c69fccd26b"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "生成并输出售后服务质量监控报告，支撑经代机构合作岗对服务质量的持续追踪",
+      "specific_capabilities": [
+        "结构化服务请求受理（热线/邮件/企微）与客户身份、保单信息自动核实",
+        "服务请求处理分类与标准化反馈生成",
+        "售后服务台账自动录入及数据清洗",
+        "理赔申请材料模板化接收、整理与保司提交",
+        "保司理赔审核进度自动查询与通知生成",
+        "投诉接收的渠道分流与投诉档案标准化创建",
+        "联合面谈的调度与合规录音存档",
+        "投诉上诉流程发起与CRC材料自动分发",
+        "售后服务质量监控指标计算与报告自动生成"
+      ],
+      "ai_reshape": "将复合动作拆分为多个独立Skill和人工协作任务。信息处理类（身份核实、台账录入、报告生成）封装为确定性Skill；投诉面谈、上诉处理等需判断与共情的环节保留人工，并由Agent辅助信息聚合与合规提醒。整体设计为‘自动化处理+人工例外干预’的Hybrid模式。",
+      "quality_anchor": "客户身份核实准确率、投诉响应时效、理赔材料完整性、监控报告数据准确性、合规录音存档完备性",
+      "ai_responsibility": "自动核实客户身份与保单信息；自动生成服务反馈、台账记录及监控报告；自动理赔文件模板校验与提交；自动投诉建档与CRC材料分发。",
+      "human_responsibility": "进行客户联合面谈与投诉调解；对理赔争议、投诉上诉作出最终决策；审核并确认服务敏感回复内容；签署最终监控报告。",
+      "handoff_triggers": [
+        "客户对自动回复表示异议或升级投诉",
+        "理赔审核结果存在争议或需进一步说明",
+        "投诉案件需进入面谈环节",
+        "AI无法确认的异常保单信息"
+      ],
+      "control_gates": [
+        "投诉处理须全程录音且存档合规",
+        "理赔文件提交前须经人工最终确认",
+        "监控报告对外发布前须经岗位负责人审批"
+      ],
+      "data_basis": [
+        "保单系统与客户信息库",
+        "理赔进度API接口",
+        "投诉管理平台记录",
+        "服务台账历史数据"
+      ],
+      "process_context": "位于经代机构售后服务流程的末端，连接客户、经代机构和保司，覆盖从理赔问题到投诉处理的全旅程，是机构合作伙伴旅程中联合运营BAU的关键交付环节。",
+      "risks_limits": [
+        "投诉面谈与上诉处理涉及复杂情绪和法规解释，AI无法完全替代",
+        "理赔争议处理权限受保司策略约束，自动化空间有限",
+        "复合动作拆分需投入分析资源，初期试点范围需严格限定",
+        "外部API可达性依赖保司系统开放程度，存在集成风险"
+      ],
+      "current_recommendation": "优先将报告生成、受理核实、台账录入等结构化子任务封装为Skill进行试点；投诉处理采用Agent辅助人工模式，先在小范围（如某一合作机构）试运行，积累知识库后再扩展。整体推进路径遵循‘先Skill后Agent’的双轴设计。",
+      "database_tier": "Auto",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "T-ASD-01",
+      "l4_code": "L4-ASD-01",
+      "task_name": "服务受理与身份核实",
+      "source_type": "BLUEPRINT_STEP",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-01",
+      "source_line": 47,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "NONE",
+      "evidence_refs": [
+        "EVD-6e2c8c639b77601d6577",
+        "EVD-bdb2f1113c41348acbb8",
+        "EVD-a7aa15c2762f15a9083a"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "输入结构化程度高（D1=2），客户身份与保单信息可通过系统自动校验，输出验证明确（D3=2），适合封装为确定性Skill。"
+    },
+    {
+      "task_id": "T-ASD-02",
+      "l4_code": "L4-ASD-01",
+      "task_name": "服务请求处理与反馈",
+      "source_type": "BLUEPRINT_STEP",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-01",
+      "source_line": 47,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "NONE",
+      "evidence_refs": [
+        "EVD-6e2c8c639b77601d6577",
+        "EVD-bdb2f1113c41348acbb8",
+        "EVD-993bee960e86a513bb63"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "处理规则部分明确（D2=1），但查询变更等动作依赖多种系统接口（D4=1），且回复内容需兼顾客情，建议由Agent提供草案，人工确认后发送。"
+    },
+    {
+      "task_id": "T-ASD-03",
+      "l4_code": "L4-ASD-01",
+      "task_name": "售后服务台账录入",
+      "source_type": "BLUEPRINT_STEP",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-01",
+      "source_line": 47,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "NONE",
+      "evidence_refs": [
+        "EVD-6e2c8c639b77601d6577",
+        "EVD-bdb2f1113c41348acbb8",
+        "EVD-b05488ed3f28b286793c"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "台账字段固定，信息来源已有结构化服务记录，合规要求仅需记录完整性，可全自动触发与归档。"
+    },
+    {
+      "task_id": "T-ASD-04",
+      "l4_code": "L4-ASD-01",
+      "task_name": "理赔协办与跟进",
+      "source_type": "BLUEPRINT_STEP",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-01",
+      "source_line": 47,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "NONE",
+      "evidence_refs": [
+        "EVD-6e2c8c639b77601d6577",
+        "EVD-bdb2f1113c41348acbb8",
+        "EVD-8d1a5d17563d5b6e2235"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "材料整理可标准化，但理赔文件合规判断和保司对接接口可达性有限（D4=1），需人机混合：自动校验与递交，人工处理例外和疑难件。"
+    },
+    {
+      "task_id": "T-ASD-05",
+      "l4_code": "L4-ASD-01",
+      "task_name": "投诉接收与档案建立",
+      "source_type": "BLUEPRINT_STEP",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-01",
+      "source_line": 47,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "NONE",
+      "evidence_refs": [
+        "EVD-6e2c8c639b77601d6577",
+        "EVD-bdb2f1113c41348acbb8",
+        "EVD-c5a3c5a4c7b19eb5f8c3"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "投诉信息结构化录入可自动化，但诉求领会和情绪安抚仍需人工；Agent提供档案草稿和分类建议，由经代机构合作岗确认。"
+    },
+    {
+      "task_id": "T-ASD-06",
+      "l4_code": "L4-ASD-01",
+      "task_name": "投诉面谈与上诉处理",
+      "source_type": "BLUEPRINT_STEP",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-01",
+      "source_line": 47,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "NONE",
+      "evidence_refs": [
+        "EVD-6e2c8c639b77601d6577",
+        "EVD-bdb2f1113c41348acbb8",
+        "EVD-2b2330dbe1c69fccd26b"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "面谈涉及复杂人际沟通和法律决策，全程录音存档合规要求严格（D6=1），且上诉处理需主观判断与机构授权，不可委托AI。"
+    },
+    {
+      "task_id": "T-ASD-07",
+      "l4_code": "L4-ASD-01",
+      "task_name": "售后服务质量监控报告生成",
+      "source_type": "DELIVERABLE",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-01",
+      "source_line": 47,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "NONE",
+      "evidence_refs": [
+        "EVD-6e2c8c639b77601d6577",
+        "EVD-bdb2f1113c41348acbb8",
+        "EVD-def226e1e50cb0b5ae67"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "报告基于台账和KPI数据自动生成，格式固定，数据验证规则明确，可封装为Skill全自动输出。"
+    }
+  ],
+  "priority_drafts": [
+    {
+      "l4_code": "L4-ASD-01",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "保单系统与客户信息库",
+        "理赔进度API接口",
+        "投诉管理平台记录",
+        "服务台账历史数据"
+      ],
+      "process_context": "位于经代机构售后服务流程的末端，连接客户、经代机构和保司，覆盖从理赔问题到投诉处理的全旅程，是机构合作伙伴旅程中联合运营BAU的关键交付环节。",
+      "risks_limits": [
+        "投诉面谈与上诉处理涉及复杂情绪和法规解释，AI无法完全替代",
+        "理赔争议处理权限受保司策略约束，自动化空间有限",
+        "复合动作拆分需投入分析资源，初期试点范围需严格限定",
+        "外部API可达性依赖保司系统开放程度，存在集成风险"
+      ],
+      "current_recommendation": "优先将报告生成、受理核实、台账录入等结构化子任务封装为Skill进行试点；投诉处理采用Agent辅助人工模式，先在小范围（如某一合作机构）试运行，积累知识库后再扩展。整体推进路径遵循‘先Skill后Agent’的双轴设计。",
+      "evidence_refs": [
+        "EVD-bdb2f1113c41348acbb8",
+        "EVD-6e2c8c639b77601d6577",
+        "EVD-def226e1e50cb0b5ae67",
+        "EVD-a7aa15c2762f15a9083a",
+        "EVD-c5a3c5a4c7b19eb5f8c3",
+        "EVD-2b2330dbe1c69fccd26b"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "decision_drafts": [
+    {
+      "priority": "P1",
+      "task_ids": [
+        "T-ASD-05",
+        "T-ASD-06"
+      ],
+      "title": "投诉处理试点AI辅助档案与人工面谈",
+      "pilot_scope": "在合作机构群内选取投诉率较高的2家机构，由Agent自动建档、生成面谈提示，面谈仍由经代机构合作岗执行",
+      "human_boundary": "投诉面部决策和上诉处理必须由人负责，AI不可直接与客户交互投诉事宜",
+      "evidence_refs": [
+        "EVD-bdb2f1113c41348acbb8",
+        "EVD-2b2330dbe1c69fccd26b",
+        "EVD-6e2c8c639b77601d6577"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "control_chain": [],
+  "rejected_task_sources": [],
+  "missing_analysis": [
+    "L4-ASD-01.human_touchpoint 缺失，无法细化人工介入点设计；已按照蓝图活动及岗位族推导。"
+  ]
+}

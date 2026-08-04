@@ -19,6 +19,7 @@ from skills.l3_analysis_contract import (
     eligible_analysis_evidence_ids,
     validate_analysis_package,
 )
+from skills.unified_analysis import l3_synthesis
 
 VALID_TIERS = {"Human", "Aug", "Hybrid", "Auto"}
 D_FIELDS = (
@@ -305,6 +306,7 @@ class L3ModelBuilder:
         l3_position_category: dict[str, dict] | None = None,
         business_table_map: dict[str, list[dict]] | None = None,
         business_table_counts: dict[str, int] | None = None,
+        analysis_confirmations_dir: Path | None = None,
     ):
         self.reader = reader
         self.blueprint_index = blueprint_index
@@ -319,6 +321,7 @@ class L3ModelBuilder:
         self.l3_position_category = l3_position_category or {}
         self.business_table_map = business_table_map or {}
         self.business_table_counts = business_table_counts or {}
+        self.analysis_confirmations_dir = analysis_confirmations_dir
 
     def build(self, l3_code: str, supplemental: list[EvidenceRecord] | None = None) -> dict:
         processes = self.reader.processes(l3_code)
@@ -874,6 +877,7 @@ class L3ModelBuilder:
             model["analysis_freshness"] = "CURRENT"
         else:
             model["analysis_freshness"] = "UNVERSIONED_REVIEWED_BASELINE"
+        model["unified_analysis"] = l3_synthesis(model, self.analysis_confirmations_dir)
         return model
 
     def build_and_write(

@@ -38,7 +38,7 @@ def call_json_model(
     api_key: str,
     model: str = DEFAULT_MODEL,
     max_retries: int = 2,
-    max_tokens: int = 16384,
+    max_tokens: int = 32768,
 ) -> str:
     if not api_key:
         raise ValueError("缺少模型API Key")

@@ -1,0 +1,893 @@
+{
+  "instruction": "只使用fact_pack。严格返回output_contract同结构JSON；所有MODEL_DRAFT结论必须引用fact_pack中的evidence_id。没有证据则留空并写入missing_analysis。",
+  "output_contract": {
+    "schema_version": "vnw.l3-analysis.v1",
+    "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
+    "generation_mode": "UNIFIED_MODEL",
+    "analysis_status": "MODEL_DRAFT",
+    "model_run": null,
+    "source_scope": {
+      "database": "process_analytics",
+      "knowledge": "ACTIVE supplemental evidence only",
+      "evidence_count": 28
+    },
+    "l4_analysis": [
+      {
+        "l4_code": "L4-ASD-01",
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [],
+        "confidence": "MODEL_DRAFT",
+        "deliverable_role": "",
+        "specific_capabilities": [],
+        "ai_reshape": "",
+        "quality_anchor": "",
+        "ai_responsibility": "",
+        "human_responsibility": "",
+        "handoff_triggers": [],
+        "control_gates": [],
+        "data_basis": [],
+        "process_context": "",
+        "risks_limits": [],
+        "current_recommendation": "",
+        "database_tier": "Auto",
+        "recommended_tier": "",
+        "quadrant": "unclassified"
+      }
+    ],
+    "tasks": [],
+    "priority_drafts": [],
+    "decision_drafts": [],
+    "control_chain": [],
+    "rejected_task_sources": [],
+    "missing_analysis": []
+  },
+  "fact_pack": {
+    "l3_code": "L3-ASD",
+    "l3_name": "经代机构售后服务流程",
+    "snapshot_hash": "5250fdddc70061f7c3c3e5dae767c640a4ff27fe4cff245aa9ad71639b1bae5c",
+    "source_policy": {
+      "consensus_separate": true,
+      "database_authority": "process_analytics",
+      "reverse_writeback": false,
+      "supplemental_requires_active": true
+    },
+    "gates": {
+      "A": {
+        "checks": [
+          {
+            "detail": "Gate E=CONDITIONAL",
+            "passed": true,
+            "rule_id": "A-001"
+          },
+          {
+            "detail": "D1-D6完整=1/1",
+            "passed": true,
+            "rule_id": "A-002"
+          },
+          {
+            "detail": "价值节点-L4映射=2",
+            "passed": true,
+            "rule_id": "A-003"
+          },
+          {
+            "detail": "无熔断节点",
+            "passed": true,
+            "rule_id": "A-004"
+          }
+        ],
+        "status": "PASS"
+      },
+      "E": {
+        "checks": [
+          {
+            "detail": "Gate M=PASS",
+            "passed": true,
+            "rule_id": "E-001"
+          },
+          {
+            "detail": "交付物完整=1/1（完整门槛90%）",
+            "passed": true,
+            "rule_id": "E-002"
+          },
+          {
+            "detail": "Tier合法",
+            "passed": true,
+            "rule_id": "E-003"
+          },
+          {
+            "detail": "可追溯任务覆盖=1/1（完整门槛80%）",
+            "passed": true,
+            "rule_id": "E-004"
+          },
+          {
+            "detail": "关键L4任务覆盖=0/0",
+            "passed": true,
+            "rule_id": "E-005"
+          },
+          {
+            "detail": "价值节点-L4映射=2",
+            "passed": true,
+            "rule_id": "E-006"
+          },
+          {
+            "detail": "规则可定位L4=0/1",
+            "passed": false,
+            "rule_id": "E-007"
+          },
+          {
+            "detail": "缺少SOP草稿或同等任务执行材料（不阻断建模）",
+            "passed": false,
+            "rule_id": "E-008"
+          },
+          {
+            "detail": "缺少可关联的规则记录（不阻断建模）",
+            "passed": false,
+            "rule_id": "E-009"
+          }
+        ],
+        "status": "CONDITIONAL"
+      },
+      "M": {
+        "checks": [
+          {
+            "detail": "L4数量=1",
+            "passed": true,
+            "rule_id": "M-001"
+          },
+          {
+            "detail": "流程蓝图_L3-ASD_经代机构售后服务流程_V1.0.md",
+            "passed": true,
+            "rule_id": "M-002"
+          },
+          {
+            "detail": "L4名称完整",
+            "passed": true,
+            "rule_id": "M-003"
+          },
+          {
+            "detail": "交付物完整=1/1（最低门槛70%）",
+            "passed": true,
+            "rule_id": "M-004"
+          },
+          {
+            "detail": "D1-D6完整=1/1",
+            "passed": true,
+            "rule_id": "M-005"
+          }
+        ],
+        "status": "PASS"
+      }
+    },
+    "l2_capabilities": [
+      {
+        "l2_code": "L2-04.3",
+        "l2_name": "赋能实施与运营",
+        "l3_code": "L3-ASD"
+      }
+    ],
+    "l4s": [
+      {
+        "business_evidence": [],
+        "d1_d6": {
+          "agent_d1_input_struct": 2,
+          "agent_d2_rule_clear": 1,
+          "agent_d3_output_verify": 2,
+          "agent_d4_api_reach": 1,
+          "agent_d5_fallback": 1,
+          "agent_d6_compliance": 1
+        },
+        "deliverable": "售后服务质量监控报告",
+        "deliverable_type": "报告",
+        "evidence_refs": {
+          "agent_d1_input_struct": "EVD-a7aa15c2762f15a9083a",
+          "agent_d2_rule_clear": "EVD-993bee960e86a513bb63",
+          "agent_d3_output_verify": "EVD-c5a3c5a4c7b19eb5f8c3",
+          "agent_d4_api_reach": "EVD-8d1a5d17563d5b6e2235",
+          "agent_d5_fallback": "EVD-f2c9d134063b0595f7d8",
+          "agent_d6_compliance": "EVD-2b2330dbe1c69fccd26b",
+          "agent_human_touchpoint": "EVD-fc661cb5c5d4b8bc19bb",
+          "agentifiability": "EVD-b05488ed3f28b286793c",
+          "l4_deliverable": "EVD-def226e1e50cb0b5ae67",
+          "l4_deliverable_type": "EVD-d2b0fd3eaeb42adda575",
+          "l4_name": "EVD-e425a5075ecc9ef071ef",
+          "position_family": "EVD-9aea74009fc6697e54ad",
+          "skill_feasibility": "EVD-bdb2f1113c41348acbb8"
+        },
+        "human_touchpoint": null,
+        "l4_code": "L4-ASD-01",
+        "l4_name": "售后服务执行与质量监控",
+        "position_family": {
+          "category_name": "经代机构合作岗",
+          "category_type": "目标态核心",
+          "family_code": "JF-03",
+          "family_name": "机构业务族"
+        },
+        "skill_feasibility": {
+          "action_nature": "信息处理/事务类",
+          "action_singularity": "复合动作(建议先拆分)",
+          "funds_safety_hard_gate": false,
+          "grade": "A-高封装(理想条件下Skill候选)",
+          "judgment_basis": "A-需先拆分为子Skill(复合动作)",
+          "physical_execution": false,
+          "recommended_path": "优先进入Skill原型候选池",
+          "verification_status": "VERIFIED"
+        },
+        "tier": "Auto"
+      }
+    ],
+    "value_nodes": [
+      {
+        "evidence_refs": {
+          "gate1_data_linked": "EVD-957fa630cd72f81fb29c",
+          "gate2_grounded": "EVD-fe216a8df9e3ee83e586",
+          "gate3_traceable": "EVD-0f81f1d513534b77197f",
+          "is_fused": "EVD-396bbef900249afcccb1",
+          "overall_judgment": "EVD-d4ab42690503b7c2e97a",
+          "priority": "EVD-98af0aee72f666c553f2",
+          "vn_name": "EVD-f090fc38eb36c8126408"
+        },
+        "is_fused": false,
+        "overall_judgment": "PARTIAL",
+        "priority": "P1",
+        "vn_id": "VN-ASD-01",
+        "vn_name": "投诉处理报告"
+      },
+      {
+        "evidence_refs": {
+          "gate1_data_linked": "EVD-84c37253221b8ede2f6e",
+          "gate2_grounded": "EVD-dabfcfe8ec09d38b822b",
+          "gate3_traceable": "EVD-89600f1be64e6f087a43",
+          "is_fused": "EVD-a46a24a5adba4696f14e",
+          "overall_judgment": "EVD-1e464c27733ef832463a",
+          "priority": "EVD-af60f93ee7e3799f1b95",
+          "vn_name": "EVD-c33b2fd6640d278feab8"
+        },
+        "is_fused": false,
+        "overall_judgment": "PARTIAL",
+        "priority": "P1",
+        "vn_id": "VN-ASD-02",
+        "vn_name": "售后服务质量监控报告"
+      }
+    ],
+    "vn_l4_mappings": [
+      {
+        "l3_code": "L3-ASD",
+        "l4_code": "L4-ASD-01",
+        "mapping_status": "direct",
+        "vn_id": "VN-ASD-01"
+      },
+      {
+        "l3_code": "L3-ASD",
+        "l4_code": "L4-ASD-01",
+        "mapping_status": "direct",
+        "vn_id": "VN-ASD-02"
+      }
+    ],
+    "kpi_mappings": [
+      {
+        "kpi_code": "KPI_13",
+        "kpi_formula": null,
+        "kpi_name": "N/R 结构 (Renewal Ratio)",
+        "kpi_target": null,
+        "kpi_unit": null,
+        "measurement_cycle": "月",
+        "source_type": "definition"
+      },
+      {
+        "kpi_code": "KPI_24",
+        "kpi_formula": null,
+        "kpi_name": "首年撤单率 (Cool-off)",
+        "kpi_target": null,
+        "kpi_unit": null,
+        "measurement_cycle": "月",
+        "source_type": "definition"
+      },
+      {
+        "kpi_code": "KPI_26",
+        "kpi_formula": null,
+        "kpi_name": "投诉率 (Complaint Rate)",
+        "kpi_target": null,
+        "kpi_unit": null,
+        "measurement_cycle": "月",
+        "source_type": "definition"
+      },
+      {
+        "kpi_code": "KPI_51",
+        "kpi_formula": null,
+        "kpi_name": "理赔时效",
+        "kpi_target": null,
+        "kpi_unit": null,
+        "measurement_cycle": "月",
+        "source_type": "definition"
+      }
+    ],
+    "value_stream_mappings": [
+      {
+        "l3_code": "L3-ASD",
+        "mapping_type": "primary",
+        "stage_code": "S5",
+        "stage_name": "联合运营BAU",
+        "stage_sequence": 5,
+        "vs_code": "VS-2",
+        "vs_name": "机构合作伙伴旅程",
+        "vs_stakeholder": "TOB机构/经代/家办/同行经代"
+      }
+    ],
+    "blueprint": {
+      "blueprint_value_nodes": [],
+      "coverage": "INDEXED",
+      "decisions": [],
+      "diagnostics": {
+        "blueprint_l4_count": 1,
+        "db_l4_count": 1,
+        "extra_in_blueprint": [],
+        "missing_in_blueprint": [],
+        "parsed_step_l4_count": 1,
+        "retired_l4s_ignored": [],
+        "unmapped_step_count": 0
+      },
+      "edges": [],
+      "filename": "流程蓝图_L3-ASD_经代机构售后服务流程_V1.0.md",
+      "note": "已从蓝图正文解析；步骤顺序边由显式步骤编号派生，判断分支保留原文行号",
+      "raci": [],
+      "source_hash": "ed10b815d5c4990ece5004d1c6c1dae5d9748210c8e1dd421128fd064b941286",
+      "source_path": "/Users/a112233/Desktop/流程架构项目_jasper/02_过程成果-工作产出/L3流程库/流程蓝图_L3-ASD_经代机构售后服务流程_V1.0.md",
+      "steps": [
+        {
+          "activities": [
+            "接收服务请求（热线 / 邮件 / 企微）",
+            "核实客户身份与保单信息",
+            "处理请求（查询/协助变更/转交保司）",
+            "回复客户，确认服务完成",
+            "录入售后服务台账",
+            "客户提交理赔申请材料",
+            "协助客户整理理赔文件包",
+            "提交至保司，跟进审核进度",
+            "收到保司理赔决定，通知客户",
+            "异议处理（如客户对结果有异议，转投诉子场景）",
+            "接收投诉：热线 / 电邮渠道接入，记录投诉事项与诉求",
+            "建立投诉档案：录入投诉事项、诉求、相关文件、客户信息",
+            "联合面谈：约见客户，全程录音（CO保存，获知情同意）",
+            "上诉处理：若客户不接受初步结论，启动上诉流程",
+            "CRC材料分发与决议执行：整理投诉材料，提交CRC委员会，执行决议"
+          ],
+          "evidence_ref": "EVD-6e2c8c639b77601d6577",
+          "l4_codes": [
+            "L4-ASD-01"
+          ],
+          "sequence": 1,
+          "source_line": 47,
+          "step_id": "STEP-01",
+          "step_name": "售后服务执行与质量监控"
+        }
+      ],
+      "structure_status": "PARSED",
+      "version": "V1.0"
+    },
+    "evidence_registry": [
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-0f81f1d513534b77197f",
+        "field_name": "gate3_traceable",
+        "source": {
+          "observed_at": "",
+          "source_field": "gate3_traceable",
+          "source_key": "VN-ASD-01",
+          "source_object": "process_analytics.dim_vn",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "PARTIAL"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-1e464c27733ef832463a",
+        "field_name": "overall_judgment",
+        "source": {
+          "observed_at": "",
+          "source_field": "overall_judgment",
+          "source_key": "VN-ASD-02",
+          "source_object": "process_analytics.dim_vn",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "PARTIAL"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-2b2330dbe1c69fccd26b",
+        "field_name": "agent_d6_compliance",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d6_compliance",
+          "source_key": "L4-ASD-01",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 1
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-396bbef900249afcccb1",
+        "field_name": "is_fused",
+        "source": {
+          "observed_at": "",
+          "source_field": "is_fused",
+          "source_key": "VN-ASD-01",
+          "source_object": "process_analytics.dim_vn",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": false
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-6e2c8c639b77601d6577",
+        "field_name": "blueprint.steps.STEP-01",
+        "source": {
+          "observed_at": "",
+          "source_field": "step",
+          "source_key": "line:47",
+          "source_object": "流程蓝图_L3-ASD_经代机构售后服务流程_V1.0.md",
+          "source_system": "L3流程库",
+          "source_version": "V1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "l4_codes": [
+            "L4-ASD-01"
+          ],
+          "step_name": "售后服务执行与质量监控"
+        }
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-84c37253221b8ede2f6e",
+        "field_name": "gate1_data_linked",
+        "source": {
+          "observed_at": "",
+          "source_field": "gate1_data_linked",
+          "source_key": "VN-ASD-02",
+          "source_object": "process_analytics.dim_vn",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "PARTIAL"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-89600f1be64e6f087a43",
+        "field_name": "gate3_traceable",
+        "source": {
+          "observed_at": "",
+          "source_field": "gate3_traceable",
+          "source_key": "VN-ASD-02",
+          "source_object": "process_analytics.dim_vn",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "PARTIAL"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-8d1a5d17563d5b6e2235",
+        "field_name": "agent_d4_api_reach",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d4_api_reach",
+          "source_key": "L4-ASD-01",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 1
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-957fa630cd72f81fb29c",
+        "field_name": "gate1_data_linked",
+        "source": {
+          "observed_at": "",
+          "source_field": "gate1_data_linked",
+          "source_key": "VN-ASD-01",
+          "source_object": "process_analytics.dim_vn",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "PARTIAL"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-98af0aee72f666c553f2",
+        "field_name": "priority",
+        "source": {
+          "observed_at": "",
+          "source_field": "priority",
+          "source_key": "VN-ASD-01",
+          "source_object": "process_analytics.dim_vn",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "P1"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-993bee960e86a513bb63",
+        "field_name": "agent_d2_rule_clear",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d2_rule_clear",
+          "source_key": "L4-ASD-01",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 1
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-9aea74009fc6697e54ad",
+        "field_name": "position_family",
+        "source": {
+          "observed_at": "",
+          "source_field": "各族详细映射",
+          "source_key": "L3-ASD",
+          "source_object": "2026-07-20_68L3岗位族归属设计_v6.1_SUBMITTED.md",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v6.1"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "category_name": "经代机构合作岗",
+          "category_type": "目标态核心",
+          "family_code": "JF-03",
+          "family_name": "机构业务族"
+        }
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-a46a24a5adba4696f14e",
+        "field_name": "is_fused",
+        "source": {
+          "observed_at": "",
+          "source_field": "is_fused",
+          "source_key": "VN-ASD-02",
+          "source_object": "process_analytics.dim_vn",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": false
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-a7aa15c2762f15a9083a",
+        "field_name": "agent_d1_input_struct",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d1_input_struct",
+          "source_key": "L4-ASD-01",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-af60f93ee7e3799f1b95",
+        "field_name": "priority",
+        "source": {
+          "observed_at": "",
+          "source_field": "priority",
+          "source_key": "VN-ASD-02",
+          "source_object": "process_analytics.dim_vn",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "P1"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-b05488ed3f28b286793c",
+        "field_name": "agentifiability",
+        "source": {
+          "observed_at": "",
+          "source_field": "agentifiability",
+          "source_key": "L4-ASD-01",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "Auto"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-bdb2f1113c41348acbb8",
+        "field_name": "skill_feasibility",
+        "source": {
+          "observed_at": "",
+          "source_field": "L4明细_最终确认版:A:N",
+          "source_key": "L4-ASD-01@row:2",
+          "source_object": "L4流程_Skill封装可行性评估_确认最终版_v2.xlsx",
+          "source_system": "OB知识库",
+          "source_version": "v2"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "action_nature": "信息处理/事务类",
+          "action_singularity": "复合动作(建议先拆分)",
+          "funds_safety_hard_gate": false,
+          "grade": "A-高封装(理想条件下Skill候选)",
+          "judgment_basis": "A-需先拆分为子Skill(复合动作)",
+          "physical_execution": false,
+          "recommended_path": "优先进入Skill原型候选池",
+          "verification_status": "VERIFIED"
+        }
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-c33b2fd6640d278feab8",
+        "field_name": "vn_name",
+        "source": {
+          "observed_at": "",
+          "source_field": "vn_name",
+          "source_key": "VN-ASD-02",
+          "source_object": "process_analytics.dim_vn",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "售后服务质量监控报告"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-c5a3c5a4c7b19eb5f8c3",
+        "field_name": "agent_d3_output_verify",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d3_output_verify",
+          "source_key": "L4-ASD-01",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-d2b0fd3eaeb42adda575",
+        "field_name": "l4_deliverable_type",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_deliverable_type",
+          "source_key": "L4-ASD-01",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "报告"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-d4ab42690503b7c2e97a",
+        "field_name": "overall_judgment",
+        "source": {
+          "observed_at": "",
+          "source_field": "overall_judgment",
+          "source_key": "VN-ASD-01",
+          "source_object": "process_analytics.dim_vn",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "PARTIAL"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-dabfcfe8ec09d38b822b",
+        "field_name": "gate2_grounded",
+        "source": {
+          "observed_at": "",
+          "source_field": "gate2_grounded",
+          "source_key": "VN-ASD-02",
+          "source_object": "process_analytics.dim_vn",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "PARTIAL"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-def226e1e50cb0b5ae67",
+        "field_name": "l4_deliverable",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_deliverable",
+          "source_key": "L4-ASD-01",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "售后服务质量监控报告"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-e425a5075ecc9ef071ef",
+        "field_name": "l4_name",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_name",
+          "source_key": "L4-ASD-01",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "售后服务执行与质量监控"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-f090fc38eb36c8126408",
+        "field_name": "vn_name",
+        "source": {
+          "observed_at": "",
+          "source_field": "vn_name",
+          "source_key": "VN-ASD-01",
+          "source_object": "process_analytics.dim_vn",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "投诉处理报告"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-f2c9d134063b0595f7d8",
+        "field_name": "agent_d5_fallback",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d5_fallback",
+          "source_key": "L4-ASD-01",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 1
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-fc661cb5c5d4b8bc19bb",
+        "field_name": "agent_human_touchpoint",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_human_touchpoint",
+          "source_key": "L4-ASD-01",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "MISSING",
+        "transform_rule": "",
+        "value": null
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-fe216a8df9e3ee83e586",
+        "field_name": "gate2_grounded",
+        "source": {
+          "observed_at": "",
+          "source_field": "gate2_grounded",
+          "source_key": "VN-ASD-01",
+          "source_object": "process_analytics.dim_vn",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "PARTIAL"
+      }
+    ]
+  }
+}

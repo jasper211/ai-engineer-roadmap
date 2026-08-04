@@ -287,6 +287,7 @@ def main() -> int:
             l3_position_category=L3_POSITION_CATEGORY,
             business_table_map=L4_BUSINESS_TABLE_MAP,
             business_table_counts=load_business_table_row_counts(db_query),
+            analysis_confirmations_dir=AGENT_ROOT / "07_接入记忆_Integrate_Memory/analysis_confirmations",
         )
         source_update_mode = args.check_source_updates or args.apply_source_updates
         snapshot_dir = workspace.root / ("source_update_candidate" if source_update_mode else "model_snapshots")

@@ -1,0 +1,286 @@
+{
+  "schema_version": "vnw.l3-analysis.v1",
+  "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
+  "generation_mode": "UNIFIED_MODEL",
+  "analysis_status": "MODEL_DRAFT",
+  "model_run": null,
+  "source_scope": {
+    "database": "process_analytics",
+    "knowledge": "ACTIVE supplemental evidence only",
+    "evidence_count": 35
+  },
+  "l4_analysis": [
+    {
+      "l4_code": "L4-CDS-01",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-140cc877d30ae9efdb12",
+        "EVD-bc1ebcd84c80020c2e30",
+        "EVD-61fcfd98758dfba18bdc",
+        "EVD-9fb861a25fd8b48f8ca9",
+        "EVD-91ea2c4aa9aac7450c68",
+        "EVD-610d5007b15fa616a513",
+        "EVD-8c35b56b10b4efabdbf6",
+        "EVD-ac319259a1899b42b0f9",
+        "EVD-33796f8883af8edebc42",
+        "EVD-85acc851227b38eaa2d3"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "为合同起草提供标准化的要点确认依据，确保后续签署环节信息完整。",
+      "specific_capabilities": [
+        "信息处理/事务类：提取合同关键要素并结构化",
+        "合同模板匹配与要点填充"
+      ],
+      "ai_reshape": "封装为确定性Skill，输入结构化数据后自动生成《起草合同要点确认》文档。",
+      "quality_anchor": "交付物需涵盖合同必备条款，符合模板规范，关键字段无遗漏。",
+      "ai_responsibility": "自动生成合同要点确认草案。",
+      "human_responsibility": "",
+      "handoff_triggers": [
+        "AI对要点判断置信度低于阈值时转人工复核"
+      ],
+      "control_gates": [
+        "合规审核关口（规则不清晰时需人工介入）"
+      ],
+      "data_basis": [
+        "结构化输入数据（客户信息、合同模板、服务协议）",
+        "规则清晰度不足，需依赖人工经验补充"
+      ],
+      "process_context": "合同签订阶段的起始步骤，承接前期协商结果，为正式签署做准备。",
+      "risks_limits": [
+        "规则不清晰可能导致要点遗漏或偏差",
+        "合规检查覆盖不足，存在法律风险",
+        "API可达性弱（1分），自动化执行存在限制"
+      ],
+      "current_recommendation": "基于Skill可行性评估A级（单一信息处理动作），建议优先进入Skill原型候选池。同时需补充人工复核规则与合规校验机制，采用双轴设计路径：高封装可行性 + 部分人工判断层。",
+      "database_tier": "Auto",
+      "recommended_tier": "Aug",
+      "quadrant": "high_feasibility_partial_human"
+    },
+    {
+      "l4_code": "L4-CDS-02",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-505035778cd9e506b5b9",
+        "EVD-adc2dd8598de0a3737e0",
+        "EVD-edcc2a930c2ee06a9be9",
+        "EVD-5c5baa50201f7edadd79",
+        "EVD-34afe3b3cb277131c0b5",
+        "EVD-8545ca07ca8f379953bf",
+        "EVD-cb052bac53767464f972",
+        "EVD-67ec729327354d79916b",
+        "EVD-0d1ed4be9f8a065cfa41",
+        "EVD-6a66954025b8d6cd5709"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "完成合同签署核对与登记，产生已签合同文件及登记表，作为合同生命周期记录的基础。",
+      "specific_capabilities": [
+        "信息处理/事务类：合同签署完整性核对",
+        "文档生成与归档：生成已签合同及登记表"
+      ],
+      "ai_reshape": "需拆分为两个子Skill：①签署信息自动核对；②基于核对结果生成标准文件并归档。",
+      "quality_anchor": "签署文件内容准确，登记表信息与签署文件一致，归档无遗漏。",
+      "ai_responsibility": "自动执行核对与登记操作。",
+      "human_responsibility": "",
+      "handoff_triggers": [
+        "核对发现差异无法自动解决时转人工处理"
+      ],
+      "control_gates": [
+        "合规审核关口（规则清晰，但必须确保合规性）",
+        "文档登记完成后可能有法律效力，需确认归档正确"
+      ],
+      "data_basis": [
+        "结构化签署数据与合同要点确认结果",
+        "预设的核对规则与归档逻辑"
+      ],
+      "process_context": "合同签订的最后步骤，承接要点确认，产出已签署的正式文件并完成登记，是价值节点「已签权益商务合同」的直接支撑。",
+      "risks_limits": [
+        "复合动作需先拆分为子Skill，否则自动化执行存在边界不清晰的风险",
+        "登记错误可能影响合同管理，但资金安全硬门未涉及",
+        "回退机制（D5=1）较弱，需完善"
+      ],
+      "current_recommendation": "依据Skill可行性评估A级但建议拆分，优先将核对与登记解耦为两个独立任务后进入原型候选池。双轴设计：高封装可行性，但需拆分及人工复核环节。",
+      "database_tier": "Auto",
+      "recommended_tier": "Aug",
+      "quadrant": "high_feasibility_split_needed"
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "TASK-001",
+      "l4_code": "L4-CDS-01",
+      "task_name": "生成合同要点确认文档",
+      "source_type": "蓝图步骤",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-01",
+      "source_line": 48,
+      "previous_task_ids": [],
+      "next_task_ids": ["TASK-002", "TASK-003"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-140cc877d30ae9efdb12",
+        "EVD-61fcfd98758dfba18bdc",
+        "EVD-bc1ebcd84c80020c2e30",
+        "EVD-9fb861a25fd8b48f8ca9"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "D1-D6评分：结构化输入(2)，规则清晰度(1)，输出验证(2)，API可达(1)，回退(1)，合规(1)。规则不清晰与API可达性较弱，需保留人工复核环节。建议采用增强自动化，AI生成文档后由人确认。"
+    },
+    {
+      "task_id": "TASK-002",
+      "l4_code": "L4-CDS-02",
+      "task_name": "核对签署文件内容",
+      "source_type": "蓝图步骤",
+      "sequence_no": 2,
+      "sequence_status": "UNCONFIRMED",
+      "source_step_id": "STEP-02",
+      "source_line": 54,
+      "previous_task_ids": ["TASK-001"],
+      "next_task_ids": [],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-505035778cd9e506b5b9",
+        "EVD-edcc2a930c2ee06a9be9",
+        "EVD-5c5baa50201f7edadd79",
+        "EVD-34afe3b3cb277131c0b5",
+        "EVD-8545ca07ca8f379953bf"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "复合动作被评估为需拆分，核对子动作输入结构化(2)，规则清晰(2)，输出可验证(2)，API可达(2)，理论上可自动化。但原复合动作回退较弱(1)且需确保签署法律效力，建议增强自动化并设置人工异常处理。"
+    },
+    {
+      "task_id": "TASK-003",
+      "l4_code": "L4-CDS-02",
+      "task_name": "登记并归档签署文件",
+      "source_type": "蓝图步骤",
+      "sequence_no": 2,
+      "sequence_status": "UNCONFIRMED",
+      "source_step_id": "STEP-02",
+      "source_line": 54,
+      "previous_task_ids": ["TASK-001"],
+      "next_task_ids": [],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-505035778cd9e506b5b9",
+        "EVD-edcc2a930c2ee06a9be9",
+        "EVD-cb052bac53767464f972",
+        "EVD-67ec729327354d79916b",
+        "EVD-0d1ed4be9f8a065cfa41"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "登记子动作输入结构化(2)，API可达(2)，合规(2)，输出可验证(2)，规则清晰(2)，自动化条件较好。但登记错误可能影响合同管理，且回退机制(1)不足，建议自动化后由专人抽样核对。"
+    }
+  ],
+  "priority_drafts": [
+    {
+      "priority": "P1",
+      "rationale": "价值节点「已签权益商务合同」为P1，直接关联客户核心价值实现，且合同签署流程为权益服务必经过环节。",
+      "evidence_refs": [
+        "EVD-5cad2df5a18d26024b2f",
+        "EVD-a5cc0a4d04e180633931",
+        "EVD-672c49aba93a81f5b519"
+      ],
+      "recommended_pilot_tasks": [
+        "TASK-001",
+        "TASK-002"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "decision_drafts": [
+    {
+      "priority": "P1",
+      "task_ids": ["TASK-001"],
+      "title": "试点AI生成合同要点确认并建立人工复核流程",
+      "pilot_scope": "权益服务族新签合同场景，选择1-2个产品线作为试点。",
+      "human_boundary": "人工必须最终确认《起草合同要点确认》文档的准确性并签字；合规部门需明确审核规则。",
+      "evidence_refs": [
+        "EVD-61fcfd98758dfba18bdc",
+        "EVD-140cc877d30ae9efdb12",
+        "EVD-33796f8883af8edebc42"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "pending_decision": "需补充人工职责定义及合规规则的具体条目"
+    },
+    {
+      "priority": "P1",
+      "task_ids": ["TASK-002", "TASK-003"],
+      "title": "拆分签署核对与登记任务并试点自动化执行",
+      "pilot_scope": "与合同要点确认试点范围一致，先验证核对子任务自动化，再扩展至登记任务。",
+      "human_boundary": "核对差异需人工仲裁；登记结果需由合同管理岗定期抽查。",
+      "evidence_refs": [
+        "EVD-edcc2a930c2ee06a9be9",
+        "EVD-505035778cd9e506b5b9",
+        "EVD-0d1ed4be9f8a065cfa41"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "pending_decision": "明确核对规则的具体细节及异常处理标准，确定登记表格式与归档系统对接方式。"
+    }
+  ],
+  "control_chain": [
+    {
+      "control_point": "L4-CDS-01合规审核",
+      "type": "human_gate",
+      "trigger": "当AI生成的要点中包含合规敏感条款或规则库无法明确判断时",
+      "evidence_refs": [
+        "EVD-33796f8883af8edebc42",
+        "EVD-91ea2c4aa9aac7450c68"
+      ],
+      "status": "PARTIAL_EVIDENCE",
+      "note": "D6合规=1，规则不清晰，需人工介入；但具体人工控制门缺失。"
+    },
+    {
+      "control_point": "L4-CDS-02签署核对异常处理",
+      "type": "human_gate",
+      "trigger": "核对差异无法自动解决时",
+      "evidence_refs": [
+        "EVD-67ec729327354d79916b",
+        "EVD-34afe3b3cb277131c0b5"
+      ],
+      "status": "PARTIAL_EVIDENCE",
+      "note": "回退机制(1)较弱，暗示需人工处理；但无明确人工控制点定义。"
+    },
+    {
+      "control_point": "L4-CDS-02登记归档确认",
+      "type": "human_gate",
+      "trigger": "登记完成后需人工抽样或确认归档完整性",
+      "evidence_refs": [
+        "EVD-0d1ed4be9f8a065cfa41",
+        "EVD-adc2dd8598de0a3737e0"
+      ],
+      "status": "MODEL_DRAFT",
+      "note": "无直接证据，基于合同规范管理要求建模推断，需负责人确认。"
+    }
+  ],
+  "rejected_task_sources": [],
+  "missing_analysis": [
+    {
+      "field": "human_touchpoint",
+      "l4_code": "L4-CDS-01",
+      "detail": "EVD-e9177d6b9ac81af1a137 状态MISSING，无法确定人工交互点。"
+    },
+    {
+      "field": "human_touchpoint",
+      "l4_code": "L4-CDS-02",
+      "detail": "EVD-d86da447b22f78fd7205 状态MISSING，无法确定人工交互点。"
+    },
+    {
+      "field": "rule_evidence",
+      "l3_code": "L3-CDS",
+      "detail": "Gate E-007提示缺少可关联的规则记录，导致步骤级规则无法定位。"
+    },
+    {
+      "field": "task_sequence_in_L4-CDS-02",
+      "l4_code": "L4-CDS-02",
+      "detail": "复合动作拆分后子任务顺序无证据，标记为UNCONFIRMED。"
+    },
+    {
+      "field": "control_gate_details",
+      "l4_code": "L4-CDS-01,L4-CDS-02",
+      "detail": "人工控制门的具体审查标准与职责人缺失，无法直接从事实包推导。"
+    }
+  ]
+}

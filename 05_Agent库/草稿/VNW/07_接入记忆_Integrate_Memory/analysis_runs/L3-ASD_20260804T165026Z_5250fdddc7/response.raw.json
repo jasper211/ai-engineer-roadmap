@@ -1,0 +1,181 @@
+{
+  "schema_version": "vnw.l3-analysis.v1",
+  "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
+  "generation_mode": "UNIFIED_MODEL",
+  "analysis_status": "MODEL_DRAFT",
+  "model_run": null,
+  "source_scope": {
+    "database": "process_analytics",
+    "knowledge": "ACTIVE supplemental evidence only",
+    "evidence_count": 28
+  },
+  "l4_analysis": [
+    {
+      "l4_code": "L4-ASD-01",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-bdb2f1113c41348acbb8",
+        "EVD-6e2c8c639b77601d6577",
+        "EVD-993bee960e86a513bb63",
+        "EVD-9aea74009fc6697e54ad",
+        "EVD-def226e1e50cb0b5ae67",
+        "EVD-e425a5075ecc9ef071ef",
+        "EVD-d2b0fd3eaeb42adda575",
+        "EVD-98af0aee72f666c553f2",
+        "EVD-af60f93ee7e3799f1b95",
+        "EVD-b05488ed3f28b286793c"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "经代机构合作岗负责输出售后服务质量监控报告",
+      "specific_capabilities": [
+        "需拆分为子Skill：服务请求处理、理赔文件协助、投诉档案管理、联合面谈等；复合动作建议先拆分为可独立执行的子任务"
+      ],
+      "ai_reshape": "将售后服务流程拆分为多个确定性Skill执行，如自动台账录入、标准化查询回复等，复杂投诉处理留给Agent辅助",
+      "quality_anchor": "",
+      "ai_responsibility": "根据skill_feasibility，AI可承担结构化数据处理与报告生成，但需人工审核",
+      "human_responsibility": "经代机构合作岗负责处理复杂投诉、情感沟通、最终决策、合规审核",
+      "handoff_triggers": [
+        "异议处理转投诉子场景",
+        "联合面谈",
+        "上诉处理",
+        "CRC材料分发与决议执行"
+      ],
+      "control_gates": [
+        "投诉处理中的全程录音与知情同意（合规控制门）"
+      ],
+      "data_basis": [
+        "服务请求记录",
+        "保单信息",
+        "理赔申请材料",
+        "投诉档案",
+        "CRC决议"
+      ],
+      "process_context": "该流程覆盖售后服务执行全流程，包括服务请求处理、理赔协办、投诉受理与上诉等，位于机构合作伙伴旅程的联合运营阶段",
+      "risks_limits": [
+        "复合动作一次性封装会导致灵活性降低",
+        "部分活动如联合面谈、上诉处理需高度人工判断",
+        "缺少SOP草稿导致规则模糊（D2=1）",
+        "规则可定位L4失败，自动化边界不清晰"
+      ],
+      "current_recommendation": "将L4-ASD-01拆分为多个子任务，优先对结构化程度高的部分（如台账录入、标准查询回复）进行Skill封装，对投诉处理等保留人工强参与，待SOP完善后逐步自动化",
+      "database_tier": "Auto",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "TASK-ASD-01-001",
+      "l4_code": "L4-ASD-01",
+      "task_name": "处理服务请求与理赔协助",
+      "source_type": "blueprint",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-01",
+      "source_line": 47,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "parallel",
+      "evidence_refs": [
+        "EVD-6e2c8c639b77601d6577",
+        "EVD-bdb2f1113c41348acbb8"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "服务请求处理与理赔协助以事务性操作为主，结构化程度较高，但涉及客户身份核实与异议处理仍需人工复核，建议Aug"
+    },
+    {
+      "task_id": "TASK-ASD-01-002",
+      "l4_code": "L4-ASD-01",
+      "task_name": "处理客户投诉",
+      "source_type": "blueprint",
+      "sequence_no": 2,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-01",
+      "source_line": 47,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "parallel",
+      "evidence_refs": [
+        "EVD-6e2c8c639b77601d6577",
+        "EVD-bdb2f1113c41348acbb8",
+        "EVD-98af0aee72f666c553f2"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "投诉处理涉及情感沟通、合规录音、上诉与CRC决议，高度依赖人工判断，但建档、材料分发等可自动化，整体适合Hybrid"
+    },
+    {
+      "task_id": "TASK-ASD-01-003",
+      "l4_code": "L4-ASD-01",
+      "task_name": "生成售后服务质量监控报告",
+      "source_type": "blueprint",
+      "sequence_no": 3,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-01",
+      "source_line": 47,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "parallel",
+      "evidence_refs": [
+        "EVD-6e2c8c639b77601d6577",
+        "EVD-def226e1e50cb0b5ae67",
+        "EVD-af60f93ee7e3799f1b95"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "报告生成基于结构化台账数据，规则明确后可完全自动化，但仍需人工审核最终输出，当前建议Auto待SOP落实"
+    }
+  ],
+  "priority_drafts": [
+    {
+      "priority": "投诉处理任务优先试点，其次服务请求处理Skill封装",
+      "task_ids": [
+        "TASK-ASD-01-002",
+        "TASK-ASD-01-001"
+      ],
+      "data_basis": [
+        "价值节点投诉处理报告与售后服务质量监控报告均为P1高优先级",
+        "投诉率KPI_26直接影响客户体验与监管风险"
+      ],
+      "process_context": "投诉处理处于客户旅程高风险触点，当前人工处理效率低、合规压力大",
+      "risks_limits": [
+        "投诉处理缺少SOP，规则清晰度不足",
+        "联合面谈与上诉需人工深度参与，自动化边界需谨慎界定"
+      ],
+      "current_recommendation": "优先在投诉处理中引入AI辅助建档、材料整理，保留人工决策控制；同步对服务请求处理进行Skill封装，快速降低事务性人力消耗",
+      "evidence_refs": [
+        "EVD-98af0aee72f666c553f2",
+        "EVD-af60f93ee7e3799f1b95",
+        "EVD-bdb2f1113c41348acbb8",
+        "EVD-993bee960e86a513bb63"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "decision_drafts": [
+    {
+      "priority": "投诉处理任务AI辅助试点决策",
+      "task_ids": [
+        "TASK-ASD-01-002"
+      ],
+      "title": "在投诉处理任务中启动AI辅助试点",
+      "pilot_scope": "选择3家经代机构，试点期2个月，仅开放建档自动化、材料预整理功能，联合面谈及上诉保留人工全权处理",
+      "human_boundary": "人工必须全程控制联合面谈、上诉决议与CRC材料分发，AI不得自动发起客户沟通",
+      "evidence_refs": [
+        "EVD-6e2c8c639b77601d6577",
+        "EVD-bdb2f1113c41348acbb8",
+        "EVD-98af0aee72f666c553f2"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "control_chain": [
+    "投诉处理中的全程录音与知情同意形成合规控制链"
+  ],
+  "rejected_task_sources": [],
+  "missing_analysis": [
+    "quality_anchor未定义，因无直接证据支撑监控报告的具体质量指标",
+    "human_touchpoint证据缺失，无法完整分析转人工条件细节"
+  ]
+}

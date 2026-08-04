@@ -282,6 +282,29 @@ export interface L3Model {
     }[]
     missing_analysis: string[]
   }
+  unified_analysis: {
+    schema_version: string
+    status: 'DRAFT' | 'CONFIRMED'
+    confirmed_by: string | null
+    confirmed_at: string | null
+    confirmation_notes: string | null
+    axis_conflicts: string[]
+    coverage: {
+      l4_total: number
+      business_evidence_covered: number
+      position_covered: number
+      kpi_count: number
+      value_stream_count: number
+    }
+    gate_a_status: string
+    dod_checklist: { item: string; satisfied: boolean; detail?: Record<string, boolean> }[]
+    root_cause_ladders: Record<string, {
+      layer: string
+      grade: string
+      statement: string
+      axis_conflict?: boolean
+    }[]>
+  }
 }
 
 export async function loadModelIndex(): Promise<ModelIndex> {
