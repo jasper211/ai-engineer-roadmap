@@ -145,6 +145,16 @@ schema_version_overrides:
     test_id: TEST-HKIA-ANNUAL-LONG-2023-CROSS-YEAR-001
     column_order_rule: annual_before_single
     inforce_test_id: TEST-HKIA-ANNUAL-LONG-2023-L8-L13-001
+    market_history_test_id: TEST-HKIA-ANNUAL-LONG-2023-L1-L3-001
+    new_business_cross_grain_test_id: TEST-HKIA-ANNUAL-LONG-2023-L4-L16-001
+    group_retirement_cross_grain_test_id: TEST-HKIA-ANNUAL-LONG-2023-L6-COMPANY-001
+    annuity_cross_grain_test_id: TEST-HKIA-ANNUAL-LONG-2023-L7-COMPANY-001
+    L7_inforce_control: L12_annuity_and_other
+    L7_new_business_control: L17_plus_L18_equals_L19_total_annuity
+    L6_sections: [group_life_inforce, retirement_scheme_inforce]
+    L6_company_controls: [L10, L11]
+    L1_liability_rule: add_L2_L3_and_two_L1_additional_reserve_rows
+    L1_sums_assured_rule: L3_not_published_linked_status_is_NA_not_zero
   RBC_2024:
     applies_to_report_years: [2024]
     table_semantics:
@@ -181,10 +191,14 @@ canonical_fact_fields:
 join_graph:
   reconciliations:
     - {detail_tables: [L2, L3], control_table: L1, relation: metric_and_period_qualified_component_to_individual_life_inforce, test_id: TEST-HKIA-ANNUAL-LONG-L1-L3-001}
+    - {detail_tables: [L2, L3], control_table: L1, report_year: 2023, relation: pre_RBC_metric_qualified_with_additional_reserve_rows, test_id: TEST-HKIA-ANNUAL-LONG-2023-L1-L3-001}
     - {detail_tables: [L14, L15], control_table: L16, relation: linked_plus_non_linked_to_total_individual_new_business}
     - {detail_tables: [L14, L15, L16], control_table: L4, relation: validated_cross_grain_cross_unit_at_shared_dimensions, test_id: TEST-HKIA-ANNUAL-LONG-L4-L16-001}
+    - {detail_tables: [L14, L15, L16], control_table: L4, report_year: 2023, relation: validated_cross_grain_with_display_precision_tolerance, test_id: TEST-HKIA-ANNUAL-LONG-2023-L4-L16-001}
     - {detail_tables: [L10, L11, L18], control_table: L6, relation: validated_metric_specific_group_and_retirement_cross_grain_control, test_id: TEST-HKIA-ANNUAL-LONG-L6-COMPANY-001}
+    - {detail_tables: [L10, L11], control_table: L6, report_year: 2023, relation: validated_pre_RBC_group_and_retirement_inforce_control, test_id: TEST-HKIA-ANNUAL-LONG-2023-L6-COMPANY-001}
     - {detail_tables: [L12, L17], control_table: L7, relation: validated_2024_annuity_shared_grain_control_with_other_business_exclusion, test_id: TEST-HKIA-ANNUAL-LONG-L7-COMPANY-001}
+    - {detail_tables: [L12, L17, L18, L19], control_table: L7, report_year: 2023, relation: validated_pre_RBC_annuity_and_other_inforce_plus_total_annuity_new_business, test_id: TEST-HKIA-ANNUAL-LONG-2023-L7-COMPANY-001}
     - {detail_tables: [L8, L9, L10, L11, L12], control_table: L13, relation: validated_metric_specific_component_to_total, test_id: TEST-HKIA-ANNUAL-LONG-L8-L13-001}
     - {detail_tables: [L16, L17, L18], control_table: L19, relation: validated_component_to_total_L17_not_in_L16, test_id: TEST-HKIA-ANNUAL-LONG-L16-L19-001}
   entity_join:
@@ -217,6 +231,13 @@ prohibited_joins:
   - L11_2023_policy_count_must_not_be_union_mapped_to_L11_2024_scheme_count
   - annual_and_single_premium_columns_must_not_be_mapped_by_position_across_2023_2024
   - L12_2023_other_business_scope_must_not_be_silently_relabelled_as_2024_annuity_only
+  - L1_additional_reserve_rows_must_not_be_dropped_when_reconciling_pre_RBC_net_liabilities
+  - report_vintage_must_not_be_overwritten_by_observation_year_in_historical_tables
+  - cross_grain_amount_tolerance_must_reflect_source_display_precision_and_component_count
+  - L18_2023_linked_annuity_must_not_be_routed_to_L6_group_business_control
+  - retirement_policy_count_lives_and_scheme_count_must_remain_separate_across_schema_versions
+  - L7_new_business_company_control_must_route_to_L19_in_2023_and_L17_in_2024
+  - L7a_2023_other_business_and_linked_annuity_values_must_not_be_dropped_to_force_2024_annuity_only_scope
 
 quality_rules:
   - displayed_NAME_errors_in_year_headers_are_external_formula_artifacts_use_sequence_and_source_formula_audit

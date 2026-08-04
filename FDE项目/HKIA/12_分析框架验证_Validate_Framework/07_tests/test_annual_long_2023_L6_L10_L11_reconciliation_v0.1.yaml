@@ -1,0 +1,60 @@
+test_id: TEST-HKIA-ANNUAL-LONG-2023-L6-COMPANY-001
+version: 0.1
+status: passed_with_schema_branch_and_mixed_precision_qualification
+test_type: pre_RBC_group_retirement_market_to_company_reconciliation
+period: 2023
+
+inputs:
+  market_table: L6_group_life_and_retirement_inforce
+  company_tables: [L10_group_life_inforce, L11_retirement_scheme_inforce]
+  excluded_table: L18_linked_individual_annuity_new_business
+  detected_company_entities: 59
+  market_total_row: 70
+  source_ranges:
+    L6: ["Table L6!D9:O14", "Table L6!D20:L26"]
+    L10: "Table L10!D10:H70"
+    L11: "Table L11!D10:G70"
+
+detail_to_market_results:
+  L10:
+    metrics: [policy_count, lives, sums_assured, annual_premium, net_liabilities]
+    checked_cells: 5
+    discrepancy_count: 0
+  L11:
+    metrics: [policy_count, lives, annual_contributions, net_liabilities]
+    checked_cells: 4
+    discrepancy_count: 0
+
+cross_grain_results:
+  L6a_to_L10:
+    policy_count: {L6: 16667, company: 16667, difference: 0}
+    lives: {L6: 1298300, company: 1298300, difference: 0}
+    sums_assured_difference_hkd_million: -0.034
+    annual_premium_difference_hkd_million: -0.031
+    net_liabilities_difference_hkd_million: -0.080
+  L6b_to_L11:
+    policy_count: {L6: 5614, company: 5614, difference: 0}
+    lives: {L6: 2001220, company: 2001220, difference: 0}
+    annual_contributions_difference_hkd_million: 0.012
+    net_liabilities_difference_hkd_million: 0.015
+
+precision_decision:
+  maximum_abs_amount_difference_hkd_million: 0.080
+  interpretation: L6_category_components_have_mixed_0_1_and_0_001_million_display_precision_while_company_tables_retain_thousand_precision
+  acceptance: within_source_derived_rounding_bound
+
+schema_branch:
+  pre_RBC_2023:
+    L6_sections: [group_life_inforce, retirement_scheme_inforce]
+    retirement_quantity_metrics: [policy_count, lives]
+    company_controls: [L10, L11]
+  RBC_2024:
+    L6_sections: [non_retirement_group_inforce, retirement_scheme_inforce, non_retirement_group_new_business]
+    retirement_quantity_metrics: [scheme_count]
+    company_controls: [L10, L11, L18]
+  prohibited_join: L18_2023_is_linked_individual_annuity_and_must_not_be_used_as_L6_group_new_business_control
+
+promotion_candidate:
+  stable_core: L6_group_and_retirement_inforce_reconcile_to_L10_L11_by_versioned_metric_type
+  status: validated_2_of_3_periods_with_schema_qualification
+  RBC_only_branch: L6c_to_L18_validated_2024_only

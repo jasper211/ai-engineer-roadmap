@@ -1,0 +1,54 @@
+test_id: TEST-HKIA-ANNUAL-LONG-2023-L1-L3-001
+version: 0.1
+status: passed_with_rounding_and_adjustment_qualification
+test_type: pre_RBC_market_history_cross_table_reconciliation
+report_year: 2023
+observation_years: [2019, 2020, 2021, 2022, 2023]
+
+inputs:
+  components: [L2_non_linked_individual_life_inforce, L3_linked_individual_life_inforce]
+  control: L1_individual_life_inforce
+  source_ranges:
+    L1: ["Table L1!D19:M19", "Table L1!D29:M36"]
+    L2: ["Table L2!C13:N13", "Table L2!C25:N25", "Table L2!C37:N37", "Table L2!C49:N49"]
+    L3: ["Table L3!E12:I12", "Table L3!E23:I23", "Table L3!E34:I34"]
+
+results:
+  policy_count:
+    expression: L2_non_linked + L3_linked = L1_total
+    checked_years: 5
+    discrepancy_count: 0
+  office_premium:
+    expression: L2_non_linked + L3_linked approximately_equals L1_total
+    checked_years: 5
+    max_abs_difference_hkd_million: 0.1
+  sums_assured:
+    expression: L2_non_linked approximately_equals L1_total
+    checked_years: 5
+    max_abs_difference_hkd_million: 0.1
+    L3_publication_status: not_published
+    semantic_status: linked_sums_assured_is_NA_not_zero
+  net_liabilities:
+    direct_expression: L2_non_linked + L3_linked
+    direct_residuals_hkd_million: [23525.3, 31796.0, 37042.3, 14378.9, 104538.1]
+    complete_expression: L2_non_linked + L3_linked + L1_non_linked_additional_reserve + L1_linked_additional_reserve approximately_equals L1_total
+    complete_expression_max_abs_difference_hkd_million: 0.1
+
+cross_vintage_check:
+  compared_report_vintages: [2023, 2024]
+  overlapping_observation_years: [2020, 2021, 2022, 2023]
+  compared_metrics: [policy_count, office_premium, sums_assured, liability]
+  compared_cells: 16
+  exact_equal_cells: 16
+  interpretation: historical_series_is_unchanged_between_the_two_official_vintages
+
+semantic_decisions:
+  - L1_additional_reserve_rows_are_required_components_not_ignorable_notes
+  - historical_linked_sums_assured_NA_must_not_be_converted_to_zero
+  - disclosed_HKD_million_values_use_0.1_million_tolerance
+  - report_year_and_observation_year_must_be_stored_separately
+
+promotion_candidate:
+  rule: L1_L2_L3_market_relations_are_metric_and_period_qualified
+  status: validated_2_of_3_report_vintages
+  remaining_requirement: validate_one_additional_annual_vintage

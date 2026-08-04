@@ -278,6 +278,56 @@ steps:
     validation: 295_cells_zero_discrepancy_column_order_and_L11_quantity_schema_break_recorded
     status: completed
 
+  - step_id: PB01-STEP-029
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    role: qa_reviewer
+    objective: 复验2023年L1至L3市场历史链并比较2023_2024官方版本重叠序列
+    input_refs: [Table-L1_2023, Table-L2_2023, Table-L3_2023, Table-L1_2024]
+    action: 分指标测试保单数保费保额净负债_纳入额外储备行_比较16个跨版本重叠值
+    output_refs: [TEST-HKIA-ANNUAL-LONG-2023-L1-L3-001]
+    validation: policy_exact_amounts_within_0_1_million_16_overlap_cells_exact_equal
+    status: completed
+
+  - step_id: PB01-STEP-030
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    role: qa_reviewer
+    objective: 复验2023年L4与L14至L16跨粒度跨单位控制
+    input_refs: [Table-L4_2023, Table-L14_2023, Table-L15_2023, Table-L16_2023]
+    action: 汇总59家公司_核对市场总额_千元转百万元_按共同维度和表头标签复算
+    output_refs: [TEST-HKIA-ANNUAL-LONG-2023-L4-L16-001]
+    validation: 12_detail_controls_zero_policy_exact_premium_within_accumulated_display_rounding_bounds
+    status: completed
+
+  - step_id: PB01-STEP-031
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    role: qa_reviewer
+    objective: 复验2023年L6团体及退休计划与L10_L11公司控制并识别L6c版本分支
+    input_refs: [Table-L6_2023, Table-L10_2023, Table-L11_2023, Table-L18_2023]
+    action: 核对59家公司和市场总额_单位转换_分离保单数受保人数计划数_审计L18业务标题
+    output_refs: [TEST-HKIA-ANNUAL-LONG-2023-L6-COMPANY-001]
+    validation: 9_detail_controls_zero_counts_exact_amounts_within_mixed_precision_bound_L18_branch_rejected
+    status: completed
+
+  - step_id: PB01-STEP-032
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    role: qa_reviewer
+    objective: 复验2023年L7年金及其他业务与L12_L17_L18_L19年度路由
+    input_refs: [Table-L7_2023, Table-L12_2023, Table-L17_2023, Table-L18_2023, Table-L19_2023]
+    action: 核对59家公司及市场总额_解析相连属性和缴费方式双轴_按旧制度标题路由控制表
+    output_refs: [TEST-HKIA-ANNUAL-LONG-2023-L7-COMPANY-001]
+    validation: 16_detail_controls_zero_counts_exact_amounts_within_rounding_bound_year_specific_routing_recorded
+    status: completed
+
+  - step_id: PB01-STEP-033
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    role: methodology_curator
+    objective: 汇总2023_2024年度长期业务跨年规则并建立Agent可执行注册表
+    input_refs: [annual_long_2023_tests, annual_long_2024_tests, annual_long_schema_registry, annual_long_parser_contract]
+    action: 将规则分为稳定候选_年度Schema规则_禁止推断并定义第三期晋升门槛
+    output_refs: [HKIA-ANNUAL-LONG-CROSS-YEAR-RULES, 年度长期业务跨年规则清单_v0.1]
+    validation: six_rules_classified_promotion_policy_and_runtime_order_recorded
+    status: completed
+
 incidents:
   - incident_id: INC-PB-004
     run_id: RUN-HKIA-PHASE-B-SLICE-01

@@ -1,0 +1,60 @@
+test_id: TEST-HKIA-ANNUAL-LONG-2023-L7-COMPANY-001
+version: 0.1
+status: passed_with_year_specific_annuity_routing_and_precision_qualification
+test_type: pre_RBC_annuity_other_market_to_company_reconciliation
+period: 2023
+
+inputs:
+  market_table: L7_annuity_and_other
+  company_tables: [L12_annuity_and_other_inforce, L17_nonlinked_annuity_new, L18_linked_annuity_new, L19_total_annuity_new]
+  detected_company_entities: 59
+  market_total_row: 70
+  source_ranges:
+    L7a: "Table L7!D11:L22"
+    L7b: "Table L7!D26:I38"
+    L12: "Table L12!D10:G70"
+    L17: "Table L17!D10:H70"
+    L18: "Table L18!D10:H70"
+    L19: "Table L19!D10:H70"
+
+detail_to_market_results:
+  tables_checked: [L12, L17, L18, L19]
+  metrics_per_table: 4
+  checked_cells: 16
+  discrepancy_count: 0
+
+cross_grain_results:
+  L7a_total_to_L12:
+    policy_count: {L7: 1190986, company: 1190986, difference: 0}
+    office_premium_L7_hkd_million: 36142.3
+    office_premium_company_hkd_million: 36142.282
+    office_premium_difference_hkd_million: 0.018
+    net_liabilities_L7_hkd_million: 358454.8
+    net_liabilities_company_hkd_million: 358454.694
+    net_liabilities_difference_hkd_million: 0.106
+  L7b_total_to_L19:
+    policy_annual: {L7: 49040, company: 49040, difference: 0}
+    policy_single: {L7: 3078, company: 3078, difference: 0}
+    premium_annual_difference_hkd_million: -0.044
+    premium_single_difference_hkd_million: 0.043
+
+year_specific_routing:
+  pre_RBC_2023:
+    inforce: L7a_total_to_L12_annuity_and_other
+    new_business: L17_nonlinked_plus_L18_linked_equals_L19_total_then_L7b
+    linked_new_annuity_status: published_with_zero_policy_count_and_nonzero_premium
+  RBC_2024:
+    inforce: L7a_2024_shared_annuity_grain_to_L12_annuity_only
+    new_business: L17_total_individual_annuity_to_L7b
+    L18_semantics: non_retirement_group_new_business_not_annuity
+
+state_semantics:
+  linked_inforce_2023: published_nonzero
+  group_annuity_2023: published_zero
+  other_business_2023: permanent_health_and_tontines_published_nonzero
+  interpretation: published_zero_nonzero_and_NA_must_remain_distinct
+
+promotion_candidate:
+  stable_core: L7_reconciles_to_year_routed_company_annuity_scope_at_shared_grain
+  status: validated_2_of_3_periods_with_schema_qualification
+  prohibited_rule: fixed_L7_to_L12_L17_table_number_mapping_across_years

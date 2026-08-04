@@ -1,0 +1,65 @@
+test_id: TEST-HKIA-ANNUAL-LONG-2023-L4-L16-001
+version: 0.1
+status: passed_with_published_precision_qualification
+test_type: pre_RBC_market_to_company_cross_grain_reconciliation
+period: 2023
+
+inputs:
+  market_table: L4_individual_life_new_business
+  company_tables: [L14_non_linked, L15_linked, L16_total_individual_life]
+  detected_company_entities: 59
+  market_total_row: 70
+  source_ranges:
+    L4: ["Table L4!D14:O14", "Table L4!D25:O25", "Table L4!D37:O37", "Table L4!D47:O47"]
+    L14: "Table L14!D10:H70"
+    L15: "Table L15!D10:H70"
+    L16: "Table L16!D10:H70"
+
+unit_rule:
+  L4_premium_unit: HKD_million_displayed_to_0_1
+  company_premium_unit: HKD_thousand
+  conversion: company_premium_thousand / 1000 = market_premium_million
+
+detail_to_market_results:
+  expression: sum_59_company_rows = source_market_total
+  tables_checked: [L14, L15, L16]
+  metrics_per_table: [policy_count_annual, policy_count_single, premium_annual, premium_single]
+  checked_cells: 12
+  discrepancy_count: 0
+
+cross_grain_results:
+  L4_non_linked_to_L14:
+    comparable_grain: grand_total_only
+    policy_total: 859222
+    premium_L4_hkd_million: 158872.9
+    premium_company_hkd_million: 158872.848
+    premium_difference_hkd_million: 0.052
+  L4_linked_to_L15:
+    comparable_grain: payment_basis
+    policy_annual_difference: 0
+    policy_single_difference: 0
+    premium_annual_difference_hkd_million: 0.072
+    premium_single_difference_hkd_million: -0.021
+  L4_total_to_L16:
+    comparable_grain: grand_total_only
+    policy_total: 892317
+    policy_difference: 0
+    premium_L4_hkd_million: 170149.2
+    premium_company_hkd_million: 170149.097
+    premium_difference_hkd_million: 0.103
+
+precision_decision:
+  component_tolerance_hkd_million: 0.1
+  aggregate_tolerance_rule: sum_of_component_display_rounding_bounds
+  interpretation: total_difference_can_slightly_exceed_0_1_when_multiple_displayed_components_are_added
+
+semantic_decisions:
+  - L4_nonlinked_participation_dimension_only_reconciles_to_L14_at_grand_total
+  - L4_linked_payment_basis_reconciles_to_L15_by_annual_and_single_labels
+  - 2023_company_columns_are_annual_before_single_while_2024_is_single_before_annual
+  - column_mapping_must_use_labels_not_positions
+
+promotion_candidate:
+  rule: L4_reconciles_to_L14_L16_after_unit_conversion_at_shared_grain
+  status: validated_2_of_3_periods_with_precision_qualification
+  remaining_requirement: validate_one_additional_annual_vintage
