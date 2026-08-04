@@ -280,6 +280,17 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
   const mappedL4s = useMemo(() => new Set(
     model?.vn_l4_mappings.map(row => String(row.l4_code || '')) ?? []
   ), [model])
+  const positionCategory = useMemo(() => {
+    if (!model) return null
+    return model.l4s.find(l4 => l4.position_family)?.position_family ?? null
+  }, [model])
+  const businessDataSummary = useMemo(() => {
+    if (!model) return null
+    const matched = model.l4s.filter(l4 => l4.business_evidence.length > 0)
+    if (matched.length === 0) return null
+    const strong = matched.filter(l4 => l4.business_evidence.some(e => e.confidence === 'strong')).length
+    return { matched: matched.length, total: model.l4s.length, strong }
+  }, [model])
   const taskL4Options = useMemo(() => [...new Set(cards.map(card => card.l4_code))].sort(), [cards])
   const visibleCards = useMemo(
     () => taskL4Filter === 'ALL' ? cards : cards.filter(card => card.l4_code === taskL4Filter),
@@ -401,12 +412,29 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
             <div className="mt-2 flex flex-wrap gap-1.5">
               {model.value_stream_mappings.map((vs, index) => (
                 <span key={index} className="rounded-full bg-teal-400/10 px-2.5 py-1 text-[11px] font-medium text-teal-700">
-                  {String(vs.vs_name || vs.vs_code)} · 第{String(vs.stage_sequence ?? '?')}阶段 {String(vs.stage_name || vs.stage_code)}
+                  {String(vs.vs_code)} · {String(vs.vs_name)} · {String(vs.stage_code)} · 第{String(vs.stage_sequence ?? '?')}阶段 {String(vs.stage_name)}
                 </span>
               ))}
             </div>
           ) : (
             <p className="mt-2 text-[11px] text-text-muted">当前未定位到客户旅程/价值流阶段（数据库bridge_l3_vs_stage未覆盖该L3）</p>
+          )}
+          {model.kpi_mappings.length > 0 ? (
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              {model.kpi_mappings.map(kpi => (
+                kpi.source_type === 'definition' ? (
+                  <span key={kpi.kpi_code} className="rounded-full bg-amber-400/10 px-2.5 py-1 text-[11px] font-medium text-amber-800" title={kpi.kpi_formula ?? undefined}>
+                    {kpi.kpi_name}{kpi.measurement_cycle ? `·${kpi.measurement_cycle}度` : ''}
+                  </span>
+                ) : (
+                  <span key={kpi.kpi_code} className="rounded-full border border-dashed border-rose-300 bg-rose-50 px-2.5 py-1 text-[11px] font-medium text-rose-700">
+                    {kpi.kpi_name}·战略权重{kpi.contribution_weight ?? '?'}·{kpi.weight_confirmed === 'blocked' ? '阻塞' : '待确认'}
+                  </span>
+                )
+              ))}
+            </div>
+          ) : (
+            <p className="mt-2 text-[11px] text-text-muted">当前未关联KPI（数据库dim_kpi/bridge_kpi_l3未覆盖该L3）</p>
           )}
         </div>
         <div className="flex gap-2">
@@ -546,6 +574,26 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
             </div>
           ))}
         </div>
+        <div className="mt-3 rounded-lg border border-cyan-200 bg-cyan-50/70 p-3">
+          <p className="text-[11px] font-semibold text-cyan-800">人力现状参考 · 当前负责岗位</p>
+          {positionCategory ? (
+            <p className="mt-1 text-[11px] leading-5 text-text-secondary">
+              本L3当前由 <b>{positionCategory.category_name}</b>（{positionCategory.family_name}，{positionCategory.family_code}，{positionCategory.category_type}）负责，下辖全部L4共享同一岗位归属。
+            </p>
+          ) : (
+            <p className="mt-1 text-[11px] text-text-muted">本L3未在68L3岗位族归属设计v6.1中找到岗位归属（可能是外包/新增L3，待归口）。</p>
+          )}
+          <p className="mt-2 text-[9px] text-text-muted">SSOT：2026-07-20_68L3岗位族归属设计_v6.1_SUBMITTED.md（三/四节各族详细映射）</p>
+        </div>
+        {businessDataSummary && (
+          <div className="mt-3 rounded-lg border border-emerald-200 bg-emerald-50/70 p-3">
+            <p className="text-[11px] font-semibold text-emerald-800">业务数据现状 · 试点匹配结果</p>
+            <p className="mt-1 text-[11px] leading-5 text-text-secondary">
+              本L3 {businessDataSummary.total} 个L4中，{businessDataSummary.matched} 个定位到真实业务系统数据表（{businessDataSummary.strong} 个强匹配），其余 {businessDataSummary.total - businessDataSummary.matched} 个未找到对应表——可能业务数据仓库本身不覆盖该环节，非遗漏。
+            </p>
+            <p className="mt-2 text-[9px] text-text-muted">SSOT：public/comm_sandbox/fin_sandbox业务数据仓库（人工按业务含义匹配，非外键关联，2026-08-04 L3-COM试点；行数为实时查询）</p>
+          </div>
+        )}
         <div className="mt-4 grid gap-3 md:grid-cols-2">
           {model.l4s.map(l4 => {
             const analysis = model.analysis.l4_analysis.find(item => String(item.l4_code) === l4.l4_code) as Record<string, unknown> | undefined
@@ -600,16 +648,23 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
               {Boolean(analysis?.database_tier && analysis?.recommended_tier && analysis.database_tier !== analysis.recommended_tier) && <p className="mt-2 text-[10px] text-amber-700">数据库Tier：{String(analysis?.database_tier)} · 正式复核建议：{String(analysis?.recommended_tier)}</p>}
               {!analysis?.ai_reshape && l4.human_touchpoint && <p className="mt-2 text-xs text-text-secondary">人工介入：{l4.human_touchpoint}</p>}
               {l4.position_family ? (
-                <div className="mt-3 rounded-lg border border-cyan-200 bg-cyan-50/70 p-3">
-                  <p className="text-[10px] font-semibold text-cyan-800">人力现状参考 · {l4.position_family.candidate_agent}</p>
-                  <p className="mt-1 text-[11px] leading-4 text-text-secondary">
-                    归属岗位族：{l4.position_family.family_name}（{l4.position_family.family_code}）· 现有在岗 {l4.position_family.headcount} 人
-                  </p>
-                  <p className="mt-1 text-[9px] text-text-muted">来源：{l4.position_family.headcount_source} · 可信度：{l4.position_family.confidence}</p>
-                </div>
+                <p className="mt-3 text-[10px] text-cyan-700">
+                  负责岗位：{l4.position_family.category_name}（{l4.position_family.family_name} {l4.position_family.family_code}）
+                </p>
               ) : (
-                <p className="mt-3 text-[10px] text-text-muted">人力现状参考：候选Agent桥接未覆盖该L4，待归口</p>
+                <p className="mt-3 text-[10px] text-text-muted">负责岗位：68L3岗位族归属设计v6.1未覆盖该L3，待归口</p>
               )}
+              {l4.business_evidence.length > 0 ? (
+                <div className="mt-2 space-y-1">
+                  {l4.business_evidence.map(evidence => (
+                    <p key={`${evidence.schema}.${evidence.table}`} className={`text-[10px] leading-4 ${evidence.confidence === 'strong' ? 'text-emerald-700' : 'text-slate-500'}`}>
+                      业务系统：<span className="font-mono">{evidence.schema}.{evidence.table}</span>（{evidence.row_count ?? '?'}行，{evidence.confidence === 'strong' ? '强匹配' : '弱匹配'}）· {evidence.rationale}
+                    </p>
+                  ))}
+                </div>
+              ) : model.l3_code === 'L3-COM' ? (
+                <p className="mt-2 text-[10px] text-text-muted">业务系统：试点范围内未匹配到业务数据仓库表</p>
+              ) : null}
             </div>
           )})}
         </div>

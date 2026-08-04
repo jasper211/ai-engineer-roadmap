@@ -222,7 +222,8 @@ def main() -> int:
             load_sop_records,
             load_prepared_analysis_codes,
         )
-        from skills.position_bridge import build_l4_position_bridge
+        from skills.position_bridge import L3_POSITION_CATEGORY
+        from skills.business_data_bridge import L4_BUSINESS_TABLE_MAP, load_business_table_row_counts
         from skills.sync_data_foundation import db_query
         from tools.postgres_reader import BulkPostgresL3Reader, PostgresL3Reader
 
@@ -254,15 +255,6 @@ def main() -> int:
             load_skill_feasibility(skill_feasibility_xlsx)
             if skill_feasibility_xlsx.exists() else {}
         )
-        candidate_agent_xlsx = Path(
-            "/Users/a112233/Desktop/流程架构项目_jasper/02_过程成果-工作产出/"
-            "规则分析（Jasper）/Agent与Skill体系/候选Agent目录_数据表_v3.xlsx"
-        )
-        hr_aligned_csv = AGENT_ROOT / "03_规划项目结构_Plan_Project_Structure/候选Agent岗位族映射_HR对齐版_v1.0.csv"
-        position_bridge = (
-            build_l4_position_bridge(candidate_agent_xlsx, hr_aligned_csv)
-            if candidate_agent_xlsx.exists() and hr_aligned_csv.exists() else {}
-        )
         foundation_dir = AGENT_ROOT / "07_接入记忆_Integrate_Memory/data_foundation/A_自动同步_当前有效"
         sop_csv = foundation_dir / "T19_SOP生产进度_全域_v2.0.csv"
         rule_csv = foundation_dir / "T5_规则清单_全域_v3.0.csv"
@@ -282,7 +274,9 @@ def main() -> int:
             prepared_analysis_codes=load_prepared_analysis_codes(
                 AGENT_ROOT / "07_接入记忆_Integrate_Memory/analysis_runs"
             ),
-            position_bridge=position_bridge,
+            l3_position_category=L3_POSITION_CATEGORY,
+            business_table_map=L4_BUSINESS_TABLE_MAP,
+            business_table_counts=load_business_table_row_counts(db_query),
         )
         source_update_mode = args.check_source_updates or args.apply_source_updates
         snapshot_dir = workspace.root / ("source_update_candidate" if source_update_mode else "model_snapshots")

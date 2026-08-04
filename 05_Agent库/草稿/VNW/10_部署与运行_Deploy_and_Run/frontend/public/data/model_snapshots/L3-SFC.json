@@ -17,8 +17,8 @@
         "evidence_refs": [
           "EVD-1670312ea0717b6a7a73",
           "EVD-23a61fae9be757549e7d",
-          "EVD-2f56b62e577a1b26128e",
           "EVD-3549991b8e3094398198",
+          "EVD-423cf74dd7ca773605e6",
           "EVD-55b0463c90b98058387c",
           "EVD-809956eb8533b4783c03",
           "EVD-88cda0b7e3514e8252af",
@@ -47,8 +47,8 @@
         "deliverable_role": "",
         "evidence_refs": [
           "EVD-17cf734c4eeb8dcc49cf",
-          "EVD-2f56b62e577a1b26128e",
           "EVD-384d13700e7eaeb051a7",
+          "EVD-423cf74dd7ca773605e6",
           "EVD-47b74ca3c9dd5b624037",
           "EVD-5aa76d274048359491fe",
           "EVD-5e8353e571ee9da112a8",
@@ -79,7 +79,7 @@
         "evidence_refs": [
           "EVD-06895706cc937a8ea248",
           "EVD-2ae6c17d926bf4da5b8e",
-          "EVD-2f56b62e577a1b26128e",
+          "EVD-423cf74dd7ca773605e6",
           "EVD-4aa014f5e7045334709e",
           "EVD-5221290928a695f6f0ee",
           "EVD-67eb5b8610c4545332b7",
@@ -118,7 +118,7 @@
     "tasks": []
   },
   "analysis_freshness": "PENDING_MODEL",
-  "analysis_input_hash": "7591748b3ca7ade2c49305e066dbfd54bba386aaaa8773767be63254c7d595f0",
+  "analysis_input_hash": "554180f2548e609d5548b72987650204e7a69cf5fba849995f8dfb47a6b4df05",
   "blueprint": {
     "blueprint_value_nodes": [],
     "coverage": "INDEXED",
@@ -310,31 +310,6 @@
       "confidence": "HIGH",
       "conflict_note": "",
       "evidence_class": "SUPPLEMENTAL",
-      "evidence_id": "EVD-2f56b62e577a1b26128e",
-      "field_name": "position_family",
-      "source": {
-        "observed_at": "",
-        "source_field": "岗位族代码",
-        "source_key": "细分市场判断与目标设计Agent",
-        "source_object": "候选Agent岗位族映射_HR对齐版_v1.0.csv",
-        "source_system": "EA项目_权威数据",
-        "source_version": "v1.0"
-      },
-      "status": "ACTIVE",
-      "transform_rule": "",
-      "value": {
-        "candidate_agent": "细分市场判断与目标设计Agent",
-        "confidence": "业务方口头确认+HR数据双重印证(待01层材料佐证)",
-        "family_code": "JF-01",
-        "family_name": "保司战略族",
-        "headcount": 2,
-        "headcount_source": "2026-07-28_人员归属方案_v5.3_SUBMITTED.md 一节映射统计总表"
-      }
-    },
-    {
-      "confidence": "HIGH",
-      "conflict_note": "",
-      "evidence_class": "SUPPLEMENTAL",
       "evidence_id": "EVD-34cd90820418751b4814",
       "field_name": "blueprint.steps.STEP-03",
       "source": {
@@ -387,6 +362,29 @@
       "status": "ACTIVE",
       "transform_rule": "",
       "value": 1
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-423cf74dd7ca773605e6",
+      "field_name": "position_family",
+      "source": {
+        "observed_at": "",
+        "source_field": "各族详细映射",
+        "source_key": "L3-SFC",
+        "source_object": "2026-07-20_68L3岗位族归属设计_v6.1_SUBMITTED.md",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v6.1"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "category_name": "市场进入策略岗",
+        "category_type": "目标态核心",
+        "family_code": "JF-01",
+        "family_name": "保司战略族"
+      }
     },
     {
       "confidence": "HIGH",
@@ -1067,7 +1065,17 @@
     }
   },
   "has_demo": false,
-  "kpi_mappings": [],
+  "kpi_mappings": [
+    {
+      "kpi_code": "KPI_03",
+      "kpi_formula": null,
+      "kpi_name": "目标达成率 (Achievement)",
+      "kpi_target": null,
+      "kpi_unit": null,
+      "measurement_cycle": "月",
+      "source_type": "definition"
+    }
+  ],
   "l2_capabilities": [
     {
       "l2_code": "L2-02.1",
@@ -1079,6 +1087,7 @@
   "l3_name": "策略可行性评估与沟通流程",
   "l4s": [
     {
+      "business_evidence": [],
       "d1_d6": {
         "agent_d1_input_struct": 2,
         "agent_d2_rule_clear": 1,
@@ -1101,19 +1110,17 @@
         "l4_deliverable": "EVD-23a61fae9be757549e7d",
         "l4_deliverable_type": "EVD-809956eb8533b4783c03",
         "l4_name": "EVD-3549991b8e3094398198",
-        "position_family": "EVD-2f56b62e577a1b26128e",
+        "position_family": "EVD-423cf74dd7ca773605e6",
         "skill_feasibility": "EVD-be88821397d22808785f"
       },
       "human_touchpoint": null,
       "l4_code": "L4-SFC-01",
       "l4_name": "可行性评估准备",
       "position_family": {
-        "candidate_agent": "细分市场判断与目标设计Agent",
-        "confidence": "业务方口头确认+HR数据双重印证(待01层材料佐证)",
+        "category_name": "市场进入策略岗",
+        "category_type": "目标态核心",
         "family_code": "JF-01",
-        "family_name": "保司战略族",
-        "headcount": 2,
-        "headcount_source": "2026-07-28_人员归属方案_v5.3_SUBMITTED.md 一节映射统计总表"
+        "family_name": "保司战略族"
       },
       "skill_feasibility": {
         "action_nature": "判断/策略/认知类",
@@ -1128,6 +1135,7 @@
       "tier": "Aug"
     },
     {
+      "business_evidence": [],
       "d1_d6": {
         "agent_d1_input_struct": 2,
         "agent_d2_rule_clear": 1,
@@ -1150,19 +1158,17 @@
         "l4_deliverable": "EVD-ab0cc5ecc9e8cd506c2c",
         "l4_deliverable_type": "EVD-fa31e63fe9c439c8f2a5",
         "l4_name": "EVD-cce4b57a7f1825904e92",
-        "position_family": "EVD-2f56b62e577a1b26128e",
+        "position_family": "EVD-423cf74dd7ca773605e6",
         "skill_feasibility": "EVD-ea36a6ed5cc8b21a50ef"
       },
       "human_touchpoint": null,
       "l4_code": "L4-SFC-02",
       "l4_name": "策略评估与优化",
       "position_family": {
-        "candidate_agent": "细分市场判断与目标设计Agent",
-        "confidence": "业务方口头确认+HR数据双重印证(待01层材料佐证)",
+        "category_name": "市场进入策略岗",
+        "category_type": "目标态核心",
         "family_code": "JF-01",
-        "family_name": "保司战略族",
-        "headcount": 2,
-        "headcount_source": "2026-07-28_人员归属方案_v5.3_SUBMITTED.md 一节映射统计总表"
+        "family_name": "保司战略族"
       },
       "skill_feasibility": {
         "action_nature": "判断/策略/认知类",
@@ -1177,6 +1183,7 @@
       "tier": "Aug"
     },
     {
+      "business_evidence": [],
       "d1_d6": {
         "agent_d1_input_struct": 2,
         "agent_d2_rule_clear": 1,
@@ -1199,19 +1206,17 @@
         "l4_deliverable": "EVD-d14c96d12a94fa931382",
         "l4_deliverable_type": "EVD-738ea48039a48979ae36",
         "l4_name": "EVD-6a2bde09f4d6036a511f",
-        "position_family": "EVD-2f56b62e577a1b26128e",
+        "position_family": "EVD-423cf74dd7ca773605e6",
         "skill_feasibility": "EVD-58efa29ac2ecbce621a8"
       },
       "human_touchpoint": null,
       "l4_code": "L4-SFC-03",
       "l4_name": "策略沟通落地",
       "position_family": {
-        "candidate_agent": "细分市场判断与目标设计Agent",
-        "confidence": "业务方口头确认+HR数据双重印证(待01层材料佐证)",
+        "category_name": "市场进入策略岗",
+        "category_type": "目标态核心",
         "family_code": "JF-01",
-        "family_name": "保司战略族",
-        "headcount": 2,
-        "headcount_source": "2026-07-28_人员归属方案_v5.3_SUBMITTED.md 一节映射统计总表"
+        "family_name": "保司战略族"
       },
       "skill_feasibility": {
         "action_nature": "判断/策略/认知类",
@@ -1268,6 +1273,11 @@
   },
   "schema_version": "vnw.l3-model.v1",
   "source_locations": {
+    "2026-07-20_68L3岗位族归属设计_v6.1_SUBMITTED.md": {
+      "record_keys": [
+        "L3-SFC"
+      ]
+    },
     "L4两阶段复核_全量368条_合并版_v1.0.csv": {
       "rows": [
         108,
@@ -1297,11 +1307,6 @@
     },
     "process_analytics.dim_vn": {
       "record_keys": []
-    },
-    "候选Agent岗位族映射_HR对齐版_v1.0.csv": {
-      "record_keys": [
-        "细分市场判断与目标设计Agent"
-      ]
     },
     "流程蓝图_L3-SFC_策略可行性评估与沟通流程_V1.1.md": {
       "lines": [

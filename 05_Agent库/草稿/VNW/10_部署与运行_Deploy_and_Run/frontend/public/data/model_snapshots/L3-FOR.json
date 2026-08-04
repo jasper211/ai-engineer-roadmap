@@ -534,7 +534,7 @@
     ]
   },
   "analysis_freshness": "INPUT_CHANGED",
-  "analysis_input_hash": "52347fbb0a358591f78fed43e1e59a1785fc90f11481e4a6eb6477f2e111ccf6",
+  "analysis_input_hash": "d6b71d20f62acd5c36160505cbf6f4c4fed366c187405da2cdc67de3419aa639",
   "blueprint": {
     "blueprint_value_nodes": [],
     "coverage": "INDEXED",
@@ -786,6 +786,29 @@
       "status": "ACTIVE",
       "transform_rule": "",
       "value": 2
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-266204119b1fc525733a",
+      "field_name": "position_family",
+      "source": {
+        "observed_at": "",
+        "source_field": "各族详细映射",
+        "source_key": "L3-FOR",
+        "source_object": "2026-07-20_68L3岗位族归属设计_v6.1_SUBMITTED.md",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v6.1"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "category_name": "理财师辅导与发展岗",
+        "category_type": "目标态核心",
+        "family_code": "JF-05",
+        "family_name": "理财师发展族"
+      }
     },
     {
       "confidence": "HIGH",
@@ -1312,31 +1335,6 @@
         "physical_execution": false,
         "recommended_path": "优先考虑Agent辅助或决策支持，不直接封装确定性Skill",
         "verification_status": "VERIFIED"
-      }
-    },
-    {
-      "confidence": "HIGH",
-      "conflict_note": "",
-      "evidence_class": "SUPPLEMENTAL",
-      "evidence_id": "EVD-801d5f35a550bc227a57",
-      "field_name": "position_family",
-      "source": {
-        "observed_at": "",
-        "source_field": "岗位族代码",
-        "source_key": "理财师全周期Agent",
-        "source_object": "候选Agent岗位族映射_HR对齐版_v1.0.csv",
-        "source_system": "EA项目_权威数据",
-        "source_version": "v1.0"
-      },
-      "status": "ACTIVE",
-      "transform_rule": "",
-      "value": {
-        "candidate_agent": "理财师全周期Agent",
-        "confidence": "HR权威数据核实",
-        "family_code": "JF-05",
-        "family_name": "理财师发展族",
-        "headcount": 1,
-        "headcount_source": "2026-07-28_人员归属方案_v5.3_SUBMITTED.md 一节映射统计总表"
       }
     },
     {
@@ -2118,6 +2116,7 @@
       "kpi_name": "理财师首单陪跑五动作完成率",
       "l3_code": "L3-FOR",
       "row_status": "draft",
+      "source_type": "mark_priority_draft",
       "weight_confirmed": "pending"
     },
     {
@@ -2126,6 +2125,7 @@
       "kpi_name": "理财师周活动量",
       "l3_code": "L3-FOR",
       "row_status": "draft",
+      "source_type": "mark_priority_draft",
       "weight_confirmed": "pending"
     },
     {
@@ -2134,7 +2134,53 @@
       "kpi_name": "签单转化率（周跟踪）",
       "l3_code": "L3-FOR",
       "row_status": "draft",
+      "source_type": "mark_priority_draft",
       "weight_confirmed": "pending"
+    },
+    {
+      "kpi_code": "KPI_01",
+      "kpi_formula": null,
+      "kpi_name": "总保费 (Total Premium)",
+      "kpi_target": null,
+      "kpi_unit": null,
+      "measurement_cycle": "月",
+      "source_type": "definition"
+    },
+    {
+      "kpi_code": "KPI_02",
+      "kpi_formula": null,
+      "kpi_name": "APE (年化保费)",
+      "kpi_target": null,
+      "kpi_unit": null,
+      "measurement_cycle": "月",
+      "source_type": "definition"
+    },
+    {
+      "kpi_code": "KPI_14",
+      "kpi_formula": null,
+      "kpi_name": "预约转化率 (Appt Conv.)",
+      "kpi_target": null,
+      "kpi_unit": null,
+      "measurement_cycle": "月",
+      "source_type": "definition"
+    },
+    {
+      "kpi_code": "KPI_15",
+      "kpi_formula": null,
+      "kpi_name": "排期转化率 (Sched Conv.)",
+      "kpi_target": null,
+      "kpi_unit": null,
+      "measurement_cycle": "月",
+      "source_type": "definition"
+    },
+    {
+      "kpi_code": "KPI_16",
+      "kpi_formula": null,
+      "kpi_name": "签单转化率 (Sign Conv.)",
+      "kpi_target": null,
+      "kpi_unit": null,
+      "measurement_cycle": "月",
+      "source_type": "definition"
     }
   ],
   "l2_capabilities": [
@@ -2148,6 +2194,7 @@
   "l3_name": "理财师运营支持",
   "l4s": [
     {
+      "business_evidence": [],
       "d1_d6": {
         "agent_d1_input_struct": 2,
         "agent_d2_rule_clear": 2,
@@ -2170,19 +2217,17 @@
         "l4_deliverable": "EVD-cd9bf2b07a03188ddd82",
         "l4_deliverable_type": "EVD-d7ece86cdbb0b15c852e",
         "l4_name": "EVD-dbafebc69e717ba0410a",
-        "position_family": "EVD-801d5f35a550bc227a57",
+        "position_family": "EVD-266204119b1fc525733a",
         "skill_feasibility": "EVD-83f16ca08ed16998d327"
       },
       "human_touchpoint": "人工执行：首单陪跑配对与计划制定",
       "l4_code": "L4-FOR-01",
       "l4_name": "首单陪跑配对与计划制定",
       "position_family": {
-        "candidate_agent": "理财师全周期Agent",
-        "confidence": "HR权威数据核实",
+        "category_name": "理财师辅导与发展岗",
+        "category_type": "目标态核心",
         "family_code": "JF-05",
-        "family_name": "理财师发展族",
-        "headcount": 1,
-        "headcount_source": "2026-07-28_人员归属方案_v5.3_SUBMITTED.md 一节映射统计总表"
+        "family_name": "理财师发展族"
       },
       "skill_feasibility": {
         "action_nature": "信息处理/事务类",
@@ -2197,6 +2242,7 @@
       "tier": "Auto"
     },
     {
+      "business_evidence": [],
       "d1_d6": {
         "agent_d1_input_struct": 2,
         "agent_d2_rule_clear": 1,
@@ -2219,19 +2265,17 @@
         "l4_deliverable": "EVD-cd96d8b5c3e4cab1ee3e",
         "l4_deliverable_type": "EVD-13d278d62b51538a6c20",
         "l4_name": "EVD-4e511db65451938b7bdc",
-        "position_family": "EVD-801d5f35a550bc227a57",
+        "position_family": "EVD-266204119b1fc525733a",
         "skill_feasibility": "EVD-c63e7f15855b011abdf6"
       },
       "human_touchpoint": "人工执行：首单陪跑执行与记录",
       "l4_code": "L4-FOR-02",
       "l4_name": "首单陪跑执行与记录",
       "position_family": {
-        "candidate_agent": "理财师全周期Agent",
-        "confidence": "HR权威数据核实",
+        "category_name": "理财师辅导与发展岗",
+        "category_type": "目标态核心",
         "family_code": "JF-05",
-        "family_name": "理财师发展族",
-        "headcount": 1,
-        "headcount_source": "2026-07-28_人员归属方案_v5.3_SUBMITTED.md 一节映射统计总表"
+        "family_name": "理财师发展族"
       },
       "skill_feasibility": {
         "action_nature": "信息处理/事务类",
@@ -2246,6 +2290,7 @@
       "tier": "Auto"
     },
     {
+      "business_evidence": [],
       "d1_d6": {
         "agent_d1_input_struct": 1,
         "agent_d2_rule_clear": 0,
@@ -2268,19 +2313,17 @@
         "l4_deliverable": "EVD-7d1a46335c69cb9b9ed8",
         "l4_deliverable_type": "EVD-940b309774f4d7b76f63",
         "l4_name": "EVD-75605f612ab292d5fd53",
-        "position_family": "EVD-801d5f35a550bc227a57",
+        "position_family": "EVD-266204119b1fc525733a",
         "skill_feasibility": "EVD-6a4a1b7930035e622e27"
       },
       "human_touchpoint": "人工执行：首单陪跑",
       "l4_code": "L4-FOR-03",
       "l4_name": "首单陪跑",
       "position_family": {
-        "candidate_agent": "理财师全周期Agent",
-        "confidence": "HR权威数据核实",
+        "category_name": "理财师辅导与发展岗",
+        "category_type": "目标态核心",
         "family_code": "JF-05",
-        "family_name": "理财师发展族",
-        "headcount": 1,
-        "headcount_source": "2026-07-28_人员归属方案_v5.3_SUBMITTED.md 一节映射统计总表"
+        "family_name": "理财师发展族"
       },
       "skill_feasibility": {
         "action_nature": "语义复核判定",
@@ -2295,6 +2338,7 @@
       "tier": "Hybrid"
     },
     {
+      "business_evidence": [],
       "d1_d6": {
         "agent_d1_input_struct": 2,
         "agent_d2_rule_clear": 1,
@@ -2317,19 +2361,17 @@
         "l4_deliverable": "EVD-ef7c33455b52d56b7e67",
         "l4_deliverable_type": "EVD-c6b1d641b23f5eb4f91b",
         "l4_name": "EVD-1c4d5be978e27ae83c49",
-        "position_family": "EVD-801d5f35a550bc227a57",
+        "position_family": "EVD-266204119b1fc525733a",
         "skill_feasibility": "EVD-7ff47f8f7bac22f8dfec"
       },
       "human_touchpoint": "人工执行：BIU运营（恒常出单推动）",
       "l4_code": "L4-FOR-04",
       "l4_name": "BIU运营（恒常出单推动）",
       "position_family": {
-        "candidate_agent": "理财师全周期Agent",
-        "confidence": "HR权威数据核实",
+        "category_name": "理财师辅导与发展岗",
+        "category_type": "目标态核心",
         "family_code": "JF-05",
-        "family_name": "理财师发展族",
-        "headcount": 1,
-        "headcount_source": "2026-07-28_人员归属方案_v5.3_SUBMITTED.md 一节映射统计总表"
+        "family_name": "理财师发展族"
       },
       "skill_feasibility": {
         "action_nature": "语义复核判定",
@@ -2392,6 +2434,11 @@
   },
   "schema_version": "vnw.l3-model.v1",
   "source_locations": {
+    "2026-07-20_68L3岗位族归属设计_v6.1_SUBMITTED.md": {
+      "record_keys": [
+        "L3-FOR"
+      ]
+    },
     "L4两阶段复核_全量368条_合并版_v1.0.csv": {
       "rows": [
         68,
@@ -2428,11 +2475,6 @@
       "record_keys": [
         "VN-FOR-01",
         "VN-FOR-02"
-      ]
-    },
-    "候选Agent岗位族映射_HR对齐版_v1.0.csv": {
-      "record_keys": [
-        "理财师全周期Agent"
       ]
     },
     "流程蓝图_L3-FOR_理财师运营支持_V1.0.md": {

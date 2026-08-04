@@ -71,7 +71,7 @@ class PostgresL3Reader:
         )
 
     def kpi_mappings(self, l3_code: str) -> list[dict]:
-        return self._read(
+        priority_rows = self._read(
             """SELECT kpi_id AS kpi_code, kpi_name, contribution_weight,
                       weight_confirmed, row_status
                  FROM process_analytics.bridge_kpi_l3
@@ -79,6 +79,27 @@ class PostgresL3Reader:
                 ORDER BY kpi_id""",
             l3_code,
         )
+        for row in priority_rows:
+            row["source_type"] = "mark_priority_draft"
+        definition_rows = [
+            {
+                "kpi_code": row["kpi_code"],
+                "kpi_name": row["kpi_name"],
+                "kpi_formula": row.get("kpi_formula"),
+                "kpi_unit": row.get("kpi_unit"),
+                "kpi_target": row.get("kpi_target"),
+                "measurement_cycle": row.get("measurement_cycle"),
+                "source_type": "definition",
+            }
+            for row in self._read(
+                """SELECT kpi_code, kpi_name, kpi_formula, kpi_unit, kpi_target, measurement_cycle, l3_codes
+                     FROM process_analytics.dim_kpi
+                    WHERE l3_codes IS NOT NULL""",
+                l3_code,
+            )
+            if l3_code in {c.strip() for c in (row.get("l3_codes") or "").split(";")}
+        ]
+        return priority_rows + definition_rows
 
     def value_stream_mappings(self, l3_code: str) -> list[dict]:
         return self._read(
@@ -100,12 +121,30 @@ class BulkPostgresL3Reader:
         self.datasets = datasets
         self.grouped: dict[str, dict[str, list[dict]]] = {}
         for name, rows in datasets.items():
+            if name == "kpi_defs":
+                continue
             by_l3: dict[str, list[dict]] = defaultdict(list)
             for row in rows:
                 code = str(row.get("l3_code") or "")
                 if code:
                     by_l3[code].append(row)
             self.grouped[name] = dict(by_l3)
+        by_l3_kpi_def: dict[str, list[dict]] = defaultdict(list)
+        for row in datasets.get("kpi_defs", []):
+            for code in {c.strip() for c in (row.get("l3_codes") or "").split(";") if c.strip()}:
+                by_l3_kpi_def[code].append({
+                    "kpi_code": row["kpi_code"],
+                    "kpi_name": row["kpi_name"],
+                    "kpi_formula": row.get("kpi_formula"),
+                    "kpi_unit": row.get("kpi_unit"),
+                    "kpi_target": row.get("kpi_target"),
+                    "measurement_cycle": row.get("measurement_cycle"),
+                    "source_type": "definition",
+                })
+        self.grouped["kpi_defs"] = dict(by_l3_kpi_def)
+        for kpi_rows in self.grouped.get("kpis", {}).values():
+            for kpi_row in kpi_rows:
+                kpi_row["source_type"] = "mark_priority_draft"
 
     @classmethod
     def from_query(cls, query: Callable[[str, tuple], list[dict]]) -> "BulkPostgresL3Reader":
@@ -133,6 +172,11 @@ class BulkPostgresL3Reader:
                       contribution_weight, weight_confirmed, row_status
                  FROM process_analytics.bridge_kpi_l3
                 ORDER BY l3_id, kpi_id""",
+            "kpi_defs": """SELECT kpi_code, kpi_name, kpi_formula, kpi_unit, kpi_target,
+                      measurement_cycle, l3_codes
+                 FROM process_analytics.dim_kpi
+                WHERE l3_codes IS NOT NULL
+                ORDER BY kpi_code""",
             "value_streams": """SELECT b.l3_code, b.vs_code, b.stage_code, v.vs_name,
                       v.stage_name, v.stage_sequence, v.vs_stakeholder, b.mapping_type
                  FROM process_analytics.bridge_l3_vs_stage b
@@ -157,5 +201,5 @@ class BulkPostgresL3Reader:
     def value_nodes(self, code: str): return self._get("value_nodes", code)
     def vn_l4_mappings(self, code: str): return self._get("mappings", code)
     def l2_mappings(self, code: str): return self._get("l2s", code)
-    def kpi_mappings(self, code: str): return self._get("kpis", code)
+    def kpi_mappings(self, code: str): return self._get("kpis", code) + self._get("kpi_defs", code)
     def value_stream_mappings(self, code: str): return self._get("value_streams", code)

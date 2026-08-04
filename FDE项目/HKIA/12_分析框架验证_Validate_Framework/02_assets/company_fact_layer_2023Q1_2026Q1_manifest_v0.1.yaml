@@ -1,0 +1,94 @@
+asset_id: HKIA-LTQ-COMPANY-FACT-LAYER-001
+version: 0.1
+status: built_and_verified
+output: outputs/HKIA_company_fact_layer_2023Q1_2026Q1_v0.1.xlsx
+bytes: 339190
+sha256: 30d1da1849c23656a16634c79cd4086457aa90eb9ee97ff08a32cca5642fc4c2
+source_manifest: HKIA-LTQ-2023Q1-2026Q1
+identity_bridge: HKIA-LTQ-INSURER-IDENTITY-BRIDGE-001
+
+workbook_structure:
+  README: scope_definitions_and_limitations
+  Company_Facts: normalized_company_metric_facts
+  Lineage_Summary: formula_driven_transfer_adjusted_series
+  Identity_Bridge: explicit_alias_and_lineage_mappings
+  QC: formula_driven_completeness_controls
+  2026Q1_Rankings: formula_driven_scale_share_and_metric_specific_growth_gate
+  Increment_Contribution: formula_driven_2025Q1_to_2026Q1_net_change_contribution
+
+fact_profile:
+  periods: [2023Q1, 2024Q1, 2025Q1, 2026Q1]
+  metrics: 18
+  fact_rows: 4914
+  reported_numeric_rows: 2443
+  reported_missing_rows: 2471
+  missing_policy: preserve_null_never_impute_zero
+
+identity_profile:
+  alias_rows: 10
+  canonical_keys_and_lineages: 5
+  chubb_lineage_fact_rows: 108
+  canada_mypace_lineage_fact_rows: 90
+
+quality_controls:
+  fact_partition_check: passed
+  formula_error_scan: zero_matches
+  visual_verification:
+    sheets_checked: [README, Company_Facts, Lineage_Summary, Identity_Bridge, QC, 2026Q1_Rankings, Increment_Contribution]
+    status: passed
+
+ranking_profile:
+  period: 2026Q1
+  prior_period: 2025Q1
+  grain: canonical_entity
+  metrics:
+    - NB_IND_TOTAL_SINGLE_PREMIUM
+    - NB_IND_TOTAL_ANNUALIZED_PREMIUM
+    - IF_IND_TOTAL_POLICIES
+    - IF_IND_TOTAL_NON_SINGLE_PREMIUM_RECEIVABLE
+  scale_ranking: top_10_including_current_period_entities
+  growth_gate: metric_specific_prior_value_and_transfer_event_check
+  contribution_gate: only_descriptive_eligible_nonzero_prior_entities
+  contribution_definition: company_absolute_change_divided_by_market_absolute_change
+  interpretation_note: positive_company_contributions_can_sum_above_100_percent_when_other_companies_decline
+
+ranking_findings_2026Q1:
+  new_business_single_premium:
+    top_three: [HSBC_Life, FWD_Life_Bermuda, Manulife_International]
+    top_three_market_share: 0.5548314968915377
+    largest_net_growth_contributor: HSBC_Life
+    largest_contribution: 0.34078274710010115
+  new_business_annualized_premium:
+    top_three: [HSBC_Life, BOC_Life, AIA_International]
+    top_three_market_share: 0.5584604047092799
+    largest_net_growth_contributor: HSBC_Life
+    largest_contribution: 0.614572407504386
+  inforce_policies:
+    top_three: [AIA_International, Prudential_HK_Life, Manulife_International]
+    top_three_market_share: 0.5580886244988498
+    largest_net_growth_contributor: Prudential_HK_Life
+    largest_contribution: 0.2679684286104858
+  inforce_non_single_premium:
+    top_three: [HSBC_Life, AIA_International, BOC_Life]
+    top_three_market_share: 0.46367278027601083
+    largest_net_growth_contributor: HSBC_Life
+    largest_contribution: 0.30195122239898653
+
+transfer_adjusted_findings:
+  canada_mypace_2025Q1_to_2026Q1:
+    inforce_policy_growth: -0.0575495678698526
+    sums_assured_or_annuities_growth: -0.2649514196134276
+    single_premium_receivable_growth: -0.2560819362765173
+    non_single_premium_receivable_growth: -0.13786707932553486
+    claim_status: formula_validated_descriptive_only
+  chubb_2025Q1_to_2026Q1:
+    inforce_policy_growth: 0.0208526416745877
+    sums_assured_or_annuities_growth: 0.1355322266743062
+    single_premium_receivable_growth: 44.97570883622058
+    non_single_premium_receivable_growth: 0.1206891648243206
+    claim_status: formula_validated_single_premium_outlier_requires_context
+
+next_gate:
+  - reconcile_lineage_summary_to_source_rows_independently
+  - build_company_ranking_only_for_metrics_passing_identity_and_outlier_gates
+  - attach_external_event_context_to_material_company_movements

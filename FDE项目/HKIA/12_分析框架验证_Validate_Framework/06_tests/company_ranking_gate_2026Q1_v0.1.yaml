@@ -1,0 +1,39 @@
+test_id: TEST-HKIA-LTQ-COMPANY-RANKING-001
+version: 0.1
+status: passed_after_gate_correction
+asset_ref: HKIA-LTQ-COMPANY-FACT-LAYER-001
+
+scope:
+  current_period: 2026Q1
+  prior_period: 2025Q1
+  metrics: 4
+  top_rows_per_metric: 10
+
+controls:
+  - control: rank_on_canonical_entity_not_source_abbreviation
+    status: passed
+  - control: market_share_denominator_reconciles_to_company_fact_market_sum
+    status: passed
+  - control: prior_presence_is_evaluated_per_company_per_metric
+    status: passed_after_correction
+  - control: transfer_hold_entities_excluded_from_unadjusted_growth_and_contribution
+    status: passed
+  - control: zero_prior_never_generates_growth_rate
+    status: passed
+  - control: formula_error_scan
+    result: zero_matches
+  - control: visual_verification
+    sheets: [2026Q1_Rankings, Increment_Contribution]
+    status: passed
+
+correction_record:
+  initial_issue: prior_presence_gate_was_inherited_from_first_metric_for_all_metrics
+  impact: scale_values_unchanged_but_some_growth_eligibility_and_contribution_candidates_were_wrong
+  correction: recalculate_gate_at_company_metric_grain_and_rebuild_each_contribution_block
+  regression_rule: no_cross_metric_gate_reuse
+
+interpretation_rules:
+  - scale_ranking_does_not_prove_growth_quality
+  - extreme_growth_from_small_prior_base_requires_context
+  - contribution_above_100_percent_is_possible_when_other_companies_offset_with_declines
+  - rank_and_contribution_are_descriptive_until_external_event_evidence_is_attached

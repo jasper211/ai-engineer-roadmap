@@ -16,9 +16,9 @@
         "deliverable_role": "",
         "evidence_refs": [
           "EVD-2b2330dbe1c69fccd26b",
-          "EVD-4a188e8ec7d9bf6ab723",
           "EVD-8d1a5d17563d5b6e2235",
           "EVD-993bee960e86a513bb63",
+          "EVD-9aea74009fc6697e54ad",
           "EVD-a7aa15c2762f15a9083a",
           "EVD-b05488ed3f28b286793c",
           "EVD-bdb2f1113c41348acbb8",
@@ -343,7 +343,7 @@
     ]
   },
   "analysis_freshness": "PENDING_MODEL",
-  "analysis_input_hash": "9990e9c31ff60ecafe87e8b84e9c0b3afffd321e6563658ea535be3ec074dc70",
+  "analysis_input_hash": "5250fdddc70061f7c3c3e5dae767c640a4ff27fe4cff245aa9ad71639b1bae5c",
   "blueprint": {
     "blueprint_value_nodes": [],
     "coverage": "INDEXED",
@@ -468,31 +468,6 @@
       "status": "ACTIVE",
       "transform_rule": "",
       "value": false
-    },
-    {
-      "confidence": "HIGH",
-      "conflict_note": "",
-      "evidence_class": "SUPPLEMENTAL",
-      "evidence_id": "EVD-4a188e8ec7d9bf6ab723",
-      "field_name": "position_family",
-      "source": {
-        "observed_at": "",
-        "source_field": "岗位族代码",
-        "source_key": "经代机构全周期Agent",
-        "source_object": "候选Agent岗位族映射_HR对齐版_v1.0.csv",
-        "source_system": "EA项目_权威数据",
-        "source_version": "v1.0"
-      },
-      "status": "ACTIVE",
-      "transform_rule": "",
-      "value": {
-        "candidate_agent": "经代机构全周期Agent",
-        "confidence": "HR权威数据核实",
-        "family_code": "JF-03",
-        "family_name": "机构业务族",
-        "headcount": 52,
-        "headcount_source": "2026-07-28_人员归属方案_v5.3_SUBMITTED.md 一节映射统计总表"
-      }
     },
     {
       "confidence": "HIGH",
@@ -624,6 +599,29 @@
       "status": "ACTIVE",
       "transform_rule": "",
       "value": 1
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-9aea74009fc6697e54ad",
+      "field_name": "position_family",
+      "source": {
+        "observed_at": "",
+        "source_field": "各族详细映射",
+        "source_key": "L3-ASD",
+        "source_object": "2026-07-20_68L3岗位族归属设计_v6.1_SUBMITTED.md",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v6.1"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "category_name": "经代机构合作岗",
+        "category_type": "目标态核心",
+        "family_code": "JF-03",
+        "family_name": "机构业务族"
+      }
     },
     {
       "confidence": "HIGH",
@@ -1031,7 +1029,44 @@
     }
   },
   "has_demo": false,
-  "kpi_mappings": [],
+  "kpi_mappings": [
+    {
+      "kpi_code": "KPI_13",
+      "kpi_formula": null,
+      "kpi_name": "N/R 结构 (Renewal Ratio)",
+      "kpi_target": null,
+      "kpi_unit": null,
+      "measurement_cycle": "月",
+      "source_type": "definition"
+    },
+    {
+      "kpi_code": "KPI_24",
+      "kpi_formula": null,
+      "kpi_name": "首年撤单率 (Cool-off)",
+      "kpi_target": null,
+      "kpi_unit": null,
+      "measurement_cycle": "月",
+      "source_type": "definition"
+    },
+    {
+      "kpi_code": "KPI_26",
+      "kpi_formula": null,
+      "kpi_name": "投诉率 (Complaint Rate)",
+      "kpi_target": null,
+      "kpi_unit": null,
+      "measurement_cycle": "月",
+      "source_type": "definition"
+    },
+    {
+      "kpi_code": "KPI_51",
+      "kpi_formula": null,
+      "kpi_name": "理赔时效",
+      "kpi_target": null,
+      "kpi_unit": null,
+      "measurement_cycle": "月",
+      "source_type": "definition"
+    }
+  ],
   "l2_capabilities": [
     {
       "l2_code": "L2-04.3",
@@ -1043,6 +1078,7 @@
   "l3_name": "经代机构售后服务流程",
   "l4s": [
     {
+      "business_evidence": [],
       "d1_d6": {
         "agent_d1_input_struct": 2,
         "agent_d2_rule_clear": 1,
@@ -1065,19 +1101,17 @@
         "l4_deliverable": "EVD-def226e1e50cb0b5ae67",
         "l4_deliverable_type": "EVD-d2b0fd3eaeb42adda575",
         "l4_name": "EVD-e425a5075ecc9ef071ef",
-        "position_family": "EVD-4a188e8ec7d9bf6ab723",
+        "position_family": "EVD-9aea74009fc6697e54ad",
         "skill_feasibility": "EVD-bdb2f1113c41348acbb8"
       },
       "human_touchpoint": null,
       "l4_code": "L4-ASD-01",
       "l4_name": "售后服务执行与质量监控",
       "position_family": {
-        "candidate_agent": "经代机构全周期Agent",
-        "confidence": "HR权威数据核实",
+        "category_name": "经代机构合作岗",
+        "category_type": "目标态核心",
         "family_code": "JF-03",
-        "family_name": "机构业务族",
-        "headcount": 52,
-        "headcount_source": "2026-07-28_人员归属方案_v5.3_SUBMITTED.md 一节映射统计总表"
+        "family_name": "机构业务族"
       },
       "skill_feasibility": {
         "action_nature": "信息处理/事务类",
@@ -1134,6 +1168,11 @@
   },
   "schema_version": "vnw.l3-model.v1",
   "source_locations": {
+    "2026-07-20_68L3岗位族归属设计_v6.1_SUBMITTED.md": {
+      "record_keys": [
+        "L3-ASD"
+      ]
+    },
     "L4两阶段复核_全量368条_合并版_v1.0.csv": {
       "rows": [
         232
@@ -1159,11 +1198,6 @@
       "record_keys": [
         "VN-ASD-01",
         "VN-ASD-02"
-      ]
-    },
-    "候选Agent岗位族映射_HR对齐版_v1.0.csv": {
-      "record_keys": [
-        "经代机构全周期Agent"
       ]
     },
     "流程蓝图_L3-ASD_经代机构售后服务流程_V1.0.md": {

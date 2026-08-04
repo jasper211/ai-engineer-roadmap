@@ -106,6 +106,22 @@ function ModelCard({ model, quality }: { model: ModelIndexItem; quality?: { mixe
           ))}
         </p>
       )}
+      {model.kpis.length > 0 && (
+        <p className="mt-2 flex flex-wrap gap-1.5">
+          {model.kpis.map((kpi, index) => (
+            <span
+              key={`${kpi.kpi_name}-${index}`}
+              className={
+                kpi.source_type === 'definition'
+                  ? 'rounded-full bg-amber-400/10 px-2 py-0.5 text-[11px] font-medium text-amber-800'
+                  : 'rounded-full border border-dashed border-rose-300 bg-rose-50 px-2 py-0.5 text-[11px] font-medium text-rose-700'
+              }
+            >
+              {kpi.kpi_name}
+            </span>
+          ))}
+        </p>
+      )}
       {!full && model.gap_reasons.length > 0 && (
         <p className="mt-2 line-clamp-2 text-xs text-amber-800/80">首要缺口：{model.gap_reasons[0]}</p>
       )}
@@ -154,14 +170,16 @@ export default function L3Models() {
 
   const valueStreams = useMemo(() => {
     const byCode = new Map<string, { vs_code: string; vs_name: string; count: number }>()
+    let unmapped = 0
     for (const model of data?.models ?? []) {
+      if (model.value_streams.length === 0) unmapped += 1
       for (const vs of model.value_streams) {
         const existing = byCode.get(vs.vs_code)
         if (existing) existing.count += 1
         else byCode.set(vs.vs_code, { vs_code: vs.vs_code, vs_name: vs.vs_name, count: 1 })
       }
     }
-    return [...byCode.values()].sort((a, b) => a.vs_code.localeCompare(b.vs_code))
+    return { list: [...byCode.values()].sort((a, b) => a.vs_code.localeCompare(b.vs_code)), unmapped }
   }, [data])
 
   if (error) return <div className="panel p-5 text-sm text-accent-danger">{error}</div>
@@ -169,7 +187,7 @@ export default function L3Models() {
 
   const current = groups[view]
     .filter(model => `${model.l3_code}${model.l3_name}`.toLowerCase().includes(query.toLowerCase()))
-    .filter(model => vsFilter === 'all' || model.value_streams.some(vs => vs.vs_code === vsFilter))
+    .filter(model => vsFilter === 'all' || (vsFilter === 'unmapped' ? model.value_streams.length === 0 : model.value_streams.some(vs => vs.vs_code === vsFilter)))
   const parsedCount = data.models.filter(model => model.blueprint_structure_status === 'PARSED').length
   const featuredDemo = groups.demo[0]
   return (
@@ -330,16 +348,20 @@ export default function L3Models() {
           <Search className="absolute left-3 top-2.5 h-4 w-4 text-text-muted" />
           <input value={query} onChange={event => setQuery(event.target.value)} placeholder="按 L3 编码或名称搜索" className="w-full rounded-xl border border-border-default bg-bg-elevated py-2 pl-9 pr-3 text-sm text-text-primary placeholder:text-text-muted" />
         </div>
-        <select
-          value={vsFilter}
-          onChange={event => setVsFilter(event.target.value)}
-          className="rounded-xl border border-border-default bg-bg-elevated py-2 px-3 text-sm text-text-primary"
-        >
-          <option value="all">全部价值流</option>
-          {valueStreams.map(vs => (
-            <option key={vs.vs_code} value={vs.vs_code}>{vs.vs_code} · {vs.vs_name}（{vs.count}）</option>
-          ))}
-        </select>
+        <div className="flex items-center gap-2">
+          <select
+            value={vsFilter}
+            onChange={event => setVsFilter(event.target.value)}
+            className="rounded-xl border border-border-default bg-bg-elevated py-2 px-3 text-sm text-text-primary"
+          >
+            <option value="all">全部价值流</option>
+            {valueStreams.list.map(vs => (
+              <option key={vs.vs_code} value={vs.vs_code}>{vs.vs_code} · {vs.vs_name}（{vs.count}）</option>
+            ))}
+            <option value="unmapped">未归属价值流（{valueStreams.unmapped}）</option>
+          </select>
+          <span className="text-[10px] text-text-muted">SSOT：process_analytics.bridge_l3_vs_stage + dim_vs</span>
+        </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">

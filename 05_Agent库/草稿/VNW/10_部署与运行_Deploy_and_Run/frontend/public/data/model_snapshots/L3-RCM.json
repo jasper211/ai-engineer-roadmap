@@ -21,12 +21,12 @@
           "EVD-42834e2df16be921518e",
           "EVD-4b847040bb7d89566c81",
           "EVD-7d9a7c0393089cdf6736",
-          "EVD-829a25b9763cbe872118",
           "EVD-96c4048865bddb188bfa",
           "EVD-987c985fd598ee253c87",
           "EVD-a1fcb8bbf2708a11a973",
           "EVD-b29b3bca67c2c2f50641",
           "EVD-d769b329113fb4bdf137",
+          "EVD-f006f2d4d73da3bd196e",
           "EVD-f7afb30a846ea9d3fdbf"
         ],
         "handoff_triggers": [],
@@ -55,10 +55,10 @@
           "EVD-5aeb5111f6e0643075ed",
           "EVD-611f60ce1503d4fa729f",
           "EVD-6a47fea336570920757d",
-          "EVD-829a25b9763cbe872118",
           "EVD-8f442dab17843353119f",
           "EVD-996378983fffc905c315",
           "EVD-a548941a84b5799d738e",
+          "EVD-f006f2d4d73da3bd196e",
           "EVD-fbb5d08e263d909a1af8"
         ],
         "handoff_triggers": [],
@@ -128,7 +128,7 @@
     ]
   },
   "analysis_freshness": "PENDING_MODEL",
-  "analysis_input_hash": "b0eb76fdbb0041eab8c474c5242a715ab226f0d8a8e270569d9c92d5765d0859",
+  "analysis_input_hash": "a4af518fd536a27661189d874b243829dedd57190ab48fa094c5619987ca76b9",
   "blueprint": {
     "blueprint_value_nodes": [],
     "coverage": "INDEXED",
@@ -589,31 +589,6 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
-      "evidence_class": "SUPPLEMENTAL",
-      "evidence_id": "EVD-829a25b9763cbe872118",
-      "field_name": "position_family",
-      "source": {
-        "observed_at": "",
-        "source_field": "岗位族代码",
-        "source_key": "风险合规监控Agent",
-        "source_object": "候选Agent岗位族映射_HR对齐版_v1.0.csv",
-        "source_system": "EA项目_权威数据",
-        "source_version": "v1.0"
-      },
-      "status": "ACTIVE",
-      "transform_rule": "",
-      "value": {
-        "candidate_agent": "风险合规监控Agent",
-        "confidence": "HR权威数据核实",
-        "family_code": "职能层",
-        "family_name": "职能支撑层",
-        "headcount": 26,
-        "headcount_source": "2026-07-28_人员归属方案_v5.3_SUBMITTED.md 一节映射统计总表"
-      }
-    },
-    {
-      "confidence": "HIGH",
-      "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
       "evidence_id": "EVD-89097773c0aa174ef196",
       "field_name": "gate3_traceable",
@@ -890,6 +865,29 @@
       "confidence": "HIGH",
       "conflict_note": "",
       "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-f006f2d4d73da3bd196e",
+      "field_name": "position_family",
+      "source": {
+        "observed_at": "",
+        "source_field": "各族详细映射",
+        "source_key": "L3-RCM",
+        "source_object": "2026-07-20_68L3岗位族归属设计_v6.1_SUBMITTED.md",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v6.1"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "category_name": "合规管理岗",
+        "category_type": "目标态核心",
+        "family_code": "职能层",
+        "family_name": "职能支撑层"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
       "evidence_id": "EVD-f34cfdf9c883fccfcf7a",
       "field_name": "blueprint.steps.STEP-02",
       "source": {
@@ -1079,6 +1077,7 @@
       "kpi_name": "合规红线实时预警处置率",
       "l3_code": "L3-RCM",
       "row_status": "draft",
+      "source_type": "mark_priority_draft",
       "weight_confirmed": "pending"
     },
     {
@@ -1087,7 +1086,62 @@
       "kpi_name": "高风险件实时拦截率",
       "l3_code": "L3-RCM",
       "row_status": "draft",
+      "source_type": "mark_priority_draft",
       "weight_confirmed": "pending"
+    },
+    {
+      "kpi_code": "KPI_18",
+      "kpi_formula": null,
+      "kpi_name": "核保转化率 (UW Conv.)",
+      "kpi_target": null,
+      "kpi_unit": null,
+      "measurement_cycle": "月",
+      "source_type": "definition"
+    },
+    {
+      "kpi_code": "KPI_22",
+      "kpi_formula": null,
+      "kpi_name": "长周期件数 (Backlog)",
+      "kpi_target": null,
+      "kpi_unit": null,
+      "measurement_cycle": "月",
+      "source_type": "definition"
+    },
+    {
+      "kpi_code": "KPI_27",
+      "kpi_formula": null,
+      "kpi_name": "审计问题数 (Audit Issues)",
+      "kpi_target": null,
+      "kpi_unit": null,
+      "measurement_cycle": "月",
+      "source_type": "definition"
+    },
+    {
+      "kpi_code": "KPI_28",
+      "kpi_formula": null,
+      "kpi_name": "高风险件占比",
+      "kpi_target": null,
+      "kpi_unit": null,
+      "measurement_cycle": "月",
+      "source_type": "definition"
+    },
+    {
+      "kpi_code": "KPI_29",
+      "kpi_formula": null,
+      "kpi_name": "红线命中数",
+      "kpi_target": null,
+      "kpi_unit": null,
+      "measurement_cycle": "月",
+      "source_type": "definition"
+    },
+    {
+      "kpi_code": "KPI_50",
+      "kpi_formula": null,
+      "kpi_name": "简单赔付率 (Loss Ratio)",
+      "kpi_target": null,
+      "kpi_unit": null,
+      "measurement_cycle": "月",
+      "source_type": "definition"
     }
   ],
   "l2_capabilities": [
@@ -1101,6 +1155,7 @@
   "l3_name": "风险管理与合规监控",
   "l4s": [
     {
+      "business_evidence": [],
       "d1_d6": {
         "agent_d1_input_struct": 2,
         "agent_d2_rule_clear": 1,
@@ -1123,19 +1178,17 @@
         "l4_deliverable": "EVD-96c4048865bddb188bfa",
         "l4_deliverable_type": "EVD-7d9a7c0393089cdf6736",
         "l4_name": "EVD-d769b329113fb4bdf137",
-        "position_family": "EVD-829a25b9763cbe872118",
+        "position_family": "EVD-f006f2d4d73da3bd196e",
         "skill_feasibility": "EVD-348080169ed30b24d279"
       },
       "human_touchpoint": null,
       "l4_code": "L4-RCM-01",
       "l4_name": "渠道信用评估",
       "position_family": {
-        "candidate_agent": "风险合规监控Agent",
-        "confidence": "HR权威数据核实",
+        "category_name": "合规管理岗",
+        "category_type": "目标态核心",
         "family_code": "职能层",
-        "family_name": "职能支撑层",
-        "headcount": 26,
-        "headcount_source": "2026-07-28_人员归属方案_v5.3_SUBMITTED.md 一节映射统计总表"
+        "family_name": "职能支撑层"
       },
       "skill_feasibility": {
         "action_nature": "判断/策略/认知类",
@@ -1150,6 +1203,7 @@
       "tier": "Hybrid"
     },
     {
+      "business_evidence": [],
       "d1_d6": {
         "agent_d1_input_struct": 2,
         "agent_d2_rule_clear": 2,
@@ -1172,19 +1226,17 @@
         "l4_deliverable": "EVD-54562c63e324667fba0a",
         "l4_deliverable_type": "EVD-996378983fffc905c315",
         "l4_name": "EVD-04c6d6aba39bf72a84e1",
-        "position_family": "EVD-829a25b9763cbe872118",
+        "position_family": "EVD-f006f2d4d73da3bd196e",
         "skill_feasibility": "EVD-24e917bba93e7a2c1f19"
       },
       "human_touchpoint": null,
       "l4_code": "L4-RCM-02",
       "l4_name": "合规审计",
       "position_family": {
-        "candidate_agent": "风险合规监控Agent",
-        "confidence": "HR权威数据核实",
+        "category_name": "合规管理岗",
+        "category_type": "目标态核心",
         "family_code": "职能层",
-        "family_name": "职能支撑层",
-        "headcount": 26,
-        "headcount_source": "2026-07-28_人员归属方案_v5.3_SUBMITTED.md 一节映射统计总表"
+        "family_name": "职能支撑层"
       },
       "skill_feasibility": {
         "action_nature": "合规监管类",
@@ -1241,6 +1293,11 @@
   },
   "schema_version": "vnw.l3-model.v1",
   "source_locations": {
+    "2026-07-20_68L3岗位族归属设计_v6.1_SUBMITTED.md": {
+      "record_keys": [
+        "L3-RCM"
+      ]
+    },
     "L4两阶段复核_全量368条_合并版_v1.0.csv": {
       "rows": [
         255,
@@ -1269,11 +1326,6 @@
       "record_keys": [
         "VN-RCM-01",
         "VN-RCM-02"
-      ]
-    },
-    "候选Agent岗位族映射_HR对齐版_v1.0.csv": {
-      "record_keys": [
-        "风险合规监控Agent"
       ]
     },
     "流程蓝图_L3-RCM_风险管理与合规监控_V1.0.md": {

@@ -302,7 +302,9 @@ class L3ModelBuilder:
         sop_records: list[dict] | None = None,
         rule_records: list[dict] | None = None,
         prepared_analysis_codes: set[str] | None = None,
-        position_bridge: dict[str, dict] | None = None,
+        l3_position_category: dict[str, dict] | None = None,
+        business_table_map: dict[str, list[dict]] | None = None,
+        business_table_counts: dict[str, int] | None = None,
     ):
         self.reader = reader
         self.blueprint_index = blueprint_index
@@ -314,7 +316,9 @@ class L3ModelBuilder:
         self.sop_records = sop_records or []
         self.rule_records = rule_records or []
         self.prepared_analysis_codes = prepared_analysis_codes or set()
-        self.position_bridge = position_bridge or {}
+        self.l3_position_category = l3_position_category or {}
+        self.business_table_map = business_table_map or {}
+        self.business_table_counts = business_table_counts or {}
 
     def build(self, l3_code: str, supplemental: list[EvidenceRecord] | None = None) -> dict:
         processes = self.reader.processes(l3_code)
@@ -465,16 +469,14 @@ class L3ModelBuilder:
                         source_version="v2",
                     ),
                 ))
-            bridge = self.position_bridge.get(code)
+            category = self.l3_position_category.get(l3_code)
             position_family = None
-            if bridge is not None:
+            if category is not None:
                 position_family = {
-                    "candidate_agent": bridge["candidate_agent"],
-                    "family_code": bridge["family_code"],
-                    "family_name": bridge["family_name"],
-                    "headcount": bridge["headcount"],
-                    "headcount_source": bridge["headcount_source"],
-                    "confidence": bridge["confidence"],
+                    "family_code": category["family_code"],
+                    "family_name": category["family_name"],
+                    "category_name": category["category_name"],
+                    "category_type": category["category_type"],
                 }
                 refs["position_family"] = add(EvidenceRecord(
                     field_name="position_family",
@@ -483,10 +485,37 @@ class L3ModelBuilder:
                     status=EvidenceStatus.ACTIVE,
                     source=SourceRef(
                         source_system="EA项目_权威数据",
-                        source_object="候选Agent岗位族映射_HR对齐版_v1.0.csv",
-                        source_key=bridge["candidate_agent"],
-                        source_field="岗位族代码",
-                        source_version="v1.0",
+                        source_object="2026-07-20_68L3岗位族归属设计_v6.1_SUBMITTED.md",
+                        source_key=l3_code,
+                        source_field="各族详细映射",
+                        source_version="v6.1",
+                    ),
+                ))
+            business_evidence = [
+                {
+                    "schema": item["schema"],
+                    "table": item["table"],
+                    "row_count": self.business_table_counts.get(f"{item['schema']}.{item['table']}"),
+                    "matched_columns": item["matched_columns"],
+                    "rationale": item["rationale"],
+                    "confidence": item["confidence"],
+                }
+                for item in self.business_table_map.get(code, [])
+            ]
+            if business_evidence:
+                refs["business_evidence"] = add(EvidenceRecord(
+                    field_name="business_evidence",
+                    value=business_evidence,
+                    evidence_class=EvidenceClass.CONSENSUS,
+                    status=EvidenceStatus.UNVERIFIED,
+                    confidence="LOW",
+                    conflict_note="人工按业务含义匹配到业务数据仓库表，非外键关联，未经业务方确认",
+                    source=SourceRef(
+                        source_system="业务数据仓库",
+                        source_object=", ".join(f"{i['schema']}.{i['table']}" for i in business_evidence),
+                        source_key=code,
+                        source_field="人工匹配",
+                        source_version="2026-08-04试点",
                     ),
                 ))
             l4s.append({
@@ -499,6 +528,7 @@ class L3ModelBuilder:
                 "d1_d6": d1_d6,
                 "skill_feasibility": skill_payload,
                 "position_family": position_family,
+                "business_evidence": business_evidence,
                 "evidence_refs": refs,
             })
 
@@ -715,11 +745,8 @@ class L3ModelBuilder:
                     if row.get("_source_row")
                 }),
             },
-            "候选Agent岗位族映射_HR对齐版_v1.0.csv": {
-                "record_keys": sorted({
-                    item["position_family"]["candidate_agent"]
-                    for item in l4s if item.get("position_family")
-                }),
+            "2026-07-20_68L3岗位族归属设计_v6.1_SUBMITTED.md": {
+                "record_keys": [l3_code] if l3_code in self.l3_position_category else [],
             },
         }
         if blueprint:
@@ -889,6 +916,10 @@ class L3ModelBuilder:
                             "stage_sequence": row.get("stage_sequence"),
                         }
                         for row in model["value_stream_mappings"]
+                    ],
+                    "kpis": [
+                        {"kpi_name": row["kpi_name"], "source_type": row["source_type"]}
+                        for row in model["kpi_mappings"]
                     ],
                     "l4_count": len(model["l4s"]),
                     "value_node_count": len(model["value_nodes"]),

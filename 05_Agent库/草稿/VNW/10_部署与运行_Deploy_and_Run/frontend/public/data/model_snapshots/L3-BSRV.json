@@ -20,8 +20,8 @@
           "EVD-2a8fbe9ed2f17d22cf48",
           "EVD-2de27666273d2259c992",
           "EVD-40c61e7c40c92fec9b15",
-          "EVD-4a188e8ec7d9bf6ab723",
           "EVD-598f747700c04d3a92bf",
+          "EVD-a0a6eeab37d19897bdeb",
           "EVD-a6a935c44e832c6feabe",
           "EVD-b541f9499818fbe1a7c9",
           "EVD-c5ca760bf616cdf436ed",
@@ -50,8 +50,8 @@
           "EVD-0068695e622a20a2694e",
           "EVD-06657ed312fe9c7b50f0",
           "EVD-148c78c3e53027299ea9",
-          "EVD-4a188e8ec7d9bf6ab723",
           "EVD-4ac63ab6b409b7ab6fa5",
+          "EVD-a0a6eeab37d19897bdeb",
           "EVD-b05083e110fe7c806e56",
           "EVD-b97d69aa6f342ca07241",
           "EVD-bf3b730bcb5881123690",
@@ -242,7 +242,7 @@
     ]
   },
   "analysis_freshness": "PENDING_MODEL",
-  "analysis_input_hash": "5d9a0ecf3b65a8ef016481bdf2e69f01e79c62c0a4f2211cc5a317c4855acb4e",
+  "analysis_input_hash": "bfbeb1d460386cc715eb24c452cdd00791f52de99643fc66985a74ce08b6b253",
   "blueprint": {
     "blueprint_value_nodes": [],
     "coverage": "INDEXED",
@@ -544,31 +544,6 @@
       "confidence": "HIGH",
       "conflict_note": "",
       "evidence_class": "SUPPLEMENTAL",
-      "evidence_id": "EVD-4a188e8ec7d9bf6ab723",
-      "field_name": "position_family",
-      "source": {
-        "observed_at": "",
-        "source_field": "岗位族代码",
-        "source_key": "经代机构全周期Agent",
-        "source_object": "候选Agent岗位族映射_HR对齐版_v1.0.csv",
-        "source_system": "EA项目_权威数据",
-        "source_version": "v1.0"
-      },
-      "status": "ACTIVE",
-      "transform_rule": "",
-      "value": {
-        "candidate_agent": "经代机构全周期Agent",
-        "confidence": "HR权威数据核实",
-        "family_code": "JF-03",
-        "family_name": "机构业务族",
-        "headcount": 52,
-        "headcount_source": "2026-07-28_人员归属方案_v5.3_SUBMITTED.md 一节映射统计总表"
-      }
-    },
-    {
-      "confidence": "HIGH",
-      "conflict_note": "",
-      "evidence_class": "SUPPLEMENTAL",
       "evidence_id": "EVD-4ac63ab6b409b7ab6fa5",
       "field_name": "agent_d5_fallback",
       "source": {
@@ -677,6 +652,29 @@
       "status": "ACTIVE",
       "transform_rule": "",
       "value": "机构结算核对台账"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-a0a6eeab37d19897bdeb",
+      "field_name": "position_family",
+      "source": {
+        "observed_at": "",
+        "source_field": "各族详细映射",
+        "source_key": "L3-BSRV",
+        "source_object": "2026-07-20_68L3岗位族归属设计_v6.1_SUBMITTED.md",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v6.1"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "category_name": "经代机构合作岗",
+        "category_type": "目标态核心",
+        "family_code": "JF-03",
+        "family_name": "机构业务族"
+      }
     },
     {
       "confidence": "HIGH",
@@ -1066,7 +1064,26 @@
     }
   },
   "has_demo": false,
-  "kpi_mappings": [],
+  "kpi_mappings": [
+    {
+      "kpi_code": "KPI_19",
+      "kpi_formula": null,
+      "kpi_name": "结算转化率 (Settle Conv.)",
+      "kpi_target": null,
+      "kpi_unit": null,
+      "measurement_cycle": "月",
+      "source_type": "definition"
+    },
+    {
+      "kpi_code": "KPI_21",
+      "kpi_formula": null,
+      "kpi_name": "结算周期 (Payment TAT)",
+      "kpi_target": null,
+      "kpi_unit": null,
+      "measurement_cycle": "月",
+      "source_type": "definition"
+    }
+  ],
   "l2_capabilities": [
     {
       "l2_code": "L2-04.4",
@@ -1078,6 +1095,7 @@
   "l3_name": "经代机构结算与日常运营评估",
   "l4s": [
     {
+      "business_evidence": [],
       "d1_d6": {
         "agent_d1_input_struct": 2,
         "agent_d2_rule_clear": 1,
@@ -1100,19 +1118,17 @@
         "l4_deliverable": "EVD-e0daa925457013eff16e",
         "l4_deliverable_type": "EVD-2a8fbe9ed2f17d22cf48",
         "l4_name": "EVD-598f747700c04d3a92bf",
-        "position_family": "EVD-4a188e8ec7d9bf6ab723",
+        "position_family": "EVD-a0a6eeab37d19897bdeb",
         "skill_feasibility": "EVD-059baa24ad494d0f6f1b"
       },
       "human_touchpoint": "人工执行：日常运营协同",
       "l4_code": "L4-BSRV-01",
       "l4_name": "日常运营协同",
       "position_family": {
-        "candidate_agent": "经代机构全周期Agent",
-        "confidence": "HR权威数据核实",
+        "category_name": "经代机构合作岗",
+        "category_type": "目标态核心",
         "family_code": "JF-03",
-        "family_name": "机构业务族",
-        "headcount": 52,
-        "headcount_source": "2026-07-28_人员归属方案_v5.3_SUBMITTED.md 一节映射统计总表"
+        "family_name": "机构业务族"
       },
       "skill_feasibility": {
         "action_nature": "语义复核判定",
@@ -1127,6 +1143,7 @@
       "tier": "Aug"
     },
     {
+      "business_evidence": [],
       "d1_d6": {
         "agent_d1_input_struct": 2,
         "agent_d2_rule_clear": 1,
@@ -1149,19 +1166,17 @@
         "l4_deliverable": "EVD-d794b4228035a7d325df",
         "l4_deliverable_type": "EVD-b05083e110fe7c806e56",
         "l4_name": "EVD-148c78c3e53027299ea9",
-        "position_family": "EVD-4a188e8ec7d9bf6ab723",
+        "position_family": "EVD-a0a6eeab37d19897bdeb",
         "skill_feasibility": "EVD-f82b306e59afc9679bd7"
       },
       "human_touchpoint": null,
       "l4_code": "L4-BSRV-02",
       "l4_name": "结算与评估",
       "position_family": {
-        "candidate_agent": "经代机构全周期Agent",
-        "confidence": "HR权威数据核实",
+        "category_name": "经代机构合作岗",
+        "category_type": "目标态核心",
         "family_code": "JF-03",
-        "family_name": "机构业务族",
-        "headcount": 52,
-        "headcount_source": "2026-07-28_人员归属方案_v5.3_SUBMITTED.md 一节映射统计总表"
+        "family_name": "机构业务族"
       },
       "skill_feasibility": {
         "action_nature": "判断/策略/认知类",
@@ -1218,6 +1233,11 @@
   },
   "schema_version": "vnw.l3-model.v1",
   "source_locations": {
+    "2026-07-20_68L3岗位族归属设计_v6.1_SUBMITTED.md": {
+      "record_keys": [
+        "L3-BSRV"
+      ]
+    },
     "L4两阶段复核_全量368条_合并版_v1.0.csv": {
       "rows": [
         233,
@@ -1245,11 +1265,6 @@
     "process_analytics.dim_vn": {
       "record_keys": [
         "VN-BSRV-01"
-      ]
-    },
-    "候选Agent岗位族映射_HR对齐版_v1.0.csv": {
-      "record_keys": [
-        "经代机构全周期Agent"
       ]
     },
     "流程蓝图_L3-BSRV_经代机构结算与日常运营评估_V1.0.md": {

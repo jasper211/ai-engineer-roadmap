@@ -1,0 +1,93 @@
+manifest_id: HKIA-LTQ-2023Q1-2026Q1
+version: 0.1
+status: acquired_and_schema_audited
+source_owner: Hong_Kong_Insurance_Authority
+source_family: provisional_statistics_on_hong_kong_long_term_insurance_business
+analysis_scope_ref: HKIA-LONG-TERM-ANALYSIS-2023-2026Q1
+
+assets:
+  - period: 2023Q1
+    period_title: January to March 2023
+    certification: provisional
+    role: same_period_series
+    raw_path: 01_sources/raw/SRC-REG-IA-LTQ/2023Q1/1q23long.xls
+    native_format: xls_ole2
+    bytes: 514560
+    sha256: 9690e889548c922465c645ce149d0dc976b6f7d8ee42149a1e41ec1b027c69f3
+    normalized_path: 04_normalized/legacy_excel_converted/quarterly_long/1q23long.xlsx
+    normalized_sha256: 29094f27109d90c3169777b90c4793ec42c6a571379a9567cbce67d2cabe6bfc
+    sheet_count: 31
+    parse_status: passed_after_lossless_container_conversion
+  - period: 2024Q1
+    period_title: January to March 2024
+    certification: provisional
+    role: same_period_series
+    raw_path: 01_sources/raw/SRC-REG-IA-LTQ/2024Q1/1q24long.xls
+    native_format: xls_ole2
+    bytes: 522752
+    sha256: 47c5fb568d4e86d558e3fb28c9d6a7e5c6a35935d3c771eea864fa8574930189
+    normalized_path: 04_normalized/legacy_excel_converted/quarterly_long/1q24long.xlsx
+    normalized_sha256: 38a92d34a8cc748d824fada87a2277473948d8df15817245c0733d78aa134afa
+    sheet_count: 31
+    parse_status: passed_after_lossless_container_conversion
+  - period: 2025Q1
+    period_title: January to March 2025
+    certification: provisional
+    role: same_period_series
+    raw_path: 01_sources/raw/SRC-REG-IA-LTQ/2025Q1/1q25long.xlsx
+    native_format: xlsx_ooxml
+    bytes: 157039
+    sha256: dfe39a48020e3b28d78c0850b5c6ea565c8bf6988c75763bd4b56d6e0ac0e242
+    sheet_count: 16
+    parse_status: passed_native
+  - period: 2025Q4
+    period_title: January to December 2025
+    certification: provisional
+    role: latest_complete_calendar_year_view
+    raw_path: 01_sources/raw/SRC-REG-IA-LTQ/2025Q4/4q25long.xlsx
+    native_format: xlsx_ooxml
+    bytes: 166291
+    sha256: 58790c92463da40c30bf0320b1facf82685fca7627f71833e8647784890c04e1
+    sheet_count: 16
+    parse_status: passed_native
+  - period: 2026Q1
+    period_title: January to March 2026
+    certification: provisional
+    role: latest_same_period_endpoint
+    raw_path: 01_sources/raw/SRC-REG-IA-LTQ/2026Q1/1q26_long.xlsx
+    native_format: xlsx_ooxml
+    bytes: 179170
+    sha256: dc1060ef2fab9e942b1928b10c346d60cbd3cfb1ade9318de19f22dc94806189
+    sheet_count: 17
+    parse_status: passed_native
+
+schema_routes:
+  - route_id: LTQ_LEGACY_2023_2024
+    periods: [2023Q1, 2024Q1]
+    sheet_pattern: Form_HKLQ_and_Table_L1_to_L4
+    rule: parse_normalized_xlsx_but_retain_raw_xls_as_source_of_record
+  - route_id: LTQ_REVISED_2025_2026
+    periods: [2025Q1, 2025Q4, 2026Q1]
+    sheet_pattern: Form_LT_QR_and_Table_L1_to_L4
+    available_dimensions: [business_type, currency, premium_term, distribution_channel, in_force, group_and_health, lapse, reinsurance, insurer]
+  - route_id: LTQ_2026_TERMINOLOGY_AND_ENTITY_EVENT
+    periods: [2026Q1]
+    rule: route_life_to_long_term_wording_by_label_not_fixed_title
+    entity_continuity_event: Canada_Life_Assurance_and_Canada_Life_Limited_business_transferred_to_MyPace_Life
+    analytical_treatment: bridge_transferred_business_before_company_growth_interpretation
+
+comparison_policy:
+  allowed:
+    - compare_2023Q1_2024Q1_2025Q1_2026Q1_on_schema_mapped_metrics
+    - use_2025Q4_as_2025_full_year_provisional_view
+  forbidden:
+    - compare_2025Q4_cumulative_directly_with_any_Q1_as_growth
+    - treat_company_jump_around_2026_transfer_as_organic_growth_without_bridge
+    - overwrite_or_discard_raw_legacy_xls_after_conversion
+
+next_gate:
+  action: extract_and_reconcile_same_period_metric_dictionary
+  required_outputs:
+    - metric_level_comparability_matrix
+    - entity_identity_bridge
+    - 2023Q1_to_2026Q1_normalized_fact_table

@@ -408,6 +408,66 @@ steps:
     validation: 240_company_formula_cells_zero_16_detail_controls_zero_cross_grain_max_amount_difference_0_050
     status: completed_rule_promoted_third_period_execution_closed_with_one_open_source_exception
 
+  - step_id: PB01-STEP-042
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    role: source_acquisition_and_schema_auditor
+    objective: 落库并审计2023Q1至2026Q1季度长期业务统计资产
+    input_refs: [1q23long, 1q24long, 1q25long, 4q25long, 1q26_long]
+    action: 保留原始文件与哈希_将旧版xls转换为独立解析副本_核对工作簿期间标题工作表结构及实体连续性说明
+    output_refs: [HKIA-LTQ-2023Q1-2026Q1, HKIA-LONG-TERM-ANALYSIS-2023-2026Q1]
+    validation: five_assets_parsed_periods_confirmed_Q1_series_separated_from_2025_full_year_entity_transfer_flagged
+    status: completed_ready_for_metric_mapping
+
+  - step_id: PB01-STEP-043
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    role: schema_mapper_and_fact_extractor
+    objective: 建立季度长期业务核心市场指标可比矩阵及2023Q1至2026Q1标准事实表
+    input_refs: [HKIA-LTQ-2023Q1-2026Q1, Table_L1, Table_L2, Table_L3_1, Table_L3_2, Table_L3, Table_L4]
+    action: 解析多层表头与市场总额行_区分流量和期末存量_在2025Schema断点只桥接共同总额_保留原始精度与零值
+    output_refs: [HKIA-LTQ-METRIC-COMPARABILITY-2023Q1-2026Q1, market_total_core_facts_2023Q1_2026Q1_v0.1]
+    validation: 18_metrics_72_facts_source_cells_addressed_Q1_only_product_detail_deferred
+    status: completed_ready_for_reconciliation_and_growth_calculation
+
+  - step_id: PB01-STEP-044
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    role: qa_reviewer_and_growth_calculator
+    objective: 对72条季度核心事实执行公司明细加总复核并形成受控同比序列
+    input_refs: [market_total_core_facts_2023Q1_2026Q1_v0.1, HKIA-LTQ-METRIC-COMPARABILITY-2023Q1-2026Q1]
+    action: 动态识别公司行和Market_Total_按来源列加总_采用浮点尾差容限_对零基数禁算增速_定位异常指标公司贡献
+    output_refs: [TEST-HKIA-LTQ-CORE-RECON-001, core_metric_yoy_2023Q1_2026Q1_v0.1]
+    validation: 72_of_72_reconciled_54_growth_rows_6_zero_base_rates_suppressed_HSBC_concentration_identified
+    status: completed_ready_for_identity_bridge_and_context_enrichment
+
+  - step_id: PB01-STEP-045
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    role: entity_resolution_and_event_evidence_agent
+    objective: 建立2023Q1至2026Q1保险公司身份别名及业务转移桥
+    input_refs: [Name_of_Insurers_2023Q1, Name_of_Insurers_2024Q1, List_of_Insurers_2025Q1, List_of_Insurers_2026Q1, notes_2026Q1]
+    action: 比较四期简称和法律名称_以官方公告区分同实体改名迁册与跨实体业务转让_对仅出现消失名称保持开放状态
+    output_refs: [HKIA-LTQ-INSURER-IDENTITY-BRIDGE-001, insurer_identity_alias_bridge_v0.1]
+    validation: population_counts_68_67_69_69_four_event_bridges_verified_open_candidates_not_auto_merged
+    status: completed_core_bridge_ready_for_company_fact_materialization
+
+  - step_id: PB01-STEP-046
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    role: company_fact_builder_and_lineage_calculator
+    objective: 生成带法律实体键与业务Lineage键的季度公司级标准事实层
+    input_refs: [HKIA-LTQ-INSURER-IDENTITY-BRIDGE-001, HKIA-LTQ-METRIC-COMPARABILITY-2023Q1-2026Q1]
+    action: 展开四期18项公司指标_保留缺失与零值差异_写入Canonical_Entity和Business_Lineage_用公式生成转让调整序列和QC
+    output_refs: [HKIA-LTQ-COMPANY-FACT-LAYER-001]
+    validation: 4914_facts_2443_numeric_2471_missing_partition_pass_zero_formula_errors_five_sheets_visual_pass
+    status: completed_ready_for_rankings_and_event_context
+
+  - step_id: PB01-STEP-047
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    role: ranking_and_contribution_agent
+    objective: 生成2026Q1公司规模份额及2025Q1至2026Q1增量贡献榜
+    input_refs: [HKIA-LTQ-COMPANY-FACT-LAYER-001, HKIA-LTQ-INSURER-IDENTITY-BRIDGE-001]
+    action: 按Canonical_Entity聚合_公式计算当期规模市场份额及上期变化_按公司指标粒度执行可比性和转让闸门_生成受控贡献榜
+    output_refs: [TEST-HKIA-LTQ-COMPANY-RANKING-001, HKIA-LTQ-COMPANY-FACT-LAYER-001]
+    validation: four_metrics_top10_formula_error_zero_visual_pass_metric_specific_gate_regression_fixed
+    status: completed_ready_for_material_movement_context
+
 incidents:
   - incident_id: INC-PB-008
     run_id: RUN-HKIA-PHASE-B-SLICE-01

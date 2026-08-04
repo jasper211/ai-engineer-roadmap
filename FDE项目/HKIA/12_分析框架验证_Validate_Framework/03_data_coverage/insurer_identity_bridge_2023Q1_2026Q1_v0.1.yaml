@@ -1,0 +1,115 @@
+bridge_id: HKIA-LTQ-INSURER-IDENTITY-BRIDGE-001
+version: 0.1
+status: event_backed_core_bridge_with_open_candidates
+scope: quarterly_long_term_company_analysis_2023Q1_to_2026Q1
+
+population_counts:
+  2023Q1: 68
+  2024Q1: 67
+  2025Q1: 69
+  2026Q1: 69
+count_definition: distinct_abbreviated_names_in_inforce_individual_company_table_excluding_market_total
+
+bridge_rules:
+  - bridge_key: ENTITY_CTF_LIFE
+    event_class: same_legal_entity_name_change
+    source_names:
+      - period_end: 2024Q1
+        abbreviated_name: FTLife
+        legal_name: FTLife Insurance Company Limited
+      - period_start: 2025Q1
+        abbreviated_name: CTF Life
+        legal_name: Chow Tai Fook Life Insurance Company Limited
+    effective_date: 2024-07-22
+    evidence: https://www.ctflife.com.hk/pdf/en/about-ctflife/Press_release_New_Brand_Diverse_Experience_Value_Beyond_Insurance_CTF_Life_EN.pdf
+    analytical_treatment: map_both_names_to_one_canonical_entity_without_summing_same_period_rows
+    causal_growth_flag: none_from_name_change_alone
+
+  - bridge_key: ENTITY_AXA_CRI_HK
+    event_class: same_legal_entity_redomiciliation_and_name_change
+    source_names:
+      - periods: [2023Q1, 2024Q1, 2025Q1]
+        abbreviated_name: AXA China (Bermuda)
+        legal_name: AXA China Region Insurance Company (Bermuda) Limited
+      - periods: [2026Q1]
+        abbreviated_name: AXA CRI (HK)
+        legal_name: AXA China Region Insurance Company (Hong Kong) Limited
+    effective_date: 2026-01-26
+    evidence:
+      - https://www.axa.com.hk/en/article/axa-announces-re-domicile-completion
+      - https://www.ia.org.hk/en/supervision/reg_insurers_lloyd/files/06056536.pdf
+    analytical_treatment: map_to_one_canonical_entity_without_summing_names_across_periods
+    continuity_statement: legal_entity_rights_obligations_and_operations_unchanged
+
+  - bridge_key: ENTITY_AXA_CRI
+    event_class: abbreviation_change_only
+    source_names:
+      - periods: [2023Q1, 2024Q1, 2025Q1]
+        abbreviated_name: AXA China (HK)
+        legal_name: AXA China Region Insurance Company Limited
+      - periods: [2026Q1]
+        abbreviated_name: AXA CRI
+        legal_name: AXA China Region Insurance Company Limited
+    analytical_treatment: exact_legal_name_match_map_to_one_canonical_entity
+
+  - bridge_key: LINEAGE_CHUBB_LIFE_HK
+    event_class: long_term_business_transfer_between_legal_entities
+    source_names:
+      - transferor: Chubb Life
+        legal_name: Chubb Life Insurance Company Ltd.
+      - transferee: Chubb Life HK
+        legal_name: Chubb Life Insurance Hong Kong Limited
+    court_sanction_date: 2023-11-29
+    evidence: https://www.ia.org.hk/en/infocenter/files/Insurance_Authority-AR24_eng.pdf
+    analytical_treatment: sum_transferor_and_transferee_before_transfer_then_use_transferee_after_transfer_for_business_lineage_trend
+    company_legal_entity_treatment: keep_entities_separate
+
+  - bridge_key: LINEAGE_CANADA_TO_MYPACE
+    event_class: long_term_business_transfer_between_legal_entities
+    transferors:
+      - The Canada Life Assurance Company
+      - Canada Life Limited
+    transferee: MyPace Life Limited
+    effective_period: 2026Q1
+    evidence:
+      - workbook: 1q26_long.xlsx
+        sheet: notes
+        range: A1:A4
+      - https://www.ia.org.hk/tc/supervision/reg_insurers_lloyd/files/76631693.pdf
+    analytical_treatment: aggregate_all_available_transferor_and_transferee_rows_into_business_lineage_for_cross_event_comparison
+    company_legal_entity_treatment: keep_entities_separate
+    limitation: Canada_Life_Limited_has_no_separate_row_in_2025Q1_or_2026Q1_core_company_table
+    organic_growth_rule: recipient_growth_is_not_organic_growth_without_transfer_adjustment
+
+open_population_changes:
+  - names: [Blue Cross]
+    transition: removed_after_2023Q1
+    status: dataset_scope_change_not_proven_market_exit
+  - names: [Old Mutual Life]
+    transition: removed_after_2024Q1
+    status: unresolved_do_not_auto_merge
+  - names: [FuSure Re, Manufacturers Life, Prudential (America)]
+    transition: first_appear_2025Q1
+    status: first_appearance_in_dataset_not_market_entry
+  - names: [Lloyd's]
+    transition: appears_2025Q1_only
+    status: transitory_dataset_member_not_market_entry_or_exit
+
+agent_resolution_order:
+  - exact_legal_name
+  - verified_same_entity_name_change
+  - verified_business_transfer_lineage
+  - exact_abbreviated_name
+  - unresolved_candidate_hold
+
+forbidden_inferences:
+  - abbreviated_name_added_means_newly_authorized_insurer
+  - abbreviated_name_removed_means_insurer_exited_hong_kong
+  - portfolio_transfer_recipient_growth_is_organic_growth
+  - business_lineage_bridge_changes_legal_entity_identity
+  - fuzzy_name_similarity_is_sufficient_for_automatic_merge
+
+next_gate:
+  - materialize_company_metric_facts_with_canonical_entity_and_lineage_keys
+  - quantify_Chubb_and_Canada_MyPace_transfer_adjusted_series
+  - research_open_population_changes_only_if_material_to_claim

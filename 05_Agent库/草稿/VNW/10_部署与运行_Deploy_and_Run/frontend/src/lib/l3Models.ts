@@ -37,6 +37,7 @@ export interface ModelIndexItem {
     stage_name: string
     stage_sequence: number | null
   }[]
+  kpis: { kpi_name: string; source_type: 'definition' | 'mark_priority_draft' }[]
 }
 
 export interface ModelIndex {
@@ -126,13 +127,19 @@ export interface L4Item {
     recommended_path: string
   }
   position_family: null | {
-    candidate_agent: string
     family_code: string
     family_name: string
-    headcount: number
-    headcount_source: string
-    confidence: string
+    category_name: string
+    category_type: string
   }
+  business_evidence: {
+    schema: string
+    table: string
+    row_count: number | null
+    matched_columns: string[]
+    rationale: string
+    confidence: 'strong' | 'weak'
+  }[]
   evidence_refs: Record<string, string>
 }
 
@@ -210,7 +217,17 @@ export interface L3Model {
   l4s: L4Item[]
   value_nodes: Record<string, unknown>[]
   vn_l4_mappings: Record<string, unknown>[]
-  kpi_mappings: Record<string, unknown>[]
+  kpi_mappings: {
+    kpi_code: string
+    kpi_name: string
+    source_type: 'definition' | 'mark_priority_draft'
+    kpi_formula?: string | null
+    kpi_unit?: string | null
+    kpi_target?: number | null
+    measurement_cycle?: string | null
+    contribution_weight?: number | null
+    weight_confirmed?: string | null
+  }[]
   value_stream_mappings: Record<string, unknown>[]
   gates: Record<'M' | 'E' | 'A', { status: GateStatus; checks: GateCheck[] }>
   model_readiness: {

@@ -26,8 +26,8 @@
           "EVD-a7d407488fd07ceb8a7d",
           "EVD-b93409fee124954b4b54",
           "EVD-d281c836396897fb53b4",
-          "EVD-eb72dc77496d159d7cea",
-          "EVD-ebeb56a066e9819c97e8"
+          "EVD-ebeb56a066e9819c97e8",
+          "EVD-fc1dc0c6c724e33d2ef1"
         ],
         "handoff_triggers": [],
         "human_responsibility": "",
@@ -59,7 +59,7 @@
           "EVD-cd3bfc8c8e2842db3d97",
           "EVD-ce552a150bde7c96d109",
           "EVD-e77558d4d310f4e7fe86",
-          "EVD-eb72dc77496d159d7cea"
+          "EVD-fc1dc0c6c724e33d2ef1"
         ],
         "handoff_triggers": [],
         "human_responsibility": "",
@@ -91,7 +91,7 @@
           "EVD-aab6f73c27760fb4513f",
           "EVD-bd546e0783462e7d2d68",
           "EVD-d7477ca52bbd238ea9b4",
-          "EVD-eb72dc77496d159d7cea"
+          "EVD-fc1dc0c6c724e33d2ef1"
         ],
         "handoff_triggers": [],
         "human_responsibility": "",
@@ -123,7 +123,7 @@
           "EVD-66ad86c1403a6c61ebd1",
           "EVD-a1d26056bdd753ed1e11",
           "EVD-e8b95e8a75c62cf0cdcf",
-          "EVD-eb72dc77496d159d7cea"
+          "EVD-fc1dc0c6c724e33d2ef1"
         ],
         "handoff_triggers": [],
         "human_responsibility": "",
@@ -230,7 +230,7 @@
     ]
   },
   "analysis_freshness": "PENDING_MODEL",
-  "analysis_input_hash": "07952ec8f8734fd82a53d335570495b6549ea787769bd6c62d3a6f774507153d",
+  "analysis_input_hash": "80a59f4b939baf8f19580d3ed6ab5d00aaf5d094318bb44c55ed772c29051bfe",
   "blueprint": {
     "blueprint_value_nodes": [],
     "coverage": "INDEXED",
@@ -1455,31 +1455,6 @@
       "confidence": "HIGH",
       "conflict_note": "",
       "evidence_class": "SUPPLEMENTAL",
-      "evidence_id": "EVD-eb72dc77496d159d7cea",
-      "field_name": "position_family",
-      "source": {
-        "observed_at": "",
-        "source_field": "岗位族代码",
-        "source_key": "KA赋能运维Agent",
-        "source_object": "候选Agent岗位族映射_HR对齐版_v1.0.csv",
-        "source_system": "EA项目_权威数据",
-        "source_version": "v1.0"
-      },
-      "status": "ACTIVE",
-      "transform_rule": "",
-      "value": {
-        "candidate_agent": "KA赋能运维Agent",
-        "confidence": "HR权威数据核实",
-        "family_code": "JF-03",
-        "family_name": "机构业务族",
-        "headcount": 52,
-        "headcount_source": "2026-07-28_人员归属方案_v5.3_SUBMITTED.md 一节映射统计总表"
-      }
-    },
-    {
-      "confidence": "HIGH",
-      "conflict_note": "",
-      "evidence_class": "SUPPLEMENTAL",
       "evidence_id": "EVD-ebeb56a066e9819c97e8",
       "field_name": "agent_d6_compliance",
       "source": {
@@ -1493,6 +1468,29 @@
       "status": "ACTIVE",
       "transform_rule": "",
       "value": 2
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-fc1dc0c6c724e33d2ef1",
+      "field_name": "position_family",
+      "source": {
+        "observed_at": "",
+        "source_field": "各族详细映射",
+        "source_key": "L3-KAOE",
+        "source_object": "2026-07-20_68L3岗位族归属设计_v6.1_SUBMITTED.md",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v6.1"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "category_name": "KA管理岗",
+        "category_type": "目标态核心",
+        "family_code": "JF-03",
+        "family_name": "机构业务族"
+      }
     }
   ],
   "gates": {
@@ -1610,6 +1608,7 @@
       "kpi_name": "KA赋能动作完成率",
       "l3_code": "L3-KAOE",
       "row_status": "blocked_mk05",
+      "source_type": "mark_priority_draft",
       "weight_confirmed": "blocked"
     },
     {
@@ -1618,7 +1617,53 @@
       "kpi_name": "签单转化率（周跟踪）",
       "l3_code": "L3-KAOE",
       "row_status": "blocked_mk05",
+      "source_type": "mark_priority_draft",
       "weight_confirmed": "blocked"
+    },
+    {
+      "kpi_code": "KPI_12",
+      "kpi_formula": null,
+      "kpi_name": "Top N 集中度",
+      "kpi_target": null,
+      "kpi_unit": null,
+      "measurement_cycle": "月",
+      "source_type": "definition"
+    },
+    {
+      "kpi_code": "KPI_16",
+      "kpi_formula": null,
+      "kpi_name": "签单转化率 (Sign Conv.)",
+      "kpi_target": null,
+      "kpi_unit": null,
+      "measurement_cycle": "月",
+      "source_type": "definition"
+    },
+    {
+      "kpi_code": "KPI_31",
+      "kpi_formula": null,
+      "kpi_name": "人均 APE (Productivity)",
+      "kpi_target": null,
+      "kpi_unit": null,
+      "measurement_cycle": "月",
+      "source_type": "definition"
+    },
+    {
+      "kpi_code": "KPI_35",
+      "kpi_formula": null,
+      "kpi_name": "新签成活率",
+      "kpi_target": null,
+      "kpi_unit": null,
+      "measurement_cycle": "月",
+      "source_type": "definition"
+    },
+    {
+      "kpi_code": "KPI_37",
+      "kpi_formula": null,
+      "kpi_name": "培训改善度",
+      "kpi_target": null,
+      "kpi_unit": null,
+      "measurement_cycle": "月",
+      "source_type": "definition"
     }
   ],
   "l2_capabilities": [
@@ -1632,6 +1677,7 @@
   "l3_name": "陪跑与转化",
   "l4s": [
     {
+      "business_evidence": [],
       "d1_d6": {
         "agent_d1_input_struct": 2,
         "agent_d2_rule_clear": 1,
@@ -1654,19 +1700,17 @@
         "l4_deliverable": "EVD-411d006cdbc4234cef09",
         "l4_deliverable_type": "EVD-0e5656434cb2632b20e8",
         "l4_name": "EVD-965665b1c3968e10a808",
-        "position_family": "EVD-eb72dc77496d159d7cea",
+        "position_family": "EVD-fc1dc0c6c724e33d2ef1",
         "skill_feasibility": "EVD-b93409fee124954b4b54"
       },
       "human_touchpoint": "人工执行：陪跑需求分析",
       "l4_code": "L4-KAOE-01",
       "l4_name": "陪跑需求分析",
       "position_family": {
-        "candidate_agent": "KA赋能运维Agent",
-        "confidence": "HR权威数据核实",
+        "category_name": "KA管理岗",
+        "category_type": "目标态核心",
         "family_code": "JF-03",
-        "family_name": "机构业务族",
-        "headcount": 52,
-        "headcount_source": "2026-07-28_人员归属方案_v5.3_SUBMITTED.md 一节映射统计总表"
+        "family_name": "机构业务族"
       },
       "skill_feasibility": {
         "action_nature": "判断/策略/认知类",
@@ -1681,6 +1725,7 @@
       "tier": "Hybrid"
     },
     {
+      "business_evidence": [],
       "d1_d6": {
         "agent_d1_input_struct": 2,
         "agent_d2_rule_clear": 1,
@@ -1703,19 +1748,17 @@
         "l4_deliverable": "EVD-cd3bfc8c8e2842db3d97",
         "l4_deliverable_type": "EVD-8537d3fa3abafb5195a5",
         "l4_name": "EVD-a1a55de8fdae9bf8328e",
-        "position_family": "EVD-eb72dc77496d159d7cea",
+        "position_family": "EVD-fc1dc0c6c724e33d2ef1",
         "skill_feasibility": "EVD-e77558d4d310f4e7fe86"
       },
       "human_touchpoint": "人工执行：陪跑计划制定",
       "l4_code": "L4-KAOE-02",
       "l4_name": "陪跑计划制定",
       "position_family": {
-        "candidate_agent": "KA赋能运维Agent",
-        "confidence": "HR权威数据核实",
+        "category_name": "KA管理岗",
+        "category_type": "目标态核心",
         "family_code": "JF-03",
-        "family_name": "机构业务族",
-        "headcount": 52,
-        "headcount_source": "2026-07-28_人员归属方案_v5.3_SUBMITTED.md 一节映射统计总表"
+        "family_name": "机构业务族"
       },
       "skill_feasibility": {
         "action_nature": "信息处理/事务类",
@@ -1730,6 +1773,7 @@
       "tier": "Auto"
     },
     {
+      "business_evidence": [],
       "d1_d6": {
         "agent_d1_input_struct": 2,
         "agent_d2_rule_clear": 1,
@@ -1752,19 +1796,17 @@
         "l4_deliverable": "EVD-aa17a4660a9714816d2c",
         "l4_deliverable_type": "EVD-1a4d4f394f4d9c2e95d3",
         "l4_name": "EVD-7acc114cd2a4a6514b45",
-        "position_family": "EVD-eb72dc77496d159d7cea",
+        "position_family": "EVD-fc1dc0c6c724e33d2ef1",
         "skill_feasibility": "EVD-377d31f8b74cdd5e9674"
       },
       "human_touchpoint": "人工执行：陪跑执行与跟进",
       "l4_code": "L4-KAOE-03",
       "l4_name": "陪跑执行与跟进",
       "position_family": {
-        "candidate_agent": "KA赋能运维Agent",
-        "confidence": "HR权威数据核实",
+        "category_name": "KA管理岗",
+        "category_type": "目标态核心",
         "family_code": "JF-03",
-        "family_name": "机构业务族",
-        "headcount": 52,
-        "headcount_source": "2026-07-28_人员归属方案_v5.3_SUBMITTED.md 一节映射统计总表"
+        "family_name": "机构业务族"
       },
       "skill_feasibility": {
         "action_nature": "信息处理/事务类",
@@ -1779,6 +1821,7 @@
       "tier": "Auto"
     },
     {
+      "business_evidence": [],
       "d1_d6": {
         "agent_d1_input_struct": 1,
         "agent_d2_rule_clear": 1,
@@ -1801,19 +1844,17 @@
         "l4_deliverable": "EVD-66ad86c1403a6c61ebd1",
         "l4_deliverable_type": "EVD-565b26ebd1b5510dc64f",
         "l4_name": "EVD-e8b95e8a75c62cf0cdcf",
-        "position_family": "EVD-eb72dc77496d159d7cea",
+        "position_family": "EVD-fc1dc0c6c724e33d2ef1",
         "skill_feasibility": "EVD-a1d26056bdd753ed1e11"
       },
       "human_touchpoint": "人工执行：业务跟进与复盘",
       "l4_code": "L4-KAOE-04",
       "l4_name": "业务跟进与复盘",
       "position_family": {
-        "candidate_agent": "KA赋能运维Agent",
-        "confidence": "HR权威数据核实",
+        "category_name": "KA管理岗",
+        "category_type": "目标态核心",
         "family_code": "JF-03",
-        "family_name": "机构业务族",
-        "headcount": 52,
-        "headcount_source": "2026-07-28_人员归属方案_v5.3_SUBMITTED.md 一节映射统计总表"
+        "family_name": "机构业务族"
       },
       "skill_feasibility": {
         "action_nature": "信息处理/事务类",
@@ -1870,6 +1911,11 @@
   },
   "schema_version": "vnw.l3-model.v1",
   "source_locations": {
+    "2026-07-20_68L3岗位族归属设计_v6.1_SUBMITTED.md": {
+      "record_keys": [
+        "L3-KAOE"
+      ]
+    },
     "L4两阶段复核_全量368条_合并版_v1.0.csv": {
       "rows": [
         215,
@@ -1902,11 +1948,6 @@
     },
     "process_analytics.dim_vn": {
       "record_keys": []
-    },
-    "候选Agent岗位族映射_HR对齐版_v1.0.csv": {
-      "record_keys": [
-        "KA赋能运维Agent"
-      ]
     },
     "流程蓝图_L3-KAOE_陪跑与转化_V1.1.md": {
       "lines": [

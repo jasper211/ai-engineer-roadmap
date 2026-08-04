@@ -1,0 +1,53 @@
+test_id: TEST-HKIA-LTQ-CORE-RECON-001
+version: 0.1
+status: passed_with_context_hold
+inputs:
+  facts: market_total_core_facts_2023Q1_2026Q1_v0.1
+  periods: [2023Q1, 2024Q1, 2025Q1, 2026Q1]
+  metric_count: 18
+  fact_count: 72
+
+reconciliation:
+  method: sum_numeric_company_rows_and_compare_to_official_market_total
+  passed: 72
+  failed: 0
+  arithmetic_tolerance_HKD_thousand: 0.00001
+  maximum_absolute_difference_HKD_thousand: 0.0000019073486328125
+  maximum_difference_class: floating_point_tail_only
+
+growth_output:
+  comparisons: [2023Q1_to_2024Q1, 2024Q1_to_2025Q1, 2025Q1_to_2026Q1]
+  row_count: 54
+  calculated_rate_rows: 48
+  both_zero_no_rate_rows: 6
+  rule: prior_value_zero_never_yields_percentage_growth
+  interpretation_state: descriptive_only_pending_industry_context
+
+outlier_review:
+  metric_id: NB_GROUP_LIVES
+  period: 2025Q1
+  market_total: 201727
+  source_reconciliation: passed
+  largest_contributor:
+    insurer: HSBC_Life
+    value: 162672
+    market_share: 0.8063967639433491
+    adjacent_values:
+      2024Q1: 2884
+      2026Q1: 1635
+  conclusion: source_valid_and_company_concentrated_cause_not_yet_evidenced
+  interpretation_rule: do_not_describe_as_structural_market_growth_or_decline_before_event_context_is_sourced
+
+headline_descriptive_movements:
+  2025Q1_to_2026Q1:
+    individual_new_business_single_premium_growth: 0.9307705653145264
+    individual_new_business_annualized_premium_growth: 0.08860151281255191
+    individual_inforce_policy_growth: 0.024851450217725723
+    individual_inforce_non_single_premium_growth: 0.17989825670541548
+    retirement_fund_balance_growth: 0.05569494002768005
+  claim_status: validated_calculation_not_yet_causal_interpretation
+
+next_gate:
+  - insurer_identity_bridge
+  - source_industry_context_for_HSBC_2025Q1_group_lives
+  - calculate_contribution_and_mix_metrics

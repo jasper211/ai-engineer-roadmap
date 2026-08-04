@@ -1,0 +1,130 @@
+matrix_id: HKIA-LTQ-METRIC-COMPARABILITY-2023Q1-2026Q1
+version: 0.1
+status: core_market_total_layer_mapped
+source_manifest: HKIA-LTQ-2023Q1-2026Q1
+
+schema_break:
+  boundary: 2025Q1
+  before:
+    periods: [2023Q1, 2024Q1]
+    individual_axis: [non_linked_class_A, linked_class_C, other_classes_B_D_E_F]
+    inforce_layout: [Table_L3_1, Table_L3_2]
+  after:
+    periods: [2025Q1, 2025Q4, 2026Q1]
+    individual_axis: [participating, other_excluding_group, linked_class_C]
+    inforce_layout: [Table_L3]
+  interpretation: 分类明细不可因列位相近而直接串联_市场总额可按共同业务范围桥接
+
+core_metrics:
+  - metric_id: NB_IND_TOTAL_SINGLE_PREMIUM
+    grain: market_total
+    unit: HKD_thousand
+    period_basis: flow_during_period
+    comparability: comparable_with_schema_bridge
+  - metric_id: NB_IND_TOTAL_ANNUALIZED_PREMIUM
+    grain: market_total
+    unit: HKD_thousand
+    period_basis: flow_during_period
+    comparability: comparable_with_schema_bridge
+  - metric_id: NB_GROUP_POLICIES
+    grain: market_total
+    unit: count
+    period_basis: flow_during_period
+    comparability: directly_comparable_by_label
+  - metric_id: NB_GROUP_LIVES
+    grain: market_total
+    unit: count
+    period_basis: flow_during_period
+    comparability: directly_comparable_by_label_with_outlier_review
+  - metric_id: NB_GROUP_SINGLE_PREMIUM
+    grain: market_total
+    unit: HKD_thousand
+    period_basis: flow_during_period
+    comparability: directly_comparable_by_label
+  - metric_id: NB_GROUP_ANNUALIZED_PREMIUM
+    grain: market_total
+    unit: HKD_thousand
+    period_basis: flow_during_period
+    comparability: directly_comparable_by_label
+  - metric_id: IF_IND_TOTAL_POLICIES
+    grain: market_total
+    unit: count
+    period_basis: stock_at_period_end
+    comparability: comparable_with_schema_bridge
+  - metric_id: IF_IND_TOTAL_SUMS_ASSURED_OR_ANNUITIES
+    grain: market_total
+    unit: HKD_thousand
+    period_basis: stock_at_period_end
+    comparability: comparable_with_schema_bridge
+  - metric_id: IF_IND_TOTAL_SINGLE_PREMIUM_RECEIVABLE
+    grain: market_total
+    unit: HKD_thousand
+    period_basis: flow_during_period
+    comparability: comparable_with_schema_bridge
+  - metric_id: IF_IND_TOTAL_NON_SINGLE_PREMIUM_RECEIVABLE
+    grain: market_total
+    unit: HKD_thousand
+    period_basis: flow_during_period
+    comparability: comparable_with_schema_bridge
+  - metric_id: IF_GROUP_NON_RETIREMENT_POLICIES
+    grain: market_total
+    unit: count
+    period_basis: stock_at_period_end
+    comparability: directly_comparable_by_label
+  - metric_id: IF_GROUP_NON_RETIREMENT_LIVES
+    grain: market_total
+    unit: count
+    period_basis: stock_at_period_end
+    comparability: directly_comparable_by_label
+  - metric_id: IF_GROUP_NON_RETIREMENT_SINGLE_PREMIUM_RECEIVABLE
+    grain: market_total
+    unit: HKD_thousand
+    period_basis: flow_during_period
+    comparability: directly_comparable_by_label
+  - metric_id: IF_GROUP_NON_RETIREMENT_NON_SINGLE_PREMIUM_RECEIVABLE
+    grain: market_total
+    unit: HKD_thousand
+    period_basis: flow_during_period
+    comparability: directly_comparable_by_label
+  - metric_id: IF_RETIREMENT_SCHEMES
+    grain: market_total
+    unit: count
+    period_basis: stock_at_period_end
+    comparability: directly_comparable_by_label
+  - metric_id: IF_RETIREMENT_ENDING_FUND_BALANCE
+    grain: market_total
+    unit: HKD_thousand
+    period_basis: stock_at_period_end
+    comparability: directly_comparable_by_label
+  - metric_id: IF_RETIREMENT_SINGLE_CONTRIBUTIONS
+    grain: market_total
+    unit: HKD_thousand
+    period_basis: flow_during_period
+    comparability: directly_comparable_by_label
+  - metric_id: IF_RETIREMENT_NON_SINGLE_CONTRIBUTIONS
+    grain: market_total
+    unit: HKD_thousand
+    period_basis: flow_during_period
+    comparability: directly_comparable_by_label
+
+deferred_dimensions:
+  - dimension: individual_product_class
+    reason: 2025分类轴由非相连_相连_其他改为分红_其他_相连
+  - dimension: insurer_growth
+    reason: 需先建立公司别名和2026Q1业务转移桥
+  - dimension: currency_premium_term_and_channel
+    reason: 需分别验证2023_2024旧表与2025以后新表的字段覆盖
+
+quality_gates:
+  - source_value_must_come_from_market_total_row
+  - period_basis_must_be_flow_or_stock
+  - Q1_series_must_not_include_2025Q4
+  - zero_must_not_be_converted_to_missing
+  - decimal_values_must_not_be_rounded_in_normalized_facts
+  - classification_detail_requires_separate_schema_mapping
+
+next_gate:
+  - reconcile_market_totals_to_company_detail
+  - calculate_same_period_growth_with_source_precision
+  - review_NB_GROUP_LIVES_2025Q1_outlier
+  - build_insurer_identity_bridge

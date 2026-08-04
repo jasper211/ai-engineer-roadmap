@@ -16,6 +16,7 @@
         "deliverable_role": "",
         "evidence_refs": [
           "EVD-247e65108d7f70e6c299",
+          "EVD-290e14e2a9d271e4cf89",
           "EVD-3e347631c92fd8607633",
           "EVD-41257964c12214eb344d",
           "EVD-555ce78f159de386e7d5",
@@ -23,7 +24,6 @@
           "EVD-911d8d9b72d45bd0d8b7",
           "EVD-980c7fab4d81ab564638",
           "EVD-a2756bb98937687ba53c",
-          "EVD-a7e48446ea02ab0826e6",
           "EVD-c99709588f78e7c1eadc",
           "EVD-e33548f03b84aa7ddc10",
           "EVD-e655119dc4ade35046cc",
@@ -49,13 +49,13 @@
         "evidence_refs": [
           "EVD-02a4d6cc4cfad1125e1d",
           "EVD-15b1aca6be9b0439c95a",
+          "EVD-290e14e2a9d271e4cf89",
           "EVD-307f6238a3c376b4084e",
           "EVD-56fae339eb0148976860",
           "EVD-6932f40a18611cadd31c",
           "EVD-74b017a4585c9c67bcc8",
           "EVD-99b7b4ba531e36a4ff83",
           "EVD-a394f745e43e76ef39d9",
-          "EVD-a7e48446ea02ab0826e6",
           "EVD-ba83f829c6d9d5853bea",
           "EVD-ece73f08b4cb57a9e986",
           "EVD-f2f4033a1700940f3883",
@@ -82,12 +82,12 @@
           "EVD-07b30b25b5665533f6e1",
           "EVD-1d97b4a865c3ec749dae",
           "EVD-28cb8b7b52f25a69f4d0",
+          "EVD-290e14e2a9d271e4cf89",
           "EVD-45d18e7f7a9c9813187d",
           "EVD-5bd9a422144cc92ee0ac",
           "EVD-62a2dadb2ca660c280e3",
           "EVD-84ce2994bc8aeb6ffbc2",
           "EVD-a3d5b304d207c38a099a",
-          "EVD-a7e48446ea02ab0826e6",
           "EVD-b5829298d6d2549bd5be",
           "EVD-c5190aa9d7aee4136c0e",
           "EVD-e27626b2bece9f15dade",
@@ -179,7 +179,7 @@
     ]
   },
   "analysis_freshness": "PENDING_MODEL",
-  "analysis_input_hash": "07d0f42d24fde90d4f68e2c98277034d1bd3155666242cf7067e7fed08457296",
+  "analysis_input_hash": "dbf1a986c8e9df261907f9325a26ca5607b6c1c31fec6b24dcd3dc3b48e55c85",
   "blueprint": {
     "blueprint_value_nodes": [],
     "coverage": "INDEXED",
@@ -432,6 +432,29 @@
       "status": "ACTIVE",
       "transform_rule": "",
       "value": 1
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-290e14e2a9d271e4cf89",
+      "field_name": "position_family",
+      "source": {
+        "observed_at": "",
+        "source_field": "各族详细映射",
+        "source_key": "L3-COB",
+        "source_object": "2026-07-20_68L3岗位族归属设计_v6.1_SUBMITTED.md",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v6.1"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "category_name": "服务执行与跟踪岗",
+        "category_type": "目标态核心",
+        "family_code": "JF-06",
+        "family_name": "权益服务族"
+      }
     },
     {
       "confidence": "HIGH",
@@ -842,31 +865,6 @@
     {
       "confidence": "HIGH",
       "conflict_note": "",
-      "evidence_class": "SUPPLEMENTAL",
-      "evidence_id": "EVD-a7e48446ea02ab0826e6",
-      "field_name": "position_family",
-      "source": {
-        "observed_at": "",
-        "source_field": "岗位族代码",
-        "source_key": "权益客户交付Agent",
-        "source_object": "候选Agent岗位族映射_HR对齐版_v1.0.csv",
-        "source_system": "EA项目_权威数据",
-        "source_version": "v1.0"
-      },
-      "status": "ACTIVE",
-      "transform_rule": "",
-      "value": {
-        "candidate_agent": "权益客户交付Agent",
-        "confidence": "HR权威数据核实",
-        "family_code": "JF-06",
-        "family_name": "权益服务族",
-        "headcount": 11,
-        "headcount_source": "2026-07-28_人员归属方案_v5.3_SUBMITTED.md 一节映射统计总表"
-      }
-    },
-    {
-      "confidence": "HIGH",
-      "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
       "evidence_id": "EVD-a7ff19ccc086ac4ab8d6",
       "field_name": "gate3_traceable",
@@ -1266,7 +1264,17 @@
     }
   },
   "has_demo": false,
-  "kpi_mappings": [],
+  "kpi_mappings": [
+    {
+      "kpi_code": "KPI_35",
+      "kpi_formula": null,
+      "kpi_name": "新签成活率",
+      "kpi_target": null,
+      "kpi_unit": null,
+      "measurement_cycle": "月",
+      "source_type": "definition"
+    }
+  ],
   "l2_capabilities": [
     {
       "l2_code": "L2-05.3",
@@ -1278,6 +1286,7 @@
   "l3_name": "客户入驻权益服务启动",
   "l4s": [
     {
+      "business_evidence": [],
       "d1_d6": {
         "agent_d1_input_struct": 2,
         "agent_d2_rule_clear": 1,
@@ -1300,19 +1309,17 @@
         "l4_deliverable": "EVD-980c7fab4d81ab564638",
         "l4_deliverable_type": "EVD-41257964c12214eb344d",
         "l4_name": "EVD-a2756bb98937687ba53c",
-        "position_family": "EVD-a7e48446ea02ab0826e6",
+        "position_family": "EVD-290e14e2a9d271e4cf89",
         "skill_feasibility": "EVD-555ce78f159de386e7d5"
       },
       "human_touchpoint": null,
       "l4_code": "L4-COB-01",
       "l4_name": "服务项目启动",
       "position_family": {
-        "candidate_agent": "权益客户交付Agent",
-        "confidence": "HR权威数据核实",
+        "category_name": "服务执行与跟踪岗",
+        "category_type": "目标态核心",
         "family_code": "JF-06",
-        "family_name": "权益服务族",
-        "headcount": 11,
-        "headcount_source": "2026-07-28_人员归属方案_v5.3_SUBMITTED.md 一节映射统计总表"
+        "family_name": "权益服务族"
       },
       "skill_feasibility": {
         "action_nature": "信息处理/事务类",
@@ -1327,6 +1334,7 @@
       "tier": "Auto"
     },
     {
+      "business_evidence": [],
       "d1_d6": {
         "agent_d1_input_struct": 2,
         "agent_d2_rule_clear": 2,
@@ -1349,19 +1357,17 @@
         "l4_deliverable": "EVD-307f6238a3c376b4084e",
         "l4_deliverable_type": "EVD-f802da0147c13e89bcc8",
         "l4_name": "EVD-ece73f08b4cb57a9e986",
-        "position_family": "EVD-a7e48446ea02ab0826e6",
+        "position_family": "EVD-290e14e2a9d271e4cf89",
         "skill_feasibility": "EVD-15b1aca6be9b0439c95a"
       },
       "human_touchpoint": null,
       "l4_code": "L4-COB-02",
       "l4_name": "系统与账户初始化",
       "position_family": {
-        "candidate_agent": "权益客户交付Agent",
-        "confidence": "HR权威数据核实",
+        "category_name": "服务执行与跟踪岗",
+        "category_type": "目标态核心",
         "family_code": "JF-06",
-        "family_name": "权益服务族",
-        "headcount": 11,
-        "headcount_source": "2026-07-28_人员归属方案_v5.3_SUBMITTED.md 一节映射统计总表"
+        "family_name": "权益服务族"
       },
       "skill_feasibility": {
         "action_nature": "信息处理/事务类",
@@ -1376,6 +1382,7 @@
       "tier": "Auto"
     },
     {
+      "business_evidence": [],
       "d1_d6": {
         "agent_d1_input_struct": 2,
         "agent_d2_rule_clear": 1,
@@ -1398,19 +1405,17 @@
         "l4_deliverable": "EVD-f2c9ce6b8dcab64230be",
         "l4_deliverable_type": "EVD-07b30b25b5665533f6e1",
         "l4_name": "EVD-c5190aa9d7aee4136c0e",
-        "position_family": "EVD-a7e48446ea02ab0826e6",
+        "position_family": "EVD-290e14e2a9d271e4cf89",
         "skill_feasibility": "EVD-62a2dadb2ca660c280e3"
       },
       "human_touchpoint": null,
       "l4_code": "L4-COB-03",
       "l4_name": "客户赋能",
       "position_family": {
-        "candidate_agent": "权益客户交付Agent",
-        "confidence": "HR权威数据核实",
+        "category_name": "服务执行与跟踪岗",
+        "category_type": "目标态核心",
         "family_code": "JF-06",
-        "family_name": "权益服务族",
-        "headcount": 11,
-        "headcount_source": "2026-07-28_人员归属方案_v5.3_SUBMITTED.md 一节映射统计总表"
+        "family_name": "权益服务族"
       },
       "skill_feasibility": {
         "action_nature": "语义复核判定",
@@ -1467,6 +1472,11 @@
   },
   "schema_version": "vnw.l3-model.v1",
   "source_locations": {
+    "2026-07-20_68L3岗位族归属设计_v6.1_SUBMITTED.md": {
+      "record_keys": [
+        "L3-COB"
+      ]
+    },
     "L4两阶段复核_全量368条_合并版_v1.0.csv": {
       "rows": [
         271,
@@ -1497,11 +1507,6 @@
     "process_analytics.dim_vn": {
       "record_keys": [
         "VN-EQ-07"
-      ]
-    },
-    "候选Agent岗位族映射_HR对齐版_v1.0.csv": {
-      "record_keys": [
-        "权益客户交付Agent"
       ]
     },
     "流程蓝图_L3-COB_客户入驻权益服务启动_V1.0.md": {
