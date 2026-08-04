@@ -139,6 +139,7 @@ export interface L4Item {
     matched_columns: string[]
     rationale: string
     confidence: 'strong' | 'weak'
+    evidence_type: 'output' | 'rule' | 'workflow' | 'audit'
   }[]
   evidence_refs: Record<string, string>
 }

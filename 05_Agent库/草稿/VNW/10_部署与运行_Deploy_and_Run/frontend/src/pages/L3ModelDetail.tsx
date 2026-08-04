@@ -60,6 +60,13 @@ function shortSkillGrade(grade: string) {
   return grade.split('(')[0].trim()
 }
 
+const EVIDENCE_TYPE_INFO: Record<string, { label: string; tone: string }> = {
+  output: { label: '产出证据', tone: 'text-emerald-700' },
+  rule: { label: '规则证据', tone: 'text-indigo-700' },
+  workflow: { label: '流程状态证据', tone: 'text-amber-700' },
+  audit: { label: '追溯证据', tone: 'text-slate-600' },
+}
+
 function roleTone(role: string) {
   if (role.startsWith('价值')) return 'border-blue-200 bg-blue-50/70'
   if (role.startsWith('控制')) return 'border-rose-200 bg-rose-50/70'
@@ -289,7 +296,13 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
     const matched = model.l4s.filter(l4 => l4.business_evidence.length > 0)
     if (matched.length === 0) return null
     const strong = matched.filter(l4 => l4.business_evidence.some(e => e.confidence === 'strong')).length
-    return { matched: matched.length, total: model.l4s.length, strong }
+    const byType: Record<string, number> = {}
+    for (const l4 of model.l4s) {
+      for (const evidence of l4.business_evidence) {
+        byType[evidence.evidence_type] = (byType[evidence.evidence_type] ?? 0) + 1
+      }
+    }
+    return { matched: matched.length, total: model.l4s.length, strong, byType }
   }, [model])
   const taskL4Options = useMemo(() => [...new Set(cards.map(card => card.l4_code))].sort(), [cards])
   const visibleCards = useMemo(
@@ -587,11 +600,21 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
         </div>
         {businessDataSummary && (
           <div className="mt-3 rounded-lg border border-emerald-200 bg-emerald-50/70 p-3">
-            <p className="text-[11px] font-semibold text-emerald-800">业务数据现状 · 试点匹配结果</p>
+            <p className="text-[11px] font-semibold text-emerald-800">业务数据现状 · L3-COM参照模型</p>
             <p className="mt-1 text-[11px] leading-5 text-text-secondary">
-              本L3 {businessDataSummary.total} 个L4中，{businessDataSummary.matched} 个定位到真实业务系统数据表（{businessDataSummary.strong} 个强匹配），其余 {businessDataSummary.total - businessDataSummary.matched} 个未找到对应表——可能业务数据仓库本身不覆盖该环节，非遗漏。
+              本L3 {businessDataSummary.total} 个L4中，{businessDataSummary.matched} 个定位到真实业务系统数据表（{businessDataSummary.strong} 个强匹配），其余 {businessDataSummary.total - businessDataSummary.matched} 个未找到对应表——业务数据仓库122张表逐一核实后确认不覆盖该环节（税务/争议/合规拦截），非匹配遗漏。
             </p>
-            <p className="mt-2 text-[9px] text-text-muted">SSOT：public/comm_sandbox/fin_sandbox业务数据仓库（人工按业务含义匹配，非外键关联，2026-08-04 L3-COM试点；行数为实时查询）</p>
+            <p className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[10px]">
+              {Object.entries(businessDataSummary.byType).map(([type, count]) => (
+                <span key={type} className={EVIDENCE_TYPE_INFO[type]?.tone}>
+                  {EVIDENCE_TYPE_INFO[type]?.label ?? type} × {count}
+                </span>
+              ))}
+            </p>
+            <p className="mt-2 text-[9px] text-text-muted">
+              产出证据=交付物实际数据；规则证据=判断逻辑已参数化(利于Skill封装)；流程状态证据=暴露当前人工关卡位置；追溯证据=变更可追溯程度。
+            </p>
+            <p className="mt-2 text-[9px] text-text-muted">SSOT：public/comm_sandbox/fin_sandbox业务数据仓库（人工按业务含义匹配，非外键关联，2026-08-04基于122张表完整目录核实；行数为实时查询）</p>
           </div>
         )}
         <div className="mt-4 grid gap-3 md:grid-cols-2">
@@ -657,13 +680,14 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
               {l4.business_evidence.length > 0 ? (
                 <div className="mt-2 space-y-1">
                   {l4.business_evidence.map(evidence => (
-                    <p key={`${evidence.schema}.${evidence.table}`} className={`text-[10px] leading-4 ${evidence.confidence === 'strong' ? 'text-emerald-700' : 'text-slate-500'}`}>
-                      业务系统：<span className="font-mono">{evidence.schema}.{evidence.table}</span>（{evidence.row_count ?? '?'}行，{evidence.confidence === 'strong' ? '强匹配' : '弱匹配'}）· {evidence.rationale}
+                    <p key={`${evidence.schema}.${evidence.table}`} className="text-[10px] leading-4 text-text-secondary">
+                      <span className={`font-semibold ${EVIDENCE_TYPE_INFO[evidence.evidence_type]?.tone}`}>[{EVIDENCE_TYPE_INFO[evidence.evidence_type]?.label ?? evidence.evidence_type}]</span>{' '}
+                      <span className="font-mono">{evidence.schema}.{evidence.table}</span>（{evidence.row_count ?? '?'}行，{evidence.confidence === 'strong' ? '强匹配' : '弱匹配'}）· {evidence.rationale}
                     </p>
                   ))}
                 </div>
               ) : model.l3_code === 'L3-COM' ? (
-                <p className="mt-2 text-[10px] text-text-muted">业务系统：试点范围内未匹配到业务数据仓库表</p>
+                <p className="mt-2 text-[10px] text-text-muted">业务系统：122张业务数据仓库表逐一核实后未找到对应表（数据侧空白）</p>
               ) : null}
             </div>
           )})}

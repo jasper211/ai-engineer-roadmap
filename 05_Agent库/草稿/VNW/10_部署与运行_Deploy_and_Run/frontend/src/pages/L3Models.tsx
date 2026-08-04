@@ -364,6 +364,55 @@ export default function L3Models() {
         </div>
       </div>
 
+      <details className="panel p-4">
+        <summary className="cursor-pointer text-xs font-semibold text-text-primary">图例说明 · 卡片标签颜色定义</summary>
+        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div>
+            <p className="eyebrow">建模分类（右上角第二枚）</p>
+            <div className="mt-2 space-y-1.5">
+              <p className="flex items-center gap-2 text-xs"><span className="rounded-full bg-emerald-400/10 px-2.5 py-1 text-[11px] font-medium text-emerald-700">可生成完整模型</span><span className="text-text-muted">证据达到完整门槛</span></p>
+              <p className="flex items-center gap-2 text-xs"><span className="rounded-full bg-sky-400/10 px-2.5 py-1 text-[11px] font-medium text-sky-700">可生成带缺口模型</span><span className="text-text-muted">可建模但有明确缺口</span></p>
+              <p className="flex items-center gap-2 text-xs"><span className="rounded-full bg-amber-400/10 px-2.5 py-1 text-[11px] font-medium text-amber-700">待补后生成</span><span className="text-text-muted">未达最低准入门槛</span></p>
+            </div>
+          </div>
+          <div>
+            <p className="eyebrow">生产状态（右上角第三枚）</p>
+            <div className="mt-2 space-y-1.5">
+              <p className="flex items-center gap-2 text-xs"><span className="rounded-full bg-blue-50 px-2.5 py-1 text-[11px] font-medium text-blue-700">待运行统一分析</span><span className="text-text-muted">尚未跑过统一模型</span></p>
+              <p className="flex items-center gap-2 text-xs"><span className="rounded-full bg-cyan-50 px-2.5 py-1 text-[11px] font-medium text-cyan-700">运行包已准备</span><span className="text-text-muted">已进入生产队列</span></p>
+              <p className="flex items-center gap-2 text-xs"><span className="rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-medium text-emerald-700">分析与当前输入一致</span><span className="text-text-muted">结论仍是最新</span></p>
+              <p className="flex items-center gap-2 text-xs"><span className="rounded-full bg-rose-50 px-2.5 py-1 text-[11px] font-medium text-rose-700">输入已变化·待重跑</span><span className="text-text-muted">源头更新，旧结论过期</span></p>
+              <p className="flex items-center gap-2 text-xs"><span className="rounded-full bg-violet-50 px-2.5 py-1 text-[11px] font-medium text-violet-700">历史评审基线</span><span className="text-text-muted">人工复核过的既有结论</span></p>
+              <p className="flex items-center gap-2 text-xs"><span className="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-medium text-slate-600">输入未达准入</span><span className="text-text-muted">模型入口关闭</span></p>
+            </div>
+          </div>
+          <div>
+            <p className="eyebrow">数据质量提示</p>
+            <div className="mt-2 space-y-1.5">
+              <p className="flex items-center gap-2 text-xs"><span className="flex items-center gap-1 rounded-full bg-violet-400/10 px-2.5 py-1 text-[11px] font-medium text-violet-700"><Star className="h-3 w-3" />完整 Demo</span><span className="text-text-muted">已有评审通过的完整demo</span></p>
+              <p className="flex items-center gap-2 text-xs"><span className="rounded-full bg-rose-50 px-2.5 py-1 text-[11px] font-medium text-rose-700">交付物待治理 N</span><span className="text-text-muted">交付物字段存在质量问题</span></p>
+              <p className="flex items-center gap-2 text-xs"><span className="rounded-full bg-amber-50 px-2.5 py-1 text-[11px] font-medium text-amber-700">重复值待核实 N</span><span className="text-text-muted">交付物疑似重复值</span></p>
+            </div>
+          </div>
+          <div>
+            <p className="eyebrow">Gate（M / E / A）</p>
+            <div className="mt-2 space-y-1.5">
+              <p className="flex items-center gap-2 text-xs"><span className="rounded-md border border-emerald-400/25 bg-emerald-400/10 px-2 py-1 font-mono text-[11px] text-emerald-700">PASS</span><span className="text-text-muted">通过</span></p>
+              <p className="flex items-center gap-2 text-xs"><span className="rounded-md border border-sky-400/25 bg-sky-400/10 px-2 py-1 font-mono text-[11px] text-sky-700">CONDITIONAL</span><span className="text-text-muted">条件通过，有缺口但不阻断</span></p>
+              <p className="flex items-center gap-2 text-xs"><span className="rounded-md border border-amber-400/25 bg-amber-400/10 px-2 py-1 font-mono text-[11px] text-amber-700">BLOCKED</span><span className="text-text-muted">未通过</span></p>
+            </div>
+          </div>
+          <div>
+            <p className="eyebrow">价值流 / KPI</p>
+            <div className="mt-2 space-y-1.5">
+              <p className="flex items-center gap-2 text-xs"><span className="rounded-full bg-teal-400/10 px-2 py-0.5 text-[11px] font-medium text-teal-700">价值流名称 · 阶段</span><span className="text-text-muted">该L3在客户旅程中的位置</span></p>
+              <p className="flex items-center gap-2 text-xs"><span className="rounded-full bg-amber-400/10 px-2 py-0.5 text-[11px] font-medium text-amber-800">KPI名称</span><span className="text-text-muted">已有公式/单位的业务指标定义</span></p>
+              <p className="flex items-center gap-2 text-xs"><span className="rounded-full border border-dashed border-rose-300 bg-rose-50 px-2 py-0.5 text-[11px] font-medium text-rose-700">KPI名称</span><span className="text-text-muted">Mark战略权重，未确认草稿</span></p>
+            </div>
+          </div>
+        </div>
+      </details>
+
       <div className="grid gap-4 md:grid-cols-2">
         {current.map(model => <ModelCard key={model.l3_code} model={model} quality={qualityByL3[model.l3_code]} />)}
       </div>

@@ -499,6 +499,7 @@ class L3ModelBuilder:
                     "matched_columns": item["matched_columns"],
                     "rationale": item["rationale"],
                     "confidence": item["confidence"],
+                    "evidence_type": item["evidence_type"],
                 }
                 for item in self.business_table_map.get(code, [])
             ]
