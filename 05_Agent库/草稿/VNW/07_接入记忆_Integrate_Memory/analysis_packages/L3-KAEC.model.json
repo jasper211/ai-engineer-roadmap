@@ -1,0 +1,456 @@
+{
+  "schema_version": "vnw.l3-analysis.v1",
+  "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
+  "generation_mode": "UNIFIED_MODEL",
+  "analysis_status": "MODEL_DRAFT",
+  "model_run": {
+    "model_name": "deepseek-v4-pro",
+    "model_version": "deepseek-v4-pro",
+    "prompt_version": "VNW-L3-COM-GOLD-v1.0",
+    "generated_at": "2026-08-04T18:30:12.100016+00:00",
+    "input_snapshot_hash": "51a9d906ce676b340a56e1319c41f7cf6fae61e9ec71fa525c50739e2f27e49b"
+  },
+  "source_scope": {
+    "database": "process_analytics",
+    "knowledge": "ACTIVE supplemental evidence only",
+    "evidence_count": 42
+  },
+  "l4_analysis": [
+    {
+      "l4_code": "L4-KAEC-01",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-508c5292d33beea5e57b",
+        "EVD-ee77744ecc2b39cdc0e1",
+        "EVD-efa1c188ee98d64a527f",
+        "EVD-0c600b0bb25d587c0066",
+        "EVD-444ae97f8678bf9b1c7b",
+        "EVD-aa008b5378557ee41e95",
+        "EVD-5276c25cbfe64ddc4e5c",
+        "EVD-39b4df9a8044f356d18a",
+        "EVD-58a0f58907b3d49680f0",
+        "EVD-edab2fdf52b8f5c3d886",
+        "EVD-4b7d7e381e9d16fde07e",
+        "EVD-1ea9d31483921d7819c6",
+        "EVD-2c1820c34d75d6d6c9d2",
+        "EVD-178e19731a532fa764c6",
+        "EVD-4d46d210dc109f7ed028"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "业务发展BD岗",
+      "specific_capabilities": [
+        "接收多渠道KA线索并解析",
+        "验证线索信息完整性（联系方式、业务基本信息）",
+        "录入数据至《KA信息记录》"
+      ],
+      "ai_reshape": "通过Skill封装，将接收和登记子动作自动化：系统自动抓取或接收渠道线索，解析后填充至《KA信息记录》模板；保留人工校验信息完整性的决策点。",
+      "quality_anchor": "《KA信息记录》的数据完整性和准确性，以信息完整度≥90%为基准。",
+      "ai_responsibility": "自动接收并解析渠道线索，自动填写基础字段，生成《KA信息记录》草稿。",
+      "human_responsibility": "核对联系方式、业务基本信息是否完整，补充缺失项；对不完整线索执行退回操作。",
+      "handoff_triggers": [
+        "自动校验发现信息不完整或关键字段缺失",
+        "遇到未知渠道格式无法解析"
+      ],
+      "control_gates": [
+        {
+          "id": "Q1",
+          "description": "KA信息完整性判断：完整则进入STEP-02初步筛选，不完整则退回推送方补充信息。"
+        }
+      ],
+      "data_basis": [
+        "D1输入结构化=1 (EVD-508c5292d33beea5e57b)",
+        "D2规则清晰=1 (EVD-ee77744ecc2b39cdc0e1)",
+        "D3输出可验证=1 (EVD-efa1c188ee98d64a527f)",
+        "D4系统可达=1 (EVD-0c600b0bb25d587c0066)"
+      ],
+      "process_context": "在获取KA资源流程（L3-KAEC）中作为第一步，属于KA发现与接触阶段，从各渠道接收线索并完成信息登记，为后续筛选提供基础。",
+      "risks_limits": [
+        "数据源格式不统一可能导致自动化登记错误或遗漏",
+        "退回规则不明确可能延误线索处理",
+        "需确保《KA信息记录》的字段映射准确"
+      ],
+      "current_recommendation": "优先将接收和登记拆分为子任务，对接收和自动化填充部分进行Skill封装；信息完整性检查保留人工确认，作为控制门Q1。试点后根据自动登记准确率逐步放开。",
+      "database_tier": "Auto",
+      "recommended_tier": "Hybrid",
+      "quadrant": "高自动化潜力，优先试点"
+    },
+    {
+      "l4_code": "L4-KAEC-02",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-e1772180329aeb0c3513",
+        "EVD-10c19e41edc0cd726f42",
+        "EVD-a6d4706ee1b3a7189d75",
+        "EVD-0ad814fc7bda9299dede",
+        "EVD-29b7925ccc1a2a423809",
+        "EVD-1e1a25231926f8ef3b95",
+        "EVD-eb3df46c07ca771a0e4f",
+        "EVD-feb1258a9532585f3cd3",
+        "EVD-1c57e22ecbab72496a48",
+        "EVD-4a4fe203df368046ff1c",
+        "EVD-e53d24268d6dd73a2208",
+        "EVD-1ea9d31483921d7819c6",
+        "EVD-631732e7b29d9ab634b6",
+        "EVD-fe5a82293c2c62b3ca7d",
+        "EVD-aaf20e4c7e8377890416"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "业务发展BD岗",
+      "specific_capabilities": [
+        "依据预设标准（行业、规模、地域等）进行初步筛选",
+        "与潜在KA初步沟通确认合作意向"
+      ],
+      "ai_reshape": "引入智能辅助：系统自动根据规则匹配筛选，给出推荐评分；筛选后可自动发送标准化意向沟通模板，由BD岗最终确认。",
+      "quality_anchor": "《KA初步筛选记录》的准确性和时效性，筛选判断与标准的一致性。",
+      "ai_responsibility": "基于规则自动匹配并生成筛选建议，记录筛选轨迹。",
+      "human_responsibility": "结合业务经验判断筛选的合理性，直接沟通确认KA的合作意向。",
+      "handoff_triggers": [
+        "系统筛选评分边界模糊无法确定",
+        "KA意向回复不明确需人工判断"
+      ],
+      "control_gates": [
+        {
+          "id": "Q2",
+          "description": "KA合作潜力判断：有潜力+有意向进入STEP-03移交分配，不符合则进入KA观察池。"
+        }
+      ],
+      "data_basis": [
+        "D1=2 输入部分结构化 (EVD-e1772180329aeb0c3513)",
+        "D2=1 规则清晰 (EVD-10c19e41edc0cd726f42)",
+        "D3=2 输出部分可验证 (EVD-a6d4706ee1b3a7189d75)",
+        "D4=1 系统可达 (EVD-0ad814fc7bda9299dede)"
+      ],
+      "process_context": "在信息登记完成后，需要对线索进行初步筛选和意向确认，决定是否进入深度的KA移交环节。",
+      "risks_limits": [
+        "筛选标准主观性较强，可能遗漏潜在KA",
+        "沟通反馈时长不可控，影响流程效率"
+      ],
+      "current_recommendation": "建议将筛选逻辑标准化，先实现系统自动筛选推荐，保留BD岗确认；意向确认环节暂由人工主导。",
+      "database_tier": "Auto",
+      "recommended_tier": "Aug",
+      "quadrant": "辅助决策增强，中期优化"
+    },
+    {
+      "l4_code": "L4-KAEC-03",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-4365fdf35d513d088500",
+        "EVD-eb191331c78728e4c26e",
+        "EVD-e7834c24242d523e4ffe",
+        "EVD-f5a3dc3db34dacbd3f47",
+        "EVD-39f343e7f096721391e2",
+        "EVD-fdb3e9f332ce349cea70",
+        "EVD-ef8ff990787b2953168f",
+        "EVD-3a2076454d35b815b769",
+        "EVD-e1c3292369606465cdb7",
+        "EVD-5fe57553e0ccfc723759",
+        "EVD-a030f43d4962ad965611",
+        "EVD-1ea9d31483921d7819c6",
+        "EVD-6c71fcbbf89145e5c2d6",
+        "EVD-747aee38aef037ad24da"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "业务发展BD岗",
+      "specific_capabilities": [
+        "移交KA资料和沟通记录至跟进团队",
+        "根据组内负载和KA属性分配跟进责任人"
+      ],
+      "ai_reshape": "自动化移交和分配：系统根据KA属性自动触发移交流程，并基于规则给出分配建议；人工调整并确认最终分配。",
+      "quality_anchor": "《KA分配记录》的准确率和及时性，确保KA无遗漏、责任明晰。",
+      "ai_responsibility": "自动生成移交包，推送至指定团队；根据忙闲和专长规则推荐跟进人。",
+      "human_responsibility": "审核分配建议，考虑特殊情况进行调整，确认最终分配后通知相关人员。",
+      "handoff_triggers": [
+        "分配规则冲突或无法决策",
+        "紧急或高价值KA需特别指派"
+      ],
+      "control_gates": [],
+      "data_basis": [
+        "D1=2 输入部分结构化 (EVD-4365fdf35d513d088500)",
+        "D2=2 规则半清晰 (EVD-eb191331c78728e4c26e)",
+        "D3=2 输出部分可验证 (EVD-e7834c24242d523e4ffe)",
+        "D4=2 系统部分可达 (EVD-f5a3dc3db34dacbd3f47)"
+      ],
+      "process_context": "在KA通过筛选和意向确认后，进行团队内部移交和跟进分配，确保后续跟进无缝衔接。",
+      "risks_limits": [
+        "分配不合理可能导致KA跟进延迟或质量问题",
+        "移交信息不完整影响跟进效率"
+      ],
+      "current_recommendation": "建议先标准化分配规则，实现系统推荐和自动移交，保留团队负责人人工确认权。",
+      "database_tier": "Auto",
+      "recommended_tier": "Aug",
+      "quadrant": "流程整合与协同，中期推进"
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "TASK-L3-KAEC-001",
+      "l4_code": "L4-KAEC-01",
+      "task_name": "接收KA线索",
+      "source_type": "SPLIT_TASK",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-01",
+      "source_line": 53,
+      "previous_task_ids": [],
+      "next_task_ids": [
+        "TASK-L3-KAEC-002"
+      ],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-178e19731a532fa764c6",
+        "EVD-2c1820c34d75d6d6c9d2"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "线索接收通常通过系统集成，结构化高，D1=1, D4=1，可自动化。但需确认信息来源格式统一。"
+    },
+    {
+      "task_id": "TASK-L3-KAEC-002",
+      "l4_code": "L4-KAEC-01",
+      "task_name": "登记KA信息至《KA信息记录》",
+      "source_type": "SPLIT_TASK",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-01",
+      "source_line": 53,
+      "previous_task_ids": [
+        "TASK-L3-KAEC-001"
+      ],
+      "next_task_ids": [
+        "TASK-L3-KAEC-003"
+      ],
+      "relation_type": "DECISION",
+      "evidence_refs": [
+        "EVD-178e19731a532fa764c6",
+        "EVD-2c1820c34d75d6d6c9d2",
+        "EVD-4d46d210dc109f7ed028"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "信息登记为结构化数据填充，D3=1可验证，适合自动处理。"
+    },
+    {
+      "task_id": "TASK-L3-KAEC-003",
+      "l4_code": "L4-KAEC-02",
+      "task_name": "执行KA初步筛选",
+      "source_type": "SPLIT_TASK",
+      "sequence_no": 2,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-02",
+      "source_line": 60,
+      "previous_task_ids": [
+        "TASK-L3-KAEC-002"
+      ],
+      "next_task_ids": [
+        "TASK-L3-KAEC-004"
+      ],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-fe5a82293c2c62b3ca7d",
+        "EVD-631732e7b29d9ab634b6",
+        "EVD-aaf20e4c7e8377890416"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "初步筛选基于预定义标准（行业、规模等），可由系统自动匹配并推荐，但最终决策需BD岗确认，故建议Aug。"
+    },
+    {
+      "task_id": "TASK-L3-KAEC-004",
+      "l4_code": "L4-KAEC-02",
+      "task_name": "确认合作意向",
+      "source_type": "SPLIT_TASK",
+      "sequence_no": 2,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-02",
+      "source_line": 60,
+      "previous_task_ids": [
+        "TASK-L3-KAEC-003"
+      ],
+      "next_task_ids": [
+        "TASK-L3-KAEC-005"
+      ],
+      "relation_type": "DECISION",
+      "evidence_refs": [
+        "EVD-fe5a82293c2c62b3ca7d",
+        "EVD-631732e7b29d9ab634b6",
+        "EVD-aaf20e4c7e8377890416"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "意向确认涉及与KA的直接沟通和谈判，需人类BD岗执行，无法自动化。"
+    },
+    {
+      "task_id": "TASK-L3-KAEC-005",
+      "l4_code": "L4-KAEC-03",
+      "task_name": "移交KA资料至跟进团队",
+      "source_type": "SPLIT_TASK",
+      "sequence_no": 3,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-03",
+      "source_line": 67,
+      "previous_task_ids": [
+        "TASK-L3-KAEC-004"
+      ],
+      "next_task_ids": [
+        "TASK-L3-KAEC-006"
+      ],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-747aee38aef037ad24da",
+        "EVD-6c71fcbbf89145e5c2d6"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "移交为标准化动作，可自动推送KA资料和记录至指定团队，D4=2需API集成，但主要操作为系统触发。"
+    },
+    {
+      "task_id": "TASK-L3-KAEC-006",
+      "l4_code": "L4-KAEC-03",
+      "task_name": "分配跟进责任人并记录",
+      "source_type": "SPLIT_TASK",
+      "sequence_no": 3,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-03",
+      "source_line": 67,
+      "previous_task_ids": [
+        "TASK-L3-KAEC-005"
+      ],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-747aee38aef037ad24da",
+        "EVD-6c71fcbbf89145e5c2d6"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "分配需结合人员忙闲和KA属性，系统可基于规则推荐，由团队负责人确认，故建议Aug。"
+    }
+  ],
+  "priority_drafts": [
+    {
+      "l4_code": "L4-KAEC-01",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "D1输入结构化=1 (EVD-508c5292d33beea5e57b)",
+        "D2规则清晰=1 (EVD-ee77744ecc2b39cdc0e1)",
+        "D3输出可验证=1 (EVD-efa1c188ee98d64a527f)",
+        "D4系统可达=1 (EVD-0c600b0bb25d587c0066)"
+      ],
+      "process_context": "在获取KA资源流程（L3-KAEC）中作为第一步，属于KA发现与接触阶段，从各渠道接收线索并完成信息登记，为后续筛选提供基础。",
+      "risks_limits": [
+        "数据源格式不统一可能导致自动化登记错误或遗漏",
+        "退回规则不明确可能延误线索处理",
+        "需确保《KA信息记录》的字段映射准确"
+      ],
+      "current_recommendation": "优先将接收和登记拆分为子任务，对接收和自动化填充部分进行Skill封装；信息完整性检查保留人工确认，作为控制门Q1。试点后根据自动登记准确率逐步放开。",
+      "evidence_refs": [
+        "EVD-508c5292d33beea5e57b",
+        "EVD-ee77744ecc2b39cdc0e1",
+        "EVD-efa1c188ee98d64a527f",
+        "EVD-0c600b0bb25d587c0066",
+        "EVD-444ae97f8678bf9b1c7b",
+        "EVD-aa008b5378557ee41e95",
+        "EVD-5276c25cbfe64ddc4e5c",
+        "EVD-39b4df9a8044f356d18a",
+        "EVD-58a0f58907b3d49680f0",
+        "EVD-edab2fdf52b8f5c3d886",
+        "EVD-4b7d7e381e9d16fde07e",
+        "EVD-1ea9d31483921d7819c6",
+        "EVD-2c1820c34d75d6d6c9d2",
+        "EVD-178e19731a532fa764c6",
+        "EVD-4d46d210dc109f7ed028"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-KAEC-02",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "D1=2 输入部分结构化 (EVD-e1772180329aeb0c3513)",
+        "D2=1 规则清晰 (EVD-10c19e41edc0cd726f42)",
+        "D3=2 输出部分可验证 (EVD-a6d4706ee1b3a7189d75)",
+        "D4=1 系统可达 (EVD-0ad814fc7bda9299dede)"
+      ],
+      "process_context": "在信息登记完成后，需要对线索进行初步筛选和意向确认，决定是否进入深度的KA移交环节。",
+      "risks_limits": [
+        "筛选标准主观性较强，可能遗漏潜在KA",
+        "沟通反馈时长不可控，影响流程效率"
+      ],
+      "current_recommendation": "建议将筛选逻辑标准化，先实现系统自动筛选推荐，保留BD岗确认；意向确认环节暂由人工主导。",
+      "evidence_refs": [
+        "EVD-e1772180329aeb0c3513",
+        "EVD-10c19e41edc0cd726f42",
+        "EVD-a6d4706ee1b3a7189d75",
+        "EVD-0ad814fc7bda9299dede",
+        "EVD-29b7925ccc1a2a423809",
+        "EVD-1e1a25231926f8ef3b95",
+        "EVD-eb3df46c07ca771a0e4f",
+        "EVD-feb1258a9532585f3cd3",
+        "EVD-1c57e22ecbab72496a48",
+        "EVD-4a4fe203df368046ff1c",
+        "EVD-e53d24268d6dd73a2208",
+        "EVD-1ea9d31483921d7819c6",
+        "EVD-631732e7b29d9ab634b6",
+        "EVD-fe5a82293c2c62b3ca7d",
+        "EVD-aaf20e4c7e8377890416"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-KAEC-03",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "D1=2 输入部分结构化 (EVD-4365fdf35d513d088500)",
+        "D2=2 规则半清晰 (EVD-eb191331c78728e4c26e)",
+        "D3=2 输出部分可验证 (EVD-e7834c24242d523e4ffe)",
+        "D4=2 系统部分可达 (EVD-f5a3dc3db34dacbd3f47)"
+      ],
+      "process_context": "在KA通过筛选和意向确认后，进行团队内部移交和跟进分配，确保后续跟进无缝衔接。",
+      "risks_limits": [
+        "分配不合理可能导致KA跟进延迟或质量问题",
+        "移交信息不完整影响跟进效率"
+      ],
+      "current_recommendation": "建议先标准化分配规则，实现系统推荐和自动移交，保留团队负责人人工确认权。",
+      "evidence_refs": [
+        "EVD-4365fdf35d513d088500",
+        "EVD-eb191331c78728e4c26e",
+        "EVD-e7834c24242d523e4ffe",
+        "EVD-f5a3dc3db34dacbd3f47",
+        "EVD-39f343e7f096721391e2",
+        "EVD-fdb3e9f332ce349cea70",
+        "EVD-ef8ff990787b2953168f",
+        "EVD-3a2076454d35b815b769",
+        "EVD-e1c3292369606465cdb7",
+        "EVD-5fe57553e0ccfc723759",
+        "EVD-a030f43d4962ad965611",
+        "EVD-1ea9d31483921d7819c6",
+        "EVD-6c71fcbbf89145e5c2d6",
+        "EVD-747aee38aef037ad24da"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "decision_drafts": [
+    {
+      "priority": "HIGH",
+      "task_ids": [
+        "TASK-L3-KAEC-001",
+        "TASK-L3-KAEC-002"
+      ],
+      "title": "启动KA线索接收与登记自动化试点",
+      "pilot_scope": "试点范围选择2-3个稳定KA渠道，验证自动接收和登记的全流程，周期2周。",
+      "human_boundary": "信息完整性校验（Q1判断）必须由BD岗人工执行并确认；登记后的《KA信息记录》需BD岗复核后方可进入后续步骤。",
+      "evidence_refs": [
+        "EVD-4d46d210dc109f7ed028",
+        "EVD-5276c25cbfe64ddc4e5c",
+        "EVD-2c1820c34d75d6d6c9d2"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "control_chain": [],
+  "rejected_task_sources": [],
+  "missing_analysis": [
+    "控制链缺少L4定位，已拒绝2条"
+  ]
+}

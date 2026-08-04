@@ -1,0 +1,446 @@
+{
+  "schema_version": "vnw.l3-analysis.v1",
+  "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
+  "generation_mode": "UNIFIED_MODEL",
+  "analysis_status": "MODEL_DRAFT",
+  "model_run": {
+    "model_name": "deepseek-v4-pro",
+    "model_version": "deepseek-v4-pro",
+    "prompt_version": "VNW-L3-COM-GOLD-v1.0",
+    "generated_at": "2026-08-04T18:33:21.242301+00:00",
+    "input_snapshot_hash": "3ac39ea030d969b69fe8d4291a298745aa9fb17c14ae5acfc6e199f55a4f971d"
+  },
+  "source_scope": {
+    "database": "process_analytics",
+    "knowledge": "ACTIVE supplemental evidence only",
+    "evidence_count": 69
+  },
+  "l4_analysis": [
+    {
+      "l4_code": "L4-KAEM-01",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-4d26f3f3aa5731173b9f",
+        "EVD-fb9d0ed72cb4c8ea006e",
+        "EVD-5d40a6b5b05bceff44a9",
+        "EVD-0c2f76584d00aadec02e",
+        "EVD-5f257782499e621c3766",
+        "EVD-f9af3f2b2ba0089e0841"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "交付物《培训记录》由KA管理岗（机构业务族）负责生成和维护，作为培训执行的凭证。",
+      "specific_capabilities": [
+        "培训需求归集与结构化（信息处理）",
+        "培训计划模板化生成（可封装为Skill）",
+        "培训执行（需人工授课与互动）",
+        "培训记录数据录入与校验（可自动化）"
+      ],
+      "ai_reshape": "AI可自动生成培训计划草案，根据KA画像和产品需求匹配培训内容；培训执行阶段可提供辅助工具（如培训材料推送、记录模板），但需人工授课；记录可自动录入并校验。",
+      "quality_anchor": "",
+      "ai_responsibility": "生成培训计划草案、推送培训资料、自动记录培训完成情况。",
+      "human_responsibility": "审批培训计划、执行培训授课、判断培训效果、确认培训记录。",
+      "handoff_triggers": [
+        "AI生成计划置信度低于阈值时转人工修改",
+        "培训执行阶段（需人工现场授课）",
+        "培训记录异常（如缺失字段或逻辑冲突）需人工复核"
+      ],
+      "control_gates": [
+        "培训计划审批（人工）",
+        "Q1: KA基础培训与出单能力确认（人工判断，决定是否进入下一步）"
+      ],
+      "data_basis": [
+        "KA基本信息（来自KA主数据）",
+        "产品培训素材（产品库）",
+        "历史培训记录（培训档案）"
+      ],
+      "process_context": "位于KA赋能流程起点（STEP-01），为KA提供初始或补充培训，并记录完成情况。",
+      "risks_limits": [
+        "培训计划可能不贴合实际需求，因依赖历史数据或静态规则",
+        "复合动作需多次人工介入，半自动化可能导致流程断裂",
+        "规则清晰度低（D2=1），自动化处理易出错"
+      ],
+      "current_recommendation": "建议拆分为‘制定计划’和‘执行记录’两个子任务，优先将计划生成部分实现Skill原型，并设计人工审批节点。逐步验证后扩大自动化范围。",
+      "database_tier": "Auto",
+      "recommended_tier": "Aug",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-KAEM-02",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-741e9f3588611ef98ff1",
+        "EVD-31005be0382bba9d848c",
+        "EVD-895fc7372ead9091326a",
+        "EVD-afed4d8d8b7e0147cce8"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "交付物为资讯配发相关记录（Excel/邮件），由KA管理岗负责执行和记录。",
+      "specific_capabilities": [
+        "资讯内容匹配与筛选（语义判断）",
+        "培训材料分发与沟通（物理执行）",
+        "培训结果记录（可模板化）"
+      ],
+      "ai_reshape": "AI可辅助筛选适合KA的资讯内容，生成配发建议列表，但仍需人工确认内容准确性；培训执行本身依赖人工交互，AI无法替代。",
+      "quality_anchor": "",
+      "ai_responsibility": "建议资讯配发内容、生成配发记录模板。",
+      "human_responsibility": "最终选择资讯内容、执行配发与培训沟通、确认记录准确性。",
+      "handoff_triggers": [
+        "AI无法确定资讯相关性时转人工判断",
+        "培训执行阶段（物理交互）"
+      ],
+      "control_gates": [],
+      "data_basis": [
+        "KA画像及偏好数据",
+        "最新资讯/产品材料库"
+      ],
+      "process_context": "位于蓝图STEP-02，通常在KA完成基础培训后执行，为销售培训提供素材。",
+      "risks_limits": [
+        "动作单一但属语义判断/物理执行类，自动化天花板低",
+        "P1批次反映当前无标准化模板，纯手工操作，自动化改造需先标准化"
+      ],
+      "current_recommendation": "采用Agent辅助模式，AI提供内容推荐和记录工具，保留人工操作为主，待流程标准化后再评估部分自动化。",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-KAEM-03",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-fae77f48eb74dc6fbf1a",
+        "EVD-cc50cd0005fe2b80368d",
+        "EVD-ac755b40299a232aff2e",
+        "EVD-ed20bd4ddc2113257be2"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "交付物为RW权益系统数据记录+Excel台账，由KA管理岗负责维护和核销。",
+      "specific_capabilities": [
+        "营销资源需求判断（策略性）",
+        "权益核销计算与记录（可结构化但当前手工）",
+        "多方口头沟通传递信息（未系统化）"
+      ],
+      "ai_reshape": "AI可自动化权益核销计算、台账生成，并监控资源使用情况；但资源分配策略仍需人工制定。",
+      "quality_anchor": "",
+      "ai_responsibility": "自动计算权益激励金、生成台账、预警超支。",
+      "human_responsibility": "审批资源分配、修正异常数据、执行口头沟通。",
+      "handoff_triggers": [
+        "权益计算出现异常或超过阈值时转人工确认",
+        "新资源类型或政策变化时需人工重新定义规则"
+      ],
+      "control_gates": [],
+      "data_basis": [
+        "KA等级与权益规则",
+        "历史核销记录",
+        "营销活动数据"
+      ],
+      "process_context": "位于蓝图STEP-03，在KA培训完成后提供销售支持资料。",
+      "risks_limits": [
+        "当前全流程手工，数据质量依赖个人，存在错漏风险",
+        "口头传递信息不可追溯，影响合规性"
+      ],
+      "current_recommendation": "优先建立系统化核销流程，AI辅助计算和监控，人工保留分配决策权和异常处理，后续逐步向Aug演进。",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-KAEM-04",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-281f66eb1fa14876ee00",
+        "EVD-b8f198c5b483b639f036",
+        "EVD-e54862d56a878e896c4d",
+        "EVD-5c97c55550feaf765e9d"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "交付物《赋能效果评估》由KA管理岗编写，用于总结赋能成效和制定后续计划。",
+      "specific_capabilities": [
+        "多维度数据收集与分析（信息处理）",
+        "赋能效果综合判断（策略/认知）",
+        "跟进计划制定（需拆分动作）"
+      ],
+      "ai_reshape": "AI可自动汇总培训参与、销售数据等生成评估报告初稿，但效果评判和决策需人工；跟进计划可基于模板生成建议。",
+      "quality_anchor": "",
+      "ai_responsibility": "数据提取、指标计算、报告组装。",
+      "human_responsibility": "效果评价、策略调整、计划审批。",
+      "handoff_triggers": [
+        "AI分析出现矛盾或不确定结论时转人工复核",
+        "跟进计划涉及重大资源调整时需高层审批"
+      ],
+      "control_gates": [
+        "Q2: KA赋能是否达到出单基准（人工判断，决定是否进入持续跟踪）"
+      ],
+      "data_basis": [
+        "培训记录",
+        "销售业绩数据",
+        "KA反馈"
+      ],
+      "process_context": "位于蓝图STEP-04，为赋能流程末环，并衔接L3-KAGA持续跟踪。",
+      "risks_limits": [
+        "复合动作且低封装，判断依赖权威，AI无法独立决策",
+        "评估标准未结构化，自动化需先明确指标"
+      ],
+      "current_recommendation": "采用Agent辅助模式，AI提供评估仪表盘和计划草稿，人工主导判断和审批，逐步定义评估标准为未来自动化铺路。",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "TASK-L4-KAEM-01-001",
+      "l4_code": "L4-KAEM-01",
+      "task_name": "制定KA培训计划",
+      "source_type": "BLUEPRINT_STEP",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-01",
+      "source_line": 56,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": null,
+      "evidence_refs": [
+        "EVD-fb9d0ed72cb4c8ea006e",
+        "EVD-4d26f3f3aa5731173b9f"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "制定计划需AI辅助生成草案，人工审批，属于增强型自动化。"
+    },
+    {
+      "task_id": "TASK-L4-KAEM-01-002",
+      "l4_code": "L4-KAEM-01",
+      "task_name": "执行KA培训并填写培训记录",
+      "source_type": "BLUEPRINT_STEP",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-01",
+      "source_line": 56,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": null,
+      "evidence_refs": [
+        "EVD-fb9d0ed72cb4c8ea006e",
+        "EVD-5d40a6b5b05bceff44a9"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "培训执行需人工交互，记录可自动生成但需人工确认，整体Hybrid。"
+    },
+    {
+      "task_id": "TASK-L4-KAEM-02-001",
+      "l4_code": "L4-KAEM-02",
+      "task_name": "执行资讯权益配发与销售培训",
+      "source_type": "BLUEPRINT_STEP",
+      "sequence_no": 2,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-02",
+      "source_line": 65,
+      "previous_task_ids": [
+        "TASK-L4-KAEM-01-001",
+        "TASK-L4-KAEM-01-002"
+      ],
+      "next_task_ids": [],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-31005be0382bba9d848c",
+        "EVD-741e9f3588611ef98ff1"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "C级低封装，需人工判断和物理执行，但AI可辅助资料准备和记录，推荐Hybrid。"
+    },
+    {
+      "task_id": "TASK-L4-KAEM-03-001",
+      "l4_code": "L4-KAEM-03",
+      "task_name": "执行销售资料包更新发放",
+      "source_type": "BLUEPRINT_STEP",
+      "sequence_no": 3,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-03",
+      "source_line": 71,
+      "previous_task_ids": [
+        "TASK-L4-KAEM-02-001"
+      ],
+      "next_task_ids": [],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-cc50cd0005fe2b80368d",
+        "EVD-fae77f48eb74dc6fbf1a"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "C级，涉及营销资源判断和手工操作，AI可辅助监控和提醒，推荐Hybrid。"
+    },
+    {
+      "task_id": "TASK-L4-KAEM-04-001",
+      "l4_code": "L4-KAEM-04",
+      "task_name": "评估赋能效果",
+      "source_type": "BLUEPRINT_STEP",
+      "sequence_no": 4,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-04",
+      "source_line": 78,
+      "previous_task_ids": [
+        "TASK-L4-KAEM-03-001"
+      ],
+      "next_task_ids": [],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-b8f198c5b483b639f036",
+        "EVD-281f66eb1fa14876ee00"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "C级，评估需要判断和策略，AI可提供数据摘要和初步分析，但决策在人工，Hybrid。"
+    },
+    {
+      "task_id": "TASK-L4-KAEM-04-002",
+      "l4_code": "L4-KAEM-04",
+      "task_name": "制定持续跟进计划",
+      "source_type": "BLUEPRINT_STEP",
+      "sequence_no": 4,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-04",
+      "source_line": 78,
+      "previous_task_ids": [
+        "TASK-L4-KAEM-04-001"
+      ],
+      "next_task_ids": [],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-b8f198c5b483b639f036",
+        "EVD-281f66eb1fa14876ee00"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "依评估结果制定计划，需人工决策，AI可生成草稿，Hybrid。"
+    }
+  ],
+  "priority_drafts": [
+    {
+      "l4_code": "L4-KAEM-01",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "KA基本信息（来自KA主数据）",
+        "产品培训素材（产品库）",
+        "历史培训记录（培训档案）"
+      ],
+      "process_context": "位于KA赋能流程起点（STEP-01），为KA提供初始或补充培训，并记录完成情况。",
+      "risks_limits": [
+        "培训计划可能不贴合实际需求，因依赖历史数据或静态规则",
+        "复合动作需多次人工介入，半自动化可能导致流程断裂",
+        "规则清晰度低（D2=1），自动化处理易出错"
+      ],
+      "current_recommendation": "建议拆分为‘制定计划’和‘执行记录’两个子任务，优先将计划生成部分实现Skill原型，并设计人工审批节点。逐步验证后扩大自动化范围。",
+      "evidence_refs": [
+        "EVD-4d26f3f3aa5731173b9f",
+        "EVD-fb9d0ed72cb4c8ea006e",
+        "EVD-5d40a6b5b05bceff44a9",
+        "EVD-0c2f76584d00aadec02e",
+        "EVD-5f257782499e621c3766",
+        "EVD-f9af3f2b2ba0089e0841"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-KAEM-02",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "KA画像及偏好数据",
+        "最新资讯/产品材料库"
+      ],
+      "process_context": "位于蓝图STEP-02，通常在KA完成基础培训后执行，为销售培训提供素材。",
+      "risks_limits": [
+        "动作单一但属语义判断/物理执行类，自动化天花板低",
+        "P1批次反映当前无标准化模板，纯手工操作，自动化改造需先标准化"
+      ],
+      "current_recommendation": "采用Agent辅助模式，AI提供内容推荐和记录工具，保留人工操作为主，待流程标准化后再评估部分自动化。",
+      "evidence_refs": [
+        "EVD-741e9f3588611ef98ff1",
+        "EVD-31005be0382bba9d848c",
+        "EVD-895fc7372ead9091326a",
+        "EVD-afed4d8d8b7e0147cce8"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-KAEM-03",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "KA等级与权益规则",
+        "历史核销记录",
+        "营销活动数据"
+      ],
+      "process_context": "位于蓝图STEP-03，在KA培训完成后提供销售支持资料。",
+      "risks_limits": [
+        "当前全流程手工，数据质量依赖个人，存在错漏风险",
+        "口头传递信息不可追溯，影响合规性"
+      ],
+      "current_recommendation": "优先建立系统化核销流程，AI辅助计算和监控，人工保留分配决策权和异常处理，后续逐步向Aug演进。",
+      "evidence_refs": [
+        "EVD-fae77f48eb74dc6fbf1a",
+        "EVD-cc50cd0005fe2b80368d",
+        "EVD-ac755b40299a232aff2e",
+        "EVD-ed20bd4ddc2113257be2"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-KAEM-04",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "培训记录",
+        "销售业绩数据",
+        "KA反馈"
+      ],
+      "process_context": "位于蓝图STEP-04，为赋能流程末环，并衔接L3-KAGA持续跟踪。",
+      "risks_limits": [
+        "复合动作且低封装，判断依赖权威，AI无法独立决策",
+        "评估标准未结构化，自动化需先明确指标"
+      ],
+      "current_recommendation": "采用Agent辅助模式，AI提供评估仪表盘和计划草稿，人工主导判断和审批，逐步定义评估标准为未来自动化铺路。",
+      "evidence_refs": [
+        "EVD-281f66eb1fa14876ee00",
+        "EVD-b8f198c5b483b639f036",
+        "EVD-e54862d56a878e896c4d",
+        "EVD-5c97c55550feaf765e9d"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "decision_drafts": [
+    {
+      "priority": "P1",
+      "task_ids": [
+        "TASK-L4-KAEM-02-001"
+      ],
+      "title": "决策：启动KA资讯权益配发自动化试点",
+      "pilot_scope": "选取5个活跃KA，试行AI辅助的资讯配发与核销流程，为期1个月。",
+      "human_boundary": "所有配发内容须经KA管理岗审核，异常核销数据需人工验证。",
+      "evidence_refs": [
+        "EVD-31005be0382bba9d848c",
+        "EVD-741e9f3588611ef98ff1",
+        "EVD-09c8b390990963571ef9"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "control_chain": [],
+  "rejected_task_sources": [
+    {
+      "source_type": "RULE",
+      "reason": "网关E-007检查表明无可用规则定位到L4，无法生成基于规则的任务。",
+      "evidence_refs": [
+        "rule_id: E-007"
+      ]
+    }
+  ],
+  "missing_analysis": [
+    "L4-KAEM-01 · quality_anchor · 未发现明确的培训质量指标或KPI标准，仅有T03 KA赋能动作完成率可参考，但权重未确认。",
+    "L4-KAEM-02 · quality_anchor · 缺少培训效果评估标准，交付物仅为Excel/邮件记录，无结构化质量锚点。",
+    "L4-KAEM-03 · quality_anchor · 无明确的营销资源支持质量度量，当前为手工台账，需定义准确性、响应时效等指标。",
+    "L4-KAEM-04 · quality_anchor · 《赋能效果评估》方案未明确评估维度和标准，需补充具体评估框架。",
+    "控制链缺少L4定位，已拒绝6条"
+  ]
+}

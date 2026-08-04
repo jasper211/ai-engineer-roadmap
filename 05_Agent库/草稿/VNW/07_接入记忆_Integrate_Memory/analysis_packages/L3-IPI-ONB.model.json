@@ -1,0 +1,1062 @@
+{
+  "schema_version": "vnw.l3-analysis.v1",
+  "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
+  "generation_mode": "UNIFIED_MODEL",
+  "analysis_status": "MODEL_DRAFT",
+  "model_run": {
+    "model_name": "deepseek-v4-pro",
+    "model_version": "deepseek-v4-pro",
+    "prompt_version": "VNW-L3-COM-GOLD-v1.0",
+    "generated_at": "2026-08-04T18:11:20.147857+00:00",
+    "input_snapshot_hash": "1c588aa67439c85334fafea26363368aa89c99b129905029cda3b79d5fbca63c"
+  },
+  "source_scope": {
+    "database": "process_analytics",
+    "knowledge": "ACTIVE supplemental evidence only",
+    "evidence_count": 110
+  },
+  "l4_analysis": [
+    {
+      "l4_code": "L4-IPI-01",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-c95329a3f73d5bfcf2c9",
+        "EVD-e750752d3726cdc999c5",
+        "EVD-a16f6234695c7425b9e7",
+        "EVD-3a828407b0e6c2a54453",
+        "EVD-f186313f5860b0ec7361",
+        "EVD-2db5c8d566f8e6f6ef95",
+        "EVD-7b999d1d611c562de520",
+        "EVD-a5d2961c7b9720fbe1a7",
+        "EVD-675f5b9473e70d2fe0a2",
+        "EVD-ab78b96bc65494c8b758",
+        "EVD-826db543d4e076d45331",
+        "EVD-37adf5454c4a4a8d9491"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "《Portfolio分析报告》（方案）；实际输出产品库条目。数据库与蓝图存在交付物描述冲突。",
+      "specific_capabilities": [
+        "结构化数据录入（依赖已定义的产品元数据模型）",
+        "单一信息处理动作，可封装为确定性Skill（A-高封装根据skill_feasibility EVD-826db543d4e076d45331）"
+      ],
+      "ai_reshape": "完全自动化录入产品元数据，生成产品库条目；由确定性的Skill执行，无需人工介入典型路径。",
+      "quality_anchor": "蓝图STEP-01要求输出产品库条目（Auto）；质量依赖于前置元数据校验和规则完整性。",
+      "ai_responsibility": "执行数据录入、启动校验、输出产品库条目。",
+      "human_responsibility": "人工执行：产品元数据录入配置（EVD-a16f6234695c7425b9e7）。尽管skill_feasibility为A，数据库human_touchpoint仍标示人工执行，说明当前实际运行中由保司关系经理操作，需核查是配置变更、数据源不标准还是临时过渡状态。",
+      "handoff_triggers": [
+        "新品类产品元数据模型缺失",
+        "数据校验失败（如字段不完整、格式异常）",
+        "系统接口异常或规则调用失败"
+      ],
+      "control_gates": [],
+      "data_basis": [
+        "agent_d1_input_struct=3 (EVD-f186313f5860b0ec7361)",
+        "agent_d2_rule_clear=3 (EVD-2db5c8d566f8e6f6ef95)",
+        "agent_d3_output_verify=3 (EVD-7b999d1d611c562de520)",
+        "agent_d4_api_reach=3 (EVD-a5d2961c7b9720fbe1a7)",
+        "agent_d5_fallback=2 (EVD-675f5b9473e70d2fe0a2)",
+        "agent_d6_compliance=2 (EVD-ab78b96bc65494c8b758)",
+        "skill_feasibility: A-高封装,单一信息处理动作 (EVD-826db543d4e076d45331)"
+      ],
+      "process_context": "属于STEP-01产品元数据录入与佣金配置，是产品上架的第一道工序，与L4-IPI-02并行后经过Q1沙箱测试判断。",
+      "risks_limits": [
+        "当前human_touchpoint为人工执行，可能因数据源未标准化或产品种类复杂导致全自动不可靠",
+        "agent_d5_fallback与agent_d6_compliance仅为2，表明容错和合规机制不够健壮"
+      ],
+      "current_recommendation": "优先进入Skill原型候选池，但须先补全各类产品的元数据模型和校验规则。实际建议以Aug起步（AI录入+人工校验），待模型稳定且d5/d6提升至3后切换为Auto。",
+      "database_tier": "Auto",
+      "recommended_tier": "Aug",
+      "quadrant": "quick-win"
+    },
+    {
+      "l4_code": "L4-IPI-02",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-bb657f8f977cf5d6b892",
+        "EVD-19031d1366c6ab3ccce9",
+        "EVD-e8099b7625936ac4ea77",
+        "EVD-5fa927dac061f78e6692",
+        "EVD-a9482b0d90c40bc0de37",
+        "EVD-d482700621c9b84cc55a",
+        "EVD-f5d1d8f011c5db18a683",
+        "EVD-52a093afe38f9e7ae7e0",
+        "EVD-c48c6158d3e908238309",
+        "EVD-ca292b676bb3a9c6037d",
+        "EVD-fcc1f17a9e34e7b11b21",
+        "EVD-37adf5454c4a4a8d9491"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "《Portfolio分析报告》（方案）；实际输出佣金规则部署。交付物描述冲突，以蓝图为准：部署佣金规则到规则引擎。",
+      "specific_capabilities": [
+        "佣金政策到系统规则的转化部署（依赖预定义的规则模板）",
+        "单一信息处理动作，可封装为确定性Skill（A-高封装，skill_feasibility EVD-fcc1f17a9e34e7b11b21）"
+      ],
+      "ai_reshape": "完全自动化将佣金政策配置到规则引擎；由Skill执行部署和初步校验。",
+      "quality_anchor": "蓝图STEP-01输出佣金规则部署（Auto）；规则部署后须通过Q1沙箱测试。",
+      "ai_responsibility": "执行佣金规则部署、调用沙箱测试接口。",
+      "human_responsibility": "人工执行：佣金政策拆解配置（EVD-e8099b7625936ac4ea77）。与L4-IPI-01同理，当前指示人工执行，可能源于政策解读需人工或规则模板未完善。",
+      "handoff_triggers": [
+        "新佣金模式无对应规则模板",
+        "沙箱测试失败（Q1未通过）",
+        "规则部署过程中引擎返回错误"
+      ],
+      "control_gates": [],
+      "data_basis": [
+        "agent_d1_input_struct=3 (EVD-a9482b0d90c40bc0de37)",
+        "agent_d2_rule_clear=3 (EVD-d482700621c9b84cc55a)",
+        "agent_d3_output_verify=3 (EVD-f5d1d8f011c5db18a683)",
+        "agent_d4_api_reach=3 (EVD-52a093afe38f9e7ae7e0)",
+        "agent_d5_fallback=2 (EVD-c48c6158d3e908238309)",
+        "agent_d6_compliance=2 (EVD-ca292b676bb3a9c6037d)",
+        "skill_feasibility: A-高封装,单一信息处理动作 (EVD-fcc1f17a9e34e7b11b21)"
+      ],
+      "process_context": "属于STEP-01，与L4-IPI-01并行，之后进入Q1决策。佣金规则直接影响产品成本和渠道结算，准确度要求高。",
+      "risks_limits": [
+        "当前human_touchpoint为人工执行",
+        "agent_d5_fallback=2和agent_d6_compliance=2预示故障恢复与合规验证薄弱"
+      ],
+      "current_recommendation": "优先进入Skill原型候选池，但需与佣金管理团队配合固化规则模板。实际建议Aug（自动部署+人工复核），待规则模板覆盖完整且沙箱测试自动化后转Auto。",
+      "database_tier": "Auto",
+      "recommended_tier": "Aug",
+      "quadrant": "quick-win"
+    },
+    {
+      "l4_code": "L4-IPI-03",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-de0a19a0098952e8c0ea",
+        "EVD-e9cd6ee33ee9abd09bb8",
+        "EVD-66638a3ddd4cc4de131d",
+        "EVD-f11efa46eb65444d6976",
+        "EVD-5e1966d13c47713a7528",
+        "EVD-b601fdd84aacd635d0bd",
+        "EVD-540659f49ee7d89f6fda",
+        "EVD-a5051c114ad289934a58",
+        "EVD-ca1c2ba525880f02ca5a",
+        "EVD-c8bd9ef9349d138f4d88",
+        "EVD-735dfa8361987a665d05",
+        "EVD-45b0bf2b74da68ec4bc8"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "《Portfolio分析报告》（数据表）；实际输出匹配表。蓝图要求输出《匹配表》。",
+      "specific_capabilities": [
+        "基于产品属性和业务线规则进行匹配路由",
+        "语义复核判定类，单一动作但需人工确认（C-低封装根据skill_feasibility EVD-735dfa8361987a665d05）"
+      ],
+      "ai_reshape": "Agent辅助生成匹配建议，由人工确认后执行路由；不直接封装确定性Skill，因涉及策略和关系判断。",
+      "quality_anchor": "蓝图STEP-02输出《匹配表》；匹配质量依赖于佣金规则通过Q1沙箱测试和业务线规则维护情况。",
+      "ai_responsibility": "根据规则引擎计算匹配结果，输出《匹配表》草案。",
+      "human_responsibility": "人工执行：资源匹配至业务线（EVD-66638a3ddd4cc4de131d）。负责最终确认匹配、处理冲突和例外情况。",
+      "handoff_triggers": [
+        "规则引擎无匹配或产生冲突",
+        "业务线容量或优先级需要调整",
+        "新产品无现成匹配规则"
+      ],
+      "control_gates": [
+        "人工确认门：匹配结果必须由保司关系经理审核后生效，避免错误分配影响业务运营。"
+      ],
+      "data_basis": [
+        "agent_d1_input_struct=2 (EVD-5e1966d13c47713a7528)",
+        "agent_d2_rule_clear=2 (EVD-b601fdd84aacd635d0bd)",
+        "agent_d3_output_verify=2 (EVD-540659f49ee7d89f6fda)",
+        "agent_d4_api_reach=2 (EVD-a5051c114ad289934a58)",
+        "agent_d5_fallback=2 (EVD-ca1c2ba525880f02ca5a)",
+        "agent_d6_compliance=2 (EVD-c8bd9ef9349d138f4d88)",
+        "skill_feasibility: C-低封装,语义复核判定 (EVD-735dfa8361987a665d05)"
+      ],
+      "process_context": "属于STEP-02资源匹配与分发，紧随Q1通过之后执行，匹配结果将直接影响后续权益搭配和试运行范围。",
+      "risks_limits": [
+        "技能可行性为C，不宜全自动；agent各项指标均为2，需人工监督",
+        "匹配规则不透明或过时时，AI辅助结果可信度下降"
+      ],
+      "current_recommendation": "优先考虑Agent辅助或决策支持，不直接封装确定性Skill。建议以Hybrid模式运作：AI生成匹配建议，人工确认后自动路由，人工边界为异常、冲突和策略变更。",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "high-value-strategic"
+    },
+    {
+      "l4_code": "L4-IPI-04",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-db93dba946dca7cbf21f",
+        "EVD-fb46d09b02df5fce4dac",
+        "EVD-b3004e5da3f99ca1eb2a",
+        "EVD-cee4123c2242e8bf4648",
+        "EVD-f7e57b3feadbe49a97af",
+        "EVD-e65bd86f51513ca5c3fb",
+        "EVD-20b206d9ce57f092e9ae",
+        "EVD-248b0a3e81f43e057029",
+        "EVD-f867d12788bb6c4d0fee",
+        "EVD-4504ad7b5aa062b12e58",
+        "EVD-5dc78c09181c44c1ccbf",
+        "EVD-9f54ecd9011e862f4027"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "《Portfolio分析报告》（报告）；实际输出《试运行报告》。蓝图要求输出《试运行报告》并成为Q2决策依据。",
+      "specific_capabilities": [
+        "执行小范围测试并监控关键指标（可标准化数据收集）",
+        "生成结构化试运行报告（模板化输出）",
+        "复合动作需先拆分：测试执行与报告生成/结果判定可分离（B-中封装根据skill_feasibility EVD-5dc78c09181c44c1ccbf）"
+      ],
+      "ai_reshape": "测试执行与监控可部分自动化（Skill），报告生成可Agent辅助（基于监控数据和建议），最终达标判定必须人工参与。",
+      "quality_anchor": "蓝图STEP-03要求输出《试运行报告》，并基于报告作出Q2决策。报告质量直接影响是否进入全面上架。",
+      "ai_responsibility": "收集测试数据、生成《试运行报告》草稿、标注异常指标。",
+      "human_responsibility": "人工执行：试运行与小范围测试（EVD-b3004e5da3f99ca1eb2a）。负责设计测试范围、判定结果是否达标、决定是否返回异常处置。",
+      "handoff_triggers": [
+        "自动监控发现重大异常",
+        "试运行数据缺失或不符合报告模板要求",
+        "模型无法确定的达标阈值"
+      ],
+      "control_gates": [
+        "人工决策门：Q2试运行结果是否达标，由负责人（保司关系经理）判定，决策不可自动化。"
+      ],
+      "data_basis": [
+        "agent_d1_input_struct=2 (EVD-f7e57b3feadbe49a97af)",
+        "agent_d2_rule_clear=2 (EVD-e65bd86f51513ca5c3fb)",
+        "agent_d3_output_verify=2 (EVD-20b206d9ce57f092e9ae)",
+        "agent_d4_api_reach=2 (EVD-248b0a3e81f43e057029)",
+        "agent_d5_fallback=2 (EVD-f867d12788bb6c4d0fee)",
+        "agent_d6_compliance=2 (EVD-4504ad7b5aa062b12e58)",
+        "skill_feasibility: B-中封装,需报告模板/系统集成,语义复核后确认 (EVD-5dc78c09181c44c1ccbf)"
+      ],
+      "process_context": "属于STEP-03试运行与小范围测试，紧接资源匹配后执行；未达标时退回L4-IPI-09异常处置，达标则进入STEP-04全面上架。",
+      "risks_limits": [
+        "复合动作需先拆分，否则AI难以直接承接整体任务",
+        "报告模板和达标规则尚未固化（gate E-007/E-008失败）",
+        "试运行范围和达标标准依赖人工判断"
+      ],
+      "current_recommendation": "优先补齐报告模板、达标规则与系统监控API，再将测试监控与报告生成拆分为具体子任务。当前建议Aug（AI辅助监控+报告生成草稿），运营决策（Q2）保留为Human，待模板和规则固化后可探索Hybrid。",
+      "database_tier": "Aug",
+      "recommended_tier": "Aug",
+      "quadrant": "high-value-strategic"
+    },
+    {
+      "l4_code": "L4-IPI-05",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-a9ee5f3846f42598f505",
+        "EVD-cce6d25c4c07be97bfaa",
+        "EVD-32e7372af7efff9c98fc",
+        "EVD-58342c18d937264a5297",
+        "EVD-31408afc46f957bf34d9",
+        "EVD-7ba6bd006cb97efc7908",
+        "EVD-36765e59fd8aaf66b118",
+        "EVD-43a35b7f4cebad3258a0",
+        "EVD-66366693eb2e804c8504",
+        "EVD-4728acfde2bfc09baa22",
+        "EVD-c15923c719ef07e59fa1",
+        "EVD-cb6c178a6aaa8edb5dd3",
+        "EVD-b2108e21de51af0691ea"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "《Portfolio分析报告》（方案）；实际输出上架通知。蓝图要求输出上架通知并移交运维。",
+      "specific_capabilities": [
+        "执行发布流程（自动化上架、通知等）",
+        "复合动作需先拆分为子Skill（A-高封装但复合，skill_feasibility EVD-c15923c719ef07e59fa1）"
+      ],
+      "ai_reshape": "在Q2达标后，可自动化执行发布动作和通知，但必须有人工审批门；可拆为自动化发布任务和人工审批任务。",
+      "quality_anchor": "蓝图STEP-04输出上架通知，标志产品成功上架。",
+      "ai_responsibility": "接收审批指令后自动化执行发布和通知。",
+      "human_responsibility": "人工执行：全面上架与发布（EVD-32e7372af7efff9c98fc）。负责最终审批上架决定、处理发布异常。",
+      "handoff_triggers": [
+        "发布系统返回错误或中断",
+        "上架通知发送失败",
+        "发布后出现立即异常"
+      ],
+      "control_gates": [
+        "不可绕过控制门：对上生产环境的发布操作必须有人工审批（发布确认门），确保试运行结果已达标且无其他风险。",
+        "版本管理归档（L4-IPI-06）完成后整个上架流程结束。"
+      ],
+      "data_basis": [
+        "agent_d1_input_struct=2 (EVD-31408afc46f957bf34d9)",
+        "agent_d2_rule_clear=2 (EVD-7ba6bd006cb97efc7908)",
+        "agent_d3_output_verify=2 (EVD-36765e59fd8aaf66b118)",
+        "agent_d4_api_reach=2 (EVD-43a35b7f4cebad3258a0)",
+        "agent_d5_fallback=2 (EVD-66366693eb2e804c8504)",
+        "agent_d6_compliance=2 (EVD-4728acfde2bfc09baa22)",
+        "skill_feasibility: A-高封装,需先拆分为子Skill (EVD-c15923c719ef07e59fa1)"
+      ],
+      "process_context": "属于STEP-04全面上架与发布，仅当Q2达标时执行；与版本管理归档并行或顺序。上架后移交L3-IPI-Ops。",
+      "risks_limits": [
+        "未经审批的全自动发布可能导致未达标准产品上线",
+        "agent各项指标为2，自动化执行可靠性中等",
+        "复合动作未拆分会导致Skill边界模糊"
+      ],
+      "current_recommendation": "遵循skill_feasibility建议先拆分为子Skill：自动化发布动作（可候选Skill）和独立的人工审批任务。当前建议Hybrid（人工审批+自动执行），待发布流程成熟且agent d5/d6提升后可逐步向Auto靠近但永久保留人工审批门。",
+      "database_tier": "Auto",
+      "recommended_tier": "Hybrid",
+      "quadrant": "compliance-gate"
+    },
+    {
+      "l4_code": "L4-IPI-06",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-0fdc3515670863a7fb64",
+        "EVD-2a18e60fad1479c7a74a",
+        "EVD-0fb33f656fa502163286",
+        "EVD-7f63283d068ab9f25ad5",
+        "EVD-8c0665343057c899291c",
+        "EVD-968ba7644d2a4de7b17d",
+        "EVD-8e910292a050d74e6618",
+        "EVD-6c12ac62451bf880934a",
+        "EVD-f64b1bae071896207576",
+        "EVD-80c34a53dbd9ec9e3a45",
+        "EVD-5df84650e90bea469bd3",
+        "EVD-cb6c178a6aaa8edb5dd3"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "《Portfolio分析报告》（数据表）；实际输出《版本变更记录》。蓝图要求输出《版本变更记录》（Auto）。",
+      "specific_capabilities": [
+        "生成版本变更记录并归档",
+        "单一信息处理动作但需语义复核（A-高封装根据skill_feasibility EVD-5df84650e90bea469bd3）"
+      ],
+      "ai_reshape": "自动化收集变更信息并生成版本记录，可由Skill执行，但最终需人工审核记录准确性。",
+      "quality_anchor": "蓝图STEP-04输出《版本变更记录》，确保上架可追溯。",
+      "ai_responsibility": "自动抓取变更数据、生成报告草案。",
+      "human_responsibility": "人工执行：产品版本管理（EVD-0fb33f656fa502163286）。负责校验版本信息并确认归档。",
+      "handoff_triggers": [
+        "变更数据缺失或不一致",
+        "归档系统接口错误"
+      ],
+      "control_gates": [],
+      "data_basis": [
+        "agent_d1_input_struct=3 (EVD-8c0665343057c899291c)",
+        "agent_d2_rule_clear=3 (EVD-968ba7644d2a4de7b17d)",
+        "agent_d3_output_verify=3 (EVD-8e910292a050d74e6618)",
+        "agent_d4_api_reach=3 (EVD-6c12ac62451bf880934a)",
+        "agent_d5_fallback=2 (EVD-f64b1bae071896207576)",
+        "agent_d6_compliance=2 (EVD-80c34a53dbd9ec9e3a45)",
+        "skill_feasibility: A-高封装,语义复核后确认 (EVD-5df84650e90bea469bd3)"
+      ],
+      "process_context": "属于STEP-04全面上架与发布，与L4-IPI-05配套，两者并行或顺序，完成版本记录后上架结束。",
+      "risks_limits": [
+        "当前human_touchpoint为人工执行，可能因变更信息结构不够标准化",
+        "agent_d5_fallback=2，容错需加强"
+      ],
+      "current_recommendation": "优先进入Skill原型，但需保留人工最终审核。建议Aug起步（自动生成+人工复核），待变更来源标准化且d5提升至3后可完全自动化（Auto）。",
+      "database_tier": "Auto",
+      "recommended_tier": "Aug",
+      "quadrant": "quick-win"
+    },
+    {
+      "l4_code": "L4-IPI-09",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-db4c1af3aba6c52570c2",
+        "EVD-7cc70d7ced5376bf06ae",
+        "EVD-c2c8530fbbbb9955f674",
+        "EVD-d120d77ec4e8e4e44a79",
+        "EVD-b466ca0f4a9aa28a0c9b",
+        "EVD-009a4b1824c3c0e264f9",
+        "EVD-0560a56f66acb65f0bef",
+        "EVD-59e76474b1da29ac6a97",
+        "EVD-84b374fe3304363db458",
+        "EVD-a9b4f4276ac6cacaadaf",
+        "EVD-01e4664a10780bd7e2aa",
+        "EVD-9f54ecd9011e862f4027",
+        "EVD-b2108e21de51af0691ea"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "《Portfolio分析报告》（数据表）；实际输出异常处置报告。蓝图要求在Q2不达标时执行L4-IPI-09异常处置，修复后重新测试。",
+      "specific_capabilities": [
+        "诊断异常并制定修复方案",
+        "判断/策略/关系类，单一动作但高度依赖人工判断（C-低封装，skill_feasibility EVD-01e4664a10780bd7e2aa）"
+      ],
+      "ai_reshape": "Agent辅助收集异常信息和初步诊断建议，最终处置决策及执行必须由人工完成。",
+      "quality_anchor": "蓝图Q2不达标分支触发；目标是修复问题使产品可重新进入试运行。",
+      "ai_responsibility": "汇总异常数据、提供历史类似案例和修复建议。",
+      "human_responsibility": "人工执行：产品异常事件处置（EVD-c2c8530fbbbb9955f674）。负责判断异常根本原因、批准修复方案并协调执行。",
+      "handoff_triggers": [
+        "AI无法提供有效诊断时全面转人工",
+        "涉及资金安全、监管风险的异常立即升级"
+      ],
+      "control_gates": [
+        "所有异常处置方案必须由保司关系经理批准，涉及外部通联的还需合规审批。"
+      ],
+      "data_basis": [
+        "agent_d1_input_struct=2 (EVD-b466ca0f4a9aa28a0c9b)",
+        "agent_d2_rule_clear=1 (EVD-009a4b1824c3c0e264f9)",
+        "agent_d3_output_verify=2 (EVD-0560a56f66acb65f0bef)",
+        "agent_d4_api_reach=1 (EVD-59e76474b1da29ac6a97)",
+        "agent_d5_fallback=2 (EVD-84b374fe3304363db458)",
+        "agent_d6_compliance=1 (EVD-a9b4f4276ac6cacaadaf)",
+        "skill_feasibility: C-低封装,判断/策略/关系类 (EVD-01e4664a10780bd7e2aa)"
+      ],
+      "process_context": "属于STEP-03试运行与小范围测试的异常分支，也可能在后续运营中触发；是典型的多发异常处理节点。",
+      "risks_limits": [
+        "规则清晰度仅1，API可达性1，自动化基础薄弱",
+        "技能天花板为C，不适合直接Skill封装"
+      ],
+      "current_recommendation": "优先考虑Agent辅助或决策支持，不直接封装确定性Skill。建议Hybrid（AI辅助+人工决策），长远可建设异常知识库提升辅助质量，但核心决策永恒保留Human。",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "high-value-strategic"
+    },
+    {
+      "l4_code": "L4-IPI-11",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-c6acf780fdc1e4ba8289",
+        "EVD-0d5ae3a06435504cdd5a",
+        "EVD-dc6bf30a63ce50c29070",
+        "EVD-6d42bdd6b24282b17d73",
+        "EVD-3e432d32bd19d039428c",
+        "EVD-f130386b8d2c59b17114",
+        "EVD-2d8028169d82be0d94a5",
+        "EVD-53af60f750a4decb687f",
+        "EVD-cfdf934f50aeb41d9e1f",
+        "EVD-c3be27d9ecd42de3d720",
+        "EVD-f74ea3b3471be01a464d",
+        "EVD-45b0bf2b74da68ec4bc8"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "《Portfolio分析报告》（方案）；实际输出《组合方案》。蓝图要求F族搭配权益方案，输出《组合方案》。",
+      "specific_capabilities": [
+        "根据产品属性设计权益搭配方案",
+        "判断/策略/关系类，复合动作需拆分（C-低封装，skill_feasibility EVD-f74ea3b3471be01a464d）"
+      ],
+      "ai_reshape": "AI可基于规则和历史数据生成搭配建议草稿，但最终方案选择和调整需人工完成；因C级天花板，不宜封装为独立Skill。",
+      "quality_anchor": "蓝图STEP-02输出《组合方案》，影响产品吸引力和客户价值。",
+      "ai_responsibility": "生成搭配方案草稿并标注依据。",
+      "human_responsibility": "人工执行：产品与权益搭配运营（EVD-dc6bf30a63ce50c29070）。负责最终确认方案、协调权益合作伙伴。",
+      "handoff_triggers": [
+        "新产品无历史数据或规则支持",
+        "涉及独家合作权益需要人工谈判",
+        "AI生成的建议被驳回需重新设计"
+      ],
+      "control_gates": [
+        "人工确认门：所有对外发布的搭配方案须经F族/保司关系经理审批。"
+      ],
+      "data_basis": [
+        "agent_d1_input_struct=2 (EVD-3e432d32bd19d039428c)",
+        "agent_d2_rule_clear=2 (EVD-f130386b8d2c59b17114)",
+        "agent_d3_output_verify=2 (EVD-2d8028169d82be0d94a5)",
+        "agent_d4_api_reach=2 (EVD-53af60f750a4decb687f)",
+        "agent_d5_fallback=2 (EVD-cfdf934f50aeb41d9e1f)",
+        "agent_d6_compliance=2 (EVD-c3be27d9ecd42de3d720)",
+        "skill_feasibility: C-低封装,复合动作需拆分 (EVD-f74ea3b3471be01a464d)"
+      ],
+      "process_context": "属于STEP-02资源匹配与分发，紧随L4-IPI-03之后；生成方案后将提交后续环节或直接进入试运行（视流程变体）。",
+      "risks_limits": [
+        "需要多维度策略判断，AI难以独立胜任",
+        "权益涉及商业合作，不适合全自动"
+      ],
+      "current_recommendation": "优先考虑Agent辅助或决策支持，不直接封装确定性Skill。建议Hybrid（AI草稿+人工确认），并将“生成搭配建议草稿”与“确认搭配方案”拆分为两个独立任务卡，后者为Human控制。",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "high-value-strategic"
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "TSK-IPI-01-001",
+      "l4_code": "L4-IPI-01",
+      "task_name": "录入产品元数据至产品库",
+      "source_type": "blueprint_step",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-01",
+      "source_line": 41,
+      "previous_task_ids": [],
+      "next_task_ids": [
+        "TSK-IPI-03-001",
+        "TSK-IPI-11-001"
+      ],
+      "relation_type": "PARALLEL_INSIDE_STEP",
+      "evidence_refs": [
+        "EVD-37adf5454c4a4a8d9491",
+        "EVD-826db543d4e076d45331"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "skill_feasibility为A-高封装，但当前human_touchpoint为人工执行，建议起步为Aug（自动录入+人工校验），待元数据标准化且容错机制完善后转Auto。"
+    },
+    {
+      "task_id": "TSK-IPI-02-001",
+      "l4_code": "L4-IPI-02",
+      "task_name": "部署佣金规则至规则引擎",
+      "source_type": "blueprint_step",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-01",
+      "source_line": 41,
+      "previous_task_ids": [],
+      "next_task_ids": [
+        "TSK-IPI-03-001",
+        "TSK-IPI-11-001"
+      ],
+      "relation_type": "PARALLEL_INSIDE_STEP",
+      "evidence_refs": [
+        "EVD-37adf5454c4a4a8d9491",
+        "EVD-fcc1f17a9e34e7b11b21"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "A-高封装潜力，但human_touchpoint为人工，且规则部署后需通过Q1沙箱测试；建议Aug部署+人工复核，待规则模板固化后转Auto。"
+    },
+    {
+      "task_id": "TSK-IPI-03-001",
+      "l4_code": "L4-IPI-03",
+      "task_name": "生成产品到业务线匹配建议并人工确认",
+      "source_type": "blueprint_step",
+      "sequence_no": 3,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-02",
+      "source_line": 49,
+      "previous_task_ids": [
+        "TSK-IPI-01-001",
+        "TSK-IPI-02-001"
+      ],
+      "next_task_ids": [
+        "TSK-IPI-04-001"
+      ],
+      "relation_type": "CONDITIONAL",
+      "evidence_refs": [
+        "EVD-45b0bf2b74da68ec4bc8",
+        "EVD-735dfa8361987a665d05",
+        "EVD-7bbd615892516e976153"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "skill_feasibility为C-低封装，匹配需要语义判断，AI辅助生成建议，人工最终确认；匹配结果直接影响业务，不适合纯Auto。"
+    },
+    {
+      "task_id": "TSK-IPI-11-001",
+      "l4_code": "L4-IPI-11",
+      "task_name": "生成产品与权益搭配方案草稿",
+      "source_type": "blueprint_step",
+      "sequence_no": 4,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-02",
+      "source_line": 51,
+      "previous_task_ids": [
+        "TSK-IPI-01-001",
+        "TSK-IPI-02-001"
+      ],
+      "next_task_ids": [
+        "TSK-IPI-11-002"
+      ],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-45b0bf2b74da68ec4bc8",
+        "EVD-f74ea3b3471be01a464d"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "复合动作的第一个可执行子任务：AI基于规则和历史生成草稿；skill_feasibility为C，不适合全自动，此任务专注于AI辅助生成。"
+    },
+    {
+      "task_id": "TSK-IPI-11-002",
+      "l4_code": "L4-IPI-11",
+      "task_name": "确认产品与权益搭配方案",
+      "source_type": "blueprint_step",
+      "sequence_no": 5,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-02",
+      "source_line": 51,
+      "previous_task_ids": [
+        "TSK-IPI-11-001"
+      ],
+      "next_task_ids": [
+        "TSK-IPI-04-001"
+      ],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-45b0bf2b74da68ec4bc8",
+        "EVD-f74ea3b3471be01a464d"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "搭配方案最终确认涉及商业判断、合作谈判，必须由人工执行；符合skill_feasibility C-低封装的天花板。"
+    },
+    {
+      "task_id": "TSK-IPI-04-001",
+      "l4_code": "L4-IPI-04",
+      "task_name": "执行试运行监控与数据收集",
+      "source_type": "blueprint_step",
+      "sequence_no": 6,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-03",
+      "source_line": 53,
+      "previous_task_ids": [
+        "TSK-IPI-03-001",
+        "TSK-IPI-11-002"
+      ],
+      "next_task_ids": [
+        "TSK-IPI-04-002"
+      ],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-9f54ecd9011e862f4027",
+        "EVD-5dc78c09181c44c1ccbf"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "复合动作的第一个可执行子任务：自动收集监控数据，可Agent辅助配置监控指标，但测试范围需人工设定。"
+    },
+    {
+      "task_id": "TSK-IPI-04-002",
+      "l4_code": "L4-IPI-04",
+      "task_name": "生成试运行报告并判定达标",
+      "source_type": "blueprint_step",
+      "sequence_no": 7,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-03",
+      "source_line": 53,
+      "previous_task_ids": [
+        "TSK-IPI-04-001"
+      ],
+      "next_task_ids": [
+        "TSK-IPI-05-001",
+        "TSK-IPI-09-001"
+      ],
+      "relation_type": "BRANCH",
+      "evidence_refs": [
+        "EVD-9f54ecd9011e862f4027",
+        "EVD-b2108e21de51af0691ea"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "生成报告可AI辅助草稿，但达标判定（Q2决策）必须由负责人根据业务判断做出，不可自动化，因此整体任务为Human主导。"
+    },
+    {
+      "task_id": "TSK-IPI-09-001",
+      "l4_code": "L4-IPI-09",
+      "task_name": "产品异常事件诊断与处置",
+      "source_type": "blueprint_step",
+      "sequence_no": 8,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-03",
+      "source_line": 58,
+      "previous_task_ids": [
+        "TSK-IPI-04-002"
+      ],
+      "next_task_ids": [
+        "TSK-IPI-04-001"
+      ],
+      "relation_type": "RETURN",
+      "evidence_refs": [
+        "EVD-9f54ecd9011e862f4027",
+        "EVD-b2108e21de51af0691ea",
+        "EVD-01e4664a10780bd7e2aa"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "skill_feasibility为C-低封装，诊断可AI辅助（Hybrid），但处置决策必须人工；关系为RETURN，完成后回到试运行。"
+    },
+    {
+      "task_id": "TSK-IPI-05-001",
+      "l4_code": "L4-IPI-05",
+      "task_name": "执行自动化上架发布并通知",
+      "source_type": "blueprint_step",
+      "sequence_no": 9,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-04",
+      "source_line": 61,
+      "previous_task_ids": [
+        "TSK-IPI-04-002"
+      ],
+      "next_task_ids": [
+        "TSK-IPI-06-001"
+      ],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-cb6c178a6aaa8edb5dd3",
+        "EVD-c15923c719ef07e59fa1"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "A-高封装潜力，发布动作可拆为独立Skill，但在审批门通过后执行；此任务仅负责自动化发布，假设人工审批已前置。"
+    },
+    {
+      "task_id": "TSK-IPI-05-002",
+      "l4_code": "L4-IPI-05",
+      "task_name": "审批全面上架发布",
+      "source_type": "blueprint_step",
+      "sequence_no": 10,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-04",
+      "source_line": 61,
+      "previous_task_ids": [
+        "TSK-IPI-04-002"
+      ],
+      "next_task_ids": [
+        "TSK-IPI-05-001"
+      ],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-cb6c178a6aaa8edb5dd3",
+        "EVD-32e7372af7efff9c98fc"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "不可绕过的人工控制门：发布审批必须由负责人执行，考虑试运行结果、合规风险。"
+    },
+    {
+      "task_id": "TSK-IPI-06-001",
+      "l4_code": "L4-IPI-06",
+      "task_name": "版本管理归档",
+      "source_type": "blueprint_step",
+      "sequence_no": 11,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-04",
+      "source_line": 62,
+      "previous_task_ids": [
+        "TSK-IPI-05-001"
+      ],
+      "next_task_ids": [],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-cb6c178a6aaa8edb5dd3",
+        "EVD-5df84650e90bea469bd3"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "A-高封装潜力，但human_touchpoint标示人工执行；建议Aug自动生成+人工复核，待标准化后可转Auto，但永久保留人工抽检。"
+    }
+  ],
+  "priority_drafts": [
+    {
+      "l4_code": "L4-IPI-01",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "agent_d1_input_struct=3 (EVD-f186313f5860b0ec7361)",
+        "agent_d2_rule_clear=3 (EVD-2db5c8d566f8e6f6ef95)",
+        "agent_d3_output_verify=3 (EVD-7b999d1d611c562de520)",
+        "agent_d4_api_reach=3 (EVD-a5d2961c7b9720fbe1a7)",
+        "agent_d5_fallback=2 (EVD-675f5b9473e70d2fe0a2)",
+        "agent_d6_compliance=2 (EVD-ab78b96bc65494c8b758)",
+        "skill_feasibility: A-高封装,单一信息处理动作 (EVD-826db543d4e076d45331)"
+      ],
+      "process_context": "属于STEP-01产品元数据录入与佣金配置，是产品上架的第一道工序，与L4-IPI-02并行后经过Q1沙箱测试判断。",
+      "risks_limits": [
+        "当前human_touchpoint为人工执行，可能因数据源未标准化或产品种类复杂导致全自动不可靠",
+        "agent_d5_fallback与agent_d6_compliance仅为2，表明容错和合规机制不够健壮"
+      ],
+      "current_recommendation": "优先进入Skill原型候选池，但须先补全各类产品的元数据模型和校验规则。实际建议以Aug起步（AI录入+人工校验），待模型稳定且d5/d6提升至3后切换为Auto。",
+      "evidence_refs": [
+        "EVD-c95329a3f73d5bfcf2c9",
+        "EVD-e750752d3726cdc999c5",
+        "EVD-a16f6234695c7425b9e7",
+        "EVD-3a828407b0e6c2a54453",
+        "EVD-f186313f5860b0ec7361",
+        "EVD-2db5c8d566f8e6f6ef95",
+        "EVD-7b999d1d611c562de520",
+        "EVD-a5d2961c7b9720fbe1a7",
+        "EVD-675f5b9473e70d2fe0a2",
+        "EVD-ab78b96bc65494c8b758",
+        "EVD-826db543d4e076d45331",
+        "EVD-37adf5454c4a4a8d9491"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-IPI-02",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "agent_d1_input_struct=3 (EVD-a9482b0d90c40bc0de37)",
+        "agent_d2_rule_clear=3 (EVD-d482700621c9b84cc55a)",
+        "agent_d3_output_verify=3 (EVD-f5d1d8f011c5db18a683)",
+        "agent_d4_api_reach=3 (EVD-52a093afe38f9e7ae7e0)",
+        "agent_d5_fallback=2 (EVD-c48c6158d3e908238309)",
+        "agent_d6_compliance=2 (EVD-ca292b676bb3a9c6037d)",
+        "skill_feasibility: A-高封装,单一信息处理动作 (EVD-fcc1f17a9e34e7b11b21)"
+      ],
+      "process_context": "属于STEP-01，与L4-IPI-01并行，之后进入Q1决策。佣金规则直接影响产品成本和渠道结算，准确度要求高。",
+      "risks_limits": [
+        "当前human_touchpoint为人工执行",
+        "agent_d5_fallback=2和agent_d6_compliance=2预示故障恢复与合规验证薄弱"
+      ],
+      "current_recommendation": "优先进入Skill原型候选池，但需与佣金管理团队配合固化规则模板。实际建议Aug（自动部署+人工复核），待规则模板覆盖完整且沙箱测试自动化后转Auto。",
+      "evidence_refs": [
+        "EVD-bb657f8f977cf5d6b892",
+        "EVD-19031d1366c6ab3ccce9",
+        "EVD-e8099b7625936ac4ea77",
+        "EVD-5fa927dac061f78e6692",
+        "EVD-a9482b0d90c40bc0de37",
+        "EVD-d482700621c9b84cc55a",
+        "EVD-f5d1d8f011c5db18a683",
+        "EVD-52a093afe38f9e7ae7e0",
+        "EVD-c48c6158d3e908238309",
+        "EVD-ca292b676bb3a9c6037d",
+        "EVD-fcc1f17a9e34e7b11b21",
+        "EVD-37adf5454c4a4a8d9491"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-IPI-03",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "agent_d1_input_struct=2 (EVD-5e1966d13c47713a7528)",
+        "agent_d2_rule_clear=2 (EVD-b601fdd84aacd635d0bd)",
+        "agent_d3_output_verify=2 (EVD-540659f49ee7d89f6fda)",
+        "agent_d4_api_reach=2 (EVD-a5051c114ad289934a58)",
+        "agent_d5_fallback=2 (EVD-ca1c2ba525880f02ca5a)",
+        "agent_d6_compliance=2 (EVD-c8bd9ef9349d138f4d88)",
+        "skill_feasibility: C-低封装,语义复核判定 (EVD-735dfa8361987a665d05)"
+      ],
+      "process_context": "属于STEP-02资源匹配与分发，紧随Q1通过之后执行，匹配结果将直接影响后续权益搭配和试运行范围。",
+      "risks_limits": [
+        "技能可行性为C，不宜全自动；agent各项指标均为2，需人工监督",
+        "匹配规则不透明或过时时，AI辅助结果可信度下降"
+      ],
+      "current_recommendation": "优先考虑Agent辅助或决策支持，不直接封装确定性Skill。建议以Hybrid模式运作：AI生成匹配建议，人工确认后自动路由，人工边界为异常、冲突和策略变更。",
+      "evidence_refs": [
+        "EVD-de0a19a0098952e8c0ea",
+        "EVD-e9cd6ee33ee9abd09bb8",
+        "EVD-66638a3ddd4cc4de131d",
+        "EVD-f11efa46eb65444d6976",
+        "EVD-5e1966d13c47713a7528",
+        "EVD-b601fdd84aacd635d0bd",
+        "EVD-540659f49ee7d89f6fda",
+        "EVD-a5051c114ad289934a58",
+        "EVD-ca1c2ba525880f02ca5a",
+        "EVD-c8bd9ef9349d138f4d88",
+        "EVD-735dfa8361987a665d05",
+        "EVD-45b0bf2b74da68ec4bc8"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-IPI-04",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "agent_d1_input_struct=2 (EVD-f7e57b3feadbe49a97af)",
+        "agent_d2_rule_clear=2 (EVD-e65bd86f51513ca5c3fb)",
+        "agent_d3_output_verify=2 (EVD-20b206d9ce57f092e9ae)",
+        "agent_d4_api_reach=2 (EVD-248b0a3e81f43e057029)",
+        "agent_d5_fallback=2 (EVD-f867d12788bb6c4d0fee)",
+        "agent_d6_compliance=2 (EVD-4504ad7b5aa062b12e58)",
+        "skill_feasibility: B-中封装,需报告模板/系统集成,语义复核后确认 (EVD-5dc78c09181c44c1ccbf)"
+      ],
+      "process_context": "属于STEP-03试运行与小范围测试，紧接资源匹配后执行；未达标时退回L4-IPI-09异常处置，达标则进入STEP-04全面上架。",
+      "risks_limits": [
+        "复合动作需先拆分，否则AI难以直接承接整体任务",
+        "报告模板和达标规则尚未固化（gate E-007/E-008失败）",
+        "试运行范围和达标标准依赖人工判断"
+      ],
+      "current_recommendation": "优先补齐报告模板、达标规则与系统监控API，再将测试监控与报告生成拆分为具体子任务。当前建议Aug（AI辅助监控+报告生成草稿），运营决策（Q2）保留为Human，待模板和规则固化后可探索Hybrid。",
+      "evidence_refs": [
+        "EVD-db93dba946dca7cbf21f",
+        "EVD-fb46d09b02df5fce4dac",
+        "EVD-b3004e5da3f99ca1eb2a",
+        "EVD-cee4123c2242e8bf4648",
+        "EVD-f7e57b3feadbe49a97af",
+        "EVD-e65bd86f51513ca5c3fb",
+        "EVD-20b206d9ce57f092e9ae",
+        "EVD-248b0a3e81f43e057029",
+        "EVD-f867d12788bb6c4d0fee",
+        "EVD-4504ad7b5aa062b12e58",
+        "EVD-5dc78c09181c44c1ccbf",
+        "EVD-9f54ecd9011e862f4027"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-IPI-05",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "agent_d1_input_struct=2 (EVD-31408afc46f957bf34d9)",
+        "agent_d2_rule_clear=2 (EVD-7ba6bd006cb97efc7908)",
+        "agent_d3_output_verify=2 (EVD-36765e59fd8aaf66b118)",
+        "agent_d4_api_reach=2 (EVD-43a35b7f4cebad3258a0)",
+        "agent_d5_fallback=2 (EVD-66366693eb2e804c8504)",
+        "agent_d6_compliance=2 (EVD-4728acfde2bfc09baa22)",
+        "skill_feasibility: A-高封装,需先拆分为子Skill (EVD-c15923c719ef07e59fa1)"
+      ],
+      "process_context": "属于STEP-04全面上架与发布，仅当Q2达标时执行；与版本管理归档并行或顺序。上架后移交L3-IPI-Ops。",
+      "risks_limits": [
+        "未经审批的全自动发布可能导致未达标准产品上线",
+        "agent各项指标为2，自动化执行可靠性中等",
+        "复合动作未拆分会导致Skill边界模糊"
+      ],
+      "current_recommendation": "遵循skill_feasibility建议先拆分为子Skill：自动化发布动作（可候选Skill）和独立的人工审批任务。当前建议Hybrid（人工审批+自动执行），待发布流程成熟且agent d5/d6提升后可逐步向Auto靠近但永久保留人工审批门。",
+      "evidence_refs": [
+        "EVD-a9ee5f3846f42598f505",
+        "EVD-cce6d25c4c07be97bfaa",
+        "EVD-32e7372af7efff9c98fc",
+        "EVD-58342c18d937264a5297",
+        "EVD-31408afc46f957bf34d9",
+        "EVD-7ba6bd006cb97efc7908",
+        "EVD-36765e59fd8aaf66b118",
+        "EVD-43a35b7f4cebad3258a0",
+        "EVD-66366693eb2e804c8504",
+        "EVD-4728acfde2bfc09baa22",
+        "EVD-c15923c719ef07e59fa1",
+        "EVD-cb6c178a6aaa8edb5dd3",
+        "EVD-b2108e21de51af0691ea"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-IPI-06",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "agent_d1_input_struct=3 (EVD-8c0665343057c899291c)",
+        "agent_d2_rule_clear=3 (EVD-968ba7644d2a4de7b17d)",
+        "agent_d3_output_verify=3 (EVD-8e910292a050d74e6618)",
+        "agent_d4_api_reach=3 (EVD-6c12ac62451bf880934a)",
+        "agent_d5_fallback=2 (EVD-f64b1bae071896207576)",
+        "agent_d6_compliance=2 (EVD-80c34a53dbd9ec9e3a45)",
+        "skill_feasibility: A-高封装,语义复核后确认 (EVD-5df84650e90bea469bd3)"
+      ],
+      "process_context": "属于STEP-04全面上架与发布，与L4-IPI-05配套，两者并行或顺序，完成版本记录后上架结束。",
+      "risks_limits": [
+        "当前human_touchpoint为人工执行，可能因变更信息结构不够标准化",
+        "agent_d5_fallback=2，容错需加强"
+      ],
+      "current_recommendation": "优先进入Skill原型，但需保留人工最终审核。建议Aug起步（自动生成+人工复核），待变更来源标准化且d5提升至3后可完全自动化（Auto）。",
+      "evidence_refs": [
+        "EVD-0fdc3515670863a7fb64",
+        "EVD-2a18e60fad1479c7a74a",
+        "EVD-0fb33f656fa502163286",
+        "EVD-7f63283d068ab9f25ad5",
+        "EVD-8c0665343057c899291c",
+        "EVD-968ba7644d2a4de7b17d",
+        "EVD-8e910292a050d74e6618",
+        "EVD-6c12ac62451bf880934a",
+        "EVD-f64b1bae071896207576",
+        "EVD-80c34a53dbd9ec9e3a45",
+        "EVD-5df84650e90bea469bd3",
+        "EVD-cb6c178a6aaa8edb5dd3"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-IPI-09",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "agent_d1_input_struct=2 (EVD-b466ca0f4a9aa28a0c9b)",
+        "agent_d2_rule_clear=1 (EVD-009a4b1824c3c0e264f9)",
+        "agent_d3_output_verify=2 (EVD-0560a56f66acb65f0bef)",
+        "agent_d4_api_reach=1 (EVD-59e76474b1da29ac6a97)",
+        "agent_d5_fallback=2 (EVD-84b374fe3304363db458)",
+        "agent_d6_compliance=1 (EVD-a9b4f4276ac6cacaadaf)",
+        "skill_feasibility: C-低封装,判断/策略/关系类 (EVD-01e4664a10780bd7e2aa)"
+      ],
+      "process_context": "属于STEP-03试运行与小范围测试的异常分支，也可能在后续运营中触发；是典型的多发异常处理节点。",
+      "risks_limits": [
+        "规则清晰度仅1，API可达性1，自动化基础薄弱",
+        "技能天花板为C，不适合直接Skill封装"
+      ],
+      "current_recommendation": "优先考虑Agent辅助或决策支持，不直接封装确定性Skill。建议Hybrid（AI辅助+人工决策），长远可建设异常知识库提升辅助质量，但核心决策永恒保留Human。",
+      "evidence_refs": [
+        "EVD-db4c1af3aba6c52570c2",
+        "EVD-7cc70d7ced5376bf06ae",
+        "EVD-c2c8530fbbbb9955f674",
+        "EVD-d120d77ec4e8e4e44a79",
+        "EVD-b466ca0f4a9aa28a0c9b",
+        "EVD-009a4b1824c3c0e264f9",
+        "EVD-0560a56f66acb65f0bef",
+        "EVD-59e76474b1da29ac6a97",
+        "EVD-84b374fe3304363db458",
+        "EVD-a9b4f4276ac6cacaadaf",
+        "EVD-01e4664a10780bd7e2aa",
+        "EVD-9f54ecd9011e862f4027",
+        "EVD-b2108e21de51af0691ea"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-IPI-11",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "agent_d1_input_struct=2 (EVD-3e432d32bd19d039428c)",
+        "agent_d2_rule_clear=2 (EVD-f130386b8d2c59b17114)",
+        "agent_d3_output_verify=2 (EVD-2d8028169d82be0d94a5)",
+        "agent_d4_api_reach=2 (EVD-53af60f750a4decb687f)",
+        "agent_d5_fallback=2 (EVD-cfdf934f50aeb41d9e1f)",
+        "agent_d6_compliance=2 (EVD-c3be27d9ecd42de3d720)",
+        "skill_feasibility: C-低封装,复合动作需拆分 (EVD-f74ea3b3471be01a464d)"
+      ],
+      "process_context": "属于STEP-02资源匹配与分发，紧随L4-IPI-03之后；生成方案后将提交后续环节或直接进入试运行（视流程变体）。",
+      "risks_limits": [
+        "需要多维度策略判断，AI难以独立胜任",
+        "权益涉及商业合作，不适合全自动"
+      ],
+      "current_recommendation": "优先考虑Agent辅助或决策支持，不直接封装确定性Skill。建议Hybrid（AI草稿+人工确认），并将“生成搭配建议草稿”与“确认搭配方案”拆分为两个独立任务卡，后者为Human控制。",
+      "evidence_refs": [
+        "EVD-c6acf780fdc1e4ba8289",
+        "EVD-0d5ae3a06435504cdd5a",
+        "EVD-dc6bf30a63ce50c29070",
+        "EVD-6d42bdd6b24282b17d73",
+        "EVD-3e432d32bd19d039428c",
+        "EVD-f130386b8d2c59b17114",
+        "EVD-2d8028169d82be0d94a5",
+        "EVD-53af60f750a4decb687f",
+        "EVD-cfdf934f50aeb41d9e1f",
+        "EVD-c3be27d9ecd42de3d720",
+        "EVD-f74ea3b3471be01a464d",
+        "EVD-45b0bf2b74da68ec4bc8"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "decision_drafts": [
+    {
+      "priority": "P0-急迫",
+      "task_ids": [
+        "TSK-IPI-01-001",
+        "TSK-IPI-02-001",
+        "TSK-IPI-06-001"
+      ],
+      "title": "授权启动高自动化节点的Skill原型试点",
+      "pilot_scope": "选取2-3款标准化程度高的产品，在STEP-01和STEP-04上以Aug模式运行，同步建立元数据标注规则和佣金模板库。",
+      "human_boundary": "元数据校验结果变更、佣金规则沙箱测试失败、版本记录中的异常标注必须由保司关系经理确认。",
+      "evidence_refs": [
+        "EVD-cb536f24504920395093",
+        "EVD-826db543d4e076d45331",
+        "EVD-37adf5454c4a4a8d9491"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "priority": "P0-常规",
+      "task_ids": [
+        "TSK-IPI-05-002",
+        "TSK-IPI-04-002"
+      ],
+      "title": "明确试运行达标标准和发布审批流程",
+      "pilot_scope": "与保司关系族、F族共同定义试运行达标指标，设计发布审批单和电子签流程。",
+      "human_boundary": "Q2试运行是否达标和最终上架审批必须由授权决策角色执行，不可委托给自动化。",
+      "evidence_refs": [
+        "EVD-b2108e21de51af0691ea",
+        "EVD-cb6c178a6aaa8edb5dd3"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "priority": "P1",
+      "task_ids": [
+        "TSK-IPI-03-001",
+        "TSK-IPI-11-001",
+        "TSK-IPI-11-002",
+        "TSK-IPI-09-001"
+      ],
+      "title": "筹备Agent辅助工具试点",
+      "pilot_scope": "先启动资源匹配（L4-IPI-03）的Agent辅助，将规则路由可视化，匹配建议由人工确认；权益搭配和异常处置暂以知识库填充为主。",
+      "human_boundary": "最终匹配决定、搭配方案签署、异常处置方案批准全部保持人工。",
+      "evidence_refs": [
+        "EVD-735dfa8361987a665d05",
+        "EVD-f74ea3b3471be01a464d",
+        "EVD-01e4664a10780bd7e2aa"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "control_chain": [],
+  "rejected_task_sources": [
+    {
+      "reason": "蓝图步骤中L4-IPI-01与L4-IPI-02未明确执行顺序，合并为同一STEP内并行任务；未进一步拆分因各自为单一动作。"
+    },
+    {
+      "reason": "蓝图决策Q1未生成独立任务，因其属于流程判断节点，已在任务依赖中体现。"
+    }
+  ],
+  "missing_analysis": [
+    "l4_deliverable",
+    "human_touchpoint vs. tier",
+    "控制链缺少L4定位，已拒绝4条"
+  ]
+}

@@ -1,0 +1,385 @@
+{
+  "schema_version": "vnw.l3-analysis.v1",
+  "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
+  "generation_mode": "UNIFIED_MODEL",
+  "analysis_status": "MODEL_DRAFT",
+  "model_run": null,
+  "source_scope": {
+    "database": "process_analytics",
+    "knowledge": "ACTIVE supplemental evidence only",
+    "evidence_count": 61
+  },
+  "l4_analysis": [
+    {
+      "l4_code": "L4-OBC-01",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-2cd9b7015f955fc509be",
+        "EVD-57354e083dac3e4300e9",
+        "EVD-00025424fed35581d226",
+        "EVD-b393cc25769903c39fd9",
+        "EVD-037e72ae5511a595016d",
+        "EVD-417c0b523bcd4d7be316",
+        "EVD-112ec9541509a9fd6bb3",
+        "EVD-929beb70ffb511e05962"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "定义项目范围基线（《项目启动与范围确认》方案）",
+      "specific_capabilities": [
+        "信息采集与结构化（D1=2）",
+        "规则/模板匹配（D2=1）",
+        "输出可验证（D3=2）",
+        "Skill封装可行性A级，但为复合动作，需先拆分为子Skill"
+      ],
+      "ai_reshape": "拆分为信息采集Skill与范围确认Agent辅助流程，前者确定性执行，后者人工审核后启动",
+      "quality_anchor": "启动会共识确认后的范围文档",
+      "ai_responsibility": "自动采集项目背景、参照模板生成范围草案",
+      "human_responsibility": "审核范围草案、主持启动沟通会并最终签字确认",
+      "handoff_triggers": [
+        "AI生成初步范围草案后自动转人工审核",
+        "数据源异常或模板匹配失败时"
+      ],
+      "control_gates": [
+        "启动会需人工主持并完成签字确认（对外发布前控制）"
+      ],
+      "data_basis": [
+        "EVD-2cd9b7015f955fc509be (D1=2)",
+        "EVD-57354e083dac3e4300e9 (D2=1)",
+        "EVD-112ec9541509a9fd6bb3 (复合动作)"
+      ],
+      "process_context": "L3-OBC流程起点，为后续目标设定提供准确边界",
+      "risks_limits": [
+        "复合动作必须拆分否则自动化不确定性高",
+        "非结构化信息多，需容错处理"
+      ],
+      "current_recommendation": "优先进入Skill原型候选池，但须先拆分为信息采集与范围确认两个任务；信息采集试点Auto，范围确认保留Aug；复合动作拆分细节通过工作坊确认。",
+      "database_tier": "Auto",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-OBC-02",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-f5260a3c75cb7a6ff5e2",
+        "EVD-c3c7d804abc4735b7621",
+        "EVD-21108589334e8348e2c8",
+        "EVD-bc30556640463a7eaa66",
+        "EVD-4b5b43b331362bae34c4",
+        "EVD-1c0a436c214fa3b4e24b",
+        "EVD-4354decafce07e561a83"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "形成业务目标设定文件（《设置目标》）",
+      "specific_capabilities": [
+        "语义解析与模板填充（D1=2）",
+        "规则清晰度不足（D2=1）",
+        "输出可验证（D3=2）",
+        "Skill封装可行性C级，单一动作、语义复核判定"
+      ],
+      "ai_reshape": "Agent辅助生成目标选项并模拟影响，人工基于业务判断决断",
+      "quality_anchor": "目标需与公司战略一致且可量化",
+      "ai_responsibility": "提取历史业绩、行业基准，生成多种目标组合建议",
+      "human_responsibility": "评估选项合理性，选择最终目标并授权",
+      "handoff_triggers": [
+        "目标选项生成后需人工审批",
+        "策略性指标无法量化时"
+      ],
+      "control_gates": [],
+      "data_basis": [
+        "EVD-f5260a3c75cb7a6ff5e2 (D1=2)",
+        "EVD-4354decafce07e561a83 (C级)"
+      ],
+      "process_context": "承接范围确认结果，为后续汇报决策提供核心指标",
+      "risks_limits": [
+        "低封装度，不适合完全自动化",
+        "语义模糊可能导致建议偏离实际"
+      ],
+      "current_recommendation": "不直接封装确定性Skill，优先考虑Agent辅助或决策支持；待规则进一步清晰后评估部分自动化。",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-OBC-03",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-9900a6f922cad00859b9",
+        "EVD-1b23ee591c055d1ed7ce",
+        "EVD-7af02f46965fcca1d0ce",
+        "EVD-ab16f948238bdde8ac03",
+        "EVD-3d9e334ce22b5467b5ad",
+        "EVD-9ac987c0486be0f03727",
+        "EVD-d7bbd4d007df0d5ca0c2"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "产出经决策层批准的终版权益规划方案",
+      "specific_capabilities": [
+        "材料准备与信息整合（D1=2）",
+        "低封装决策判断（grade C）",
+        "复合动作：汇报准备与决策审批"
+      ],
+      "ai_reshape": "拆分为预审材料生成Agent和决策辅助Agent，前者自动化，后者提供信息支持，最终决策由人主持",
+      "quality_anchor": "方案需获得管理层正式批准",
+      "ai_responsibility": "整合前期材料，自动生成汇报幻灯、议案摘要",
+      "human_responsibility": "主持会议、解释方案、做出最终决策",
+      "handoff_triggers": [
+        "任何决策点必须人工拍板",
+        "汇报材料自动生成后需人工审核"
+      ],
+      "control_gates": [
+        "决策审批必须人工签字确认"
+      ],
+      "data_basis": [
+        "EVD-d7bbd4d007df0d5ca0c2 (C级，判断/策略/认知类)",
+        "EVD-9900a6f922cad00859b9 (D1=2)"
+      ],
+      "process_context": "承接目标设定，形成最终方案并触发决策分支",
+      "risks_limits": [
+        "决策权威不可替代，必须人工主导",
+        "复合动作需拆分，否则无法自动化"
+      ],
+      "current_recommendation": "拆分为准备和决策两个任务，准备环节Agent辅助（Aug），决策环节保留Human；优先建设决策支持工具，不直接封装确定性Skill。",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Human",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-OBC-04",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-5fb0af31ace577cb812b",
+        "EVD-8dd6d271e2a8a0ca23ac",
+        "EVD-98309e8190d8ab2381cc",
+        "EVD-f66aff634fc89bf419bf",
+        "EVD-412c0330a82b323c2d86",
+        "EVD-5d6e4d4398e6a5d56a2b",
+        "EVD-b05859087ce24e5703d9",
+        "EVD-81809eecf9c560789efa"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "完成方案归档与向下游交接（移交版方案）",
+      "specific_capabilities": [
+        "文档生成与系统集成需求（grade B）",
+        "报告模板与系统接口待完善",
+        "单一动作、语义复核判定"
+      ],
+      "ai_reshape": "基于模板自动生成移交文档，系统接口自动归档，人工确认签收",
+      "quality_anchor": "移交完整性需由接收方确认",
+      "ai_responsibility": "填充移交模板，自动打包并触发系统流转",
+      "human_responsibility": "核对内容完整性、执行最终交接确认",
+      "handoff_triggers": [
+        "文档生成后需人工审核",
+        "接收方提出异议时"
+      ],
+      "control_gates": [
+        "交接确认必须人工完成"
+      ],
+      "data_basis": [
+        "EVD-b05859087ce24e5703d9 (B级，需报告模板/系统集成)",
+        "EVD-81809eecf9c560789efa (人工执行方案移交)"
+      ],
+      "process_context": "流程终点，将审批通过方案移交给下游合同签订流程",
+      "risks_limits": [
+        "缺乏统一报告模板，自动化质量依赖模板固化",
+        "系统集成接口缺失"
+      ],
+      "current_recommendation": "优先补充报告模板和系统接口，再设计Aug方案；当前阶段维持人工主导但可借助文档生成工具提高效率。",
+      "database_tier": "Aug",
+      "recommended_tier": "Aug",
+      "quadrant": "unclassified"
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "TASK-L3OBC-01A",
+      "l4_code": "L4-OBC-01",
+      "task_name": "采集项目背景与初始范围信息",
+      "source_type": "blueprint_step",
+      "sequence_no": 1,
+      "sequence_status": "UNCONFIRMED",
+      "source_step_id": "STEP-01",
+      "source_line": 46,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "UNCONFIRMED",
+      "evidence_refs": [
+        "EVD-6c43fefb1df8c696e79d",
+        "EVD-112ec9541509a9fd6bb3",
+        "EVD-2cd9b7015f955fc509be"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "信息采集结构化程度高（D1=2），可基于模板自动完成，无决策属性；复合动作拆分后本任务为确定性数据准备，适合完全自动化。"
+    },
+    {
+      "task_id": "TASK-L3OBC-01B",
+      "l4_code": "L4-OBC-01",
+      "task_name": "审核范围草案并组织启动会确认",
+      "source_type": "blueprint_step",
+      "sequence_no": 2,
+      "sequence_status": "UNCONFIRMED",
+      "source_step_id": "STEP-01",
+      "source_line": 46,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "UNCONFIRMED",
+      "evidence_refs": [
+        "EVD-6c43fefb1df8c696e79d",
+        "EVD-112ec9541509a9fd6bb3"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "需要人工判断范围合理性并召开会议，不可绕过；AI可辅助提供验证结果和建议，但最终确认和启动需人。"
+    },
+    {
+      "task_id": "TASK-L3OBC-02",
+      "l4_code": "L4-OBC-02",
+      "task_name": "制定并提交目标设定方案",
+      "source_type": "blueprint_step",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-02",
+      "source_line": 51,
+      "previous_task_ids": [
+        "TASK-L3OBC-01B"
+      ],
+      "next_task_ids": [
+        "TASK-L3OBC-03A"
+      ],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-0f56eab5b69638879731",
+        "EVD-4354decafce07e561a83"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "单一动作但需语义复核判定（grade C），AI生成目标选项后必须人工决策；混合模式最适合当前条件。"
+    },
+    {
+      "task_id": "TASK-L3OBC-03A",
+      "l4_code": "L4-OBC-03",
+      "task_name": "编制方案汇报材料并预审",
+      "source_type": "blueprint_step",
+      "sequence_no": 1,
+      "sequence_status": "UNCONFIRMED",
+      "source_step_id": "STEP-03",
+      "source_line": 56,
+      "previous_task_ids": [
+        "TASK-L3OBC-02"
+      ],
+      "next_task_ids": [
+        "TASK-L3OBC-03B"
+      ],
+      "relation_type": "UNCONFIRMED",
+      "evidence_refs": [
+        "EVD-fa9411b97a99e0fe7258",
+        "EVD-d7bbd4d007df0d5ca0c2"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "报告编写偏信息整合，Agent可自动生成草案，但内容完整性、逻辑性需人工预审后再提交决策；适合AI辅助。"
+    },
+    {
+      "task_id": "TASK-L3OBC-03B",
+      "l4_code": "L4-OBC-03",
+      "task_name": "组织方案审批决策会议",
+      "source_type": "blueprint_step",
+      "sequence_no": 2,
+      "sequence_status": "UNCONFIRMED",
+      "source_step_id": "STEP-03",
+      "source_line": 56,
+      "previous_task_ids": [
+        "TASK-L3OBC-03A"
+      ],
+      "next_task_ids": [
+        "TASK-L3OBC-04"
+      ],
+      "relation_type": "BRANCH",
+      "evidence_refs": [
+        "EVD-fa9411b97a99e0fe7258",
+        "EVD-53295ce3c9294f76de05",
+        "EVD-d7bbd4d007df0d5ca0c2"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "决策会议必须人工主持，涉及权威判断和业务决策；AI可提供辅助信息，但决策权不可下放。另含分支：获批则转TASK-L3OBC-04，需修改则返回TASK-L3OBC-02。"
+    },
+    {
+      "task_id": "TASK-L3OBC-04",
+      "l4_code": "L4-OBC-04",
+      "task_name": "生成并移交终版方案包",
+      "source_type": "blueprint_step",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-04",
+      "source_line": 64,
+      "previous_task_ids": [
+        "TASK-L3OBC-03B"
+      ],
+      "next_task_ids": [],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-99983441d67d6d743cd8",
+        "EVD-b05859087ce24e5703d9",
+        "EVD-81809eecf9c560789efa"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "中封装任务，需报告模板与系统集成支持；当前条件下AI可生成移交文档，但最终审核与签收需人，故为增强型自动化。"
+    }
+  ],
+  "priority_drafts": [
+    {
+      "priority_label": "P1 （高）",
+      "l3_code": "L3-OBC",
+      "rationale": "价值节点VN-EQ-04为P1，流程整体关键；源头数据较结构化，拆分后易于AI试点，且无资金安全硬关卡。",
+      "evidence_refs": [
+        "EVD-0627662516ad30730092",
+        "EVD-207d7b757b2a37c37f04"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "decision_drafts": [
+    {
+      "priority": "P1",
+      "task_ids": [
+        "TASK-L3OBC-01A"
+      ],
+      "title": "优先试点信息采集自动化，逐步推进决策辅助",
+      "pilot_scope": "在内部项目中，AI自动采集CIP系统信息及模板参数，生成范围草案，不直接外发",
+      "human_boundary": "范围草案必须经由权益战略岗审核并主持启动会议确认后方可进入下一步",
+      "evidence_refs": [
+        "EVD-112ec9541509a9fd6bb3",
+        "EVD-6c43fefb1df8c696e79d"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "control_chain": [],
+  "rejected_task_sources": [],
+  "missing_analysis": [
+    {
+      "l4_code": "L4-OBC-01",
+      "field": "agent_human_touchpoint",
+      "evidence_id": "EVD-97369c00823234c670b6",
+      "impact": "无法评估人工干预节点，建议补充。",
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-OBC-02",
+      "field": "agent_human_touchpoint",
+      "evidence_id": "EVD-b04442b98eed88e75e2e",
+      "impact": "无法评估人工干预节点，建议补充。",
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-OBC-03",
+      "field": "agent_human_touchpoint",
+      "evidence_id": "EVD-0d9c909bc3d633ad065e",
+      "impact": "无法评估人工干预节点，建议补充。",
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ]
+}

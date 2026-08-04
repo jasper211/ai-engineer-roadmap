@@ -1,0 +1,477 @@
+{
+  "schema_version": "vnw.l3-analysis.v1",
+  "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
+  "generation_mode": "UNIFIED_MODEL",
+  "analysis_status": "MODEL_DRAFT",
+  "model_run": {
+    "model_name": "deepseek-v4-pro",
+    "model_version": "deepseek-v4-pro",
+    "prompt_version": "VNW-L3-COM-GOLD-v1.0",
+    "generated_at": "2026-08-04T18:37:57.072317+00:00",
+    "input_snapshot_hash": "47252db692e49c8faa9c6834a5fdace6e49366c07a7d23719a1e13271b5079d6"
+  },
+  "source_scope": {
+    "database": "process_analytics",
+    "knowledge": "ACTIVE supplemental evidence only",
+    "evidence_count": 62
+  },
+  "l4_analysis": [
+    {
+      "l4_code": "L4-KAGA-01",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-2dd1432f3344841c41dd",
+        "EVD-75510da766d5e1b19e3f",
+        "EVD-ee03cdc6f3f21d08925a",
+        "EVD-92e70a8b90a4765f7346",
+        "EVD-37fcc152c8f91c191f3d"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "提供KA业绩汇总数据表，作为流程其他步骤的数据基础",
+      "specific_capabilities": [
+        "数据抽取与聚合",
+        "数据清洗与标准化",
+        "报表生成"
+      ],
+      "ai_reshape": "确定性Skill自动采集多源数据并生成报表；当前需先建设统一数据管道",
+      "quality_anchor": "数据准确性、完整性、时效性（当前缺乏统一数据源）",
+      "ai_responsibility": "自动执行数据抽取、计算与报表生成",
+      "human_responsibility": "确认数据逻辑、处理数据源异常、审批最终报表",
+      "handoff_triggers": [
+        "数据源中断或字段缺失",
+        "计算结果异常波动超出阈值"
+      ],
+      "control_gates": [
+        "数据口径确认（非资金关卡，但影响后续决策）"
+      ],
+      "data_basis": [
+        "签单系统（个人视角）和MoMo个人大表，数据分散且绩会流于形式"
+      ],
+      "process_context": "KA业绩跟踪与运维流程第一步，为后续复盘、策略提供输入",
+      "risks_limits": [
+        "数据源分散，未建设统一报表包",
+        "依赖人工整合，可能延迟或出错"
+      ],
+      "current_recommendation": "优先建设数据管道与自动化Skill，解决数据基础问题，实现任务级自动化",
+      "database_tier": "Auto",
+      "recommended_tier": "Auto",
+      "quadrant": "quick_win"
+    },
+    {
+      "l4_code": "L4-KAGA-02",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-3b7056ee8b0285abcfbf",
+        "EVD-b3d4ebf9555d0394db60",
+        "EVD-473fbb7da2dde4932c4a",
+        "EVD-7993c63c88e58a66e918",
+        "EVD-bf9af2cc9bcdcff8569c"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "产出《业绩复盘报告》，提供问题诊断和行动方向",
+      "specific_capabilities": [
+        "业绩趋势分析",
+        "异常检测与根因关联",
+        "业务诊断与建议"
+      ],
+      "ai_reshape": "Agent辅助：自动推送趋势与异常，提供初步归因假设；最终诊断和决策由人完成",
+      "quality_anchor": "诊断结论的准确性、可执行性、覆盖关键KA",
+      "ai_responsibility": "数据监控、异常预警、归因记分板",
+      "human_responsibility": "主持复盘会议、验证根因、制定行动方案",
+      "handoff_triggers": [
+        "AI识别出显著异常或趋势变化",
+        "需要跨部门或高层决策"
+      ],
+      "control_gates": [],
+      "data_basis": [
+        "L4-KAGA-01产出的业绩汇总数据"
+      ],
+      "process_context": "核心判断节点，根据数据诊断业绩问题并确定下一步策略",
+      "risks_limits": [
+        "诊断质量高度依赖人的经验",
+        "复合动作需拆分为可执行的子任务"
+      ],
+      "current_recommendation": "先拆分任务，第一阶段实现数据异常辅助，第二阶段逐步训练诊断模型但保持人在回路",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Aug",
+      "quadrant": "strategic"
+    },
+    {
+      "l4_code": "L4-KAGA-03",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-1c121214650a0b0f484d",
+        "EVD-79dec9905e64b74a29d2",
+        "EVD-5faf1619dcd3209eaecd",
+        "EVD-71157b6dea1f0f011c40",
+        "EVD-3fc4f6954016890ea963"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "产生《策略调整方案》，为KA运营提供具体行动指引",
+      "specific_capabilities": [
+        "策略方案设计",
+        "数据驱动的资源分配建议",
+        "赋能材料准备"
+      ],
+      "ai_reshape": "Agent辅助：结合历史数据和效果模拟推荐策略选项；人工决策并制定最终方案",
+      "quality_anchor": "方案的可落地性、与诊断结论的关联度、资源匹配度",
+      "ai_responsibility": "生成策略选项和影响预估",
+      "human_responsibility": "拍板策略、沟通调整、批准方案",
+      "handoff_triggers": [
+        "涉及重大资源变更或跨部门协调",
+        "策略选项超出预设规则"
+      ],
+      "control_gates": [
+        "涉及预算或对外承诺时需额外审批"
+      ],
+      "data_basis": [
+        "业绩复盘报告、KA历史数据"
+      ],
+      "process_context": "连接诊断与执行的关键环节，后续进入运营维护",
+      "risks_limits": [
+        "策略效果难以完全模型化，需人工判断",
+        "复合动作，需拆分为分析与决策子任务"
+      ],
+      "current_recommendation": "先实现策略选项推荐Agent原型，并在小范围KA上试点",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Aug",
+      "quadrant": "strategic"
+    },
+    {
+      "l4_code": "L4-KAGA-04",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-eefe17775ae0e913d627",
+        "EVD-b67abc10d3a082377ee8",
+        "EVD-52c01327196de5325281",
+        "EVD-abf9c299677269b1add2",
+        "EVD-ebc9c5dc1c13327bc41f"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "维护《KA运营记录》，确保KA关系健康度和续约率",
+      "specific_capabilities": [
+        "定期记录更新与状态跟踪",
+        "关系维护任务计划与执行",
+        "流失风险早期识别"
+      ],
+      "ai_reshape": "Agent辅助：自动提醒关键节点、推送流失风险信号；人工执行实际沟通与决策",
+      "quality_anchor": "运营记录的完整性与及时性、KA活跃度指标变化",
+      "ai_responsibility": "日历提醒、数据更新、风险信号生成",
+      "human_responsibility": "执行关系维护动作、判断降级/挽留策略、更新运营记录中主观评价",
+      "handoff_triggers": [
+        "AI标记高风险流失或降级",
+        "需要升级合作级别或终止合作"
+      ],
+      "control_gates": [
+        "终止合作等重大决策需管理层审批"
+      ],
+      "data_basis": [
+        "历史出单数据、互动记录"
+      ],
+      "process_context": "长效运营，维持KA健康度，闭环反馈至下一周期收集",
+      "risks_limits": [
+        "关系维护高度依赖个人能力",
+        "部分动作不可逆（如终止合作）"
+      ],
+      "current_recommendation": "先实现运营记录数字化和风险提示，再结合Agent辅助决策",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "maintain"
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "TASK-KAGA-01",
+      "l4_code": "L4-KAGA-01",
+      "task_name": "执行定期业绩数据采集与汇总",
+      "source_type": "blueprint_step",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-01",
+      "source_line": 57,
+      "previous_task_ids": [],
+      "next_task_ids": [
+        "TASK-KAGA-02A",
+        "TASK-KAGA-02B"
+      ],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-37fcc152c8f91c191f3d",
+        "EVD-2dd1432f3344841c41dd",
+        "EVD-92e70a8b90a4765f7346",
+        "EVD-75510da766d5e1b19e3f"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "Skill封装等级A-高封装，单一信息处理动作，适合自动化；当前受限于数据源分散，需先建设数据管道"
+    },
+    {
+      "task_id": "TASK-KAGA-02A",
+      "l4_code": "L4-KAGA-02",
+      "task_name": "整理业绩数据并生成分析草案",
+      "source_type": "blueprint_step",
+      "sequence_no": 2,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-02",
+      "source_line": 66,
+      "previous_task_ids": [
+        "TASK-KAGA-01"
+      ],
+      "next_task_ids": [
+        "TASK-KAGA-03A",
+        "TASK-KAGA-03B"
+      ],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-bf9af2cc9bcdcff8569c",
+        "EVD-3b7056ee8b0285abcfbf",
+        "EVD-7993c63c88e58a66e918"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "复合动作拆分后的可执行子任务；数据整理和初步分析可由AI辅助，但需要人工校验假设"
+    },
+    {
+      "task_id": "TASK-KAGA-02B",
+      "l4_code": "L4-KAGA-02",
+      "task_name": "组织业绩复盘会议并撰写诊断报告",
+      "source_type": "blueprint_step",
+      "sequence_no": 2,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-02",
+      "source_line": 66,
+      "previous_task_ids": [
+        "TASK-KAGA-01"
+      ],
+      "next_task_ids": [
+        "TASK-KAGA-03A",
+        "TASK-KAGA-03B"
+      ],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-bf9af2cc9bcdcff8569c",
+        "EVD-3b7056ee8b0285abcfbf",
+        "EVD-7993c63c88e58a66e918"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "会议需要利益相关方参与讨论，诊断决策高度依赖经验，当前阶段必须由人主导"
+    },
+    {
+      "task_id": "TASK-KAGA-03A",
+      "l4_code": "L4-KAGA-03",
+      "task_name": "制定策略调整草案与数据分析支撑",
+      "source_type": "blueprint_step",
+      "sequence_no": 3,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-03",
+      "source_line": 72,
+      "previous_task_ids": [
+        "TASK-KAGA-02A",
+        "TASK-KAGA-02B"
+      ],
+      "next_task_ids": [
+        "TASK-KAGA-04A",
+        "TASK-KAGA-04B"
+      ],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-3fc4f6954016890ea963",
+        "EVD-1c121214650a0b0f484d",
+        "EVD-71157b6dea1f0f011c40"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "AI可基于诊断结果推荐策略选项并预估影响，最终方案仍需人工确认和细化"
+    },
+    {
+      "task_id": "TASK-KAGA-03B",
+      "l4_code": "L4-KAGA-03",
+      "task_name": "进行策略调整沟通与赋能方案确认",
+      "source_type": "blueprint_step",
+      "sequence_no": 3,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-03",
+      "source_line": 72,
+      "previous_task_ids": [
+        "TASK-KAGA-02A",
+        "TASK-KAGA-02B"
+      ],
+      "next_task_ids": [
+        "TASK-KAGA-04A",
+        "TASK-KAGA-04B"
+      ],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-3fc4f6954016890ea963",
+        "EVD-1c121214650a0b0f484d",
+        "EVD-71157b6dea1f0f011c40"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "涉及跨团队沟通、资源分配和高层批准，需要人工主导并承担决策责任"
+    },
+    {
+      "task_id": "TASK-KAGA-04A",
+      "l4_code": "L4-KAGA-04",
+      "task_name": "更新KA运营记录并同步相关数据",
+      "source_type": "blueprint_step",
+      "sequence_no": 4,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-04",
+      "source_line": 80,
+      "previous_task_ids": [
+        "TASK-KAGA-03A",
+        "TASK-KAGA-03B"
+      ],
+      "next_task_ids": [],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-ebc9c5dc1c13327bc41f",
+        "EVD-eefe17775ae0e913d627",
+        "EVD-abf9c299677269b1add2",
+        "EVD-b67abc10d3a082377ee8"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "运营记录包含部分结构化字段可自动更新，但主观评估和关键状态需人工输入"
+    },
+    {
+      "task_id": "TASK-KAGA-04B",
+      "l4_code": "L4-KAGA-04",
+      "task_name": "执行定期关系维护沟通与运营活动",
+      "source_type": "blueprint_step",
+      "sequence_no": 4,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-04",
+      "source_line": 80,
+      "previous_task_ids": [
+        "TASK-KAGA-03A",
+        "TASK-KAGA-03B"
+      ],
+      "next_task_ids": [],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-ebc9c5dc1c13327bc41f",
+        "EVD-eefe17775ae0e913d627",
+        "EVD-abf9c299677269b1add2"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "关系维护需要情感交流和复杂判断，不可逆的操作（如终止合作）需人类决策"
+    }
+  ],
+  "priority_drafts": [
+    {
+      "l4_code": "L4-KAGA-01",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "签单系统（个人视角）和MoMo个人大表，数据分散且绩会流于形式"
+      ],
+      "process_context": "KA业绩跟踪与运维流程第一步，为后续复盘、策略提供输入",
+      "risks_limits": [
+        "数据源分散，未建设统一报表包",
+        "依赖人工整合，可能延迟或出错"
+      ],
+      "current_recommendation": "优先建设数据管道与自动化Skill，解决数据基础问题，实现任务级自动化",
+      "evidence_refs": [
+        "EVD-2dd1432f3344841c41dd",
+        "EVD-75510da766d5e1b19e3f",
+        "EVD-ee03cdc6f3f21d08925a",
+        "EVD-92e70a8b90a4765f7346",
+        "EVD-37fcc152c8f91c191f3d"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-KAGA-02",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "L4-KAGA-01产出的业绩汇总数据"
+      ],
+      "process_context": "核心判断节点，根据数据诊断业绩问题并确定下一步策略",
+      "risks_limits": [
+        "诊断质量高度依赖人的经验",
+        "复合动作需拆分为可执行的子任务"
+      ],
+      "current_recommendation": "先拆分任务，第一阶段实现数据异常辅助，第二阶段逐步训练诊断模型但保持人在回路",
+      "evidence_refs": [
+        "EVD-3b7056ee8b0285abcfbf",
+        "EVD-b3d4ebf9555d0394db60",
+        "EVD-473fbb7da2dde4932c4a",
+        "EVD-7993c63c88e58a66e918",
+        "EVD-bf9af2cc9bcdcff8569c"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-KAGA-03",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "业绩复盘报告、KA历史数据"
+      ],
+      "process_context": "连接诊断与执行的关键环节，后续进入运营维护",
+      "risks_limits": [
+        "策略效果难以完全模型化，需人工判断",
+        "复合动作，需拆分为分析与决策子任务"
+      ],
+      "current_recommendation": "先实现策略选项推荐Agent原型，并在小范围KA上试点",
+      "evidence_refs": [
+        "EVD-1c121214650a0b0f484d",
+        "EVD-79dec9905e64b74a29d2",
+        "EVD-5faf1619dcd3209eaecd",
+        "EVD-71157b6dea1f0f011c40",
+        "EVD-3fc4f6954016890ea963"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-KAGA-04",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "历史出单数据、互动记录"
+      ],
+      "process_context": "长效运营，维持KA健康度，闭环反馈至下一周期收集",
+      "risks_limits": [
+        "关系维护高度依赖个人能力",
+        "部分动作不可逆（如终止合作）"
+      ],
+      "current_recommendation": "先实现运营记录数字化和风险提示，再结合Agent辅助决策",
+      "evidence_refs": [
+        "EVD-eefe17775ae0e913d627",
+        "EVD-b67abc10d3a082377ee8",
+        "EVD-52c01327196de5325281",
+        "EVD-abf9c299677269b1add2",
+        "EVD-ebc9c5dc1c13327bc41f"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "decision_drafts": [
+    {
+      "priority": "P1",
+      "task_ids": [
+        "TASK-KAGA-01"
+      ],
+      "title": "启动KA业绩数据管道与自动化Skill原型",
+      "pilot_scope": "以3家KA试点，开发自动采集脚本并验证数据准确性",
+      "human_boundary": "业务方确认数据逻辑；IT负责接口打通；试运行期间人工双轨复核",
+      "evidence_refs": [
+        "EVD-92e70a8b90a4765f7346",
+        "EVD-d3219c09abe7f4665900",
+        "EVD-09d32061651af59e34d8"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "decision_note": "优先通过自动化解决数据收集瓶颈，为后续分析与决策提供可信基础。需指定负责人牵头数据源调研和技术实现，并在1个月内完成试点评估。"
+    }
+  ],
+  "control_chain": [],
+  "rejected_task_sources": [],
+  "missing_analysis": [
+    "L4-KAGA-01 · handoff_triggers · 数据源异常的具体阈值未定义，需业务方确认",
+    "L4-KAGA-02 · specific_capabilities · 技能拆分细节需工作坊进一步细化",
+    "L4-KAGA-03 · risks_limits · 策略模拟的模型边界和置信度待确认",
+    "L4-KAGA-04 · deliverable_role · 运营记录中自动化与人工的界限需业务规则澄清",
+    "控制链缺少L4定位，已拒绝4条"
+  ]
+}

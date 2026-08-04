@@ -1,0 +1,257 @@
+{
+  "schema_version": "vnw.l3-analysis.v1",
+  "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
+  "generation_mode": "UNIFIED_MODEL",
+  "analysis_status": "MODEL_DRAFT",
+  "model_run": {
+    "model_name": "deepseek-v4-pro",
+    "model_version": "deepseek-v4-pro",
+    "prompt_version": "VNW-L3-COM-GOLD-v1.0",
+    "generated_at": "2026-08-04T19:06:41.442050+00:00",
+    "input_snapshot_hash": "a4af518fd536a27661189d874b243829dedd57190ab48fa094c5619987ca76b9"
+  },
+  "source_scope": {
+    "database": "process_analytics",
+    "knowledge": "ACTIVE supplemental evidence only",
+    "evidence_count": 41
+  },
+  "l4_analysis": [
+    {
+      "l4_code": "L4-RCM-01",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-d769b329113fb4bdf137",
+        "EVD-96c4048865bddb188bfa",
+        "EVD-7d9a7c0393089cdf6736",
+        "EVD-348080169ed30b24d279",
+        "EVD-f7afb30a846ea9d3fdbf",
+        "EVD-1fc62602586e3a7c6104",
+        "EVD-b29b3bca67c2c2f50641",
+        "EVD-4b847040bb7d89566c81",
+        "EVD-a1fcb8bbf2708a11a973",
+        "EVD-42834e2df16be921518e",
+        "EVD-0822cfd3fc3c433f54ab"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "生成《渠道信用评估报告》（含信用等级/风险提示）",
+      "specific_capabilities": [
+        "需要从多源数据中提炼信用评估和风险提示的能力",
+        "需要根据不明确的规则进行判断和策略制定"
+      ],
+      "ai_reshape": "Agent辅助决策支持，提供推荐信用等级和风险提示，由人审核确认",
+      "quality_anchor": "信用评估的准确性、风险提示的完备性",
+      "ai_responsibility": "根据输入数据生成初步评估和风险提示",
+      "human_responsibility": "审核并确认最终信用等级和风险提示，对高风险情况进行人工干预",
+      "handoff_triggers": [
+        "当数据矛盾或缺失导致无法自动评估时",
+        "当评估结果超出预设阈值时"
+      ],
+      "control_gates": [
+        "所有对外发布的信用评估报告必须经合规管理岗审核",
+        "涉及资金决策或合作方重大调整时需更高层级审批"
+      ],
+      "data_basis": [
+        "输入数据结构化程度高 (EVD-1fc62602586e3a7c6104)",
+        "规则清晰度较低 (EVD-b29b3bca67c2c2f50641)",
+        "输出可验证性强 (EVD-4b847040bb7d89566c81)",
+        "API可达性不足 (EVD-a1fcb8bbf2708a11a973)",
+        "降级方案较弱 (EVD-42834e2df16be921518e)",
+        "合规性一般 (EVD-0822cfd3fc3c433f54ab)"
+      ],
+      "process_context": "在渠道信用评估步骤中，为后续合规审计提供依据",
+      "risks_limits": [
+        "信用评估依赖不完整或延迟的数据可能导致判断失误",
+        "规则不明确可能导致AI判断偏差"
+      ],
+      "current_recommendation": "采用Human-in-the-loop模式，AI辅助生成评估初稿，合规管理岗进行最终审核。优先完善评估规则和数据接口，提高自动化程度。",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-RCM-02",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-04c6d6aba39bf72a84e1",
+        "EVD-54562c63e324667fba0a",
+        "EVD-996378983fffc905c315",
+        "EVD-24e917bba93e7a2c1f19",
+        "EVD-2e39a1a512331276ac34",
+        "EVD-3c046ff7401f8511379f",
+        "EVD-fbb5d08e263d909a1af8",
+        "EVD-8f442dab17843353119f",
+        "EVD-6a47fea336570920757d",
+        "EVD-5aeb5111f6e0643075ed",
+        "EVD-a548941a84b5799d738e"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "生成合规审计报告系列，包括《保单审计报告》《保单财务审计报告》《抽样保单审计报告终稿》",
+      "specific_capabilities": [
+        "需要熟悉合规审计标准，能够结构化审计流程",
+        "需要生成符合监管要求的审计报告"
+      ],
+      "ai_reshape": "可封装为确定性Skill，先补报告模板、固化审计规则并集成系统接口，过渡期采用Aug模式",
+      "quality_anchor": "审计报告的合规性和准确性",
+      "ai_responsibility": "按照固化规则自动抽取数据、生成审计报告初稿",
+      "human_responsibility": "复核审计结果，处理异常和复杂情况，对外签发报告",
+      "handoff_triggers": [
+        "审计过程中发现重大合规问题",
+        "数据源缺失或冲突导致无法自动完成"
+      ],
+      "control_gates": [
+        "审计报告须经合规管理岗复核确认后方可发布",
+        "对外报送监管的审计报告需授权角色签署"
+      ],
+      "data_basis": [
+        "输入数据结构化程度高 (EVD-3c046ff7401f8511379f)",
+        "规则清晰 (EVD-fbb5d08e263d909a1af8)",
+        "输出可验证性强 (EVD-8f442dab17843353119f)",
+        "API可达性不足 (EVD-6a47fea336570920757d)",
+        "降级方案较弱 (EVD-5aeb5111f6e0643075ed)",
+        "合规性高 (EVD-a548941a84b5799d738e)"
+      ],
+      "process_context": "在合规审计步骤中，基于渠道信用评估结果和保单数据进行审计",
+      "risks_limits": [
+        "审计规则固化不足可能导致漏检",
+        "系统接口未打通可能降低自动化效率"
+      ],
+      "current_recommendation": "先补齐审计报告模板、固化审计规则并集成保单系统接口，再引入Skill进行自动化审计。过渡期建议采用Aug模式，人工复核少量抽样。",
+      "database_tier": "Aug",
+      "recommended_tier": "Aug",
+      "quadrant": "unclassified"
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "TASK-001",
+      "l4_code": "L4-RCM-01",
+      "task_name": "执行渠道信用评估并生成《渠道信用评估报告》",
+      "source_type": "BLUEPRINT_STEP",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-01",
+      "source_line": 47,
+      "previous_task_ids": [],
+      "next_task_ids": [
+        "TASK-002"
+      ],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-b7ab66c8c8e982b7ca80",
+        "EVD-d769b329113fb4bdf137",
+        "EVD-96c4048865bddb188bfa"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "技能封装为C级，需大量判断且规则不清晰，适合人机协同混合模式"
+    },
+    {
+      "task_id": "TASK-002",
+      "l4_code": "L4-RCM-02",
+      "task_name": "执行合规审计并生成审计报告系列",
+      "source_type": "BLUEPRINT_STEP",
+      "sequence_no": 2,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-02",
+      "source_line": 54,
+      "previous_task_ids": [
+        "TASK-001"
+      ],
+      "next_task_ids": [],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-f34cfdf9c883fccfcf7a",
+        "EVD-04c6d6aba39bf72a84e1",
+        "EVD-54562c63e324667fba0a"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "技能封装为B级，具备结构化数据和清晰规则，但系统接口待完善，适合增强模式，AI辅助人工复核"
+    }
+  ],
+  "priority_drafts": [
+    {
+      "l4_code": "L4-RCM-01",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "输入数据结构化程度高 (EVD-1fc62602586e3a7c6104)",
+        "规则清晰度较低 (EVD-b29b3bca67c2c2f50641)",
+        "输出可验证性强 (EVD-4b847040bb7d89566c81)",
+        "API可达性不足 (EVD-a1fcb8bbf2708a11a973)",
+        "降级方案较弱 (EVD-42834e2df16be921518e)",
+        "合规性一般 (EVD-0822cfd3fc3c433f54ab)"
+      ],
+      "process_context": "在渠道信用评估步骤中，为后续合规审计提供依据",
+      "risks_limits": [
+        "信用评估依赖不完整或延迟的数据可能导致判断失误",
+        "规则不明确可能导致AI判断偏差"
+      ],
+      "current_recommendation": "采用Human-in-the-loop模式，AI辅助生成评估初稿，合规管理岗进行最终审核。优先完善评估规则和数据接口，提高自动化程度。",
+      "evidence_refs": [
+        "EVD-d769b329113fb4bdf137",
+        "EVD-96c4048865bddb188bfa",
+        "EVD-7d9a7c0393089cdf6736",
+        "EVD-348080169ed30b24d279",
+        "EVD-f7afb30a846ea9d3fdbf",
+        "EVD-1fc62602586e3a7c6104",
+        "EVD-b29b3bca67c2c2f50641",
+        "EVD-4b847040bb7d89566c81",
+        "EVD-a1fcb8bbf2708a11a973",
+        "EVD-42834e2df16be921518e",
+        "EVD-0822cfd3fc3c433f54ab"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-RCM-02",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "输入数据结构化程度高 (EVD-3c046ff7401f8511379f)",
+        "规则清晰 (EVD-fbb5d08e263d909a1af8)",
+        "输出可验证性强 (EVD-8f442dab17843353119f)",
+        "API可达性不足 (EVD-6a47fea336570920757d)",
+        "降级方案较弱 (EVD-5aeb5111f6e0643075ed)",
+        "合规性高 (EVD-a548941a84b5799d738e)"
+      ],
+      "process_context": "在合规审计步骤中，基于渠道信用评估结果和保单数据进行审计",
+      "risks_limits": [
+        "审计规则固化不足可能导致漏检",
+        "系统接口未打通可能降低自动化效率"
+      ],
+      "current_recommendation": "先补齐审计报告模板、固化审计规则并集成保单系统接口，再引入Skill进行自动化审计。过渡期建议采用Aug模式，人工复核少量抽样。",
+      "evidence_refs": [
+        "EVD-04c6d6aba39bf72a84e1",
+        "EVD-54562c63e324667fba0a",
+        "EVD-996378983fffc905c315",
+        "EVD-24e917bba93e7a2c1f19",
+        "EVD-2e39a1a512331276ac34",
+        "EVD-3c046ff7401f8511379f",
+        "EVD-fbb5d08e263d909a1af8",
+        "EVD-8f442dab17843353119f",
+        "EVD-6a47fea336570920757d",
+        "EVD-5aeb5111f6e0643075ed",
+        "EVD-a548941a84b5799d738e"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "decision_drafts": [
+    {
+      "priority": "P1",
+      "task_ids": [
+        "TASK-001"
+      ],
+      "title": "渠道信用评估试点决策",
+      "pilot_scope": "选取一小部分渠道进行信用评估自动化试点，由合规管理岗全程复核评估结果",
+      "human_boundary": "最终信用等级确认和对外报告必须由合规管理岗人工决策并签署",
+      "evidence_refs": [
+        "EVD-348080169ed30b24d279",
+        "EVD-b29b3bca67c2c2f50641"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "control_chain": [],
+  "rejected_task_sources": [],
+  "missing_analysis": []
+}

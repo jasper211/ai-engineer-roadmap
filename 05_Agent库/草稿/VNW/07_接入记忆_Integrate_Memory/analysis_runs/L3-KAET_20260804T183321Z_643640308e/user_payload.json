@@ -1,0 +1,1878 @@
+{
+  "instruction": "只使用fact_pack。严格返回output_contract同结构JSON；所有MODEL_DRAFT结论必须引用fact_pack中的evidence_id。没有证据则留空并写入missing_analysis。",
+  "output_contract": {
+    "schema_version": "vnw.l3-analysis.v1",
+    "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
+    "generation_mode": "UNIFIED_MODEL",
+    "analysis_status": "MODEL_DRAFT",
+    "model_run": null,
+    "source_scope": {
+      "database": "process_analytics",
+      "knowledge": "ACTIVE supplemental evidence only",
+      "evidence_count": 62
+    },
+    "l4_analysis": [
+      {
+        "l4_code": "L4-KAET-01",
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [],
+        "confidence": "MODEL_DRAFT",
+        "deliverable_role": "",
+        "specific_capabilities": [],
+        "ai_reshape": "",
+        "quality_anchor": "",
+        "ai_responsibility": "",
+        "human_responsibility": "",
+        "handoff_triggers": [],
+        "control_gates": [],
+        "data_basis": [],
+        "process_context": "",
+        "risks_limits": [],
+        "current_recommendation": "",
+        "database_tier": "Auto",
+        "recommended_tier": "",
+        "quadrant": "unclassified"
+      },
+      {
+        "l4_code": "L4-KAET-02",
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [],
+        "confidence": "MODEL_DRAFT",
+        "deliverable_role": "",
+        "specific_capabilities": [],
+        "ai_reshape": "",
+        "quality_anchor": "",
+        "ai_responsibility": "",
+        "human_responsibility": "",
+        "handoff_triggers": [],
+        "control_gates": [],
+        "data_basis": [],
+        "process_context": "",
+        "risks_limits": [],
+        "current_recommendation": "",
+        "database_tier": "Aug",
+        "recommended_tier": "",
+        "quadrant": "unclassified"
+      },
+      {
+        "l4_code": "L4-KAET-03",
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [],
+        "confidence": "MODEL_DRAFT",
+        "deliverable_role": "",
+        "specific_capabilities": [],
+        "ai_reshape": "",
+        "quality_anchor": "",
+        "ai_responsibility": "",
+        "human_responsibility": "",
+        "handoff_triggers": [],
+        "control_gates": [],
+        "data_basis": [],
+        "process_context": "",
+        "risks_limits": [],
+        "current_recommendation": "",
+        "database_tier": "Hybrid",
+        "recommended_tier": "",
+        "quadrant": "unclassified"
+      },
+      {
+        "l4_code": "L4-KAET-04",
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [],
+        "confidence": "MODEL_DRAFT",
+        "deliverable_role": "",
+        "specific_capabilities": [],
+        "ai_reshape": "",
+        "quality_anchor": "",
+        "ai_responsibility": "",
+        "human_responsibility": "",
+        "handoff_triggers": [],
+        "control_gates": [],
+        "data_basis": [],
+        "process_context": "",
+        "risks_limits": [],
+        "current_recommendation": "",
+        "database_tier": "Hybrid",
+        "recommended_tier": "",
+        "quadrant": "unclassified"
+      }
+    ],
+    "tasks": [],
+    "priority_drafts": [],
+    "decision_drafts": [],
+    "control_chain": [],
+    "rejected_task_sources": [],
+    "missing_analysis": []
+  },
+  "fact_pack": {
+    "l3_code": "L3-KAET",
+    "l3_name": "KA评估定级",
+    "snapshot_hash": "643640308ece9855e4aece371e7f282fb5b067abeee90b4c641d9c0bbe412688",
+    "source_policy": {
+      "consensus_separate": true,
+      "database_authority": "process_analytics",
+      "reverse_writeback": false,
+      "supplemental_requires_active": true
+    },
+    "gates": {
+      "A": {
+        "checks": [
+          {
+            "detail": "Gate E=CONDITIONAL",
+            "passed": true,
+            "rule_id": "A-001"
+          },
+          {
+            "detail": "D1-D6完整=4/4",
+            "passed": true,
+            "rule_id": "A-002"
+          },
+          {
+            "detail": "价值节点-L4映射=1",
+            "passed": true,
+            "rule_id": "A-003"
+          },
+          {
+            "detail": "存在熔断或无价值节点",
+            "passed": false,
+            "rule_id": "A-004"
+          }
+        ],
+        "status": "BLOCKED"
+      },
+      "E": {
+        "checks": [
+          {
+            "detail": "Gate M=PASS",
+            "passed": true,
+            "rule_id": "E-001"
+          },
+          {
+            "detail": "交付物完整=4/4（完整门槛90%）",
+            "passed": true,
+            "rule_id": "E-002"
+          },
+          {
+            "detail": "Tier合法",
+            "passed": true,
+            "rule_id": "E-003"
+          },
+          {
+            "detail": "可追溯任务覆盖=4/4（完整门槛80%）",
+            "passed": true,
+            "rule_id": "E-004"
+          },
+          {
+            "detail": "关键L4任务覆盖=1/1",
+            "passed": true,
+            "rule_id": "E-005"
+          },
+          {
+            "detail": "价值节点-L4映射=1",
+            "passed": true,
+            "rule_id": "E-006"
+          },
+          {
+            "detail": "规则可定位L4=0/4",
+            "passed": false,
+            "rule_id": "E-007"
+          },
+          {
+            "detail": "缺少SOP草稿或同等任务执行材料（不阻断建模）",
+            "passed": false,
+            "rule_id": "E-008"
+          },
+          {
+            "detail": "缺少可关联的规则记录（不阻断建模）",
+            "passed": false,
+            "rule_id": "E-009"
+          }
+        ],
+        "status": "CONDITIONAL"
+      },
+      "M": {
+        "checks": [
+          {
+            "detail": "L4数量=4",
+            "passed": true,
+            "rule_id": "M-001"
+          },
+          {
+            "detail": "流程蓝图_L3-KAET_KA评估定级_V1.1.md",
+            "passed": true,
+            "rule_id": "M-002"
+          },
+          {
+            "detail": "L4名称完整",
+            "passed": true,
+            "rule_id": "M-003"
+          },
+          {
+            "detail": "交付物完整=4/4（最低门槛70%）",
+            "passed": true,
+            "rule_id": "M-004"
+          },
+          {
+            "detail": "D1-D6完整=4/4",
+            "passed": true,
+            "rule_id": "M-005"
+          }
+        ],
+        "status": "PASS"
+      }
+    },
+    "l2_capabilities": [
+      {
+        "l2_code": "L2-03.4",
+        "l2_name": "决策分发与效果评估",
+        "l3_code": "L3-KAET"
+      }
+    ],
+    "l4s": [
+      {
+        "business_evidence": [],
+        "d1_d6": {
+          "agent_d1_input_struct": 2,
+          "agent_d2_rule_clear": 2,
+          "agent_d3_output_verify": 2,
+          "agent_d4_api_reach": 2,
+          "agent_d5_fallback": 1,
+          "agent_d6_compliance": 1
+        },
+        "deliverable": "《KA背景信息表》",
+        "deliverable_type": "数据表",
+        "evidence_refs": {
+          "agent_d1_input_struct": "EVD-bd2c408a3a7d2e459c61",
+          "agent_d2_rule_clear": "EVD-cac24f3320edb8744e3e",
+          "agent_d3_output_verify": "EVD-222528353ad5605bca62",
+          "agent_d4_api_reach": "EVD-a8638b240ebec848afb1",
+          "agent_d5_fallback": "EVD-3d107cbcae117e385889",
+          "agent_d6_compliance": "EVD-e1ed4ea074a571ed0e3e",
+          "agent_human_touchpoint": "EVD-5eb24324f096776c655b",
+          "agentifiability": "EVD-e1f4932f99af282d756e",
+          "l4_deliverable": "EVD-2f55bd5796b7c1ad1ea6",
+          "l4_deliverable_type": "EVD-729e82f25a9c59c1ab81",
+          "l4_name": "EVD-039b898e44ced67b3af2",
+          "position_family": "EVD-f51a28054e3dc7bc754f",
+          "skill_feasibility": "EVD-e112c5439e9b13434002"
+        },
+        "human_touchpoint": "人工执行：KA背景信息收集",
+        "l4_code": "L4-KAET-01",
+        "l4_name": "KA背景信息收集",
+        "position_family": {
+          "category_name": "业务发展BD岗",
+          "category_type": "目标态核心",
+          "family_code": "JF-03",
+          "family_name": "机构业务族"
+        },
+        "skill_feasibility": {
+          "action_nature": "信息处理/事务类",
+          "action_singularity": "单一动作",
+          "funds_safety_hard_gate": false,
+          "grade": "A-高封装(理想条件下Skill候选)",
+          "judgment_basis": "A-高封装(单一信息处理动作)",
+          "physical_execution": false,
+          "recommended_path": "优先进入Skill原型候选池",
+          "verification_status": "VERIFIED"
+        },
+        "tier": "Auto"
+      },
+      {
+        "business_evidence": [],
+        "d1_d6": {
+          "agent_d1_input_struct": 2,
+          "agent_d2_rule_clear": 2,
+          "agent_d3_output_verify": 2,
+          "agent_d4_api_reach": 2,
+          "agent_d5_fallback": 1,
+          "agent_d6_compliance": 2
+        },
+        "deliverable": "《资质核查记录》",
+        "deliverable_type": "数据表",
+        "evidence_refs": {
+          "agent_d1_input_struct": "EVD-b43ee63f71218bedb82e",
+          "agent_d2_rule_clear": "EVD-bbdcfa68d89dd6eedd3b",
+          "agent_d3_output_verify": "EVD-46e27cff97cdd65127e1",
+          "agent_d4_api_reach": "EVD-c02290cf192739a3e750",
+          "agent_d5_fallback": "EVD-74eeae11646ef4436512",
+          "agent_d6_compliance": "EVD-7913abe7d07b3549fd01",
+          "agent_human_touchpoint": "EVD-2fc0d78475c129215502",
+          "agentifiability": "EVD-3aa9f25e7f2f46e9673f",
+          "l4_deliverable": "EVD-4c421e21629796427539",
+          "l4_deliverable_type": "EVD-e95c296d4a96cb629d66",
+          "l4_name": "EVD-3085033e54ea2f17b128",
+          "position_family": "EVD-f51a28054e3dc7bc754f",
+          "skill_feasibility": "EVD-9037c83844530f0b4188"
+        },
+        "human_touchpoint": "人工执行：KA资质合规核查",
+        "l4_code": "L4-KAET-02",
+        "l4_name": "KA资质合规核查",
+        "position_family": {
+          "category_name": "业务发展BD岗",
+          "category_type": "目标态核心",
+          "family_code": "JF-03",
+          "family_name": "机构业务族"
+        },
+        "skill_feasibility": {
+          "action_nature": "合规监管类",
+          "action_singularity": "单一动作",
+          "funds_safety_hard_gate": false,
+          "grade": "B-中封装(需报告模板/系统集成配合)",
+          "judgment_basis": "B-可封装但仍需人工复核(合规类)",
+          "physical_execution": false,
+          "recommended_path": "先补报告模板、规则固化或系统接口，再验证Skill",
+          "verification_status": "VERIFIED"
+        },
+        "tier": "Aug"
+      },
+      {
+        "business_evidence": [],
+        "d1_d6": {
+          "agent_d1_input_struct": 2,
+          "agent_d2_rule_clear": 1,
+          "agent_d3_output_verify": 2,
+          "agent_d4_api_reach": 1,
+          "agent_d5_fallback": 1,
+          "agent_d6_compliance": 1
+        },
+        "deliverable": "《KA潜力判断记录》",
+        "deliverable_type": "数据表",
+        "evidence_refs": {
+          "agent_d1_input_struct": "EVD-f9aeb1e1c13395d57072",
+          "agent_d2_rule_clear": "EVD-151c498607d00c28907f",
+          "agent_d3_output_verify": "EVD-50841edc0ae890d5e878",
+          "agent_d4_api_reach": "EVD-1f05aeee3fa3de68aab2",
+          "agent_d5_fallback": "EVD-090b2638aee70cac6fb2",
+          "agent_d6_compliance": "EVD-dc7fecaadc8fd7991cad",
+          "agent_human_touchpoint": "EVD-10d7d25ca9907fe52e76",
+          "agentifiability": "EVD-26a75a0cf9dad0225e16",
+          "l4_deliverable": "EVD-db670e2eeaf98712c9e0",
+          "l4_deliverable_type": "EVD-e3b3024b2681bb7f528f",
+          "l4_name": "EVD-08bf763c6c69f6c62d07",
+          "position_family": "EVD-f51a28054e3dc7bc754f",
+          "skill_feasibility": "EVD-de0b411201840f5e093f"
+        },
+        "human_touchpoint": "人工执行：KA潜力综合判断",
+        "l4_code": "L4-KAET-03",
+        "l4_name": "KA潜力综合判断",
+        "position_family": {
+          "category_name": "业务发展BD岗",
+          "category_type": "目标态核心",
+          "family_code": "JF-03",
+          "family_name": "机构业务族"
+        },
+        "skill_feasibility": {
+          "action_nature": "判断/策略/认知类",
+          "action_singularity": "单一动作",
+          "funds_safety_hard_gate": false,
+          "grade": "C-低封装(判断/策略/关系类,理论天花板)",
+          "judgment_basis": "C-仍低封装度(需判断/权威)",
+          "physical_execution": false,
+          "recommended_path": "优先考虑Agent辅助或决策支持，不直接封装确定性Skill",
+          "verification_status": "VERIFIED"
+        },
+        "tier": "Hybrid"
+      },
+      {
+        "business_evidence": [],
+        "d1_d6": {
+          "agent_d1_input_struct": 1,
+          "agent_d2_rule_clear": 0,
+          "agent_d3_output_verify": 1,
+          "agent_d4_api_reach": 1,
+          "agent_d5_fallback": 1,
+          "agent_d6_compliance": 1
+        },
+        "deliverable": "Excel模板（待建设）。当前无定级体系，由MoMo根据合规要求和经验判断。流程蓝图V1.1确认无评估标准模板",
+        "deliverable_type": "数据表",
+        "evidence_refs": {
+          "agent_d1_input_struct": "EVD-f3c57c1febb349d3e9a6",
+          "agent_d2_rule_clear": "EVD-561382b3a41527b19533",
+          "agent_d3_output_verify": "EVD-aded0e82636a9740ffdd",
+          "agent_d4_api_reach": "EVD-3dc8a2f4f3839fcbae7c",
+          "agent_d5_fallback": "EVD-f6f6cef142397b84727b",
+          "agent_d6_compliance": "EVD-b01581e9b4e83b6242b5",
+          "agent_human_touchpoint": "EVD-1fb423e187abac5a6ebf",
+          "agentifiability": "EVD-c0d0a8543195f238f612",
+          "l4_deliverable": "EVD-489c148f2a932800c1b6",
+          "l4_deliverable_type": "EVD-9ca15dd5b18cfbdae0f2",
+          "l4_name": "EVD-a0b30c989a909410003a",
+          "position_family": "EVD-f51a28054e3dc7bc754f",
+          "skill_feasibility": "EVD-808b763ee69cf92641e2"
+        },
+        "human_touchpoint": "人工执行：KA评估与分级",
+        "l4_code": "L4-KAET-04",
+        "l4_name": "KA评估与分级",
+        "position_family": {
+          "category_name": "业务发展BD岗",
+          "category_type": "目标态核心",
+          "family_code": "JF-03",
+          "family_name": "机构业务族"
+        },
+        "skill_feasibility": {
+          "action_nature": "判断/策略/认知类",
+          "action_singularity": "复合动作(建议先拆分)",
+          "funds_safety_hard_gate": false,
+          "grade": "C-低封装(判断/策略/关系类,理论天花板)",
+          "judgment_basis": "C-仍低封装度(需判断/权威)",
+          "physical_execution": false,
+          "recommended_path": "优先考虑Agent辅助或决策支持，不直接封装确定性Skill",
+          "verification_status": "VERIFIED"
+        },
+        "tier": "Hybrid"
+      }
+    ],
+    "value_nodes": [
+      {
+        "evidence_refs": {
+          "gate1_data_linked": "EVD-8998a679a800271de32d",
+          "gate2_grounded": "EVD-fba662da31dfd6c0564c",
+          "gate3_traceable": "EVD-5f9d336a9de1b2ae2760",
+          "is_fused": "EVD-ea26c004c83dde344c47",
+          "overall_judgment": "EVD-3ff72f1efe7d136e5197",
+          "priority": "EVD-72189bebc3f3bd6fc320",
+          "vn_name": "EVD-8d9da83fb663df730ba8"
+        },
+        "is_fused": true,
+        "overall_judgment": "FAIL",
+        "priority": "P1候选",
+        "vn_id": "VN-KAET-01",
+        "vn_name": "KA评估定级记录"
+      }
+    ],
+    "vn_l4_mappings": [
+      {
+        "l3_code": "L3-KAET",
+        "l4_code": "L4-KAET-04",
+        "mapping_status": "direct",
+        "vn_id": "VN-KAET-01"
+      }
+    ],
+    "kpi_mappings": [
+      {
+        "kpi_code": "KPI_34",
+        "kpi_formula": null,
+        "kpi_name": "新签 KA 数",
+        "kpi_target": null,
+        "kpi_unit": null,
+        "measurement_cycle": "月",
+        "source_type": "definition"
+      }
+    ],
+    "value_stream_mappings": [
+      {
+        "l3_code": "L3-KAET",
+        "mapping_type": "primary",
+        "stage_code": "S2",
+        "stage_name": "评估定级与合规",
+        "stage_sequence": 2,
+        "vs_code": "VS-3",
+        "vs_name": "KA上架旅程",
+        "vs_stakeholder": "KA/TOA/个人IP"
+      }
+    ],
+    "blueprint": {
+      "blueprint_value_nodes": [],
+      "coverage": "INDEXED",
+      "decisions": [
+        {
+          "after_step": "STEP-01",
+          "branches": [
+            {
+              "is_return": false,
+              "label": "具备（有团队+有意愿+基本出单能力）",
+              "source_line": 86,
+              "target_l4": "",
+              "target_step": "STEP-02",
+              "target_text": "Step 2资质核查"
+            },
+            {
+              "is_return": false,
+              "label": "不具备",
+              "source_line": 87,
+              "target_l4": "",
+              "target_step": "",
+              "target_text": "退回L3-KAEC，进入观察池"
+            }
+          ],
+          "decision_id": "Q1",
+          "evidence_ref": "EVD-a06064ddcae103266dd9",
+          "question": "KA是否具备基本合作条件",
+          "source_line": 83
+        },
+        {
+          "after_step": "STEP-03",
+          "branches": [
+            {
+              "is_return": false,
+              "label": "达标（交付经理判断值得推进）",
+              "source_line": 92,
+              "target_l4": "",
+              "target_step": "STEP-04",
+              "target_text": "Step 4定级记录 → 触发L3-KASC"
+            },
+            {
+              "is_return": false,
+              "label": "暂缓（需观察出单意愿）",
+              "source_line": 93,
+              "target_l4": "",
+              "target_step": "",
+              "target_text": "进入观察期，定期跟进"
+            },
+            {
+              "is_return": false,
+              "label": "不通过",
+              "source_line": 94,
+              "target_l4": "",
+              "target_step": "",
+              "target_text": "暂停合作，记录原因"
+            }
+          ],
+          "decision_id": "Q2",
+          "evidence_ref": "EVD-830449a4a2da9f4b9582",
+          "question": "KA综合潜力是否达标",
+          "source_line": 89
+        }
+      ],
+      "diagnostics": {
+        "blueprint_l4_count": 4,
+        "db_l4_count": 4,
+        "extra_in_blueprint": [],
+        "missing_in_blueprint": [],
+        "parsed_step_l4_count": 4,
+        "retired_l4s_ignored": [],
+        "unmapped_step_count": 0
+      },
+      "edges": [
+        {
+          "edge_id": "SEQ-STEP-01-STEP-02",
+          "edge_type": "SEQUENCE",
+          "from": "STEP-01",
+          "label": "",
+          "source_rule": "蓝图显式编号步骤的相邻顺序",
+          "to": "STEP-02"
+        },
+        {
+          "edge_id": "SEQ-STEP-02-STEP-03",
+          "edge_type": "SEQUENCE",
+          "from": "STEP-02",
+          "label": "",
+          "source_rule": "蓝图显式编号步骤的相邻顺序",
+          "to": "STEP-03"
+        },
+        {
+          "edge_id": "SEQ-STEP-03-STEP-04",
+          "edge_type": "SEQUENCE",
+          "from": "STEP-03",
+          "label": "",
+          "source_rule": "蓝图显式编号步骤的相邻顺序",
+          "to": "STEP-04"
+        },
+        {
+          "edge_id": "Q1-4",
+          "edge_type": "DECISION",
+          "from": "Q1",
+          "label": "具备（有团队+有意愿+基本出单能力）",
+          "source_rule": "蓝图第86行显式分支",
+          "to": "STEP-02"
+        },
+        {
+          "edge_id": "Q2-5",
+          "edge_type": "DECISION",
+          "from": "Q2",
+          "label": "达标（交付经理判断值得推进）",
+          "source_rule": "蓝图第92行显式分支",
+          "to": "STEP-04"
+        }
+      ],
+      "filename": "流程蓝图_L3-KAET_KA评估定级_V1.1.md",
+      "note": "已从蓝图正文解析；步骤顺序边由显式步骤编号派生，判断分支保留原文行号",
+      "raci": [],
+      "source_hash": "664521e9271982e3b8948fa7871fa6a3f1944d9eb6d4bf3f4e3b794d33322d08",
+      "source_path": "/Users/a112233/Desktop/流程架构项目_jasper/02_过程成果-工作产出/L3流程库/流程蓝图_L3-KAET_KA评估定级_V1.1.md",
+      "steps": [
+        {
+          "activities": [
+            "L4-KAET-01 KA背景信息收集 → 《KA背景信息表》(Human)"
+          ],
+          "evidence_ref": "EVD-66dd9ed9b7a9940625f4",
+          "l4_codes": [
+            "L4-KAET-01"
+          ],
+          "sequence": 1,
+          "source_line": 53,
+          "step_id": "STEP-01",
+          "step_name": "KA背景信息收集"
+        },
+        {
+          "activities": [
+            "L4-KAET-02 KA资质合规核查 → 《资质核查记录》(Human)"
+          ],
+          "evidence_ref": "EVD-c224588248f6dad7afa1",
+          "l4_codes": [
+            "L4-KAET-02"
+          ],
+          "sequence": 2,
+          "source_line": 60,
+          "step_id": "STEP-02",
+          "step_name": "资质合规核查"
+        },
+        {
+          "activities": [
+            "L4-KAET-03 KA潜力综合判断 → 《KA潜力判断记录》(Human)"
+          ],
+          "evidence_ref": "EVD-af5a0dd820e4348cdd27",
+          "l4_codes": [
+            "L4-KAET-03"
+          ],
+          "sequence": 3,
+          "source_line": 66,
+          "step_id": "STEP-03",
+          "step_name": "KA潜力初判"
+        },
+        {
+          "activities": [
+            "L4-KAET-04 定级记录与推进 → 《KA评估定级记录》(Human)"
+          ],
+          "evidence_ref": "EVD-fb15986ad7dd2ebeadb1",
+          "l4_codes": [
+            "L4-KAET-04"
+          ],
+          "sequence": 4,
+          "source_line": 73,
+          "step_id": "STEP-04",
+          "step_name": "定级记录与推进决策"
+        }
+      ],
+      "structure_status": "PARSED",
+      "version": "V1.1"
+    },
+    "evidence_registry": [
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-039b898e44ced67b3af2",
+        "field_name": "l4_name",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_name",
+          "source_key": "L4-KAET-01",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "KA背景信息收集"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-08bf763c6c69f6c62d07",
+        "field_name": "l4_name",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_name",
+          "source_key": "L4-KAET-03",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "KA潜力综合判断"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-090b2638aee70cac6fb2",
+        "field_name": "agent_d5_fallback",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d5_fallback",
+          "source_key": "L4-KAET-03",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 1
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-10d7d25ca9907fe52e76",
+        "field_name": "agent_human_touchpoint",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_human_touchpoint",
+          "source_key": "L4-KAET-03",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "人工执行：KA潜力综合判断"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-151c498607d00c28907f",
+        "field_name": "agent_d2_rule_clear",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d2_rule_clear",
+          "source_key": "L4-KAET-03",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 1
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-1f05aeee3fa3de68aab2",
+        "field_name": "agent_d4_api_reach",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d4_api_reach",
+          "source_key": "L4-KAET-03",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 1
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-1fb423e187abac5a6ebf",
+        "field_name": "agent_human_touchpoint",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_human_touchpoint",
+          "source_key": "L4-KAET-04",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "人工执行：KA评估与分级"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-222528353ad5605bca62",
+        "field_name": "agent_d3_output_verify",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d3_output_verify",
+          "source_key": "L4-KAET-01",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-26a75a0cf9dad0225e16",
+        "field_name": "agentifiability",
+        "source": {
+          "observed_at": "",
+          "source_field": "agentifiability",
+          "source_key": "L4-KAET-03",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "Hybrid"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-2f55bd5796b7c1ad1ea6",
+        "field_name": "l4_deliverable",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_deliverable",
+          "source_key": "L4-KAET-01",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "《KA背景信息表》"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-2fc0d78475c129215502",
+        "field_name": "agent_human_touchpoint",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_human_touchpoint",
+          "source_key": "L4-KAET-02",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "人工执行：KA资质合规核查"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-3085033e54ea2f17b128",
+        "field_name": "l4_name",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_name",
+          "source_key": "L4-KAET-02",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "KA资质合规核查"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-3aa9f25e7f2f46e9673f",
+        "field_name": "agentifiability",
+        "source": {
+          "observed_at": "",
+          "source_field": "agentifiability",
+          "source_key": "L4-KAET-02",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "Aug"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-3d107cbcae117e385889",
+        "field_name": "agent_d5_fallback",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d5_fallback",
+          "source_key": "L4-KAET-01",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 1
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-3dc8a2f4f3839fcbae7c",
+        "field_name": "agent_d4_api_reach",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d4_api_reach",
+          "source_key": "L4-KAET-04",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 1
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-3ff72f1efe7d136e5197",
+        "field_name": "overall_judgment",
+        "source": {
+          "observed_at": "",
+          "source_field": "overall_judgment",
+          "source_key": "VN-KAET-01",
+          "source_object": "process_analytics.dim_vn",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "FAIL"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-46e27cff97cdd65127e1",
+        "field_name": "agent_d3_output_verify",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d3_output_verify",
+          "source_key": "L4-KAET-02",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-489c148f2a932800c1b6",
+        "field_name": "l4_deliverable",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_deliverable",
+          "source_key": "L4-KAET-04",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "Excel模板（待建设）。当前无定级体系，由MoMo根据合规要求和经验判断。流程蓝图V1.1确认无评估标准模板"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-4c421e21629796427539",
+        "field_name": "l4_deliverable",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_deliverable",
+          "source_key": "L4-KAET-02",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "《资质核查记录》"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-50841edc0ae890d5e878",
+        "field_name": "agent_d3_output_verify",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d3_output_verify",
+          "source_key": "L4-KAET-03",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-561382b3a41527b19533",
+        "field_name": "agent_d2_rule_clear",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d2_rule_clear",
+          "source_key": "L4-KAET-04",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 0
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-5eb24324f096776c655b",
+        "field_name": "agent_human_touchpoint",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_human_touchpoint",
+          "source_key": "L4-KAET-01",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "人工执行：KA背景信息收集"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-5f9d336a9de1b2ae2760",
+        "field_name": "gate3_traceable",
+        "source": {
+          "observed_at": "",
+          "source_field": "gate3_traceable",
+          "source_key": "VN-KAET-01",
+          "source_object": "process_analytics.dim_vn",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "FAIL"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-66dd9ed9b7a9940625f4",
+        "field_name": "blueprint.steps.STEP-01",
+        "source": {
+          "observed_at": "",
+          "source_field": "step",
+          "source_key": "line:53",
+          "source_object": "流程蓝图_L3-KAET_KA评估定级_V1.1.md",
+          "source_system": "L3流程库",
+          "source_version": "V1.1"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "l4_codes": [
+            "L4-KAET-01"
+          ],
+          "step_name": "KA背景信息收集"
+        }
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-72189bebc3f3bd6fc320",
+        "field_name": "priority",
+        "source": {
+          "observed_at": "",
+          "source_field": "priority",
+          "source_key": "VN-KAET-01",
+          "source_object": "process_analytics.dim_vn",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "P1候选"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-729e82f25a9c59c1ab81",
+        "field_name": "l4_deliverable_type",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_deliverable_type",
+          "source_key": "L4-KAET-01",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "数据表"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-74eeae11646ef4436512",
+        "field_name": "agent_d5_fallback",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d5_fallback",
+          "source_key": "L4-KAET-02",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 1
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-7913abe7d07b3549fd01",
+        "field_name": "agent_d6_compliance",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d6_compliance",
+          "source_key": "L4-KAET-02",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-808b763ee69cf92641e2",
+        "field_name": "skill_feasibility",
+        "source": {
+          "observed_at": "",
+          "source_field": "L4明细_最终确认版:A:N",
+          "source_key": "L4-KAET-04@row:236",
+          "source_object": "L4流程_Skill封装可行性评估_确认最终版_v2.xlsx",
+          "source_system": "OB知识库",
+          "source_version": "v2"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "action_nature": "判断/策略/认知类",
+          "action_singularity": "复合动作(建议先拆分)",
+          "funds_safety_hard_gate": false,
+          "grade": "C-低封装(判断/策略/关系类,理论天花板)",
+          "judgment_basis": "C-仍低封装度(需判断/权威)",
+          "physical_execution": false,
+          "recommended_path": "优先考虑Agent辅助或决策支持，不直接封装确定性Skill",
+          "verification_status": "VERIFIED"
+        }
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-830449a4a2da9f4b9582",
+        "field_name": "blueprint.decisions.Q2",
+        "source": {
+          "observed_at": "",
+          "source_field": "decision",
+          "source_key": "line:89",
+          "source_object": "流程蓝图_L3-KAET_KA评估定级_V1.1.md",
+          "source_system": "L3流程库",
+          "source_version": "V1.1"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "branches": [
+            {
+              "is_return": false,
+              "label": "达标（交付经理判断值得推进）",
+              "source_line": 92,
+              "target_l4": "",
+              "target_step": "STEP-04",
+              "target_text": "Step 4定级记录 → 触发L3-KASC"
+            },
+            {
+              "is_return": false,
+              "label": "暂缓（需观察出单意愿）",
+              "source_line": 93,
+              "target_l4": "",
+              "target_step": "",
+              "target_text": "进入观察期，定期跟进"
+            },
+            {
+              "is_return": false,
+              "label": "不通过",
+              "source_line": 94,
+              "target_l4": "",
+              "target_step": "",
+              "target_text": "暂停合作，记录原因"
+            }
+          ],
+          "question": "KA综合潜力是否达标"
+        }
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-8998a679a800271de32d",
+        "field_name": "gate1_data_linked",
+        "source": {
+          "observed_at": "",
+          "source_field": "gate1_data_linked",
+          "source_key": "VN-KAET-01",
+          "source_object": "process_analytics.dim_vn",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "FAIL"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-8d9da83fb663df730ba8",
+        "field_name": "vn_name",
+        "source": {
+          "observed_at": "",
+          "source_field": "vn_name",
+          "source_key": "VN-KAET-01",
+          "source_object": "process_analytics.dim_vn",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "KA评估定级记录"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-9037c83844530f0b4188",
+        "field_name": "skill_feasibility",
+        "source": {
+          "observed_at": "",
+          "source_field": "L4明细_最终确认版:A:N",
+          "source_key": "L4-KAET-02@row:234",
+          "source_object": "L4流程_Skill封装可行性评估_确认最终版_v2.xlsx",
+          "source_system": "OB知识库",
+          "source_version": "v2"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "action_nature": "合规监管类",
+          "action_singularity": "单一动作",
+          "funds_safety_hard_gate": false,
+          "grade": "B-中封装(需报告模板/系统集成配合)",
+          "judgment_basis": "B-可封装但仍需人工复核(合规类)",
+          "physical_execution": false,
+          "recommended_path": "先补报告模板、规则固化或系统接口，再验证Skill",
+          "verification_status": "VERIFIED"
+        }
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-9ca15dd5b18cfbdae0f2",
+        "field_name": "l4_deliverable_type",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_deliverable_type",
+          "source_key": "L4-KAET-04",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "数据表"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-a06064ddcae103266dd9",
+        "field_name": "blueprint.decisions.Q1",
+        "source": {
+          "observed_at": "",
+          "source_field": "decision",
+          "source_key": "line:83",
+          "source_object": "流程蓝图_L3-KAET_KA评估定级_V1.1.md",
+          "source_system": "L3流程库",
+          "source_version": "V1.1"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "branches": [
+            {
+              "is_return": false,
+              "label": "具备（有团队+有意愿+基本出单能力）",
+              "source_line": 86,
+              "target_l4": "",
+              "target_step": "STEP-02",
+              "target_text": "Step 2资质核查"
+            },
+            {
+              "is_return": false,
+              "label": "不具备",
+              "source_line": 87,
+              "target_l4": "",
+              "target_step": "",
+              "target_text": "退回L3-KAEC，进入观察池"
+            }
+          ],
+          "question": "KA是否具备基本合作条件"
+        }
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-a0b30c989a909410003a",
+        "field_name": "l4_name",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_name",
+          "source_key": "L4-KAET-04",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "KA评估与分级"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-a8638b240ebec848afb1",
+        "field_name": "agent_d4_api_reach",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d4_api_reach",
+          "source_key": "L4-KAET-01",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-aded0e82636a9740ffdd",
+        "field_name": "agent_d3_output_verify",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d3_output_verify",
+          "source_key": "L4-KAET-04",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 1
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-af5a0dd820e4348cdd27",
+        "field_name": "blueprint.steps.STEP-03",
+        "source": {
+          "observed_at": "",
+          "source_field": "step",
+          "source_key": "line:66",
+          "source_object": "流程蓝图_L3-KAET_KA评估定级_V1.1.md",
+          "source_system": "L3流程库",
+          "source_version": "V1.1"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "l4_codes": [
+            "L4-KAET-03"
+          ],
+          "step_name": "KA潜力初判"
+        }
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-b01581e9b4e83b6242b5",
+        "field_name": "agent_d6_compliance",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d6_compliance",
+          "source_key": "L4-KAET-04",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 1
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-b43ee63f71218bedb82e",
+        "field_name": "agent_d1_input_struct",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d1_input_struct",
+          "source_key": "L4-KAET-02",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-bbdcfa68d89dd6eedd3b",
+        "field_name": "agent_d2_rule_clear",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d2_rule_clear",
+          "source_key": "L4-KAET-02",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-bd2c408a3a7d2e459c61",
+        "field_name": "agent_d1_input_struct",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d1_input_struct",
+          "source_key": "L4-KAET-01",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-c02290cf192739a3e750",
+        "field_name": "agent_d4_api_reach",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d4_api_reach",
+          "source_key": "L4-KAET-02",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-c0d0a8543195f238f612",
+        "field_name": "agentifiability",
+        "source": {
+          "observed_at": "",
+          "source_field": "agentifiability",
+          "source_key": "L4-KAET-04",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "Hybrid"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-c224588248f6dad7afa1",
+        "field_name": "blueprint.steps.STEP-02",
+        "source": {
+          "observed_at": "",
+          "source_field": "step",
+          "source_key": "line:60",
+          "source_object": "流程蓝图_L3-KAET_KA评估定级_V1.1.md",
+          "source_system": "L3流程库",
+          "source_version": "V1.1"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "l4_codes": [
+            "L4-KAET-02"
+          ],
+          "step_name": "资质合规核查"
+        }
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-cac24f3320edb8744e3e",
+        "field_name": "agent_d2_rule_clear",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d2_rule_clear",
+          "source_key": "L4-KAET-01",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-db670e2eeaf98712c9e0",
+        "field_name": "l4_deliverable",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_deliverable",
+          "source_key": "L4-KAET-03",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "《KA潜力判断记录》"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-dc7fecaadc8fd7991cad",
+        "field_name": "agent_d6_compliance",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d6_compliance",
+          "source_key": "L4-KAET-03",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 1
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-de0b411201840f5e093f",
+        "field_name": "skill_feasibility",
+        "source": {
+          "observed_at": "",
+          "source_field": "L4明细_最终确认版:A:N",
+          "source_key": "L4-KAET-03@row:235",
+          "source_object": "L4流程_Skill封装可行性评估_确认最终版_v2.xlsx",
+          "source_system": "OB知识库",
+          "source_version": "v2"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "action_nature": "判断/策略/认知类",
+          "action_singularity": "单一动作",
+          "funds_safety_hard_gate": false,
+          "grade": "C-低封装(判断/策略/关系类,理论天花板)",
+          "judgment_basis": "C-仍低封装度(需判断/权威)",
+          "physical_execution": false,
+          "recommended_path": "优先考虑Agent辅助或决策支持，不直接封装确定性Skill",
+          "verification_status": "VERIFIED"
+        }
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-e112c5439e9b13434002",
+        "field_name": "skill_feasibility",
+        "source": {
+          "observed_at": "",
+          "source_field": "L4明细_最终确认版:A:N",
+          "source_key": "L4-KAET-01@row:233",
+          "source_object": "L4流程_Skill封装可行性评估_确认最终版_v2.xlsx",
+          "source_system": "OB知识库",
+          "source_version": "v2"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "action_nature": "信息处理/事务类",
+          "action_singularity": "单一动作",
+          "funds_safety_hard_gate": false,
+          "grade": "A-高封装(理想条件下Skill候选)",
+          "judgment_basis": "A-高封装(单一信息处理动作)",
+          "physical_execution": false,
+          "recommended_path": "优先进入Skill原型候选池",
+          "verification_status": "VERIFIED"
+        }
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-e1ed4ea074a571ed0e3e",
+        "field_name": "agent_d6_compliance",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d6_compliance",
+          "source_key": "L4-KAET-01",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 1
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-e1f4932f99af282d756e",
+        "field_name": "agentifiability",
+        "source": {
+          "observed_at": "",
+          "source_field": "agentifiability",
+          "source_key": "L4-KAET-01",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "Auto"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-e3b3024b2681bb7f528f",
+        "field_name": "l4_deliverable_type",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_deliverable_type",
+          "source_key": "L4-KAET-03",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "数据表"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-e95c296d4a96cb629d66",
+        "field_name": "l4_deliverable_type",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_deliverable_type",
+          "source_key": "L4-KAET-02",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "数据表"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-ea26c004c83dde344c47",
+        "field_name": "is_fused",
+        "source": {
+          "observed_at": "",
+          "source_field": "is_fused",
+          "source_key": "VN-KAET-01",
+          "source_object": "process_analytics.dim_vn",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": true
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-f3c57c1febb349d3e9a6",
+        "field_name": "agent_d1_input_struct",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d1_input_struct",
+          "source_key": "L4-KAET-04",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 1
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-f51a28054e3dc7bc754f",
+        "field_name": "position_family",
+        "source": {
+          "observed_at": "",
+          "source_field": "各族详细映射",
+          "source_key": "L3-KAET",
+          "source_object": "2026-07-20_68L3岗位族归属设计_v6.1_SUBMITTED.md",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v6.1"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "category_name": "业务发展BD岗",
+          "category_type": "目标态核心",
+          "family_code": "JF-03",
+          "family_name": "机构业务族"
+        }
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-f6f6cef142397b84727b",
+        "field_name": "agent_d5_fallback",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d5_fallback",
+          "source_key": "L4-KAET-04",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 1
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-f9aeb1e1c13395d57072",
+        "field_name": "agent_d1_input_struct",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d1_input_struct",
+          "source_key": "L4-KAET-03",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-fb15986ad7dd2ebeadb1",
+        "field_name": "blueprint.steps.STEP-04",
+        "source": {
+          "observed_at": "",
+          "source_field": "step",
+          "source_key": "line:73",
+          "source_object": "流程蓝图_L3-KAET_KA评估定级_V1.1.md",
+          "source_system": "L3流程库",
+          "source_version": "V1.1"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "l4_codes": [
+            "L4-KAET-04"
+          ],
+          "step_name": "定级记录与推进决策"
+        }
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-fba662da31dfd6c0564c",
+        "field_name": "gate2_grounded",
+        "source": {
+          "observed_at": "",
+          "source_field": "gate2_grounded",
+          "source_key": "VN-KAET-01",
+          "source_object": "process_analytics.dim_vn",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "FAIL"
+      }
+    ]
+  }
+}

@@ -1,0 +1,281 @@
+{
+  "schema_version": "vnw.l3-analysis.v1",
+  "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
+  "generation_mode": "UNIFIED_MODEL",
+  "analysis_status": "MODEL_DRAFT",
+  "model_run": {
+    "model_name": "deepseek-v4-pro",
+    "model_version": "deepseek-v4-pro",
+    "prompt_version": "VNW-L3-COM-GOLD-v1.0",
+    "generated_at": "2026-08-04T19:02:26.526363+00:00",
+    "input_snapshot_hash": "6c171b3a1b226fea15771e4fdb3bef3b7d03de563532228adbe227848e111c68"
+  },
+  "source_scope": {
+    "database": "process_analytics",
+    "knowledge": "ACTIVE supplemental evidence only",
+    "evidence_count": 34
+  },
+  "l4_analysis": [
+    {
+      "l4_code": "L4-NG-01",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-e64e34b437bed4496324",
+        "EVD-c0278caf7d91d43f2dac",
+        "EVD-578bfa40213e84084d28",
+        "EVD-f7a414a64a86976c3a9a",
+        "EVD-b4a56abc14f465a1bbfa",
+        "EVD-7a8451cce7f6c3ed0a2b",
+        "EVD-a6f8a25872166a550e4b",
+        "EVD-0be34a03f6035bb39c40",
+        "EVD-e4ac89616ffd805b6f6c"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "",
+      "specific_capabilities": [
+        "合同谈判与条款协商",
+        "法律合规审核",
+        "合同条款起草与修订",
+        "谈判纪要整理"
+      ],
+      "ai_reshape": "Agent辅助决策支持，提供合同条款建议、风险提示，但最终由人确认。",
+      "quality_anchor": "《合同终稿》的准确性、合规性与完整性",
+      "ai_responsibility": "提供草案对比、风险提示、条款建议等辅助信息",
+      "human_responsibility": "最终决策、谈判主导、合同审核确认",
+      "handoff_triggers": [
+        "合同条款出现重大分歧",
+        "法律风险超出AI知识范围",
+        "AI置信度低时请求人工介入"
+      ],
+      "control_gates": [],
+      "data_basis": [
+        "结构化合同模板",
+        "谈判议题与纪要",
+        "历史合同数据",
+        "机构政策与合规要求"
+      ],
+      "process_context": "属于评估与签约阶段，机构合作伙伴旅程，合同终稿为P0价值节点。",
+      "risks_limits": [
+        "谈判与判断依赖人工经验，AI可能遗漏隐性条款风险",
+        "法律地域差异可能导致AI建议不适用",
+        "复合动作需先拆分才能有效辅助"
+      ],
+      "current_recommendation": "建议拆分为‘谈判纪要辅助’与‘法律审核辅助’两个子任务，分别采用AI记录摘要和条款风险比对，人工保留最终决定权。",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-NG-02",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-c946003c1a04b5953427",
+        "EVD-779bec948d57f052ed06",
+        "EVD-137ff9deac3ceabc7464",
+        "EVD-4531e33af58d82504e7d",
+        "EVD-edb7be22d5f3491172a9",
+        "EVD-2b65b1be6c6c59b7ee2b",
+        "EVD-0be34a03f6035bb39c40"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "",
+      "specific_capabilities": [
+        "合同文件自动生成与校验",
+        "电子签章触发与状态跟踪",
+        "系统信息同步与归档"
+      ],
+      "ai_reshape": "拆分为确定性子Skill：合同终稿自动生成与校验、电子签署触发、系统信息同步，逐步实现全自动。",
+      "quality_anchor": "签署文件的完整性、准确性及系统信息同步一致性",
+      "ai_responsibility": "自动生成合同文件、触发签署流程、同步信息至系统",
+      "human_responsibility": "",
+      "handoff_triggers": [
+        "签署失败或异常",
+        "文件校验不通过",
+        "系统同步错误"
+      ],
+      "control_gates": [],
+      "data_basis": [
+        "审批通过的合同条款",
+        "机构与客户信息",
+        "电子签章接口数据"
+      ],
+      "process_context": "属于评估与签约阶段，机构合作伙伴旅程，合同终稿为P0价值节点。",
+      "risks_limits": [
+        "自动签署存在法律效力确认风险",
+        "系统同步延迟可能导致信息不一致",
+        "复合动作需拆分为原子Skill才能上线"
+      ],
+      "current_recommendation": "优先拆分‘合同终稿生成’‘电子签署触发’‘信息同步’为独立Skill，按顺序自动化，人工仅在异常时介入。",
+      "database_tier": "Auto",
+      "recommended_tier": "Auto",
+      "quadrant": "unclassified"
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "TASK-NG-01-1",
+      "l4_code": "L4-NG-01",
+      "task_name": "合同谈判纪要生成",
+      "source_type": "blueprint",
+      "sequence_no": 1,
+      "sequence_status": "UNCONFIRMED",
+      "source_step_id": "STEP-01",
+      "source_line": 47,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "UNCONFIRMED",
+      "evidence_refs": [
+        "EVD-e64e34b437bed4496324",
+        "EVD-c0278caf7d91d43f2dac"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "谈判需人工主导，AI可辅助记录要点、整理纪要，建议Augmented模式。"
+    },
+    {
+      "task_id": "TASK-NG-01-2",
+      "l4_code": "L4-NG-01",
+      "task_name": "法律审核意见生成",
+      "source_type": "blueprint",
+      "sequence_no": 1,
+      "sequence_status": "UNCONFIRMED",
+      "source_step_id": "STEP-01",
+      "source_line": 47,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "UNCONFIRMED",
+      "evidence_refs": [
+        "EVD-e64e34b437bed4496324",
+        "EVD-c0278caf7d91d43f2dac"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "法律审核需专业判断，AI提供条款比对、风险提示，人工确认，建议人机协同。"
+    },
+    {
+      "task_id": "TASK-NG-02-1",
+      "l4_code": "L4-NG-02",
+      "task_name": "合同终稿生成与签署",
+      "source_type": "blueprint",
+      "sequence_no": 2,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-02",
+      "source_line": 53,
+      "previous_task_ids": [
+        "TASK-NG-01-1",
+        "TASK-NG-01-2"
+      ],
+      "next_task_ids": [],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-c946003c1a04b5953427",
+        "EVD-779bec948d57f052ed06"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "合同终稿可基于模板自动生成，电子签署可触发自动化流程，建议Auto。"
+    },
+    {
+      "task_id": "TASK-NG-02-2",
+      "l4_code": "L4-NG-02",
+      "task_name": "系统信息同步",
+      "source_type": "blueprint",
+      "sequence_no": 2,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-02",
+      "source_line": 53,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "UNCONFIRMED",
+      "evidence_refs": [
+        "EVD-c946003c1a04b5953427",
+        "EVD-779bec948d57f052ed06"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "信息同步是确定性事务，可由Agent自动完成，建议Auto。"
+    }
+  ],
+  "priority_drafts": [
+    {
+      "l4_code": "L4-NG-01",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "结构化合同模板",
+        "谈判议题与纪要",
+        "历史合同数据",
+        "机构政策与合规要求"
+      ],
+      "process_context": "属于评估与签约阶段，机构合作伙伴旅程，合同终稿为P0价值节点。",
+      "risks_limits": [
+        "谈判与判断依赖人工经验，AI可能遗漏隐性条款风险",
+        "法律地域差异可能导致AI建议不适用",
+        "复合动作需先拆分才能有效辅助"
+      ],
+      "current_recommendation": "建议拆分为‘谈判纪要辅助’与‘法律审核辅助’两个子任务，分别采用AI记录摘要和条款风险比对，人工保留最终决定权。",
+      "evidence_refs": [
+        "EVD-e64e34b437bed4496324",
+        "EVD-c0278caf7d91d43f2dac",
+        "EVD-578bfa40213e84084d28",
+        "EVD-f7a414a64a86976c3a9a",
+        "EVD-b4a56abc14f465a1bbfa",
+        "EVD-7a8451cce7f6c3ed0a2b",
+        "EVD-a6f8a25872166a550e4b",
+        "EVD-0be34a03f6035bb39c40",
+        "EVD-e4ac89616ffd805b6f6c"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-NG-02",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "审批通过的合同条款",
+        "机构与客户信息",
+        "电子签章接口数据"
+      ],
+      "process_context": "属于评估与签约阶段，机构合作伙伴旅程，合同终稿为P0价值节点。",
+      "risks_limits": [
+        "自动签署存在法律效力确认风险",
+        "系统同步延迟可能导致信息不一致",
+        "复合动作需拆分为原子Skill才能上线"
+      ],
+      "current_recommendation": "优先拆分‘合同终稿生成’‘电子签署触发’‘信息同步’为独立Skill，按顺序自动化，人工仅在异常时介入。",
+      "evidence_refs": [
+        "EVD-c946003c1a04b5953427",
+        "EVD-779bec948d57f052ed06",
+        "EVD-137ff9deac3ceabc7464",
+        "EVD-4531e33af58d82504e7d",
+        "EVD-edb7be22d5f3491172a9",
+        "EVD-2b65b1be6c6c59b7ee2b",
+        "EVD-0be34a03f6035bb39c40"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "decision_drafts": [
+    {
+      "priority": 1,
+      "task_ids": [
+        "TASK-NG-02-1",
+        "TASK-NG-02-2"
+      ],
+      "title": "试点合同签署自动化",
+      "pilot_scope": "同行合作协议的终稿生成、电子签署触发和系统信息同步，选择1-2家合作机构先行。",
+      "human_boundary": "最终签署前需法务复核合同内容，电子签署需授权操作确认，系统同步异常需人工介入。",
+      "evidence_refs": [
+        "EVD-779bec948d57f052ed06",
+        "EVD-c946003c1a04b5953427"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "control_chain": [],
+  "rejected_task_sources": [],
+  "missing_analysis": [
+    "L4-NG-01 · deliverable_role · fact_pack中无直接证据说明交付物角色，仅有岗位族信息。",
+    "L4-NG-01 · control_gates · 无资金关卡或合规控制门的明确证据。",
+    "L4-NG-02 · human_responsibility · human_touchpoint为MISSING，无法确定人责任的明确边界。",
+    "L4-NG-02 · control_gates · 无合同签署或信息发布控制门的明确证据。"
+  ]
+}

@@ -1,0 +1,370 @@
+{
+  "schema_version": "vnw.l3-analysis.v1",
+  "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
+  "generation_mode": "UNIFIED_MODEL",
+  "analysis_status": "MODEL_DRAFT",
+  "model_run": null,
+  "source_scope": {
+    "database": "process_analytics",
+    "knowledge": "ACTIVE supplemental evidence only",
+    "evidence_count": 52
+  },
+  "l4_analysis": [
+    {
+      "l4_code": "L4-IPI-08",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-4392018782e982eef893",
+        "EVD-cf964bca393b05060175",
+        "EVD-50a3c3e5cb12d0e9d182",
+        "EVD-ddd3db8537b906f80084",
+        "EVD-baa78edc666eeb9faa4b",
+        "EVD-2357f7cb9bdbd809da3c",
+        "EVD-52668b8fe0b0d3af2fc3",
+        "EVD-5384964a0a70780e3ef5",
+        "EVD-de666290a81344d55a67",
+        "EVD-690660f24db2058fd87b",
+        "EVD-ca5425424cd99895265b",
+        "EVD-a189a8085006839e5ad8",
+        "EVD-f5e0d3c0f1cab7d8f541"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "输出《Portfolio分析报告》以支持多维Portfolio管理与策略调整决策",
+      "specific_capabilities": [
+        "多维Portfolio数据汇聚与指标计算",
+        "Portfolio策略调整建议的生成与复核"
+      ],
+      "ai_reshape": "Agent辅助：AI提供分析数据与初步建议，人工复核并做出最终决策",
+      "quality_anchor": "报告数据的准确性与策略建议的合理性，需人工审核结论",
+      "ai_responsibility": "自动收集多维度数据，生成报告草稿，标记异常指标",
+      "human_responsibility": "保司关系经理族负责最终审核报告，确认Portfolio调整策略并执行",
+      "handoff_triggers": [
+        "数据质量告警",
+        "模型置信度低于阈值",
+        "涉及策略性调整决策"
+      ],
+      "control_gates": [
+        "无资金安全硬性关卡（证据显示funds_safety_hard_gate=false）"
+      ],
+      "data_basis": [
+        "结构化输入程度中等（D1=2），规则清晰度中等（D2=2），输出验证复杂度中等（D3=2）"
+      ],
+      "process_context": "位于蓝图STEP-01 Portfolio管理与业绩监控步骤中，作为日常运营的基础分析活动",
+      "risks_limits": [
+        "低封装度（C级）导致难以完全自动化，需人工判断策略方向",
+        "数据完整性依赖上游系统集成"
+      ],
+      "current_recommendation": "保持Hybrid模式，优先构建Agent辅助能力，暂不封装为独立Skill",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-IPI-10",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-15cc28ea8726a0da7d2f",
+        "EVD-9ba81c1f87f1ae96842a",
+        "EVD-97ba7d3847b112278e3a",
+        "EVD-ddd3db8537b906f80084",
+        "EVD-9a06a30ad21aaa77c329",
+        "EVD-47eb580cf8b90799ffa7",
+        "EVD-5adfdcac846391b4d290",
+        "EVD-039750a434a87e693e8f",
+        "EVD-8811fdc4d22c92d3ad44",
+        "EVD-52fb9a393491631065a3",
+        "EVD-a97241609c074aadede4",
+        "EVD-dc7bb4c19606a38d7a6d",
+        "EVD-10a7666c2f1da0624b3b"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "输出《Portfolio分析报告》及迁移记录，支持产品跨业务线迁移决策与执行",
+      "specific_capabilities": [
+        "跨业务线迁移影响的评估",
+        "迁移方案的建议与手工执行"
+      ],
+      "ai_reshape": "Agent辅助：AI分析迁移影响并提供选项，人工确认后执行迁移",
+      "quality_anchor": "迁移决策的合理性与迁移记录的完整性",
+      "ai_responsibility": "自动化数据对比和影响分析，生成迁移建议草案",
+      "human_responsibility": "保司关系经理族负责评估并最终决定是否执行迁移，并手工完成迁移操作",
+      "handoff_triggers": [
+        "迁移影响超出预设阈值",
+        "迁移方案建议冲突",
+        "系统交互异常"
+      ],
+      "control_gates": [
+        "无资金安全硬性关卡，但涉及业务线调整，需人工审批"
+      ],
+      "data_basis": [
+        "输入结构化与规则清晰度均为中等水平（D1=2，D2=2）"
+      ],
+      "process_context": "在STEP-01的条件分支中触发，以及STEP-02作为明确步骤执行，均为按需触发的跨业务线迁移活动",
+      "risks_limits": [
+        "低封装度（C级）难以自动化决策",
+        "迁移操作直接影响客户体验与业务归属，需严格人工确认"
+      ],
+      "current_recommendation": "保持Hybrid模式，Agent辅助决策，迁移执行需人工确认与操作",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-IPI-12",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-c1c97c544d3f05ca89ec",
+        "EVD-3319d05575870343a12e",
+        "EVD-4182cda5e82bc0deb8d3",
+        "EVD-ddd3db8537b906f80084",
+        "EVD-ec5db43b5350b804bd2c",
+        "EVD-7b9232f616963091abb5",
+        "EVD-e0bd2be5774a0321a5f3",
+        "EVD-22f0add505eeddc29a70",
+        "EVD-37216c3d668cb982d0e9",
+        "EVD-76aa90960729581ac7a9",
+        "EVD-1a4994741a85e6244cdb",
+        "EVD-be49919eaf1fc92a933d",
+        "EVD-1f48b3b4c9c3542a4584"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "输出《Portfolio分析报告》中的业绩反馈记录，满足自动化数据管道要求",
+      "specific_capabilities": [
+        "业绩数据自动采集与管道接通",
+        "反馈记录的生成与推送"
+      ],
+      "ai_reshape": "确定性Skill封装：全自动执行数据反馈管道，仅在异常时转人工",
+      "quality_anchor": "反馈数据的及时性与准确性",
+      "ai_responsibility": "自动采集业绩数据，生成反馈记录并触发推送",
+      "human_responsibility": "仅在数据管道中断、数据质量异常时介入处理",
+      "handoff_triggers": [
+        "数据管道中断",
+        "数据校验失败"
+      ],
+      "control_gates": [
+        "无资金关卡，数据合规性需人工抽检（D6=2）"
+      ],
+      "data_basis": [
+        "高结构化输入（D1=3），规则清晰（D2=3），输出可自动验证（D3=3），API可达性高（D4=3）"
+      ],
+      "process_context": "位于蓝图STEP-01 Portfolio管理与业绩监控步骤，作为自动化数据反馈节点",
+      "risks_limits": [
+        "回退与合规性较低（D5=2，D6=2），需配置异常告警与人工抽检机制"
+      ],
+      "current_recommendation": "推荐Auto模式，优先封装为Skill原型，搭配人工复核抽检",
+      "database_tier": "Auto",
+      "recommended_tier": "Auto",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-IPI-13",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-b2e8d1db144879150307",
+        "EVD-9d7a4f6e74f3f3a48b21",
+        "EVD-efbaf0c177a4470b1f52",
+        "EVD-ddd3db8537b906f80084",
+        "EVD-17296cf684a7f79e1efa",
+        "EVD-d5b2d29bd5f932411e81",
+        "EVD-c6ad183f26e0a1905a66",
+        "EVD-f57e0f5c3bf6569363f3",
+        "EVD-2ec0d061142cfac3f7dc",
+        "EVD-728c2e1fb8bd8d6d3294",
+        "EVD-3ebc63b85268703c43f9",
+        "EVD-571d5202a8a874217879",
+        "EVD-805e2e8219a51a11fa94"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "输出《Portfolio分析报告》中的客户体验监控部分，支持NPS跟踪",
+      "specific_capabilities": [
+        "NPS数据自动采集与指标计算",
+        "监控报告自动生成"
+      ],
+      "ai_reshape": "确定性Skill封装：自动执行NPS监控与报告生成，异常时转人工",
+      "quality_anchor": "NPS数据的准确性与报告及时性",
+      "ai_responsibility": "自动采集客户体验数据，生成监控报告并推送",
+      "human_responsibility": "仅在数据异常或报告置信度低时介入",
+      "handoff_triggers": [
+        "NPS数据源异常",
+        "报告结论与预期偏差过大"
+      ],
+      "control_gates": [
+        "无资金关卡，合规性（D6=2）建议定期人工复核"
+      ],
+      "data_basis": [
+        "高结构化输入（D1=3），规则清晰（D2=3），但输出验证中等（D3=2）"
+      ],
+      "process_context": "位于蓝图STEP-01 Portfolio管理与业绩监控步骤，作为自动化监控节点",
+      "risks_limits": [
+        "输出验证不够完全自动化（D3=2），需人工抽检",
+        "回退机制一般（D5=2），需预设降级方案"
+      ],
+      "current_recommendation": "推荐Auto模式，封装为Skill原型，加强输出质量抽样检查",
+      "database_tier": "Auto",
+      "recommended_tier": "Auto",
+      "quadrant": "unclassified"
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "TASK-IPI-08-1",
+      "l4_code": "L4-IPI-08",
+      "task_name": "执行多维Portfolio分析并生成分析报告",
+      "source_type": "BLUEPRINT",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-01",
+      "source_line": 41,
+      "previous_task_ids": [],
+      "next_task_ids": ["TASK-IPI-10-2"],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-3d3a2f0b4460b548e4bb",
+        "EVD-4392018782e982eef893",
+        "EVD-cf964bca393b05060175",
+        "EVD-52668b8fe0b0d3af2fc3",
+        "EVD-2357f7cb9bdbd809da3c"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "数据库agentifiability为Hybrid，skill_feasibility为C级低封装，需人工判断策略，适合Agent辅助"
+    },
+    {
+      "task_id": "TASK-IPI-12-1",
+      "l4_code": "L4-IPI-12",
+      "task_name": "接通业绩数据反馈管道并输出反馈记录",
+      "source_type": "BLUEPRINT",
+      "sequence_no": 2,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-01",
+      "source_line": 41,
+      "previous_task_ids": [],
+      "next_task_ids": ["TASK-IPI-10-2"],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-3d3a2f0b4460b548e4bb",
+        "EVD-c1c97c544d3f05ca89ec",
+        "EVD-3319d05575870343a12e",
+        "EVD-e0bd2be5774a0321a5f3",
+        "EVD-7b9232f616963091abb5"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "数据库tier为Auto，skill_feasibility为A级高封装，适合确定性Skill封装"
+    },
+    {
+      "task_id": "TASK-IPI-13-1",
+      "l4_code": "L4-IPI-13",
+      "task_name": "执行客户体验NPS监控并生成监控报告",
+      "source_type": "BLUEPRINT",
+      "sequence_no": 3,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-01",
+      "source_line": 41,
+      "previous_task_ids": [],
+      "next_task_ids": ["TASK-IPI-10-2"],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-3d3a2f0b4460b548e4bb",
+        "EVD-b2e8d1db144879150307",
+        "EVD-9d7a4f6e74f3f3a48b21",
+        "EVD-c6ad183f26e0a1905a66",
+        "EVD-d5b2d29bd5f932411e81"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "数据库tier为Auto，skill_feasibility为A级，确定性信息处理动作，适合Auto"
+    },
+    {
+      "task_id": "TASK-IPI-10-1",
+      "l4_code": "L4-IPI-10",
+      "task_name": "在Portfolio监控中判断是否需要跨业务线迁移并执行迁移",
+      "source_type": "BLUEPRINT_DECISION",
+      "sequence_no": 4,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-01",
+      "source_line": 46,
+      "previous_task_ids": [],
+      "next_task_ids": ["TASK-IPI-10-2"],
+      "relation_type": "DECISION",
+      "evidence_refs": [
+        "EVD-3d3a2f0b4460b548e4bb",
+        "EVD-dde49eb31ce7395e3dee",
+        "EVD-15cc28ea8726a0da7d2f",
+        "EVD-9ba81c1f87f1ae96842a",
+        "EVD-5adfdcac846391b4d290",
+        "EVD-47eb580cf8b90799ffa7"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "决策分支触发，涉及策略判断与人工确认，skill_feasibility为C级，适合Hybrid"
+    },
+    {
+      "task_id": "TASK-IPI-10-2",
+      "l4_code": "L4-IPI-10",
+      "task_name": "执行跨业务线迁移并输出迁移记录",
+      "source_type": "BLUEPRINT",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-02",
+      "source_line": 50,
+      "previous_task_ids": ["TASK-IPI-08-1", "TASK-IPI-12-1", "TASK-IPI-13-1", "TASK-IPI-10-1"],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-315cc2dc0a331918658c",
+        "EVD-15cc28ea8726a0da7d2f",
+        "EVD-9ba81c1f87f1ae96842a",
+        "EVD-5adfdcac846391b4d290",
+        "EVD-47eb580cf8b90799ffa7"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "迁移操作为按需执行，需人工确认与手工执行，skill_feasibility为C级，适合Hybrid"
+    }
+  ],
+  "priority_drafts": [
+    {
+      "priority": 1,
+      "task_ids": ["TASK-IPI-12-1"],
+      "title": "优先启动业绩数据反馈的Auto化改造",
+      "data_basis": "L4-IPI-12的skill_feasibility为A级高封装，D1-D4评分均≥3，输入结构化、规则清晰且API可达",
+      "process_context": "位于日常运营监控循环中，是常态化、高频的数据管道操作",
+      "risks_limits": "数据合规（D6=2）和回退（D5=2）需补充人工抽检与告警机制，但不影响核心自动化",
+      "current_recommendation": "作为Auto模式示范，快速构建Skill原型，验证全自动反馈管道的价值，为后续L4-IPI-13等提供参考"
+    }
+  ],
+  "decision_drafts": [
+    {
+      "priority": 1,
+      "task_ids": ["TASK-IPI-12-1"],
+      "title": "决策试点：自动化业绩数据反馈管道",
+      "pilot_scope": "保司关系经理族在L3-IPI-OPS流程中的业绩数据反馈环节，覆盖1～2家核心保司",
+      "human_boundary": "人工必须负责：1) 数据异常告警的最终判定与处理；2) 合规性抽检（建议每月1次）；3) Skill配置的调整审批",
+      "evidence_refs": [
+        "EVD-7b9232f616963091abb5",
+        "EVD-3d3a2f0b4460b548e4bb",
+        "EVD-ec5db43b5350b804bd2c"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "control_chain": [],
+  "rejected_task_sources": [],
+  "missing_analysis": [
+    {
+      "field_path": "value_nodes",
+      "reason": "Gate A/E均报告价值节点-L4映射=0，缺少成本与价值锚定依据，影响优先级量化",
+      "gate_reference": "A-003, E-006"
+    },
+    {
+      "field_path": "blueprint.decisions.Q1",
+      "reason": "规则可定位L4=0/4，蓝图决策点缺少自动化规则支持，需工作坊补充触发条件规则",
+      "gate_reference": "E-007"
+    },
+    {
+      "field_path": "blueprint.steps.raci",
+      "reason": "蓝图中未提供RACI矩阵，任务职责边界依赖人工共识补充",
+      "gate_reference": ""
+    }
+  ]
+}

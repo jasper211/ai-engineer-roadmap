@@ -1,0 +1,570 @@
+{
+  "schema_version": "vnw.l3-analysis.v1",
+  "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
+  "generation_mode": "UNIFIED_MODEL",
+  "analysis_status": "MODEL_DRAFT",
+  "model_run": {
+    "model_name": "deepseek-v4-pro",
+    "model_version": "deepseek-v4-pro",
+    "prompt_version": "VNW-L3-COM-GOLD-v1.0",
+    "generated_at": "2026-08-04T18:42:00.276619+00:00",
+    "input_snapshot_hash": "80a59f4b939baf8f19580d3ed6ab5d00aaf5d094318bb44c55ed772c29051bfe"
+  },
+  "source_scope": {
+    "database": "process_analytics",
+    "knowledge": "ACTIVE supplemental evidence only",
+    "evidence_count": 55
+  },
+  "l4_analysis": [
+    {
+      "l4_code": "L4-KAOE-01",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-965665b1c3968e10a808",
+        "EVD-411d006cdbc4234cef09",
+        "EVD-0e5656434cb2632b20e8",
+        "EVD-8a06ade7da7b03b393cd",
+        "EVD-b93409fee124954b4b54",
+        "EVD-fc1dc0c6c724e33d2ef1",
+        "EVD-d281c836396897fb53b4",
+        "EVD-69ba26d6426ba7713ec7",
+        "EVD-0602b5b3dbd49ac8e4d3",
+        "EVD-9a30c4f759b25b53f796",
+        "EVD-0e55208e6e504058b712",
+        "EVD-a7d407488fd07ceb8a7d",
+        "EVD-ebeb56a066e9819c97e8"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "输出《陪跑需求分析报告》，明确客户陪跑需求、痛点及初步策略方向，作为后续计划制定的输入。",
+      "specific_capabilities": [
+        "客户沟通与需求挖掘（判断/策略类，低封装）",
+        "数据收集与历史行为分析（可部分自动化）",
+        "《陪跑需求分析报告》撰写（需人工判断整合）"
+      ],
+      "ai_reshape": "AI Agent辅助模式：自动汇总客户交易数据、沟通记录，生成需求分析摘要草案，但最终判断和报告定稿由KA管理岗完成。",
+      "quality_anchor": "报告需经岗位授权人审核签字，确保需求判断准确、策略建议合理。",
+      "ai_responsibility": "确保数据收集的完整性和初步分析的准确性；模型可能误解客户意图导致错误方向。",
+      "human_responsibility": "判断客户真实需求、制定陪跑策略、审核报告并承担最终责任。",
+      "handoff_triggers": [
+        "客户需求模糊或存在矛盾时",
+        "AI生成的分析报告质量不达标"
+      ],
+      "control_gates": [
+        "报告签字门：必须由机构业务族KA管理岗授权人审核确认"
+      ],
+      "data_basis": [
+        "客户交易历史与行为数据",
+        "前期赋能记录（来自L3-KAEM）",
+        "产品与业务规则库"
+      ],
+      "process_context": "作为陪跑流程的起点，接收KA赋能基础信息，分析后输出需求报告驱动后续计划制定；若判断不满足陪跑条件，可触发决策Q1返回L3-KAEM。",
+      "risks_limits": [
+        "C级低封装度限制：策略判断无法全自动，必须保留人工权威；",
+        "依赖客户数据质量，数据缺失时分析有效性下降；",
+        "Agent辅助可能产生偏见建议，需人工二次确认。"
+      ],
+      "current_recommendation": "采用双轴设计：自动化Tier建议Hybrid（部分信息处理自动，核心判断由人），但因Skill可行性为C级，不进入确定性Skill候选池，优先建设Agent辅助与决策支持工具。",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "agent_assist"
+    },
+    {
+      "l4_code": "L4-KAOE-02",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-a1a55de8fdae9bf8328e",
+        "EVD-cd3bfc8c8e2842db3d97",
+        "EVD-8537d3fa3abafb5195a5",
+        "EVD-009a1b0e0920f6efb262",
+        "EVD-e77558d4d310f4e7fe86",
+        "EVD-fc1dc0c6c724e33d2ef1",
+        "EVD-689da61f553e673dc65a",
+        "EVD-ce552a150bde7c96d109",
+        "EVD-256b37965b527d678543",
+        "EVD-427f8fd2b0a8ad819590",
+        "EVD-49cbcd15578abcabc905",
+        "EVD-0c838355fa6d8f14dabf",
+        "EVD-b70f94b04fff545f7738"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "生成《陪跑计划》，涵盖陪跑目标、里程碑、资源分配和行动步骤，作为陪跑执行的操作蓝图。",
+      "specific_capabilities": [
+        "根据需求报告自动生成陪跑计划框架（高封装信息处理）",
+        "资源匹配与排程优化（可规则化）",
+        "计划输出结构化文档（Word/PDF）"
+      ],
+      "ai_reshape": "转化为确定性Skill：输入需求分析结果和资源约束，通过预置规则和模板自动生成标准化陪跑计划，仅需人工审核特殊定制部分。",
+      "quality_anchor": "计划完整性、资源冲突、逻辑一致性由AI自动校验，人工最终确认。",
+      "ai_responsibility": "保证生成计划符合业务规则、无资源超配，若算法错误需修正并反馈。",
+      "human_responsibility": "审核计划并针对特殊客户需求进行调整，对最终计划质量负责。",
+      "handoff_triggers": [
+        "出现AI无法处理资源冲突或特殊客制化要求",
+        "计划关键指标异常（如计划完成率预测过低）"
+      ],
+      "control_gates": [
+        "计划确认门：必须由KA管理岗批准后方可下发执行"
+      ],
+      "data_basis": [
+        "《陪跑需求分析报告》",
+        "KA资源池和可用工具数据库",
+        "陪跑活动模板库（从历史计划中提炼）"
+      ],
+      "process_context": "位于需求分析之后，是陪跑执行前的关键计划环节；若蓝图决策Q1判断有明确出单计划则进入本步，否则流程返回。",
+      "risks_limits": [
+        "A级高封装但需注意过度模板化可能导致计划缺乏针对性，需人工补充调整；",
+        "依赖上游需求分析报告质量，输入错误会污染计划；",
+        "资源匹配算法需持续校准，避免资源冲突。"
+      ],
+      "current_recommendation": "强烈建议进入Skill原型候选池，目标自动化Tier为Auto。实现后可大幅降低人工排程工作量，并保证计划标准化。",
+      "database_tier": "Auto",
+      "recommended_tier": "Auto",
+      "quadrant": "full_auto"
+    },
+    {
+      "l4_code": "L4-KAOE-03",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-7acc114cd2a4a6514b45",
+        "EVD-aa17a4660a9714816d2c",
+        "EVD-1a4d4f394f4d9c2e95d3",
+        "EVD-920222ab2e40af8b1a38",
+        "EVD-377d31f8b74cdd5e9674",
+        "EVD-fc1dc0c6c724e33d2ef1",
+        "EVD-85c2126574c5e079f4c6",
+        "EVD-aab6f73c27760fb4513f",
+        "EVD-d7477ca52bbd238ea9b4",
+        "EVD-bd546e0783462e7d2d68",
+        "EVD-57843a3de1f0a03fa98f",
+        "EVD-4d8d9eac16a6b634ba23",
+        "EVD-01478a434c4b7c652394"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "输出《陪跑执行记录》，追踪陪跑活动的完成情况、关键成果与客户反馈，为复盘提供数据。",
+      "specific_capabilities": [
+        "陪跑活动执行（物理会议/培训，人工主导）",
+        "执行数据采集与进度登记（信息处理，可自动化）",
+        "执行过程异常检测与提醒（AI辅助）"
+      ],
+      "ai_reshape": "拆分为两部分：1）物理执行由人工完成，AI Agent辅助准备资料和日程提醒；2）执行记录通过系统自动生成模板，从各日志中抓取数据填充。",
+      "quality_anchor": "执行记录需完整、及时，与计划匹配；物理执行质量通过客户满意度衡量。",
+      "ai_responsibility": "确保自动记录模块准确捕获活动数据，若数据遗漏或错误需人工校正。",
+      "human_responsibility": "实际陪跑交付质量、客户关系维护、现场问题处理；对记录的真实性确认。",
+      "handoff_triggers": [
+        "物理执行中遇到计划外复杂场景需决策",
+        "自动采集的记录缺失关键数据"
+      ],
+      "control_gates": [
+        "重大客户投诉处理门：涉及产品/服务变更的必须升级授权人决策"
+      ],
+      "data_basis": [
+        "《陪跑计划》",
+        "客户互动日志（Call log, 邮件，会议纪要）",
+        "培训出勤与问卷数据"
+      ],
+      "process_context": "在计划确认后启动，贯穿陪跑全过程；若成功达成里程碑，可能触发首单成交环节（Q2决策），否则循环调整。",
+      "risks_limits": [
+        "复合动作必须拆分，否则难以整体自动化；物理执行部分不可替代；",
+        "执行记录的数据源分散，整合难度较大；",
+        "人工执行部分质量波动，可能影响整体效果。"
+      ],
+      "current_recommendation": "依据Skill可行性评估，必须拆分为子任务：执行子任务保持人工主导（建议Tier Human/Aug），记录子任务实现Auto。整体流程Hybrid。优先落地记录自动化，再考虑Agent辅助执行。",
+      "database_tier": "Auto",
+      "recommended_tier": "Hybrid",
+      "quadrant": "partial_auto"
+    },
+    {
+      "l4_code": "L4-KAOE-04",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-e8b95e8a75c62cf0cdcf",
+        "EVD-66ad86c1403a6c61ebd1",
+        "EVD-565b26ebd1b5510dc64f",
+        "EVD-12438c42be8aa893335e",
+        "EVD-a1d26056bdd753ed1e11",
+        "EVD-fc1dc0c6c724e33d2ef1",
+        "EVD-5aa4fd29eba896d46981",
+        "EVD-1c57e7ecb8fa76448a3d",
+        "EVD-44d707f495aed6c4ab37",
+        "EVD-16060592f2d764e4cd47",
+        "EVD-3b72afd502a41a7ad9a3",
+        "EVD-28aa26d261e56d38c0ea",
+        "EVD-452dbd3b4b61bf6bb897"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "生成《首单成交记录》，汇总成交数据与复盘分析，推动陪跑策略迭代和客户持续运营。",
+      "specific_capabilities": [
+        "客户跟进沟通以促成首单（人际沟通，人为主）",
+        "成交数据采集与清洗（信息处理，可自动化）",
+        "复盘分析报告生成（AI辅助，结合历史数据对比）"
+      ],
+      "ai_reshape": "拆分为两部分：1）成交数据由系统自动拉取并生成记录；2）Agent辅助生成复盘分析初稿，包括KPI对比、问题诊断。最终由人确认报告和行动建议。",
+      "quality_anchor": "成交数据准确性、复盘分析结论基于真实数据且可执行；人工审核保证建议不偏离业务目标。",
+      "ai_responsibility": "成交数据源连通性与准确性；分析模型需定期校准，避免生成错误因果。",
+      "human_responsibility": "主导客户沟通推进成交；审核复盘报告并决定策略调整；对最终转化率负责。",
+      "handoff_triggers": [
+        "成交数据异常（如缺失、金额不符）",
+        "AI分析结论与业务经验明显冲突"
+      ],
+      "control_gates": [
+        "首单成交确认门：涉及客户签约或资金环节，必须由授权人确认（无硬性资金关卡，但内部合规要求人工复核）"
+      ],
+      "data_basis": [
+        "《陪跑执行记录》",
+        "交易系统成交数据",
+        "历史陪跑转化率基准"
+      ],
+      "process_context": "位于陪跑执行之后，是首单成交与分析复盘环节；根据Q2决策，成交则转向持续运营，未成交则返回调整陪跑策略，形成闭环。",
+      "risks_limits": [
+        "复合动作需拆分，沟通环节依赖人工，难以标准化；",
+        "复盘分析的自动化程度受数据质量影响，若数据粒度不足可能得出片面结论；",
+        "与交易系统的API对接可能滞后，需设计降级方案。"
+      ],
+      "current_recommendation": "建议拆分后优先建设成交数据自动采集与复盘报告生成，让KA管理岗聚焦于客户沟通；整体流程为Hybrid，人工控制成交与最终决策。",
+      "database_tier": "Auto",
+      "recommended_tier": "Hybrid",
+      "quadrant": "partial_auto"
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "TASK-KAOE-01-01",
+      "l4_code": "L4-KAOE-01",
+      "task_name": "执行陪跑需求分析并撰写《陪跑需求分析报告》",
+      "source_type": "blueprint_step",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-01",
+      "source_line": 56,
+      "previous_task_ids": null,
+      "next_task_ids": [
+        "TASK-KAOE-02-01"
+      ],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-5cd3404929750d96ca5d",
+        "EVD-965665b1c3968e10a808",
+        "EVD-411d006cdbc4234cef09",
+        "EVD-b93409fee124954b4b54"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "需求分析包含策略判断（C级），但数据收集和初步摘要可借助AI，因此采用人机混合模式，AI Agent辅助，人做最终判断。"
+    },
+    {
+      "task_id": "TASK-KAOE-02-01",
+      "l4_code": "L4-KAOE-02",
+      "task_name": "依据需求报告自动生成《陪跑计划》并提审",
+      "source_type": "blueprint_step",
+      "sequence_no": 2,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-02",
+      "source_line": 63,
+      "previous_task_ids": [
+        "TASK-KAOE-01-01"
+      ],
+      "next_task_ids": [
+        "TASK-KAOE-03-SPLIT-01",
+        "TASK-KAOE-03-SPLIT-02"
+      ],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-1c30c93971b4b22c1316",
+        "EVD-a1a55de8fdae9bf8328e",
+        "EVD-cd3bfc8c8e2842db3d97",
+        "EVD-e77558d4d310f4e7fe86"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "单一高封装信息处理动作，输入输出明确，可直接通过Skill自动化生成计划，仅需人工最终审核。"
+    },
+    {
+      "task_id": "TASK-KAOE-03-SPLIT-01",
+      "l4_code": "L4-KAOE-03",
+      "task_name": "执行陪跑活动（会议、培训等）并与客户现场互动",
+      "source_type": "blueprint_step",
+      "sequence_no": 3,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-03",
+      "source_line": 68,
+      "previous_task_ids": [
+        "TASK-KAOE-02-01"
+      ],
+      "next_task_ids": [
+        "TASK-KAOE-04-SPLIT-01",
+        "TASK-KAOE-04-SPLIT-02"
+      ],
+      "relation_type": null,
+      "evidence_refs": [
+        "EVD-7427af83f76b787f3c48",
+        "EVD-7acc114cd2a4a6514b45",
+        "EVD-377d31f8b74cdd5e9674"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "物理执行部分依赖人际交互和现场决策，无法由AI替代；AI仅提供提醒和资料支持，故保持人类主导。"
+    },
+    {
+      "task_id": "TASK-KAOE-03-SPLIT-02",
+      "l4_code": "L4-KAOE-03",
+      "task_name": "采集陪跑执行数据并生成《陪跑执行记录》",
+      "source_type": "blueprint_step",
+      "sequence_no": 3,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-03",
+      "source_line": 68,
+      "previous_task_ids": [
+        "TASK-KAOE-02-01"
+      ],
+      "next_task_ids": [
+        "TASK-KAOE-04-SPLIT-01",
+        "TASK-KAOE-04-SPLIT-02"
+      ],
+      "relation_type": null,
+      "evidence_refs": [
+        "EVD-7427af83f76b787f3c48",
+        "EVD-aa17a4660a9714816d2c",
+        "EVD-377d31f8b74cdd5e9674"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "数据记录为规则明确的信息处理动作，可自动从系统日志和填报接口汇聚生成《陪跑执行记录》，减少人工整理工作。"
+    },
+    {
+      "task_id": "TASK-KAOE-04-SPLIT-01",
+      "l4_code": "L4-KAOE-04",
+      "task_name": "跟进客户沟通并推动首单成交",
+      "source_type": "blueprint_step",
+      "sequence_no": 4,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-04",
+      "source_line": 75,
+      "previous_task_ids": [
+        "TASK-KAOE-03-SPLIT-01",
+        "TASK-KAOE-03-SPLIT-02"
+      ],
+      "next_task_ids": null,
+      "relation_type": null,
+      "evidence_refs": [
+        "EVD-e397d7204516dc0bba1a",
+        "EVD-e8b95e8a75c62cf0cdcf",
+        "EVD-a1d26056bdd753ed1e11"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "客户沟通属关系类活动需人工主导，但AI可提供客户画像、话术建议和状态提醒，增强沟通效率。"
+    },
+    {
+      "task_id": "TASK-KAOE-04-SPLIT-02",
+      "l4_code": "L4-KAOE-04",
+      "task_name": "采集成交数据并生成《首单成交记录》及复盘分析报告",
+      "source_type": "blueprint_step",
+      "sequence_no": 4,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-04",
+      "source_line": 75,
+      "previous_task_ids": [
+        "TASK-KAOE-03-SPLIT-01",
+        "TASK-KAOE-03-SPLIT-02"
+      ],
+      "next_task_ids": null,
+      "relation_type": null,
+      "evidence_refs": [
+        "EVD-e397d7204516dc0bba1a",
+        "EVD-66ad86c1403a6c61ebd1",
+        "EVD-a1d26056bdd753ed1e11"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "成交数据抓取和初步报告可由系统自动完成，但复盘分析需结合业务判断，故采用人机混合，AI生成初稿，人工确认并输出最终策略。"
+    }
+  ],
+  "priority_drafts": [
+    {
+      "l4_code": "L4-KAOE-01",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "客户交易历史与行为数据",
+        "前期赋能记录（来自L3-KAEM）",
+        "产品与业务规则库"
+      ],
+      "process_context": "作为陪跑流程的起点，接收KA赋能基础信息，分析后输出需求报告驱动后续计划制定；若判断不满足陪跑条件，可触发决策Q1返回L3-KAEM。",
+      "risks_limits": [
+        "C级低封装度限制：策略判断无法全自动，必须保留人工权威；",
+        "依赖客户数据质量，数据缺失时分析有效性下降；",
+        "Agent辅助可能产生偏见建议，需人工二次确认。"
+      ],
+      "current_recommendation": "采用双轴设计：自动化Tier建议Hybrid（部分信息处理自动，核心判断由人），但因Skill可行性为C级，不进入确定性Skill候选池，优先建设Agent辅助与决策支持工具。",
+      "evidence_refs": [
+        "EVD-965665b1c3968e10a808",
+        "EVD-411d006cdbc4234cef09",
+        "EVD-0e5656434cb2632b20e8",
+        "EVD-8a06ade7da7b03b393cd",
+        "EVD-b93409fee124954b4b54",
+        "EVD-fc1dc0c6c724e33d2ef1",
+        "EVD-d281c836396897fb53b4",
+        "EVD-69ba26d6426ba7713ec7",
+        "EVD-0602b5b3dbd49ac8e4d3",
+        "EVD-9a30c4f759b25b53f796",
+        "EVD-0e55208e6e504058b712",
+        "EVD-a7d407488fd07ceb8a7d",
+        "EVD-ebeb56a066e9819c97e8"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-KAOE-02",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "《陪跑需求分析报告》",
+        "KA资源池和可用工具数据库",
+        "陪跑活动模板库（从历史计划中提炼）"
+      ],
+      "process_context": "位于需求分析之后，是陪跑执行前的关键计划环节；若蓝图决策Q1判断有明确出单计划则进入本步，否则流程返回。",
+      "risks_limits": [
+        "A级高封装但需注意过度模板化可能导致计划缺乏针对性，需人工补充调整；",
+        "依赖上游需求分析报告质量，输入错误会污染计划；",
+        "资源匹配算法需持续校准，避免资源冲突。"
+      ],
+      "current_recommendation": "强烈建议进入Skill原型候选池，目标自动化Tier为Auto。实现后可大幅降低人工排程工作量，并保证计划标准化。",
+      "evidence_refs": [
+        "EVD-a1a55de8fdae9bf8328e",
+        "EVD-cd3bfc8c8e2842db3d97",
+        "EVD-8537d3fa3abafb5195a5",
+        "EVD-009a1b0e0920f6efb262",
+        "EVD-e77558d4d310f4e7fe86",
+        "EVD-fc1dc0c6c724e33d2ef1",
+        "EVD-689da61f553e673dc65a",
+        "EVD-ce552a150bde7c96d109",
+        "EVD-256b37965b527d678543",
+        "EVD-427f8fd2b0a8ad819590",
+        "EVD-49cbcd15578abcabc905",
+        "EVD-0c838355fa6d8f14dabf",
+        "EVD-b70f94b04fff545f7738"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-KAOE-03",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "《陪跑计划》",
+        "客户互动日志（Call log, 邮件，会议纪要）",
+        "培训出勤与问卷数据"
+      ],
+      "process_context": "在计划确认后启动，贯穿陪跑全过程；若成功达成里程碑，可能触发首单成交环节（Q2决策），否则循环调整。",
+      "risks_limits": [
+        "复合动作必须拆分，否则难以整体自动化；物理执行部分不可替代；",
+        "执行记录的数据源分散，整合难度较大；",
+        "人工执行部分质量波动，可能影响整体效果。"
+      ],
+      "current_recommendation": "依据Skill可行性评估，必须拆分为子任务：执行子任务保持人工主导（建议Tier Human/Aug），记录子任务实现Auto。整体流程Hybrid。优先落地记录自动化，再考虑Agent辅助执行。",
+      "evidence_refs": [
+        "EVD-7acc114cd2a4a6514b45",
+        "EVD-aa17a4660a9714816d2c",
+        "EVD-1a4d4f394f4d9c2e95d3",
+        "EVD-920222ab2e40af8b1a38",
+        "EVD-377d31f8b74cdd5e9674",
+        "EVD-fc1dc0c6c724e33d2ef1",
+        "EVD-85c2126574c5e079f4c6",
+        "EVD-aab6f73c27760fb4513f",
+        "EVD-d7477ca52bbd238ea9b4",
+        "EVD-bd546e0783462e7d2d68",
+        "EVD-57843a3de1f0a03fa98f",
+        "EVD-4d8d9eac16a6b634ba23",
+        "EVD-01478a434c4b7c652394"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-KAOE-04",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "《陪跑执行记录》",
+        "交易系统成交数据",
+        "历史陪跑转化率基准"
+      ],
+      "process_context": "位于陪跑执行之后，是首单成交与分析复盘环节；根据Q2决策，成交则转向持续运营，未成交则返回调整陪跑策略，形成闭环。",
+      "risks_limits": [
+        "复合动作需拆分，沟通环节依赖人工，难以标准化；",
+        "复盘分析的自动化程度受数据质量影响，若数据粒度不足可能得出片面结论；",
+        "与交易系统的API对接可能滞后，需设计降级方案。"
+      ],
+      "current_recommendation": "建议拆分后优先建设成交数据自动采集与复盘报告生成，让KA管理岗聚焦于客户沟通；整体流程为Hybrid，人工控制成交与最终决策。",
+      "evidence_refs": [
+        "EVD-e8b95e8a75c62cf0cdcf",
+        "EVD-66ad86c1403a6c61ebd1",
+        "EVD-565b26ebd1b5510dc64f",
+        "EVD-12438c42be8aa893335e",
+        "EVD-a1d26056bdd753ed1e11",
+        "EVD-fc1dc0c6c724e33d2ef1",
+        "EVD-5aa4fd29eba896d46981",
+        "EVD-1c57e7ecb8fa76448a3d",
+        "EVD-44d707f495aed6c4ab37",
+        "EVD-16060592f2d764e4cd47",
+        "EVD-3b72afd502a41a7ad9a3",
+        "EVD-28aa26d261e56d38c0ea",
+        "EVD-452dbd3b4b61bf6bb897"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "decision_drafts": [
+    {
+      "priority": "P1决策 - 试点《陪跑计划》自动生成",
+      "task_ids": [
+        "TASK-KAOE-02-01"
+      ],
+      "title": "试点标准化陪跑计划自动生成，由人把关",
+      "pilot_scope": "选取3-5个标准KA陪跑场景（如新机构上架、产品复训），由Skill根据模板和需求报告自动生成陪跑计划初稿。",
+      "human_boundary": "KA管理岗必须在线审核计划完整性及资源匹配，并有权修改；AI不得自行发布计划；试点期间设立审批门，所有计划均需授权人电子签批。",
+      "evidence_refs": [
+        "EVD-e77558d4d310f4e7fe86",
+        "EVD-cd3bfc8c8e2842db3d97",
+        "EVD-009a1b0e0920f6efb262"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "priority": "P2决策 - 试点复盘分析自动化",
+      "task_ids": [
+        "TASK-KAOE-04-SPLIT-02"
+      ],
+      "title": "试点成交数据自动采集与AI复盘报告，人工决策",
+      "pilot_scope": "针对已完成首单成交的陪跑案例，由系统自动拉取成交明细、对比陪跑计划，生成复盘分析初稿（含KPI对比、异常项）。",
+      "human_boundary": "复盘报告必须经KA管理岗确认，尤其是‘未成交原因分析’和‘策略调整建议’需人工核实；异常数据（如金额偏差>5%）触发人工复核流程。",
+      "evidence_refs": [
+        "EVD-a1d26056bdd753ed1e11",
+        "EVD-66ad86c1403a6c61ebd1",
+        "EVD-12438c42be8aa893335e"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "control_chain": [],
+  "rejected_task_sources": [
+    {
+      "source": "蓝图决策Q1和Q2",
+      "reason": "决策分支属于流程控制逻辑，不是具体可执行工作任务，不单独拆分为任务卡。",
+      "evidence_refs": [
+        "EVD-89dee58735d736cbef8e",
+        "EVD-1969eb2c86fd1ac1793c"
+      ]
+    },
+    {
+      "source": "蓝图活动文本中的(Human)标记",
+      "reason": "Human标记是当前执行模式，不构成独立任务，已在任务Tier中体现人机分工。",
+      "evidence_refs": [
+        "EVD-8a06ade7da7b03b393cd",
+        "EVD-009a1b0e0920f6efb262",
+        "EVD-920222ab2e40af8b1a38",
+        "EVD-12438c42be8aa893335e"
+      ]
+    }
+  ],
+  "missing_analysis": [
+    "l4_analysis.quadrant",
+    "l4_analysis.recommended_tier",
+    "tasks.relation_type (internal to split tasks)",
+    "控制链缺少L4定位，已拒绝5条"
+  ]
+}

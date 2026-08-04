@@ -1,0 +1,461 @@
+{
+  "schema_version": "vnw.l3-analysis.v1",
+  "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
+  "generation_mode": "UNIFIED_MODEL",
+  "analysis_status": "MODEL_DRAFT",
+  "model_run": null,
+  "source_scope": {
+    "database": "process_analytics",
+    "knowledge": "ACTIVE supplemental evidence only",
+    "evidence_count": 62
+  },
+  "l4_analysis": [
+    {
+      "l4_code": "L4-KASC-01",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-c87ead649a59e9af5cb3",
+        "EVD-01407e3a571a286246e1",
+        "EVD-89c50a4b8db9a7c0c001",
+        "EVD-4a3feba2af880abf47c1",
+        "EVD-dbeca14691a588b468bf",
+        "EVD-c5d77c5efa00c67bc6b5",
+        "EVD-1c8457449d1f5b575381",
+        "EVD-bec86d7716ab53e4a4f9",
+        "EVD-a3a896d4617bea4dbc3c",
+        "EVD-2f2706aa95ec8a1a9a78"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "",
+      "specific_capabilities": [
+        "培训执行能力",
+        "资料包准备与发放能力",
+        "培训记录生成与管理能力"
+      ],
+      "ai_reshape": "AI生成培训大纲与提醒，辅助资料包准备；人主导执行培训并复核记录",
+      "quality_anchor": "培训参与率、资料包发送及时率、培训记录完整性",
+      "ai_responsibility": "自动生成培训提醒、资料包内容模板、培训记录草稿",
+      "human_responsibility": "执行培训、回答现场问题、复核并最终确认培训记录",
+      "handoff_triggers": [
+        "培训中突发问题",
+        "资料包内容需人工审核"
+      ],
+      "control_gates": [
+        "培训记录需讲师与KA管理岗双重确认",
+        "资料发放前需内容校验"
+      ],
+      "data_basis": [
+        "agent_d1_input_struct=2 (EVD-dbeca14691a588b468bf)",
+        "agent_d2_rule_clear=1 (EVD-c5d77c5efa00c67bc6b5)",
+        "skill_feasibility=Grade B，语义复核判定 (EVD-89c50a4b8db9a7c0c001)"
+      ],
+      "process_context": "KA转介合同起草与签订的第一步，在初次接触后提供培训与资料",
+      "risks_limits": [
+        "培训效果依赖讲师水平",
+        "资料包版本过时",
+        "AI生成内容可能不准确，须人工复核"
+      ],
+      "current_recommendation": "优先固化资料包模板和培训流程SOP，再尝试自动化发送和记录；培训环节暂保留人工主导",
+      "database_tier": "Aug",
+      "recommended_tier": "Aug",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-KASC-02",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-5e922779e234e143790d",
+        "EVD-09dbc294051bd810c481",
+        "EVD-1f2629e5b90a233a08e7",
+        "EVD-5a47a3962725c459f14c",
+        "EVD-02b2efde7d8f62acb369",
+        "EVD-dc67fd71cf1ffe6798ae",
+        "EVD-09cd066355e1a5568d77",
+        "EVD-c0a0d81c6c05111abc6e",
+        "EVD-b70cf7bcd2428649c16e",
+        "EVD-757575242987f285ab40"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "",
+      "specific_capabilities": [
+        "意向沟通与判断能力",
+        "约单协调能力",
+        "客户需求分析能力"
+      ],
+      "ai_reshape": "AI分析行为数据预测意向，生成跟进建议与约单草稿；人最终判断并确认约单",
+      "quality_anchor": "意向跟进响应率、约单成功率、跟进记录准确率",
+      "ai_responsibility": "生成意向分析报告、发送跟进提醒、自动填充约单信息",
+      "human_responsibility": "判断意向、与KA沟通、确认约单细节",
+      "handoff_triggers": [
+        "KA无响应",
+        "意向不明确或需求复杂"
+      ],
+      "control_gates": [
+        "约单前需KA管理岗确认意向真实性",
+        "涉及资金或特别条款需升级审批"
+      ],
+      "data_basis": [
+        "agent_d1_input_struct=2 (EVD-02b2efde7d8f62acb369)",
+        "agent_d2_rule_clear=1 (EVD-dc67fd71cf1ffe6798ae)",
+        "skill_feasibility=Grade A，复合动作 (EVD-1f2629e5b90a233a08e7)"
+      ],
+      "process_context": "在培训后，基于意向判断决定是否进入合同发送流程",
+      "risks_limits": [
+        "AI意向预测可能不准确",
+        "约单需外部协调，存在时间冲突风险"
+      ],
+      "current_recommendation": "建设意向预测模型，先由AI辅助筛选高意向客户，人再跟进；约单环节可先半自动化",
+      "database_tier": "Auto",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-KASC-03",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-a2628664fc2066a58e39",
+        "EVD-e14f0fb15ef60ec9e781",
+        "EVD-18b93ccffc29332e6d64",
+        "EVD-2eae8331d8d720ee8a50",
+        "EVD-6febc168ce7e306eb645",
+        "EVD-6d5b6c28f9c337a823db",
+        "EVD-ab77d9b44a3d25de0308",
+        "EVD-81f6e3dda2cfcc7c9b77",
+        "EVD-c9b3be212e804050333a",
+        "EVD-03dd2206189035804207"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "合同模板发送与说明的记录凭证",
+      "specific_capabilities": [
+        "合同模板选择与填充能力",
+        "发送操作能力",
+        "条款说明与沟通能力"
+      ],
+      "ai_reshape": "AI自动匹配模板、填充客户信息并发送；生成条款说明摘要，人复核后向客户解释",
+      "quality_anchor": "合同发送准确率、模板版本合规率、发送及时性",
+      "ai_responsibility": "选择模板、填充数据、发送合同、记录发送日志",
+      "human_responsibility": "审核合同内容与条款适用性，向KA解释关键条款",
+      "handoff_triggers": [
+        "涉及非标条款",
+        "KA提出疑问"
+      ],
+      "control_gates": [
+        "合同模板更新需法务审批",
+        "发送前需KA管理岗确认内容"
+      ],
+      "data_basis": [
+        "agent_d1_input_struct=3 (EVD-6febc168ce7e306eb645)",
+        "agent_d2_rule_clear=2 (EVD-6d5b6c28f9c337a823db)",
+        "skill_feasibility=Grade A，复合动作 (EVD-18b93ccffc29332e6d64)"
+      ],
+      "process_context": "意向确认后，选定合同模板发送给KA并说明",
+      "risks_limits": [
+        "合同模板错误可能导致法律风险",
+        "自动发送可能遗漏个性化条款"
+      ],
+      "current_recommendation": "优先实现合同模板的自动化填充和发送，但保留人工复核空间；说明环节可逐步自动化",
+      "database_tier": "Auto",
+      "recommended_tier": "Auto",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-KASC-04",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-c2918c57cd6eabe67473",
+        "EVD-9c86298cf58cc50b89d2",
+        "EVD-5a48c3063f2d9083fa1d",
+        "EVD-de6f4bb0200ab5f159da",
+        "EVD-f5d248dfa132ec2d2b42",
+        "EVD-26898a2a8006b5c16cfe",
+        "EVD-311ff36fc4fa6232d752",
+        "EVD-d79b651594b692302b98",
+        "EVD-4a2f77da702978431ee9",
+        "EVD-e733afbac01675c0f553"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "已签署合同的归档凭证",
+      "specific_capabilities": [
+        "签回跟进与催办能力",
+        "合同扫描/归档能力",
+        "归档系统操作能力"
+      ],
+      "ai_reshape": "自动发送签回提醒，监控状态；签回后自动归档电子合同",
+      "quality_anchor": "签回时效、归档完整率、合同检索效率",
+      "ai_responsibility": "跟进提醒、状态更新、电子归档",
+      "human_responsibility": "处理签回异常、协调物理签章、最终归档审核",
+      "handoff_triggers": [
+        "客户未按期签回",
+        "需要打印或物理盖章"
+      ],
+      "control_gates": [
+        "归档前需校验合同元数据完整性",
+        "物理合同需人工扫描与上传"
+      ],
+      "data_basis": [
+        "agent_d1_input_struct=2 (EVD-f5d248dfa132ec2d2b42)",
+        "agent_d2_rule_clear=2 (EVD-26898a2a8006b5c16cfe)",
+        "skill_feasibility=Grade A，复合动作 (EVD-5a48c3063f2d9083fa1d)"
+      ],
+      "process_context": "合同发送后跟进签回，完成后归档至系统",
+      "risks_limits": [
+        "自动提醒可能被忽略",
+        "系统兼容性可能影响电子归档"
+      ],
+      "current_recommendation": "实现自动提醒和电子归档，人工处理异常和物理环节",
+      "database_tier": "Auto",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "T01-KASC-01",
+      "l4_code": "L4-KASC-01",
+      "task_name": "执行首次培训",
+      "source_type": "blueprint_step",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-01",
+      "source_line": 59,
+      "previous_task_ids": [],
+      "next_task_ids": [
+        "T03-KASC-02",
+        "T04-KASC-02"
+      ],
+      "relation_type": "PARALLEL",
+      "evidence_refs": [
+        "EVD-fd5d51e88ede434692a3"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "培训需人工执行，AI辅助准备资料和记录；skill_feasibility B级，建议先增补模板再提升"
+    },
+    {
+      "task_id": "T02-KASC-01",
+      "l4_code": "L4-KASC-01",
+      "task_name": "发放资料包",
+      "source_type": "blueprint_step",
+      "sequence_no": 2,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-01",
+      "source_line": 59,
+      "previous_task_ids": [],
+      "next_task_ids": [
+        "T03-KASC-02",
+        "T04-KASC-02"
+      ],
+      "relation_type": "PARALLEL",
+      "evidence_refs": [
+        "EVD-fd5d51e88ede434692a3"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "资料包发放可通过系统触发自动化完成；skill_feasibility B级，发放环节可独立为Auto"
+    },
+    {
+      "task_id": "T03-KASC-02",
+      "l4_code": "L4-KASC-02",
+      "task_name": "进行首单意向跟进",
+      "source_type": "blueprint_step",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-02",
+      "source_line": 67,
+      "previous_task_ids": [
+        "T01-KASC-01",
+        "T02-KASC-01"
+      ],
+      "next_task_ids": [
+        "T05-KASC-03",
+        "T06-KASC-03"
+      ],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-7f3b9d59c1d3d2d33116"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "意向判断依赖人工沟通，AI可提供建议和数据；skill_feasibility A，但需保留人工判断"
+    },
+    {
+      "task_id": "T04-KASC-02",
+      "l4_code": "L4-KASC-02",
+      "task_name": "执行约单",
+      "source_type": "blueprint_step",
+      "sequence_no": 2,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-02",
+      "source_line": 67,
+      "previous_task_ids": [
+        "T01-KASC-01",
+        "T02-KASC-01"
+      ],
+      "next_task_ids": [
+        "T05-KASC-03",
+        "T06-KASC-03"
+      ],
+      "relation_type": "PARALLEL",
+      "evidence_refs": [
+        "EVD-7f3b9d59c1d3d2d33116"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "约单涉及时间协调和通知，规则明确，建议Auto；skill_feasibility A"
+    },
+    {
+      "task_id": "T05-KASC-03",
+      "l4_code": "L4-KASC-03",
+      "task_name": "发送合同模板",
+      "source_type": "blueprint_step",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-03",
+      "source_line": 74,
+      "previous_task_ids": [
+        "T03-KASC-02",
+        "T04-KASC-02"
+      ],
+      "next_task_ids": [
+        "T07-KASC-04",
+        "T08-KASC-04"
+      ],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-0905a9a753720e8b87e1"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "模板填充与发送可全自动化；skill_feasibility A，优先试点"
+    },
+    {
+      "task_id": "T06-KASC-03",
+      "l4_code": "L4-KASC-03",
+      "task_name": "进行合同说明",
+      "source_type": "blueprint_step",
+      "sequence_no": 2,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-03",
+      "source_line": 74,
+      "previous_task_ids": [
+        "T03-KASC-02",
+        "T04-KASC-02"
+      ],
+      "next_task_ids": [
+        "T07-KASC-04",
+        "T08-KASC-04"
+      ],
+      "relation_type": "PARALLEL",
+      "evidence_refs": [
+        "EVD-0905a9a753720e8b87e1"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "合同条款解释需人工介入，AI可生成说明草稿，建议Aug"
+    },
+    {
+      "task_id": "T07-KASC-04",
+      "l4_code": "L4-KASC-04",
+      "task_name": "跟进合同签回",
+      "source_type": "blueprint_step",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-04",
+      "source_line": 79,
+      "previous_task_ids": [
+        "T05-KASC-03",
+        "T06-KASC-03"
+      ],
+      "next_task_ids": [],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-a910fe8b15c01e0d4d53"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "催签和异常处理依赖人工沟通，AI发送提醒；建议Aug"
+    },
+    {
+      "task_id": "T08-KASC-04",
+      "l4_code": "L4-KASC-04",
+      "task_name": "归档已签合同",
+      "source_type": "blueprint_step",
+      "sequence_no": 2,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-04",
+      "source_line": 79,
+      "previous_task_ids": [
+        "T05-KASC-03",
+        "T06-KASC-03"
+      ],
+      "next_task_ids": [],
+      "relation_type": "PARALLEL",
+      "evidence_refs": [
+        "EVD-a910fe8b15c01e0d4d53"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "电子归档可全自动化；物理归档另需人工，整体建议Auto"
+    }
+  ],
+  "priority_drafts": [
+    {
+      "priority": "P1",
+      "task_ids": [
+        "T05-KASC-03",
+        "T06-KASC-03",
+        "T07-KASC-04",
+        "T08-KASC-04"
+      ],
+      "title": "优先自动化合同发送与归档任务",
+      "pilot_scope": "KA管理岗，标准合同模板，首次试点≤10个KA客户",
+      "human_boundary": "合同条款说明与签回异常处理必须人工；自动化仅限标准合同发送和电子归档",
+      "evidence_refs": [
+        "EVD-18b93ccffc29332e6d64",
+        "EVD-5a48c3063f2d9083fa1d"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "decision_drafts": [
+    {
+      "priority": "P1",
+      "task_ids": [
+        "T05-KASC-03",
+        "T08-KASC-04"
+      ],
+      "title": "试点合同模板自动发送和已签合同自动归档",
+      "pilot_scope": "KA管理岗，合同类型限定A/B，集成CRM与电子签平台",
+      "human_boundary": "首次发送前需KA管理岗审核合同内容与模板；归档前需确认元数据完整性；物理签章仍由人完成",
+      "evidence_refs": [
+        "EVD-18b93ccffc29332e6d64",
+        "EVD-5a48c3063f2d9083fa1d"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "control_chain": [
+    {
+      "gate_id": "E",
+      "status": "CONDITIONAL",
+      "conditions": [
+        "缺少SOP草稿或同等任务执行材料",
+        "缺少可关联的规则记录"
+      ],
+      "evidence_refs": []
+    }
+  ],
+  "rejected_task_sources": [],
+  "missing_analysis": [
+    {
+      "l4_code": "L4-KASC-01",
+      "field": "deliverable_role",
+      "reason": "交付物描述'PDF签署版法律文件'与L4名称'首次培训与资料包发放'不匹配，缺少有效证据支持交付物角色"
+    },
+    {
+      "l4_code": "L4-KASC-02",
+      "field": "deliverable_role",
+      "reason": "同L4-KASC-01，交付物描述与L4名称不匹配，无法从证据推导角色"
+    }
+  ]
+}

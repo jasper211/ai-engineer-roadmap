@@ -3,13 +3,7 @@
   "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
   "generation_mode": "UNIFIED_MODEL",
   "analysis_status": "MODEL_DRAFT",
-  "model_run": {
-    "model_name": "deepseek-v4-pro",
-    "model_version": "deepseek-v4-pro",
-    "prompt_version": "VNW-L3-COM-GOLD-v1.0",
-    "generated_at": "2026-08-04T18:26:22.490263+00:00",
-    "input_snapshot_hash": "94adc23aa9c028338590e7a8b1cd5c95f528af201ccf720c39e6d90e7d1cb1a6"
-  },
+  "model_run": null,
   "source_scope": {
     "database": "process_analytics",
     "knowledge": "ACTIVE supplemental evidence only",
@@ -308,7 +302,7 @@
       "l4_code": "L4-JOPD-01",
       "task_name": "召开启动会议并确认项目团队与组织架构",
       "source_type": "blueprint_step + skill_split",
-      "sequence_no": 1,
+      "sequence_no": 2,
       "sequence_status": "SOURCE_STEP_ONLY",
       "source_step_id": "STEP-01",
       "source_line": 49,
@@ -329,7 +323,7 @@
       "l4_code": "L4-JOPD-02",
       "task_name": "AI Agent辅助市场数据分析与报告草稿生成",
       "source_type": "blueprint_step + skill_split",
-      "sequence_no": 2,
+      "sequence_no": 1,
       "sequence_status": "SOURCE_STEP_ONLY",
       "source_step_id": "STEP-02",
       "source_line": 55,
@@ -373,7 +367,7 @@
       "l4_code": "L4-JOPD-03",
       "task_name": "自动配置系统参数并生成品牌物料包",
       "source_type": "blueprint_step + skill_split",
-      "sequence_no": 3,
+      "sequence_no": 1,
       "sequence_status": "SOURCE_STEP_ONLY",
       "source_step_id": "STEP-03",
       "source_line": 60,
@@ -397,7 +391,7 @@
       "l4_code": "L4-JOPD-03",
       "task_name": "人工语义复核并确认系统与物料就绪",
       "source_type": "blueprint_step + skill_split",
-      "sequence_no": 3,
+      "sequence_no": 2,
       "sequence_status": "SOURCE_STEP_ONLY",
       "source_step_id": "STEP-03",
       "source_line": 60,
@@ -418,7 +412,7 @@
       "l4_code": "L4-JOPD-04",
       "task_name": "生成《人力资源就绪包》并进行最终确认",
       "source_type": "blueprint_step",
-      "sequence_no": 4,
+      "sequence_no": 1,
       "sequence_status": "SOURCE_STEP_ONLY",
       "source_step_id": "STEP-04",
       "source_line": 66,
@@ -441,7 +435,7 @@
       "l4_code": "L4-JOPD-05",
       "task_name": "自动生成《知识资产交付包》并人工抽检确认",
       "source_type": "blueprint_step",
-      "sequence_no": 5,
+      "sequence_no": 1,
       "sequence_status": "SOURCE_STEP_ONLY",
       "source_step_id": "STEP-05",
       "source_line": 72,
@@ -462,160 +456,19 @@
   ],
   "priority_drafts": [
     {
-      "l4_code": "L4-JOPD-01",
-      "quadrant": "unclassified",
+      "priority": "P1",
+      "description": "联合运营项目交付完成包（VN-JOPD-01）为P1优先级，所有5个L4直接映射，是机构合作伙伴旅程体系搭建阶段的关键价值节点。建议优先启动高封装L4（L4-JOPD-05、L4-JOPD-04）的Skill原型试点，快速产出业务价值；同步拆解复合动作L4（L4-JOPD-01、L4-JOPD-02、L4-JOPD-03），分步推进自动化。",
       "data_basis": [
-        "项目基础信息（EVD-34112655c1bb1c0cf80f）",
-        "组织架构数据",
-        "人员角色数据"
+        "VN-JOPD-01 优先级 P1 (EVD-81d3bfa41c29b5bb91b3)",
+        "VN-L4映射 direct 5/5 (fact_pack.vn_l4_mappings)",
+        "overall_judgment PARTIAL (EVD-046527c22dce7ca0504d)"
       ],
-      "process_context": "处于“项目启动与组织准备”阶段，为后续步骤的前置条件，输出必须就绪方可进入业务方案阶段。",
+      "process_context": "L3-JOPD位于VS-2机构合作伙伴旅程的S3体系搭建阶段，是项目落地的最后一个交付环节，成功与否直接影响伙伴体验和后续运营。",
       "risks_limits": [
-        "复合动作需协调多个角色，Skill草稿可能遗漏最新人员变动",
-        "人工确认环节无法完全自动化，依赖会议参与度"
+        "部分L4为复合动作，需先拆分再自动化，试点周期较长",
+        "人工确认环节难以全部消除，整体自动化天花板为Hybrid"
       ],
-      "current_recommendation": "优先将信息收集与草稿生成封装为Skill（Auto），启动会议与确认保留人工（Human）。试点时，由Skill生成草稿后直接提交人工确认，减少重复录入。",
-      "evidence_refs": [
-        "EVD-df9ec58c634c7b661206",
-        "EVD-ed47f86cfd9eb3c12f49",
-        "EVD-01edc63bef7368fe3c32",
-        "EVD-4b73b9443d4529fb59cd",
-        "EVD-30f017595d1dde5851f8",
-        "EVD-34112655c1bb1c0cf80f",
-        "EVD-cd3593a2737e19e97481",
-        "EVD-dfd1740ac604e4668402",
-        "EVD-064774f5520321c132ef",
-        "EVD-4132b96e7080ff393ed7",
-        "EVD-6d2c16a02f621c983759",
-        "EVD-06c33b13af325e597e08",
-        "EVD-3e750706a891e8ee8a3b"
-      ],
-      "analysis_status": "MODEL_DRAFT"
-    },
-    {
-      "l4_code": "L4-JOPD-02",
-      "quadrant": "unclassified",
-      "data_basis": [
-        "市场行情数据（EVD-40a8c8230069adf4f6c1 – D1输入结构2）",
-        "内部产品数据",
-        "历史业绩数据"
-      ],
-      "process_context": "紧随项目启动，为后续系统就绪和人力资源配置提供业务输入；若方案未定，下游无法开始。",
-      "risks_limits": [
-        "判断/策略类工作自动化天花板低，C级封装仅理论潜力",
-        "市场变化快，数据可能过时，需要持续人工监控"
-      ],
-      "current_recommendation": "建议Agent辅助，不直接封装确定性Skill。试点AI自动准备市场数据和草稿，大幅缩短分析师搜集时间；人工聚焦策略制定。最终目标为Aug（Agent辅助+人工确认）。",
-      "evidence_refs": [
-        "EVD-c31760c2a99cd7e289ad",
-        "EVD-56a3fc99a83eace7d9ff",
-        "EVD-4a06ad9582826b1f436e",
-        "EVD-0cd160537b5416dc3c6d",
-        "EVD-145a7daf2462e5dcffab",
-        "EVD-40a8c8230069adf4f6c1",
-        "EVD-0900066577bdc8b701ff",
-        "EVD-feb56c4ce19c9591de71",
-        "EVD-1e10fbfd8abdf3778a71",
-        "EVD-a272511d5305c8119448",
-        "EVD-63c72f382c4766f9efd9",
-        "EVD-0fd051c99de03857cbd9",
-        "EVD-3e750706a891e8ee8a3b"
-      ],
-      "analysis_status": "MODEL_DRAFT"
-    },
-    {
-      "l4_code": "L4-JOPD-03",
-      "quadrant": "unclassified",
-      "data_basis": [
-        "需求文档（EVD-cd2d84fee949d3434aa0 – D1输入结构2）",
-        "品牌物料库",
-        "LMS模板与规则（EVD-bd1c6d15b52573cccc33 – D2规则清晰2）"
-      ],
-      "process_context": "紧接业务方案确定之后，为人力资源和知识交付提供系统环境；若系统未就绪，后续培训与知识发布无法进行。",
-      "risks_limits": [
-        "复合动作需先拆分为子Skill，跨系统调用可能失败",
-        "语义复核依赖人工对业务的深入理解，Skill无法完全取代"
-      ],
-      "current_recommendation": "拆分为两个任务：自动就绪部分直接进入Skill原型候选池（Auto），人工语义复核作为Aug任务。试点时，由Skill输出就绪包，专人做一次复核后确认，可大幅降低人工配置工作量。",
-      "evidence_refs": [
-        "EVD-a9dd1db7108dff67e7fd",
-        "EVD-048e2ede84f99ba0ba9a",
-        "EVD-43d5a4831ec32a35ec24",
-        "EVD-6e1a9a4c2d8fb1171283",
-        "EVD-1d8dd0b3d8d76106c3df",
-        "EVD-cd2d84fee949d3434aa0",
-        "EVD-bd1c6d15b52573cccc33",
-        "EVD-14a377199fb024a5cfa2",
-        "EVD-895f3448d9c3a88347b1",
-        "EVD-3a9eb5b3663332fc2286",
-        "EVD-b7070d946da0e60bff69",
-        "EVD-54d8beec9ba24226b55a",
-        "EVD-3e750706a891e8ee8a3b"
-      ],
-      "analysis_status": "MODEL_DRAFT"
-    },
-    {
-      "l4_code": "L4-JOPD-04",
-      "quadrant": "unclassified",
-      "data_basis": [
-        "岗位说明书模板与历史数据（EVD-20b7d81fdde4210158f2）",
-        "招聘系统数据",
-        "薪酬政策与数据（EVD-9c5a2b59a713a1984e14 – D2规则清晰1，需人工确认）",
-        "培训系统记录"
-      ],
-      "process_context": "在系统就绪之后，为项目运营提供人力保障；人力未就绪，后续知识交付和运营承接困难。",
-      "risks_limits": [
-        "涉及个人信息保护，自动化需符合数据合规要求",
-        "薪酬等敏感字段不能完全自动判定，需人工核实"
-      ],
-      "current_recommendation": "高封装Skill候选，但保留Human-in-the-loop。建议试点自动生成就绪包，由HR和运营主管确认后生效。整体tier为Aug，待验证后可提升为Auto（仅限非敏感部分）。",
-      "evidence_refs": [
-        "EVD-439cc98dfa4ee43cce46",
-        "EVD-2b9080c2676acb9309cc",
-        "EVD-09cd6dd370e1cea583b9",
-        "EVD-bc65638b9a224f00325b",
-        "EVD-541c9d3d0f12efca60f1",
-        "EVD-20b7d81fdde4210158f2",
-        "EVD-9c5a2b59a713a1984e14",
-        "EVD-88002a8051f97a8d6522",
-        "EVD-916fb7d33063793a6e46",
-        "EVD-75860553b79e0eec8086",
-        "EVD-835446ae38f4b594f6d6",
-        "EVD-2591a1baad15de6b6e23",
-        "EVD-3e750706a891e8ee8a3b"
-      ],
-      "analysis_status": "MODEL_DRAFT"
-    },
-    {
-      "l4_code": "L4-JOPD-05",
-      "quadrant": "unclassified",
-      "data_basis": [
-        "产品资料库与研究报告（EVD-adfabaa528df4c3ac6ba – D1输入结构2）",
-        "培训PPT模板与营销素材（EVD-ed3ff63701b8f86a10fd – D2规则清晰2）",
-        "交付规则与清单"
-      ],
-      "process_context": "作为联合运营项目交付的最后一个环节，知识包需在人力就绪后尽快提供给合作方；延误将影响后续培训与运营。",
-      "risks_limits": [
-        "内容过时风险，需建立自动更新机制",
-        "对外发布涉及品牌形象，不能完全无人监督"
-      ],
-      "current_recommendation": "高封装Skill候选，建议优先进入原型池。试点自动生成交付包，人工只做按比例抽检。最终目标为Auto，但首次及重大变更时保留Aug。",
-      "evidence_refs": [
-        "EVD-10aeebc47b64127787fa",
-        "EVD-81049692fc954746e4ab",
-        "EVD-380a0ad7d779fa8de31b",
-        "EVD-966c2bfee1750111fe26",
-        "EVD-4eadc81511ec9bea576f",
-        "EVD-adfabaa528df4c3ac6ba",
-        "EVD-ed3ff63701b8f86a10fd",
-        "EVD-8d9602543a8b40ecb98b",
-        "EVD-b81b99719ddda6aae755",
-        "EVD-9d17e25d2294a4d5a12d",
-        "EVD-e7178a12755f21793dff",
-        "EVD-ed4df2c48ffa205c13f5",
-        "EVD-3e750706a891e8ee8a3b"
-      ],
-      "analysis_status": "MODEL_DRAFT"
+      "current_recommendation": "先易后难：首期试点知识资产交付（L4-JOPD-05）和人力资源就绪（L4-JOPD-04）的Skill封装，同时启动项目启动与组织准备（L4-JOPD-01）的拆分设计；二期推进业务方案Agent辅助和系统就绪拆分。"
     }
   ],
   "decision_drafts": [
@@ -653,9 +506,59 @@
       "analysis_status": "MODEL_DRAFT"
     }
   ],
-  "control_chain": [],
+  "control_chain": [
+    {
+      "step_sequence": [
+        "STEP-01",
+        "STEP-02",
+        "STEP-03",
+        "STEP-04",
+        "STEP-05"
+      ],
+      "edge_type": "SEQUENCE",
+      "evidence_refs": [
+        "fact_pack.blueprint.edges"
+      ],
+      "note": "蓝图显式步骤顺序，步骤间为必须先后；步骤内任务由SOURCE_STEP_ONLY标记，无强制顺序。"
+    }
+  ],
   "rejected_task_sources": [],
   "missing_analysis": [
-    "控制链缺少L4定位，已拒绝1条"
+    {
+      "item": "L4-JOPD-01 human_touchpoint",
+      "evidence_id": "EVD-326eadf9cf84ba22987f",
+      "status": "MISSING",
+      "note": "人工触点未定义，无法确定转人工的具体节点。"
+    },
+    {
+      "item": "L4-JOPD-02 human_touchpoint",
+      "evidence_id": "EVD-f21e6612103a21c743ca",
+      "status": "MISSING",
+      "note": "人工触点未定义，影响Agent辅助流程的边界设计。"
+    },
+    {
+      "item": "L4-JOPD-03 human_touchpoint",
+      "evidence_id": "EVD-cc7eb25357ff8a46603c",
+      "status": "MISSING",
+      "note": "人工触点未定义，语义复核点不明确。"
+    },
+    {
+      "item": "L4-JOPD-04 human_touchpoint",
+      "evidence_id": "EVD-5754b10f8b9f1d31b66a",
+      "status": "MISSING",
+      "note": "人工触点缺失，人力资源就绪包最终确认人未知。"
+    },
+    {
+      "item": "L4-JOPD-05 human_touchpoint",
+      "evidence_id": "EVD-bdbf6f25a8ddde2cb2eb",
+      "status": "MISSING",
+      "note": "人工触点未定义，知识交付包发布前的审批角色待明确。"
+    },
+    {
+      "item": "SOP/规则缺失",
+      "evidence_id": "gate_E_checks",
+      "status": "MISSING",
+      "note": "Gate E检测到缺少SOP草稿和规则记录（E-008, E-009），可能影响任务执行的确定性，建议工作坊补充。"
+    }
   ]
 }
