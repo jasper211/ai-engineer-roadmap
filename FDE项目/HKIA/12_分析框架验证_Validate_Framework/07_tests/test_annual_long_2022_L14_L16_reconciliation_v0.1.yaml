@@ -1,0 +1,66 @@
+test_id: TEST-HKIA-ANNUAL-LONG-2022-L14-L16-001
+version: 0.1
+status: passed
+test_type: pre_RBC_cross_table_reconciliation
+report_year: 2022
+
+inputs:
+  L14: Table-L14_2022.xlsx
+  L15: Table-L15_2022.xlsx
+  L16: Table-L16_2022.xlsx
+  source_ranges:
+    L14: Table L14!A1:H71
+    L15: Table L15!A1:H71
+    L16: Table L16!A1:H71
+
+hypothesis: L14_nonlinked_plus_L15_linked_equals_L16_total_individual_life_new_business
+join_key: insurer_english_name_source_within_report_year
+column_mapping_rule: map_by_annual_and_single_header_labels_not_fixed_positions
+metrics:
+  - policy_count_annual
+  - policy_count_single
+  - premium_annual_HKD_thousand
+  - premium_single_HKD_thousand
+
+entity_results:
+  detected_company_count: 60
+  company_count_by_table: {L14: 60, L15: 60, L16: 60}
+  identity_gap_count: 0
+  official_insurer_list_required_for_this_test: false
+
+company_formula_results:
+  checked_cells: 240
+  discrepancy_count: 0
+  max_absolute_discrepancy_source_unit: 0
+  tolerance_source_unit: 0
+
+detail_to_source_market_total_results:
+  checked_cells: 12
+  discrepancy_count: 0
+  deltas:
+    L14: [0, 0, 0, 0]
+    L15: [0, 0, 0, 0]
+    L16: [0, 0, 0, 0]
+
+source_market_totals:
+  metric_order: [policy_count_annual, policy_count_single, premium_annual_HKD_thousand, premium_single_HKD_thousand]
+  L14: [669909, 45294, 37760866, 74859642]
+  L15: [14794, 32322, 905912, 14012181]
+  L16: [684703, 77616, 38666778, 88871823]
+
+market_formula_results:
+  expression: L14_plus_L15_equals_L16
+  deltas_by_metric: [0, 0, 0, 0]
+  decision: pass
+
+interpretation:
+  - 2022年60家公司四项指标均满足L14加L15等于L16
+  - 公司明细汇总与三张来源表市场总额分别完全一致
+  - 错误的Insurerlist_2022不影响本测试_因为三表公司行集合一致且本测试不生成跨年度身份主数据
+  - 该规则已在2022_2023_2024三个独立年度通过
+
+promotion_decision:
+  rule_id: RULE-LT-006
+  prior_status: validated_2_of_3
+  new_status: stable
+  stable_scope: within_year_nonlinked_plus_linked_equals_total_individual_life_new_business_by_company_and_labeled_metric

@@ -16,6 +16,7 @@
         "deliverable_role": "",
         "evidence_refs": [
           "EVD-348f49c0a50bc09ff383",
+          "EVD-4a188e8ec7d9bf6ab723",
           "EVD-52ff531e24933e6affb9",
           "EVD-578bfa40213e84084d28",
           "EVD-70106863df6b58edf966",
@@ -49,6 +50,7 @@
           "EVD-137ff9deac3ceabc7464",
           "EVD-2b65b1be6c6c59b7ee2b",
           "EVD-4531e33af58d82504e7d",
+          "EVD-4a188e8ec7d9bf6ab723",
           "EVD-52d8f57d99fd91cd3d38",
           "EVD-779bec948d57f052ed06",
           "EVD-8351caf184092bd0bf87",
@@ -81,7 +83,7 @@
     "schema_version": "vnw.l3-analysis.v1",
     "source_scope": {
       "database": "process_analytics",
-      "evidence_count": 33,
+      "evidence_count": 34,
       "knowledge": "ACTIVE supplemental evidence only"
     },
     "tasks": [
@@ -126,7 +128,7 @@
     ]
   },
   "analysis_freshness": "PENDING_MODEL",
-  "analysis_input_hash": "58f6a5fa9629a2b96f2825da68d5f99cb2d73aabd4c7c6fe4977e0bc920a27ac",
+  "analysis_input_hash": "cb57804c23b77332c720450569ce3281ed03a174b74b291666bd2c1c54c4f1da",
   "blueprint": {
     "blueprint_value_nodes": [],
     "coverage": "INDEXED",
@@ -297,6 +299,31 @@
       "status": "ACTIVE",
       "transform_rule": "",
       "value": "Auto"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-4a188e8ec7d9bf6ab723",
+      "field_name": "position_family",
+      "source": {
+        "observed_at": "",
+        "source_field": "岗位族代码",
+        "source_key": "经代机构全周期Agent",
+        "source_object": "候选Agent岗位族映射_HR对齐版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "candidate_agent": "经代机构全周期Agent",
+        "confidence": "HR权威数据核实",
+        "family_code": "JF-03",
+        "family_name": "机构业务族",
+        "headcount": 52,
+        "headcount_source": "2026-07-28_人员归属方案_v5.3_SUBMITTED.md 一节映射统计总表"
+      }
     },
     {
       "confidence": "HIGH",
@@ -955,11 +982,20 @@
         "l4_deliverable": "EVD-578bfa40213e84084d28",
         "l4_deliverable_type": "EVD-348f49c0a50bc09ff383",
         "l4_name": "EVD-75789373b70b9a74b660",
+        "position_family": "EVD-4a188e8ec7d9bf6ab723",
         "skill_feasibility": "EVD-c0278caf7d91d43f2dac"
       },
       "human_touchpoint": null,
       "l4_code": "L4-NG-01",
       "l4_name": "合同谈判与审核",
+      "position_family": {
+        "candidate_agent": "经代机构全周期Agent",
+        "confidence": "HR权威数据核实",
+        "family_code": "JF-03",
+        "family_name": "机构业务族",
+        "headcount": 52,
+        "headcount_source": "2026-07-28_人员归属方案_v5.3_SUBMITTED.md 一节映射统计总表"
+      },
       "skill_feasibility": {
         "action_nature": "判断/策略/认知类",
         "action_singularity": "复合动作(建议先拆分)",
@@ -995,11 +1031,20 @@
         "l4_deliverable": "EVD-137ff9deac3ceabc7464",
         "l4_deliverable_type": "EVD-f94c59fd34d305cdd09e",
         "l4_name": "EVD-9b8c82c8a889ad686242",
+        "position_family": "EVD-4a188e8ec7d9bf6ab723",
         "skill_feasibility": "EVD-779bec948d57f052ed06"
       },
       "human_touchpoint": null,
       "l4_code": "L4-NG-02",
       "l4_name": "合同签署与信息同步",
+      "position_family": {
+        "candidate_agent": "经代机构全周期Agent",
+        "confidence": "HR权威数据核实",
+        "family_code": "JF-03",
+        "family_name": "机构业务族",
+        "headcount": 52,
+        "headcount_source": "2026-07-28_人员归属方案_v5.3_SUBMITTED.md 一节映射统计总表"
+      },
       "skill_feasibility": {
         "action_nature": "信息处理/事务类",
         "action_singularity": "复合动作(建议先拆分)",
@@ -1084,6 +1129,11 @@
         "VN-NG-01"
       ]
     },
+    "候选Agent岗位族映射_HR对齐版_v1.0.csv": {
+      "record_keys": [
+        "经代机构全周期Agent"
+      ]
+    },
     "流程蓝图_L3-NG_商务谈判与合同制定流程_V1.0.md": {
       "lines": [
         47,
@@ -1119,9 +1169,13 @@
   "value_stream_mappings": [
     {
       "l3_code": "L3-NG",
+      "mapping_type": "primary",
       "stage_code": "S2",
+      "stage_name": "评估与签约",
+      "stage_sequence": 2,
       "vs_code": "VS-2",
-      "vs_name": "机构合作伙伴旅程"
+      "vs_name": "机构合作伙伴旅程",
+      "vs_stakeholder": "TOB机构/经代/家办/同行经代"
     }
   ],
   "vn_l4_mappings": [

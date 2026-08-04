@@ -97,6 +97,15 @@ function ModelCard({ model, quality }: { model: ModelIndexItem; quality?: { mixe
         SOP {model.readiness_coverage.sop_count}份 · 规则 {model.readiness_coverage.rule_count}条 ·
         任务覆盖 {model.readiness_coverage.task.covered}/{model.readiness_coverage.task.total}
       </p>
+      {model.value_streams.length > 0 && (
+        <p className="mt-2 flex flex-wrap gap-1.5">
+          {model.value_streams.map(vs => (
+            <span key={`${vs.vs_code}-${vs.stage_code}`} className="rounded-full bg-teal-400/10 px-2 py-0.5 text-[11px] font-medium text-teal-700">
+              {vs.vs_name} · {vs.stage_name}
+            </span>
+          ))}
+        </p>
+      )}
       {!full && model.gap_reasons.length > 0 && (
         <p className="mt-2 line-clamp-2 text-xs text-amber-800/80">首要缺口：{model.gap_reasons[0]}</p>
       )}
@@ -115,6 +124,7 @@ export default function L3Models() {
   const [showUpdateDetails, setShowUpdateDetails] = useState(false)
   const [view, setView] = useState<'all' | 'ready' | 'evaluable' | 'missing' | 'demo' | 'quality'>('all')
   const [query, setQuery] = useState('')
+  const [vsFilter, setVsFilter] = useState('all')
 
   useEffect(() => {
     Promise.all([loadModelIndex(), loadDeliverableAudit(), loadPendingSourceUpdate()])
@@ -142,10 +152,24 @@ export default function L3Models() {
     quality: data?.models.filter(item => Boolean(qualityByL3[item.l3_code])) ?? [],
   }), [data, qualityByL3])
 
+  const valueStreams = useMemo(() => {
+    const byCode = new Map<string, { vs_code: string; vs_name: string; count: number }>()
+    for (const model of data?.models ?? []) {
+      for (const vs of model.value_streams) {
+        const existing = byCode.get(vs.vs_code)
+        if (existing) existing.count += 1
+        else byCode.set(vs.vs_code, { vs_code: vs.vs_code, vs_name: vs.vs_name, count: 1 })
+      }
+    }
+    return [...byCode.values()].sort((a, b) => a.vs_code.localeCompare(b.vs_code))
+  }, [data])
+
   if (error) return <div className="panel p-5 text-sm text-accent-danger">{error}</div>
   if (!data) return <div className="flex min-h-64 items-center justify-center text-text-muted"><LoaderCircle className="mr-2 h-5 w-5 animate-spin" />正在读取真实模型快照</div>
 
-  const current = groups[view].filter(model => `${model.l3_code}${model.l3_name}`.toLowerCase().includes(query.toLowerCase()))
+  const current = groups[view]
+    .filter(model => `${model.l3_code}${model.l3_name}`.toLowerCase().includes(query.toLowerCase()))
+    .filter(model => vsFilter === 'all' || model.value_streams.some(vs => vs.vs_code === vsFilter))
   const parsedCount = data.models.filter(model => model.blueprint_structure_status === 'PARSED').length
   const featuredDemo = groups.demo[0]
   return (
@@ -301,9 +325,21 @@ export default function L3Models() {
         ))}
       </div>
 
-      <div className="relative max-w-md">
-        <Search className="absolute left-3 top-2.5 h-4 w-4 text-text-muted" />
-        <input value={query} onChange={event => setQuery(event.target.value)} placeholder="按 L3 编码或名称搜索" className="w-full rounded-xl border border-border-default bg-bg-elevated py-2 pl-9 pr-3 text-sm text-text-primary placeholder:text-text-muted" />
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="relative max-w-md flex-1">
+          <Search className="absolute left-3 top-2.5 h-4 w-4 text-text-muted" />
+          <input value={query} onChange={event => setQuery(event.target.value)} placeholder="按 L3 编码或名称搜索" className="w-full rounded-xl border border-border-default bg-bg-elevated py-2 pl-9 pr-3 text-sm text-text-primary placeholder:text-text-muted" />
+        </div>
+        <select
+          value={vsFilter}
+          onChange={event => setVsFilter(event.target.value)}
+          className="rounded-xl border border-border-default bg-bg-elevated py-2 px-3 text-sm text-text-primary"
+        >
+          <option value="all">全部价值流</option>
+          {valueStreams.map(vs => (
+            <option key={vs.vs_code} value={vs.vs_code}>{vs.vs_code} · {vs.vs_name}（{vs.count}）</option>
+          ))}
+        </select>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">

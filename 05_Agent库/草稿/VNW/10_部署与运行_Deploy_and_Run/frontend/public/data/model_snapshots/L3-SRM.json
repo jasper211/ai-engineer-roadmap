@@ -18,6 +18,7 @@
           "EVD-0a5c0c0097296580d977",
           "EVD-18369d1bcb247693b527",
           "EVD-2a02f611aa2641a79af4",
+          "EVD-526d45f1118b4f64a784",
           "EVD-63171c4f1fde169319eb",
           "EVD-7843068b3a7015f82078",
           "EVD-9cb90c43575486cfbdd4",
@@ -47,6 +48,7 @@
         "deliverable_role": "",
         "evidence_refs": [
           "EVD-125508ca1ac0681d62e9",
+          "EVD-526d45f1118b4f64a784",
           "EVD-62eee105882c29baf1d9",
           "EVD-636a06c93c36be89a63d",
           "EVD-6827e3cfc10122a76434",
@@ -81,13 +83,13 @@
     "schema_version": "vnw.l3-analysis.v1",
     "source_scope": {
       "database": "process_analytics",
-      "evidence_count": 24,
+      "evidence_count": 25,
       "knowledge": "ACTIVE supplemental evidence only"
     },
     "tasks": []
   },
   "analysis_freshness": "PENDING_MODEL",
-  "analysis_input_hash": "62205d27c73ea02d128633be659aaf8d486b25339de9f8836eae6d75d4d8aed8",
+  "analysis_input_hash": "77b1f3b2ab09ca5046bd24a2b7a5a449d9b33c9d547e0b034d1c9106f433ba16",
   "blueprint": {
     "blueprint_value_nodes": [],
     "coverage": "MISSING",
@@ -184,6 +186,31 @@
         "physical_execution": false,
         "recommended_path": "优先进入Skill原型候选池",
         "verification_status": "VERIFIED"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-526d45f1118b4f64a784",
+      "field_name": "position_family",
+      "source": {
+        "observed_at": "",
+        "source_field": "岗位族代码",
+        "source_key": "跨域长尾合并Agent",
+        "source_object": "候选Agent岗位族映射_HR对齐版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "candidate_agent": "跨域长尾合并Agent",
+        "confidence": "HR权威数据核实(本次对齐修正)",
+        "family_code": "JF-07",
+        "family_name": "佣金合规族",
+        "headcount": 5,
+        "headcount_source": "2026-07-28_人员归属方案_v5.3_SUBMITTED.md 一节映射统计总表"
       }
     },
     {
@@ -698,11 +725,20 @@
         "l4_deliverable": "EVD-d5d88495d56e2a71a54f",
         "l4_deliverable_type": "EVD-18369d1bcb247693b527",
         "l4_name": "EVD-9cb90c43575486cfbdd4",
+        "position_family": "EVD-526d45f1118b4f64a784",
         "skill_feasibility": "EVD-2a02f611aa2641a79af4"
       },
       "human_touchpoint": null,
       "l4_code": "L4-SRM-01",
       "l4_name": "外部资源对接",
+      "position_family": {
+        "candidate_agent": "跨域长尾合并Agent",
+        "confidence": "HR权威数据核实(本次对齐修正)",
+        "family_code": "JF-07",
+        "family_name": "佣金合规族",
+        "headcount": 5,
+        "headcount_source": "2026-07-28_人员归属方案_v5.3_SUBMITTED.md 一节映射统计总表"
+      },
       "skill_feasibility": {
         "action_nature": "信息处理/事务类",
         "action_singularity": "单一动作",
@@ -738,11 +774,20 @@
         "l4_deliverable": "EVD-abcb505f2c5a0fe496ef",
         "l4_deliverable_type": "EVD-6827e3cfc10122a76434",
         "l4_name": "EVD-636a06c93c36be89a63d",
+        "position_family": "EVD-526d45f1118b4f64a784",
         "skill_feasibility": "EVD-c9044239687a776daefa"
       },
       "human_touchpoint": null,
       "l4_code": "L4-SRM-02",
       "l4_name": "转介渠道管理",
+      "position_family": {
+        "candidate_agent": "跨域长尾合并Agent",
+        "confidence": "HR权威数据核实(本次对齐修正)",
+        "family_code": "JF-07",
+        "family_name": "佣金合规族",
+        "headcount": 5,
+        "headcount_source": "2026-07-28_人员归属方案_v5.3_SUBMITTED.md 一节映射统计总表"
+      },
       "skill_feasibility": {
         "action_nature": "语义复核判定",
         "action_singularity": "单一动作",
@@ -824,6 +869,11 @@
     },
     "process_analytics.dim_vn": {
       "record_keys": []
+    },
+    "候选Agent岗位族映射_HR对齐版_v1.0.csv": {
+      "record_keys": [
+        "跨域长尾合并Agent"
+      ]
     }
   },
   "source_policy": {
@@ -837,9 +887,13 @@
   "value_stream_mappings": [
     {
       "l3_code": "L3-SRM",
+      "mapping_type": "primary",
       "stage_code": "S3",
+      "stage_name": "体系搭建",
+      "stage_sequence": 3,
       "vs_code": "VS-2",
-      "vs_name": "机构合作伙伴旅程"
+      "vs_name": "机构合作伙伴旅程",
+      "vs_stakeholder": "TOB机构/经代/家办/同行经代"
     }
   ],
   "vn_l4_mappings": []

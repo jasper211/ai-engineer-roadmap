@@ -21,6 +21,7 @@
           "EVD-42834e2df16be921518e",
           "EVD-4b847040bb7d89566c81",
           "EVD-7d9a7c0393089cdf6736",
+          "EVD-829a25b9763cbe872118",
           "EVD-96c4048865bddb188bfa",
           "EVD-987c985fd598ee253c87",
           "EVD-a1fcb8bbf2708a11a973",
@@ -54,6 +55,7 @@
           "EVD-5aeb5111f6e0643075ed",
           "EVD-611f60ce1503d4fa729f",
           "EVD-6a47fea336570920757d",
+          "EVD-829a25b9763cbe872118",
           "EVD-8f442dab17843353119f",
           "EVD-996378983fffc905c315",
           "EVD-a548941a84b5799d738e",
@@ -81,7 +83,7 @@
     "schema_version": "vnw.l3-analysis.v1",
     "source_scope": {
       "database": "process_analytics",
-      "evidence_count": 40,
+      "evidence_count": 41,
       "knowledge": "ACTIVE supplemental evidence only"
     },
     "tasks": [
@@ -126,7 +128,7 @@
     ]
   },
   "analysis_freshness": "PENDING_MODEL",
-  "analysis_input_hash": "504c38d311074baee46e0d8a26c73a013353474e718a0a53554e2832cfdda89b",
+  "analysis_input_hash": "b0eb76fdbb0041eab8c474c5242a715ab226f0d8a8e270569d9c92d5765d0859",
   "blueprint": {
     "blueprint_value_nodes": [],
     "coverage": "INDEXED",
@@ -583,6 +585,31 @@
       "status": "ACTIVE",
       "transform_rule": "",
       "value": "报告"
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-829a25b9763cbe872118",
+      "field_name": "position_family",
+      "source": {
+        "observed_at": "",
+        "source_field": "岗位族代码",
+        "source_key": "风险合规监控Agent",
+        "source_object": "候选Agent岗位族映射_HR对齐版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "candidate_agent": "风险合规监控Agent",
+        "confidence": "HR权威数据核实",
+        "family_code": "职能层",
+        "family_name": "职能支撑层",
+        "headcount": 26,
+        "headcount_source": "2026-07-28_人员归属方案_v5.3_SUBMITTED.md 一节映射统计总表"
+      }
     },
     {
       "confidence": "HIGH",
@@ -1096,11 +1123,20 @@
         "l4_deliverable": "EVD-96c4048865bddb188bfa",
         "l4_deliverable_type": "EVD-7d9a7c0393089cdf6736",
         "l4_name": "EVD-d769b329113fb4bdf137",
+        "position_family": "EVD-829a25b9763cbe872118",
         "skill_feasibility": "EVD-348080169ed30b24d279"
       },
       "human_touchpoint": null,
       "l4_code": "L4-RCM-01",
       "l4_name": "渠道信用评估",
+      "position_family": {
+        "candidate_agent": "风险合规监控Agent",
+        "confidence": "HR权威数据核实",
+        "family_code": "职能层",
+        "family_name": "职能支撑层",
+        "headcount": 26,
+        "headcount_source": "2026-07-28_人员归属方案_v5.3_SUBMITTED.md 一节映射统计总表"
+      },
       "skill_feasibility": {
         "action_nature": "判断/策略/认知类",
         "action_singularity": "单一动作",
@@ -1136,11 +1172,20 @@
         "l4_deliverable": "EVD-54562c63e324667fba0a",
         "l4_deliverable_type": "EVD-996378983fffc905c315",
         "l4_name": "EVD-04c6d6aba39bf72a84e1",
+        "position_family": "EVD-829a25b9763cbe872118",
         "skill_feasibility": "EVD-24e917bba93e7a2c1f19"
       },
       "human_touchpoint": null,
       "l4_code": "L4-RCM-02",
       "l4_name": "合规审计",
+      "position_family": {
+        "candidate_agent": "风险合规监控Agent",
+        "confidence": "HR权威数据核实",
+        "family_code": "职能层",
+        "family_name": "职能支撑层",
+        "headcount": 26,
+        "headcount_source": "2026-07-28_人员归属方案_v5.3_SUBMITTED.md 一节映射统计总表"
+      },
       "skill_feasibility": {
         "action_nature": "合规监管类",
         "action_singularity": "单一动作",
@@ -1226,6 +1271,11 @@
         "VN-RCM-02"
       ]
     },
+    "候选Agent岗位族映射_HR对齐版_v1.0.csv": {
+      "record_keys": [
+        "风险合规监控Agent"
+      ]
+    },
     "流程蓝图_L3-RCM_风险管理与合规监控_V1.0.md": {
       "lines": [
         47,
@@ -1277,9 +1327,13 @@
   "value_stream_mappings": [
     {
       "l3_code": "L3-RCM",
+      "mapping_type": "primary",
       "stage_code": "S3",
+      "stage_name": "体系搭建",
+      "stage_sequence": 3,
       "vs_code": "VS-2",
-      "vs_name": "机构合作伙伴旅程"
+      "vs_name": "机构合作伙伴旅程",
+      "vs_stakeholder": "TOB机构/经代/家办/同行经代"
     }
   ],
   "vn_l4_mappings": [

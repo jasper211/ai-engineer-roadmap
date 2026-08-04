@@ -328,7 +328,131 @@ steps:
     validation: six_rules_classified_promotion_policy_and_runtime_order_recorded
     status: completed
 
+  - step_id: PB01-STEP-034
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    role: source_acquirer
+    objective: 发现并选择第三年度完整包
+    input_refs: [IA_annual_long_term_statistics_index, IA_market_5_2022_parent_page]
+    action: 核验最新年度可用性_确认2022页面22个Excel附件_测试语义接口浏览器会话和直连下载
+    output_refs: [ACQ-IA-LTA-2022-FULL]
+    validation: 2025_not_complete_annual_2022_selected_download_403_asset_gate_not_passed
+    status: completed_with_acquisition_pending
+
+  - step_id: PB01-STEP-035
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    role: source_acquirer_and_asset_qa
+    objective: 落库并审计2022年度长期业务第三期验证包
+    input_refs: [ACQ-IA-LTA-2022-FULL, IA_market_5_2022_parent_page]
+    action: 通过官网父页面会话下载22个附件_校验签名哈希工作簿标题年份和业务范围
+    output_refs: [ASTSET-IA-LTA-2022-CANDIDATE-XLSX, INC-PB-005]
+    validation: 22_landed_22_valid_xlsx_signatures_21_content_pass_1_wrong_content_rejected
+    status: completed_with_source_incident
+
+  - step_id: PB01-STEP-036
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    role: qa_reviewer
+    objective: 复验2022年L14加L15等于L16并执行第三期规则裁决
+    input_refs: [Table-L14_2022, Table-L15_2022, Table-L16_2022, RULE-LT-006]
+    action: 动态识别三表公司行_按表头映射年付整付和保费_执行公司及市场总额双层控制
+    output_refs: [TEST-HKIA-ANNUAL-LONG-2022-L14-L16-001, RULE-LT-006]
+    validation: 60_companies_240_company_metric_cells_zero_discrepancies_12_detail_total_controls_zero
+    status: completed_rule_promoted_to_stable
+
+  - step_id: PB01-STEP-037
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    role: schema_auditor_and_qa_reviewer
+    objective: 复验2022年L8至L13有效业务版本化公式并执行第三期规则裁决
+    input_refs: [Table-L8_2022, Table-L9_2022, Table-L10_2022, Table-L11_2022, Table-L12_2022, Table-L13_2022, RULE-LT-005]
+    action: 读取表内业务标题和双层表头_识别旧制度指标路由_执行公司公式市场公式和明细汇总三层控制
+    output_refs: [TEST-HKIA-ANNUAL-LONG-2022-L8-L13-001, RULE-LT-005]
+    validation: 60_companies_300_company_metric_cells_zero_5_market_formula_controls_zero_28_detail_total_controls_zero
+    status: completed_rule_promoted_to_stable_with_schema_routing
+
+  - step_id: PB01-STEP-038
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    role: schema_auditor_and_qa_reviewer
+    objective: 复验2022年L1至L3市场历史链并执行第三期规则裁决
+    input_refs: [Table-L1_2022, Table-L2_2022, Table-L3_2022, Table-L1_2023, RULE-LT-001]
+    action: 按标签定位指标总数及额外储备行_验证五年指标链_比较2022与2023历史版本一致性
+    output_refs: [TEST-HKIA-ANNUAL-LONG-2022-L1-L3-001, RULE-LT-001, INC-PB-006]
+    validation: policy_exact_premium_and_sums_within_rounding_liability_pass_with_adjustments_16_cross_vintage_cells_exact
+    status: completed_rule_promoted_to_stable_with_schema_routing
+
+  - step_id: PB01-STEP-039
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    role: qa_reviewer
+    objective: 复验2022年L4与L14至L16跨粒度跨单位关系并执行第三期规则裁决
+    input_refs: [Table-L4_2022, Table-L14_2022, Table-L15_2022, Table-L16_2022, Table-L1_2022, RULE-LT-002]
+    action: 核对60家公司明细至市场总额_千元转百万元_按共享粒度比较并以L1独立交叉验证
+    output_refs: [TEST-HKIA-ANNUAL-LONG-2022-L4-L16-001, RULE-LT-002, INC-PB-007]
+    validation: counts_exact_linked_premiums_within_rounding_nonlinked_delta_0_592_total_delta_0_599_rule_promotion_held
+    status: completed_with_open_source_exception
+
+  - step_id: PB01-STEP-040
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    role: schema_auditor_and_qa_reviewer
+    objective: 复验2022年L6团体及退休计划到L10_L11年度路由并执行第三期规则裁决
+    input_refs: [Table-L6_2022, Table-L10_2022, Table-L11_2022, RULE-LT-003]
+    action: 识别L6a_L6b和L6c缺失_按年度与总数双层表头映射_核对公司明细市场总额及跨单位控制
+    output_refs: [TEST-HKIA-ANNUAL-LONG-2022-L6-COMPANY-001, RULE-LT-003, INC-PB-008]
+    validation: 9_detail_controls_zero_counts_exact_max_amount_difference_0_058_L6c_absent
+    status: completed_rule_promoted_to_stable_with_schema_routing
+
+  - step_id: PB01-STEP-041
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    role: schema_auditor_and_qa_reviewer
+    objective: 复验2022年L7年金及其他业务年度路由并完成第三期规则汇总
+    input_refs: [Table-L7_2022, Table-L12_2022, Table-L17_2022, Table-L18_2022, Table-L19_2022, RULE-LT-004]
+    action: 解析相连属性与缴费方式双轴_核对60家公司组件公式_按旧制度标题连接市场及公司表_汇总六条规则裁决
+    output_refs: [TEST-HKIA-ANNUAL-LONG-2022-L7-COMPANY-001, RULE-LT-004, HKIA-ANNUAL-LONG-CROSS-YEAR-RULES]
+    validation: 240_company_formula_cells_zero_16_detail_controls_zero_cross_grain_max_amount_difference_0_050
+    status: completed_rule_promoted_third_period_execution_closed_with_one_open_source_exception
+
 incidents:
+  - incident_id: INC-PB-008
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    incident_class: parser_nested_header
+    detected_at_step: PB01-STEP-040
+    impact: 首次L6b试算读取2022总数右侧空列_造成与L11整列等额的假残差
+    root_cause: 退休计划区各年度列组宽度与团体区不同_按固定列位映射失败
+    correction: 同时解析年份表头与其下Total标签_复算后全部控制通过
+    prevention_candidate:
+      type: parser_rule_candidate
+      rule: 跨分区表不得继承固定列组宽度_每个分区独立解析嵌套表头
+      status: candidate_1_of_3
+  - incident_id: INC-PB-007
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    incident_class: source_internal_reconciliation
+    detected_at_step: PB01-STEP-039
+    impact: 2022年L4保费不能在已证明的展示舍入范围内与L14_L16及L1闭环_RULE_LT_002不能晋升
+    root_cause: unresolved_official_cross_table_difference_L4_higher_than_L1_and_company_tables_by_about_0_6_HKD_million
+    correction: 保留各官方值和差异_不扩大容差_计数与相连业务继续标记通过_金额总额保持例外
+    prevention_candidate:
+      type: quality_gate_rule_candidate
+      rule: 相对差异很小不等于规则通过_超过可证明精度边界必须登记来源例外并暂停晋升
+      status: candidate_1_of_3
+  - incident_id: INC-PB-006
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    incident_class: parser_row_addressing
+    detected_at_step: PB01-STEP-038
+    impact: 首次试算把L1业务分类行误当总数及额外储备行_产生不合理巨额残差
+    root_cause: 解析器忽略UsedRange从A2起始_将数组索引当作绝对工作表行号
+    correction: 改为按双语标签定位章节总数调整行_再用年份表头和数量级复核
+    prevention_candidate:
+      type: parser_rule_candidate
+      rule: 不得用UsedRange数组索引硬编码工作表行_必须解析range起点或按标签定位
+      status: candidate_1_of_3
+  - incident_id: INC-PB-005
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    incident_class: source_content_mismatch
+    detected_at_step: PB01-STEP-035
+    impact: 官网标示的2022长期业务保险公司名单不能用于公司身份连接或完整包声明
+    root_cause: 官方Insurerlist_2022链接返回的工作簿实际为2020年一般保险临时统计
+    correction: 保留原始字节和哈希_逻辑隔离该文件_其余21份表可继续做算术与Schema控制
+    prevention_candidate:
+      type: asset_gate_rule_candidate
+      rule: 每个下载件必须核对内部标题年份业务类型_文件名和官网链接文字不能替代内容校验
+      status: candidate_1_of_3
   - incident_id: INC-PB-004
     run_id: RUN-HKIA-PHASE-B-SLICE-01
     incident_class: file_format
@@ -390,6 +514,9 @@ gates:
       - 至少建立一条Experience到Research Question的motivates关系
 
 next_actions:
+  - acquire_and_standardize_2025_full_year_provisional_long_term_package
+  - acquire_and_standardize_2023Q1_to_2026Q1_same_period_series
+  - verify_INC_PB_007_against_2022_official_PDF_or_revised_vintage
   - request_one_real_T12_experience_sentence
   - expand_IA_catalog_to_attachment_level_by_theme_priority
   - compare_official_xlsx_with_data_gov_hk_as_distribution_cross_check

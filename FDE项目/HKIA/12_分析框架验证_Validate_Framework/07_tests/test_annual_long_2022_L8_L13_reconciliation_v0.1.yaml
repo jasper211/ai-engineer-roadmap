@@ -1,0 +1,77 @@
+test_id: TEST-HKIA-ANNUAL-LONG-2022-L8-L13-001
+version: 0.1
+status: passed_with_schema_routing
+test_type: pre_RBC_company_inforce_reconciliation
+report_year: 2022
+
+inputs:
+  component_tables: [L8, L9, L10, L11, L12]
+  control_table: L13
+  source_ranges:
+    L8: Table L8!A1:H71
+    L9: Table L9!A1:G71
+    L10: Table L10!A1:H71
+    L11: Table L11!A1:G71
+    L12: Table L12!A1:G71
+    L13: Table L13!A1:H71
+
+schema_signature:
+  family: pre_RBC
+  company_column_order: annual_before_single
+  L10_scope: group_life_inforce
+  L11_quantity_types: [policy_count, lives]
+  L12_scope: annuity_and_other_inforce
+  liability_label: net_liabilities
+
+validated_formulas:
+  policy_count: L8_policy + L9_policy + L10_policy + L11_policy + L12_policy = L13_policy
+  sums_assured: L8_sums + L10_sums = L13_sums
+  premium_annual: L8_annual + L9_annual + L10_annual + L11_contribution_annual + L12_annual = L13_annual
+  premium_single: L8_single + L9_single + L12_single = L13_single
+  net_liabilities: L8_net + L9_net + L10_net + L11_net + L12_net = L13_net
+
+entity_results:
+  detected_company_count: 60
+  company_count_by_table: {L8: 60, L9: 60, L10: 60, L11: 60, L12: 60, L13: 60}
+  identity_gap_count: 0
+  official_insurer_list_required_for_this_test: false
+
+company_formula_results:
+  metrics_per_company: 5
+  checked_cells: 300
+  discrepancy_count: 0
+  max_absolute_discrepancy_source_unit: 0
+  tolerance_source_unit: 0
+
+market_formula_results:
+  checked_metrics: 5
+  discrepancy_count: 0
+  deltas: [0, 0, 0, 0, 0]
+
+detail_to_source_market_total_results:
+  checked_cells: 28
+  discrepancy_count: 0
+  deltas:
+    L8: [0, 0, 0, 0, 0]
+    L9: [0, 0, 0, 0]
+    L10: [0, 0, 0, 0, 0]
+    L11: [0, 0, 0, 0]
+    L12: [0, 0, 0, 0]
+    L13: [0, 0, 0, 0, 0]
+
+excluded_metrics:
+  - L10_lives
+  - L11_lives
+
+semantic_decisions:
+  - L10_and_L11_lives_have_no_L13_counterpart_and_do_not_enter_policy_total
+  - annual_and_single_columns_must_be_mapped_by_header_labels
+  - 2022_and_2023_share_pre_RBC_formula_but_2024_requires_RBC_metric_routing
+  - component_metric_types_remain_distinct_even_when_the_total_control_graph_passes
+
+promotion_decision:
+  rule_id: RULE-LT-005
+  prior_status: validated_2_of_3_with_schema_routing
+  new_status: stable_with_schema_routing
+  stable_scope: L8_to_L12_component_tables_reconcile_to_L13_after_year_specific_metric_and_business_scope_routing
+  versioned_elements: [L10_scope, L11_quantity_type, L12_scope, annual_single_column_order, liability_label]

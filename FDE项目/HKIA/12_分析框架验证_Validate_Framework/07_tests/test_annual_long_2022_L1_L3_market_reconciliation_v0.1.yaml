@@ -1,0 +1,67 @@
+test_id: TEST-HKIA-ANNUAL-LONG-2022-L1-L3-001
+version: 0.1
+status: passed_with_rounding_and_adjustment_qualification
+test_type: pre_RBC_market_history_cross_table_reconciliation
+report_year: 2022
+observation_years: [2018, 2019, 2020, 2021, 2022]
+
+inputs:
+  components: [L2_nonlinked_individual_life_inforce, L3_linked_individual_life_inforce]
+  control: L1_individual_life_inforce
+  source_ranges:
+    L1: ["Table L1!D8:M19", "Table L1!D22:M36"]
+    L2: ["Table L2!D6:O13", "Table L2!D17:O25", "Table L2!D29:O37", "Table L2!D41:O49"]
+    L3: ["Table L3!F6:J12", "Table L3!F16:J23", "Table L3!F27:J34"]
+
+results:
+  policy_count:
+    expression: L2_nonlinked + L3_linked = L1_total
+    discrepancies_by_year: [0, 0, 0, 0, 0]
+    decision: exact_pass
+  office_premium_HKD_million:
+    expression: L2_nonlinked + L3_linked approximately_equals L1_total
+    discrepancies_by_year: [-0.2, 0, -0.1, -0.1, 0.1]
+    max_absolute_discrepancy: 0.2
+    decision: pass_with_component_rounding_bound
+  sums_assured_HKD_million:
+    expression: L2_nonlinked approximately_equals L1_total
+    discrepancies_by_year: [0, 0, 0.1, 0, -0.1]
+    max_absolute_discrepancy: 0.1
+    L3_publication_status: not_published
+    decision: pass_with_NA_semantic_qualification
+  net_liabilities_HKD_million:
+    direct_expression: L2_nonlinked + L3_linked
+    direct_discrepancies_by_year: [-17954.9, -23525.3, -31796.0, -37042.3, -14378.9]
+    complete_expression: L2_nonlinked + L3_linked + L1_nonlinked_additional_reserve + L1_linked_additional_reserve approximately_equals L1_total
+    complete_discrepancies_by_year: [0.2, 0.1, 0.1, 0, 0]
+    complete_max_absolute_discrepancy: 0.2
+    decision: pass_only_with_adjustment_rows
+
+adjustment_rows_HKD_million:
+  nonlinked_additional_reserve: [17853.5, 23433.7, 31661.0, 36836.9, 14299.5]
+  linked_additional_reserve: [101.6, 91.7, 135.1, 205.4, 79.4]
+
+cross_vintage_check:
+  compared_report_vintages: [2022, 2023]
+  overlapping_observation_years: [2019, 2020, 2021, 2022]
+  compared_metrics: [policy_count, office_premium, sums_assured, net_liabilities]
+  compared_cells: 16
+  exact_equal_cells: 16
+
+parser_incident:
+  incident_ref: INC-PB-006
+  initial_failure: used_range_row_offset_was_treated_as_worksheet_row_number
+  correction: locate_sections_totals_and_adjustment_rows_by_labels_then_validate_year_headers
+
+semantic_decisions:
+  - report_year_and_observation_year_are_separate_fields
+  - linked_sums_assured_NA_must_not_be_converted_to_zero
+  - L1_additional_reserve_rows_are_required_formula_components
+  - tolerance_is_derived_from_display_precision_and_component_count
+
+promotion_decision:
+  rule_id: RULE-LT-001
+  prior_status: validated_2_of_3
+  new_status: stable_with_schema_routing
+  stable_scope: L1_L2_L3_component_control_graph_by_metric_and_observation_year
+  versioned_elements: [liability_adjustment_rows, net_liabilities_vs_current_estimate, linked_sums_assured_publication]

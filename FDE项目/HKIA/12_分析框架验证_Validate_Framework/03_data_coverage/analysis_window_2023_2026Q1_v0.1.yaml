@@ -1,0 +1,44 @@
+scope_id: HKIA-LONG-TERM-ANALYSIS-2023-2026Q1
+version: 0.1
+status: approved_scope
+
+primary_analysis_window:
+  start: 2023-01-01
+  end: 2026-03-31
+  report_title: 香港长期保险行业2023至2026Q1趋势分析
+
+period_layers:
+  annual_certified_baseline:
+    periods: [2023, 2024]
+    role: comparable_annual_baseline
+  annual_provisional:
+    periods: [2025]
+    role: latest_complete_calendar_year_view
+    labeling_required: provisional
+  quarterly_same_period:
+    periods: [2023Q1, 2024Q1, 2025Q1, 2026Q1]
+    role: latest_direction_and_same_period_growth
+  methodology_validation_only:
+    periods: [2022]
+    excluded_from_primary_analysis_window: true
+    role: third_vintage_rule_validation
+
+comparison_rules:
+  allowed:
+    - 2023_full_year_to_2024_full_year
+    - 2024_full_year_to_2025_full_year_provisional
+    - 2023Q1_to_2024Q1_to_2025Q1_to_2026Q1
+    - 2026Q1_progress_against_prior_year_Q1
+  forbidden:
+    - calculate_growth_by_dividing_2026Q1_by_2025_full_year
+    - present_2025_provisional_as_certified_annual_statistics
+    - mix_pre_and_post_RBC_fields_without_schema_routing
+
+completion_gate:
+  - methodology_rules_validated_and_versioned
+  - 2023_and_2024_certified_annual_facts_standardized
+  - 2025_full_year_provisional_facts_standardized
+  - 2023Q1_to_2026Q1_same_period_series_standardized
+  - RBC_schema_breaks_and_noncomparable_fields_declared
+  - every_claim_labeled_as_certified_provisional_external_or_inference
+  - final_analysis_and_repeatable_quarterly_update_protocol_published

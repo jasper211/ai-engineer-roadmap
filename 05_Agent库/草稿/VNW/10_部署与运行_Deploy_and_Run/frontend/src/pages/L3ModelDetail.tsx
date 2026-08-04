@@ -397,6 +397,17 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
           <p className="font-mono text-xs text-accent-primary-light">{model.l3_code}</p>
           <h1 className="mt-1 font-heading text-3xl font-bold">{model.l3_name}</h1>
           <p className="mt-2 text-sm text-text-secondary">{model.l4s.length} 个 L4 交付活动 · {model.value_nodes.length} 个价值节点 · 蓝图 {model.blueprint.version || '未覆盖'}</p>
+          {model.value_stream_mappings.length > 0 ? (
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              {model.value_stream_mappings.map((vs, index) => (
+                <span key={index} className="rounded-full bg-teal-400/10 px-2.5 py-1 text-[11px] font-medium text-teal-700">
+                  {String(vs.vs_name || vs.vs_code)} · 第{String(vs.stage_sequence ?? '?')}阶段 {String(vs.stage_name || vs.stage_code)}
+                </span>
+              ))}
+            </div>
+          ) : (
+            <p className="mt-2 text-[11px] text-text-muted">当前未定位到客户旅程/价值流阶段（数据库bridge_l3_vs_stage未覆盖该L3）</p>
+          )}
         </div>
         <div className="flex gap-2">
           {(['M', 'E', 'A'] as const).map(gate => <span key={gate} className={`rounded-lg border px-3 py-2 font-mono text-xs ${gateTone(model.gates[gate].status)}`}>Gate {gate} · {model.gates[gate].status}</span>)}
@@ -588,6 +599,17 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
               {Boolean(analysis?.quality_anchor) && <p className="mt-2 text-xs leading-5 text-emerald-700"><b>质量锚点：</b>{String(analysis?.quality_anchor)}</p>}
               {Boolean(analysis?.database_tier && analysis?.recommended_tier && analysis.database_tier !== analysis.recommended_tier) && <p className="mt-2 text-[10px] text-amber-700">数据库Tier：{String(analysis?.database_tier)} · 正式复核建议：{String(analysis?.recommended_tier)}</p>}
               {!analysis?.ai_reshape && l4.human_touchpoint && <p className="mt-2 text-xs text-text-secondary">人工介入：{l4.human_touchpoint}</p>}
+              {l4.position_family ? (
+                <div className="mt-3 rounded-lg border border-cyan-200 bg-cyan-50/70 p-3">
+                  <p className="text-[10px] font-semibold text-cyan-800">人力现状参考 · {l4.position_family.candidate_agent}</p>
+                  <p className="mt-1 text-[11px] leading-4 text-text-secondary">
+                    归属岗位族：{l4.position_family.family_name}（{l4.position_family.family_code}）· 现有在岗 {l4.position_family.headcount} 人
+                  </p>
+                  <p className="mt-1 text-[9px] text-text-muted">来源：{l4.position_family.headcount_source} · 可信度：{l4.position_family.confidence}</p>
+                </div>
+              ) : (
+                <p className="mt-3 text-[10px] text-text-muted">人力现状参考：候选Agent桥接未覆盖该L4，待归口</p>
+              )}
             </div>
           )})}
         </div>

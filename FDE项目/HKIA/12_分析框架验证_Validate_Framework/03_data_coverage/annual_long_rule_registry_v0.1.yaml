@@ -1,7 +1,7 @@
 registry_id: HKIA-ANNUAL-LONG-CROSS-YEAR-RULES
 version: 0.1
-status: validated_two_period_baseline
-validated_report_years: [2023, 2024]
+status: third_period_validation_executed_five_rules_promoted_one_exception_open
+validated_report_years: [2022, 2023, 2024]
 
 promotion_policy:
   candidate: passed_in_one_period
@@ -13,49 +13,50 @@ promotion_policy:
 stable_candidates:
   - rule_id: RULE-LT-001
     name: L1_L2_L3_metric_qualified_market_reconciliation
-    status: validated_2_of_3
+    status: stable_with_schema_routing
     stable_element: component_control_graph_by_metric_and_observation_year
     versioned_elements: [liability_adjustment_rows, current_estimate_vs_net_liabilities, linked_sums_assured_publication]
     precision_rule: source_display_precision_and_component_count
-    evidence: [TEST-HKIA-ANNUAL-LONG-2023-L1-L3-001, TEST-HKIA-ANNUAL-LONG-L1-L3-001]
+    evidence: [TEST-HKIA-ANNUAL-LONG-2022-L1-L3-001, TEST-HKIA-ANNUAL-LONG-2023-L1-L3-001, TEST-HKIA-ANNUAL-LONG-L1-L3-001]
 
   - rule_id: RULE-LT-002
     name: L4_to_L14_L15_L16_shared_grain_reconciliation
-    status: validated_2_of_3
+    status: validated_2_of_3_third_period_exception_open
     stable_element: market_to_company_control_after_HKD_thousand_to_million_conversion
     versioned_elements: [annual_single_column_order, displayed_precision]
     precision_rule: source_display_precision_and_component_count
-    evidence: [TEST-HKIA-ANNUAL-LONG-2023-L4-L16-001, TEST-HKIA-ANNUAL-LONG-L4-L16-001]
+    evidence: [TEST-HKIA-ANNUAL-LONG-2022-L4-L16-001, TEST-HKIA-ANNUAL-LONG-2023-L4-L16-001, TEST-HKIA-ANNUAL-LONG-L4-L16-001]
+    open_exception: 2022_L4_nonlinked_premium_exceeds_L14_by_0_592_HKD_million_and_L4_total_exceeds_L1_L16_by_about_0_6
 
   - rule_id: RULE-LT-003
     name: L6_group_retirement_inforce_to_L10_L11
-    status: validated_2_of_3_with_schema_routing
+    status: stable_with_schema_routing
     stable_element: business_title_matched_group_and_retirement_inforce_control
     versioned_elements: [group_scope, retirement_policy_count, retirement_lives, retirement_scheme_count]
     optional_branch: L6c_to_L18_enabled_only_for_RBC_2024_or_compatible_successor_schema
-    evidence: [TEST-HKIA-ANNUAL-LONG-2023-L6-COMPANY-001, TEST-HKIA-ANNUAL-LONG-L6-COMPANY-001]
+    evidence: [TEST-HKIA-ANNUAL-LONG-2022-L6-COMPANY-001, TEST-HKIA-ANNUAL-LONG-2023-L6-COMPANY-001, TEST-HKIA-ANNUAL-LONG-L6-COMPANY-001]
 
   - rule_id: RULE-LT-004
     name: L7_to_year_routed_annuity_company_controls
-    status: validated_2_of_3_with_schema_routing
+    status: stable_with_schema_routing
     stable_element: shared_business_scope_control_after_title_based_routing
     versioned_elements: [annuity_and_other_scope, linked_status, L17_L18_L19_business_meanings]
     axis_rule: parse_linked_status_and_payment_basis_before_aggregation
-    evidence: [TEST-HKIA-ANNUAL-LONG-2023-L7-COMPANY-001, TEST-HKIA-ANNUAL-LONG-L7-COMPANY-001]
+    evidence: [TEST-HKIA-ANNUAL-LONG-2022-L7-COMPANY-001, TEST-HKIA-ANNUAL-LONG-2023-L7-COMPANY-001, TEST-HKIA-ANNUAL-LONG-L7-COMPANY-001]
 
   - rule_id: RULE-LT-005
     name: L8_to_L12_to_L13_versioned_metric_formula
-    status: validated_2_of_3_with_schema_routing
+    status: stable_with_schema_routing
     stable_element: component_to_total_control_graph
     versioned_elements: [L10_scope, L11_quantity_type, L12_scope, annual_single_column_order, liability_label]
-    evidence: [TEST-HKIA-ANNUAL-LONG-2023-L8-L13-001, TEST-HKIA-ANNUAL-LONG-L8-L13-001]
+    evidence: [TEST-HKIA-ANNUAL-LONG-2022-L8-L13-001, TEST-HKIA-ANNUAL-LONG-2023-L8-L13-001, TEST-HKIA-ANNUAL-LONG-L8-L13-001]
 
   - rule_id: RULE-LT-006
     name: L14_plus_L15_equals_L16_by_company_and_metric
-    status: validated_2_of_3
+    status: stable
     stable_element: nonlinked_plus_linked_equals_total_individual_life_new_business
     versioned_elements: [annual_single_column_order, insurer_population]
-    evidence: [TEST-HKIA-ANNUAL-LONG-2023-CROSS-YEAR-001, TEST-HKIA-ANNUAL-LONG-L14-L16-001]
+    evidence: [TEST-HKIA-ANNUAL-LONG-2022-L14-L16-001, TEST-HKIA-ANNUAL-LONG-2023-CROSS-YEAR-001, TEST-HKIA-ANNUAL-LONG-L14-L16-001]
 
 year_specific_rules:
   pre_RBC_2023:
@@ -89,8 +90,16 @@ prohibited_inferences:
   - current_estimate_can_be_relabelled_as_EV_VONB_profit_or_solvency_capital
 
 third_period_validation_matrix:
-  discovery_target: latest_available_complete_annual_L1_L19_package
-  fallback_target: one_additional_pre_RBC_annual_package
+  latest_complete_annual_package_verified: 2024
+  latest_incomplete_layer: 2025_quarterly_provisional_not_annual_certification
+  selected_third_period_target: 2022_complete_pre_RBC_package
+  acquisition_status: landed_21_usable_1_source_content_incident
+  validation_readiness: table_controls_ready_official_insurer_list_join_blocked
+  execution_status: completed_with_RULE_LT_002_source_exception_open
+  final_rule_outcomes:
+    stable: [RULE-LT-006]
+    stable_with_schema_routing: [RULE-LT-001, RULE-LT-003, RULE-LT-004, RULE-LT-005]
+    held_with_source_exception: [RULE-LT-002]
   priority_order:
     - verify_file_set_and_schema_signature
     - classify_schema_as_pre_RBC_RBC_or_new_break

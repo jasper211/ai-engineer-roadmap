@@ -1,0 +1,80 @@
+plan_id: ACQ-IA-LTA-2022-FULL
+version: 0.1
+status: landed_with_one_source_incident
+selected_role: third_period_validation_package
+
+source:
+  publisher: Hong_Kong_Insurance_Authority
+  parent_page: https://www.ia.org.hk/tc/infocenter/statistics/market_5_2022.html
+  official_page_verified: true
+  complete_excel_attachment_count: 22
+  page_last_revision: 2023-09-29
+
+expected_files:
+  tables:
+    - Table-L1_2022.xlsx
+    - Table-L2_2022.xlsx
+    - Table-L3_2022.xlsx
+    - Table-L4_2022.xlsx
+    - Table-L5_2022.xlsx
+    - Table-L6_2022.xlsx
+    - Table-L7_2022.xlsx
+    - Table-L8_2022.xlsx
+    - Table-L9_2022.xlsx
+    - Table-L10_2022.xlsx
+    - Table-L11_2022.xlsx
+    - Table-L12_2022.xlsx
+    - Table-L13_2022.xlsx
+    - Table-L14_2022.xlsx
+    - Table-L15_2022.xlsx
+    - Table-L16_2022.xlsx
+    - Table-L17_2022.xlsx
+    - Table-L18_2022.xlsx
+    - Table-L19_2022.xlsx
+  support:
+    - Notes_2022.xlsx
+    - Insurerlist_2022.xlsx
+    - Definition_2022.xlsx
+
+schema_expectation:
+  family: pre_RBC
+  confirmation_required_after_download: true
+  evidence_from_official_titles:
+    L6: group_life_and_retirement_scheme_inforce
+    L12: annuity_and_other_inforce
+    L17: nonlinked_individual_annuity_new_business
+    L18: linked_individual_annuity_new_business
+    L19: total_individual_annuity_new_business
+
+acquisition_attempts:
+  - method: semantic_web_fetch
+    result: failed
+    reason: IA_attachment_fetch_403_or_cache_miss
+  - method: trusted_parent_page_browser_session
+    result: parent_page_read_success_attachment_event_no_local_artifact
+  - method: direct_https_with_parent_referer_and_browser_user_agent
+    result: failed_403
+  - method: official_parent_page_browser_session_link_download
+    result: succeeded_22_files_landed
+  - method: workbook_signature_hash_and_content_audit
+    result: 21_passed_1_rejected_wrong_content
+
+asset_gate:
+  decision: partial_pass_21_usable_1_logically_quarantined
+  completed:
+    - all_22_files_present_locally
+    - all_22_file_signatures_validated
+    - sha256_and_byte_manifest_generated
+    - all_workbook_titles_and_sheets_inspected
+  blocked:
+    - official_2022_long_term_insurer_list_not_available_from_published_attachment
+  allowed_next_stage:
+    - run_L1_to_L19_arithmetic_and_schema_controls
+    - derive_dynamic_company_control_population_from_L8_to_L19
+  forbidden_next_stage:
+    - use_Insurerlist_2022_for_fact_generation
+    - claim_full_official_support_set_completeness
+
+next_attempt:
+  method: seek_corrected_official_insurer_list_or_archived_copy
+  preserve_rule: filenames_and_link_labels_are_not_content_validation

@@ -30,6 +30,13 @@ export interface ModelIndexItem {
   snapshot_file: string
   has_demo: boolean
   demo_file: string
+  value_streams: {
+    vs_code: string
+    vs_name: string
+    stage_code: string
+    stage_name: string
+    stage_sequence: number | null
+  }[]
 }
 
 export interface ModelIndex {
@@ -117,6 +124,14 @@ export interface L4Item {
     physical_execution: boolean
     verification_status: 'VERIFIED' | 'PROVISIONAL'
     recommended_path: string
+  }
+  position_family: null | {
+    candidate_agent: string
+    family_code: string
+    family_name: string
+    headcount: number
+    headcount_source: string
+    confidence: string
   }
   evidence_refs: Record<string, string>
 }

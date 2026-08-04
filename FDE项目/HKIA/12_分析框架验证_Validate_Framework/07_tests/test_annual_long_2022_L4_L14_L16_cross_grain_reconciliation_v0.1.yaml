@@ -1,0 +1,80 @@
+test_id: TEST-HKIA-ANNUAL-LONG-2022-L4-L16-001
+version: 0.1
+status: partial_pass_with_unresolved_source_discrepancy
+test_type: pre_RBC_market_to_company_cross_grain_reconciliation
+report_year: 2022
+
+inputs:
+  market_table: L4_individual_life_new_business
+  company_tables: [L14_nonlinked, L15_linked, L16_total_individual_life]
+  cross_check_table: L1_individual_life_new_business
+  detected_company_entities: 60
+  source_ranges:
+    L4: ["Table L4!D7:O25", "Table L4!D31:O47"]
+    L14: "Table L14!D10:H71"
+    L15: "Table L15!D10:H71"
+    L16: "Table L16!D10:H71"
+    L1: "Table L1!D43:M55"
+
+unit_rule:
+  L4_premium_unit: HKD_million_displayed_to_0_1
+  company_premium_unit: HKD_thousand
+  conversion: company_premium_thousand / 1000 = market_premium_million
+
+detail_to_market_results:
+  expression: sum_60_company_rows = source_company_table_market_total
+  tables_checked: [L14, L15, L16]
+  checked_cells: 12
+  discrepancy_count: 0
+
+cross_grain_results:
+  nonlinked_L4_to_L14:
+    policy_L4: 715203
+    policy_L14: 715203
+    policy_difference: 0
+    premium_L4_HKD_million: 112621.1
+    premium_L14_HKD_million: 112620.508
+    premium_difference_HKD_million: 0.592
+    decision: amount_exception_open
+  linked_L4_to_L15:
+    policy_single_difference: 0
+    policy_annual_difference: 0
+    premium_single_difference_HKD_million: 0.019
+    premium_annual_difference_HKD_million: -0.012
+    decision: pass_with_display_rounding
+  total_L4_to_L16:
+    policy_L4: 762319
+    policy_L16: 762319
+    policy_difference: 0
+    premium_L4_HKD_million: 127539.2
+    premium_L16_HKD_million: 127538.601
+    premium_difference_HKD_million: 0.599
+    decision: amount_exception_open
+
+independent_cross_check:
+  L1_new_business_policy: 762319
+  L1_new_business_premium_HKD_million: 127538.6
+  L4_minus_L1_policy: 0
+  L4_minus_L1_premium_HKD_million: 0.6
+  interpretation: L1_and_L16_agree_to_0_001_million_while_L4_is_higher_by_approximately_0_6_million
+
+quality_gate:
+  theoretical_display_rounding_explanation_sufficient: false
+  relative_difference_of_L4_total_premium: 0.000004704
+  material_for_industry_scale_analysis: false
+  material_for_rule_certification: true
+  incident_ref: INC-PB-007
+
+semantic_decisions:
+  - L4_nonlinked_participation_dimension_reconciles_to_L14_only_at_grand_total
+  - linked_payment_basis_controls_pass_by_header_label
+  - small_relative_difference_does_not_authorize_unbounded_tolerance
+  - official_cross_table_discrepancy_must_be_preserved_not_silently_corrected
+
+promotion_decision:
+  rule_id: RULE-LT-002
+  prior_status: validated_2_of_3
+  new_status: validated_2_of_3_third_period_exception_open
+  promotion: held
+  reason: 2022_nonlinked_and_total_premium_difference_exceeds_provable_display_rounding_bound
+  recovery_requirement: verify_against_official_PDF_or_corrected_vintage_and_classify_as_revision_or_source_error

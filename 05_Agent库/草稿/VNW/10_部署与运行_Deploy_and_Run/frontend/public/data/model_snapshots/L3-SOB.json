@@ -357,8 +357,8 @@
       }
     ]
   },
-  "analysis_freshness": "CURRENT",
-  "analysis_input_hash": "21b6532b98ad8ce210db1b7c05c660eda4b87982be5e6a8f7bf5bd2227041375",
+  "analysis_freshness": "INPUT_CHANGED",
+  "analysis_input_hash": "f2a7a9289c893c3db44007d976c7f9b7d20d82e3aa5093a03bdd8ef93358744e",
   "blueprint": {
     "blueprint_value_nodes": [],
     "coverage": "INDEXED",
@@ -809,6 +809,31 @@
       "status": "MISSING",
       "transform_rule": "",
       "value": null
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-71b43e92b392ef439fdd",
+      "field_name": "position_family",
+      "source": {
+        "observed_at": "",
+        "source_field": "岗位族代码",
+        "source_key": "服务寻源上架Agent",
+        "source_object": "候选Agent岗位族映射_HR对齐版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "candidate_agent": "服务寻源上架Agent",
+        "confidence": "业务方裁定",
+        "family_code": "JF-06",
+        "family_name": "权益服务族",
+        "headcount": 11,
+        "headcount_source": "2026-07-28_人员归属方案_v5.3_SUBMITTED.md 一节映射统计总表"
+      }
     },
     {
       "confidence": "HIGH",
@@ -1349,11 +1374,20 @@
         "l4_deliverable": "EVD-b89f2b3be38ace584230",
         "l4_deliverable_type": "EVD-c203a4639989f430efaa",
         "l4_name": "EVD-801e44a9e51e45871f9a",
+        "position_family": "EVD-71b43e92b392ef439fdd",
         "skill_feasibility": "EVD-8d15cef0d54d62539664"
       },
       "human_touchpoint": null,
       "l4_code": "L4-SOB-01",
       "l4_name": "服务寻源",
+      "position_family": {
+        "candidate_agent": "服务寻源上架Agent",
+        "confidence": "业务方裁定",
+        "family_code": "JF-06",
+        "family_name": "权益服务族",
+        "headcount": 11,
+        "headcount_source": "2026-07-28_人员归属方案_v5.3_SUBMITTED.md 一节映射统计总表"
+      },
       "skill_feasibility": {
         "action_nature": "语义复核判定",
         "action_singularity": "单一动作",
@@ -1389,11 +1423,20 @@
         "l4_deliverable": "EVD-407a48267df7ed2f6030",
         "l4_deliverable_type": "EVD-b90badc7442d00875e03",
         "l4_name": "EVD-c93223a191fedef2ae79",
+        "position_family": "EVD-71b43e92b392ef439fdd",
         "skill_feasibility": "EVD-adb5e140825584f2e96e"
       },
       "human_touchpoint": null,
       "l4_code": "L4-SOB-02",
       "l4_name": "服务设计",
+      "position_family": {
+        "candidate_agent": "服务寻源上架Agent",
+        "confidence": "业务方裁定",
+        "family_code": "JF-06",
+        "family_name": "权益服务族",
+        "headcount": 11,
+        "headcount_source": "2026-07-28_人员归属方案_v5.3_SUBMITTED.md 一节映射统计总表"
+      },
       "skill_feasibility": {
         "action_nature": "判断/策略/认知类",
         "action_singularity": "单一动作",
@@ -1429,11 +1472,20 @@
         "l4_deliverable": "EVD-e6f0e960c1215fb87f26",
         "l4_deliverable_type": "EVD-5bac5013db5214ba92c7",
         "l4_name": "EVD-7f5d417793cfe13213a7",
+        "position_family": "EVD-71b43e92b392ef439fdd",
         "skill_feasibility": "EVD-604b315600e10f443a19"
       },
       "human_touchpoint": "人工执行：服务上架",
       "l4_code": "L4-SOB-03",
       "l4_name": "服务上架",
+      "position_family": {
+        "candidate_agent": "服务寻源上架Agent",
+        "confidence": "业务方裁定",
+        "family_code": "JF-06",
+        "family_name": "权益服务族",
+        "headcount": 11,
+        "headcount_source": "2026-07-28_人员归属方案_v5.3_SUBMITTED.md 一节映射统计总表"
+      },
       "skill_feasibility": {
         "action_nature": "语义复核判定",
         "action_singularity": "单一动作",
@@ -1527,6 +1579,11 @@
     "process_analytics.dim_vn": {
       "record_keys": []
     },
+    "候选Agent岗位族映射_HR对齐版_v1.0.csv": {
+      "record_keys": [
+        "服务寻源上架Agent"
+      ]
+    },
     "流程蓝图_L3-SOB_服务项寻源与上架_V1.0.md": {
       "lines": [
         44,
@@ -1546,9 +1603,13 @@
   "value_stream_mappings": [
     {
       "l3_code": "L3-SOB",
+      "mapping_type": "primary",
       "stage_code": "S4",
+      "stage_name": "权益体系构建",
+      "stage_sequence": 4,
       "vs_code": "VS-2",
-      "vs_name": "机构合作伙伴旅程"
+      "vs_name": "机构合作伙伴旅程",
+      "vs_stakeholder": "TOB机构/经代/家办/同行经代"
     }
   ],
   "vn_l4_mappings": []

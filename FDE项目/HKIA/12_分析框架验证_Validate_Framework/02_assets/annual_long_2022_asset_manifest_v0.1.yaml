@@ -1,0 +1,60 @@
+asset_set_id: ASTSET-IA-LTA-2022-CANDIDATE-XLSX
+version: 0.1
+status: partial_pass_with_source_incident
+report_year: 2022
+publisher: Hong_Kong_Insurance_Authority
+source_parent_page: https://www.ia.org.hk/tc/infocenter/statistics/market_5_2022.html
+local_root: ../01_sources/raw/SRC-REG-IA-LTA/2022/full_annual_set
+
+validation_summary:
+  expected_files: 22
+  landed_files: 22
+  valid_xlsx_signatures: 22
+  content_passed: 21
+  content_rejected: 1
+  usable_for_table_controls: true
+  usable_as_complete_official_support_set: false
+  blocked_capability: official_insurer_list_dependent_identity_join
+  incident_ref: INC-PB-005
+
+validation_method:
+  - exact_filename_inventory
+  - xlsx_file_signature_check
+  - sha256_and_byte_size_registration
+  - every_workbook_sheet_title_and_year_inspection
+  - expected_business_scope_comparison
+
+assets:
+  - {file: Definition_2022.xlsx, bytes: 18231, sha256: c170f9227d4008a8801540926a0a8adaea167f338b797e403339185b72c21bc2, status: passed}
+  - {file: Insurerlist_2022.xlsx, bytes: 175312, sha256: 9e32b88a66a31236de6d230859a1c2a75a0cda0f8bf224b8047f59f7cd5f7ab5, status: rejected_wrong_content, quarantine: logical}
+  - {file: Notes_2022.xlsx, bytes: 15741, sha256: bcacbcd3dbe806741a694c76fd891a6922daef420c69f7523163830a26d6f3e3, status: passed}
+  - {file: Table-L1_2022.xlsx, bytes: 30291, sha256: e0abfe92474d03a0a0cac7cf076f930ed1b3d0e766f1b80da18927f472171b7a, status: passed}
+  - {file: Table-L2_2022.xlsx, bytes: 33560, sha256: 415d414f268ec3d8527685028fd9ea6d1d4955fbaa3049562e5c1ece5d2ffc9f, status: passed}
+  - {file: Table-L3_2022.xlsx, bytes: 31054, sha256: 9fb72a90b9850035fd6092c26791ba9b7d9439a0e56aaee4f21d9dfcf03be55d, status: passed}
+  - {file: Table-L4_2022.xlsx, bytes: 32668, sha256: 758770c6aa382135847e8078e7c6b996cfbc137c26a3bcbcfaf31b1fbab70d36, status: passed}
+  - {file: Table-L5_2022.xlsx, bytes: 31431, sha256: 9828af28a386a1a9f8166bc37ac0a9606e3cdca6a0e044a960f28a62424b3b80, status: passed}
+  - {file: Table-L6_2022.xlsx, bytes: 24158, sha256: d2137995ec8b54e87ab431b1f592874f2bfd5b9d70290582ca3449697529cb27, status: passed}
+  - {file: Table-L7_2022.xlsx, bytes: 31872, sha256: 76b91b9c0106fc602df7f47ee4b44dd7febe4b0aa6cf8293c693dd91df17992b, status: passed}
+  - {file: Table-L8_2022.xlsx, bytes: 24785, sha256: 766cf88ef4d527cf9a911ea6e10c1ad9a3243e415891b57c9cc1051fef1ed5f6, status: passed}
+  - {file: Table-L9_2022.xlsx, bytes: 20718, sha256: 81e8ba3afd055f41151eb262ef93d1313b2e22406197138276b8f5257abd6e85, status: passed}
+  - {file: Table-L10_2022.xlsx, bytes: 20572, sha256: 8ac81a6adf170e7836d5df743822dc7fba331dcca29cd4939861dd6f6f2e2c19, status: passed}
+  - {file: Table-L11_2022.xlsx, bytes: 20063, sha256: 107835f3a544fc21f2b56f63648ccbd10ab3452aaf5fe20807f34acba66ea01e, status: passed}
+  - {file: Table-L12_2022.xlsx, bytes: 19703, sha256: a6877a7514a295cf5f8bf9e3829b48974f82e275e0cf5d3a5572b5b7af93f198, status: passed}
+  - {file: Table-L13_2022.xlsx, bytes: 21516, sha256: 623fcb1ba2f3982c6ef03f99c8424c7ea9818f3940ca6c9a8ef7372ac7bf69cb, status: passed}
+  - {file: Table-L14_2022.xlsx, bytes: 20847, sha256: 0b0877aa26777e8851bc2cd4b4ab68ddd59f3334873e7ee1a876ffaf7e321875, status: passed}
+  - {file: Table-L15_2022.xlsx, bytes: 20542, sha256: 9a7f10c963c641b744dac9e847f4f5b589b6c9bbd0a0d3cfcd0307672f699c8a, status: passed}
+  - {file: Table-L16_2022.xlsx, bytes: 21467, sha256: 93ef33f9994d31fb74e9ecf3a19bf868ab1acc8b50c4015bfc8e45c7c7b4c630, status: passed}
+  - {file: Table-L17_2022.xlsx, bytes: 20407, sha256: 98ab53ddd572d4a84bf7f52b746bf71b7ab521c06dc5b8fe4beb4efc8eb4d6e9, status: passed}
+  - {file: Table-L18_2022.xlsx, bytes: 20107, sha256: e98fdd02dfc12eb291ddd9eaf981c8557c345c4fd3eab718aedf4c775921c653, status: passed}
+  - {file: Table-L19_2022.xlsx, bytes: 20426, sha256: 9f625606a581b610d8d5b9bc07dc0ba8b9c29870e3f401560e46c4b546de0ad2, status: passed}
+
+rejected_asset_detail:
+  file: Insurerlist_2022.xlsx
+  expected_content: list_of_insurers_for_2022_long_term_business_statistics
+  observed_content: 2020_provisional_statistics_for_general_insurance_business
+  observed_sheet_count: 18
+  disposition: preserve_original_bytes_but_exclude_from_all_fact_and_join_generation
+  recovery_route:
+    - seek_corrected_official_attachment_or_archived_copy
+    - until_recovered_use_company_rows_in_L8_to_L19_only_as_dynamic_control_population
+    - do_not_label_derived_population_as_official_insurer_list

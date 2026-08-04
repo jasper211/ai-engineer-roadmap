@@ -1,0 +1,90 @@
+test_id: TEST-HKIA-ANNUAL-LONG-2022-L7-COMPANY-001
+version: 0.1
+status: passed_with_year_specific_annuity_routing_and_precision_qualification
+test_type: pre_RBC_annuity_other_market_to_company_reconciliation
+report_year: 2022
+
+inputs:
+  market_table: L7_annuity_and_other
+  company_tables: [L12_annuity_and_other_inforce, L17_nonlinked_annuity_new, L18_linked_annuity_new, L19_total_annuity_new]
+  source_ranges:
+    L7a: "Table L7!D8:L22"
+    L7b: "Table L7!D26:I38"
+    L12: "Table L12!D10:G71"
+    L17: "Table L17!D10:H71"
+    L18: "Table L18!D10:H71"
+    L19: "Table L19!D10:H71"
+
+schema_signature:
+  family: pre_RBC
+  L12_scope: annuity_and_other_inforce
+  L17_scope: nonlinked_individual_annuity_new_business
+  L18_scope: linked_individual_annuity_new_business
+  L19_scope: total_individual_annuity_new_business
+  payment_axis: [annual, single]
+  linked_axis: [nonlinked, linked]
+
+entity_results:
+  detected_company_count: 60
+  company_formula: L17_plus_L18_equals_L19_by_company_and_metric
+  checked_cells: 240
+  discrepancy_count: 0
+
+detail_to_source_market_total_results:
+  tables_checked: [L12, L17, L18, L19]
+  checked_cells: 16
+  discrepancy_count: 0
+
+cross_grain_results:
+  L7a_total_to_L12:
+    policy_count_difference: 0
+    premium_difference_HKD_million: 0.010
+    net_liabilities_difference_HKD_million: 0.008
+  L7b_nonlinked_to_L17:
+    policy_annual_difference: 0
+    policy_single_difference: 0
+    premium_annual_difference_HKD_million: -0.050
+    premium_single_difference_HKD_million: 0.009
+  L7b_linked_to_L18:
+    policy_annual_difference: 0
+    policy_single_difference: 0
+    premium_annual_difference_HKD_million: 0.035
+    premium_single_difference_HKD_million: -0.027
+  L7b_total_to_L19:
+    policy_annual_difference: 0
+    policy_single_difference: 0
+    premium_annual_difference_HKD_million: -0.015
+    premium_single_difference_HKD_million: -0.018
+
+precision_decision:
+  maximum_absolute_amount_difference_HKD_million: 0.050
+  market_display_precision_HKD_million: 0.1
+  decision: pass_within_display_rounding_bound
+
+year_specific_routing:
+  pre_RBC_2022_2023:
+    inforce: L7a_total_to_L12_annuity_and_other
+    new_business: L17_nonlinked_plus_L18_linked_equals_L19_total_then_L7b
+  RBC_2024:
+    inforce: L7a_shared_annuity_grain_to_L12_annuity_only
+    new_business: L17_total_individual_annuity_to_L7b
+    L18_semantics: non_retirement_group_new_business
+
+state_semantics:
+  linked_inforce_2022: published_nonzero
+  linked_new_annuity_2022_policy_count: published_zero
+  linked_new_annuity_2022_premium: published_nonzero
+  group_annuity_2022: published_zero
+  other_business_2022: published_nonzero
+
+semantic_decisions:
+  - linked_status_and_payment_basis_are_separate_axes
+  - published_zero_nonzero_and_NA_are_distinct_states
+  - table_number_must_not_determine_business_meaning_across_years
+  - 2022_L18_is_linked_annuity_not_group_business
+
+promotion_decision:
+  rule_id: RULE-LT-004
+  prior_status: validated_2_of_3_with_schema_routing
+  new_status: stable_with_schema_routing
+  stable_scope: L7_reconciles_to_year_routed_company_annuity_scope_at_shared_grain

@@ -302,6 +302,7 @@ class L3ModelBuilder:
         sop_records: list[dict] | None = None,
         rule_records: list[dict] | None = None,
         prepared_analysis_codes: set[str] | None = None,
+        position_bridge: dict[str, dict] | None = None,
     ):
         self.reader = reader
         self.blueprint_index = blueprint_index
@@ -313,6 +314,7 @@ class L3ModelBuilder:
         self.sop_records = sop_records or []
         self.rule_records = rule_records or []
         self.prepared_analysis_codes = prepared_analysis_codes or set()
+        self.position_bridge = position_bridge or {}
 
     def build(self, l3_code: str, supplemental: list[EvidenceRecord] | None = None) -> dict:
         processes = self.reader.processes(l3_code)
@@ -463,6 +465,30 @@ class L3ModelBuilder:
                         source_version="v2",
                     ),
                 ))
+            bridge = self.position_bridge.get(code)
+            position_family = None
+            if bridge is not None:
+                position_family = {
+                    "candidate_agent": bridge["candidate_agent"],
+                    "family_code": bridge["family_code"],
+                    "family_name": bridge["family_name"],
+                    "headcount": bridge["headcount"],
+                    "headcount_source": bridge["headcount_source"],
+                    "confidence": bridge["confidence"],
+                }
+                refs["position_family"] = add(EvidenceRecord(
+                    field_name="position_family",
+                    value=position_family,
+                    evidence_class=EvidenceClass.SUPPLEMENTAL,
+                    status=EvidenceStatus.ACTIVE,
+                    source=SourceRef(
+                        source_system="EA项目_权威数据",
+                        source_object="候选Agent岗位族映射_HR对齐版_v1.0.csv",
+                        source_key=bridge["candidate_agent"],
+                        source_field="岗位族代码",
+                        source_version="v1.0",
+                    ),
+                ))
             l4s.append({
                 "l4_code": code,
                 "l4_name": row.get("l4_name", ""),
@@ -472,6 +498,7 @@ class L3ModelBuilder:
                 "human_touchpoint": row.get("agent_human_touchpoint", ""),
                 "d1_d6": d1_d6,
                 "skill_feasibility": skill_payload,
+                "position_family": position_family,
                 "evidence_refs": refs,
             })
 
@@ -688,6 +715,12 @@ class L3ModelBuilder:
                     if row.get("_source_row")
                 }),
             },
+            "候选Agent岗位族映射_HR对齐版_v1.0.csv": {
+                "record_keys": sorted({
+                    item["position_family"]["candidate_agent"]
+                    for item in l4s if item.get("position_family")
+                }),
+            },
         }
         if blueprint:
             source_locations[blueprint.filename] = {
@@ -847,6 +880,16 @@ class L3ModelBuilder:
                     "l3_code": model["l3_code"],
                     "l3_name": model["l3_name"],
                     "l2_capabilities": [row["l2_name"] for row in model["l2_capabilities"]],
+                    "value_streams": [
+                        {
+                            "vs_code": row.get("vs_code", ""),
+                            "vs_name": row.get("vs_name", ""),
+                            "stage_code": row.get("stage_code", ""),
+                            "stage_name": row.get("stage_name", ""),
+                            "stage_sequence": row.get("stage_sequence"),
+                        }
+                        for row in model["value_stream_mappings"]
+                    ],
                     "l4_count": len(model["l4s"]),
                     "value_node_count": len(model["value_nodes"]),
                     "blueprint_coverage": model["blueprint"]["coverage"],

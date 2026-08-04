@@ -82,7 +82,8 @@ class PostgresL3Reader:
 
     def value_stream_mappings(self, l3_code: str) -> list[dict]:
         return self._read(
-            """SELECT b.l3_code, b.vs_code, b.stage_code, v.vs_name
+            """SELECT b.l3_code, b.vs_code, b.stage_code, v.vs_name,
+                      v.stage_name, v.stage_sequence, v.vs_stakeholder, b.mapping_type
                  FROM process_analytics.bridge_l3_vs_stage b
                  LEFT JOIN process_analytics.dim_vs v
                    ON v.vs_code = b.vs_code AND v.stage_code = b.stage_code
@@ -132,7 +133,8 @@ class BulkPostgresL3Reader:
                       contribution_weight, weight_confirmed, row_status
                  FROM process_analytics.bridge_kpi_l3
                 ORDER BY l3_id, kpi_id""",
-            "value_streams": """SELECT b.l3_code, b.vs_code, b.stage_code, v.vs_name
+            "value_streams": """SELECT b.l3_code, b.vs_code, b.stage_code, v.vs_name,
+                      v.stage_name, v.stage_sequence, v.vs_stakeholder, b.mapping_type
                  FROM process_analytics.bridge_l3_vs_stage b
                  LEFT JOIN process_analytics.dim_vs v
                    ON v.vs_code = b.vs_code AND v.stage_code = b.stage_code

@@ -21,6 +21,7 @@
           "EVD-7bed03e1370dcadf26ab",
           "EVD-808048a63d2c14776138",
           "EVD-9eb6bc0f1491d6ef4f27",
+          "EVD-a7e48446ea02ab0826e6",
           "EVD-afd7e78c0837240013b2",
           "EVD-bf4c13348df566846167",
           "EVD-caf7e9baf66c730a864d",
@@ -54,6 +55,7 @@
           "EVD-8e924246fbfc8742fa9c",
           "EVD-9661bbb24a21c88fe6bc",
           "EVD-9e6d2fff2a226588f83b",
+          "EVD-a7e48446ea02ab0826e6",
           "EVD-ac469af0b9a5d8faf536",
           "EVD-e254be16e94b0154f6f6",
           "EVD-e4acb43d5778e872dd21",
@@ -81,13 +83,13 @@
     "schema_version": "vnw.l3-analysis.v1",
     "source_scope": {
       "database": "process_analytics",
-      "evidence_count": 32,
+      "evidence_count": 33,
       "knowledge": "ACTIVE supplemental evidence only"
     },
     "tasks": []
   },
   "analysis_freshness": "PENDING_MODEL",
-  "analysis_input_hash": "b7523227c6da5fc82e66eb69a5ef11fb207eab09ca14649bfd7ee7561a41aed9",
+  "analysis_input_hash": "a25dcf43f2303b00ce2abb4ff91ed2e566394fef67a48793a3aaae82a4d7854a",
   "blueprint": {
     "blueprint_value_nodes": [],
     "coverage": "INDEXED",
@@ -476,6 +478,31 @@
       "value": {
         "file": "SOP_VN-EQ-11_经确认的客户权益需求清单_v0.1.md",
         "title": "· VN-EQ-11 · 经确认的客户权益需求清单"
+      }
+    },
+    {
+      "confidence": "HIGH",
+      "conflict_note": "",
+      "evidence_class": "SUPPLEMENTAL",
+      "evidence_id": "EVD-a7e48446ea02ab0826e6",
+      "field_name": "position_family",
+      "source": {
+        "observed_at": "",
+        "source_field": "岗位族代码",
+        "source_key": "权益客户交付Agent",
+        "source_object": "候选Agent岗位族映射_HR对齐版_v1.0.csv",
+        "source_system": "EA项目_权威数据",
+        "source_version": "v1.0"
+      },
+      "status": "ACTIVE",
+      "transform_rule": "",
+      "value": {
+        "candidate_agent": "权益客户交付Agent",
+        "confidence": "HR权威数据核实",
+        "family_code": "JF-06",
+        "family_name": "权益服务族",
+        "headcount": 11,
+        "headcount_source": "2026-07-28_人员归属方案_v5.3_SUBMITTED.md 一节映射统计总表"
       }
     },
     {
@@ -873,11 +900,20 @@
         "l4_deliverable": "EVD-f005738ac2af29f5f78d",
         "l4_deliverable_type": "EVD-5076a3f7421c5eda77f4",
         "l4_name": "EVD-7bed03e1370dcadf26ab",
+        "position_family": "EVD-a7e48446ea02ab0826e6",
         "skill_feasibility": "EVD-507425ae6807a4b283b1"
       },
       "human_touchpoint": null,
       "l4_code": "L4-CDA-SRA-01",
       "l4_name": "需求收集与初步确认",
+      "position_family": {
+        "candidate_agent": "权益客户交付Agent",
+        "confidence": "HR权威数据核实",
+        "family_code": "JF-06",
+        "family_name": "权益服务族",
+        "headcount": 11,
+        "headcount_source": "2026-07-28_人员归属方案_v5.3_SUBMITTED.md 一节映射统计总表"
+      },
       "skill_feasibility": {
         "action_nature": "信息处理/事务类",
         "action_singularity": "复合动作(建议先拆分)",
@@ -913,11 +949,20 @@
         "l4_deliverable": "EVD-6ae0a5de9281eda107a0",
         "l4_deliverable_type": "EVD-e4acb43d5778e872dd21",
         "l4_name": "EVD-e254be16e94b0154f6f6",
+        "position_family": "EVD-a7e48446ea02ab0826e6",
         "skill_feasibility": "EVD-e69c1eeaa7cb56df9e6e"
       },
       "human_touchpoint": null,
       "l4_code": "L4-CDA-SRA-02",
       "l4_name": "内部需求分析",
+      "position_family": {
+        "candidate_agent": "权益客户交付Agent",
+        "confidence": "HR权威数据核实",
+        "family_code": "JF-06",
+        "family_name": "权益服务族",
+        "headcount": 11,
+        "headcount_source": "2026-07-28_人员归属方案_v5.3_SUBMITTED.md 一节映射统计总表"
+      },
       "skill_feasibility": {
         "action_nature": "判断/策略/认知类",
         "action_singularity": "单一动作",
@@ -1010,6 +1055,11 @@
         "VN-EQ-11"
       ]
     },
+    "候选Agent岗位族映射_HR对齐版_v1.0.csv": {
+      "record_keys": [
+        "权益客户交付Agent"
+      ]
+    },
     "流程蓝图_L3-CDA-SRA_权益客户需求诊断与服务需求分析_V1.2.md": {
       "lines": []
     }
@@ -1042,9 +1092,13 @@
   "value_stream_mappings": [
     {
       "l3_code": "L3-CDA-SRA",
+      "mapping_type": "primary",
       "stage_code": "S1",
+      "stage_name": "需求洞察与痛点诊断",
+      "stage_sequence": 1,
       "vs_code": "VS-5",
-      "vs_name": "权益服务企业客户旅程"
+      "vs_name": "权益服务企业客户旅程",
+      "vs_stakeholder": "企业级客户/家办/保司大客户部"
     }
   ],
   "vn_l4_mappings": [

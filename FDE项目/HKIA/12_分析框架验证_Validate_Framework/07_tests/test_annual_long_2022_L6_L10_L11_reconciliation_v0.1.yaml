@@ -1,0 +1,79 @@
+test_id: TEST-HKIA-ANNUAL-LONG-2022-L6-COMPANY-001
+version: 0.1
+status: passed_with_schema_branch_and_mixed_precision_qualification
+test_type: pre_RBC_group_retirement_market_to_company_reconciliation
+report_year: 2022
+
+inputs:
+  market_table: L6_group_life_and_retirement_inforce
+  company_tables: [L10_group_life_inforce, L11_retirement_scheme_inforce]
+  source_ranges:
+    L6: ["Table L6!D6:O14", "Table L6!D17:M26"]
+    L10: "Table L10!D10:H71"
+    L11: "Table L11!D10:G71"
+
+schema_signature:
+  family: pre_RBC
+  L6_sections: [group_life_inforce, retirement_scheme_inforce]
+  L6c_group_new_business_present: false
+  retirement_quantity_metrics: [policy_count, lives]
+
+entity_results:
+  detected_company_count: 60
+  L10_company_count: 60
+  L11_company_count: 60
+  official_insurer_list_required_for_this_test: false
+
+detail_to_source_market_total_results:
+  L10:
+    checked_metrics: 5
+    discrepancy_count: 0
+  L11:
+    checked_metrics: 4
+    discrepancy_count: 0
+
+cross_grain_results:
+  L6a_to_L10:
+    policy_count_difference: 0
+    lives_difference: 0
+    sums_assured_difference_HKD_million: -0.006
+    annual_premium_difference_HKD_million: 0.016
+    net_liabilities_difference_HKD_million: -0.025
+  L6b_to_L11:
+    policy_count_difference: 0
+    lives_difference: 0
+    annual_contributions_difference_HKD_million: -0.026
+    net_liabilities_difference_HKD_million: -0.058
+
+precision_decision:
+  maximum_absolute_amount_difference_HKD_million: 0.058
+  market_display_precision_HKD_million: 0.1
+  company_source_precision_HKD_million_after_conversion: 0.001
+  decision: pass_within_mixed_precision_bound
+
+parser_event:
+  incident_ref: INC-PB-008
+  initial_failure: retirement_2022_total_was_read_from_blank_column_to_the_right
+  correction: locate_value_column_by_nested_year_then_total_headers
+
+schema_branch:
+  pre_RBC_2022_2023:
+    company_controls: [L10, L11]
+    retirement_quantity_metrics: [policy_count, lives]
+  RBC_2024:
+    company_controls: [L10, L11, L18]
+    retirement_quantity_metrics: [scheme_count]
+    optional_branch: L6c_to_L18
+
+semantic_decisions:
+  - policy_count_lives_and_scheme_count_are_distinct_metric_ids
+  - L6c_absence_in_2022_is_schema_absence_not_zero_business
+  - year_and_total_must_both_be_parsed_from_nested_headers
+  - L18_must_be_joined_only_after_year_specific_title_routing
+
+promotion_decision:
+  rule_id: RULE-LT-003
+  prior_status: validated_2_of_3_with_schema_routing
+  new_status: stable_with_schema_routing
+  stable_scope: L6_group_and_retirement_inforce_reconcile_to_L10_L11_by_versioned_metric_type
+  RBC_only_branch: L6c_to_L18_remains_2024_only
