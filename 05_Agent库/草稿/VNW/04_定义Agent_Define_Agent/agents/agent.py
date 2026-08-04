@@ -40,6 +40,7 @@ def parse_args():
     parser.add_argument("--status", action="store_true", help="仅显示配置和最近状态")
     parser.add_argument("--build-model-snapshots", action="store_true", help="只读构建L3流程模型基础快照")
     parser.add_argument("--build-all-model-snapshots", action="store_true", help="批量只读构建数据库中的全部L3模型")
+    parser.add_argument("--build-db-catalog", action="store_true", help="只读构建数据库现状目录(process_analytics+业务数据仓库表结构+行数)")
     parser.add_argument("--check-source-updates", action="store_true", help="候选重建并输出L3/面板影响清单，不更新前端")
     parser.add_argument("--apply-source-updates", action="store_true", help="安全发布源头变化后的事实快照与影响报告")
     parser.add_argument("--l3-code", action="append", help="要构建的L3编码；可重复传入")
@@ -210,6 +211,15 @@ def main() -> int:
             output = runner.validate_and_publish(args.run_analysis_dir, response)
             print(json.dumps({"status": "published", "analysis_package": str(output)}, ensure_ascii=False, indent=2))
             return 0
+    if args.build_db_catalog:
+        from skills.db_catalog import build_catalog
+        from skills.sync_data_foundation import db_query
+
+        catalog = build_catalog(db_query)
+        catalog_path = AGENT_ROOT / "10_部署与运行_Deploy_and_Run/frontend/public/data/db_catalog.json"
+        catalog_path.write_text(json.dumps(catalog, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+        print(json.dumps({"status": "built", "table_count": len(catalog["tables"]), "output": str(catalog_path)}, ensure_ascii=False, indent=2))
+        return 0
     if args.build_model_snapshots or args.build_all_model_snapshots or args.check_source_updates or args.apply_source_updates:
         from skills.l3_model_builder import (
             L3ModelBuilder,

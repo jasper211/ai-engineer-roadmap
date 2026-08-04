@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { NavLink, Link } from 'react-router'
 import {
-  Activity, AlertTriangle, ChevronRight, ExternalLink, GitBranch,
+  Activity, AlertTriangle, ChevronRight, Database, ExternalLink, GitBranch,
   Menu, Network, Table2, Users, X,
 } from 'lucide-react'
 
@@ -24,6 +24,7 @@ const groups = [
     label: '数据治理',
     items: [
       { path: '/tables', label: '数据表中心', icon: Table2 },
+      { path: '/database', label: '数据库现状', icon: Database },
     ],
   },
 ]
