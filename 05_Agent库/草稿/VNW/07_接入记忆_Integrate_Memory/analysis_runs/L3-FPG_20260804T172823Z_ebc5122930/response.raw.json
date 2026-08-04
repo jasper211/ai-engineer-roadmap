@@ -1,0 +1,411 @@
+{
+  "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
+  "schema_version": "vnw.l3-analysis.v1",
+  "generation_mode": "UNIFIED_MODEL",
+  "analysis_status": "MODEL_DRAFT",
+  "model_run": null,
+  "source_scope": {
+    "database": "process_analytics",
+    "knowledge": "ACTIVE supplemental evidence only",
+    "evidence_count": 70
+  },
+  "l4_analysis": [
+    {
+      "l4_code": "L4-FPG-01",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-8c2146e4e77d6152b80e",
+        "EVD-e6736cb014af82df5da0",
+        "EVD-894f8191320ad51ae565",
+        "EVD-5d2512a5063ae8c2cf5d",
+        "EVD-b5ee72e36a65108dd592",
+        "EVD-f89875efd8039667ec3f",
+        "EVD-127ef4cdcf499dd20886",
+        "EVD-49627cca315bd63c852c",
+        "EVD-eb0fdbd5036c785ea251",
+        "EVD-51eab1bd31962f0ff255",
+        "EVD-757f69c6756befb38fd2",
+        "EVD-8cf89ac62ee9c50c9d1b",
+        "EVD-ff3474eee2ce91a6c7cf"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "用于月度/季度考核的指标设定，是绩效评估的基础。当前为Excel，正在制定中。",
+      "specific_capabilities": [
+        "解读业务目标并量化考核指标",
+        "设定合理的权重和评分标准",
+        "结合历史数据和公司策略调整指标"
+      ],
+      "ai_reshape": "通过Agent辅助生成指标初稿，基于历史数据和业务规则，但需人工确认语义和战略对齐。",
+      "quality_anchor": "指标的科学性和业务对齐度，由事业部运营管理岗最终审批。",
+      "ai_responsibility": "提供数据驱动的指标建议和趋势分析。",
+      "human_responsibility": "审核并最终确定考核指标，下发正式文档。",
+      "handoff_triggers": [
+        "AI模型置信度低于阈值",
+        "指标与业务目标出现矛盾",
+        "出现未预期的新业务线或产品"
+      ],
+      "control_gates": [
+        "考核指标下发前需岗位负责人审批（无资金关卡）"
+      ],
+      "data_basis": [
+        "历史绩效数据",
+        "公司战略目标",
+        "KPI定义（如新人留存率）"
+      ],
+      "process_context": "作为月度绩效周期的起点，指标设定直接影响后续跟踪与评估。",
+      "risks_limits": [
+        "业务环境快速变化可能导致指标过时",
+        "人为设定偏差",
+        "无法自动获取定性的战略目标"
+      ],
+      "current_recommendation": "保持人机协作模式，利用AI生成初稿，加速决策，但必须保留人工审批控制点。",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-FPG-02",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-99a8de3de57128a186a7",
+        "EVD-53fd1ce6b92091d659a6",
+        "EVD-790a5f6cbff2c7c0b258",
+        "EVD-d319cd2ff5f1ee8952a3",
+        "EVD-844890990788d921db86",
+        "EVD-dbe973792c0bb629f3eb",
+        "EVD-76022e58d0317c93166a",
+        "EVD-499ebf1e7112adf01bbb",
+        "EVD-059d223ac68a58837820",
+        "EVD-623ed5c18fdec7f6eaae",
+        "EVD-724c980f59cb7fc8de98",
+        "EVD-8cf89ac62ee9c50c9d1b",
+        "EVD-807f220e4798b67aac54"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "汇总月度绩效数据并形成评估报告，用于识别表现及预警。",
+      "specific_capabilities": [
+        "从多个系统采集绩效数据（难度高）",
+        "将实际数据与考核指标对比计算达成率",
+        "标注未达标项并生成预警",
+        "提供深入评估和建议（需人工）"
+      ],
+      "ai_reshape": "数据采集和初步计算可自动化，但受限于数据源分散和规则不清晰；评估部分需Agent辅助生成分析文本，人工确认。",
+      "quality_anchor": "数据准确性和评估的客观性，绩效评估表需经岗位族确认。",
+      "ai_responsibility": "自动采集和计算，生成初步评估和预警。",
+      "human_responsibility": "确认数据完整性，对未达标情况进行深入调查和定性评估。",
+      "handoff_triggers": [
+        "数据源缺失或异常",
+        "绩效大幅波动",
+        "需要定性判断的场景"
+      ],
+      "control_gates": [],
+      "data_basis": [
+        "考核指标表（L4-FPG-01输出）",
+        "理财师业绩数据",
+        "CRM等系统数据"
+      ],
+      "process_context": "月度跟踪为季度核算提供输入，同时用于运营干预。",
+      "risks_limits": [
+        "数据源接口不统一，自动化采集基础薄弱",
+        "评估标准中主观部分难以自动化",
+        "完全自动可能漏掉关键上下文"
+      ],
+      "current_recommendation": "建议拆分任务，优先提升数据采集的自动化程度，评估保留人工主导；长期构建统一数据管道。",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Human",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-FPG-03",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-d4e3f9a866cc381f5548",
+        "EVD-a3f336c3b75322f9ea5f",
+        "EVD-0c58bba4fb23741d30ab",
+        "EVD-f2056c829562c2a72459",
+        "EVD-bb1f9bb36dd371e00d23",
+        "EVD-64225df3c4aecfd155c5",
+        "EVD-abad8e37784ca0e8bca6",
+        "EVD-3272ec0a4249c478a25e",
+        "EVD-b42d723b0520b3ab10c2",
+        "EVD-87438c9a888d31ee1977",
+        "EVD-f4e0e16ea6df2e599b94",
+        "EVD-8cf89ac62ee9c50c9d1b",
+        "EVD-9d4e3db15b19efcc41f4"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "核算季度激励金额，为发放提供依据。",
+      "specific_capabilities": [
+        "按预设规则计算激励金额",
+        "处理不同激励方案的计算逻辑",
+        "关联考核数据和激励系数"
+      ],
+      "ai_reshape": "确定性计算可封装为Skill，但需人工复核涉及资金的环节，并设置审批流。",
+      "quality_anchor": "计算准确率100%，与财务数据核对一致。",
+      "ai_responsibility": "自动执行激励核算，生成核算表和异常提醒。",
+      "human_responsibility": "审核核算结果，处理例外情况，确认资金安全。",
+      "handoff_triggers": [
+        "计算金额超出预设阈值",
+        "考核数据异常",
+        "激励规则更改"
+      ],
+      "control_gates": [
+        "资金发放需经过多重审批（财务、合规）"
+      ],
+      "data_basis": [
+        "季度绩效评估结果",
+        "激励政策文件",
+        "理财师基础薪资数据"
+      ],
+      "process_context": "季度核算结果直接影响理财师收入和留存，是敏感环节。",
+      "risks_limits": [
+        "资金计算错误风险",
+        "激励政策理解偏差",
+        "系统集成可能缺失部分数据"
+      ],
+      "current_recommendation": "优先进入Skill原型，但必须嵌入人工资金审批关卡；制定清晰的例外处理SOP。",
+      "database_tier": "Auto",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-FPG-04",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-477a381a621efea1fa3b",
+        "EVD-4d08c3488f1851657c71",
+        "EVD-dfd790577394dc15dd8d",
+        "EVD-9fd540883b4d85005b97",
+        "EVD-0756d6fd44fc2b440afb",
+        "EVD-27f3a452403486704076",
+        "EVD-2cd3ef7fa562e239d935",
+        "EVD-d72cfc3885b66b77da4c",
+        "EVD-4da8e815b134c88c66c4",
+        "EVD-b45691a05812d5623cab",
+        "EVD-d5669cee01cc76919b0e",
+        "EVD-8cf89ac62ee9c50c9d1b",
+        "EVD-80f8da545f0b55a0983b"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "制定详细的季度激励方案，明确进人、产能等支持政策，非强制协议。",
+      "specific_capabilities": [
+        "综合历史数据和业务目标设计方案",
+        "与理财师沟通和谈判",
+        "方案审批和发布"
+      ],
+      "ai_reshape": "方案编制可用Agent生成草案，但决策需人工；审批发放需人工确认。",
+      "quality_anchor": "方案公平性、激励效果、合规性。",
+      "ai_responsibility": "提供数据洞察，辅助生成方案选项。",
+      "human_responsibility": "最终确定方案，与理财师沟通，审批发放。",
+      "handoff_triggers": [
+        "方案争议",
+        "预算超出预期",
+        "合规风险"
+      ],
+      "control_gates": [
+        "方案发布前需管理层审批",
+        "涉及资金承诺需财务合规"
+      ],
+      "data_basis": [
+        "季度核算结果",
+        "理财师历史激励数据",
+        "业务发展规划"
+      ],
+      "process_context": "权益兑现是理财师旅程的关键环节，影响留存和积极性。",
+      "risks_limits": [
+        "过度自动化可能忽视个性化因素",
+        "方案沟通需人际信任",
+        "政策变化快"
+      ],
+      "current_recommendation": "拆分方案编制和审批，编制阶段可用AI辅助，但最终由人决策；审批和发放保留人工流程。",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Human",
+      "quadrant": "unclassified"
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "T-001",
+      "l4_code": "L4-FPG-01",
+      "task_name": "考核指标设定与下发",
+      "source_type": "blueprint",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-01",
+      "source_line": 60,
+      "previous_task_ids": [],
+      "next_task_ids": ["T-002", "T-003"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-494be49e2a0fb21aa54f",
+        "EVD-757f69c6756befb38fd2",
+        "EVD-127ef4cdcf499dd20886"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "指标设定需要解读战略目标和业务数据，但数据基础较好（D1=3，D2=3），可由AI辅助生成草稿，最终仍须人工审核下发。"
+    },
+    {
+      "task_id": "T-002",
+      "l4_code": "L4-FPG-02",
+      "task_name": "月度绩效数据收集",
+      "source_type": "blueprint_derived",
+      "sequence_no": 2,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-02",
+      "source_line": 66,
+      "previous_task_ids": ["T-001"],
+      "next_task_ids": ["T-004"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-d8d04c8dd8eb4f3b07fd",
+        "EVD-724c980f59cb7fc8de98",
+        "EVD-99a8de3de57128a186a7"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "当前数据采集自动化基础极差（D1=0，D4=0），多源数据整合困难，短期必须依赖人工完成。"
+    },
+    {
+      "task_id": "T-003",
+      "l4_code": "L4-FPG-02",
+      "task_name": "月度绩效评估与预警",
+      "source_type": "blueprint_derived",
+      "sequence_no": 3,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-02",
+      "source_line": 66,
+      "previous_task_ids": ["T-001"],
+      "next_task_ids": ["T-004"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-d8d04c8dd8eb4f3b07fd",
+        "EVD-790a5f6cbff2c7c0b258",
+        "EVD-807f220e4798b67aac54"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "评估依赖主观判断和业务洞察，技能为C级封装，且规则清晰度不足（D2=0），无法有效自动化，必须人工主导。"
+    },
+    {
+      "task_id": "T-004",
+      "l4_code": "L4-FPG-03",
+      "task_name": "季度激励核算",
+      "source_type": "blueprint",
+      "sequence_no": 4,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-03",
+      "source_line": 74,
+      "previous_task_ids": ["T-002", "T-003"],
+      "next_task_ids": ["T-005", "T-006"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-5f56236aca63c015f235",
+        "EVD-f4e0e16ea6df2e599b94",
+        "EVD-9d4e3db15b19efcc41f4"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "计算规则清晰（D2=3），输入输出结构化高（D1=3, D3=3），可封装为Skill，但因涉及资金安全（hard gate），必须嵌入人工审核环节。"
+    },
+    {
+      "task_id": "T-005",
+      "l4_code": "L4-FPG-04",
+      "task_name": "季度激励方案编制",
+      "source_type": "blueprint_derived",
+      "sequence_no": 5,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-04",
+      "source_line": 80,
+      "previous_task_ids": ["T-004"],
+      "next_task_ids": [],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-213a1fc4c4a13ca671c2",
+        "EVD-d5669cee01cc76919b0e",
+        "EVD-80f8da545f0b55a0983b"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "方案编制涉及战略决策、人工谈判和政策权衡，技能为C级封装，自动化基础薄弱（D2=1），必须由人主导。"
+    },
+    {
+      "task_id": "T-006",
+      "l4_code": "L4-FPG-04",
+      "task_name": "季度激励方案审批与发放",
+      "source_type": "blueprint_derived",
+      "sequence_no": 6,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-04",
+      "source_line": 80,
+      "previous_task_ids": ["T-004"],
+      "next_task_ids": [],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-213a1fc4c4a13ca671c2",
+        "EVD-2cd3ef7fa562e239d935",
+        "EVD-d72cfc3885b66b77da4c"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "审批和发放是高合规、高人际敏感度的决策环节，需管理岗最终拍板，无法自动化。"
+    }
+  ],
+  "priority_drafts": [
+    {
+      "priority": "P1",
+      "task_ids": ["T-001", "T-004"],
+      "title": "理财师绩效与激励 - 关键重塑优先级",
+      "pilot_scope": "建议从季度激励核算（T-004）和考核指标下发辅助（T-001）开始试点，选择1-2个事业部作为范围，搭建数据管道和Skill原型。",
+      "human_boundary": "确保考核指标设定、激励金额审核和方案审批等决策点保留人工控制；试点阶段不做实际发放。",
+      "evidence_refs": [
+        "EVD-c3cff0b311dbf8ea8913",
+        "EVD-0c6b2f1c87d1f5880bdc",
+        "EVD-03ac3e6a8b7cdf033842",
+        "EVD-ef13e7e37ef2550fa728"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "decision_drafts": [
+    {
+      "priority": "P1",
+      "task_ids": ["T-004"],
+      "title": "启动季度激励核算Skill原型",
+      "pilot_scope": "选定一个事业部，使用近一年历史数据验证核算逻辑，设定资金复核阈值；原型阶段结果仅用于验证，不实际发放。",
+      "human_boundary": "核算结果需由事业部运营管理岗和财务双重审核；任何超出阈值的计算必须人工确认；最终发放审批维持现有流程。",
+      "evidence_refs": [
+        "EVD-9d4e3db15b19efcc41f4",
+        "EVD-3272ec0a4249c478a25e",
+        "EVD-f2056c829562c2a72459",
+        "EVD-abad8e37784ca0e8bca6"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "control_chain": [
+    {
+      "control_id": "CTL-Q1",
+      "type": "decision",
+      "description": "月度绩效跟踪后判断是否达标，决定后续行动（达标继续追踪，未达标预警并调整激励）",
+      "task_ids": ["T-003"],
+      "source_evidence": "EVD-48bee98310a2b890d583"
+    },
+    {
+      "control_id": "CTL-APPR-01",
+      "type": "approval",
+      "description": "季度激励核算结果须经人工审核批准后方可进入发放流程",
+      "task_ids": ["T-004"],
+      "source_evidence": "EVD-abad8e37784ca0e8bca6"
+    }
+  ],
+  "rejected_task_sources": [],
+  "missing_analysis": [
+    {
+      "l4_code": "L4-FPG-02",
+      "field": "human_touchpoint",
+      "issue": "证据状态为MISSING，无法确定原设计的人工介入点。",
+      "impact": "影响对该L4任务拆分和Tier建议的准确性，需补充确认人工执行环节。"
+    }
+  ]
+}

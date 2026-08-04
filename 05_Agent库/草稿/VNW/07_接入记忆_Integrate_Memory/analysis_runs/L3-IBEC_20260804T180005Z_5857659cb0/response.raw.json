@@ -1,0 +1,249 @@
+{
+  "schema_version": "vnw.l3-analysis.v1",
+  "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
+  "generation_mode": "UNIFIED_MODEL",
+  "analysis_status": "MODEL_DRAFT",
+  "model_run": null,
+  "source_scope": {
+    "database": "process_analytics",
+    "knowledge": "ACTIVE supplemental evidence only",
+    "evidence_count": 42
+  },
+  "l4_analysis": [
+    {
+      "l4_code": "L4-IBEC-01",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-22f5d3a12adb29faf3e7",
+        "EVD-cb5bee760578dff07fc8",
+        "EVD-e0bce1f16ee1d7a9e2f7",
+        "EVD-b45c736acc15862f69ea",
+        "EVD-e145826f57c4f5f9b2b8",
+        "EVD-040f683018ca4920fe0c"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "方案《合作意向初步接触》",
+      "specific_capabilities": [],
+      "ai_reshape": "Agent辅助记录沟通要点并提供意向线索提示",
+      "quality_anchor": "接触记录完整，意向判断明确",
+      "ai_responsibility": "记录对话要点，提示潜在合作意向",
+      "human_responsibility": "建立信任关系，判断合作意向并确认接触结论",
+      "handoff_triggers": ["对方明确表达合作意向或拒绝"],
+      "control_gates": [],
+      "data_basis": [
+        "EVD-22f5d3a12adb29faf3e7",
+        "EVD-b45c736acc15862f69ea"
+      ],
+      "process_context": "合作伙伴旅程接触与需求诊断阶段第一步",
+      "risks_limits": [
+        "关系建立高度依赖人工判断，AI仅能辅助记录；意向误判可能导致客户流失"
+      ],
+      "current_recommendation": "保持人工主导接触，使用AI辅助工具记录沟通并提示意向，维持当前Hybrid模式",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-IBEC-02",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-f1750ceb023cf8797820",
+        "EVD-ecc0214018314f2a2d07",
+        "EVD-1b895278df7723ee5235",
+        "EVD-2bbfb49d0f0c0dc1c798",
+        "EVD-e145826f57c4f5f9b2b8",
+        "EVD-e9bc868985d07e897518"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "报告《深度需求诊断报告》",
+      "specific_capabilities": [],
+      "ai_reshape": "AI辅助信息梳理、需求清单生成与报告草稿撰写，人工主导诊断对话",
+      "quality_anchor": "需求诊断全面准确，报告结论有据可依",
+      "ai_responsibility": "整理客户信息，生成结构化诊断框架与报告初稿",
+      "human_responsibility": "开展深度沟通，进行专业需求判断并最终审定报告",
+      "handoff_triggers": ["需求诊断完成且符合最低准入标准"],
+      "control_gates": [],
+      "data_basis": [
+        "EVD-f1750ceb023cf8797820",
+        "EVD-2bbfb49d0f0c0dc1c798"
+      ],
+      "process_context": "合作伙伴旅程接触与需求诊断阶段核心步骤，承接初步意向",
+      "risks_limits": [
+        "需求理解偏差将直接影响后续方案匹配，AI生成内容须经专业复核"
+      ],
+      "current_recommendation": "采用Agent辅助诊断流程，以提升报告效率与一致性，保持人工最终决策权",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-IBEC-03",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-f0049220eb4ee657baaf",
+        "EVD-fdb7f196c8549e36502a",
+        "EVD-d9c838bf2e7c46d7204d",
+        "EVD-def5e998d57a3441a9c8",
+        "EVD-e145826f57c4f5f9b2b8",
+        "EVD-17be85127563603135cd"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "方案《转介信息包》",
+      "specific_capabilities": [
+        "信息收集与整合",
+        "转介路径判定"
+      ],
+      "ai_reshape": "拆分动作：信息收集部分由Skill自动完成，转介路径判定由Agent辅助人工决策",
+      "quality_anchor": "信息完整准确，转介路径合理高效",
+      "ai_responsibility": "自动采集并组装转介所需数据，生成标准化信息包",
+      "human_responsibility": "审核信息包完整性，确定最终转介目标并确认交接",
+      "handoff_triggers": ["信息包审核通过并确定转介路径"],
+      "control_gates": [],
+      "data_basis": [
+        "EVD-f0049220eb4ee657baaf",
+        "EVD-def5e998d57a3441a9c8"
+      ],
+      "process_context": "合作伙伴旅程接触与需求诊断阶段最后一步，触发下游流程",
+      "risks_limits": [
+        "自动编译可能存在数据遗漏或格式偏差，转介路径错误将浪费资源"
+      ],
+      "current_recommendation": "立即拆分为信息自动编译与人工审核转介两个子任务，优先试点Skill原型并设置人工控制门",
+      "database_tier": "Auto",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "TASK-1",
+      "l4_code": "L4-IBEC-01",
+      "task_name": "执行合作意向初步接触并形成接触记录",
+      "source_type": "blueprint_step",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-01",
+      "source_line": 56,
+      "previous_task_ids": [],
+      "next_task_ids": ["TASK-2"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-a8e4d43960f21e46b4a1",
+        "EVD-b45c736acc15862f69ea"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "Skill可行性为C-低封装，需人工主导关系建立与意向判断，但可引入AI辅助记录与提示，故推荐混合模式"
+    },
+    {
+      "task_id": "TASK-2",
+      "l4_code": "L4-IBEC-02",
+      "task_name": "执行深度需求诊断并生成诊断报告",
+      "source_type": "blueprint_step",
+      "sequence_no": 2,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-02",
+      "source_line": 62,
+      "previous_task_ids": ["TASK-1"],
+      "next_task_ids": ["TASK-3", "TASK-4"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-9136e3d2139b50080c9d",
+        "EVD-2bbfb49d0f0c0dc1c798"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "Skill可行性为C-低封装，需求诊断需专业判断与深度沟通，AI可辅助信息梳理与报告草稿，但人工决策不可替代，推荐混合模式"
+    },
+    {
+      "task_id": "TASK-3",
+      "l4_code": "L4-IBEC-03",
+      "task_name": "自动编译转介信息包所需资料",
+      "source_type": "blueprint_step",
+      "sequence_no": 3,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-03",
+      "source_line": 68,
+      "previous_task_ids": ["TASK-2"],
+      "next_task_ids": [],
+      "relation_type": "PARALLEL",
+      "evidence_refs": [
+        "EVD-d618b0a242134a907a90",
+        "EVD-5726484ec237818c5909",
+        "EVD-17be85127563603135cd"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "基于Skill可行性A-高封装，该子任务为标准信息处理，结构化程度高，可优先试点Skill自动执行，但仍需人工复核输出"
+    },
+    {
+      "task_id": "TASK-4",
+      "l4_code": "L4-IBEC-03",
+      "task_name": "审核信息完整性并确定转介路径",
+      "source_type": "blueprint_step",
+      "sequence_no": 3,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-03",
+      "source_line": 68,
+      "previous_task_ids": ["TASK-2"],
+      "next_task_ids": [],
+      "relation_type": "PARALLEL",
+      "evidence_refs": [
+        "EVD-d618b0a242134a907a90",
+        "EVD-def5e998d57a3441a9c8",
+        "EVD-17be85127563603135cd"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "信息审核与转介路径判定需语义理解与业务语境判断，AI可提供建议，但最终确认必须由BD岗执行，推荐混合模式"
+    }
+  ],
+  "priority_drafts": [
+    {
+      "priority": "高",
+      "title": "优先自动化信息转介环节以提升响应速度",
+      "data_basis": "KPI T02（机构周新接洽/激活数）权重0.6，且该流程直接贡献合作伙伴旅程第一阶段效率",
+      "process_context": "L3-IBEC是机构业务入口，信息转介环节目前为人工执行，存在标准化机会",
+      "risks_limits": "自动编译信息可能存在遗漏，需设置人工复核控制门",
+      "current_recommendation": "优先启动L4-IBEC-03信息自动编译任务试点，同步设计人工审核与异常处理流程",
+      "evidence_refs": [
+        "EVD-17be85127563603135cd",
+        "EVD-5726484ec237818c5909"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "decision_drafts": [
+    {
+      "priority": "highest",
+      "task_ids": ["TASK-3"],
+      "title": "启动转介信息自动编译Skill试点",
+      "pilot_scope": "在业务发展BD团队小范围试点，由Skill自动收集并整合转介所需信息，生成转介信息包草稿",
+      "human_boundary": "所有信息包在转出前必须经BD岗人工审核完整性与路径合理性；客户敏感信息处理需遵循数据合规要求，设置人工确认控制门",
+      "evidence_refs": [
+        "EVD-17be85127563603135cd",
+        "EVD-5726484ec237818c5909"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "control_chain": [],
+  "rejected_task_sources": [],
+  "missing_analysis": [
+    {
+      "item": "specific_capabilities for L4-IBEC-01 and L4-IBEC-02",
+      "missing_reason": "没有直接描述具体能力的证据，仅能从skill_feasibility推导动作性质"
+    },
+    {
+      "item": "quadrant for all L4",
+      "missing_reason": "缺乏价值节点-L4映射，无法进行优先级象限分类"
+    },
+    {
+      "item": "data_basis details for L4-IBEC-01/02/03",
+      "missing_reason": "仅有L4名称与交付物，缺少具体数据源或系统依赖的正式证据"
+    },
+    {
+      "item": "control_gates for all L4",
+      "missing_reason": "无明显资金、合规或不可逆操作，但蓝图未定义人为控制门细节"
+    }
+  ]
+}

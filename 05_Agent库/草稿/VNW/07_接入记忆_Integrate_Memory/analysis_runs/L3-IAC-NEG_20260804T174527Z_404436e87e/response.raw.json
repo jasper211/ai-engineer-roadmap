@@ -1,0 +1,600 @@
+{
+  "schema_version": "vnw.l3-analysis.v1",
+  "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
+  "generation_mode": "UNIFIED_MODEL",
+  "analysis_status": "MODEL_DRAFT",
+  "model_run": null,
+  "source_scope": {
+    "database": "process_analytics",
+    "knowledge": "ACTIVE supplemental evidence only",
+    "evidence_count": 92
+  },
+  "l4_analysis": [
+    {
+      "l4_code": "L4-IAC-01",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-974a0dc1c7c5148007a2",
+        "EVD-91b618b19c2af2e980d7",
+        "EVD-dc28620d442b210b769d",
+        "EVD-94cb8ed9170d0500b929",
+        "EVD-1e4067c447721c7ef0b9",
+        "EVD-fb935648e534ccd50694",
+        "EVD-a8e8b9122da21b68319d",
+        "EVD-106829c0167ffe9ad486",
+        "EVD-164859469dac85f93854",
+        "EVD-7f8066e3ca44d55245b0",
+        "EVD-d9c4e11944d5213aa1f6",
+        "EVD-de5342eb3b8c4e578f91",
+        "EVD-133330beacc624a32dd3",
+        "EVD-b1e6330a3e5c2651a971"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "产出《商务条款备忘录》，作为初步谈判结果记录，支撑后续合同草拟。",
+      "specific_capabilities": [
+        "商务条款谈判能力（判断/策略/认知类，单一动作，C-低封装）",
+        "根据让步边界清单进行条款协商",
+        "撰写谈判备忘录"
+      ],
+      "ai_reshape": "AI可作为谈判辅助工具，提供数据对比、条款建议、合规检查，但不直接参与谈判；保持Agent辅助模式。",
+      "quality_anchor": "备忘录内容是否准确、完整反映谈判要点，且与让步边界一致。",
+      "ai_responsibility": "提供谈判前数据准备（如标准条款库、保司画像）、实时条款对比提醒、生成谈判纪要草稿。",
+      "human_responsibility": "主导谈判过程、做出让步决策、确认备忘录最终内容。",
+      "handoff_triggers": [
+        "当无法在让步边界内达成一致时，上报Mark裁定或重新谈判"
+      ],
+      "control_gates": [
+        "让步边界必须由Mark提前确定（L4-IAC-07），不可在谈判中突破"
+      ],
+      "data_basis": [
+        "L4-IAC-07输出的《让步边界清单》",
+        "保司需求与标准条款库"
+      ],
+      "process_context": "位于STEP-02商务条款初步谈判，紧接STEP-01让步边界确定之后。",
+      "risks_limits": [
+        "谈判结果主观性强，可能偏离整体战略",
+        "单一动作但低封装，自动化风险高"
+      ],
+      "current_recommendation": "保持Hybrid模式，AI侧重信息支持，人负责核心判断；不推荐提升自动化层级。",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-IAC-02",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-c0a36e03db12c68b4a9b",
+        "EVD-3a59bb0b0c633371d130",
+        "EVD-76d0e646adb483f038e6",
+        "EVD-746a4da634b74a3c58d0",
+        "EVD-a5146c22e2de26c2cca6",
+        "EVD-1124fd134c965f573046",
+        "EVD-5ee05ce89092406ab0f2",
+        "EVD-73fe5724287b59b9184a",
+        "EVD-ee173d12970b9ed33c86",
+        "EVD-50848ea870a4077d9058",
+        "EVD-f4b89ea12888a8fccf4f",
+        "EVD-de5342eb3b8c4e578f91",
+        "EVD-31e21aaa8d77148706a7",
+        "EVD-2d1d550e134e4506c52c"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "产出《合同草案V1》，作为正式合同初稿，需经内部审查。",
+      "specific_capabilities": [
+        "合同草拟能力（信息处理/事务类，可规则化）",
+        "内部合规审查能力（语义复核判定，需判断）",
+        "复合动作，建议先拆分为草拟与审查两步"
+      ],
+      "ai_reshape": "草拟部分可由AI根据模板与条款库自动生成合同初稿；审查部分需AI辅助条款合规检查、风险标注，人做最终确认。",
+      "quality_anchor": "合同草案是否完整、准确，符合商务条款备忘录及内部合规要求。",
+      "ai_responsibility": "自动生成合同草案v1，执行条款合规预审，输出差异报告。",
+      "human_responsibility": "负责最终合同审查、批准草案、处理复杂条款或冲突。",
+      "handoff_triggers": [
+        "内部审查发现重大分歧或风险时，上升至Mark决策"
+      ],
+      "control_gates": [
+        "多部门会签（L4-IAC-08）是合同定稿前的必要合规控制"
+      ],
+      "data_basis": [
+        "商务条款备忘录",
+        "标准合同模板库",
+        "合规规则库"
+      ],
+      "process_context": "属于STEP-03合同草拟与内部审查，在商务条款初步达成一致后进入。",
+      "risks_limits": [
+        "复合动作若未拆分，AI自动化易导致审查遗漏",
+        "草拟自动化可能生成不符合特定商业意图的条款"
+      ],
+      "current_recommendation": "建议拆分为“草拟合同初稿”（可探索Auto）与“内部审查”（保持Hybrid）两个独立任务，当前整体暂维持Hybrid。",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-IAC-03",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-be8e11d550a26c46c47f",
+        "EVD-32f1954a223a6d2377f2",
+        "EVD-79d78cc47d8c97207890",
+        "EVD-54d4f10b08e7b0eb329d",
+        "EVD-536e1014cbc07195530e",
+        "EVD-02963d7bc5085ecc2f85",
+        "EVD-36486fc1fe12107b716d",
+        "EVD-1e8569710e072c0cb22a",
+        "EVD-45decab28f9153cb3e67",
+        "EVD-98db9a7da83cbbeb0f71",
+        "EVD-f9e045c314cfdf36b06a",
+        "EVD-de5342eb3b8c4e578f91",
+        "EVD-75e58f553c040aca9f7c",
+        "EVD-c67ebf2a606b759fb611"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "产出《合同终稿》，经过多轮反馈与谈判最终确认。",
+      "specific_capabilities": [
+        "反馈分析与处理能力（判断/策略/认知类）",
+        "谈判迭代与决策能力",
+        "复合动作，建议拆分为‘反馈分析’与‘谈判决策’"
+      ],
+      "ai_reshape": "AI辅助版本对比、修改点标注、让步边界校验，并提供决策建议；最终谈判决策由人完成。",
+      "quality_anchor": "合同终稿是否双方认可，所有修改点均在让步边界内。",
+      "ai_responsibility": "自动进行版本对比、差异标记、合规复查，生成分析报告。",
+      "human_responsibility": "与保司沟通、判断修改合理性、做出最终决策。",
+      "handoff_triggers": [
+        "出现重大分歧时，返回步骤2或升级Mark介入"
+      ],
+      "control_gates": [
+        "让步边界清单（L4-IAC-07）是硬约束，终稿不得逾越"
+      ],
+      "data_basis": [
+        "合同草案V1",
+        "保司反馈件",
+        "让步边界清单"
+      ],
+      "process_context": "位于STEP-04保司反馈与谈判迭代，是合同定稿前的最后阶段。",
+      "risks_limits": [
+        "高度依赖人为判断，自动化风险高",
+        "多轮迭代可能导致版本混乱，需强管控"
+      ],
+      "current_recommendation": "人主导，AI辅助，维持Hybrid；拆分任务以细化人机分工。",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-IAC-06",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-093d307b03c1901e9078",
+        "EVD-e27da075314f4ebf6ccc",
+        "EVD-3c304322e0d6c7408216",
+        "EVD-dadf26e8383b672f1739",
+        "EVD-eacf5c79e75d765bcd8c",
+        "EVD-0cb2d4428df73b69ced3",
+        "EVD-aeebe2f220daf071d3a4",
+        "EVD-61d17de8628573658473",
+        "EVD-da88a8af6052178b8c6f",
+        "EVD-68a143c2d2bf50d52483",
+        "EVD-49cd2abd6fa1c49cab50",
+        "EVD-de5342eb3b8c4e578f91",
+        "EVD-7acdf91661f36fb1309c",
+        "EVD-a325c4c0f7aac35b336b"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "产出《授权获取路线图》，为后续授权流程提供分级策略。",
+      "specific_capabilities": [
+        "策略规划能力（C-低封装，判断/策略/认知类）",
+        "需结合业务目标与风险分析"
+      ],
+      "ai_reshape": "AI可汇总历史数据、模拟场景，生成分级建议，辅助策略制定；最终决策由人拍板。",
+      "quality_anchor": "路线图是否明确、可行，且与让步边界及业务目标一致。",
+      "ai_responsibility": "收集并分析数据，生成初步分级方案。",
+      "human_responsibility": "审定最终分级策略，确保符合整体战略。",
+      "handoff_triggers": [],
+      "control_gates": [
+        "让步边界清单是分级策略的前提，必须对齐"
+      ],
+      "data_basis": [
+        "业务需求清单",
+        "风险评估报告"
+      ],
+      "process_context": "位于STEP-01让步边界确定中，与让步边界清单共同构成谈判准备。",
+      "risks_limits": [
+        "AI建议可能忽略组织政治或隐蔽风险",
+        "低封装，自动化产出不宜直接采用"
+      ],
+      "current_recommendation": "建议AI辅助与人决策结合，维持Hybrid。",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-IAC-07",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-75ab00504eb359992f2a",
+        "EVD-90025243d5174ca2dcd1",
+        "EVD-8571328b68fb92653fb7",
+        "EVD-180b292751b859993005",
+        "EVD-4e2c01e75aed5465105d",
+        "EVD-8cd99c2d4d5e05b4114f",
+        "EVD-ec143e955a5ae2683df6",
+        "EVD-b7e75c70059fc5f145b1",
+        "EVD-caf31ebe2186b699250b",
+        "EVD-962e2032b1cffc044cc9",
+        "EVD-85840370efb1ced59eb7",
+        "EVD-de5342eb3b8c4e578f91",
+        "EVD-837e905349af92fa5895",
+        "EVD-a325c4c0f7aac35b336b"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "产出《让步边界清单》（待建设），作为谈判的不可逾越红线。",
+      "specific_capabilities": [
+        "权威决策能力（C-低封装，纯判断/策略）",
+        "需Mark级判断"
+      ],
+      "ai_reshape": "AI无法替代决策，仅能提供历史合同幅度、市场数据作为参考。",
+      "quality_anchor": "清单必须明确、可量化，由Mark签署确认。",
+      "ai_responsibility": "整理历史让步数据、提供分析摘要。",
+      "human_responsibility": "Mark亲自确定边界清单，无替补。",
+      "handoff_triggers": [],
+      "control_gates": [
+        "Mark必须介入，此边界是整个谈判的控制门"
+      ],
+      "data_basis": [
+        "历史合同数据",
+        "业务目标与风险承受"
+      ],
+      "process_context": "STEP-01让步边界确定的第一步，奠定后续谈判基调。",
+      "risks_limits": [
+        "清单若模糊或过时，将导致后续所有环节失控",
+        "绝对人工控制，不可自动化"
+      ],
+      "current_recommendation": "保持Hybrid（因AI可辅助数据），但核心决策纯人工。",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-IAC-08",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-488fa016de98176ff589",
+        "EVD-8713b0e3e7f213664cb8",
+        "EVD-f0cbe1ab417672f5877a",
+        "EVD-3f3c01527d4f5f741cdb",
+        "EVD-dc6f28c992c5f948c951",
+        "EVD-58db851b474e01cabd31",
+        "EVD-5bd7a59b401e6d2af086",
+        "EVD-51c4449da97fdc33a56f",
+        "EVD-d13f3a8ad3db900dd461",
+        "EVD-3396c37c7fbee1861ca9",
+        "EVD-69eae2958f9e5fbce4ed",
+        "EVD-de5342eb3b8c4e578f91",
+        "EVD-a5e70dd5fea91bd717c3",
+        "EVD-2d1d550e134e4506c52c"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "产出《会签记录》，作为多部门协同的合规凭证。",
+      "specific_capabilities": [
+        "流程协调与意见收集能力（语义复核判定，单一动作，低封装）",
+        "需法定务/合规/财务参与"
+      ],
+      "ai_reshape": "AI可自动发起会签流程、追踪进度、汇总意见，并标识不一致项；但最终批准需人工语义复核。",
+      "quality_anchor": "会签是否完整覆盖所需部门，重大意见是否被记录并处理。",
+      "ai_responsibility": "流程自动化执行、进度监控、意见分类。",
+      "human_responsibility": "审核会签结果，处理异议，批准会签完成。",
+      "handoff_triggers": [
+        "部门间存在重大分歧时升级"
+      ],
+      "control_gates": [
+        "签约前必须获得法务与财务会签通过"
+      ],
+      "data_basis": [
+        "合同草案",
+        "部门会签清单"
+      ],
+      "process_context": "位于STEP-03内，与合同草拟并行，条件触发于Q1分支。",
+      "risks_limits": [
+        "自动化流程可能掩盖部门隐性反对",
+        "需防止AI误读无回复为同意"
+      ],
+      "current_recommendation": "建议提升为Aug，AI自动协调会签流程，人做最终确认；当前暂维持Hybrid。",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-IAC-12",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-17d43fa822fe43322603",
+        "EVD-c92003b0988c7e68ffd3",
+        "EVD-c585354decfc29a1de2b",
+        "EVD-38674b4a78e777f8e6eb",
+        "EVD-09e1561c2f98276bcbac",
+        "EVD-a7144f6b12d4e4a44578",
+        "EVD-6e2abc41a5062e58df09",
+        "EVD-569b3df0ab1221e73c21",
+        "EVD-c0e7c4797e964aaca493",
+        "EVD-1ba2205a379b38755d21",
+        "EVD-700174406745dcc9e988",
+        "EVD-de5342eb3b8c4e578f91",
+        "EVD-6ead59fa22a31cbe56e6",
+        "EVD-b1e6330a3e5c2651a971"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "产出《跨境合规附加条款》，针对跨境业务附加合规要求。",
+      "specific_capabilities": [
+        "信息处理/事务类，单一动作，A-高封装",
+        "可根据合同类型自动生成跨境合规条款"
+      ],
+      "ai_reshape": "可作为确定性Skill直接执行：输入合同信息，输出合规附加条款草案；但仍需人工复核以保证法律严谨。",
+      "quality_anchor": "附加条款是否完整覆盖相关法域要求，且可执行。",
+      "ai_responsibility": "自动生成合规条款初稿，保证覆盖已知法规。",
+      "human_responsibility": "法务人员审核条款，在特殊情况下调整。",
+      "handoff_triggers": [
+        "涉及新型交易或无明确规则的跨境场景时转人工处理"
+      ],
+      "control_gates": [
+        "所有跨境条款必须经由法务最终审批"
+      ],
+      "data_basis": [
+        "跨境法规知识库",
+        "合同基本信息"
+      ],
+      "process_context": "位于STEP-02，作为条件触发活动，仅当涉及跨境业务时执行。",
+      "risks_limits": [
+        "自动化输出可能未能覆盖特定司法管辖区的最新变化",
+        "需确保知识库持续更新"
+      ],
+      "current_recommendation": "优先进入Skill原型候选池，建议Auto tier，但保留人审批环节作为控制门。",
+      "database_tier": "Auto",
+      "recommended_tier": "Auto",
+      "quadrant": "unclassified"
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "TSK-001",
+      "l4_code": "L4-IAC-07",
+      "task_name": "确定合同谈判让步边界清单",
+      "source_type": "BLUEPRINT",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-01",
+      "source_line": 40,
+      "previous_task_ids": [],
+      "next_task_ids": ["TSK-003", "TSK-004"],
+      "relation_type": "PARALLEL",
+      "evidence_refs": [
+        "EVD-a325c4c0f7aac35b336b",
+        "EVD-837e905349af92fa5895",
+        "EVD-ec143e955a5ae2683df6"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "让步边界是Mark级决策，纯人工判断，不可替代；AI仅提供数据辅助，整体L4为Hybrid，但该任务应标记为Human。"
+    },
+    {
+      "task_id": "TSK-002",
+      "l4_code": "L4-IAC-06",
+      "task_name": "制定授权分级获取路线图",
+      "source_type": "BLUEPRINT",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-01",
+      "source_line": 40,
+      "previous_task_ids": [],
+      "next_task_ids": ["TSK-003", "TSK-004"],
+      "relation_type": "PARALLEL",
+      "evidence_refs": [
+        "EVD-a325c4c0f7aac35b336b",
+        "EVD-7acdf91661f36fb1309c",
+        "EVD-aeebe2f220daf071d3a4"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "策略类任务，需AI辅助数据分析与场景模拟，但最终决策需人，因此Hybrid。"
+    },
+    {
+      "task_id": "TSK-003",
+      "l4_code": "L4-IAC-01",
+      "task_name": "进行商务条款初步谈判并撰写备忘录",
+      "source_type": "BLUEPRINT",
+      "sequence_no": 2,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-02",
+      "source_line": 45,
+      "previous_task_ids": ["TSK-001", "TSK-002"],
+      "next_task_ids": ["TSK-005", "TSK-006", "TSK-007"],
+      "relation_type": "PARALLEL",
+      "evidence_refs": [
+        "EVD-b1e6330a3e5c2651a971",
+        "EVD-133330beacc624a32dd3",
+        "EVD-a8e8b9122da21b68319d"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "谈判过程高度依赖人际判断，AI仅可辅助信息准备与纪要整理，人主导，推荐Hybrid。"
+    },
+    {
+      "task_id": "TSK-004",
+      "l4_code": "L4-IAC-12",
+      "task_name": "生成跨境合规附加条款草案并提交法务复核",
+      "source_type": "BLUEPRINT",
+      "sequence_no": 2,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-02",
+      "source_line": 45,
+      "previous_task_ids": ["TSK-001", "TSK-002"],
+      "next_task_ids": ["TSK-005", "TSK-006", "TSK-007"],
+      "relation_type": "PARALLEL",
+      "evidence_refs": [
+        "EVD-b1e6330a3e5c2651a971",
+        "EVD-6ead59fa22a31cbe56e6",
+        "EVD-6e2abc41a5062e58df09"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "单一信息处理动作，A级高封装，可封装为Skill自动生成条款；但需人复核法律风险，整体L4已为Auto，推荐Auto并保留人工控制门。"
+    },
+    {
+      "task_id": "TSK-005",
+      "l4_code": "L4-IAC-02",
+      "task_name": "草拟合同初稿（基于模板与条款）",
+      "source_type": "BLUEPRINT",
+      "sequence_no": 3,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-03",
+      "source_line": 53,
+      "previous_task_ids": ["TSK-003", "TSK-004"],
+      "next_task_ids": ["TSK-008", "TSK-009"],
+      "relation_type": "PARALLEL",
+      "evidence_refs": [
+        "EVD-2d1d550e134e4506c52c",
+        "EVD-31e21aaa8d77148706a7"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "草拟动作可规则化，高封装潜力，建议自动化生成初稿，但作为复合动作的一部分，当前整体Hybrid；拆分后此任务可尝试Auto。"
+    },
+    {
+      "task_id": "TSK-006",
+      "l4_code": "L4-IAC-02",
+      "task_name": "进行内部合规审查并批准合同草案",
+      "source_type": "BLUEPRINT",
+      "sequence_no": 3,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-03",
+      "source_line": 53,
+      "previous_task_ids": ["TSK-003", "TSK-004"],
+      "next_task_ids": ["TSK-008", "TSK-009"],
+      "relation_type": "PARALLEL",
+      "evidence_refs": [
+        "EVD-2d1d550e134e4506c52c",
+        "EVD-31e21aaa8d77148706a7"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "语义复核判定，需人判断，AI可辅助检查；保持Hybrid。"
+    },
+    {
+      "task_id": "TSK-007",
+      "l4_code": "L4-IAC-08",
+      "task_name": "发起多部门会签流程并汇总意见",
+      "source_type": "BLUEPRINT",
+      "sequence_no": 3,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-03",
+      "source_line": 53,
+      "previous_task_ids": ["TSK-003", "TSK-004"],
+      "next_task_ids": ["TSK-008", "TSK-009"],
+      "relation_type": "PARALLEL",
+      "evidence_refs": [
+        "EVD-2d1d550e134e4506c52c",
+        "EVD-a5e70dd5fea91bd717c3"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "流程性强，AI可自动触发、追踪，但最终审批需人；建议Aug，后续可衡量自动化效果。"
+    },
+    {
+      "task_id": "TSK-008",
+      "l4_code": "L4-IAC-03",
+      "task_name": "分析保司反馈并标记让步冲突点",
+      "source_type": "BLUEPRINT",
+      "sequence_no": 4,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-04",
+      "source_line": 57,
+      "previous_task_ids": ["TSK-005", "TSK-006", "TSK-007"],
+      "next_task_ids": [],
+      "relation_type": "PARALLEL",
+      "evidence_refs": [
+        "EVD-c67ebf2a606b759fb611",
+        "EVD-75e58f553c040aca9f7c"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "反馈分析可AI辅助对比，但最终判断需要人，建议Hybrid。"
+    },
+    {
+      "task_id": "TSK-009",
+      "l4_code": "L4-IAC-03",
+      "task_name": "进行谈判迭代并确定合同终稿",
+      "source_type": "BLUEPRINT",
+      "sequence_no": 4,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-04",
+      "source_line": 57,
+      "previous_task_ids": ["TSK-005", "TSK-006", "TSK-007"],
+      "next_task_ids": [],
+      "relation_type": "PARALLEL",
+      "evidence_refs": [
+        "EVD-c67ebf2a606b759fb611",
+        "EVD-75e58f553c040aca9f7c"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "谈判决策高人工依赖，AI辅助信息，人主导，Hybrid。"
+    }
+  ],
+  "priority_drafts": [
+    {
+      "priority": "P1",
+      "task_ids": ["TSK-004", "TSK-007"],
+      "title": "优先启动高封装与流程性任务试点",
+      "pilot_scope": "跨境合同业务线（TSK-004）与标准合同会签流程（TSK-007）",
+      "human_boundary": "TSK-004: 法务最终审批；TSK-007: 部门负责人确认会签结果",
+      "evidence_refs": [
+        "EVD-6ead59fa22a31cbe56e6",
+        "EVD-a5e70dd5fea91bd717c3",
+        "EVD-569b3df0ab1221e73c21",
+        "EVD-51c4449da97fdc33a56f"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "priority": "P2",
+      "task_ids": ["TSK-005", "TSK-006"],
+      "title": "拆分复合动作，探索合同草拟自动化",
+      "pilot_scope": "非复杂标准合同类型",
+      "human_boundary": "草拟结果须经内部审查（TSK-006）批准",
+      "evidence_refs": [
+        "EVD-31e21aaa8d77148706a7"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "decision_drafts": [
+    {
+      "priority": "P1",
+      "task_ids": ["TSK-004"],
+      "title": "决策：启动跨境合规附加条款Skill原型",
+      "pilot_scope": "跨境业务线，覆盖常用法域",
+      "human_boundary": "生成条款必须经法务部门审核签批，不可跳过",
+      "evidence_refs": [
+        "EVD-6ead59fa22a31cbe56e6",
+        "EVD-569b3df0ab1221e73c21",
+        "EVD-6e2abc41a5062e58df09"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "control_chain": [],
+  "rejected_task_sources": [
+    {
+      "source": "蓝图额外L4 L4-IAC-04",
+      "reason": "已从数据库退役，不在当前建模范围，不生成任务。",
+      "evidence_refs": [],
+      "note": "蓝图诊断显示extra_in_blueprint，忽略。"
+    }
+  ],
+  "missing_analysis": [
+    "L4-IAC-07 《让步边界清单》状态为待建设，证据不足，无法分析其交付物质量。",
+    "价值节点-L4映射缺失，无法关联价值流，影响优先级量化。",
+    "部分决策分支缺少明确的L4目标步骤，需工作坊补充。"
+  ]
+}

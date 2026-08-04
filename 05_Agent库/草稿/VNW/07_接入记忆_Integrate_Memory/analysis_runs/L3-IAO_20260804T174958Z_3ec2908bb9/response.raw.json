@@ -1,0 +1,813 @@
+{
+  "schema_version": "vnw.l3-analysis.v1",
+  "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
+  "generation_mode": "UNIFIED_MODEL",
+  "analysis_status": "MODEL_DRAFT",
+  "model_run": null,
+  "source_scope": {
+    "database": "process_analytics",
+    "knowledge": "ACTIVE supplemental evidence only",
+    "evidence_count": 161
+  },
+  "l4_analysis": [
+    {
+      "l4_code": "L4-IAO-01",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-bc559be65edbfa2eebc9",
+        "EVD-70d8fd6ea8d0a8fb5944",
+        "EVD-5640cd8be0a33dc91c67",
+        "EVD-973c378f78039ee5dbe8",
+        "EVD-36b8f24976ab2ab7744a",
+        "EVD-ae75302d27ba7d9c10f2",
+        "EVD-28a4a549ff72d8375380",
+        "EVD-8f6a612b7a2cff63f1d4",
+        "EVD-6e410c61f0962eb88ed3",
+        "EVD-4b2b17e5d0764c97773a"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "输出《目标保司清单》数据表，作为保司合作接洽的起始输入与优先级依据。",
+      "specific_capabilities": [
+        "多维度评分与保司优先级排序能力（语义复核判定）",
+        "数据整合与结构化输入处理（d1=2）"
+      ],
+      "ai_reshape": "Agent可辅助自动生成评分清单并建议优先级，人工复核确认。",
+      "quality_anchor": "多维度评分的规则清晰度（d2=2）和输出可验证性（d3=2）构成质量锚点。",
+      "ai_responsibility": "自动生成目标保司评分和初步清单。",
+      "human_responsibility": "复核评分合理性，最终确认优先级并批准清单（人工执行：目标保司识别优先级）。",
+      "handoff_triggers": [
+        "评分模型输出置信度低或涉及战略级保司时，转人工决策。"
+      ],
+      "control_gates": [
+        "无资金或合规关卡，但需人工确认优先级，可能触发后续决策分支Q1。"
+      ],
+      "data_basis": [
+        "输入结构化（d1=2，EVD-36b8f24976ab2ab7744a）",
+        "合规性（d6=2，EVD-4b2b17e5d0764c97773a）"
+      ],
+      "process_context": "蓝图STEP-01：目标保司识别与优先级排序。",
+      "risks_limits": [
+        "评分模型偏差可能导致遗漏高价值保司；规则固化度不足（d2=2）限制全自动可靠性。"
+      ],
+      "current_recommendation": "鉴于单一动作语义复核判定（C-低封装），优先Agent辅助，保留人工最终确认。",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-IAO-02",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-041cff26cc034143cf31",
+        "EVD-ed682d8b6acaaa4477ec",
+        "EVD-1b9d82adc6cd2d8d3636",
+        "EVD-4523cf0e3e2f7054dfe9",
+        "EVD-b72fa9250c5c9fdab261",
+        "EVD-6197c4d24edf1a9f586b",
+        "EVD-b42a1dbd20737ba288f4",
+        "EVD-d47eef4ac81a4a51bdc6",
+        "EVD-e7a521e30ba95c051c96",
+        "EVD-4bcacdb51b77273a7e40"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "输出接触反馈方案，明确保司合作意向，为后续决策提供依据。",
+      "specific_capabilities": [
+        "沟通与价值主张传递（复合动作，建议先拆分）",
+        "接触执行与反馈记录（规则清晰度d2=0，低）"
+      ],
+      "ai_reshape": "Agent可辅助准备接触资料、记录反馈，但核心的人际沟通需人工主导。",
+      "quality_anchor": "反馈的完整性高度依赖人工经验（d2=0, d3=0），暂无可自动化验证机制。",
+      "ai_responsibility": "生成接触脚本、整理资料、自动记录结构化反馈。",
+      "human_responsibility": "执行首次接触，传递价值主张，判断保司意向（人工执行：首次接触与价值主张）。",
+      "handoff_triggers": [
+        "涉及复杂沟通或保司高层接触时，必须人工介入。"
+      ],
+      "control_gates": [
+        "无直接关卡，但Q1决策依赖接触反馈的意向，结果影响流程分支。"
+      ],
+      "data_basis": [
+        "输入结构化（d1=2，EVD-b72fa9250c5c9fdab261）",
+        "API可达性较高（d4=2，EVD-d47eef4ac81a4a51bdc6）但规则不清晰"
+      ],
+      "process_context": "蓝图STEP-03：首次接触与价值主张传递。",
+      "risks_limits": [
+        "沟通失败或价值主张不匹配导致保司无意向；规则固化缺失使自动化受限。"
+      ],
+      "current_recommendation": "拆分动作为『接触执行』（人工）和『反馈记录』（Agent辅助），逐步提升记录标准化。",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-IAO-03",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-3f782a25074ccbe8e5cb",
+        "EVD-ee75f942d8438f5a48b3",
+        "EVD-64c6cf917da3ba9218f0",
+        "EVD-cffd7d6d491278bae83b",
+        "EVD-792ced5375faf0e064c2",
+        "EVD-155c39fc6560096f09da",
+        "EVD-5e1484f4fa1e4e938615",
+        "EVD-03dd887e3bc1e84b3585",
+        "EVD-cbfb1c4ff276eb2c4d1d",
+        "EVD-a4c4522755ed2105a551"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "输出《能力展示材料》方案，向保司直观展示平台价值与适配度。",
+      "specific_capabilities": [
+        "内容定制与材料生成（单一动作，语义复核判定）",
+        "现场展示与答疑（依赖人际沟通）"
+      ],
+      "ai_reshape": "Agent可自动生成能力展示材料草稿与数据可视化，人工负责定制化调整并现场展示。",
+      "quality_anchor": "材料质量依赖输入结构（d1=2）和规则（d2=1），输出验证度较低（d3=1）。",
+      "ai_responsibility": "基于模板和保司画像生成材料初稿。",
+      "human_responsibility": "定制化内容、现场展示、沟通答疑（人工执行：定制化能力展示）。",
+      "handoff_triggers": [
+        "展示内容涉及非标服务或需要高层技术支持时，转人工主导。"
+      ],
+      "control_gates": [
+        "无，但展示效果影响后续尽调与意向。"
+      ],
+      "data_basis": [
+        "输入结构化（d1=2，EVD-792ced5375faf0e064c2）",
+        "规则不清晰（d2=1），合规一般（d6=1）"
+      ],
+      "process_context": "蓝图STEP-04：定制化能力展示与尽调配合。",
+      "risks_limits": [
+        "展示内容不匹配保司需求可能导致失效；自动化程度受限因规则缺失。"
+      ],
+      "current_recommendation": "Agent辅助材料生成，人工主导展示；优先建设材料模板库。",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-IAO-04",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-6abf3226d7f50f6670bc",
+        "EVD-f45a31b17830c1977db8",
+        "EVD-2c11589241560b101900",
+        "EVD-55efbe7e73cc32133c54",
+        "EVD-15c4082164d3778c0553",
+        "EVD-1d9830d8b9748ac12eab",
+        "EVD-a4b7e4fd86b3a6385f00",
+        "EVD-9b8dde387938d2eb0a92",
+        "EVD-c4503240d7db75419b54",
+        "EVD-4406c820cb2ad2bb7bc6"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "输出《尽调回复材料》方案，配合保司尽调流程，满足合作准入要求。",
+      "specific_capabilities": [
+        "信息收集与资料整理（复合动作，建议先拆分）",
+        "现场协调与应答（依赖人工判断）"
+      ],
+      "ai_reshape": "Agent可辅助汇总尽调清单、自动填入已知数据生成回复模板，现场考察部分无法自动化。",
+      "quality_anchor": "输入结构较好（d1=2），但API可达性为零（d4=0），严重依赖人工输送。",
+      "ai_responsibility": "资料整理、标准信息自动填充、回复文档生成。",
+      "human_responsibility": "现场协调、非标问题应答、质量控制（人工执行：保司尽调与现场考察）。",
+      "handoff_triggers": [
+        "现场考察与关键信息确认必须人工；尽调要求超出标准模板时转人工。"
+      ],
+      "control_gates": [
+        "Q2尽调结果是否通过决定后续路径，需人工把关最终回复。"
+      ],
+      "data_basis": [
+        "输入结构化（d1=2），但规则（d2=1）和API（d4=0）不足"
+      ],
+      "process_context": "蓝图STEP-04：定制化能力展示与尽调配合。",
+      "risks_limits": [
+        "信息不完整或协调失误导致尽调失败；完全自动化不可行（d4=0）。"
+      ],
+      "current_recommendation": "拆分现场协调（人工）与资料处理（Agent辅助），逐步建设尽调模板库提升半自动化。",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-IAO-05",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-7cde67688944957d4f2e",
+        "EVD-86e15c84bcea076d7654",
+        "EVD-4b8d981ddf7c844432bd",
+        "EVD-763268e6167f111e04fa",
+        "EVD-cbcc2a7e5c6a39674bb4",
+        "EVD-b7ea9ff7cda84a446008",
+        "EVD-d44b9977dbd01c9d6f9f",
+        "EVD-d0d2008886a132fae689",
+        "EVD-358823e658a876bcb636",
+        "EVD-8dbab6c5ca2e9e062279"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "输出《可行性报告》，作为是否推进合作的决策锚点（价值节点VN-INS-01，优先级P1）。",
+      "specific_capabilities": [
+        "信息整合与综合分析（复合动作，A-高封装候选但需先拆分）",
+        "商业判断与决策建议（当前规则清晰度d2=0，高度依赖人工）"
+      ],
+      "ai_reshape": "理想目标为Auto（A-高封装），但当前d2-d5评分低，需先固化报告框架、补充规则与系统集成；现阶段Agent辅助信息汇总与草稿生成，人工决策。",
+      "quality_anchor": "报告质量依赖完整性（d2=0）和合规性（d6=1），需Mark签批。",
+      "ai_responsibility": "汇总基础数据、生成报告草稿与数据可视化。",
+      "human_responsibility": "综合分析、撰写核心结论、与Mark确认意向（人工执行：意向确认与可行性报告）。",
+      "handoff_triggers": [
+        "报告草稿生成后必须由人工审核；涉及签批（Q3）不可自动化。"
+      ],
+      "control_gates": [
+        "Q3 Mark批准推进合作，涉及资金安全，为硬性人工控制门。"
+      ],
+      "data_basis": [
+        "输入结构化（d1=2），但规则（d2=0）、验证（d3=0）、API（d4=0）均不足",
+        "合规存在（d6=1）"
+      ],
+      "process_context": "蓝图STEP-06：意向确认与可行性评估 → 移交。",
+      "risks_limits": [
+        "轻率批准可能导致不良合作；报告依赖个人经验，标准化低；自动化需前置大量工作。"
+      ],
+      "current_recommendation": "先将报告框架标准化、规则固化（d2），补数据接口，再推进到Skill原型；当前发挥High-辅助。",
+      "database_tier": "Auto",
+      "recommended_tier": "Aug",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-IAO-06",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-1f2ccdff446367efbd37",
+        "EVD-ef298915085756628e7b",
+        "EVD-37a62155a3f5863ca0fb",
+        "EVD-dff050c06b09d1d0f73b",
+        "EVD-7ef391ff4978e756f5a9",
+        "EVD-7c6318842d0da4239be4",
+        "EVD-6b52178aa036eca6b5e9",
+        "EVD-d81ac9dcf06ccef9ebc7",
+        "EVD-6e52244a5bc2423550a0",
+        "EVD-95d08853e631e105e1a5"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "输出《决策链图谱》决议，识别保司内部关键决策人及关系网络。",
+      "specific_capabilities": [
+        "关系分析与信息搜集（单一动作，判断/策略/认知类C）",
+        "图谱绘制与更新"
+      ],
+      "ai_reshape": "Agent可辅助收集公开信息、绘制图谱草稿，人工负责核实与调整。",
+      "quality_anchor": "图谱准确度依赖信息源（高结构化输入d1=2）和人工核实（d3=2）。",
+      "ai_responsibility": "初步图谱生成、信息聚合。",
+      "human_responsibility": "核实决策人信息、确认关系链（人工执行：保司决策链图谱）。",
+      "handoff_triggers": [
+        "信息不确定或涉及敏感关系时，转人工确认。"
+      ],
+      "control_gates": [
+        "无。"
+      ],
+      "data_basis": [
+        "所有Agent维度评分均为2（高），但无法完全免去人工判断"
+      ],
+      "process_context": "蓝图STEP-02：决策链图谱建立。",
+      "risks_limits": [
+        "错误关系判断可能误导后续接触策略；图谱更新频率依赖人工。"
+      ],
+      "current_recommendation": "Agent辅助生成与更新，人工核实，保持Hybrid模式。",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-IAO-07",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-52c904123e7c38a19b91",
+        "EVD-5c5de63f83c4dddcd2de",
+        "EVD-aa21887f25cb1f8dc085",
+        "EVD-d0d44ea2eebad081963c",
+        "EVD-988ea4cd064284f0a155",
+        "EVD-54a85f63d1b4220ac309",
+        "EVD-123da3f4d986eab76360",
+        "EVD-1c3df8d59b9654aff1a9",
+        "EVD-feb63626a762bbd7c712",
+        "EVD-f67e6ede82b56b40b63b"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "输出《应对策略记录》数据表，辅助竞品排挤环境下的竞争决策。",
+      "specific_capabilities": [
+        "竞品分析与策略制定（单一动作，语义复核判定C）",
+        "策略记录与归档"
+      ],
+      "ai_reshape": "Agent可辅助竞品信息收集、策略模板生成，人工制定核心策略。",
+      "quality_anchor": "策略有效性依赖人工判断（d2=1, d3=2），记录可结构化验证。",
+      "ai_responsibility": "信息采集、策略备选方案生成、记录填写。",
+      "human_responsibility": "制定应对策略，评估竞争风险（人工执行：竞品MGA排挤应对）。",
+      "handoff_triggers": [
+        "涉及重大客户争夺或策略跨越部门时，必须人工决策。"
+      ],
+      "control_gates": [
+        "应对策略可能影响合作关系，需主管审批。"
+      ],
+      "data_basis": [
+        "输入结构化（d1=2），验证较易（d3=2），但规则不充分（d2=1）"
+      ],
+      "process_context": "出现在STEP-04（尽调未通过分支）和STEP-05（主动分析），覆盖多个场景。",
+      "risks_limits": [
+        "应对不当可能导致丢单；自动化难以涵盖动态博弈。"
+      ],
+      "current_recommendation": "Agent辅助分析与记录，人工主导策略制定。",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-IAO-08",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-e73a6448d0e441f86cc8",
+        "EVD-af7dfd3aeded27e2c169",
+        "EVD-4a532336447f6118478d",
+        "EVD-9b30c947d1887023c319",
+        "EVD-b8330a6e155125bd2ee8",
+        "EVD-42637df8c5daa741f0e3",
+        "EVD-668a05e8175364f3a2e6",
+        "EVD-5ee8f8c3b9cc3ecd915b",
+        "EVD-849e2da9a6abbaebb209",
+        "EVD-b46985a3ff4ba6988b75"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "输出《关系维护记录》数据表，支持周期性保司关系维护。",
+      "specific_capabilities": [
+        "关系维护与定期沟通（单一动作，判断/策略/认知类C）",
+        "活动记录与提醒"
+      ],
+      "ai_reshape": "Agent可辅助节点提醒、活动记录，但核心关系维护需人工执行。",
+      "quality_anchor": "记录的及时性（d3=1）和完整性，依赖人工主动更新。",
+      "ai_responsibility": "自动发送维护提醒、记录基础交互日志。",
+      "human_responsibility": "执行关系维护活动，更新策略（人工执行：长周期关系维护）。",
+      "handoff_triggers": [
+        "保司重大事件或高层互动时，转人工介入。"
+      ],
+      "control_gates": [
+        "无。"
+      ],
+      "data_basis": [
+        "输入结构化（d1=2），API可达（d4=2），但规则和验证偏低"
+      ],
+      "process_context": "多个分支转入（Q1无意向，Q2未通过，Q3暂缓），起兜底作用。",
+      "risks_limits": [
+        "关系淡忘导致合作流失；自动化不能替代人际温度。"
+      ],
+      "current_recommendation": "Agent辅助提醒与记录，人工维护关系，适合Aug或Hybrid。",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-IAO-09",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-e601823c4e07d5fdf699",
+        "EVD-fe5c3858c16afe87af51",
+        "EVD-76757f304db1285c0e60",
+        "EVD-b79cd068a922ee6721a7",
+        "EVD-a0376794b013c776a49d",
+        "EVD-ef2762f79959efe21491",
+        "EVD-6926ce81fa5c32e82216",
+        "EVD-222f87caa9514cc9ec6c",
+        "EVD-4b1ea0c624d3a788c344",
+        "EVD-01dcc921d22b6a42165a"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "输出《战略级服务方案》，为高价值保司提供差异化合作方案。",
+      "specific_capabilities": [
+        "高端定制与战略规划（单一动作，语义复核判定C）",
+        "方案撰写与内部协调"
+      ],
+      "ai_reshape": "Agent可辅助收集资料、生成方案模板，但核心内容与决策需Mark主导。",
+      "quality_anchor": "方案质量依赖高层判断，无自动化验证（d3=0）。",
+      "ai_responsibility": "基础方案草稿生成、数据整合。",
+      "human_responsibility": "主导方案设计，Mark亲自主导（条件触发：仅战略级保司）。",
+      "handoff_triggers": [
+        "方案内容超出常规范围或涉及资源重大倾斜时。"
+      ],
+      "control_gates": [
+        "需Mark审批，资金和资源配置有硬性人工控制门。"
+      ],
+      "data_basis": [
+        "输入结构化低（d1=1），规则、验证、API均缺失"
+      ],
+      "process_context": "STEP-05：竞品排挤应对与差异化策略，条件触发。",
+      "risks_limits": [
+        "资源投入大，方案失败影响战略关系；高度依赖个人，难以标准化。"
+      ],
+      "current_recommendation": "Agent辅助信息整合与模板，核心人工设计，不追求自动化。",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-IAO-10",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-6f784cf23d0af84db67d",
+        "EVD-5e0d592e3c4b9ea8de39",
+        "EVD-463ed68c3eca53f74b51",
+        "EVD-47807f8c6e750d66492a",
+        "EVD-98e9b6203ca4d5f44cc7",
+        "EVD-138ebc2595cb65de431c",
+        "EVD-daa3972445de285f85ec",
+        "EVD-7e979b5239f78b0580ea",
+        "EVD-bfa5d5273e97f4a56cb2",
+        "EVD-78861403aa8a50216aeb"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "输出《盟友地图》方案，协助在保司内部培养支持者网络。",
+      "specific_capabilities": [
+        "人际交往与政治敏感度（单一动作，语义复核判定C）",
+        "联系人管理"
+      ],
+      "ai_reshape": "AI仅能辅助记录联系人信息与互动历史，无法介入人际活动。",
+      "quality_anchor": "效果高度依赖个人能力，无结构质量锚点（d1=0, d2=0, d3=0）。",
+      "ai_responsibility": "联系人数据库管理、互动记录。",
+      "human_responsibility": "培养盟友、维护关系、获取内部支持（人工执行：保司内部盟友培养）。",
+      "handoff_triggers": [
+        "涉及高层秘密或敏感信息时，不可记录。"
+      ],
+      "control_gates": [
+        "无。"
+      ],
+      "data_basis": [
+        "所有自动化维度极低（d1=0, d2=0, d3=0, d4=0, d5=0），仅合规（d6=1）"
+      ],
+      "process_context": "蓝图STEP-02：决策链图谱建立，作为并行软性活动。",
+      "risks_limits": [
+        "高度依赖个人，人员变动风险大；自动化几乎不可行。"
+      ],
+      "current_recommendation": "Agent极简辅助（联系人记录），核心活动人工完成；建议tier Human。",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Human",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-IAO-12",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-40e1522dfcc92dbb1e8b",
+        "EVD-71c60679ca5a1ad1e51a",
+        "EVD-c29f4ff8d58e08b6c2ed",
+        "EVD-b85c5165acfefac5383b",
+        "EVD-5edbaf61403d2f668fe1",
+        "EVD-10bfecfd0fe58476959d",
+        "EVD-da4c4dc4a4e2564284ef",
+        "EVD-e79e70d1962cf2e42a38",
+        "EVD-00049d00ac3858e1e697",
+        "EVD-35e576c6cad0b3145db0"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "输出《Pipeline看板》方案，实现保司合作进度的动态追踪与可视化管理。",
+      "specific_capabilities": [
+        "数据更新与可视化（单一动作，B-中封装：需报告模板/系统集成）",
+        "进度跟踪与异常预警"
+      ],
+      "ai_reshape": "高潜力自动化，可实施为确定性Skill，需补报告模板与系统集成。",
+      "quality_anchor": "数据准确性（d3=3）和实时性作为核心质量锚点。",
+      "ai_responsibility": "自动更新Pipeline状态、生成看板与报告。",
+      "human_responsibility": "审核关键更新，处理异常与决策瓶颈（人工执行：保司Pipeline动态管理）。",
+      "handoff_triggers": [
+        "系统无法自动获取的数据或进度卡住时，转人工介入。"
+      ],
+      "control_gates": [
+        "重大里程碑变更需人工确认。"
+      ],
+      "data_basis": [
+        "所有Agent维度均为高分（d1=3, d2=3, d3=3, d4=3, d5=2, d6=2），可高度自动化"
+      ],
+      "process_context": "贯穿全程，从STEP-01开始，持续维护。",
+      "risks_limits": [
+        "数据源中断或集成问题可能导致看板失效；需确保系统稳健。"
+      ],
+      "current_recommendation": "优先实施Skill原型，补报告模板，推进至Auto+；试点后可大幅降低人工负荷。",
+      "database_tier": "Aug",
+      "recommended_tier": "Auto",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-IAO-13",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-5547697f57fda9a8d093",
+        "EVD-b28a131c3bad74ef0082",
+        "EVD-448f93b625ad3c19cf22",
+        "EVD-54b9c298cf653180e0f6",
+        "EVD-7ad639ef1a10c0e8ca41",
+        "EVD-dc1db8a7010e31045652",
+        "EVD-b4f9aff309b65b43bf8c",
+        "EVD-a81d12476c467eff3b85",
+        "EVD-7092034d9b08351a95ce",
+        "EVD-7d053fe4be6ec2d9d7e8"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "输出《二次跟进记录》数据表，为曾失败保司的再接触提供依据。",
+      "specific_capabilities": [
+        "时机判断与沟通（单一动作，语义复核判定C）",
+        "记录归档"
+      ],
+      "ai_reshape": "Agent可辅助时机提醒、记录跟进信息，人工决定再接触策略。",
+      "quality_anchor": "记录完整性（d3=2）和时机合理性作为质量锚点。",
+      "ai_responsibility": "生成跟进提醒、自动记录互动日志。",
+      "human_responsibility": "判断合适时机、制定再接触策略（人工执行：失败保司二次机会）。",
+      "handoff_triggers": [
+        "再次接触决策需人工，不可自动触发。"
+      ],
+      "control_gates": [
+        "无。"
+      ],
+      "data_basis": [
+        "各维度评分中等偏高（d1=2, d2=2, d3=2, d4=2, d5=2, d6=2），但决策不可替代"
+      ],
+      "process_context": "来自Q1无意向或其他分支的后续跟进。",
+      "risks_limits": [
+        "过度打扰可能适得其反；时机不当错失机会。"
+      ],
+      "current_recommendation": "Agent辅助提醒与记录，人工执行决策，保持Hybrid。",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "T-01",
+      "l4_code": "L4-IAO-01",
+      "task_name": "多维度评分并输出目标保司清单",
+      "source_type": "blueprint_activity",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-01",
+      "source_line": 42,
+      "previous_task_ids": [],
+      "next_task_ids": ["T-03", "T-04"],
+      "relation_type": "",
+      "evidence_refs": ["EVD-c8753382fcb3dc920540"],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "依据Skill评估C及人工执行标注，需人判断优先级，无法全自动。"
+    },
+    {
+      "task_id": "T-02",
+      "l4_code": "L4-IAO-12",
+      "task_name": "建立Pipeline看板并持续追踪",
+      "source_type": "blueprint_activity",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-01",
+      "source_line": 43,
+      "previous_task_ids": [],
+      "next_task_ids": ["T-03", "T-04"],
+      "relation_type": "",
+      "evidence_refs": ["EVD-c8753382fcb3dc920540"],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "Skill评估B-中封装，高自动化潜力，当前数据库tier Aug，可逐步推进Auto。"
+    },
+    {
+      "task_id": "T-03",
+      "l4_code": "L4-IAO-06",
+      "task_name": "识别保司内部关键决策人并输出决策链图谱",
+      "source_type": "blueprint_activity",
+      "sequence_no": 2,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-02",
+      "source_line": 47,
+      "previous_task_ids": ["T-01", "T-02"],
+      "next_task_ids": ["T-05", "T-06", "T-07"],
+      "relation_type": "",
+      "evidence_refs": ["EVD-8b5ce540d98f22127e59"],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "判断/认知类C，需人工核实，Agent辅助生成。"
+    },
+    {
+      "task_id": "T-04",
+      "l4_code": "L4-IAO-10",
+      "task_name": "培养保司内部盟友（Human介入）",
+      "source_type": "blueprint_activity",
+      "sequence_no": 2,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-02",
+      "source_line": 48,
+      "previous_task_ids": ["T-01", "T-02"],
+      "next_task_ids": ["T-05", "T-06", "T-07"],
+      "relation_type": "",
+      "evidence_refs": ["EVD-8b5ce540d98f22127e59"],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "人际活动几乎无法自动化，仅能做联系人记录，核心Human。"
+    },
+    {
+      "task_id": "T-05",
+      "l4_code": "L4-IAO-02",
+      "task_name": "执行首次接触并传递价值主张，输出接触反馈",
+      "source_type": "blueprint_activity",
+      "sequence_no": 3,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-03",
+      "source_line": 51,
+      "previous_task_ids": ["T-03", "T-04"],
+      "next_task_ids": ["T-08", "T-09", "T-10"],
+      "relation_type": "",
+      "evidence_refs": ["EVD-6bba4d7eb9c155787011"],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "复合动作C，需拆分接触执行（人工）与反馈记录（Agent辅助）。"
+    },
+    {
+      "task_id": "T-06",
+      "l4_code": "L4-IAO-08",
+      "task_name": "长周期关系维护（无意向时触发）",
+      "source_type": "blueprint_decision_branch",
+      "sequence_no": 3,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-03",
+      "source_line": 57,
+      "previous_task_ids": ["T-03", "T-04"],
+      "next_task_ids": ["T-08", "T-09", "T-10"],
+      "relation_type": "",
+      "evidence_refs": ["EVD-ea59b894cd704433d4b4"],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "Q1分支转入，维护周期长，Agent辅助提醒。"
+    },
+    {
+      "task_id": "T-07",
+      "l4_code": "L4-IAO-13",
+      "task_name": "记录失败保司备案（无意向时触发）",
+      "source_type": "blueprint_decision_branch",
+      "sequence_no": 3,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-03",
+      "source_line": 57,
+      "previous_task_ids": ["T-03", "T-04"],
+      "next_task_ids": ["T-08", "T-09", "T-10"],
+      "relation_type": "",
+      "evidence_refs": ["EVD-ea59b894cd704433d4b4"],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "记录归档，后续人工判断时机。"
+    },
+    {
+      "task_id": "T-08",
+      "l4_code": "L4-IAO-03",
+      "task_name": "生成能力展示材料并进行现场展示",
+      "source_type": "blueprint_activity",
+      "sequence_no": 4,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-04",
+      "source_line": 59,
+      "previous_task_ids": ["T-05", "T-06", "T-07"],
+      "next_task_ids": ["T-11", "T-12"],
+      "relation_type": "",
+      "evidence_refs": ["EVD-bd07fa93b5f0cff5b191"],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "Agent辅助材料生成，现场人工主导。"
+    },
+    {
+      "task_id": "T-09",
+      "l4_code": "L4-IAO-04",
+      "task_name": "配合保司尽调并输出尽调回复材料",
+      "source_type": "blueprint_activity",
+      "sequence_no": 4,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-04",
+      "source_line": 60,
+      "previous_task_ids": ["T-05", "T-06", "T-07"],
+      "next_task_ids": ["T-11", "T-12"],
+      "relation_type": "",
+      "evidence_refs": ["EVD-bd07fa93b5f0cff5b191"],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "复合动作需拆分，现场人工协调，资料Agent辅助。"
+    },
+    {
+      "task_id": "T-10",
+      "l4_code": "L4-IAO-07",
+      "task_name": "竞品MGA排挤应对（尽调未通过或顾虑时）",
+      "source_type": "blueprint_decision_branch",
+      "sequence_no": 4,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-04",
+      "source_line": 65,
+      "previous_task_ids": ["T-05", "T-06", "T-07"],
+      "next_task_ids": ["T-11", "T-12"],
+      "relation_type": "",
+      "evidence_refs": ["EVD-e527913018fed1efc1bf"],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "Q2分支触发，人主导策略，Agent记录。"
+    },
+    {
+      "task_id": "T-11",
+      "l4_code": "L4-IAO-07",
+      "task_name": "分析竞品MGA动向并输出应对策略记录",
+      "source_type": "blueprint_activity",
+      "sequence_no": 5,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-05",
+      "source_line": 67,
+      "previous_task_ids": ["T-08", "T-09", "T-10"],
+      "next_task_ids": ["T-13", "T-14"],
+      "relation_type": "",
+      "evidence_refs": ["EVD-fd2b6b4d7f68fe894d02"],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "同L4-IAO-07，人工分析为主。"
+    },
+    {
+      "task_id": "T-12",
+      "l4_code": "L4-IAO-09",
+      "task_name": "制定战略级保司差异化服务方案（条件触发：战略级保司）",
+      "source_type": "blueprint_activity",
+      "sequence_no": 5,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-05",
+      "source_line": 68,
+      "previous_task_ids": ["T-08", "T-09", "T-10"],
+      "next_task_ids": ["T-13", "T-14"],
+      "relation_type": "",
+      "evidence_refs": ["EVD-fd2b6b4d7f68fe894d02"],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "Mark签批，高度定制，人工主导。"
+    },
+    {
+      "task_id": "T-13",
+      "l4_code": "L4-IAO-05",
+      "task_name": "整合信息并输出可行性报告草稿",
+      "source_type": "blueprint_activity",
+      "sequence_no": 6,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-06",
+      "source_line": 71,
+      "previous_task_ids": ["T-11", "T-12"],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": ["EVD-2453490ee451fb8f5105"],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "A-高封装候选，当前规则不足，人工承担决策，Agent辅助信息整合。"
+    },
+    {
+      "task_id": "T-14",
+      "l4_code": "L4-IAO-08",
+      "task_name": "长周期关系维护（暂缓时触发）",
+      "source_type": "blueprint_decision_branch",
+      "sequence_no": 6,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-06",
+      "source_line": 77,
+      "previous_task_ids": ["T-11", "T-12"],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": ["EVD-77a4b11a9d9beb8dede8"],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "Q3暂缓分支，Agent辅助提醒，人工维护。"
+    }
+  ],
+  "priority_drafts": [
+    {
+      "priority": "P1",
+      "task_ids": ["T-13"],
+      "title": "加速可行性报告标准化与自动化",
+      "pilot_scope": "选择1-2个试点保司，由Agent辅助生成可行性报告草稿，人工完善并签批",
+      "human_boundary": "Mark签批环节不可自动化",
+      "evidence_refs": [
+        "EVD-d71e872074976c1b8f00",
+        "EVD-d917512fcef25c914842",
+        "EVD-7cde67688944957d4f2e",
+        "EVD-77a4b11a9d9beb8dede8"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "decision_drafts": [
+    {
+      "priority": "P1",
+      "task_ids": ["T-13"],
+      "title": "推进可行性报告Skill化试点",
+      "pilot_scope": "选定两家非战略保司作为试点，Agent生成初稿，保司关系经理审核，Mark终批",
+      "human_boundary": "Mark签批与核心结论撰写保留人工",
+      "evidence_refs": [
+        "EVD-d71e872074976c1b8f00",
+        "EVD-2453490ee451fb8f5105",
+        "EVD-7cde67688944957d4f2e"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "control_chain": [],
+  "rejected_task_sources": [
+    {
+      "l4_code": "L4-IAO-11",
+      "reason": "已退休节点，蓝图诊断忽略，不纳入任务生成。"
+    }
+  ],
+  "missing_analysis": []
+}

@@ -1,0 +1,463 @@
+{
+  "schema_version": "vnw.l3-analysis.v1",
+  "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
+  "generation_mode": "UNIFIED_MODEL",
+  "analysis_status": "MODEL_DRAFT",
+  "model_run": null,
+  "source_scope": {
+    "database": "process_analytics",
+    "knowledge": "ACTIVE supplemental evidence only",
+    "evidence_count": 70
+  },
+  "l4_analysis": [
+    {
+      "l4_code": "L4-FOB-01",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-22c9534245218de8d5ee",
+        "EVD-a5f56bd2e1ac937d799d",
+        "EVD-9553f5aa29d9f1a112bc",
+        "EVD-8212e0e6d470547e2749",
+        "EVD-ad6858c3a9fb85a4afd0",
+        "EVD-2ec708cdb535b2eb1c83",
+        "EVD-12a2fe2a8215ddc883d5",
+        "EVD-746e82239d70cfe583ce"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "事业部运营管理岗负责入职资料审核与协议准备，交付《待签协议包》",
+      "specific_capabilities": [
+        "理解入职政策与合规要求",
+        "审核入职资料真实性与完整性",
+        "依据模板准备个性化协议包",
+        "协调多方信息（业务岗、合规、IT）",
+        "（拆分）资料审核子动作需人工判断",
+        "（拆分）协议准备子动作可模板化生成"
+      ],
+      "ai_reshape": "基于C级低封装，不直接封装确定性Skill；采用Agent辅助模式，AI提供资料完整性检查清单、协议模板自动填充与合规预警，最终决策仍由人工完成。",
+      "quality_anchor": "入职资料审核通过率、协议包一次正确率、合规审查通过率",
+      "ai_responsibility": "提供资料完整性校验、协议模板填充、合规风险提示",
+      "human_responsibility": "最终审核资料真实性、判断特殊情况、确认协议合规并授权签署",
+      "handoff_triggers": [
+        "AI无法判断资料真实性的场景",
+        "协议模板不覆盖的新类型",
+        "合规规则冲突需人工裁决"
+      ],
+      "control_gates": [
+        "合规审查门：协议内容须符合最新法规与公司政策，不可自动放行",
+        "资料真实性门：身份及资质文件须人工核验"
+      ],
+      "data_basis": [
+        "员工入职信息表（ERP/HR系统）",
+        "协议模板库（法务维护）",
+        "合规规则引擎（政策文档）"
+      ],
+      "process_context": "入职流程第一步，为后续签署、系统开通及培养计划奠定信息与法律基础。",
+      "risks_limits": [
+        "审核失误可能导致不合规入职或后续纠纷",
+        "AI无法处理非结构化判断，复杂案例仍需高技能人工",
+        "复合动作未拆分时自动化整体尝试易导致责任模糊"
+      ],
+      "current_recommendation": "采用Hybrid路径：人工主导审核与决策，AI提供Agent辅助的信息提示与协议草拟。后续可尝试将资料校验与协议生成拆分为两个独立子步骤，资料校验仍保持人工判断，协议准备逐步实现Skill化。",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-FOB-02",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-812963c72dd74c02b19a",
+        "EVD-56aeae2dfc3578e27a99",
+        "EVD-e257d609ba523390a6c6",
+        "EVD-59267c11e4c675e82806",
+        "EVD-123d47beacd5a8e8bd67",
+        "EVD-b91f24f4790092acbc42",
+        "EVD-12a2fe2a8215ddc883d5",
+        "EVD-5b2d6545cb8440a289ae",
+        "EVD-cc8cff085862eb22e542"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "事业部运营管理岗负责协议签署与寄总部归档，交付《已签署协议包》",
+      "specific_capabilities": [
+        "签署流程管理（通知、催办、用印）",
+        "物理文件寄送与跟踪",
+        "归档与记录更新",
+        "（拆分）协议签署子动作需人工或电子签授权",
+        "（拆分）寄总部归档子动作为事务性操作"
+      ],
+      "ai_reshape": "技能评级A但复合，需先拆分为签署与寄送两阶段。签署阶段可由AI监控状态、发送提醒，但签署本身仍需人工完成；寄送阶段可自动生成快递单并跟踪物流，但实物处理仍依赖人工。",
+      "quality_anchor": "签署完成率、归档及时率、文档完整率",
+      "ai_responsibility": "监控签署进度、自动催办、生成物流单据、更新归档状态",
+      "human_responsibility": "亲自签署或协调签署、封装文件、投递、异常处理",
+      "handoff_triggers": [
+        "签署超时未完成",
+        "寄送地址变更或退回",
+        "归档信息与实物不符"
+      ],
+      "control_gates": [
+        "协议完整性检查门：所有必签页齐全方可进入系统开通（决策Q1）",
+        "实物寄送门：须人工核对收件信息与文件内容后才可发出"
+      ],
+      "data_basis": [
+        "签署任务列表（来自L4-FOB-01的协议包）",
+        "员工通讯录",
+        "物流跟踪API"
+      ],
+      "process_context": "继资料审核与协议准备之后，签署归档是入职过程的关键法律步骤，也是价值节点VN-FOB-01（P0）的主要承载环节，其完成度直接决定后续系统开通。",
+      "risks_limits": [
+        "实体签署环节不可自动化，进程可能因人工延误",
+        "文件寄送丢失或受损将影响归档与合规",
+        "复合动作若整体处理，易掩盖寄送子任务的明确责任"
+      ],
+      "current_recommendation": "建设Agent辅助的签署进度监控与寄送管理应用，重点提升流程透明度与催办效率，但签署与寄送核心动作保留人工执行。可尝试将寄送归档环节中的物流创建与状态跟踪部分封装为Skill。",
+      "database_tier": "Auto",
+      "recommended_tier": "Aug",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-FOB-03",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-195a9cb4edc8bffac1bf",
+        "EVD-af7adea0f689c48ad749",
+        "EVD-99d96284ff3c954eef6e",
+        "EVD-a26a46b0293bc52f1ee8",
+        "EVD-610a8a24f0cec5ef552f",
+        "EVD-9685f84ff73d748a9611",
+        "EVD-12a2fe2a8215ddc883d5",
+        "EVD-54ed3d391aa1345cf0b4"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "事业部运营管理岗负责系统账号开通与工具配置，交付《系统开通记录》；人工触点缺失，需明确执行归属。",
+      "specific_capabilities": [
+        "理解各系统账号体系与权限模型",
+        "执行系统账号创建与激活",
+        "配置业务工具与软件",
+        "（拆分）系统账号开通为可API编排动作",
+        "（拆分）工具配置为可用脚本执行动作"
+      ],
+      "ai_reshape": "技能评级A，复合动作且human_touchpoint缺失，但动作本身均为信息处理/事务类，可拆分为两个可独立封装的Skill：系统开通Skill与工具配置Skill。原流程中的人为执行可被自动化替代，但需补充人工审核与异常处理节点。",
+      "quality_anchor": "账号开通准确率、工具配置一致性、开通时效",
+      "ai_responsibility": "自动调用系统API完成账号创建、权限分配；自动执行工具安装与参数配置；记录操作日志",
+      "human_responsibility": "审核开通结果（尤其在权限敏感场景）、处理API调用失败或配置异常、审批特殊工具请求",
+      "handoff_triggers": [
+        "API调用返回错误且预设重试机制失效",
+        "账号或权限与标准模板不一致需要人工裁决",
+        "工具安装/配置脚本执行失败"
+      ],
+      "control_gates": [
+        "权限合规门：敏感系统账号开通前须直属主管确认，不可全自动赋予高危权限",
+        "前序依赖门：必须通过Q1协议完整性检查后才可执行系统开通"
+      ],
+      "data_basis": [
+        "员工岗位-权限映射表（IT维护）",
+        "系统账号API接口",
+        "标准工具清单与配置脚本"
+      ],
+      "process_context": "协议签署归档后，系统开通是使新人具备工作能力的必要步骤，也间接影响VN-FOB-01的价值实现（签署完成后的IT就绪）。",
+      "risks_limits": [
+        "全自动开通可能产生权限溢出，需预设最小权限原则",
+        "API依赖性高，单点故障可能阻塞流程",
+        "人为触点的缺失带来责任不清，需补充明确的审核角色"
+      ],
+      "current_recommendation": "优先将系统和工具操作拆分为两个Skill原型，完善API对接与异常处理，同时增设人工审核节点（如权限审批）以确保安全。建议初期采用Auto+Aug混合模式，高风险操作保持人介入。",
+      "database_tier": "Auto",
+      "recommended_tier": "Auto",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-FOB-04",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-7bd8c31fd32d018021c2",
+        "EVD-c6b98062fb126f907a48",
+        "EVD-c5be6cdd57cf8af72133",
+        "EVD-c974b99ec5f5a9b55eb0",
+        "EVD-6afc52cfc5a6fb5015b6",
+        "EVD-aeb7a5a04a6db582b7fa",
+        "EVD-12a2fe2a8215ddc883d5",
+        "EVD-f010e5a377fcb5eddd68"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "事业部运营管理岗负责新人90天培养计划启动，交付培训方案文档",
+      "specific_capabilities": [
+        "理解岗位能力模型与培训资源库",
+        "根据模板与新人信息制定个性化培养计划",
+        "启动培训任务并跟踪"
+      ],
+      "ai_reshape": "技能评级A，单一信息处理动作，完全可封装为Skill。AI能自动匹配岗位学习路径、生成计划、发送任务并监控进度。但启动与方案确认仍需人工审批以确保与业务目标契合。",
+      "quality_anchor": "计划制定及时率、新人留存率（KPI_36）、培训任务完成率",
+      "ai_responsibility": "自动生成培养计划草案、推送学习任务、收集学习数据、预警计划偏离",
+      "human_responsibility": "审批培养计划、调整特殊学习需求、定期回顾与辅导",
+      "handoff_triggers": [
+        "自动生成的计划与新人实际能力不匹配",
+        "培训资源冲突",
+        "新人反馈需要计划变更"
+      ],
+      "control_gates": [
+        "审批门：培养计划需事业部负责人或其授权人审批后方可正式启动，以确保组织目标对齐"
+      ],
+      "data_basis": [
+        "岗位能力模型与课程映射",
+        "历史留存与高绩效行为数据",
+        "培训管理系统API"
+      ],
+      "process_context": "系统开通后，培养计划是新员工发展的起点，直接关联价值节点VN-FOB-02及KPI新人留存率，虽然优先级P1，但属于长期人力资本投入。",
+      "risks_limits": [
+        "计划过度模板化可能忽视新人个体差异",
+        "全自动启动可能绕过必要的人工审批",
+        "执行过程中若无人跟进，计划容易流于形式"
+      ],
+      "current_recommendation": "构建Skill自动生成并分发培养计划，但保留人工审批与调整环节，形成Auto+Human-in-the-loop模式。可作为快速胜利场景优先试点，验证AI对留存率的影响。",
+      "database_tier": "Auto",
+      "recommended_tier": "Aug",
+      "quadrant": "unclassified"
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "T-FOB-001",
+      "l4_code": "L4-FOB-01",
+      "task_name": "审核入职资料",
+      "source_type": "BLUEPRINT_STEP",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-01",
+      "source_line": 50,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": null,
+      "evidence_refs": [
+        "EVD-746e82239d70cfe583ce",
+        "EVD-2ec708cdb535b2eb1c83",
+        "EVD-8212e0e6d470547e2749"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "入职资料审核涉及真伪判断与合规性裁决，技能可行性评级C，当前无法自动化，必须由事业部运营管理岗人工完成。"
+    },
+    {
+      "task_id": "T-FOB-002",
+      "l4_code": "L4-FOB-01",
+      "task_name": "准备待签协议包",
+      "source_type": "BLUEPRINT_STEP",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-01",
+      "source_line": 50,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": null,
+      "evidence_refs": [
+        "EVD-746e82239d70cfe583ce",
+        "EVD-a5f56bd2e1ac937d799d",
+        "EVD-2ec708cdb535b2eb1c83"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "协议包准备可借助模板自动化填充，但需人工复核特殊条款与个性化内容，适合Agent辅助（Aug）。"
+    },
+    {
+      "task_id": "T-FOB-003",
+      "l4_code": "L4-FOB-02",
+      "task_name": "签署协议",
+      "source_type": "BLUEPRINT_STEP",
+      "sequence_no": 2,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-02",
+      "source_line": 55,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": null,
+      "evidence_refs": [
+        "EVD-5b2d6545cb8440a289ae",
+        "EVD-59267c11e4c675e82806",
+        "EVD-b91f24f4790092acbc42"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "协议签署需本人或授权人亲自完成，无法通过自动化替代，必须为人工操作（Human）。"
+    },
+    {
+      "task_id": "T-FOB-004",
+      "l4_code": "L4-FOB-02",
+      "task_name": "寄总部归档",
+      "source_type": "BLUEPRINT_STEP",
+      "sequence_no": 2,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-02",
+      "source_line": 55,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": null,
+      "evidence_refs": [
+        "EVD-5b2d6545cb8440a289ae",
+        "EVD-56aeae2dfc3578e27a99",
+        "EVD-b91f24f4790092acbc42"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "寄送实物文件与归档操作依赖人工处理（封装、投递、系统录入），暂无法全程自动化。"
+    },
+    {
+      "task_id": "T-FOB-005",
+      "l4_code": "L4-FOB-03",
+      "task_name": "开通系统账号",
+      "source_type": "BLUEPRINT_STEP",
+      "sequence_no": 3,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-03",
+      "source_line": 63,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": null,
+      "evidence_refs": [
+        "EVD-54ed3d391aa1345cf0b4",
+        "EVD-610a8a24f0cec5ef552f",
+        "EVD-9685f84ff73d748a9611"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "系统账号开通可通过API编排实现全自动化，技能评级A且action_nature为信息处理，具备Auto条件；但需前置权限审批控制门。"
+    },
+    {
+      "task_id": "T-FOB-006",
+      "l4_code": "L4-FOB-03",
+      "task_name": "配置工具",
+      "source_type": "BLUEPRINT_STEP",
+      "sequence_no": 3,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-03",
+      "source_line": 63,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": null,
+      "evidence_refs": [
+        "EVD-54ed3d391aa1345cf0b4",
+        "EVD-610a8a24f0cec5ef552f",
+        "EVD-9685f84ff73d748a9611"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "工具配置为脚本化事务操作，可封装为Skill自动执行，接口可达时无需人工介入。"
+    },
+    {
+      "task_id": "T-FOB-007",
+      "l4_code": "L4-FOB-04",
+      "task_name": "制定并启动90天培养计划",
+      "source_type": "BLUEPRINT_STEP",
+      "sequence_no": 4,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-04",
+      "source_line": 69,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": null,
+      "evidence_refs": [
+        "EVD-f010e5a377fcb5eddd68",
+        "EVD-aeb7a5a04a6db582b7fa",
+        "EVD-c974b99ec5f5a9b55eb0"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "培养计划可自动化生成与启动，但业务负责人须审批计划内容以对齐组织目标，故采用Aug模式（自动生成+人工审批）。"
+    }
+  ],
+  "priority_drafts": [
+    {
+      "priority": "P0",
+      "target_l4_codes": ["L4-FOB-02", "L4-FOB-03"],
+      "title": "优先完成转介协议签署归档及后续系统开通，以交付价值节点VN-FOB-01",
+      "evidence_refs": [
+        "EVD-f7a3cedbdee7a9c1d4b7",
+        "EVD-54df2347e9113cd0fe35",
+        "EVD-8982ead70163389d290f",
+        "EVD-274080e5a5fe2ba787bf"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "rationale": "VN-FOB-01优先级P0，为当前入职流程的必要法律与IT基础，其缺失将阻塞后续业务开展。数据依据：VALUE NODE整体判断PARTIAL，但三关已过两关，风险可控。流程背景：签署归档是人工密集型但法律强制的步骤。建议立即优化签署跟踪与系统开通的自动化试点，降低延迟。"
+    },
+    {
+      "priority": "P1",
+      "target_l4_codes": ["L4-FOB-04"],
+      "title": "新人90天培养计划作为长期能力建设，可并行但不应延迟P0流程",
+      "evidence_refs": [
+        "EVD-acb942f71c28343f9776",
+        "EVD-e91d4ba744d5a41ffcdf",
+        "EVD-2d858d89dc352e540580",
+        "EVD-a0177f250f48c15bb5b6"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "rationale": "VN-FOB-02优先级P1，整体判断FAIL，需重新验证数据基础与可追溯性，短期内不宜作为首要自动化目标。但培养计划对新人留存率KPI_36有长远价值，可在完成P0后启动试点。风险限制：模型若未经过业务验证，直接自动化可能无法聚焦实际需求。"
+    }
+  ],
+  "decision_drafts": [
+    {
+      "priority": "CRITICAL",
+      "task_ids": ["T-FOB-005", "T-FOB-006"],
+      "title": "决定系统开通Skill试点范围并确认人工审批边界",
+      "pilot_scope": "选取新员工入职中低频业务线，试行自动开通与工具配置，设定为期1个月的试运行期，仅覆盖非敏感系统。",
+      "human_boundary": "1. 所有涉及财务系统或高权限的开通必须经直属主管审批；2. 当API返回未知错误或自动开通失败超过2次时，立即转人工工单。",
+      "evidence_refs": [
+        "EVD-54ed3d391aa1345cf0b4",
+        "EVD-610a8a24f0cec5ef552f",
+        "EVD-9685f84ff73d748a9611",
+        "EVD-a26a46b0293bc52f1ee8"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "priority": "IMPORTANT",
+      "task_ids": ["T-FOB-007"],
+      "title": "定义培养计划Skill的审批流与业务校验规则",
+      "pilot_scope": "在已使用成熟培养模型的成都/重庆分公司启动，与历史数据比对准确率，试点3个月。",
+      "human_boundary": "事业部负责人必须审批最终学习计划；若新人背景超出预设模板，强制人工定制。",
+      "evidence_refs": [
+        "EVD-f010e5a377fcb5eddd68",
+        "EVD-aeb7a5a04a6db582b7fa",
+        "EVD-c6b98062fb126f907a48"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "control_chain": [
+    {
+      "control_id": "GATE-FOB-01",
+      "control_type": "COMPLIANCE",
+      "trigger_point": "L4-FOB-01 → L4-FOB-02 交接",
+      "description": "入职资料与协议内容合规性审查，确保所有资料真实有效且协议无违规条款。",
+      "evidence_refs": [
+        "EVD-8212e0e6d470547e2749",
+        "EVD-092e21a81e917b07b3cd"
+      ]
+    },
+    {
+      "control_id": "GATE-FOB-02",
+      "control_type": "DECISION",
+      "trigger_point": "L4-FOB-02 完成后",
+      "description": "Q1决策门：检查协议是否全部签署归档，是则进入系统开通，否则退回补签并禁止进入后续步骤。",
+      "evidence_refs": [
+        "EVD-cc8cff085862eb22e542",
+        "EVD-5b2d6545cb8440a289ae"
+      ]
+    },
+    {
+      "control_id": "GATE-FOB-03",
+      "control_type": "APPROVAL",
+      "trigger_point": "系统开通任务（T-FOB-005）执行前",
+      "description": "权限审批门：敏感系统账号开通前必须经直属主管或IT安全岗审批。",
+      "evidence_refs": [
+        "EVD-a26a46b0293bc52f1ee8",
+        "EVD-54ed3d391aa1345cf0b4"
+      ]
+    }
+  ],
+  "rejected_task_sources": [],
+  "missing_analysis": [
+    {
+      "entity": "L4-FOB-03",
+      "missing_evidence": "human_touchpoint",
+      "note": "人工触点数据缺失（EVD-a26a46b0293bc52f1ee8状态MISSING），无法确认原设计中的人类参与角色，后续任务与决策分析假设此环节可自动化，但实际需补充执行责任归属。"
+    }
+  ]
+}

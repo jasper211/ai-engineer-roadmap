@@ -1,0 +1,662 @@
+{
+  "schema_version": "vnw.l3-analysis.v1",
+  "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
+  "generation_mode": "UNIFIED_MODEL",
+  "analysis_status": "MODEL_DRAFT",
+  "model_run": null,
+  "source_scope": {
+    "database": "process_analytics",
+    "knowledge": "ACTIVE supplemental evidence only",
+    "evidence_count": 93
+  },
+  "l4_analysis": [
+    {
+      "l4_code": "L4-CRR-06",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-deb35df4db13f4d7270d",
+        "EVD-11d079c8359e16d7f875",
+        "EVD-1c157fbb3f14abf41941",
+        "EVD-430255ed26eb8fb3d60d",
+        "EVD-e5e084d92d2c1441dd15",
+        "EVD-4c21cf5a5e4dc4189fa7",
+        "EVD-1cdc98d95be0d6b7ee76",
+        "EVD-80485493b13afbc24f8e",
+        "EVD-ebf71e3ab1527a820738",
+        "EVD-2818f5f9a2f374a915ce",
+        "EVD-da76a5b66a794d198569",
+        "EVD-5bb6772bcc019456eb88",
+        "EVD-ca65d7bcf09d2ab3c62d"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "合作伙伴到期审核记录",
+      "specific_capabilities": [
+        "根据合作伙伴类型和剩余时间查询到期清单",
+        "生成结构化的到期审核记录"
+      ],
+      "ai_reshape": "使用Skill自动执行查询、清单生成和提醒通知，人工仅处理异常场景",
+      "quality_anchor": "自动核对到期规则和清单准确性",
+      "ai_responsibility": "自动执行到期识别全流程",
+      "human_responsibility": "MISSING，暂未指定人工节点",
+      "handoff_triggers": [
+        "系统查询异常",
+        "数据源缺失"
+      ],
+      "control_gates": [
+        "合规检查：确保到期通知符合合同条款"
+      ],
+      "data_basis": [
+        "合作伙伴合同",
+        "出单系统",
+        "合作类型规则"
+      ],
+      "process_context": "续约到期识别是续约管理的起点",
+      "risks_limits": [
+        "提醒通知模板未经人工审核可能引发合规风险",
+        "依赖历史数据准确性"
+      ],
+      "current_recommendation": "推荐Tier=Auto，需补充异常处理规则和人工兜底流程。建议优先进入Skill原型池。",
+      "database_tier": "Auto",
+      "recommended_tier": "Auto",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-CRR-07",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-77dfa9c7db635a4ae8e9",
+        "EVD-2330ea99254eb9962de9",
+        "EVD-bc240cd098943d148e49",
+        "EVD-772eb4fb75e5dd869624",
+        "EVD-57286b0cdbc10050253c",
+        "EVD-01894d0bf43c6499c1dd",
+        "EVD-78323c40c37e65b3fff8",
+        "EVD-12fdbf7b7e9e3e4e4383",
+        "EVD-fdbaf8d0bcc6da688ec6",
+        "EVD-aae13649a9c336658cda",
+        "EVD-a770ee3dfa200e51d42f",
+        "EVD-5bb6772bcc019456eb88",
+        "EVD-c621807d654bd59c553a"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "出单核查结果 + 续签/终止决定",
+      "specific_capabilities": [
+        "核查出单记录",
+        "根据业务规则判定续约资格",
+        "输出判定结果表"
+      ],
+      "ai_reshape": "建议拆分为系统自动核查出单并生成初步判定，人工复核并确认。采用Agent辅助决策模式",
+      "quality_anchor": "核查结果需与原始出单数据比对，判定规则需与业务规则库一致",
+      "ai_responsibility": "自动执行出单记录查询、数据比对和规则匹配",
+      "human_responsibility": "复核系统判定结果，处理模糊或边缘案例",
+      "handoff_triggers": [
+        "出单数据异常",
+        "规则库无法覆盖的判定场景",
+        "合作关系敏感需人工介入"
+      ],
+      "control_gates": [
+        "续约/终止决定需人工确认，涉及合约法律效力"
+      ],
+      "data_basis": [
+        "出单记录",
+        "合同到期日",
+        "业务续约规则"
+      ],
+      "process_context": "出单核查与续约资格判定直接影响后续DD重审或终止流程",
+      "risks_limits": [
+        "规则不完善可能导致误判",
+        "依赖准确的出单数据"
+      ],
+      "current_recommendation": "推荐Tier=Hybrid，先建立自动核查与规则引擎，人工复核保留在流程中，后续根据规则成熟度逐步降低人工介入。不直接封装为Skill。",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-CRR-08",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-31bb3cc6f3a724fc1da6",
+        "EVD-2cb681dbef31bf04cefe",
+        "EVD-fbbbb4b709a3f853826d",
+        "EVD-73e98f7038e73e285a18",
+        "EVD-7ef95d0b2e0e41fff7fb",
+        "EVD-49ac626107b75a7c799b",
+        "EVD-3f684c64ece77366c2ae",
+        "EVD-2650ddb86b48c91c9dda",
+        "EVD-78bba44e1dbb19c4d28b",
+        "EVD-4d332c6369cbcce47612",
+        "EVD-8260e154cfd581036435",
+        "EVD-5bb6772bcc019456eb88",
+        "EVD-310101719224fc8d8ea9"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "续约前流失预警报告",
+      "specific_capabilities": [
+        "识别高风险合作伙伴",
+        "生成预警报告",
+        "执行介入动作（电话/拜访）",
+        "记录处置结果"
+      ],
+      "ai_reshape": "系统自动识别预警并生成报告，Agent辅助提醒介入动作，人工执行介入并记录。整体为Agent辅助模式",
+      "quality_anchor": "预警准确性基于出单数据与阈值模型",
+      "ai_responsibility": "自动计算风险评分、生成预警报告和提示",
+      "human_responsibility": "决定并执行介入动作，记录结果",
+      "handoff_triggers": [
+        "高风险合作伙伴触发预警",
+        "自动介入无法执行时（如需要人际关系沟通）"
+      ],
+      "control_gates": [
+        "介入动作可能涉及客户关系维护，需合规审批"
+      ],
+      "data_basis": [
+        "出单数据",
+        "合作伙伴历史行为",
+        "流失模型"
+      ],
+      "process_context": "流失预警触达与介入是在续约前挽留关键合作伙伴",
+      "risks_limits": [
+        "预警模型准确率影响介入效率",
+        "介入执行需跨部门协调"
+      ],
+      "current_recommendation": "推荐Tier=Hybrid，Agent辅助决策，人工执行介入。不直接封装Skill，优先建立预警模型和Agent工作流。",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-CRR-09",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-b637961430067100299b",
+        "EVD-3e5c2b3fb6f53b866a9c",
+        "EVD-dac40f28edac5626b848",
+        "EVD-60d8eba5e07c8346866f",
+        "EVD-e1f04111085baef2c6be",
+        "EVD-5d91ffba6cd7c4265eb6",
+        "EVD-3bd8c144eef13def1b64",
+        "EVD-5c8ff3af6913649afb85",
+        "EVD-45ba5e555e522544678c",
+        "EVD-88753ab842e1188d505e",
+        "EVD-0427929b87ffeb83ceae",
+        "EVD-5bb6772bcc019456eb88",
+        "EVD-7d1874ed74999002b106"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "DD重审记录（续签专用）",
+      "specific_capabilities": [
+        "发起DD流程",
+        "收集续签材料",
+        "评审DD结果",
+        "输出记录"
+      ],
+      "ai_reshape": "系统自动拉取材料、生成DD检查表，人工评审并输出结论。Skill封装材料预处理部分，评审部分保留人工",
+      "quality_anchor": "DD重审记录需完整覆盖合规要求",
+      "ai_responsibility": "自动拉取历史合规记录、牌照信息等",
+      "human_responsibility": "审核材料真伪与合规性，形成重审结论",
+      "handoff_triggers": [
+        "材料不全或异常",
+        "合规记录有疑点"
+      ],
+      "control_gates": [
+        "DD重审结论需合规部门确认"
+      ],
+      "data_basis": [
+        "合作伙伴历史合规记录",
+        "外部数据源"
+      ],
+      "process_context": "续签DD重审是合作续约前的风险控制环节",
+      "risks_limits": [
+        "外部数据源可用性影响自动化程度",
+        "报告模板需预先定义"
+      ],
+      "current_recommendation": "推荐Tier=Aug，系统辅助材料收集与检查清单，人工做出最终判定。先补数据接口和报告模板。",
+      "database_tier": "Aug",
+      "recommended_tier": "Aug",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-CRR-10",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-94d22f2b06666f7c4a6d",
+        "EVD-dd77ada9e83d7ce03b4a",
+        "EVD-b57e67640c283e241f94",
+        "EVD-b9855c634616876d7616",
+        "EVD-3a291be9dc5b1966dec5",
+        "EVD-b41f796bc577d96bb25d",
+        "EVD-a07de369014b63d703fb",
+        "EVD-02367a65bbdccf9a9274",
+        "EVD-a250aa11a1c467cc8d81",
+        "EVD-aac7222a3e871ca3d3f1",
+        "EVD-740d714bfac04394b6d2",
+        "EVD-5bb6772bcc019456eb88",
+        "EVD-8fe57ac1cf1086d90c0c"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "续签合同",
+      "specific_capabilities": [
+        "起草合同",
+        "审核合同",
+        "发送签署",
+        "归档"
+      ],
+      "ai_reshape": "系统自动起草合同并进行初步校验，人工审核后发送签署并归档。高封装但保留人工审核控制门",
+      "quality_anchor": "合同条款准确性、签署流程合规性",
+      "ai_responsibility": "自动生成合同、发送签署邀请、归档",
+      "human_responsibility": "审核合同条款",
+      "handoff_triggers": [
+        "合同模板更新",
+        "签署异常",
+        "合作伙伴退回修改"
+      ],
+      "control_gates": [
+        "合同签署需法务/业务审核"
+      ],
+      "data_basis": [
+        "合同模板",
+        "合作伙伴信息",
+        "续约条款"
+      ],
+      "process_context": "续签合同签署是续约流程的法律落地环节",
+      "risks_limits": [
+        "合同自动生成依赖模板准确性",
+        "签署流程需对接电子签章系统"
+      ],
+      "current_recommendation": "推荐Tier=Auto，但人工审核节点不可省略。优先实施合同自动生成与签署闭环，Skill原型验证后推广。",
+      "database_tier": "Auto",
+      "recommended_tier": "Auto",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-CRR-11",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-a5f7dcedade38f598916",
+        "EVD-b0037e4d2ed290c895ea",
+        "EVD-cee173564c73281bcd69",
+        "EVD-23875c1e3906a8cfb253",
+        "EVD-331ff086f7bef6ad0cc1",
+        "EVD-797ff51ae944a51f165b",
+        "EVD-9123dfb493eef902fd1b",
+        "EVD-8ae558c8aa73d264b64c",
+        "EVD-0f452012df351757798a",
+        "EVD-2df5d8ac3664e546f636",
+        "EVD-86d86b8862d5f0a788eb",
+        "EVD-5bb6772bcc019456eb88",
+        "EVD-156120e641b4c1a4a381"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "合约终止通知 + 归档记录",
+      "specific_capabilities": [
+        "确认终止决定",
+        "发出终止通知",
+        "更新状态",
+        "归档记录"
+      ],
+      "ai_reshape": "系统自动执行终止通知和归档，人工确认终止决定。高封装但保留人工最终确认",
+      "quality_anchor": "终止通知准确性和不可逆操作的可追溯性",
+      "ai_responsibility": "自动生成通知、更新状态、归档",
+      "human_responsibility": "复核并确认终止决定",
+      "handoff_triggers": [
+        "终止决定不明确",
+        "合作伙伴有异议"
+      ],
+      "control_gates": [
+        "终止操作不可逆，必须人工最终确认"
+      ],
+      "data_basis": [
+        "出单核查结果",
+        "合同状态"
+      ],
+      "process_context": "合约终止是合作结束的正式步骤",
+      "risks_limits": [
+        "错误终止可能导致法律纠纷"
+      ],
+      "current_recommendation": "推荐Tier=Auto，但设置人工确认步骤。先确保终止逻辑准确无误，再封装为Skill。",
+      "database_tier": "Auto",
+      "recommended_tier": "Auto",
+      "quadrant": "unclassified"
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "T001",
+      "l4_code": "L4-CRR-06",
+      "task_name": "系统查询即将到期合作伙伴",
+      "source_type": "blueprint_step",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-01",
+      "source_line": 80,
+      "previous_task_ids": [],
+      "next_task_ids": ["T002"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-cc49b457587be95b7ef7",
+        "EVD-deb35df4db13f4d7270d",
+        "EVD-11d079c8359e16d7f875",
+        "EVD-ca65d7bcf09d2ab3c62d"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "基于d1输入结构化=2, d2规则清晰=2, 可全自动化查询到期合作伙伴。skill可行性A，支持封装。"
+    },
+    {
+      "task_id": "T002",
+      "l4_code": "L4-CRR-06",
+      "task_name": "生成到期清单",
+      "source_type": "blueprint_step",
+      "sequence_no": 2,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-01",
+      "source_line": 80,
+      "previous_task_ids": ["T001"],
+      "next_task_ids": ["T003"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-cc49b457587be95b7ef7",
+        "EVD-deb35df4db13f4d7270d",
+        "EVD-1c157fbb3f14abf41941",
+        "EVD-ca65d7bcf09d2ab3c62d"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "基于结构化输入和验证能力，系统可自动生成到期清单。"
+    },
+    {
+      "task_id": "T003",
+      "l4_code": "L4-CRR-06",
+      "task_name": "发送到期提醒通知",
+      "source_type": "blueprint_step",
+      "sequence_no": 3,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-01",
+      "source_line": 80,
+      "previous_task_ids": ["T002"],
+      "next_task_ids": ["T004"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-cc49b457587be95b7ef7",
+        "EVD-e5e084d92d2c1441dd15",
+        "EVD-4c21cf5a5e4dc4189fa7"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "提醒通知可系统自动发送，fallback需人工处理异常。"
+    },
+    {
+      "task_id": "T004",
+      "l4_code": "L4-CRR-07",
+      "task_name": "系统核查出单记录并输出初步续约资格判定",
+      "source_type": "blueprint_step",
+      "sequence_no": 4,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-02",
+      "source_line": 92,
+      "previous_task_ids": ["T003"],
+      "next_task_ids": ["T005"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-97faaaa5ba0959d1b5bb",
+        "EVD-77dfa9c7db635a4ae8e9",
+        "EVD-2330ea99254eb9962de9",
+        "EVD-c621807d654bd59c553a"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "规则清晰(d2=2)但判定涉及业务判断，需人最终确认。复合动作拆分，系统部分为Hybrid。"
+    },
+    {
+      "task_id": "T005",
+      "l4_code": "L4-CRR-07",
+      "task_name": "人工复核续约/终止决定",
+      "source_type": "blueprint_step",
+      "sequence_no": 5,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-02",
+      "source_line": 92,
+      "previous_task_ids": ["T004"],
+      "next_task_ids": ["T006"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-97faaaa5ba0959d1b5bb",
+        "EVD-bc240cd098943d148e49",
+        "EVD-01894d0bf43c6499c1dd"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "需人工基于业务经验复核判定结果，合规要求(d6=1)需谨慎处理。"
+    },
+    {
+      "task_id": "T006",
+      "l4_code": "L4-CRR-08",
+      "task_name": "系统识别高风险合作伙伴并生成预警报告",
+      "source_type": "blueprint_step",
+      "sequence_no": 6,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-03",
+      "source_line": 102,
+      "previous_task_ids": ["T005"],
+      "next_task_ids": ["T007"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-3db1f01ec343422935bb",
+        "EVD-31bb3cc6f3a724fc1da6",
+        "EVD-2cb681dbef31bf04cefe",
+        "EVD-310101719224fc8d8ea9"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "依赖模型识别和规则，可自动化生成报告，但阈值设定需业务输入，故为Hybrid。"
+    },
+    {
+      "task_id": "T007",
+      "l4_code": "L4-CRR-08",
+      "task_name": "人工执行介入动作并记录处置结果",
+      "source_type": "blueprint_step",
+      "sequence_no": 7,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-03",
+      "source_line": 102,
+      "previous_task_ids": ["T006"],
+      "next_task_ids": ["T008"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-3db1f01ec343422935bb",
+        "EVD-fbbbb4b709a3f853826d",
+        "EVD-7ef95d0b2e0e41fff7fb"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "介入动作涉及人际沟通，需人工执行并记录。"
+    },
+    {
+      "task_id": "T008",
+      "l4_code": "L4-CRR-09",
+      "task_name": "发起续签DD并进行自动材料收集",
+      "source_type": "blueprint_step",
+      "sequence_no": 8,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-04",
+      "source_line": 117,
+      "previous_task_ids": ["T007"],
+      "next_task_ids": ["T009"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-68dbd892b215579265ab",
+        "EVD-b637961430067100299b",
+        "EVD-60d8eba5e07c8346866f",
+        "EVD-7d1874ed74999002b106"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "需人工触发DD并协调材料收集，系统辅助拉取历史数据，为Aug。"
+    },
+    {
+      "task_id": "T009",
+      "l4_code": "L4-CRR-09",
+      "task_name": "内部评审DD材料并形成意见",
+      "source_type": "blueprint_step",
+      "sequence_no": 9,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-04",
+      "source_line": 117,
+      "previous_task_ids": ["T008"],
+      "next_task_ids": ["T010"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-68dbd892b215579265ab",
+        "EVD-dac40f28edac5626b848",
+        "EVD-5d91ffba6cd7c4265eb6"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "材料评审涉及合规判断，需人工。"
+    },
+    {
+      "task_id": "T010",
+      "l4_code": "L4-CRR-10",
+      "task_name": "系统起草续签合同",
+      "source_type": "blueprint_step",
+      "sequence_no": 10,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-05",
+      "source_line": 128,
+      "previous_task_ids": ["T009"],
+      "next_task_ids": ["T011"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-1d34269f1b6669b886aa",
+        "EVD-94d22f2b06666f7c4a6d",
+        "EVD-dd77ada9e83d7ce03b4a",
+        "EVD-8fe57ac1cf1086d90c0c"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "基于模板和规则自动生成合同，输入结构化(d1=2)、规则清晰(d2=2)，可封装。"
+    },
+    {
+      "task_id": "T011",
+      "l4_code": "L4-CRR-10",
+      "task_name": "内部审核合同",
+      "source_type": "blueprint_step",
+      "sequence_no": 11,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-05",
+      "source_line": 128,
+      "previous_task_ids": ["T010"],
+      "next_task_ids": ["T012"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-1d34269f1b6669b886aa",
+        "EVD-b57e67640c283e241f94",
+        "EVD-b41f796bc577d96bb25d"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "合同审核涉及法律和商务条款，必须人工。"
+    },
+    {
+      "task_id": "T012",
+      "l4_code": "L4-CRR-10",
+      "task_name": "发送签署并归档",
+      "source_type": "blueprint_step",
+      "sequence_no": 12,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-05",
+      "source_line": 128,
+      "previous_task_ids": ["T011"],
+      "next_task_ids": ["T013"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-1d34269f1b6669b886aa",
+        "EVD-b9855c634616876d7616",
+        "EVD-3a291be9dc5b1966dec5"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "发送签署和归档可由系统自动完成，fallback处理异常。"
+    },
+    {
+      "task_id": "T013",
+      "l4_code": "L4-CRR-11",
+      "task_name": "确认终止决定",
+      "source_type": "blueprint_step",
+      "sequence_no": 13,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-06",
+      "source_line": 139,
+      "previous_task_ids": ["T012"],
+      "next_task_ids": ["T014"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-44b6ee59790b470d5eb5",
+        "EVD-a5f7dcedade38f598916",
+        "EVD-b0037e4d2ed290c895ea"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "终止操作不可逆，需人工确认决定。"
+    },
+    {
+      "task_id": "T014",
+      "l4_code": "L4-CRR-11",
+      "task_name": "执行合约终止与归档",
+      "source_type": "blueprint_step",
+      "sequence_no": 14,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-06",
+      "source_line": 139,
+      "previous_task_ids": ["T013"],
+      "next_task_ids": [],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-44b6ee59790b470d5eb5",
+        "EVD-cee173564c73281bcd69",
+        "EVD-23875c1e3906a8cfb253",
+        "EVD-331ff086f7bef6ad0cc1"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "系统自动发送通知、更新状态和归档，高确定性。"
+    }
+  ],
+  "priority_drafts": [
+    {
+      "priority": "P0",
+      "l3_code": "L3-CRR",
+      "focus_l4s": ["L4-CRR-06","L4-CRR-07","L4-CRR-08","L4-CRR-09"],
+      "rationale": "价值链节点'DD重审记录'(VN-CRR-01)优先级P0，直接影响续约风险控制与业务效率，建议优先实现自动化和质量控制。",
+      "evidence_refs": ["EVD-eb1545516437627521b5","EVD-f39d97e872ca3cb4b441"]
+    },
+    {
+      "priority": "P1",
+      "l3_code": "L3-CRR",
+      "focus_l4s": ["L4-CRR-10","L4-CRR-11"],
+      "rationale": "价值链节点'续签合约'(VN-CRR-02)优先级P1，为续约执行交付物，但依赖前置节点的数据与决策，可在P0节点稳定后推进。",
+      "evidence_refs": ["EVD-b761644e2e3c5fd12c73","EVD-a3c3ba642c20cb67a990"]
+    }
+  ],
+  "decision_drafts": [
+    {
+      "priority": "P0",
+      "task_ids": ["T004","T005"],
+      "title": "出单核查与续约资格判定自动化试点",
+      "pilot_scope": "选择KA合作伙伴续约场景，自动核查出单并生成初步判定，试点期由经代机构合作岗人工复核所有判定结果，验证规则准确率后逐步减少人工。",
+      "human_boundary": "系统无法覆盖的规则、合作关系敏感或边缘案例，必须由岗位人员最终决定。",
+      "evidence_refs": ["EVD-97faaaa5ba0959d1b5bb","EVD-c621807d654bd59c553a"]
+    },
+    {
+      "priority": "P1",
+      "task_ids": ["T010","T011","T012"],
+      "title": "续签合同自动化签署流程",
+      "pilot_scope": "对标准化续签合同场景，自动起草并发送签署，内部审核节点保留，试点后评估审核效率提升。",
+      "human_boundary": "合同条款审核必须人工，系统不得自动跳过审核节点。",
+      "evidence_refs": ["EVD-1d34269f1b6669b886aa","EVD-8fe57ac1cf1086d90c0c"]
+    }
+  ],
+  "control_chain": [],
+  "rejected_task_sources": [],
+  "missing_analysis": []
+}
