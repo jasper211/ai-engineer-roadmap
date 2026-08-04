@@ -1,0 +1,98 @@
+matrix_id: HKIA-IA-ASSET-METRIC-COVERAGE
+version: 0.1
+status: representative_workbook_parsed_full_site_inventory_pending
+
+local_asset_coverage:
+  quarterly_long_business:
+    file_count: 45
+    period_start: 2015Q1
+    period_end: 2026Q1
+    completeness:
+      2015_2024: complete_four_quarters_each_year
+      2025: complete_four_quarters
+      2026: Q1_only_as_of_audit
+    formats:
+      legacy: xls
+      recent: xlsx
+  annual_long_business:
+    locally_saved_assets:
+      - file: Table-L5_2024.xlsx
+        table: L5
+        subject: individual_life_voluntary_termination_rate
+
+representative_quarterly_workbook:
+  file: 1q26_long.xlsx
+  period: 2026Q1
+  sheet_count: 17
+  sheets:
+    - {name: Form LT QR (NB), subject: new_business_by_product, themes: [T00, T01, T10]}
+    - {name: Form LT QR (CCY), subject: new_business_by_currency, themes: [T13]}
+    - {name: Form LT QR (prem term), subject: new_business_by_premium_term, themes: [T11]}
+    - {name: Form LT QR (channel), subject: new_business_by_distribution_channel, themes: [T12]}
+    - {name: Form LT QR (IF), subject: inforce_business_and_premiums_receivable, themes: [T02]}
+    - {name: Form LT QR (IF G H), subject: inforce_group_and_other_classes, themes: [T02]}
+    - {name: Form LT QR (Lapse), subject: lapse_or_termination, themes: [T02]}
+    - {name: Form LT QR (RI), subject: reinsurance, themes: [T32]}
+    - {name: Table L1, subject: insurer_new_business, themes: [T20]}
+    - {name: Table L2, subject: insurer_inforce_business, themes: [T20, T02]}
+    - {name: Table L1 (CCY), subject: insurer_new_business_by_currency, themes: [T20, T13]}
+    - {name: Table L1 (prem term), subject: insurer_new_business_by_premium_term, themes: [T20, T11]}
+    - {name: Table L1 (channel), subject: insurer_new_business_by_channel, themes: [T20, T12]}
+    - {name: Table L3, subject: insurer_business_detail, themes: [T20, T21]}
+    - {name: Table L4, subject: insurer_business_detail, themes: [T20, T21]}
+    - {name: List of Insurers, subject: insurer_entity_reference, themes: [T20]}
+    - {name: notes, subject: definitions_and_notes, themes: []}
+
+confirmed_metric_families:
+  - {family: business_volume, metrics: [policy_count, lives, sums_assured, single_premium, annualized_premium], dimensions: [period, product, participating_status]}
+  - {family: currency, metrics: [policy_count, single_premium, annualized_premium], dimensions: [HKD, RMB, USD, other_currency, product]}
+  - {family: premium_term, metrics: [policy_count, single_premium, annualized_premium], dimensions: [single, under_5_years, 5_to_under_10, 10_to_under_25, 25_plus, product]}
+  - {family: channel, metrics: [policy_count, single_premium, annualized_premium], dimensions: [agent_ex_bancassurance, bancassurance, broker, direct_sales, other, product]}
+  - {family: inforce, metrics: [policy_count, lives, sums_assured, single_premium, first_year_premium, renewal_premium], dimensions: [product, participating_status]}
+  - {family: insurer, metrics: [new_business, inforce_business], dimensions: [insurer, product, channel, currency, premium_term]}
+  - {family: lapse_and_termination, metrics: [lapse_or_termination_observations], dimensions: [product_and_table_specific_dimensions]}
+  - {family: reinsurance, metrics: [reinsurance_observations], dimensions: [table_specific_dimensions]}
+
+annual_l5_2024:
+  subject: individual_life_voluntary_termination_rate
+  historical_overall_rate_period: 2020_2024
+  dimensions: [linked_status, insurance_type, policy_year, participating_status]
+  metrics: [overall_termination_rate, first_policy_year_rate, second_policy_year_rate, third_year_and_after_rate]
+  limitation: some_product_rows_are_NA_for_2024_breakdown
+
+intermediary_licensing_web_table:
+  source_url: https://www.ia.org.hk/tc/infocenter/statistics/statistics.html
+  observed_as_of: 2026-06-30
+  data_subjects:
+    - appointed_and_unappointed_individual_licensees
+    - individual_agents_agency_representatives_and_broker_representatives
+    - licensed_agencies_and_broker_companies
+    - licensees_by_eligible_line_of_business
+  themes: [T22]
+  evidence_permission: licensed_population_size_only
+  prohibited_inference: cannot_infer_active_rate_productivity_or_retention
+
+revised_theme_coverage:
+  T00: strong
+  T01: strong_for_NOP_and_APE_weak_for_value_and_profit
+  T02: medium_inforce_and_lapse_present_continuity_and_persistency_depth_to_validate
+  T10: strong_with_classification_break_checks_required
+  T11: strong
+  T12: strong
+  T13: strong
+  T14: weak_MCV_not_confirmed_in_quarterly_workbook
+  T20: strong
+  T21: medium_market_structure_strong_operating_capability_weak
+  T22: weak_to_medium_licensed_population_present_activity_and_productivity_missing
+  T30: outside_statistical_workbook_requires_policy_assets
+  T31: missing_from_IA_insurance_workbooks
+  T32: weak_reinsurance_present_profit_value_capital_missing
+
+next_inventory_targets:
+  - IA_annual_tables_L1_to_L4_and_other_L_tables
+  - IA_general_business_statistics
+  - IA_MCV_statistics_and_press_release_tables
+  - IA_complaints_and_conduct_statistics
+  - IA_solvency_and_RBC_statistics
+  - intermediary_statistics_historical_snapshots
+

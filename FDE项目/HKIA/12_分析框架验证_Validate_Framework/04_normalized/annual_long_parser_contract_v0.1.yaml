@@ -1,0 +1,51 @@
+contract_id: HKIA-ANNUAL-LONG-PARSER
+version: 0.1
+status: design_ready_first_reconciliation_test_passed
+input_asset_set: ASTSET-IA-LTA-2024-FULL-XLSX
+schema_registry: HKIA-ANNUAL-LONG-SCHEMA-REGISTRY
+
+pipeline:
+  - step: verify_file_signature_checksum_and_original_path
+    failure: quarantine_asset
+  - step: select_standard_or_legacy_excel_parser
+    failure: create_incident
+  - step: identify_table_id_sheet_and_report_year
+    failure: reject_fact_extraction
+  - step: detect_subtable_blocks_and_multilevel_headers
+    failure: manual_schema_review
+  - step: expand_merged_headers_and_normalize_bilingual_labels
+    failure: retain_raw_header_path
+  - step: convert_wide_observations_to_canonical_long_facts
+    failure: no_partial_publish
+  - step: normalize_units_metric_ids_dimensions_and_entity_ids
+    failure: quality_flag_and_hold
+  - step: separate_detail_market_total_NA_zero_and_blank_records
+    failure: reconciliation_gate_fail
+  - step: reconcile_detail_tables_to_control_tables
+    failure: discrepancy_incident
+  - step: emit_facts_lineage_and_quality_report
+    failure: run_incomplete
+
+outputs:
+  - annual_long_market_facts
+  - annual_long_termination_facts
+  - annual_long_company_inforce_facts
+  - annual_long_company_new_business_facts
+  - annual_long_reconciliation_report
+  - annual_long_parse_incidents
+
+acceptance_tests:
+  - all_19_tables_route_to_exactly_one_schema_family
+  - all_numeric_records_have_metric_unit_period_and_locator
+  - zero_blank_NA_and_not_disclosed_remain_distinct
+  - company_rows_map_to_insurer_id_or_are_quarantined
+  - market_total_is_not_double_counted
+  - L14_plus_L15_reconciles_to_L16_by_insurer_and_metric_or_exception_is_logged
+  - L16_L17_L18_to_L19_relation_is_reconciled_not_assumed
+  - external_formula_header_artifacts_do_not_overwrite_source_file
+
+test_evidence:
+  - test_id: TEST-HKIA-ANNUAL-LONG-L14-L16-001
+    result: pass
+    scope: 57_insurers_x_4_metrics_228_cells_zero_discrepancy
+    promotion_limit: one_year_only

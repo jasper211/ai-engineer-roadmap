@@ -1,0 +1,35 @@
+test_id: TEST-HKIA-ANNUAL-LONG-L14-L16-001
+version: 0.1
+status: passed
+test_type: cross_table_reconciliation
+period: 2024
+
+inputs:
+  L14: Table-L14_2024.xlsx
+  L15: Table-L15_2024.xlsx
+  L16: Table-L16__2024.xlsx
+
+hypothesis: L14_non_linked_plus_L15_linked_equals_L16_total_individual_life_new_business
+join_key: insurer_english_name_source
+metrics:
+  - policy_count_single
+  - policy_count_annual
+  - premium_single_HKD_thousand
+  - premium_annual_HKD_thousand
+
+results:
+  insurer_count: 57
+  checked_cells: 228
+  discrepancy_count: 0
+  tolerance: 0.0001_source_unit
+  decision: pass
+
+interpretation:
+  - 2024年L14_L15_L16在当前四项指标上可建立确定性component_to_total关系
+  - 英文来源名称可用于本年度对账_跨年仍需稳定insurer_id和别名历史
+  - 此测试只证明表间算术关系_不证明任何经营原因或盈利结果
+
+promotion_candidate:
+  rule: L14_plus_L15_reconcile_to_L16_by_insurer_and_metric
+  status: validated_once_not_yet_cross_year_promoted
+

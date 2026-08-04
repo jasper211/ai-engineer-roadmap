@@ -1,0 +1,108 @@
+matrix_id: HKIA-IA-ASSET-METRIC-COVERAGE
+version: 0.2
+status: second_round_directory_verified_one_new_workbook_parsed
+supersedes: ia_asset_metric_coverage_matrix_v0.1.yaml
+
+official_data_branches:
+  - branch_id: IA_LONG_QUARTERLY
+    assets: quarterly_xls_xlsx
+    local_status: 45_files_2015Q1_to_2026Q1
+    coverage: [new_business, product, currency, premium_term, channel, inforce, lapse, reinsurance, insurer]
+  - branch_id: IA_LONG_ANNUAL
+    assets: L1_to_L19_plus_notes_definitions_and_insurer_list
+    verified_year: 2024
+    market_tables: [L1, L2, L3, L4, L5, L6, L7]
+    company_tables: [L8, L9, L10, L11, L12, L13, L14, L15, L16, L17, L18, L19]
+    local_status: L5_only
+  - branch_id: IA_GENERAL_ANNUAL
+    available_years: 2001_to_2024
+    coverage:
+      - direct_and_reinsurance_inward_results
+      - underwriting_results_accident_and_underwriting_year
+      - professional_reinsurer_results
+      - claims_and_premium_liabilities
+      - gross_and_net_claims_triangles
+      - employees_compensation_claims
+      - motor_claims
+      - statutory_business
+      - company_operating_results
+    structural_break: RBC_2024_reporting_population_and_form_change
+  - branch_id: IA_GENERAL_QUARTERLY
+    available_years: 2001_to_2025
+    coverage: [gross_premium, net_premium, paid_claims, underwriting_result, operating_result, company_result]
+    structural_break: RBC_2024Q3_onward
+  - branch_id: IA_FINANCIAL_QUARTERLY
+    available_periods: [2024Q4, 2025Q1, 2025Q2, 2025Q3, 2025Q4, 2026Q1]
+    parsed_asset: AST-IA-FINANCIAL-2026Q1-XLSX
+    coverage:
+      - total_assets_and_liabilities
+      - cash_and_deposits
+      - debt_securities
+      - equities
+      - properties
+      - loans_and_advances
+      - policyholder_account_assets
+      - other_financial_assets
+      - reinsurance_assets
+      - insurance_liabilities
+      - financial_liabilities
+      - net_assets
+    scopes: [industry_total, long_term, participating_long_term, general]
+    themes: [T01, T31, T32]
+  - branch_id: IA_MCV
+    asset_type: quarterly_or_half_year_press_release_fact
+    confirmed_through: 2024FY
+    2025_status: publication_suspended_pending_review_of_non_local_policyholder_data_scope_and_criteria
+    evidence_boundary: no_silent_interpolation_after_2024
+    themes: [T14]
+  - branch_id: IA_COMPLAINTS
+    statistics_page_periods: 2017-06-26_to_2025-03-31
+    newer_updates: Conduct_in_Focus_2025_full_year
+    coverage: [total_complaints, complaint_categories, handling_completion]
+    themes: [T02, T12, T22, T30]
+  - branch_id: IA_INTERMEDIARY
+    coverage:
+      - licence_population_by_type_and_business_line
+      - age_profile
+      - new_entrant_retention_and_turnover
+      - licence_duration_choice
+      - broker_survey_2018
+      - agency_survey
+    themes: [T12, T22]
+    limitation: survey_updates_are_irregular
+
+material_revisions_to_theme_coverage:
+  T14:
+    previous: weak_missing
+    revised: historical_MCV_official_headlines_available_current_series_suspended
+  T22:
+    previous: licensed_population_only_active_rate_and_retention_missing
+    revised: licence_population_age_turnover_and_new_entrant_retention_available_productivity_still_missing
+  T32:
+    previous: profit_value_capital_missing
+    revised: industry_balance_sheet_and_asset_allocation_available_from_2024Q4_profit_EV_VONB_and_solvency_ratio_still_missing
+  general_business:
+    previous: not_in_priority_scope
+    revised: deep_official_dataset_available_with_claims_triangles_and_underwriting_results
+
+priority_download_queue:
+  P0:
+    - annual_long_2024_L1_to_L4_and_L6_to_L19_plus_definitions
+    - quarterly_financial_2024Q4_to_2025Q4
+    - complaint_statistics_latest_pdf_and_Conduct_in_Focus_12
+    - intermediary_dynamics_issue_12
+  P1:
+    - general_business_2024_market_and_company_xlsx
+    - general_business_2025Q4_xlsx
+    - historical_MCV_press_release_asset_index
+  P2:
+    - broker_and_agency_survey_pdfs
+    - general_business_historical_backfill
+
+remaining_core_gaps:
+  - company_EV_VONB_and_profit
+  - solvency_ratio_and_capital_requirement_time_series
+  - active_sales_productivity_by_channel
+  - post_2024_MCV_or_non_local_policyholder_breakdown
+  - claims_outcomes_for_long_term_business
+

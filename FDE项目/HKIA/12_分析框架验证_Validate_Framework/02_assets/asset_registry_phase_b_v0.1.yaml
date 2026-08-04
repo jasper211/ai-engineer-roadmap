@@ -93,3 +93,82 @@ assets:
     cited_source_count: 8
     allowed_use: [research_claim, mechanism_hypothesis, source_lead, analytical_framework]
     prohibited_use: [regulatory_fact_without_backtrace, market_incidence_fact, causal_claim]
+
+  - asset_id: AST-IA-FINANCIAL-2026Q1-XLSX
+    source_id: SRC-REG-IA-FINANCIAL
+    title: Provisional Statistics on Hong Kong Insurance Market - Information on Assets and Liabilities
+    canonical_url: https://www.ia.org.hk/tc/infocenter/statistics/files/1q26_Industry_Financial_Info.xlsx
+    parent_page: https://www.ia.org.hk/tc/infocenter/statistics/Quarterly_Release_of_Provisional_Fin_Info_on_Insurance_Industry.html
+    content_type: xlsx
+    period: 2026-Q1
+    storage_path: 01_sources/raw/SRC-REG-IA-FINANCIAL/2026/1q26_Industry_Financial_Info.xlsx
+    acquisition_status: acquired
+    acquisition_method: official_parent_page_browser_session
+    acquired_at: 2026-08-04
+    local_file_present: true
+    file_size_bytes: 29488
+    checksum_sha256: b312bc66ea14fdd639c58f80eadde2cdd337be6ffd3a80a8d7dcc4a5cf0ad02b
+    workbook_profile:
+      sheets: [By Fund, By Fund (Qtr Cmp)]
+      periods_in_comparison_sheet: [2024Q4, 2025Q1, 2025Q2, 2025Q3, 2025Q4, 2026Q1]
+      unit: HKD_million
+      scopes: [industry_total, long_term_business, participating_long_term_business, general_business]
+    quality_status: admitted_read_only_source
+    allowed_use: [formal_fact, balance_sheet_fact, asset_allocation_fact, trend_fact]
+    prohibited_use: [profit_fact, solvency_ratio_fact, causal_claim, direct_pre_RBC_comparison]
+
+  - asset_id: ASTSET-IA-LTA-2024-FULL-XLSX
+    source_id: SRC-REG-IA-LTA
+    title: 2024 Annual Long Term Business Full Excel Set
+    parent_page: https://www.ia.org.hk/tc/infocenter/statistics/market_5_2024.html
+    content_type: xlsx_set
+    period: 2024-FY
+    storage_path: 01_sources/raw/SRC-REG-IA-LTA/2024/full_annual_set/
+    acquisition_status: acquired
+    acquisition_method: official_parent_page_browser_session
+    acquired_at: 2026-08-04
+    file_count: 22
+    components:
+      market_tables: [L1, L2, L3, L4, L5, L6, L7]
+      company_tables: [L8, L9, L10, L11, L12, L13, L14, L15, L16, L17, L18, L19]
+      governance_files: [Notes_2024, Insurerlist_2024, Definition_2024_R]
+    parse_status:
+      standard_xlsx_files: 21
+      mislabeled_legacy_xls_files: [Definition_2024_R.xlsx]
+      normalized_copy: 04_normalized/legacy_excel_converted/Definition_2024_R.xlsx
+    quality_status: admitted_read_only_asset_set_with_one_normalized_derivative
+
+  - asset_id: ASTSET-IA-FINANCIAL-2024Q4-2026Q1-XLSX
+    source_id: SRC-REG-IA-FINANCIAL
+    title: Quarterly Provisional Financial Information Complete Available Set
+    parent_page: https://www.ia.org.hk/tc/infocenter/statistics/Quarterly_Release_of_Provisional_Fin_Info_on_Insurance_Industry.html
+    content_type: xlsx_set
+    available_periods: [2024Q4, 2025Q1, 2025Q2, 2025Q3, 2025Q4, 2026Q1]
+    acquisition_status: acquired
+    acquisition_method: official_parent_page_browser_session
+    acquired_at: 2026-08-04
+    file_count: 6
+    storage_root: 01_sources/raw/SRC-REG-IA-FINANCIAL/
+    parse_status:
+      standard_xlsx_periods: [2024Q4, 2025Q1, 2025Q3, 2025Q4, 2026Q1]
+      mislabeled_legacy_xls_periods: [2025Q2]
+      normalized_copy: 04_normalized/legacy_excel_converted/2q25_Industry_Financial_Info.xlsx
+    quality_status: admitted_read_only_asset_set_with_one_normalized_derivative
+
+  - asset_id: AST-IA-COMPLAINTS-2024-25-PDF
+    source_id: SRC-REG-IA-COMPLAINTS
+    title: Summary of Complaints Received by IA 2024-04-01 to 2025-03-31
+    canonical_url: https://www.ia.org.hk/tc/infocenter/statistics/files/Summary_Complaints_received_by_IA_20240401_20250331_TC.pdf
+    content_type: pdf
+    period: 2024-04-01_to_2025-03-31
+    acquisition_status: browser_readable_not_locally_saved
+    quality_status: source_lead_until_local_asset_and_visual_check
+
+  - asset_id: AST-IA-CONDUCT-ISSUE12-2026-PDF
+    source_id: SRC-REG-IA-INTERMEDIARY-DYNAMICS
+    title: Conduct in Focus Issue 12 March 2026
+    canonical_url: https://www.ia.org.hk/tc/legislative_framework/files/CHI_Conduct_in_Focus_Issue_12_March_2026.pdf
+    content_type: pdf
+    period: 2026-03
+    acquisition_status: browser_readable_not_locally_saved
+    quality_status: HTML_articles_verified_PDF_local_asset_pending

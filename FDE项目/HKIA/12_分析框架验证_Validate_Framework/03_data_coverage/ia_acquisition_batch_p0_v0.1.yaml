@@ -1,0 +1,50 @@
+batch_id: IA-ACQUISITION-P0-20260804
+version: 0.1
+status: structured_assets_acquired_and_profiled_pdf_sources_located
+
+annual_long_2024:
+  expected_files: 22
+  acquired_files: 22
+  parsed_standard: 21
+  parsed_after_legacy_conversion: 1
+  tables: [L1, L2, L3, L4, L5, L6, L7, L8, L9, L10, L11, L12, L13, L14, L15, L16, L17, L18, L19]
+  governance_files: [Notes, Insurer_list, Definitions]
+  storage_path: 01_sources/raw/SRC-REG-IA-LTA/2024/full_annual_set/
+
+quarterly_financial:
+  expected_periods: [2024Q4, 2025Q1, 2025Q2, 2025Q3, 2025Q4, 2026Q1]
+  acquired_periods: [2024Q4, 2025Q1, 2025Q2, 2025Q3, 2025Q4, 2026Q1]
+  parsed_standard: [2024Q4, 2025Q1, 2025Q3, 2025Q4, 2026Q1]
+  parsed_after_legacy_conversion: [2025Q2]
+  storage_path: 01_sources/raw/SRC-REG-IA-FINANCIAL/
+
+format_incidents:
+  - incident_id: IA-FMT-001
+    file: Definition_2024_R.xlsx
+    actual_format: OLE_Composite_Document_legacy_xls
+    server_extension: xlsx
+    resolution: preserve_original_and_create_normalized_xlsx_copy
+    normalized_sheet: Definition_2024_R!A1:F190
+  - incident_id: IA-FMT-002
+    file: 2q25_Industry_Financial_Info.xlsx
+    actual_format: OLE_Composite_Document_legacy_xls
+    server_extension: xlsx
+    resolution: preserve_original_and_create_normalized_xlsx_copy
+    normalized_sheet: 2q25_Industry_Financial_Info!A1:F265
+
+agent_rule_candidates:
+  - extension_must_not_determine_parser_without_file_signature_check
+  - original_asset_must_be_preserved_before_format_normalization
+  - normalized_derivative_must_link_to_original_asset_and_conversion_method
+
+pdf_assets:
+  complaints_2024_25:
+    status: browser_readable_local_save_pending
+  conduct_in_focus_issue_12:
+    status: browser_readable_HTML_components_verified_local_save_pending
+
+next_steps:
+  - build_table_level_schema_profiles_for_L1_to_L19
+  - compare_quarterly_financial_period_layouts_and_values
+  - retrieve_or_render_pdf_assets_via_supported_pdf_path
+

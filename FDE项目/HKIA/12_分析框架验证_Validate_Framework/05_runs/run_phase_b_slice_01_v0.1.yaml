@@ -138,7 +138,68 @@ steps:
     validation: all_pages_visual_checked_and_regulatory_claims_not_admitted_without_primary_backtrace
     status: completed
 
+  - step_id: PB01-STEP-015
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    role: source_engineer
+    objective: 将第二层输入纠偏为香港保险行业数据并盘点IA完整数据分支
+    input_refs: [IA_statistics_directory, local_45_quarterly_workbooks, AST-IA-LTA-2024-L5-XLSX]
+    action: 解析2026Q1长期业务17张表_登记中介牌照统计_形成首轮指标覆盖矩阵
+    output_refs: [HKIA-IA-ASSET-METRIC-COVERAGE-v0.1, HKIA-HK-INSURANCE-DATA-STACK]
+    validation: YAML_valid_and_representative_workbooks_read_only
+    status: completed
+
+  - step_id: PB01-STEP-016
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    role: source_engineer
+    objective: 扩展IA年度_一般业务_财务_投诉和中介动态数据分支
+    input_refs: [IA_long_annual_2024, IA_general_statistics, IA_financial_statistics, IA_complaints, IA_intermediary_statistics]
+    action: 验证L1至L19_一般业务历史目录_季度财务六期_投诉八期和中介流动数据_下载解析2026Q1财务Excel
+    output_refs: [HKIA-IA-ASSET-METRIC-COVERAGE-v0.2, AST-IA-FINANCIAL-2026Q1-XLSX]
+    validation: official_parent_pages_checked_checksum_recorded_workbook_two_sheets_parsed
+    status: completed
+
+  - step_id: PB01-STEP-017
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    role: source_engineer
+    objective: 完成IA P0结构化资产批量采集
+    input_refs: [IA_2024_annual_long_page, IA_quarterly_financial_page]
+    action: 下载L1至L19及三份治理文件_补齐六期季度财务_批量解析28份Excel_识别两份伪xlsx
+    output_refs: [IA-ACQUISITION-P0-20260804, ASTSET-IA-LTA-2024-FULL-XLSX, ASTSET-IA-FINANCIAL-2024Q4-2026Q1-XLSX]
+    validation: expected_file_counts_matched_all_files_have_working_parse_route
+    status: completed
+
+  - step_id: PB01-STEP-018
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    role: data_architect
+    objective: 建立年度长期业务L1至L19统一Schema和解析合同
+    input_refs: [ASTSET-IA-LTA-2024-FULL-XLSX]
+    action: 审计19张表的标题_多层表头_单位_市场与公司粒度_建立四类事实族_连接图和禁止连接
+    output_refs: [HKIA-ANNUAL-LONG-SCHEMA-REGISTRY, HKIA-ANNUAL-LONG-PARSER]
+    validation: all_19_tables_routed_once_and_join_redlines_declared
+    status: completed
+
+  - step_id: PB01-STEP-019
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    role: qa_reviewer
+    objective: 验证年度公司新造业务第一条跨表连接关系
+    input_refs: [Table-L14_2024, Table-L15_2024, Table-L16_2024]
+    action: 按57家保险公司对账整付和年付的保单数与保费
+    output_refs: [TEST-HKIA-ANNUAL-LONG-L14-L16-001]
+    validation: 228_cells_checked_zero_discrepancy
+    status: completed
+
 incidents:
+  - incident_id: INC-PB-004
+    run_id: RUN-HKIA-PHASE-B-SLICE-01
+    incident_class: file_format
+    detected_at_step: PB01-STEP-017
+    impact: 标准XLSX解析器误判两个官方文件损坏
+    root_cause: IA下载文件扩展名为xlsx但实际是OLE旧版Excel
+    correction: 保留原始文件_按文件签名路由_只读副本转换后成功解析
+    prevention_candidate:
+      type: parser_rule_candidate
+      rule: 选择解析器前检查文件签名_不得只依赖扩展名
+      status: candidate_1_of_3
   - incident_id: INC-PB-001
     run_id: RUN-HKIA-PHASE-B-SLICE-01
     incident_class: access
@@ -198,3 +259,6 @@ next_actions:
   - complete_human_annotation_before_any_deepseek_blind_test
   - backtrace_PwC_TCF_IA_Conduct_GL21_GL16
   - pilot_one_HKFI_one_trade_media_one_company_primary_asset
+  - download_and_parse_annual_long_L1_to_L19
+  - backfill_financial_quarterly_2024Q4_to_2025Q4
+  - acquire_latest_complaint_and_intermediary_dynamics_assets

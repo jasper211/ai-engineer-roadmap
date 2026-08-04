@@ -1,0 +1,177 @@
+registry_id: HKIA-ANNUAL-LONG-SCHEMA-REGISTRY
+version: 0.1
+status: representative_headers_verified_row_mapping_pending
+asset_set: ASTSET-IA-LTA-2024-FULL-XLSX
+
+schema_families:
+  - schema_id: SCH-LT-MARKET-LEVEL
+    grain: [report_year, observation_year, table_section, business_scope, insurance_type, metric_id, dimension_tuple]
+    tables: [L1, L2, L3, L4, L6, L7]
+    entity_scope: hong_kong_market
+    units: [count, HKD_million]
+    row_form: multi_section_wide_to_long
+  - schema_id: SCH-LT-TERMINATION-RATE
+    grain: [report_year, observation_year, linked_status, insurance_type, policy_year_band, participation_status, metric_id]
+    tables: [L5]
+    entity_scope: hong_kong_market
+    units: [percentage_point]
+    row_form: ratio_table_wide_to_long
+  - schema_id: SCH-LT-COMPANY-INFORCE
+    grain: [report_year, insurer_id, business_scope, metric_id, payment_basis]
+    tables: [L8, L9, L10, L11, L12, L13]
+    entity_scope: insurer
+    units: [count, HKD_thousand]
+    row_form: company_rows_metric_columns
+  - schema_id: SCH-LT-COMPANY-NEW-BUSINESS
+    grain: [report_year, insurer_id, business_scope, metric_id, payment_basis]
+    tables: [L14, L15, L16, L17, L18, L19]
+    entity_scope: insurer
+    units: [count, HKD_thousand]
+    row_form: company_rows_metric_columns
+
+table_registry:
+  L1:
+    subject: individual_life_inforce_and_new_business
+    schema_id: SCH-LT-MARKET-LEVEL
+    sections: [L1a_inforce, L1b_new_business]
+    dimensions: [linked_status, insurance_type, observation_year]
+    metrics: [policy_count, office_or_revenue_premium, sums_assured, net_liability_or_current_estimate]
+  L2:
+    subject: non_linked_individual_life_inforce
+    schema_id: SCH-LT-MARKET-LEVEL
+    dimensions: [participation_status, insurance_type, observation_year]
+    metrics: [policy_count, office_or_revenue_premium, sums_assured, net_liability_or_current_estimate]
+  L3:
+    subject: linked_individual_life_inforce
+    schema_id: SCH-LT-MARKET-LEVEL
+    dimensions: [insurance_type, observation_year]
+    metrics: [policy_count, office_or_revenue_premium, sums_assured, net_liability_or_current_estimate]
+  L4:
+    subject: individual_life_new_business
+    schema_id: SCH-LT-MARKET-LEVEL
+    sections: [L4a_non_linked, L4b_linked]
+    dimensions: [linked_status, participation_or_payment_status, insurance_type, observation_year]
+    metrics: [policy_count, office_premium]
+  L5:
+    subject: individual_life_voluntary_termination_rate
+    schema_id: SCH-LT-TERMINATION-RATE
+    sections: [L5a_non_linked, L5b_linked]
+    dimensions: [linked_status, insurance_type, policy_year_band, participation_status, observation_year]
+    metrics: [overall_termination_rate, termination_rate]
+  L6:
+    subject: group_and_retirement_inforce_and_group_new_business
+    schema_id: SCH-LT-MARKET-LEVEL
+    dimensions: [business_class, group_business_type, observation_year]
+    metrics: [policy_or_scheme_count, lives, sums_assured, premium_or_contribution, current_estimate]
+  L7:
+    subject: annuity_and_other_inforce_and_individual_annuity_new_business
+    schema_id: SCH-LT-MARKET-LEVEL
+    sections: [L7a_inforce, L7b_new_annuity]
+    dimensions: [linked_status, annuity_or_other_type, payment_basis, observation_year]
+    metrics: [policy_count, office_or_revenue_premium, net_liability_or_current_estimate]
+  L8:
+    subject: insurer_non_linked_individual_life_inforce
+    schema_id: SCH-LT-COMPANY-INFORCE
+    dimensions: [insurer, non_linked]
+    metrics: [policy_count, sums_assured, revenue_premium_single, revenue_premium_annual, current_estimate]
+  L9:
+    subject: insurer_linked_individual_life_inforce
+    schema_id: SCH-LT-COMPANY-INFORCE
+    dimensions: [insurer, linked]
+    metrics: [policy_count, sums_assured, revenue_premium_single, revenue_premium_annual, current_estimate]
+  L10:
+    subject: insurer_non_retirement_group_inforce
+    schema_id: SCH-LT-COMPANY-INFORCE
+    dimensions: [insurer, non_retirement_group]
+    metrics: [policy_count, lives, sums_assured, revenue_premium_single, revenue_premium_annual, current_estimate]
+  L11:
+    subject: insurer_retirement_scheme_inforce
+    schema_id: SCH-LT-COMPANY-INFORCE
+    dimensions: [insurer, retirement_scheme]
+    metrics: [scheme_count, contribution_single, contribution_annual, current_estimate]
+  L12:
+    subject: insurer_annuity_inforce
+    schema_id: SCH-LT-COMPANY-INFORCE
+    dimensions: [insurer, annuity]
+    metrics: [policy_count, revenue_premium_single, revenue_premium_annual, current_estimate]
+  L13:
+    subject: insurer_total_inforce
+    schema_id: SCH-LT-COMPANY-INFORCE
+    dimensions: [insurer, total_inforce]
+    metrics: [policy_count, sums_assured, revenue_premium_single, revenue_premium_annual, current_estimate]
+  L14:
+    subject: insurer_non_linked_individual_life_new_business
+    schema_id: SCH-LT-COMPANY-NEW-BUSINESS
+    dimensions: [insurer, non_linked_individual]
+    metrics: [policy_count_single, policy_count_annual, premium_single, premium_annual]
+  L15:
+    subject: insurer_linked_individual_life_new_business
+    schema_id: SCH-LT-COMPANY-NEW-BUSINESS
+    dimensions: [insurer, linked_individual]
+    metrics: [policy_count_single, policy_count_annual, premium_single, premium_annual]
+  L16:
+    subject: insurer_total_individual_life_new_business
+    schema_id: SCH-LT-COMPANY-NEW-BUSINESS
+    dimensions: [insurer, total_individual_life]
+    metrics: [policy_count_single, policy_count_annual, premium_single, premium_annual]
+  L17:
+    subject: insurer_individual_annuity_new_business
+    schema_id: SCH-LT-COMPANY-NEW-BUSINESS
+    dimensions: [insurer, individual_annuity]
+    metrics: [policy_count_single, policy_count_annual, premium_single, premium_annual]
+  L18:
+    subject: insurer_non_retirement_group_new_business
+    schema_id: SCH-LT-COMPANY-NEW-BUSINESS
+    dimensions: [insurer, non_retirement_group]
+    metrics: [policy_count_single, policy_count_annual, premium_single, premium_annual]
+  L19:
+    subject: insurer_total_long_term_new_business
+    schema_id: SCH-LT-COMPANY-NEW-BUSINESS
+    dimensions: [insurer, total_long_term]
+    metrics: [policy_count_single, policy_count_annual, premium_single, premium_annual]
+
+canonical_fact_fields:
+  required:
+    - fact_id
+    - source_asset_id
+    - source_table_id
+    - source_sheet
+    - source_locator
+    - report_year
+    - observation_year
+    - entity_scope
+    - metric_id
+    - value
+    - unit
+    - business_scope
+    - dimension_tuple
+    - quality_flags
+  company_only: [insurer_id, insurer_name_source]
+  ratio_only: [numerator_definition, denominator_definition, policy_year_band]
+
+join_graph:
+  reconciliations:
+    - {detail_tables: [L2, L3], control_table: L1, relation: component_to_individual_life_inforce}
+    - {detail_tables: [L14, L15], control_table: L16, relation: linked_plus_non_linked_to_total_individual_new_business}
+    - {detail_tables: [L8, L9, L10, L11, L12], control_table: L13, relation: inforce_components_to_total_reconciliation_only}
+    - {detail_tables: [L16, L17, L18], control_table: L19, relation: new_business_components_to_total_reconciliation_only}
+  entity_join:
+    source: Insurerlist_2024
+    rule: create_stable_insurer_id_and_alias_history_before_cross_year_join
+
+prohibited_joins:
+  - market_total_rows_must_not_be_added_to_company_rows
+  - L1_to_L7_market_facts_must_not_be_union_summed_with_L8_to_L19_company_market_total_rows
+  - policy_count_lives_and_scheme_count_are_not_additive_across_metric_ids
+  - HKD_million_and_HKD_thousand_must_not_be_union_summed_before_unit_normalization
+  - L5_percentage_points_must_not_enter_amount_fact_table
+  - current_estimate_must_not_be_relabelled_as_EV_VONB_profit_or_solvency_capital
+  - historical_columns_across_RBC_break_must_not_be_treated_as_definitionally_identical_without_notes_check
+
+quality_rules:
+  - displayed_NAME_errors_in_year_headers_are_external_formula_artifacts_use_sequence_and_source_formula_audit
+  - preserve_NA_distinct_from_zero_and_blank
+  - retain_market_total_as_control_record_notordinary_detail_record
+  - validate_company_sum_against_market_total_with_explicit_tolerance
+  - record_negative_current_estimate_values_without_forcing_nonnegative
+

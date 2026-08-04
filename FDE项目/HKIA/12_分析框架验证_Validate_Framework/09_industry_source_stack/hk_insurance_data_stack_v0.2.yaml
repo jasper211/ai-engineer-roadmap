@@ -1,0 +1,79 @@
+stack_id: HKIA-HK-INSURANCE-DATA-STACK
+version: 0.2
+status: active_design
+scope: 香港保险行业可结构化数据
+design_principle: 先补指标和维度缺口_再寻找数据资产_文本仅作解释
+
+layers:
+  - layer_id: D0_market_regulatory_core
+    role: 香港保险市场规模和结构的统一事实底座
+    preferred_sources: [IA_statistics_excel, IA_quarterly_and_annual_releases]
+    data_examples: [NOP, APE, 保费, 保单数, 产品, 缴费方式, 渠道, 币种, 公司]
+    evidence_grade: A
+  - layer_id: D1_company_quantitative_disclosure
+    role: 补充公司价值_利润_资本_持续率_渠道产能等IA未披露指标
+    preferred_sources: [annual_report, results_announcement, results_supplement, investor_presentation]
+    data_examples: [VONB, EV, operating_profit, solvency, persistency, agent_count, active_agent_productivity]
+    evidence_grade: A_for_company_scope
+  - layer_id: D2_hk_insurance_operating_data
+    role: 补充投诉_理赔_中介和消费者结果数据
+    preferred_sources: [IA_conduct_statistics, complaints_bureau_reports, HKFI_statistical_publications]
+    data_examples: [complaint_count, complaint_type, claim_outcome, intermediary_count, conduct_case]
+    evidence_grade: A_or_B_subject_to_method
+  - layer_id: D3_hk_demand_context_data
+    role: 为香港保险需求变化提供可量化外部变量
+    preferred_sources: [HKMA, Census_and_Statistics_Department, Immigration_Department, Hong_Kong_Tourism_Board]
+    data_examples: [interest_rate, exchange_rate, visitor_arrivals, mainland_visitor_arrivals, household_income]
+    evidence_grade: A_for_context_not_insurance_causality
+  - layer_id: D4_method_disclosed_industry_dataset
+    role: 补充监管与公司披露均缺失的调查或估算数据
+    preferred_sources: [Swiss_Re_sigma, professional_surveys, rating_agency_datasets]
+    admission_rule: sample_definition_and_method_and_period_required
+    evidence_grade: B_or_C
+
+non_data_explanation_layer:
+  sources: [industry_media, WeChat_articles, expert_posts, consultancy_commentary]
+  allowed_outputs: [source_lead, event_lead, mechanism_hypothesis, question_backlog]
+  prohibited_outputs: [market_fact_without_primary_source, numeric_fact_without_method]
+
+gap_driven_priority:
+  P0:
+    - theme: T02
+      missing_metrics: [lapse_definition_continuity, persistency_depth, inforce_quality]
+      target_layers: [D1_company_quantitative_disclosure, D2_hk_insurance_operating_data]
+    - theme: T14
+      missing_metrics: [MCV_business, customer_origin, cross_border_demand]
+      target_layers: [D0_market_regulatory_core, D3_hk_demand_context_data]
+    - theme: T22
+      missing_metrics: [historical_intermediary_series, active_rate, productivity, retention]
+      target_layers: [D1_company_quantitative_disclosure, D2_hk_insurance_operating_data]
+    - theme: T32
+      missing_metrics: [VONB, EV, profit, capital, persistency, cost]
+      target_layers: [D1_company_quantitative_disclosure]
+  P1:
+    - theme: T31
+      missing_metrics: [interest_rate, exchange_rate, visitor_flow, asset_market]
+      target_layers: [D3_hk_demand_context_data]
+    - theme: T30
+      missing_metrics: [rule_effective_date, scope, capital_transition, conduct_outcome]
+      target_layers: [D0_market_regulatory_core, D2_hk_insurance_operating_data]
+
+dataset_admission_gate:
+  required_fields: [metric_id, definition, unit, period, geography, population, dimensions, source_asset_id, locator]
+  required_checks:
+    - hong_kong_scope_is_explicit
+    - insurance_relevance_is_explicit
+    - period_and_unit_are_known
+    - definition_is_reproducible_or_limitation_is_recorded
+    - company_data_is_not_silently_promoted_to_market_data
+  failure_route: explanation_layer_or_source_lead
+
+agent_sequence:
+  - detect_theme_metric_gap
+  - discover_candidate_dataset
+  - register_source_and_asset
+  - parse_metric_definition_and_observation
+  - normalize_period_unit_entity_and_dimension
+  - validate_against_source_total_and_cross_source
+  - admit_fact_or_record_gap
+  - generate_analysis_only_after_fact_gate

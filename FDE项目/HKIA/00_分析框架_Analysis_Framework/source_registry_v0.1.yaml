@@ -200,6 +200,109 @@ sources:
     owner: Jasper
     status: assessed
 
+  - source_id: SRC-REG-IA-FINANCIAL
+    name: IA保险业季度临时财务资料
+    publisher: Insurance Authority Hong Kong
+    source_class: S1_regulatory_government
+    channels: [website, excel, pdf]
+    base_urls:
+      - https://www.ia.org.hk/tc/infocenter/statistics/Quarterly_Release_of_Provisional_Fin_Info_on_Insurance_Industry.html
+    themes: [T01, T21, T31, T32]
+    acquisition_mode: browser_download_verified
+    update_pattern: quarterly
+    available_period: 2024Q4_to_2026Q1_as_of_audit
+    access_policy:
+      public: true
+      automation_review_required: true
+    quality_profile:
+      authority: primary_official
+      proximity: primary
+      method_transparency: high_with_RBC_scope_notes
+      reproducibility: high
+      bias_profile: regulatory
+      access_stability: browser_session_required
+    evidence_permissions: [fact, balance_sheet_fact, asset_allocation_fact]
+    owner: Jasper
+    status: active_pilot
+
+  - source_id: SRC-REG-IA-GENERAL
+    name: IA一般业务年度及季度统计
+    publisher: Insurance Authority Hong Kong
+    source_class: S1_regulatory_government
+    channels: [website, excel, pdf]
+    base_urls:
+      - https://www.ia.org.hk/tc/infocenter/statistics/annual_general_business_statistics.html
+      - https://www.ia.org.hk/tc/infocenter/statistics/quarterly_release_of_provisional_statistics_for_general_business.html
+    themes: [T00, T01, T02, T10, T20, T21, T32]
+    acquisition_mode: assessed_browser_download_pending
+    update_pattern: quarterly_and_annual
+    access_policy:
+      public: true
+      automation_review_required: true
+      notes: RBC于2024-07-01实施后申报范围和表式变化_新旧数据不得直接比较
+    quality_profile:
+      authority: primary_official
+      proximity: primary
+      method_transparency: high_with_reporting_scope_break
+      reproducibility: high
+      bias_profile: regulatory
+      access_stability: browser_session_required
+    evidence_permissions: [fact, claims_fact, underwriting_fact, company_fact]
+    owner: Jasper
+    status: assessed
+
+  - source_id: SRC-REG-IA-COMPLAINTS
+    name: IA投诉统计
+    publisher: Insurance Authority Hong Kong
+    source_class: S1_regulatory_government
+    channels: [website, pdf, conduct_in_focus]
+    base_urls:
+      - https://www.ia.org.hk/tc/infocenter/statistics/Complaint_Statistics.html
+      - https://www.ia.org.hk/en/legislative_framework/conduct_in_focus.html
+    themes: [T02, T12, T22, T30]
+    acquisition_mode: assessed_pdf_and_html
+    update_pattern: annual_and_periodic
+    available_period: 2017-06-26_to_2025-03-31_on_statistics_page_with_newer_updates_in_conduct_in_focus
+    access_policy:
+      public: true
+      automation_review_required: true
+    quality_profile:
+      authority: primary_official
+      proximity: primary_for_complaints_received_by_IA
+      method_transparency: medium_high
+      reproducibility: high
+      bias_profile: regulatory
+      access_stability: medium_high
+    evidence_permissions: [complaint_fact, conduct_fact, regulatory_observation]
+    owner: Jasper
+    status: assessed
+
+  - source_id: SRC-REG-IA-INTERMEDIARY-DYNAMICS
+    name: IA中介结构与流动统计
+    publisher: Insurance Authority Hong Kong
+    source_class: S1_regulatory_government
+    channels: [website, pdf, conduct_in_focus, survey]
+    base_urls:
+      - https://www.ia.org.hk/en/legislative_framework/Conduct_in_Focus_Issue_12_04.html
+      - https://www.ia.org.hk/tc/infocenter/statistics/brokersurvey.html
+      - https://www.ia.org.hk/tc/infocenter/statistics/agencysurvey.html
+    themes: [T12, T22, T30]
+    acquisition_mode: assessed_html_and_pdf
+    update_pattern: periodic_irregular
+    access_policy:
+      public: true
+      automation_review_required: true
+    quality_profile:
+      authority: primary_official
+      proximity: primary_for_licensing_records_and_IA_surveys
+      method_transparency: medium_high
+      reproducibility: medium_high
+      bias_profile: regulatory
+      access_stability: medium_high
+    evidence_permissions: [intermediary_count_fact, age_fact, turnover_fact, licence_duration_fact, survey_fact]
+    owner: Jasper
+    status: assessed
+
   - source_id: SRC-MEDIA-WECHAT-GANGXIAN-CHANNEL
     name: 港险渠道微信公众号
     publisher: 港险渠道
