@@ -4,6 +4,7 @@ export interface ModelIndexItem {
   l3_code: string
   l3_name: string
   l2_capabilities: string[]
+  business_evidence_l4_count: number
   l4_count: number
   value_node_count: number
   blueprint_coverage: 'INDEXED' | 'MISSING'

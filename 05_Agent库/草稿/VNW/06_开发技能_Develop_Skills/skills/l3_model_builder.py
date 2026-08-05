@@ -926,6 +926,7 @@ class L3ModelBuilder:
                         {"kpi_name": row["kpi_name"], "source_type": row["source_type"]}
                         for row in model["kpi_mappings"]
                     ],
+                    "business_evidence_l4_count": sum(1 for l4 in model["l4s"] if l4.get("business_evidence")),
                     "l4_count": len(model["l4s"]),
                     "value_node_count": len(model["value_nodes"]),
                     "blueprint_coverage": model["blueprint"]["coverage"],

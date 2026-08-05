@@ -13,10 +13,8 @@ export default function GapsActions() {
 
   useEffect(() => { loadAllData().then(setData) }, [])
 
-  if (!data) return <div className="flex min-h-[60vh] items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-2 border-accent-primary border-t-transparent" /></div>
-
-  const gaps = data.gaps || []
-  const actions = data.actions || []
+  const gaps = data?.gaps || []
+  const actions = data?.actions || []
 
   const filteredGaps = useMemo(() => {
     return gaps.filter((g: any) => {
@@ -33,6 +31,8 @@ export default function GapsActions() {
       return matchSearch && matchDomain
     })
   }, [actions, search, domainFilter])
+
+  if (!data) return <div className="flex min-h-[60vh] items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-2 border-accent-primary border-t-transparent" /></div>
 
   const p0Gaps = gaps.filter((g: any) => g.priority === 'P0' && g.status === 'open').length
   const p1Gaps = gaps.filter((g: any) => g.priority === 'P1' && g.status === 'open').length
