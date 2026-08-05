@@ -23,6 +23,7 @@ export interface ModelIndexItem {
   analysis_status: 'PENDING_MODEL' | 'MODEL_DRAFT' | 'REVIEWED'
   analysis_input_hash: string
   analysis_run_input_hash: string
+  analysis_run_at: string | null
   production_status: 'READY_TO_RUN' | 'RUN_PREPARED' | 'ANALYSIS_CURRENT' | 'ANALYSIS_INPUT_CHANGED' | 'REVIEWED_BASELINE' | 'BLOCKED_INPUT'
   highest_gate: 'A' | 'E' | 'M' | 'NONE'
   gap_reasons: string[]

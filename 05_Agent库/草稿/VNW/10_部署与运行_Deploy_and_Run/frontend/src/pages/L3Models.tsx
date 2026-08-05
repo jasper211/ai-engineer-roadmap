@@ -125,6 +125,11 @@ function ModelCard({ model, quality }: { model: ModelIndexItem; quality?: { mixe
       {!full && model.gap_reasons.length > 0 && (
         <p className="mt-2 line-clamp-2 text-xs text-amber-800/80">首要缺口：{model.gap_reasons[0]}</p>
       )}
+      <p className="mt-2 text-right text-[10px] text-text-muted">
+        {model.analysis_run_at
+          ? `最新demo跑通于 ${new Date(model.analysis_run_at).toLocaleString('zh-CN')}`
+          : '未启动分析'}
+      </p>
     </>
   )
   return model.model_generation_allowed

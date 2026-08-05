@@ -937,6 +937,7 @@ class L3ModelBuilder:
                     "analysis_status": model["analysis"]["analysis_status"],
                     "analysis_input_hash": model.get("analysis_input_hash", ""),
                     "analysis_run_input_hash": (model["analysis"].get("model_run") or {}).get("input_snapshot_hash", ""),
+                    "analysis_run_at": (model["analysis"].get("model_run") or {}).get("generated_at"),
                     "production_status": (
                         "BLOCKED_INPUT" if not model["model_readiness"]["model_generation_allowed"]
                         else "ANALYSIS_INPUT_CHANGED" if model.get("stale_analysis")
