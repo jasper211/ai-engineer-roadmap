@@ -77,12 +77,14 @@ export default function LineageGraph({ nodes, edges, hops, focusKey, focusSchema
         data: {
           id: k,
           label: n.table,
+          cn_label: n.business_label || n.table,
           schema: n.schema,
           business_label: n.business_label,
           table_type: n.table_type,
           row_count: n.row_count,
           isFocus: k === focusKey,
           color: !focusSchema || n.schema === focusSchema ? nodeColor(n) : '#cbd5e1',
+          longLabel: (n.business_label || n.table) + '\n' + n.table,
         },
       })
     })
@@ -114,14 +116,18 @@ export default function LineageGraph({ nodes, edges, hops, focusKey, focusSchema
       {
         selector: 'node[label]',
         style: {
-          label: 'data(label)',
+          label: 'data(longLabel)',
           color: '#0f172a',
-          'font-size': 9,
+          'font-size': 8,
           'text-valign': 'bottom' as const,
+          'text-halign': 'center' as const,
           'text-margin-y': 6,
+          'text-wrap': 'wrap' as const,
+          'text-max-width': '110px' as const,
           'text-background-color': '#ffffff',
           'text-background-opacity': 0.7,
           'text-background-padding': '2px',
+          'text-line-height': 1.2,
         },
       },
       {
@@ -224,9 +230,48 @@ export default function LineageGraph({ nodes, edges, hops, focusKey, focusSchema
   }, [nodes, edges, hops, focusKey, focusSchema, onSelect])
 
   return (
-    <div className="relative">
-      <div ref={containerRef} style={{ width: '100%', height: 480 }} />
-      <div className="pointer-events-none absolute bottom-2 left-2 z-10 text-[10px] text-text-muted">滚轮缩放 · 拖拽平移 · 点节点切换焦点 · 因dagre按血缘方向左右分层，清晰可读</div>
+    <div className="space-y-2">
+      {/* 图例：线含义 + 节点颜色含义 */}
+      <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 rounded-lg border border-border-default bg-bg-elevated px-3 py-2 text-[10px] text-text-secondary">
+        <span className="font-semibold text-text-primary">图例</span>
+        <span className="flex items-center gap-1.5">
+          <span className="inline-block h-0.5 w-5 rounded bg-[#6366f1]" /> 靛蓝实线 = 视图依赖（VIEW 引用数据库表）
+        </span>
+        <span className="flex items-center gap-1.5">
+          <span className="inline-block h-0.5 w-5 rounded bg-[#0ea5e9]" /> 天蓝实线 = 外键关联（FK）
+        </span>
+        <span className="flex items-center gap-1.5">
+          <span className="inline-block w-5 border-t-2 border-dashed border-[#94a3b8]" /> 灰虚线 = 流水线同批（同批抽取/同步）
+        </span>
+        <span className="mx-1 inline-block h-3 w-px bg-border-default" />
+        <span className="flex items-center gap-1.5">
+          <span className="inline-block h-2.5 w-2.5 rounded-sm bg-[#6366f1]" /> 明细/事实表
+        </span>
+        <span className="flex items-center gap-1.5">
+          <span className="inline-block h-2.5 w-2.5 rounded-sm bg-[#8ca3e8]" /> 配置/维度/规则(参考)
+        </span>
+        <span className="flex items-center gap-1.5">
+          <span className="inline-block h-2.5 w-2.5 rounded-sm bg-[#0ea5e9]" /> 视图/桥接/映射
+        </span>
+        <span className="flex items-center gap-1.5">
+          <span className="inline-block h-2.5 w-2.5 rounded-sm bg-[#e2e8f0] border border-slate-300" /> 0行/未启用
+        </span>
+        <span className="flex items-center gap-1.5">
+          <span className="inline-block h-2.5 w-2.5 rounded-sm bg-[#e11d48]" /> 疑似断点/僵尸
+        </span>
+        <span className="flex items-center gap-1.5">
+          <span className="inline-block h-2.5 w-2.5 rounded-sm bg-[#0f172a]" /> 边框加粗 = 当前焦点表
+        </span>
+      </div>
+      <div className="relative">
+        <div ref={containerRef} style={{ width: '100%', height: 480 }} />
+        <div className="pointer-events-none absolute bottom-2 left-2 z-10 text-[10px] text-text-muted">滚轮缩放 · 拖拽平移 · 点节点切换焦点 · dagre按血缘上游→下游左右分层</div>
+      </div>
+      <p className="text-[10px] text-text-muted">
+        节点下方为业务中文名（与业务分析对齐），第二行小字为物理表名。箭头方向 = 数据流向（A→B 表示 A 供给 B）。
+        孤立表（无任何连线）多为<b>配置/维度等参考表</b>或<b>未激活/归档表</b>（如 never_activated / 0 行 / 历史归档），
+        业务上本就无血缘；少数大表（如应收主表 fact_receivable）无血缘则是<b>血缘采集缺口</b>，属后续补采范围。
+      </p>
     </div>
   )
 }
