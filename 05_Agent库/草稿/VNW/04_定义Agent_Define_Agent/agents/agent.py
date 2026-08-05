@@ -42,6 +42,7 @@ def parse_args():
     parser.add_argument("--build-all-model-snapshots", action="store_true", help="批量只读构建数据库中的全部L3模型")
     parser.add_argument("--build-db-catalog", action="store_true", help="只读构建数据库现状目录(process_analytics+业务数据仓库表结构+行数)")
     parser.add_argument("--sync-business-scenarios", action="store_true", help="同步人工authoring的业务数据场景记录到前端")
+    parser.add_argument("--build-table-analysis", action="store_true", help="构建业务数据入口②五层分析结构(104张业务表)")
     parser.add_argument("--check-source-updates", action="store_true", help="候选重建并输出L3/面板影响清单，不更新前端")
     parser.add_argument("--apply-source-updates", action="store_true", help="安全发布源头变化后的事实快照与影响报告")
     parser.add_argument("--l3-code", action="append", help="要构建的L3编码；可重复传入")
@@ -220,6 +221,28 @@ def main() -> int:
             AGENT_ROOT / "10_部署与运行_Deploy_and_Run/frontend/public/data/business_scenarios",
         )
         print(json.dumps({"status": "synced", "scenario_count": len(index["scenarios"])}, ensure_ascii=False, indent=2))
+        return 0
+    if args.build_table_analysis:
+        from skills.table_analysis import build_table_analysis, build_table_to_l4_index
+
+        catalog_path = AGENT_ROOT / "10_部署与运行_Deploy_and_Run/frontend/public/data/db_catalog.json"
+        db_catalog = json.loads(catalog_path.read_text(encoding="utf-8"))
+        snapshot_dir = AGENT_ROOT / "10_部署与运行_Deploy_and_Run/frontend/public/data/model_snapshots"
+        index_path = snapshot_dir / "index.json"
+        model_index = json.loads(index_path.read_text(encoding="utf-8"))
+        l3_codes = [item["l3_code"] for item in model_index["models"]]
+
+        def load_l3_snapshot(l3_code: str) -> dict | None:
+            path = snapshot_dir / f"{l3_code}.json"
+            if not path.exists():
+                return None
+            return json.loads(path.read_text(encoding="utf-8"))
+
+        table_to_l4_index = build_table_to_l4_index(l3_codes, load_l3_snapshot)
+        analysis = build_table_analysis(db_catalog, table_to_l4_index)
+        output_path = AGENT_ROOT / "10_部署与运行_Deploy_and_Run/frontend/public/data/table_analysis.json"
+        output_path.write_text(json.dumps(analysis, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+        print(json.dumps({"status": "built", "table_count": len(analysis["tables"]), "output": str(output_path)}, ensure_ascii=False, indent=2))
         return 0
     if args.build_db_catalog:
         from skills.db_catalog import build_catalog
