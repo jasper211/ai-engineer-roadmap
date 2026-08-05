@@ -31,6 +31,58 @@ export interface LineageL4Candidate {
   evidence: string
 }
 
+export type FieldTransform = 'direct' | 'derived' | 'computed_literal'
+
+export interface FieldSource {
+  schema: string
+  table: string
+  column: string
+}
+
+export interface FieldLineageColumn {
+  output_column: string
+  transform: FieldTransform
+  sources: FieldSource[]
+}
+
+export interface ResolvedFieldView {
+  schema: string
+  table: string
+  columns: FieldLineageColumn[]
+}
+
+export interface UnparsedFieldView {
+  schema: string
+  table: string
+  reason: string
+}
+
+export interface FieldLineage {
+  resolved_views: ResolvedFieldView[]
+  unparsed_views: UnparsedFieldView[]
+}
+
+export type FieldUsageConfidence = 'origin' | 'foreign_key_confirmed' | 'same_name_business_confirmed'
+
+export interface FieldUsage {
+  schema: string
+  table: string
+  confidence: FieldUsageConfidence
+  fk_target: { schema: string; table: string; column: string } | null
+}
+
+export interface FieldIndexEntry {
+  field_name: string
+  origin_tables: { schema: string; table: string }[]
+  usages: FieldUsage[]
+}
+
+export interface FieldIndex {
+  schema_version: string
+  source_policy: string
+  fields: Record<string, FieldIndexEntry>
+}
+
 export interface DataLineage {
   schema_version: string
   source_policy: string
@@ -39,6 +91,8 @@ export interface DataLineage {
   nodes: LineageNode[]
   edges: LineageEdge[]
   suggested_l4_candidates: Record<string, LineageL4Candidate[]>
+  field_lineage: FieldLineage
+  field_index: FieldIndex
 }
 
 export async function loadDataLineage(): Promise<DataLineage> {

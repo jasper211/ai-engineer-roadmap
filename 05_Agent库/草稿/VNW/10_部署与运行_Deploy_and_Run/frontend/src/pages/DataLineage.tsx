@@ -1,7 +1,24 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Workflow, Search, Info } from 'lucide-react'
-import { loadDataLineage, type DataLineage, type LineageEdge, type LineageEdgeType, type LineageNode } from '../lib/dataLineage'
+import { loadDataLineage, type DataLineage, type FieldTransform, type LineageEdge, type LineageEdgeType, type LineageNode } from '../lib/dataLineage'
 import { loadTableAnalysis, type TableAnalysis } from '../lib/tableAnalysis'
+
+const TRANSFORM_LABEL: Record<FieldTransform, string> = {
+  direct: '直接透传',
+  derived: '由源字段计算',
+  computed_literal: '常量/无法追溯到源字段',
+}
+
+const FIELD_CONFIDENCE_TONE: Record<string, string> = {
+  origin: 'bg-emerald-400/10 text-emerald-700',
+  foreign_key_confirmed: 'bg-sky-400/10 text-sky-700',
+  same_name_business_confirmed: 'bg-amber-400/10 text-amber-700',
+}
+const FIELD_CONFIDENCE_LABEL: Record<string, string> = {
+  origin: '源头(主键)',
+  foreign_key_confirmed: '外键确认',
+  same_name_business_confirmed: '同名(业务方确认一致)',
+}
 
 const EDGE_TONE: Record<LineageEdgeType, { stroke: string; dash?: string }> = {
   view_dependency: { stroke: '#6366f1' },
@@ -101,6 +118,7 @@ export default function DataLineage() {
   const [showPipelineSibling, setShowPipelineSibling] = useState(false)
   const [schemaFilter, setSchemaFilter] = useState<'all' | string>('all')
   const [l3Slice, setL3Slice] = useState<'all' | string>('all')
+  const [fieldQuery, setFieldQuery] = useState('')
 
   useEffect(() => {
     loadDataLineage().then(setLineage).catch(err => setError(err.message))
@@ -196,6 +214,18 @@ export default function DataLineage() {
         evidence: e.evidence,
       }))
   }, [selected, lineage])
+
+  const selectedFieldView = useMemo(() => lineage?.field_lineage.resolved_views.find(v => nodeKey(v.schema, v.table) === selected) ?? null, [lineage, selected])
+  const selectedFieldUnparsed = useMemo(() => lineage?.field_lineage.unparsed_views.find(v => nodeKey(v.schema, v.table) === selected) ?? null, [lineage, selected])
+
+  const fieldEntries = useMemo(() => {
+    if (!lineage) return []
+    const q = fieldQuery.trim().toLowerCase()
+    return Object.values(lineage.field_index.fields)
+      .filter(f => !q || f.field_name.toLowerCase().includes(q))
+      .sort((a, b) => b.usages.length - a.usages.length)
+      .slice(0, 40)
+  }, [lineage, fieldQuery])
 
   const relationStatus = (node: LineageNode): keyof typeof RELATION_TONE => {
     const key = nodeKey(node.schema, node.table)
@@ -353,6 +383,28 @@ export default function DataLineage() {
                   ))}
                 </div>
               </div>
+
+              {selectedFieldView && (
+                <div className="mt-3">
+                  <p className="text-[11px] font-semibold text-text-primary">字段级血缘({selectedFieldView.columns.length}列，来自真实SQL解析)</p>
+                  <div className="mt-1.5 max-h-80 space-y-1 overflow-auto">
+                    {selectedFieldView.columns.map((col, i) => (
+                      <div key={i} className="rounded-md bg-bg-surface p-1.5 text-[10px] leading-4">
+                        <span className="font-mono text-text-primary">{col.output_column}</span>
+                        <span className="ml-1.5 rounded bg-indigo-100 px-1 text-indigo-700">{TRANSFORM_LABEL[col.transform]}</span>
+                        {col.sources.length > 0 && (
+                          <p className="mt-0.5 text-text-muted">
+                            {col.sources.map(s => `${s.schema}.${s.table}.${s.column}`).join('、')}
+                          </p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {selectedFieldUnparsed && (
+                <p className="mt-3 text-[10px] text-text-muted">字段级血缘：{selectedFieldUnparsed.reason}，如实跳过，不猜测。</p>
+              )}
             </div>
           ) : (
             <div className="panel flex items-start gap-2 p-3 text-[11px] text-text-muted">
@@ -386,6 +438,37 @@ export default function DataLineage() {
         <div className="mt-3 flex flex-wrap gap-1.5">
           {isolatedNodes.map(n => (
             <span key={nodeKey(n.schema, n.table)} className="rounded-full bg-bg-surface px-2 py-1 font-mono text-[10px] text-text-muted" title={n.business_label}>{n.schema}.{n.table}</span>
+          ))}
+        </div>
+      </div>
+
+      <div className="panel p-4">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <p className="text-sm font-semibold text-text-primary">同名字段跨表索引（{Object.keys(lineage.field_index.fields).length}个共享字段名，按使用表数排序显示前40个）</p>
+          <div className="relative max-w-xs">
+            <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-text-muted" />
+            <input value={fieldQuery} onChange={e => setFieldQuery(e.target.value)} placeholder="搜索字段名" className="w-full rounded-lg border border-border-default bg-bg-elevated py-1.5 pl-8 pr-3 text-xs text-text-primary placeholder:text-text-muted" />
+          </div>
+        </div>
+        <p className="mt-1 text-[11px] text-text-muted">{lineage.field_index.source_policy}</p>
+        <div className="mt-3 space-y-2">
+          {fieldEntries.map(field => (
+            <details key={field.field_name} className="rounded-lg border border-border-default bg-bg-elevated">
+              <summary className="flex cursor-pointer flex-wrap items-center gap-2 px-3 py-2">
+                <span className="font-mono text-xs font-bold text-text-primary">{field.field_name}</span>
+                <span className="text-[10px] text-text-muted">源头：{field.origin_tables.length > 0 ? field.origin_tables.map(o => `${o.schema}.${o.table}`).join('、') : '无声明主键的源头'}</span>
+                <span className="ml-auto rounded-full bg-bg-surface px-2 py-0.5 text-[10px] text-text-secondary">出现在{field.usages.length}张表</span>
+              </summary>
+              <div className="border-t border-border-default p-2">
+                <div className="flex flex-wrap gap-1.5">
+                  {field.usages.map(u => (
+                    <span key={`${u.schema}.${u.table}`} className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${FIELD_CONFIDENCE_TONE[u.confidence]}`} title={u.fk_target ? `外键指向${u.fk_target.schema}.${u.fk_target.table}.${u.fk_target.column}` : undefined}>
+                      {u.schema}.{u.table} · {FIELD_CONFIDENCE_LABEL[u.confidence]}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </details>
           ))}
         </div>
       </div>
