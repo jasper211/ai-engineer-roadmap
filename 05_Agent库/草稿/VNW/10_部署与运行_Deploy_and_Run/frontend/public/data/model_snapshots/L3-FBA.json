@@ -499,7 +499,7 @@
     ]
   },
   "analysis_freshness": "INPUT_CHANGED",
-  "analysis_input_hash": "42d5d95ae616525530691f5d6f085baf8b5a1f3572862f20a0c65bfa3f0a4934",
+  "analysis_input_hash": "f8254eba89d97687c96ac2702cdfd1fbf8c047b2450dfd86a4a9638bb2e7a81b",
   "blueprint": {
     "blueprint_value_nodes": [],
     "coverage": "INDEXED",
@@ -731,6 +731,65 @@
       "status": "ACTIVE",
       "transform_rule": "",
       "value": 3
+    },
+    {
+      "confidence": "LOW",
+      "conflict_note": "人工按业务含义匹配到业务数据仓库表，非外键关联，未经业务方确认",
+      "evidence_class": "CONSENSUS",
+      "evidence_id": "EVD-11d29dbd9bafa8c5a14e",
+      "field_name": "business_evidence",
+      "source": {
+        "observed_at": "",
+        "source_field": "人工匹配",
+        "source_key": "L4-FBA-01",
+        "source_object": "public.agg_sales_base, comm_sandbox.config_quarter, public.config_quarter",
+        "source_system": "业务数据仓库",
+        "source_version": "2026-08-04试点"
+      },
+      "status": "UNVERIFIED",
+      "transform_rule": "",
+      "value": [
+        {
+          "confidence": "strong",
+          "evidence_type": "output",
+          "matched_columns": [
+            "签单日期",
+            "保费(hkd)",
+            "ape",
+            "签单年月"
+          ],
+          "rationale": "订单粒度销售汇总表，是月度/季度业绩数据汇总的原始输入",
+          "row_count": 6399,
+          "schema": "public",
+          "table": "agg_sales_base"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "rule",
+          "matched_columns": [
+            "quarter_code",
+            "q_start",
+            "q_end"
+          ],
+          "rationale": "季度日历配置表，是\"按季度分析\"切分区间的规则依据",
+          "row_count": 4,
+          "schema": "comm_sandbox",
+          "table": "config_quarter"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "rule",
+          "matched_columns": [
+            "quarter_code",
+            "q_start",
+            "q_end"
+          ],
+          "rationale": "与comm_sandbox.config_quarter同结构、同行数(两schema各维护一份)，同为季度日历规则依据",
+          "row_count": 4,
+          "schema": "public",
+          "table": "config_quarter"
+        }
+      ]
     },
     {
       "confidence": "HIGH",
@@ -1439,52 +1498,6 @@
       "value": 2
     },
     {
-      "confidence": "LOW",
-      "conflict_note": "人工按业务含义匹配到业务数据仓库表，非外键关联，未经业务方确认",
-      "evidence_class": "CONSENSUS",
-      "evidence_id": "EVD-ab1cd29217a22ee86f15",
-      "field_name": "business_evidence",
-      "source": {
-        "observed_at": "",
-        "source_field": "人工匹配",
-        "source_key": "L4-FBA-01",
-        "source_object": "public.agg_sales_base, comm_sandbox.config_quarter",
-        "source_system": "业务数据仓库",
-        "source_version": "2026-08-04试点"
-      },
-      "status": "UNVERIFIED",
-      "transform_rule": "",
-      "value": [
-        {
-          "confidence": "strong",
-          "evidence_type": "output",
-          "matched_columns": [
-            "签单日期",
-            "保费(hkd)",
-            "ape",
-            "签单年月"
-          ],
-          "rationale": "订单粒度销售汇总表，是月度/季度业绩数据汇总的原始输入",
-          "row_count": 6399,
-          "schema": "public",
-          "table": "agg_sales_base"
-        },
-        {
-          "confidence": "strong",
-          "evidence_type": "rule",
-          "matched_columns": [
-            "quarter_code",
-            "q_start",
-            "q_end"
-          ],
-          "rationale": "季度日历配置表，是\"按季度分析\"切分区间的规则依据",
-          "row_count": 4,
-          "schema": "comm_sandbox",
-          "table": "config_quarter"
-        }
-      ]
-    },
-    {
       "confidence": "HIGH",
       "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
@@ -2030,6 +2043,7 @@
       "contribution_weight": 0.6,
       "kpi_code": "T05",
       "kpi_name": "理财师周活动量",
+      "l3_code": "L3-FBA",
       "row_status": "draft",
       "source_type": "mark_priority_draft",
       "weight_confirmed": "pending"
@@ -2109,6 +2123,19 @@
           "row_count": 4,
           "schema": "comm_sandbox",
           "table": "config_quarter"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "rule",
+          "matched_columns": [
+            "quarter_code",
+            "q_start",
+            "q_end"
+          ],
+          "rationale": "与comm_sandbox.config_quarter同结构、同行数(两schema各维护一份)，同为季度日历规则依据",
+          "row_count": 4,
+          "schema": "public",
+          "table": "config_quarter"
         }
       ],
       "d1_d6": {
@@ -2130,7 +2157,7 @@
         "agent_d6_compliance": "EVD-e9aab6f3d54a490658df",
         "agent_human_touchpoint": "EVD-8f81780d994e76326212",
         "agentifiability": "EVD-0122b63aac94d035a161",
-        "business_evidence": "EVD-ab1cd29217a22ee86f15",
+        "business_evidence": "EVD-11d29dbd9bafa8c5a14e",
         "l4_deliverable": "EVD-b03f01c0471cb68248ee",
         "l4_deliverable_type": "EVD-3b8520df1fa07fd18d8d",
         "l4_name": "EVD-6b1aae1d8dd5dd31fc94",
@@ -2617,21 +2644,25 @@
   ],
   "vn_l4_mappings": [
     {
+      "l3_code": "L3-FBA",
       "l4_code": "L4-FBA-01",
       "mapping_status": "expanded",
       "vn_id": "VN-FBA-01"
     },
     {
+      "l3_code": "L3-FBA",
       "l4_code": "L4-FBA-02",
       "mapping_status": "expanded",
       "vn_id": "VN-FBA-01"
     },
     {
+      "l3_code": "L3-FBA",
       "l4_code": "L4-FBA-03",
       "mapping_status": "expanded",
       "vn_id": "VN-FBA-01"
     },
     {
+      "l3_code": "L3-FBA",
       "l4_code": "L4-FBA-04",
       "mapping_status": "expanded",
       "vn_id": "VN-FBA-01"

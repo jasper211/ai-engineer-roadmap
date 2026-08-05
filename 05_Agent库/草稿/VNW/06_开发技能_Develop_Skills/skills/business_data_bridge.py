@@ -188,6 +188,7 @@ L4_BUSINESS_TABLE_MAP: dict[str, list[dict]] = {
     "L4-FBA-01": [
         {"schema": "public", "table": "agg_sales_base", "evidence_type": "output", "matched_columns": ["签单日期", "保费(hkd)", "ape", "签单年月"], "rationale": "订单粒度销售汇总表，是月度/季度业绩数据汇总的原始输入", "confidence": "strong"},
         {"schema": "comm_sandbox", "table": "config_quarter", "evidence_type": "rule", "matched_columns": ["quarter_code", "q_start", "q_end"], "rationale": "季度日历配置表，是\"按季度分析\"切分区间的规则依据", "confidence": "strong"},
+        {"schema": "public", "table": "config_quarter", "evidence_type": "rule", "matched_columns": ["quarter_code", "q_start", "q_end"], "rationale": "与comm_sandbox.config_quarter同结构、同行数(两schema各维护一份)，同为季度日历规则依据", "confidence": "strong"},
     ],
     "L4-FBA-02": [
         {"schema": "public", "table": "v_person_activity", "evidence_type": "output", "matched_columns": ["person_id", "role_code", "measure", "biz_date"], "rationale": "人员活动流水视图，measure字段可作活动率计算的原始输入，但未专门按理财师角色聚合", "confidence": "weak"},

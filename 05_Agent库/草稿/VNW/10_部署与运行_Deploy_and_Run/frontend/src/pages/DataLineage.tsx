@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Workflow, Search, Database, FolderTree, Briefcase, Boxes, Network } from 'lucide-react'
-import { loadDataLineage, type DataLineage, type LineageEdge, type LineageNode } from '../lib/dataLineage'
+import { loadDataLineage, type DataLineage, type LineageEdge, type LineageNode, type ResolvedFieldView, type UnparsedFieldView } from '../lib/dataLineage'
 import { loadTableAnalysis, type TableAnalysis } from '../lib/tableAnalysis'
 import LineageGraph from '../components/LineageGraph'
 
@@ -26,6 +26,12 @@ interface TableRecord {
 }
 
 const SCHEMA_ALL = ['public', 'comm_sandbox', 'fin_sandbox'] as const
+
+const SCHEMA_LABELS: Record<string, string> = {
+  public: '主库·通用业务表',
+  comm_sandbox: '佣金域',
+  fin_sandbox: '财务收付域',
+}
 
 /** 分类：用于树导航第一层 */
 const TYPE_ORDER = ['事实表', '维度表', '汇总表', '配置表', '规则表', '映射表', '桥接表', '视图', '状态记录表', '事件记录表', '调整记录表', '历史记录表', '快照表', '核对匹配表', '系统表', '疑似记录表', '其他']
@@ -95,6 +101,15 @@ export default function DataLineage() {
       }
     })
   }, [lineage, tableAnalysis])
+
+  /** 字段级血缘查找表：视图的输出字段解析结果/未解析原因，按schema.table索引 */
+  const fieldLineageMaps = useMemo(() => {
+    const resolved = new Map<string, ResolvedFieldView>()
+    const unparsed = new Map<string, UnparsedFieldView>()
+    lineage?.field_lineage.resolved_views.forEach(v => resolved.set(`${v.schema}.${v.table}`, v))
+    lineage?.field_lineage.unparsed_views.forEach(v => unparsed.set(`${v.schema}.${v.table}`, v))
+    return { resolved, unparsed }
+  }, [lineage])
 
   /** 树数据构建 */
   const schemaTree = useMemo(() => {
@@ -179,6 +194,7 @@ export default function DataLineage() {
   const suspectedCount = tables.filter(t => t.zombie_flag === 'suspected_zombie').length
   const fieldAnchoredCount = tables.filter(t => t.zombie_flag === 'field_anchored').length
   const utilitySupportCount = tables.filter(t => t.zombie_flag === 'utility_support').length
+  const neverActivatedCount = tables.filter(t => t.zombie_flag === 'never_activated').length
   const withL4 = tables.filter(t => t.related_l3_l4.length > 0).length
   const noLineage = tables.filter(t => !t.has_lineage).length
 
@@ -222,7 +238,10 @@ export default function DataLineage() {
               <div className="space-y-1.5">
                 {schemaTree.map(s => (
                   <details key={s.schema} className="group" open={true}>
-                    <summary className="cursor-pointer rounded-md px-2 py-1 font-semibold text-text-primary hover:bg-bg-surface">{s.schema}</summary>
+                    <summary className="flex cursor-pointer items-center justify-between rounded-md px-2 py-1 font-semibold text-text-primary hover:bg-bg-surface">
+                      <span>{s.schema}</span>
+                      <span className="text-[10px] font-normal text-text-muted">{SCHEMA_LABELS[s.schema] ?? ''}</span>
+                    </summary>
                     <button onClick={() => { setNavSelection(s.schema); setFocus(null) }} className={`ml-3 mt-1 flex items-center gap-1 rounded-md px-2 py-0.5 text-[10px] ${navSelection===s.schema?'bg-accent-primary text-white':'text-text-secondary hover:bg-bg-surface'}`}>全部({s.types.reduce((x,t)=>x+t.list.length,0)})</button>
                     <div className="ml-3 space-y-0.5">
                       {s.types.map(t => (
@@ -266,7 +285,7 @@ export default function DataLineage() {
               </div>
             )}
           </div>
-          <p className="mt-3 border-t border-border-default pt-2 text-[10px] text-text-muted">{tables.length}张表 · {withL4}张已映射L4/岗位 · {utilitySupportCount}张工具/服务支撑 · 其余为字段锚定/独立表</p>
+          <p className="mt-3 border-t border-border-default pt-2 text-[10px] text-text-muted">{tables.length}张表 · {withL4}张已映射L4/岗位 · {utilitySupportCount}张工具/服务支撑 · {neverActivatedCount}张0行从未启用 · 其余为字段锚定/候选/独立表</p>
         </div>
 
         {/* 中栏：表卡片网格 */}
@@ -285,6 +304,11 @@ export default function DataLineage() {
               const isFieldAnchored = t.zombie_flag === 'field_anchored'
               const isUtilitySupport = t.zombie_flag === 'utility_support'
               const anchorLinks = lineage.field_anchor_links[t.key]
+              const candidates = lineage.suggested_l4_candidates[t.key]
+              const isCandidate = !hasL4 && !isFieldAnchored && !isUtilitySupport && !isZombie && (candidates?.length ?? 0) > 0
+              const isNeverActivated = t.zombie_flag === 'never_activated'
+              const resolvedView = fieldLineageMaps.resolved.get(t.key)
+              const unparsedView = fieldLineageMaps.unparsed.get(t.key)
               const isFocus = focus === t.key
               return (
                 <div key={t.key} onClick={() => setFocus(t.key)} className={`panel cursor-pointer p-3 transition ${isFocus ? 'ring-2 ring-accent-primary' : 'hover:border-accent-primary'} ${hasL4 ? '' : 'opacity-80'}`}>
@@ -293,8 +317,8 @@ export default function DataLineage() {
                       <p className="font-mono text-xs font-bold text-text-primary">{t.schema}.{t.table}</p>
                       <p className="mt-0.5 truncate text-[11px] text-text-secondary">{t.business_label}</p>
                     </div>
-                    <span className={`shrink-0 rounded px-1.5 py-0.5 text-[9px] font-medium ${isZombie ? 'bg-rose-100 text-rose-700' : hasL4 ? 'bg-indigo-100 text-indigo-700' : isFieldAnchored ? 'bg-sky-100 text-sky-700' : isUtilitySupport ? 'bg-violet-100 text-violet-700' : 'bg-slate-100 text-slate-500'}`}>
-                      {isZombie ? '断点' : hasL4 ? '已定位L4' : isFieldAnchored ? '字段锚定' : isUtilitySupport ? '工具/服务支撑' : '支撑/独立'}
+                    <span className={`shrink-0 rounded px-1.5 py-0.5 text-[9px] font-medium ${isZombie ? 'bg-rose-100 text-rose-700' : hasL4 ? 'bg-indigo-100 text-indigo-700' : isFieldAnchored ? 'bg-sky-100 text-sky-700' : isUtilitySupport ? 'bg-violet-100 text-violet-700' : isCandidate ? 'bg-amber-100 text-amber-700' : isNeverActivated ? 'border border-dashed border-slate-300 bg-slate-50 text-slate-400' : 'bg-slate-100 text-slate-500'}`}>
+                      {isZombie ? '断点' : hasL4 ? '已定位L4' : isFieldAnchored ? '字段锚定' : isUtilitySupport ? '工具/服务支撑' : isCandidate ? '血缘候选L4' : isNeverActivated ? '0行·从未启用' : '支撑/独立'}
                     </span>
                   </div>
                   <div className="mt-2 flex flex-wrap gap-1 text-[9px]">
@@ -312,14 +336,49 @@ export default function DataLineage() {
                     </div>
                   )}
                   {isFieldAnchored && anchorLinks && anchorLinks.length > 0 && (
-                    <div className="mt-2 rounded-md border border-dashed border-sky-300 bg-sky-50/60 p-1.5">
-                      <p className="text-[9px] font-semibold text-sky-800">无血缘边/L4，但字段"{anchorLinks[0].field}"是{anchorLinks[0].origin_tables.join('、')}的真实主键，且被{anchorLinks[0].linked_tables.length}张表共用——非孤立</p>
+                    <div className="mt-2 space-y-1 rounded-md border border-dashed border-sky-300 bg-sky-50/60 p-1.5">
+                      {anchorLinks.slice(0, 3).map((link, i) => (
+                        <p key={i} className="text-[9px] font-semibold text-sky-800">无血缘边/L4，但字段"{link.field}"是{link.origin_tables.join('、')}的真实主键，且被{link.linked_tables.length}张表共用——非孤立</p>
+                      ))}
+                      {anchorLinks.length > 3 && <p className="text-[9px] text-sky-700">+{anchorLinks.length - 3} 个锚定字段…</p>}
                     </div>
                   )}
                   {isUtilitySupport && (
                     <div className="mt-2 rounded-md border border-dashed border-violet-300 bg-violet-50/60 p-1.5">
                       <p className="text-[9px] font-semibold text-violet-800">{lineage.nodes.find(n => `${n.schema}.${n.table}` === t.key)?.utility_support_reason}</p>
                     </div>
+                  )}
+                  {isCandidate && candidates && candidates.length > 0 && (
+                    <div className="mt-2 space-y-1 rounded-md border border-dashed border-amber-300 bg-amber-50/60 p-1.5">
+                      {candidates.slice(0, 2).map((c, i) => (
+                        <p key={i} className="text-[9px] leading-4 text-amber-800">
+                          <span className="font-semibold">{c.l3_code} · {c.l4_code} · {c.l4_name}</span>
+                          {' '}——经由 <span className="font-mono">{c.via_table}</span>（{c.edge_type === 'view_dependency' ? '视图依赖' : c.edge_type === 'foreign_key' ? '外键' : '流水线同批'}）：{c.evidence}
+                        </p>
+                      ))}
+                      {candidates.length > 2 && <p className="text-[9px] text-amber-700">+{candidates.length - 2} 个候选L4…</p>}
+                      <p className="text-[9px] italic text-amber-600">未经人工核实，仅提示值得去核实</p>
+                    </div>
+                  )}
+                  {(resolvedView || unparsedView) && (
+                    <details className="mt-2 rounded-md border border-indigo-200 bg-indigo-50/40 p-1.5">
+                      <summary className="cursor-pointer text-[9px] font-semibold text-indigo-800">字段级血缘（视图SQL解析，{resolvedView ? `${resolvedView.columns.length}个输出字段` : '未解析'}）</summary>
+                      {resolvedView && (
+                        <div className="mt-1 space-y-0.5">
+                          {resolvedView.columns.map((c, i) => (
+                            <p key={i} className="text-[9px] leading-4 text-text-secondary">
+                              <span className="font-mono text-indigo-700">{c.output_column}</span>
+                              {' '}
+                              {c.transform === 'direct' ? '透传自' : c.transform === 'derived' ? '计算自' : '（无可解析源：常量/表达式计算）'}
+                              {c.sources.length > 0 && ' ' + c.sources.map(s => `${s.schema}.${s.table}.${s.column}`).join('、')}
+                            </p>
+                          ))}
+                        </div>
+                      )}
+                      {unparsedView && (
+                        <p className="mt-1 text-[9px] leading-4 text-amber-700">结构复杂未解析：{unparsedView.reason}</p>
+                      )}
+                    </details>
                   )}
                   {t.positions.length > 0 && (
                     <div className="mt-2 flex flex-wrap gap-1">
