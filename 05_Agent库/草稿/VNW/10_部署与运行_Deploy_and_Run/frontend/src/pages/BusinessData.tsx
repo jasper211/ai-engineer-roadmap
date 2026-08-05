@@ -80,6 +80,13 @@ function ScenarioCard({ file }: { file: string }) {
   )
 }
 
+const QUADRANT_TONE: Record<string, string> = {
+  q1: 'bg-emerald-400/10 text-emerald-700',
+  q2: 'bg-amber-400/10 text-amber-700',
+  q3: 'bg-sky-400/10 text-sky-700',
+  q4: 'bg-slate-100 text-slate-500',
+}
+
 const HEALTH_TONE: Record<string, string> = {
   '未开始录入': 'bg-slate-100 text-slate-500',
   '试点阶段(个位数记录)': 'bg-amber-400/10 text-amber-700',
@@ -87,13 +94,22 @@ const HEALTH_TONE: Record<string, string> = {
   '规模化在跑': 'bg-emerald-400/10 text-emerald-700',
 }
 
-function BlockedLayer({ title, layer }: { title: string; layer: { status: string; goal: string; required_inputs: string[]; reason: string } }) {
+const LAYER_NOTES: Record<'L1' | 'L2' | 'L3' | 'L4' | 'L5', string> = {
+  L1: '层说明：这张表的事实是什么——有没有数据、数据量多少，建立分析基线',
+  L2: '层说明：现状分析——这张表关联哪些L3/L4、谁负责、数据录入健康度如何',
+  L3: '层说明：相关性/跟进/聚类分析——找耗时高、错误多、成本高的任务，判断根因(流程设计/岗位能力/系统支撑不够/纯劳动密集型)，哪类任务天然适合AI',
+  L4: '层说明：AI介入后的ROI/质量/产能测算，把可行性从定性变定量',
+  L5: '层说明：该做什么——复用流程模型面板D的四象限语义，给出优先级参考',
+}
+
+function BlockedLayer({ title, noteKey, layer }: { title: string; noteKey: 'L3' | 'L4'; layer: { status: string; goal: string; required_inputs: string[]; reason: string } }) {
   return (
     <div className="rounded-lg border border-dashed border-slate-300 bg-slate-50/60 p-3">
       <div className="flex items-center gap-2">
         <Lock className="h-3.5 w-3.5 text-slate-400" />
         <p className="text-xs font-semibold text-slate-500">{title} · <span className="font-mono">BLOCKED</span></p>
       </div>
+      <p className="mt-1 text-[10px] italic leading-4 text-slate-400">{LAYER_NOTES[noteKey]}</p>
       <p className="mt-1.5 text-[11px] leading-5 text-text-secondary"><b>分析目标：</b>{layer.goal}</p>
       <p className="mt-1 text-[11px] leading-5 text-text-secondary"><b>卡在：</b>{layer.reason}</p>
       <ul className="mt-1 list-disc space-y-0.5 pl-4 text-[10px] leading-4 text-slate-500">
@@ -106,13 +122,25 @@ function BlockedLayer({ title, layer }: { title: string; layer: { status: string
 function TableFiveLayerDetail({ entry }: { entry: TableAnalysisEntry }) {
   return (
     <div className="space-y-2 p-3">
+      <div className="rounded-lg border border-indigo-200 bg-indigo-50/50 p-3">
+        <div className="flex flex-wrap items-center gap-2">
+          <p className="font-mono text-base font-bold text-text-primary">{entry.schema}.{entry.table}</p>
+          <span className="rounded-full bg-white px-2 py-0.5 text-[10px] font-medium text-text-secondary">{entry.table_type}</span>
+        </div>
+        <p className="mt-1 text-sm text-text-secondary">{entry.business_label}</p>
+        {entry.description && <p className="mt-1 text-[11px] leading-5 text-text-secondary">{entry.description}</p>}
+        {!entry.description && <p className="mt-1 text-[11px] text-amber-700">业务含义待核实（与"数据库现状"页一致，尚未逐字段核实过）</p>}
+      </div>
+
       <div className="rounded-lg border border-border-default bg-bg-surface p-3">
         <p className="text-[11px] font-semibold text-text-primary">L1 描述层</p>
-        <p className="mt-1 text-[11px] leading-5 text-text-secondary">{entry.layer1.fact_statement}</p>
+        <p className="mt-1 text-[10px] italic leading-4 text-text-muted">{LAYER_NOTES.L1}</p>
+        <p className="mt-1.5 text-[11px] leading-5 text-text-secondary">{entry.layer1.fact_statement}</p>
       </div>
 
       <div className="rounded-lg border border-border-default bg-bg-surface p-3">
         <p className="text-[11px] font-semibold text-text-primary">L2 诊断层</p>
+        <p className="mt-1 text-[10px] italic leading-4 text-text-muted">{LAYER_NOTES.L2}</p>
         {entry.layer2.related_l3_l4.length > 0 ? (
           <div className="mt-1.5 space-y-1">
             {entry.layer2.related_l3_l4.map(rel => (
@@ -130,12 +158,29 @@ function TableFiveLayerDetail({ entry }: { entry: TableAnalysisEntry }) {
         <span className={`mt-2 inline-block rounded-full px-2 py-0.5 text-[10px] font-medium ${HEALTH_TONE[entry.layer2.data_health] ?? 'bg-slate-100 text-slate-500'}`}>{entry.layer2.data_health}</span>
       </div>
 
-      <BlockedLayer title="L3 归因层" layer={entry.layer3} />
-      <BlockedLayer title="L4 预测层" layer={entry.layer4} />
+      <BlockedLayer title="L3 归因层" noteKey="L3" layer={entry.layer3} />
+      <BlockedLayer title="L4 预测层" noteKey="L4" layer={entry.layer4} />
 
       <div className="rounded-lg border border-indigo-200 bg-indigo-50/70 p-3">
         <p className="text-[11px] font-semibold text-indigo-800">L5 决策层 · {entry.layer5.status === 'PRELIMINARY' ? '初步判断' : entry.layer5.status === 'CONFIRMED' ? '已确认' : '暂无依据'}</p>
-        <p className="mt-1 text-[11px] leading-5 text-text-secondary">{entry.layer5.note}</p>
+        <p className="mt-1 text-[10px] italic leading-4 text-indigo-400">{LAYER_NOTES.L5}</p>
+        <p className="mt-1.5 text-[11px] leading-5 text-text-secondary">{entry.layer5.note}</p>
+        {entry.layer5.l4_quadrants.length > 0 && (
+          <div className="mt-2 space-y-1.5">
+            {entry.layer5.l4_quadrants.map(q => (
+              <div key={q.l4_code} className="rounded-md border border-indigo-200/70 bg-white/60 p-2">
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <span className="font-mono text-[10px] text-accent-primary-light">{q.l4_code}</span>
+                  <span className="text-[10px] text-text-secondary">{q.l4_name}</span>
+                  <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${QUADRANT_TONE[q.quadrant]}`}>{q.quadrant_label}</span>
+                  {q.axis_conflict && <span className="rounded-full bg-rose-100 px-2 py-0.5 text-[10px] font-medium text-rose-700">双轴冲突</span>}
+                  <span className="text-[10px] text-text-muted">{q.confidence === 'confirmed_basis' ? '依据已核实' : '依据为草稿'}</span>
+                </div>
+                <p className="mt-1 text-[10px] leading-4 text-text-muted">{q.rationale}</p>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   )
@@ -146,9 +191,14 @@ export default function BusinessData() {
   const [scenarioIndex, setScenarioIndex] = useState<ScenarioIndex | null>(null)
   const [tableAnalysis, setTableAnalysis] = useState<TableAnalysis | null>(null)
   const [error, setError] = useState('')
-  const [query, setQuery] = useState(searchParams.get('l3') ?? '')
+  const [query, setQuery] = useState('')
   const [expandedTable, setExpandedTable] = useState<string | null>(null)
   const [expandedScenario, setExpandedScenario] = useState<string | null>(null)
+  const [schemaFilter, setSchemaFilter] = useState<'all' | string>('all')
+  const [tableTypeFilter, setTableTypeFilter] = useState<'all' | string>('all')
+  const [healthFilter, setHealthFilter] = useState<'all' | string>('all')
+  const [relationFilter, setRelationFilter] = useState<'all' | 'related' | 'unrelated'>('all')
+  const [l3Filter, setL3Filter] = useState<'all' | string>(searchParams.get('l3') ?? 'all')
 
   useEffect(() => {
     loadScenarioIndex().then(setScenarioIndex).catch(() => setScenarioIndex({ schema_version: '', scenarios: [] }))
@@ -157,14 +207,33 @@ export default function BusinessData() {
 
   const relatedCount = useMemo(() => tableAnalysis?.tables.filter(t => t.layer2.related_l3_l4.length > 0).length ?? 0, [tableAnalysis])
   const hasDataCount = useMemo(() => tableAnalysis?.tables.filter(t => t.layer1.has_data).length ?? 0, [tableAnalysis])
+  const l3Coverage = tableAnalysis?.tables[0]?.layer2.analyzed_l3_coverage ?? { analyzed: 0, total: 0 }
+
+  const schemas = useMemo(() => Array.from(new Set(tableAnalysis?.tables.map(t => t.schema) ?? [])).sort(), [tableAnalysis])
+  const tableTypes = useMemo(() => Array.from(new Set(tableAnalysis?.tables.map(t => t.table_type) ?? [])).sort(), [tableAnalysis])
+  const healthBuckets = ['未开始录入', '试点阶段(个位数记录)', '小规模在跑', '规模化在跑']
+
+  const l3Options = useMemo(() => {
+    const map = new Map<string, string>()
+    tableAnalysis?.tables.forEach(t => t.layer2.related_l3_l4.forEach(rel => map.set(rel.l3_code, rel.l3_name)))
+    return Array.from(map.entries()).sort(([a], [b]) => a.localeCompare(b))
+  }, [tableAnalysis])
 
   const filteredTables = useMemo(() => {
     if (!tableAnalysis) return []
     const q = query.toLowerCase()
     return tableAnalysis.tables
-      .filter(t => !q || `${t.schema}.${t.table}`.toLowerCase().includes(q) || t.layer2.related_l3_l4.some(rel => rel.l3_code.toLowerCase().includes(q)))
+      .filter(t => schemaFilter === 'all' || t.schema === schemaFilter)
+      .filter(t => tableTypeFilter === 'all' || t.table_type === tableTypeFilter)
+      .filter(t => healthFilter === 'all' || t.layer2.data_health === healthFilter)
+      .filter(t => relationFilter === 'all' || (relationFilter === 'related' ? t.layer2.related_l3_l4.length > 0 : t.layer2.related_l3_l4.length === 0))
+      .filter(t => l3Filter === 'all' || t.layer2.related_l3_l4.some(rel => rel.l3_code === l3Filter))
+      .filter(t => !q
+        || `${t.schema}.${t.table}`.toLowerCase().includes(q)
+        || t.business_label.toLowerCase().includes(q)
+        || t.layer2.related_l3_l4.some(rel => rel.l3_code.toLowerCase().includes(q)))
       .sort((a, b) => b.layer2.related_l3_l4.length - a.layer2.related_l3_l4.length)
-  }, [tableAnalysis, query])
+  }, [tableAnalysis, query, schemaFilter, tableTypeFilter, healthFilter, relationFilter, l3Filter])
 
   if (error) return <div className="panel p-5 text-sm text-accent-danger">{error}</div>
   if (!tableAnalysis) return <div className="flex min-h-64 items-center justify-center text-text-muted"><LoaderCircle className="mr-2 h-5 w-5 animate-spin" />正在读取业务数据分析</div>
@@ -177,11 +246,12 @@ export default function BusinessData() {
         <p className="mt-2 max-w-3xl text-sm leading-6 text-text-secondary">
           两个并行入口：<b>①场景分析</b>——从真实业务问题（如"P&L定期核算"）往下拆解成数据组成项，
           追溯到L3/L4/KPI/表，判断今天能不能端到端产出，卡在哪段；场景随真实问题产生，不预先穷举。
-          <b>②系统性覆盖扫描</b>——以104张业务数据表（public/comm_sandbox/fin_sandbox，不含process_analytics）
-          为锚点逐张五层展开：L1描述层→L2诊断层（关联哪些L3/L4、谁负责、数据录入健康度）→L3归因层→
-          L4预测层→L5决策层，作为兜底层防止没人恰好问到的角落被漏掉。L3/L4两层今天全部标注BLOCKED——
-          不是没做，是核查后发现底层输入（任务耗时/错误率、人力成本单价）真实不存在，如实呈现缺口，
-          不做代理指标替代，等输入产生后再激活。
+          <b>②系统性覆盖扫描</b>——以当前{tableAnalysis.tables.length}张业务数据表（public/comm_sandbox/fin_sandbox，
+          不含process_analytics；表数量随数据库真实变化，见下方"表数量"指标）为锚点逐张五层展开：
+          L1描述层→L2诊断层（关联哪些L3/L4、谁负责、数据录入健康度）→L3归因层→L4预测层→L5决策层，
+          作为兜底层防止没人恰好问到的角落被漏掉。L3/L4两层今天全部标注BLOCKED——不是没做，是核查后
+          发现底层输入（任务耗时/错误率、人力成本单价）真实不存在，如实呈现缺口，不做代理指标替代，
+          等输入产生后再激活。
         </p>
       </div>
 
@@ -222,16 +292,58 @@ export default function BusinessData() {
       </section>
 
       <section>
-        <div className="flex items-center gap-2 text-sm font-semibold text-text-primary"><Database className="h-4 w-4 text-accent-primary-light" /> 入口② 系统性覆盖扫描 · 以104张业务数据表为锚点的五层分析</div>
-        <div className="mt-3 grid gap-3 sm:grid-cols-3">
+        <div className="flex items-center gap-2 text-sm font-semibold text-text-primary"><Database className="h-4 w-4 text-accent-primary-light" /> 入口② 系统性覆盖扫描 · 以{tableAnalysis.tables.length}张业务数据表为锚点的五层分析</div>
+        <div className="mt-3 grid gap-3 sm:grid-cols-4">
+          <div className="panel p-4"><p className="eyebrow">已纳入匹配分析的L3</p><p className="mt-2 metric-value">{l3Coverage.analyzed}/{l3Coverage.total}</p><p className="mt-1 text-[11px] text-text-muted">其余L3尚未逐张核实，其表暂不计入"已核实无关联"</p></div>
           <div className="panel p-4"><p className="eyebrow">已定位L3/L4关联的表</p><p className="mt-2 metric-value">{relatedCount}/{tableAnalysis.tables.length}</p></div>
           <div className="panel p-4"><p className="eyebrow">有真实数据的表</p><p className="mt-2 metric-value">{hasDataCount}/{tableAnalysis.tables.length}</p></div>
           <div className="panel p-4"><p className="eyebrow">L3归因层/L4预测层</p><p className="mt-2 text-sm font-semibold text-slate-500">全部 BLOCKED</p><p className="mt-1 text-[11px] text-text-muted">fact_card/fact_agent(唯一含耗时/错误率字段的表)当前0行，无薪酬成本字段——分析维度保留，不做降级替代</p></div>
         </div>
 
-        <div className="relative mt-3 max-w-md">
-          <Search className="absolute left-3 top-2.5 h-4 w-4 text-text-muted" />
-          <input value={query} onChange={event => setQuery(event.target.value)} placeholder="按表名(schema.table)或L3编码搜索" className="w-full rounded-xl border border-border-default bg-bg-elevated py-2 pl-9 pr-3 text-sm text-text-primary placeholder:text-text-muted" />
+        <div className="mt-3 space-y-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-[11px] text-text-muted">Schema</span>
+            <div className="flex flex-wrap gap-1 rounded-lg bg-bg-elevated p-1">
+              <button onClick={() => setSchemaFilter('all')} className={`rounded-md px-2.5 py-1 text-[11px] transition-colors ${schemaFilter === 'all' ? 'bg-accent-primary text-white' : 'text-text-secondary hover:text-text-primary hover:bg-bg-surface'}`}>全部</button>
+              {schemas.map(schema => (
+                <button key={schema} onClick={() => setSchemaFilter(schema)} className={`rounded-md px-2.5 py-1 text-[11px] transition-colors ${schemaFilter === schema ? 'bg-accent-primary text-white' : 'text-text-secondary hover:text-text-primary hover:bg-bg-surface'}`}>{schema}</button>
+              ))}
+            </div>
+            <span className="ml-2 text-[11px] text-text-muted">关联状态</span>
+            <div className="flex flex-wrap gap-1 rounded-lg bg-bg-elevated p-1">
+              {([['all', '全部'], ['related', '已关联L4'], ['unrelated', '未定位关联']] as const).map(([value, label]) => (
+                <button key={value} onClick={() => setRelationFilter(value)} className={`rounded-md px-2.5 py-1 text-[11px] transition-colors ${relationFilter === value ? 'bg-accent-primary text-white' : 'text-text-secondary hover:text-text-primary hover:bg-bg-surface'}`}>{label}</button>
+              ))}
+            </div>
+          </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <label className="flex items-center gap-1.5 text-[11px] text-text-muted">
+              按L3筛选
+              <select value={l3Filter} onChange={event => setL3Filter(event.target.value)} className="rounded-md border border-border-default bg-bg-elevated px-2 py-1 text-[11px] text-text-primary">
+                <option value="all">全部</option>
+                {l3Options.map(([code, name]) => <option key={code} value={code}>{code} · {name}</option>)}
+              </select>
+            </label>
+            <label className="flex items-center gap-1.5 text-[11px] text-text-muted">
+              表类型
+              <select value={tableTypeFilter} onChange={event => setTableTypeFilter(event.target.value)} className="rounded-md border border-border-default bg-bg-elevated px-2 py-1 text-[11px] text-text-primary">
+                <option value="all">全部</option>
+                {tableTypes.map(type => <option key={type} value={type}>{type}</option>)}
+              </select>
+            </label>
+            <label className="flex items-center gap-1.5 text-[11px] text-text-muted">
+              数据健康度
+              <select value={healthFilter} onChange={event => setHealthFilter(event.target.value)} className="rounded-md border border-border-default bg-bg-elevated px-2 py-1 text-[11px] text-text-primary">
+                <option value="all">全部</option>
+                {healthBuckets.map(bucket => <option key={bucket} value={bucket}>{bucket}</option>)}
+              </select>
+            </label>
+            <span className="text-[11px] text-text-muted">共{filteredTables.length}张（{tableAnalysis.tables.length}张中）</span>
+          </div>
+          <div className="relative max-w-md">
+            <Search className="absolute left-3 top-2.5 h-4 w-4 text-text-muted" />
+            <input value={query} onChange={event => setQuery(event.target.value)} placeholder="按表名/中文含义/L3编码搜索" className="w-full rounded-xl border border-border-default bg-bg-elevated py-2 pl-9 pr-3 text-sm text-text-primary placeholder:text-text-muted" />
+          </div>
         </div>
 
         <div className="mt-3 space-y-2">
@@ -239,11 +351,19 @@ export default function BusinessData() {
             const key = `${entry.schema}.${entry.table}`
             return (
               <details key={key} open={expandedTable === key} onToggle={event => setExpandedTable(event.currentTarget.open ? key : null)} className="rounded-lg border border-border-default bg-bg-elevated">
-                <summary className="flex cursor-pointer flex-wrap items-center gap-3 px-4 py-3">
-                  <span className="font-mono text-xs text-accent-primary-light">{key}</span>
+                <summary className="flex cursor-pointer flex-wrap items-center gap-2 px-4 py-3">
+                  <span className="font-mono text-sm font-bold text-text-primary">{key}</span>
+                  <span className="rounded-full bg-bg-surface px-2 py-0.5 text-[10px] font-medium text-text-secondary">{entry.table_type}</span>
+                  <span className="text-xs text-text-secondary">{entry.business_label}</span>
                   <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${HEALTH_TONE[entry.layer2.data_health] ?? 'bg-slate-100 text-slate-500'}`}>{entry.layer2.data_health}</span>
-                  <span className={`ml-auto rounded-full px-2.5 py-1 text-[11px] font-medium ${entry.layer2.related_l3_l4.length > 0 ? 'bg-emerald-400/10 text-emerald-700' : 'bg-slate-100 text-slate-500'}`}>
-                    {entry.layer2.related_l3_l4.length > 0 ? `关联${entry.layer2.related_l3_l4.length}个L4` : '未定位关联'}
+                  <span className={`ml-auto rounded-full px-2.5 py-1 text-[11px] font-medium ${
+                    entry.layer2.related_l3_l4.length > 0 ? 'bg-emerald-400/10 text-emerald-700'
+                      : entry.layer2.analyzed_l3_coverage.analyzed >= entry.layer2.analyzed_l3_coverage.total ? 'bg-slate-100 text-slate-500'
+                        : 'border border-dashed border-amber-300 bg-amber-400/10 text-amber-700'
+                  }`}>
+                    {entry.layer2.related_l3_l4.length > 0
+                      ? `关联${entry.layer2.related_l3_l4.length}个L4`
+                      : entry.layer2.analyzed_l3_coverage.analyzed >= entry.layer2.analyzed_l3_coverage.total ? '已核实无关联' : '未纳入分析范围'}
                   </span>
                 </summary>
                 {expandedTable === key && (

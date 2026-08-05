@@ -3,11 +3,17 @@
   "source_policy": "五层分析结构：描述/诊断层基于真实数据现算；归因/预测层如实标注BLOCKED+缺失输入，不做代理指标或假设替代",
   "tables": [
     {
+      "business_label": "佣金档位调整记录表",
+      "description": "佣金档位调整记录表：口径已建但当前0行，未产生调整数据",
       "layer1": {
         "fact_statement": "comm_sandbox.commission_tier_adjustment当前0行，尚无数据录入。佣金档位调整记录表：口径已建但当前0行，未产生调整数据",
         "has_data": false
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "未开始录入",
         "positions": [
           "佣金管理与合规岗"
@@ -47,20 +53,49 @@
         "status": "BLOCKED"
       },
       "layer5": {
-        "note": "已知关联L4的Tier/封装档位等流程模型结论可作初步参考，但完整决策需等L3/L4层激活后补充定量支撑，当前仅为初步判断。",
+        "l4_quadrants": [
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-COM-02",
+            "l4_name": "差异化拆解与验证",
+            "quadrant": "q1",
+            "quadrant_label": "优先验证",
+            "rationale": "D1-D6完整、候选Agent封装=A-高封装(理想条件下Skill候选)、Tier=Auto方向一致，且有业务数据证据支撑，可优先验证"
+          },
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-COM-05",
+            "l4_name": "追溯调整与退保倒扣",
+            "quadrant": "q3",
+            "quadrant_label": "补数据/规则后推进",
+            "rationale": "候选Agent封装=B-中封装(需报告模板/系统集成配合)、Tier=Aug组合暂无法明确归入优先验证或暂缓，需人工判断"
+          }
+        ],
+        "note": "2个关联L4已按面板D四象限语义(优先验证/治理后推进/补数据规则后推进/暂缓自动化)完成DERIVED归类；该归类只是同一套语义在表维度的推导参考，不等同于面板D工作坊的正式象限坐标，完整决策仍需等L3/L4层激活后补充定量支撑。",
         "status": "PRELIMINARY"
       },
       "role": "业务数据",
       "row_count": 0,
       "schema": "comm_sandbox",
-      "table": "commission_tier_adjustment"
+      "table": "commission_tier_adjustment",
+      "table_type": "调整记录表"
     },
     {
+      "business_label": "佣金档位调整历史归档表",
+      "description": "佣金档位调整历史归档表：commission_tier_adjustment的归档版，当前0行",
       "layer1": {
         "fact_statement": "comm_sandbox.commission_tier_adjustment_history_long当前0行，尚无数据录入。佣金档位调整历史归档表：commission_tier_adjustment的归档版，当前0行",
         "has_data": false
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "未开始录入",
         "positions": [
           "佣金管理与合规岗"
@@ -94,24 +129,43 @@
         "status": "BLOCKED"
       },
       "layer5": {
-        "note": "已知关联L4的Tier/封装档位等流程模型结论可作初步参考，但完整决策需等L3/L4层激活后补充定量支撑，当前仅为初步判断。",
+        "l4_quadrants": [
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-COM-05",
+            "l4_name": "追溯调整与退保倒扣",
+            "quadrant": "q3",
+            "quadrant_label": "补数据/规则后推进",
+            "rationale": "候选Agent封装=B-中封装(需报告模板/系统集成配合)、Tier=Aug组合暂无法明确归入优先验证或暂缓，需人工判断"
+          }
+        ],
+        "note": "1个关联L4已按面板D四象限语义(优先验证/治理后推进/补数据规则后推进/暂缓自动化)完成DERIVED归类；该归类只是同一套语义在表维度的推导参考，不等同于面板D工作坊的正式象限坐标，完整决策仍需等L3/L4层激活后补充定量支撑。",
         "status": "PRELIMINARY"
       },
       "role": "业务数据",
       "row_count": 0,
       "schema": "comm_sandbox",
-      "table": "commission_tier_adjustment_history_long"
+      "table": "commission_tier_adjustment_history_long",
+      "table_type": "历史记录表"
     },
     {
+      "business_label": "竞品费率对比表",
+      "description": "竞品费率对比表：按产品记录Y1-Y10逐年竞品费率及来源，当前0行未populate",
       "layer1": {
         "fact_statement": "comm_sandbox.competitor_rate当前0行，尚无数据录入。竞品费率对比表：按产品记录Y1-Y10逐年竞品费率及来源，当前0行未populate",
         "has_data": false
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "未开始录入",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -132,20 +186,28 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 0,
       "schema": "comm_sandbox",
-      "table": "competitor_rate"
+      "table": "competitor_rate",
+      "table_type": "其他"
     },
     {
+      "business_label": "渠道路由规则表",
+      "description": "渠道路由规则表：按保司/业务线/产品/伙伴分类条件，决定佣金归属到哪个牌照(license_code)",
       "layer1": {
         "fact_statement": "comm_sandbox.config_partner_routing现有41行数据。渠道路由规则表：按保司/业务线/产品/伙伴分类条件，决定佣金归属到哪个牌照(license_code)",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "小规模在跑",
         "positions": [
           "佣金管理与合规岗"
@@ -179,24 +241,43 @@
         "status": "BLOCKED"
       },
       "layer5": {
-        "note": "已知关联L4的Tier/封装档位等流程模型结论可作初步参考，但完整决策需等L3/L4层激活后补充定量支撑，当前仅为初步判断。",
+        "l4_quadrants": [
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-COM-12",
+            "l4_name": "应派金额拆分与渠道对账（待注册）",
+            "quadrant": "q1",
+            "quadrant_label": "优先验证",
+            "rationale": "D1-D6完整、候选Agent封装=A-高封装(理想条件下Skill候选)、Tier=Auto方向一致，且有业务数据证据支撑，可优先验证"
+          }
+        ],
+        "note": "1个关联L4已按面板D四象限语义(优先验证/治理后推进/补数据规则后推进/暂缓自动化)完成DERIVED归类；该归类只是同一套语义在表维度的推导参考，不等同于面板D工作坊的正式象限坐标，完整决策仍需等L3/L4层激活后补充定量支撑。",
         "status": "PRELIMINARY"
       },
       "role": "业务数据",
       "row_count": 41,
       "schema": "comm_sandbox",
-      "table": "config_partner_routing"
+      "table": "config_partner_routing",
+      "table_type": "配置表"
     },
     {
+      "business_label": "产品定价分组映射表",
+      "description": "产品定价分组映射表：product_sku到定价组(pricing_group_id)的归类",
       "layer1": {
         "fact_statement": "comm_sandbox.config_product_pricing_group现有31行数据。产品定价分组映射表：product_sku到定价组(pricing_group_id)的归类",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "小规模在跑",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -217,24 +298,41 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 31,
       "schema": "comm_sandbox",
-      "table": "config_product_pricing_group"
+      "table": "config_product_pricing_group",
+      "table_type": "配置表"
     },
     {
+      "business_label": "季度日历表",
+      "description": "季度日历表：quarter_code与起止日期对照",
       "layer1": {
         "fact_statement": "comm_sandbox.config_quarter现有4行数据。季度日历表：quarter_code与起止日期对照",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "试点阶段(个位数记录)",
-        "positions": [],
-        "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "positions": [
+          "事业部运营管理岗"
+        ],
+        "related_l3_l4": [
+          {
+            "l3_code": "L3-FBA",
+            "l3_name": "理财师业务分析",
+            "l4_code": "L4-FBA-01",
+            "l4_name": "月度/季度业绩数据汇总"
+          }
+        ],
+        "status": "已定位关联"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -255,24 +353,43 @@
         "status": "BLOCKED"
       },
       "layer5": {
-        "note": "无关联L4，暂无法给出决策建议。",
-        "status": "NO_BASIS"
+        "l4_quadrants": [
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-FBA-01",
+            "l4_name": "月度/季度业绩数据汇总",
+            "quadrant": "q1",
+            "quadrant_label": "优先验证",
+            "rationale": "D1-D6完整、候选Agent封装=A-高封装(理想条件下Skill候选)、Tier=Auto方向一致，且有业务数据证据支撑，可优先验证"
+          }
+        ],
+        "note": "1个关联L4已按面板D四象限语义(优先验证/治理后推进/补数据规则后推进/暂缓自动化)完成DERIVED归类；该归类只是同一套语义在表维度的推导参考，不等同于面板D工作坊的正式象限坐标，完整决策仍需等L3/L4层激活后补充定量支撑。",
+        "status": "PRELIMINARY"
       },
       "role": "业务数据",
       "row_count": 4,
       "schema": "comm_sandbox",
-      "table": "config_quarter"
+      "table": "config_quarter",
+      "table_type": "配置表"
     },
     {
+      "business_label": "费率折算系数配置",
+      "description": "费率折算系数配置：按table_type/premium_term/费率区间的系数换算规则，当前0行未populate",
       "layer1": {
         "fact_statement": "comm_sandbox.config_table_type_coefficient当前0行，尚无数据录入。费率折算系数配置：按table_type/premium_term/费率区间的系数换算规则，当前0行未populate",
         "has_data": false
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "未开始录入",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -293,20 +410,28 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 0,
       "schema": "comm_sandbox",
-      "table": "config_table_type_coefficient"
+      "table": "config_table_type_coefficient",
+      "table_type": "配置表"
     },
     {
+      "business_label": "佣金制表类型定义表",
+      "description": "佣金制表类型定义表：20种制表类型(如\"同行经代B2B\")的业务分类、牌照口径、最长续期年限规则",
       "layer1": {
         "fact_statement": "comm_sandbox.config_table_type_def现有20行数据。佣金制表类型定义表：20种制表类型(如\"同行经代B2B\")的业务分类、牌照口径、最长续期年限规则",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "小规模在跑",
         "positions": [
           "佣金管理与合规岗"
@@ -340,20 +465,39 @@
         "status": "BLOCKED"
       },
       "layer5": {
-        "note": "已知关联L4的Tier/封装档位等流程模型结论可作初步参考，但完整决策需等L3/L4层激活后补充定量支撑，当前仅为初步判断。",
+        "l4_quadrants": [
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-COM-01",
+            "l4_name": "佣金政策接收与校准",
+            "quadrant": "q1",
+            "quadrant_label": "优先验证",
+            "rationale": "D1-D6完整、候选Agent封装=A-高封装(理想条件下Skill候选)、Tier=Auto方向一致，且有业务数据证据支撑，可优先验证"
+          }
+        ],
+        "note": "1个关联L4已按面板D四象限语义(优先验证/治理后推进/补数据规则后推进/暂缓自动化)完成DERIVED归类；该归类只是同一套语义在表维度的推导参考，不等同于面板D工作坊的正式象限坐标，完整决策仍需等L3/L4层激活后补充定量支撑。",
         "status": "PRELIMINARY"
       },
       "role": "业务数据",
       "row_count": 20,
       "schema": "comm_sandbox",
-      "table": "config_table_type_def"
+      "table": "config_table_type_def",
+      "table_type": "配置表"
     },
     {
+      "business_label": "制表类型产品范围配置",
+      "description": "制表类型产品范围配置：按carrier/product等维度定义某制表类型INCLUDE/EXCLUDE哪些产品",
       "layer1": {
         "fact_statement": "comm_sandbox.config_table_type_product_scope现有251行数据。制表类型产品范围配置：按carrier/product等维度定义某制表类型INCLUDE/EXCLUDE哪些产品",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "小规模在跑",
         "positions": [
           "佣金管理与合规岗"
@@ -387,20 +531,39 @@
         "status": "BLOCKED"
       },
       "layer5": {
-        "note": "已知关联L4的Tier/封装档位等流程模型结论可作初步参考，但完整决策需等L3/L4层激活后补充定量支撑，当前仅为初步判断。",
+        "l4_quadrants": [
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-COM-02",
+            "l4_name": "差异化拆解与验证",
+            "quadrant": "q1",
+            "quadrant_label": "优先验证",
+            "rationale": "D1-D6完整、候选Agent封装=A-高封装(理想条件下Skill候选)、Tier=Auto方向一致，且有业务数据证据支撑，可优先验证"
+          }
+        ],
+        "note": "1个关联L4已按面板D四象限语义(优先验证/治理后推进/补数据规则后推进/暂缓自动化)完成DERIVED归类；该归类只是同一套语义在表维度的推导参考，不等同于面板D工作坊的正式象限坐标，完整决策仍需等L3/L4层激活后补充定量支撑。",
         "status": "PRELIMINARY"
       },
       "role": "业务数据",
       "row_count": 251,
       "schema": "comm_sandbox",
-      "table": "config_table_type_product_scope"
+      "table": "config_table_type_product_scope",
+      "table_type": "配置表"
     },
     {
+      "business_label": "分档定价规则表",
+      "description": "分档定价规则表：按渠道/保司/产品条件匹配fyc/ryc档位及调整系数，是佣金费率计算的规则源之一",
       "layer1": {
         "fact_statement": "comm_sandbox.config_table_type_tier_pricing_rules现有109行数据。分档定价规则表：按渠道/保司/产品条件匹配fyc/ryc档位及调整系数，是佣金费率计算的规则源之一",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "小规模在跑",
         "positions": [
           "佣金管理与合规岗"
@@ -434,20 +597,39 @@
         "status": "BLOCKED"
       },
       "layer5": {
-        "note": "已知关联L4的Tier/封装档位等流程模型结论可作初步参考，但完整决策需等L3/L4层激活后补充定量支撑，当前仅为初步判断。",
+        "l4_quadrants": [
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-COM-02",
+            "l4_name": "差异化拆解与验证",
+            "quadrant": "q1",
+            "quadrant_label": "优先验证",
+            "rationale": "D1-D6完整、候选Agent封装=A-高封装(理想条件下Skill候选)、Tier=Auto方向一致，且有业务数据证据支撑，可优先验证"
+          }
+        ],
+        "note": "1个关联L4已按面板D四象限语义(优先验证/治理后推进/补数据规则后推进/暂缓自动化)完成DERIVED归类；该归类只是同一套语义在表维度的推导参考，不等同于面板D工作坊的正式象限坐标，完整决策仍需等L3/L4层激活后补充定量支撑。",
         "status": "PRELIMINARY"
       },
       "role": "业务数据",
       "row_count": 109,
       "schema": "comm_sandbox",
-      "table": "config_table_type_tier_pricing_rules"
+      "table": "config_table_type_tier_pricing_rules",
+      "table_type": "配置表"
     },
     {
+      "business_label": "佣金方案定义表",
+      "description": "佣金方案定义表：方案名称、类型、生效期间",
       "layer1": {
         "fact_statement": "comm_sandbox.dim_comm_scheme现有173行数据。佣金方案定义表：方案名称、类型、生效期间",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "小规模在跑",
         "positions": [
           "佣金管理与合规岗"
@@ -481,20 +663,39 @@
         "status": "BLOCKED"
       },
       "layer5": {
-        "note": "已知关联L4的Tier/封装档位等流程模型结论可作初步参考，但完整决策需等L3/L4层激活后补充定量支撑，当前仅为初步判断。",
+        "l4_quadrants": [
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-COM-01",
+            "l4_name": "佣金政策接收与校准",
+            "quadrant": "q1",
+            "quadrant_label": "优先验证",
+            "rationale": "D1-D6完整、候选Agent封装=A-高封装(理想条件下Skill候选)、Tier=Auto方向一致，且有业务数据证据支撑，可优先验证"
+          }
+        ],
+        "note": "1个关联L4已按面板D四象限语义(优先验证/治理后推进/补数据规则后推进/暂缓自动化)完成DERIVED归类；该归类只是同一套语义在表维度的推导参考，不等同于面板D工作坊的正式象限坐标，完整决策仍需等L3/L4层激活后补充定量支撑。",
         "status": "PRELIMINARY"
       },
       "role": "业务数据",
       "row_count": 173,
       "schema": "comm_sandbox",
-      "table": "dim_comm_scheme"
+      "table": "dim_comm_scheme",
+      "table_type": "维度表"
     },
     {
+      "business_label": "佣金分档费率表",
+      "description": "佣金分档费率表：按tier_level/customer_type/product_sku等维度的分档费率(Y1-Y10)",
       "layer1": {
         "fact_statement": "comm_sandbox.fact_commission_tier_rate现有7639行数据。佣金分档费率表：按tier_level/customer_type/product_sku等维度的分档费率(Y1-Y10)",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "规模化在跑",
         "positions": [
           "佣金管理与合规岗"
@@ -528,24 +729,43 @@
         "status": "BLOCKED"
       },
       "layer5": {
-        "note": "已知关联L4的Tier/封装档位等流程模型结论可作初步参考，但完整决策需等L3/L4层激活后补充定量支撑，当前仅为初步判断。",
+        "l4_quadrants": [
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-COM-02",
+            "l4_name": "差异化拆解与验证",
+            "quadrant": "q1",
+            "quadrant_label": "优先验证",
+            "rationale": "D1-D6完整、候选Agent封装=A-高封装(理想条件下Skill候选)、Tier=Auto方向一致，且有业务数据证据支撑，可优先验证"
+          }
+        ],
+        "note": "1个关联L4已按面板D四象限语义(优先验证/治理后推进/补数据规则后推进/暂缓自动化)完成DERIVED归类；该归类只是同一套语义在表维度的推导参考，不等同于面板D工作坊的正式象限坐标，完整决策仍需等L3/L4层激活后补充定量支撑。",
         "status": "PRELIMINARY"
       },
       "role": "业务数据",
       "row_count": 7639,
       "schema": "comm_sandbox",
-      "table": "fact_commission_tier_rate"
+      "table": "fact_commission_tier_rate",
+      "table_type": "事实表"
     },
     {
+      "business_label": "佣金分档费率历史归档表",
+      "description": "佣金分档费率历史归档表：fact_commission_tier_rate的历史版本，含pricing_trace计算过程字符串，33万+行",
       "layer1": {
         "fact_statement": "comm_sandbox.fact_commission_tier_rate_history_long现有337610行数据。佣金分档费率历史归档表：fact_commission_tier_rate的历史版本，含pricing_trace计算过程字符串，33万+行",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "规模化在跑",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -566,24 +786,32 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 337610,
       "schema": "comm_sandbox",
-      "table": "fact_commission_tier_rate_history_long"
+      "table": "fact_commission_tier_rate_history_long",
+      "table_type": "事实表"
     },
     {
+      "business_label": "佣金方案代码映射表",
+      "description": "佣金方案代码映射表：commission_plan_code对应到scheme_id/table_type/carrier_code",
       "layer1": {
         "fact_statement": "comm_sandbox.map_commission_plan_scheme现有349行数据。佣金方案代码映射表：commission_plan_code对应到scheme_id/table_type/carrier_code",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "小规模在跑",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -604,24 +832,32 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 349,
       "schema": "comm_sandbox",
-      "table": "map_commission_plan_scheme"
+      "table": "map_commission_plan_scheme",
+      "table_type": "映射表"
     },
     {
+      "business_label": "费率发布变更明细表",
+      "description": "费率发布变更明细表：记录一次发布事件里每行费率变化前后的值，当前0行",
       "layer1": {
         "fact_statement": "comm_sandbox.market_publish_change当前0行，尚无数据录入。费率发布变更明细表：记录一次发布事件里每行费率变化前后的值，当前0行",
         "has_data": false
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "未开始录入",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -642,20 +878,28 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 0,
       "schema": "comm_sandbox",
-      "table": "market_publish_change"
+      "table": "market_publish_change",
+      "table_type": "事件记录表"
     },
     {
+      "business_label": "市场费率发布事件表",
+      "description": "市场费率发布事件表：当前0行",
       "layer1": {
         "fact_statement": "comm_sandbox.market_publish_event当前0行，尚无数据录入。市场费率发布事件表：当前0行",
         "has_data": false
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "未开始录入",
         "positions": [
           "佣金管理与合规岗"
@@ -689,20 +933,39 @@
         "status": "BLOCKED"
       },
       "layer5": {
-        "note": "已知关联L4的Tier/封装档位等流程模型结论可作初步参考，但完整决策需等L3/L4层激活后补充定量支撑，当前仅为初步判断。",
+        "l4_quadrants": [
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-COM-03",
+            "l4_name": "佣金整合与外发",
+            "quadrant": "q1",
+            "quadrant_label": "优先验证",
+            "rationale": "D1-D6完整、候选Agent封装=A-高封装(理想条件下Skill候选)、Tier=Auto方向一致，且有业务数据证据支撑，可优先验证"
+          }
+        ],
+        "note": "1个关联L4已按面板D四象限语义(优先验证/治理后推进/补数据规则后推进/暂缓自动化)完成DERIVED归类；该归类只是同一套语义在表维度的推导参考，不等同于面板D工作坊的正式象限坐标，完整决策仍需等L3/L4层激活后补充定量支撑。",
         "status": "PRELIMINARY"
       },
       "role": "业务数据",
       "row_count": 0,
       "schema": "comm_sandbox",
-      "table": "market_publish_event"
+      "table": "market_publish_event",
+      "table_type": "事件记录表"
     },
     {
+      "business_label": "费率行状态跟踪表",
+      "description": "费率行状态跟踪表：逐条费率记录的审核工作流状态(待确认/新增等)+变化原因+发布后的费率快照",
       "layer1": {
         "fact_statement": "comm_sandbox.market_row_state现有3718行数据。费率行状态跟踪表：逐条费率记录的审核工作流状态(待确认/新增等)+变化原因+发布后的费率快照",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "规模化在跑",
         "positions": [
           "佣金管理与合规岗"
@@ -736,20 +999,39 @@
         "status": "BLOCKED"
       },
       "layer5": {
-        "note": "已知关联L4的Tier/封装档位等流程模型结论可作初步参考，但完整决策需等L3/L4层激活后补充定量支撑，当前仅为初步判断。",
+        "l4_quadrants": [
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-COM-02",
+            "l4_name": "差异化拆解与验证",
+            "quadrant": "q1",
+            "quadrant_label": "优先验证",
+            "rationale": "D1-D6完整、候选Agent封装=A-高封装(理想条件下Skill候选)、Tier=Auto方向一致，且有业务数据证据支撑，可优先验证"
+          }
+        ],
+        "note": "1个关联L4已按面板D四象限语义(优先验证/治理后推进/补数据规则后推进/暂缓自动化)完成DERIVED归类；该归类只是同一套语义在表维度的推导参考，不等同于面板D工作坊的正式象限坐标，完整决策仍需等L3/L4层激活后补充定量支撑。",
         "status": "PRELIMINARY"
       },
       "role": "业务数据",
       "row_count": 3718,
       "schema": "comm_sandbox",
-      "table": "market_row_state"
+      "table": "market_row_state",
+      "table_type": "状态记录表"
     },
     {
+      "business_label": "费率表头审批工作流表",
+      "description": "费率表头审批工作流表：按table_type×quarter的提交/审批/发布/撤回状态跟踪",
       "layer1": {
         "fact_statement": "comm_sandbox.market_table_header_state现有20行数据。费率表头审批工作流表：按table_type×quarter的提交/审批/发布/撤回状态跟踪",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "小规模在跑",
         "positions": [
           "佣金管理与合规岗"
@@ -789,24 +1071,53 @@
         "status": "BLOCKED"
       },
       "layer5": {
-        "note": "已知关联L4的Tier/封装档位等流程模型结论可作初步参考，但完整决策需等L3/L4层激活后补充定量支撑，当前仅为初步判断。",
+        "l4_quadrants": [
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-COM-01",
+            "l4_name": "佣金政策接收与校准",
+            "quadrant": "q1",
+            "quadrant_label": "优先验证",
+            "rationale": "D1-D6完整、候选Agent封装=A-高封装(理想条件下Skill候选)、Tier=Auto方向一致，且有业务数据证据支撑，可优先验证"
+          },
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-COM-18",
+            "l4_name": "收款映射版本管理",
+            "quadrant": "q1",
+            "quadrant_label": "优先验证",
+            "rationale": "D1-D6完整、候选Agent封装=A-高封装(理想条件下Skill候选)、Tier=Auto方向一致，且有业务数据证据支撑，可优先验证"
+          }
+        ],
+        "note": "2个关联L4已按面板D四象限语义(优先验证/治理后推进/补数据规则后推进/暂缓自动化)完成DERIVED归类；该归类只是同一套语义在表维度的推导参考，不等同于面板D工作坊的正式象限坐标，完整决策仍需等L3/L4层激活后补充定量支撑。",
         "status": "PRELIMINARY"
       },
       "role": "业务数据",
       "row_count": 20,
       "schema": "comm_sandbox",
-      "table": "market_table_header_state"
+      "table": "market_table_header_state",
+      "table_type": "状态记录表"
     },
     {
+      "business_label": "费率来源差异确认表",
+      "description": "费率来源差异确认表：当前0行未populate",
       "layer1": {
         "fact_statement": "comm_sandbox.source_diff_confirm当前0行，尚无数据录入。费率来源差异确认表：当前0行未populate",
         "has_data": false
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "未开始录入",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -827,24 +1138,32 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 0,
       "schema": "comm_sandbox",
-      "table": "source_diff_confirm"
+      "table": "source_diff_confirm",
+      "table_type": "其他"
     },
     {
+      "business_label": "生效佣金费率视图",
+      "description": "生效佣金费率视图：在fact_commission_tier_rate基础上应用调整后得到的当前有效费率(含eff_y1-y10/is_adjusted等字段)",
       "layer1": {
         "fact_statement": "comm_sandbox.v_commission_tier_effective现有7384行数据。生效佣金费率视图：在fact_commission_tier_rate基础上应用调整后得到的当前有效费率(含eff_y1-y10/is_adjusted等字段)",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "规模化在跑",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -865,20 +1184,28 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 7384,
       "schema": "comm_sandbox",
-      "table": "v_commission_tier_effective"
+      "table": "v_commission_tier_effective",
+      "table_type": "视图"
     },
     {
+      "business_label": "已正式发布费率视图",
+      "description": "已正式发布费率视图：当前0行，说明目前还没有走完正式发布流程的费率",
       "layer1": {
         "fact_statement": "comm_sandbox.v_commission_tier_published当前0行，尚无数据录入。已正式发布费率视图：当前0行，说明目前还没有走完正式发布流程的费率",
         "has_data": false
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "未开始录入",
         "positions": [
           "佣金管理与合规岗"
@@ -912,20 +1239,39 @@
         "status": "BLOCKED"
       },
       "layer5": {
-        "note": "已知关联L4的Tier/封装档位等流程模型结论可作初步参考，但完整决策需等L3/L4层激活后补充定量支撑，当前仅为初步判断。",
+        "l4_quadrants": [
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-COM-03",
+            "l4_name": "佣金整合与外发",
+            "quadrant": "q1",
+            "quadrant_label": "优先验证",
+            "rationale": "D1-D6完整、候选Agent封装=A-高封装(理想条件下Skill候选)、Tier=Auto方向一致，且有业务数据证据支撑，可优先验证"
+          }
+        ],
+        "note": "1个关联L4已按面板D四象限语义(优先验证/治理后推进/补数据规则后推进/暂缓自动化)完成DERIVED归类；该归类只是同一套语义在表维度的推导参考，不等同于面板D工作坊的正式象限坐标，完整决策仍需等L3/L4层激活后补充定量支撑。",
         "status": "PRELIMINARY"
       },
       "role": "业务数据",
       "row_count": 0,
       "schema": "comm_sandbox",
-      "table": "v_commission_tier_published"
+      "table": "v_commission_tier_published",
+      "table_type": "视图"
     },
     {
+      "business_label": "佣金支出比率校验视图",
+      "description": "佣金支出比率校验视图：对比市场费率(mkt)与来源费率(src)算出payout ratio，用于费率健康度检查",
       "layer1": {
         "fact_statement": "comm_sandbox.v_payout_ratio_check现有7384行数据。佣金支出比率校验视图：对比市场费率(mkt)与来源费率(src)算出payout ratio，用于费率健康度检查",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "规模化在跑",
         "positions": [
           "佣金管理与合规岗"
@@ -959,20 +1305,39 @@
         "status": "BLOCKED"
       },
       "layer5": {
-        "note": "已知关联L4的Tier/封装档位等流程模型结论可作初步参考，但完整决策需等L3/L4层激活后补充定量支撑，当前仅为初步判断。",
+        "l4_quadrants": [
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-COM-09",
+            "l4_name": "佣金异常检测反欺诈",
+            "quadrant": "q3",
+            "quadrant_label": "补数据/规则后推进",
+            "rationale": "候选Agent封装=B-中封装(需报告模板/系统集成配合)、Tier=Aug组合暂无法明确归入优先验证或暂缓，需人工判断"
+          }
+        ],
+        "note": "1个关联L4已按面板D四象限语义(优先验证/治理后推进/补数据规则后推进/暂缓自动化)完成DERIVED归类；该归类只是同一套语义在表维度的推导参考，不等同于面板D工作坊的正式象限坐标，完整决策仍需等L3/L4层激活后补充定量支撑。",
         "status": "PRELIMINARY"
       },
       "role": "业务数据",
       "row_count": 7384,
       "schema": "comm_sandbox",
-      "table": "v_payout_ratio_check"
+      "table": "v_payout_ratio_check",
+      "table_type": "视图"
     },
     {
+      "business_label": "费率环比对比视图",
+      "description": "费率环比对比视图：同一产品/条件下当季度(cur)与上季度(prev)费率差异对比",
       "layer1": {
         "fact_statement": "comm_sandbox.v_qoq_rate_compare现有7294行数据。费率环比对比视图：同一产品/条件下当季度(cur)与上季度(prev)费率差异对比",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "规模化在跑",
         "positions": [
           "佣金管理与合规岗"
@@ -1006,24 +1371,43 @@
         "status": "BLOCKED"
       },
       "layer5": {
-        "note": "已知关联L4的Tier/封装档位等流程模型结论可作初步参考，但完整决策需等L3/L4层激活后补充定量支撑，当前仅为初步判断。",
+        "l4_quadrants": [
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-COM-09",
+            "l4_name": "佣金异常检测反欺诈",
+            "quadrant": "q3",
+            "quadrant_label": "补数据/规则后推进",
+            "rationale": "候选Agent封装=B-中封装(需报告模板/系统集成配合)、Tier=Aug组合暂无法明确归入优先验证或暂缓，需人工判断"
+          }
+        ],
+        "note": "1个关联L4已按面板D四象限语义(优先验证/治理后推进/补数据规则后推进/暂缓自动化)完成DERIVED归类；该归类只是同一套语义在表维度的推导参考，不等同于面板D工作坊的正式象限坐标，完整决策仍需等L3/L4层激活后补充定量支撑。",
         "status": "PRELIMINARY"
       },
       "role": "业务数据",
       "row_count": 7294,
       "schema": "comm_sandbox",
-      "table": "v_qoq_rate_compare"
+      "table": "v_qoq_rate_compare",
+      "table_type": "视图"
     },
     {
+      "business_label": "费率中文可读视图",
+      "description": "费率中文可读视图：v_commission_tier_effective的中文字段版(保司/牌照/产品品类等)，供业务人员直接查阅",
       "layer1": {
         "fact_statement": "comm_sandbox.v_tier_rate_readable现有7384行数据。费率中文可读视图：v_commission_tier_effective的中文字段版(保司/牌照/产品品类等)，供业务人员直接查阅",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "规模化在跑",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -1044,20 +1428,28 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 7384,
       "schema": "comm_sandbox",
-      "table": "v_tier_rate_readable"
+      "table": "v_tier_rate_readable",
+      "table_type": "视图"
     },
     {
+      "business_label": "保司结算周期规则配置",
+      "description": "保司结算周期规则配置：结算基准类型、偏移月数、容差天数",
       "layer1": {
         "fact_statement": "fin_sandbox.config_carrier_settlement_schedule_rules现有36行数据。保司结算周期规则配置：结算基准类型、偏移月数、容差天数",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "小规模在跑",
         "positions": [
           "佣金管理与合规岗"
@@ -1091,20 +1483,39 @@
         "status": "BLOCKED"
       },
       "layer5": {
-        "note": "已知关联L4的Tier/封装档位等流程模型结论可作初步参考，但完整决策需等L3/L4层激活后补充定量支撑，当前仅为初步判断。",
+        "l4_quadrants": [
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-COM-18",
+            "l4_name": "收款映射版本管理",
+            "quadrant": "q1",
+            "quadrant_label": "优先验证",
+            "rationale": "D1-D6完整、候选Agent封装=A-高封装(理想条件下Skill候选)、Tier=Auto方向一致，且有业务数据证据支撑，可优先验证"
+          }
+        ],
+        "note": "1个关联L4已按面板D四象限语义(优先验证/治理后推进/补数据规则后推进/暂缓自动化)完成DERIVED归类；该归类只是同一套语义在表维度的推导参考，不等同于面板D工作坊的正式象限坐标，完整决策仍需等L3/L4层激活后补充定量支撑。",
         "status": "PRELIMINARY"
       },
       "role": "业务数据",
       "row_count": 36,
       "schema": "fin_sandbox",
-      "table": "config_carrier_settlement_schedule_rules"
+      "table": "config_carrier_settlement_schedule_rules",
+      "table_type": "配置表"
     },
     {
+      "business_label": "实收流水主表",
+      "description": "实收流水主表：按保单/结算期记录实际到账金额，source_file/batch_id留有ETL导入批次痕迹",
       "layer1": {
         "fact_statement": "fin_sandbox.fact_receipt现有1219行数据。实收流水主表：按保单/结算期记录实际到账金额，source_file/batch_id留有ETL导入批次痕迹",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "规模化在跑",
         "positions": [
           "佣金管理与合规岗"
@@ -1144,20 +1555,49 @@
         "status": "BLOCKED"
       },
       "layer5": {
-        "note": "已知关联L4的Tier/封装档位等流程模型结论可作初步参考，但完整决策需等L3/L4层激活后补充定量支撑，当前仅为初步判断。",
+        "l4_quadrants": [
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-COM-11",
+            "l4_name": "银行到账确认与实收对账（待注册）",
+            "quadrant": "q1",
+            "quadrant_label": "优先验证",
+            "rationale": "D1-D6完整、候选Agent封装=A-高封装(理想条件下Skill候选)、Tier=Auto方向一致，且有业务数据证据支撑，可优先验证"
+          },
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-COM-16",
+            "l4_name": "佣金数据导入与格式转换（待注册）",
+            "quadrant": "q1",
+            "quadrant_label": "优先验证",
+            "rationale": "D1-D6完整、候选Agent封装=A-高封装(理想条件下Skill候选)、Tier=Auto方向一致，且有业务数据证据支撑，可优先验证"
+          }
+        ],
+        "note": "2个关联L4已按面板D四象限语义(优先验证/治理后推进/补数据规则后推进/暂缓自动化)完成DERIVED归类；该归类只是同一套语义在表维度的推导参考，不等同于面板D工作坊的正式象限坐标，完整决策仍需等L3/L4层激活后补充定量支撑。",
         "status": "PRELIMINARY"
       },
       "role": "业务数据",
       "row_count": 1219,
       "schema": "fin_sandbox",
-      "table": "fact_receipt"
+      "table": "fact_receipt",
+      "table_type": "事实表"
     },
     {
+      "business_label": "应收明细主表",
+      "description": "应收明细主表：按保单记录应收佣金金额、费率、保单年度，是佣金核算的核心事实表",
       "layer1": {
         "fact_statement": "fin_sandbox.fact_receivable现有47142行数据。应收明细主表：按保单记录应收佣金金额、费率、保单年度，是佣金核算的核心事实表",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "规模化在跑",
         "positions": [
           "佣金管理与合规岗"
@@ -1191,24 +1631,43 @@
         "status": "BLOCKED"
       },
       "layer5": {
-        "note": "已知关联L4的Tier/封装档位等流程模型结论可作初步参考，但完整决策需等L3/L4层激活后补充定量支撑，当前仅为初步判断。",
+        "l4_quadrants": [
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-COM-10",
+            "l4_name": "保单信息整合与应收核算（待注册）",
+            "quadrant": "q1",
+            "quadrant_label": "优先验证",
+            "rationale": "D1-D6完整、候选Agent封装=A-高封装(理想条件下Skill候选)、Tier=Auto方向一致，且有业务数据证据支撑，可优先验证"
+          }
+        ],
+        "note": "1个关联L4已按面板D四象限语义(优先验证/治理后推进/补数据规则后推进/暂缓自动化)完成DERIVED归类；该归类只是同一套语义在表维度的推导参考，不等同于面板D工作坊的正式象限坐标，完整决策仍需等L3/L4层激活后补充定量支撑。",
         "status": "PRELIMINARY"
       },
       "role": "业务数据",
       "row_count": 47142,
       "schema": "fin_sandbox",
-      "table": "fact_receivable"
+      "table": "fact_receivable",
+      "table_type": "事实表"
     },
     {
+      "business_label": "财务数据同步历史日志",
+      "description": "财务数据同步历史日志：记录哪张财务表何时从哪个批次同步、影响行数，当前仅1行",
       "layer1": {
         "fact_statement": "fin_sandbox.fin_sync_history现有1行数据。财务数据同步历史日志：记录哪张财务表何时从哪个批次同步、影响行数，当前仅1行",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "试点阶段(个位数记录)",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -1229,20 +1688,28 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 1,
       "schema": "fin_sandbox",
-      "table": "fin_sync_history"
+      "table": "fin_sync_history",
+      "table_type": "历史记录表"
     },
     {
+      "business_label": "应收实收匹配与差异对照表",
+      "description": "应收实收匹配与差异对照表：diff_hkd/diff_pct/diff_category/rate_missing字段直接支持差异检测与异常识别",
       "layer1": {
         "fact_statement": "fin_sandbox.match_receipt_receivable现有1154行数据。应收实收匹配与差异对照表：diff_hkd/diff_pct/diff_category/rate_missing字段直接支持差异检测与异常识别",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "规模化在跑",
         "positions": [
           "佣金管理与合规岗"
@@ -1282,20 +1749,49 @@
         "status": "BLOCKED"
       },
       "layer5": {
-        "note": "已知关联L4的Tier/封装档位等流程模型结论可作初步参考，但完整决策需等L3/L4层激活后补充定量支撑，当前仅为初步判断。",
+        "l4_quadrants": [
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-COM-09",
+            "l4_name": "佣金异常检测反欺诈",
+            "quadrant": "q3",
+            "quadrant_label": "补数据/规则后推进",
+            "rationale": "候选Agent封装=B-中封装(需报告模板/系统集成配合)、Tier=Aug组合暂无法明确归入优先验证或暂缓，需人工判断"
+          },
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-COM-11",
+            "l4_name": "银行到账确认与实收对账（待注册）",
+            "quadrant": "q1",
+            "quadrant_label": "优先验证",
+            "rationale": "D1-D6完整、候选Agent封装=A-高封装(理想条件下Skill候选)、Tier=Auto方向一致，且有业务数据证据支撑，可优先验证"
+          }
+        ],
+        "note": "2个关联L4已按面板D四象限语义(优先验证/治理后推进/补数据规则后推进/暂缓自动化)完成DERIVED归类；该归类只是同一套语义在表维度的推导参考，不等同于面板D工作坊的正式象限坐标，完整决策仍需等L3/L4层激活后补充定量支撑。",
         "status": "PRELIMINARY"
       },
       "role": "业务数据",
       "row_count": 1154,
       "schema": "fin_sandbox",
-      "table": "match_receipt_receivable"
+      "table": "match_receipt_receivable",
+      "table_type": "核对匹配表"
     },
     {
+      "business_label": "市场佣金费率汇总宽表",
+      "description": "市场佣金费率汇总宽表：合作伙伴层级+保司+产品维度的费率明细，含Y1-Y10逐年总佣金/基础/超额/SMPA拆分",
       "layer1": {
         "fact_statement": "public.agg_market_commission_tier_rate现有7518行数据。市场佣金费率汇总宽表：合作伙伴层级+保司+产品维度的费率明细，含Y1-Y10逐年总佣金/基础/超额/SMPA拆分",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "规模化在跑",
         "positions": [
           "佣金管理与合规岗"
@@ -1329,24 +1825,59 @@
         "status": "BLOCKED"
       },
       "layer5": {
-        "note": "已知关联L4的Tier/封装档位等流程模型结论可作初步参考，但完整决策需等L3/L4层激活后补充定量支撑，当前仅为初步判断。",
+        "l4_quadrants": [
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-COM-08",
+            "l4_name": "跨保司佣金整合",
+            "quadrant": "q1",
+            "quadrant_label": "优先验证",
+            "rationale": "D1-D6完整、候选Agent封装=A-高封装(理想条件下Skill候选)、Tier=Auto方向一致，且有业务数据证据支撑，可优先验证"
+          }
+        ],
+        "note": "1个关联L4已按面板D四象限语义(优先验证/治理后推进/补数据规则后推进/暂缓自动化)完成DERIVED归类；该归类只是同一套语义在表维度的推导参考，不等同于面板D工作坊的正式象限坐标，完整决策仍需等L3/L4层激活后补充定量支撑。",
         "status": "PRELIMINARY"
       },
       "role": "业务数据",
       "row_count": 7518,
       "schema": "public",
-      "table": "agg_market_commission_tier_rate"
+      "table": "agg_market_commission_tier_rate",
+      "table_type": "汇总表"
     },
     {
+      "business_label": "销售业务基础汇总表",
+      "description": "销售业务基础汇总表：订单粒度，含保单号/产品/保费/APE/预约-签单-递交-批核各环节日期与签批时效天数，是agg_source_commission_wide等下游表的基础",
       "layer1": {
         "fact_statement": "public.agg_sales_base现有6399行数据。销售业务基础汇总表：订单粒度，含保单号/产品/保费/APE/预约-签单-递交-批核各环节日期与签批时效天数，是agg_source_commission_wide等下游表的基础",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "规模化在跑",
-        "positions": [],
-        "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "positions": [
+          "事业部运营管理岗",
+          "保单服务岗"
+        ],
+        "related_l3_l4": [
+          {
+            "l3_code": "L3-FBA",
+            "l3_name": "理财师业务分析",
+            "l4_code": "L4-FBA-01",
+            "l4_name": "月度/季度业绩数据汇总"
+          },
+          {
+            "l3_code": "L3-RSJD",
+            "l3_name": "经代机构销售业务执行流程",
+            "l4_code": "L4-RSJD-02",
+            "l4_name": "财务模型测算"
+          }
+        ],
+        "status": "已定位关联"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -1367,24 +1898,53 @@
         "status": "BLOCKED"
       },
       "layer5": {
-        "note": "无关联L4，暂无法给出决策建议。",
-        "status": "NO_BASIS"
+        "l4_quadrants": [
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-FBA-01",
+            "l4_name": "月度/季度业绩数据汇总",
+            "quadrant": "q1",
+            "quadrant_label": "优先验证",
+            "rationale": "D1-D6完整、候选Agent封装=A-高封装(理想条件下Skill候选)、Tier=Auto方向一致，且有业务数据证据支撑，可优先验证"
+          },
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-RSJD-02",
+            "l4_name": "财务模型测算",
+            "quadrant": "q3",
+            "quadrant_label": "补数据/规则后推进",
+            "rationale": "候选Agent封装=C-低封装(判断/策略/关系类,理论天花板)、Tier=Hybrid组合暂无法明确归入优先验证或暂缓，需人工判断"
+          }
+        ],
+        "note": "2个关联L4已按面板D四象限语义(优先验证/治理后推进/补数据规则后推进/暂缓自动化)完成DERIVED归类；该归类只是同一套语义在表维度的推导参考，不等同于面板D工作坊的正式象限坐标，完整决策仍需等L3/L4层激活后补充定量支撑。",
+        "status": "PRELIMINARY"
       },
       "role": "业务数据",
       "row_count": 6399,
       "schema": "public",
-      "table": "agg_sales_base"
+      "table": "agg_sales_base",
+      "table_type": "汇总表"
     },
     {
+      "business_label": "agg_sales_base的ETL抽取范围参数记录表(记录抽取用的起止日期字段)",
+      "description": "agg_sales_base的ETL抽取范围参数记录表(记录抽取用的起止日期字段)",
       "layer1": {
         "fact_statement": "public.agg_sales_base_etl_scope现有30行数据。agg_sales_base的ETL抽取范围参数记录表(记录抽取用的起止日期字段)",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "小规模在跑",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -1405,20 +1965,28 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 30,
       "schema": "public",
-      "table": "agg_sales_base_etl_scope"
+      "table": "agg_sales_base_etl_scope",
+      "table_type": "汇总表"
     },
     {
+      "business_label": "来源佣金费率宽表",
+      "description": "来源佣金费率宽表：按carrier/license/产品维度的费率明细，含basic/extra/smpa/fyc/ryc多档位Y1-Y10费率",
       "layer1": {
         "fact_statement": "public.agg_source_commission_wide现有5734行数据。来源佣金费率宽表：按carrier/license/产品维度的费率明细，含basic/extra/smpa/fyc/ryc多档位Y1-Y10费率",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "规模化在跑",
         "positions": [
           "佣金管理与合规岗"
@@ -1452,24 +2020,43 @@
         "status": "BLOCKED"
       },
       "layer5": {
-        "note": "已知关联L4的Tier/封装档位等流程模型结论可作初步参考，但完整决策需等L3/L4层激活后补充定量支撑，当前仅为初步判断。",
+        "l4_quadrants": [
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-COM-08",
+            "l4_name": "跨保司佣金整合",
+            "quadrant": "q1",
+            "quadrant_label": "优先验证",
+            "rationale": "D1-D6完整、候选Agent封装=A-高封装(理想条件下Skill候选)、Tier=Auto方向一致，且有业务数据证据支撑，可优先验证"
+          }
+        ],
+        "note": "1个关联L4已按面板D四象限语义(优先验证/治理后推进/补数据规则后推进/暂缓自动化)完成DERIVED归类；该归类只是同一套语义在表维度的推导参考，不等同于面板D工作坊的正式象限坐标，完整决策仍需等L3/L4层激活后补充定量支撑。",
         "status": "PRELIMINARY"
       },
       "role": "业务数据",
       "row_count": 5734,
       "schema": "public",
-      "table": "agg_source_commission_wide"
+      "table": "agg_source_commission_wide",
+      "table_type": "汇总表"
     },
     {
+      "business_label": "本数据系统(非保险业务)的用户登录/操作审计日志，与保险业务流程无关",
+      "description": "本数据系统(非保险业务)的用户登录/操作审计日志，与保险业务流程无关",
       "layer1": {
         "fact_statement": "public.auth_audit_log现有47行数据。本数据系统(非保险业务)的用户登录/操作审计日志，与保险业务流程无关",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "小规模在跑",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -1490,24 +2077,32 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "系统数据",
       "row_count": 47,
       "schema": "public",
-      "table": "auth_audit_log"
+      "table": "auth_audit_log",
+      "table_type": "系统表"
     },
     {
+      "business_label": "本数据系统的登录会话表，与保险业务流程无关",
+      "description": "本数据系统的登录会话表，与保险业务流程无关",
       "layer1": {
         "fact_statement": "public.auth_sessions现有18行数据。本数据系统的登录会话表，与保险业务流程无关",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "小规模在跑",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -1528,24 +2123,32 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "系统数据",
       "row_count": 18,
       "schema": "public",
-      "table": "auth_sessions"
+      "table": "auth_sessions",
+      "table_type": "系统表"
     },
     {
+      "business_label": "本数据系统的用户账号表，当前仅1个admin账号，与保险业务流程无关",
+      "description": "本数据系统的用户账号表，当前仅1个admin账号，与保险业务流程无关",
       "layer1": {
         "fact_statement": "public.auth_users现有1行数据。本数据系统的用户账号表，当前仅1个admin账号，与保险业务流程无关",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "试点阶段(个位数记录)",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -1566,24 +2169,32 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "系统数据",
       "row_count": 1,
       "schema": "public",
-      "table": "auth_users"
+      "table": "auth_users",
+      "table_type": "系统表"
     },
     {
+      "business_label": "渠道伙伴-KA归属桥接表",
+      "description": "渠道伙伴-KA归属桥接表：伙伴的团队、推荐人、上下级关系",
       "layer1": {
         "fact_statement": "public.bridge_partner_ka现有704行数据。渠道伙伴-KA归属桥接表：伙伴的团队、推荐人、上下级关系",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "小规模在跑",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -1604,24 +2215,32 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 704,
       "schema": "public",
-      "table": "bridge_partner_ka"
+      "table": "bridge_partner_ka",
+      "table_type": "桥接表"
     },
     {
+      "business_label": "人员身份归一化桥接表",
+      "description": "人员身份归一化桥接表：把各业务表里的partner_code/employee_name等原始标识统一映射到person_id，是跨表识别\"这是同一个人\"的核心基础设施表",
       "layer1": {
         "fact_statement": "public.bridge_person_identity现有15833行数据。人员身份归一化桥接表：把各业务表里的partner_code/employee_name等原始标识统一映射到person_id，是跨表识别\"这是同一个人\"的核心基础设施表",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "规模化在跑",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -1642,24 +2261,32 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 15833,
       "schema": "public",
-      "table": "bridge_person_identity"
+      "table": "bridge_person_identity",
+      "table_type": "桥接表"
     },
     {
+      "business_label": "人员关系桥接表",
+      "description": "人员关系桥接表：refers(推荐)/supervises(管理)等人际关系记录",
       "layer1": {
         "fact_statement": "public.bridge_person_relationship现有418行数据。人员关系桥接表：refers(推荐)/supervises(管理)等人际关系记录",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "小规模在跑",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -1680,24 +2307,32 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 418,
       "schema": "public",
-      "table": "bridge_person_relationship"
+      "table": "bridge_person_relationship",
+      "table_type": "桥接表"
     },
     {
+      "business_label": "人员角色桥接表",
+      "description": "人员角色桥接表：person_id对应担任的角色(如PARTNER_ADVISOR)及所属组织",
       "layer1": {
         "fact_statement": "public.bridge_person_role现有5442行数据。人员角色桥接表：person_id对应担任的角色(如PARTNER_ADVISOR)及所属组织",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "规模化在跑",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -1718,24 +2353,32 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 5442,
       "schema": "public",
-      "table": "bridge_person_role"
+      "table": "bridge_person_role",
+      "table_type": "桥接表"
     },
     {
+      "business_label": "策略路由配置表",
+      "description": "策略路由配置表：当前0行未populate",
       "layer1": {
         "fact_statement": "public.bridge_strategy_routing当前0行，尚无数据录入。策略路由配置表：当前0行未populate",
         "has_data": false
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "未开始录入",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -1756,24 +2399,32 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 0,
       "schema": "public",
-      "table": "bridge_strategy_routing"
+      "table": "bridge_strategy_routing",
+      "table_type": "桥接表"
     },
     {
+      "business_label": "佣金制表业务类型配置",
+      "description": "佣金制表业务类型配置：伙伴与制表类型/主签牌照/生效期间的对应关系",
       "layer1": {
         "fact_statement": "public.config_commission_table_type现有23行数据。佣金制表业务类型配置：伙伴与制表类型/主签牌照/生效期间的对应关系",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "小规模在跑",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -1794,24 +2445,32 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 23,
       "schema": "public",
-      "table": "config_commission_table_type"
+      "table": "config_commission_table_type",
+      "table_type": "配置表"
     },
     {
+      "business_label": "人员身份来源映射配置",
+      "description": "人员身份来源映射配置：定义从哪些源表哪些字段能识别出哪种角色，是bridge_person_identity生成逻辑的配置表",
       "layer1": {
         "fact_statement": "public.config_identity_source_map现有22行数据。人员身份来源映射配置：定义从哪些源表哪些字段能识别出哪种角色，是bridge_person_identity生成逻辑的配置表",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "小规模在跑",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -1832,20 +2491,28 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 22,
       "schema": "public",
-      "table": "config_identity_source_map"
+      "table": "config_identity_source_map",
+      "table_type": "配置表"
     },
     {
+      "business_label": "牌照-保司佣金方案映射配置",
+      "description": "牌照-保司佣金方案映射配置：license_code与carrier_code对应到具体commission_plan_code及生效期间",
       "layer1": {
         "fact_statement": "public.config_license_carrier_mapping现有90行数据。牌照-保司佣金方案映射配置：license_code与carrier_code对应到具体commission_plan_code及生效期间",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "小规模在跑",
         "positions": [
           "佣金管理与合规岗"
@@ -1879,24 +2546,43 @@
         "status": "BLOCKED"
       },
       "layer5": {
-        "note": "已知关联L4的Tier/封装档位等流程模型结论可作初步参考，但完整决策需等L3/L4层激活后补充定量支撑，当前仅为初步判断。",
+        "l4_quadrants": [
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-COM-01",
+            "l4_name": "佣金政策接收与校准",
+            "quadrant": "q1",
+            "quadrant_label": "优先验证",
+            "rationale": "D1-D6完整、候选Agent封装=A-高封装(理想条件下Skill候选)、Tier=Auto方向一致，且有业务数据证据支撑，可优先验证"
+          }
+        ],
+        "note": "1个关联L4已按面板D四象限语义(优先验证/治理后推进/补数据规则后推进/暂缓自动化)完成DERIVED归类；该归类只是同一套语义在表维度的推导参考，不等同于面板D工作坊的正式象限坐标，完整决策仍需等L3/L4层激活后补充定量支撑。",
         "status": "PRELIMINARY"
       },
       "role": "业务数据",
       "row_count": 90,
       "schema": "public",
-      "table": "config_license_carrier_mapping"
+      "table": "config_license_carrier_mapping",
+      "table_type": "配置表"
     },
     {
+      "business_label": "牌照平台服务费扣除配置",
+      "description": "牌照平台服务费扣除配置：当前0行未populate",
       "layer1": {
         "fact_statement": "public.config_license_cost_deduction当前0行，尚无数据录入。牌照平台服务费扣除配置：当前0行未populate",
         "has_data": false
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "未开始录入",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -1917,24 +2603,32 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 0,
       "schema": "public",
-      "table": "config_license_cost_deduction"
+      "table": "config_license_cost_deduction",
+      "table_type": "配置表"
     },
     {
+      "business_label": "渠道路由规则表",
+      "description": "渠道路由规则表：按伙伴/保司/业务线/产品条件分配牌照(assigned_license_code)，与comm_sandbox.config_partner_routing同类但字段命名不同(bussiness_line_comdition等拼写差异)，疑似两处独立维护的重复配置",
       "layer1": {
         "fact_statement": "public.config_partner_routing现有67行数据。渠道路由规则表：按伙伴/保司/业务线/产品条件分配牌照(assigned_license_code)，与comm_sandbox.config_partner_routing同类但字段命名不同(bussiness_line_comdition等拼写差异)，疑似两处独立维护的重复配置",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "小规模在跑",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -1955,20 +2649,28 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 67,
       "schema": "public",
-      "table": "config_partner_routing"
+      "table": "config_partner_routing",
+      "table_type": "配置表"
     },
     {
+      "business_label": "产品佣金计算公式配置",
+      "description": "产品佣金计算公式配置：首年/续期公式定义",
       "layer1": {
         "fact_statement": "public.config_product_commission_formula现有32行数据。产品佣金计算公式配置：首年/续期公式定义",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "小规模在跑",
         "positions": [
           "佣金管理与合规岗"
@@ -2002,24 +2704,43 @@
         "status": "BLOCKED"
       },
       "layer5": {
-        "note": "已知关联L4的Tier/封装档位等流程模型结论可作初步参考，但完整决策需等L3/L4层激活后补充定量支撑，当前仅为初步判断。",
+        "l4_quadrants": [
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-COM-01",
+            "l4_name": "佣金政策接收与校准",
+            "quadrant": "q1",
+            "quadrant_label": "优先验证",
+            "rationale": "D1-D6完整、候选Agent封装=A-高封装(理想条件下Skill候选)、Tier=Auto方向一致，且有业务数据证据支撑，可优先验证"
+          }
+        ],
+        "note": "1个关联L4已按面板D四象限语义(优先验证/治理后推进/补数据规则后推进/暂缓自动化)完成DERIVED归类；该归类只是同一套语义在表维度的推导参考，不等同于面板D工作坊的正式象限坐标，完整决策仍需等L3/L4层激活后补充定量支撑。",
         "status": "PRELIMINARY"
       },
       "role": "业务数据",
       "row_count": 32,
       "schema": "public",
-      "table": "config_product_commission_formula"
+      "table": "config_product_commission_formula",
+      "table_type": "配置表"
     },
     {
+      "business_label": "产品排除范围配置",
+      "description": "产品排除范围配置：定义某制表类型下需要排除哪些保司/产品线/产品",
       "layer1": {
         "fact_statement": "public.config_product_exclusion_range现有228行数据。产品排除范围配置：定义某制表类型下需要排除哪些保司/产品线/产品",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "小规模在跑",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -2040,24 +2761,32 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 228,
       "schema": "public",
-      "table": "config_product_exclusion_range"
+      "table": "config_product_exclusion_range",
+      "table_type": "配置表"
     },
     {
+      "business_label": "产品特征类型字典",
+      "description": "产品特征类型字典：定义产品可有哪些标准化特征字段(如投保年龄、红利结构)，是dim_product_feature_value的取值口径",
       "layer1": {
         "fact_statement": "public.config_product_feature_type现有25行数据。产品特征类型字典：定义产品可有哪些标准化特征字段(如投保年龄、红利结构)，是dim_product_feature_value的取值口径",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "小规模在跑",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -2078,24 +2807,32 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 25,
       "schema": "public",
-      "table": "config_product_feature_type"
+      "table": "config_product_feature_type",
+      "table_type": "配置表"
     },
     {
+      "business_label": "季度日历表",
+      "description": "季度日历表：与comm_sandbox.config_quarter同结构(两schema各维护一份)",
       "layer1": {
         "fact_statement": "public.config_quarter现有4行数据。季度日历表：与comm_sandbox.config_quarter同结构(两schema各维护一份)",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "试点阶段(个位数记录)",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -2116,24 +2853,32 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 4,
       "schema": "public",
-      "table": "config_quarter"
+      "table": "config_quarter",
+      "table_type": "配置表"
     },
     {
+      "business_label": "策略头配置表",
+      "description": "策略头配置表：当前0行未populate",
       "layer1": {
         "fact_statement": "public.config_strategy_header当前0行，尚无数据录入。策略头配置表：当前0行未populate",
         "has_data": false
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "未开始录入",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -2154,24 +2899,32 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 0,
       "schema": "public",
-      "table": "config_strategy_header"
+      "table": "config_strategy_header",
+      "table_type": "配置表"
     },
     {
+      "business_label": "策略分档奖励配置表",
+      "description": "策略分档奖励配置表：当前0行未populate",
       "layer1": {
         "fact_statement": "public.config_strategy_tiers当前0行，尚无数据录入。策略分档奖励配置表：当前0行未populate",
         "has_data": false
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "未开始录入",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -2192,24 +2945,32 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 0,
       "schema": "public",
-      "table": "config_strategy_tiers"
+      "table": "config_strategy_tiers",
+      "table_type": "配置表"
     },
     {
+      "business_label": "转介协议主表",
+      "description": "转介协议主表：渠道伙伴的转介协议编号、签约主体、付款主体、有效期",
       "layer1": {
         "fact_statement": "public.dim_binder_agreement现有32行数据。转介协议主表：渠道伙伴的转介协议编号、签约主体、付款主体、有效期",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "小规模在跑",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -2230,24 +2991,32 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 32,
       "schema": "public",
-      "table": "dim_binder_agreement"
+      "table": "dim_binder_agreement",
+      "table_type": "维度表"
     },
     {
+      "business_label": "保司主数据表",
+      "description": "保司主数据表：保司代码、中英文名、评级、服务热线，与fin_sandbox/comm_sandbox里的carrier_code是同一套编码",
       "layer1": {
         "fact_statement": "public.dim_carrier现有26行数据。保司主数据表：保司代码、中英文名、评级、服务热线，与fin_sandbox/comm_sandbox里的carrier_code是同一套编码",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "小规模在跑",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -2268,24 +3037,32 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 26,
       "schema": "public",
-      "table": "dim_carrier"
+      "table": "dim_carrier",
+      "table_type": "维度表"
     },
     {
+      "business_label": "佣金方案主表",
+      "description": "佣金方案主表：与comm_sandbox.dim_comm_scheme同名同结构，当前0行",
       "layer1": {
         "fact_statement": "public.dim_comm_scheme当前0行，尚无数据录入。佣金方案主表：与comm_sandbox.dim_comm_scheme同名同结构，当前0行",
         "has_data": false
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "未开始录入",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -2306,24 +3083,41 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 0,
       "schema": "public",
-      "table": "dim_comm_scheme"
+      "table": "dim_comm_scheme",
+      "table_type": "维度表"
     },
     {
+      "business_label": "客户主数据表",
+      "description": "客户主数据表：客户身份信息(姓名/国籍/联系方式/职业)",
       "layer1": {
         "fact_statement": "public.dim_customer现有4699行数据。客户主数据表：客户身份信息(姓名/国籍/联系方式/职业)",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "规模化在跑",
-        "positions": [],
-        "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "positions": [
+          "保单服务岗"
+        ],
+        "related_l3_l4": [
+          {
+            "l3_code": "L3-RSJD",
+            "l3_name": "经代机构销售业务执行流程",
+            "l4_code": "L4-RSJD-01",
+            "l4_name": "销售执行与客户管理"
+          }
+        ],
+        "status": "已定位关联"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -2344,24 +3138,43 @@
         "status": "BLOCKED"
       },
       "layer5": {
-        "note": "无关联L4，暂无法给出决策建议。",
-        "status": "NO_BASIS"
+        "l4_quadrants": [
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-RSJD-01",
+            "l4_name": "销售执行与客户管理",
+            "quadrant": "q1",
+            "quadrant_label": "优先验证",
+            "rationale": "D1-D6完整、候选Agent封装=A-高封装(理想条件下Skill候选)、Tier=Auto方向一致，且有业务数据证据支撑，可优先验证"
+          }
+        ],
+        "note": "1个关联L4已按面板D四象限语义(优先验证/治理后推进/补数据规则后推进/暂缓自动化)完成DERIVED归类；该归类只是同一套语义在表维度的推导参考，不等同于面板D工作坊的正式象限坐标，完整决策仍需等L3/L4层激活后补充定量支撑。",
+        "status": "PRELIMINARY"
       },
       "role": "业务数据",
       "row_count": 4699,
       "schema": "public",
-      "table": "dim_customer"
+      "table": "dim_customer",
+      "table_type": "维度表"
     },
     {
+      "business_label": "客户类型字典表",
+      "description": "客户类型字典表：当前0行未populate",
       "layer1": {
         "fact_statement": "public.dim_customer_type当前0行，尚无数据录入。客户类型字典表：当前0行未populate",
         "has_data": false
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "未开始录入",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -2382,24 +3195,32 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 0,
       "schema": "public",
-      "table": "dim_customer_type"
+      "table": "dim_customer_type",
+      "table_type": "维度表"
     },
     {
+      "business_label": "日期维度表",
+      "description": "日期维度表：年/季/月/周/是否工作日/节假日标记",
       "layer1": {
         "fact_statement": "public.dim_date现有1826行数据。日期维度表：年/季/月/周/是否工作日/节假日标记",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "规模化在跑",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -2420,24 +3241,71 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 1826,
       "schema": "public",
-      "table": "dim_date"
+      "table": "dim_date",
+      "table_type": "维度表"
     },
     {
+      "business_label": "HR员工档案表",
+      "description": "HR员工档案表：姓名、入职/转正日期、合同地区、雇佣类型、学历；与process_analytics.dim_org(目标态编制设计)不是一回事，这是实际HR档案",
       "layer1": {
         "fact_statement": "public.dim_employee现有209行数据。HR员工档案表：姓名、入职/转正日期、合同地区、雇佣类型、学历；与process_analytics.dim_org(目标态编制设计)不是一回事，这是实际HR档案",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "小规模在跑",
-        "positions": [],
-        "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "positions": [
+          "人力资源管理岗"
+        ],
+        "related_l3_l4": [
+          {
+            "l3_code": "L3-HRA",
+            "l3_name": "人力分析与决策支持流程",
+            "l4_code": "L4-HRA-01",
+            "l4_name": "人效数据采集与清洗"
+          },
+          {
+            "l3_code": "L3-HRA",
+            "l3_name": "人力分析与决策支持流程",
+            "l4_code": "L4-HRA-05",
+            "l4_name": "人员素质结构盘点"
+          },
+          {
+            "l3_code": "L3-HRA",
+            "l3_name": "人力分析与决策支持流程",
+            "l4_code": "L4-HRA-06",
+            "l4_name": "流失率分析与预警"
+          },
+          {
+            "l3_code": "L3-HRM",
+            "l3_name": "人员全生命周期管理流程",
+            "l4_code": "L4-HRM-03",
+            "l4_name": "入职配置与合同签署"
+          },
+          {
+            "l3_code": "L3-HRM",
+            "l3_name": "人员全生命周期管理流程",
+            "l4_code": "L4-HRM-04",
+            "l4_name": "试用期考核与转正"
+          },
+          {
+            "l3_code": "L3-HRM",
+            "l3_name": "人员全生命周期管理流程",
+            "l4_code": "L4-HRM-09",
+            "l4_name": "人员退出与档案归档"
+          }
+        ],
+        "status": "已定位关联"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -2458,24 +3326,108 @@
         "status": "BLOCKED"
       },
       "layer5": {
-        "note": "无关联L4，暂无法给出决策建议。",
-        "status": "NO_BASIS"
+        "l4_quadrants": [
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-HRA-01",
+            "l4_name": "人效数据采集与清洗",
+            "quadrant": "q1",
+            "quadrant_label": "优先验证",
+            "rationale": "D1-D6完整、候选Agent封装=A-高封装(理想条件下Skill候选)、Tier=Auto方向一致，且有业务数据证据支撑，可优先验证"
+          },
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-HRA-05",
+            "l4_name": "人员素质结构盘点",
+            "quadrant": "q1",
+            "quadrant_label": "优先验证",
+            "rationale": "D1-D6完整、候选Agent封装=A-高封装(理想条件下Skill候选)、Tier=Auto方向一致，且有业务数据证据支撑，可优先验证"
+          },
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-HRA-06",
+            "l4_name": "流失率分析与预警",
+            "quadrant": "q3",
+            "quadrant_label": "补数据/规则后推进",
+            "rationale": "候选Agent封装=C-低封装(判断/策略/关系类,理论天花板)、Tier=Hybrid组合暂无法明确归入优先验证或暂缓，需人工判断"
+          },
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-HRM-03",
+            "l4_name": "入职配置与合同签署",
+            "quadrant": "q1",
+            "quadrant_label": "优先验证",
+            "rationale": "D1-D6完整、候选Agent封装=A-高封装(理想条件下Skill候选)、Tier=Auto方向一致，且有业务数据证据支撑，可优先验证"
+          },
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-HRM-04",
+            "l4_name": "试用期考核与转正",
+            "quadrant": "q3",
+            "quadrant_label": "补数据/规则后推进",
+            "rationale": "候选Agent封装=C-低封装(判断/策略/关系类,理论天花板)、Tier=Hybrid组合暂无法明确归入优先验证或暂缓，需人工判断"
+          },
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-HRM-09",
+            "l4_name": "人员退出与档案归档",
+            "quadrant": "q1",
+            "quadrant_label": "优先验证",
+            "rationale": "D1-D6完整、候选Agent封装=A-高封装(理想条件下Skill候选)、Tier=Auto方向一致，且有业务数据证据支撑，可优先验证"
+          }
+        ],
+        "note": "6个关联L4已按面板D四象限语义(优先验证/治理后推进/补数据规则后推进/暂缓自动化)完成DERIVED归类；该归类只是同一套语义在表维度的推导参考，不等同于面板D工作坊的正式象限坐标，完整决策仍需等L3/L4层激活后补充定量支撑。",
+        "status": "PRELIMINARY"
       },
       "role": "业务数据",
       "row_count": 209,
       "schema": "public",
-      "table": "dim_employee"
+      "table": "dim_employee",
+      "table_type": "维度表"
     },
     {
+      "business_label": "KA(经代机构)主数据表",
+      "description": "KA(经代机构)主数据表：市场细分、合作等级、对接人、结算方式",
       "layer1": {
         "fact_statement": "public.dim_ka现有109行数据。KA(经代机构)主数据表：市场细分、合作等级、对接人、结算方式",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "小规模在跑",
-        "positions": [],
-        "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "positions": [
+          "KA管理岗"
+        ],
+        "related_l3_l4": [
+          {
+            "l3_code": "L3-KAGA",
+            "l3_name": "KA业绩跟踪与运维",
+            "l4_code": "L4-KAGA-02",
+            "l4_name": "业绩复盘与问题诊断"
+          },
+          {
+            "l3_code": "L3-KAGA",
+            "l3_name": "KA业绩跟踪与运维",
+            "l4_code": "L4-KAGA-04",
+            "l4_name": "KA关系维护与长效运营"
+          }
+        ],
+        "status": "已定位关联"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -2496,20 +3448,49 @@
         "status": "BLOCKED"
       },
       "layer5": {
-        "note": "无关联L4，暂无法给出决策建议。",
-        "status": "NO_BASIS"
+        "l4_quadrants": [
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-KAGA-02",
+            "l4_name": "业绩复盘与问题诊断",
+            "quadrant": "q3",
+            "quadrant_label": "补数据/规则后推进",
+            "rationale": "候选Agent封装=C-低封装(判断/策略/关系类,理论天花板)、Tier=Hybrid组合暂无法明确归入优先验证或暂缓，需人工判断"
+          },
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-KAGA-04",
+            "l4_name": "KA关系维护与长效运营",
+            "quadrant": "q3",
+            "quadrant_label": "补数据/规则后推进",
+            "rationale": "候选Agent封装=C-低封装(判断/策略/关系类,理论天花板)、Tier=Hybrid组合暂无法明确归入优先验证或暂缓，需人工判断"
+          }
+        ],
+        "note": "2个关联L4已按面板D四象限语义(优先验证/治理后推进/补数据规则后推进/暂缓自动化)完成DERIVED归类；该归类只是同一套语义在表维度的推导参考，不等同于面板D工作坊的正式象限坐标，完整决策仍需等L3/L4层激活后补充定量支撑。",
+        "status": "PRELIMINARY"
       },
       "role": "业务数据",
       "row_count": 109,
       "schema": "public",
-      "table": "dim_ka"
+      "table": "dim_ka",
+      "table_type": "维度表"
     },
     {
+      "business_label": "持牌机构主数据表",
+      "description": "持牌机构主数据表：12个持牌实体的牌照信息+**结算/后台两套银行账户**(已脱敏哈希)；这是实际付款账户信息的真实来源，dim_payee是空表不代表付款信息缺失",
       "layer1": {
         "fact_statement": "public.dim_license现有12行数据。持牌机构主数据表：12个持牌实体的牌照信息+**结算/后台两套银行账户**(已脱敏哈希)；这是实际付款账户信息的真实来源，dim_payee是空表不代表付款信息缺失",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "小规模在跑",
         "positions": [
           "佣金管理与合规岗"
@@ -2549,24 +3530,53 @@
         "status": "BLOCKED"
       },
       "layer5": {
-        "note": "已知关联L4的Tier/封装档位等流程模型结论可作初步参考，但完整决策需等L3/L4层激活后补充定量支撑，当前仅为初步判断。",
+        "l4_quadrants": [
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-COM-13",
+            "l4_name": "实派清单确认与财务制单（待注册）",
+            "quadrant": "q1",
+            "quadrant_label": "优先验证",
+            "rationale": "D1-D6完整、候选Agent封装=A-高封装(理想条件下Skill候选)、Tier=Auto方向一致，且有业务数据证据支撑，可优先验证"
+          },
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-COM-14",
+            "l4_name": "财务付款执行（待注册）",
+            "quadrant": "q1",
+            "quadrant_label": "优先验证",
+            "rationale": "D1-D6完整、候选Agent封装=A-高封装(理想条件下Skill候选)、Tier=Auto方向一致，且有业务数据证据支撑，可优先验证"
+          }
+        ],
+        "note": "2个关联L4已按面板D四象限语义(优先验证/治理后推进/补数据规则后推进/暂缓自动化)完成DERIVED归类；该归类只是同一套语义在表维度的推导参考，不等同于面板D工作坊的正式象限坐标，完整决策仍需等L3/L4层激活后补充定量支撑。",
         "status": "PRELIMINARY"
       },
       "role": "业务数据",
       "row_count": 12,
       "schema": "public",
-      "table": "dim_license"
+      "table": "dim_license",
+      "table_type": "维度表"
     },
     {
+      "business_label": "通用代码字典表",
+      "description": "通用代码字典表：各类字段枚举值的中英文对照(如产品品类CI=重疾)",
       "layer1": {
         "fact_statement": "public.dim_lookup_code现有150行数据。通用代码字典表：各类字段枚举值的中英文对照(如产品品类CI=重疾)",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "小规模在跑",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -2587,20 +3597,28 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 150,
       "schema": "public",
-      "table": "dim_lookup_code"
+      "table": "dim_lookup_code",
+      "table_type": "维度表"
     },
     {
+      "business_label": "渠道伙伴主数据表",
+      "description": "渠道伙伴主数据表：合作伙伴档案(签约主体、牌照、结算周期、最低起付额、合作状态)",
       "layer1": {
         "fact_statement": "public.dim_partner现有727行数据。渠道伙伴主数据表：合作伙伴档案(签约主体、牌照、结算周期、最低起付额、合作状态)",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "小规模在跑",
         "positions": [
           "佣金管理与合规岗"
@@ -2634,24 +3652,43 @@
         "status": "BLOCKED"
       },
       "layer5": {
-        "note": "已知关联L4的Tier/封装档位等流程模型结论可作初步参考，但完整决策需等L3/L4层激活后补充定量支撑，当前仅为初步判断。",
+        "l4_quadrants": [
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-COM-12",
+            "l4_name": "应派金额拆分与渠道对账（待注册）",
+            "quadrant": "q1",
+            "quadrant_label": "优先验证",
+            "rationale": "D1-D6完整、候选Agent封装=A-高封装(理想条件下Skill候选)、Tier=Auto方向一致，且有业务数据证据支撑，可优先验证"
+          }
+        ],
+        "note": "1个关联L4已按面板D四象限语义(优先验证/治理后推进/补数据规则后推进/暂缓自动化)完成DERIVED归类；该归类只是同一套语义在表维度的推导参考，不等同于面板D工作坊的正式象限坐标，完整决策仍需等L3/L4层激活后补充定量支撑。",
         "status": "PRELIMINARY"
       },
       "role": "业务数据",
       "row_count": 727,
       "schema": "public",
-      "table": "dim_partner"
+      "table": "dim_partner",
+      "table_type": "维度表"
     },
     {
+      "business_label": "伙伴权益配置表",
+      "description": "伙伴权益配置表：当前0行未populate",
       "layer1": {
         "fact_statement": "public.dim_partner_equity当前0行，尚无数据录入。伙伴权益配置表：当前0行未populate",
         "has_data": false
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "未开始录入",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -2672,24 +3709,32 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 0,
       "schema": "public",
-      "table": "dim_partner_equity"
+      "table": "dim_partner_equity",
+      "table_type": "维度表"
     },
     {
+      "business_label": "收款人银行账户信息表",
+      "description": "收款人银行账户信息表：银行名称、账号、付款周期；当前0行——但实际付款银行信息真实存在于dim_license(见下)，dim_payee本身是空表，不代表付款信息整体缺失，是表设计上的重复/未启用",
       "layer1": {
         "fact_statement": "public.dim_payee当前0行，尚无数据录入。收款人银行账户信息表：银行名称、账号、付款周期；当前0行——但实际付款银行信息真实存在于dim_license(见下)，dim_payee本身是空表，不代表付款信息整体缺失，是表设计上的重复/未启用",
         "has_data": false
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "未开始录入",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -2710,24 +3755,32 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 0,
       "schema": "public",
-      "table": "dim_payee"
+      "table": "dim_payee",
+      "table_type": "维度表"
     },
     {
+      "business_label": "统一人员主数据表",
+      "description": "统一人员主数据表：bridge_person_identity归一化后的人员档案，区分INTERNAL/EMPLOYEE等范围与分组",
       "layer1": {
         "fact_statement": "public.dim_person现有5291行数据。统一人员主数据表：bridge_person_identity归一化后的人员档案，区分INTERNAL/EMPLOYEE等范围与分组",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "规模化在跑",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -2748,24 +3801,32 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 5291,
       "schema": "public",
-      "table": "dim_person"
+      "table": "dim_person",
+      "table_type": "维度表"
     },
     {
+      "business_label": "保单生命周期事件类型定义库",
+      "description": "保单生命周期事件类型定义库：75种事件(如预约/签单/核保)的业务定义，是fact_sales_activity的事件字典",
       "layer1": {
         "fact_statement": "public.dim_predicate_library现有75行数据。保单生命周期事件类型定义库：75种事件(如预约/签单/核保)的业务定义，是fact_sales_activity的事件字典",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "小规模在跑",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -2786,24 +3847,32 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 75,
       "schema": "public",
-      "table": "dim_predicate_library"
+      "table": "dim_predicate_library",
+      "table_type": "维度表"
     },
     {
+      "business_label": "产品权益特征一致性检查表",
+      "description": "产品权益特征一致性检查表：现金价值/身故赔付等权益标记在跨计划书间是否一致",
       "layer1": {
         "fact_statement": "public.dim_product_benefit_profile现有69行数据。产品权益特征一致性检查表：现金价值/身故赔付等权益标记在跨计划书间是否一致",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "小规模在跑",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -2824,24 +3893,32 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 69,
       "schema": "public",
-      "table": "dim_product_benefit_profile"
+      "table": "dim_product_benefit_profile",
+      "table_type": "维度表"
     },
     {
+      "business_label": "产品特征取值表",
+      "description": "产品特征取值表：产品在config_product_feature_type定义的各标准化特征上的具体取值",
       "layer1": {
         "fact_statement": "public.dim_product_feature_value现有1014行数据。产品特征取值表：产品在config_product_feature_type定义的各标准化特征上的具体取值",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "规模化在跑",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -2862,24 +3939,32 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 1014,
       "schema": "public",
-      "table": "dim_product_feature_value"
+      "table": "dim_product_feature_value",
+      "table_type": "维度表"
     },
     {
+      "business_label": "产品ID主数据表",
+      "description": "产品ID主数据表：产品代码、中英文名、费率选项、缴费期、保障期",
       "layer1": {
         "fact_statement": "public.dim_product_id现有728行数据。产品ID主数据表：产品代码、中英文名、费率选项、缴费期、保障期",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "小规模在跑",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -2900,24 +3985,32 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 728,
       "schema": "public",
-      "table": "dim_product_id"
+      "table": "dim_product_id",
+      "table_type": "维度表"
     },
     {
+      "business_label": "产品SKU主数据表",
+      "description": "产品SKU主数据表：产品线分类、是否离岸/保费融资、回溯期、冷静期天数",
       "layer1": {
         "fact_statement": "public.dim_product_sku现有223行数据。产品SKU主数据表：产品线分类、是否离岸/保费融资、回溯期、冷静期天数",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "小规模在跑",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -2938,24 +4031,32 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 223,
       "schema": "public",
-      "table": "dim_product_sku"
+      "table": "dim_product_sku",
+      "table_type": "维度表"
     },
     {
+      "business_label": "人员角色类型字典表",
+      "description": "人员角色类型字典表：35种角色定义，区分内部员工与外部角色",
       "layer1": {
         "fact_statement": "public.dim_role_type现有35行数据。人员角色类型字典表：35种角色定义，区分内部员工与外部角色",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "小规模在跑",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -2976,24 +4077,32 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 35,
       "schema": "public",
-      "table": "dim_role_type"
+      "table": "dim_role_type",
+      "table_type": "维度表"
     },
     {
+      "business_label": "业务细分市场字典表",
+      "description": "业务细分市场字典表：如天领业务、成事家办等细分市场代码",
       "layer1": {
         "fact_statement": "public.dim_segmentation现有11行数据。业务细分市场字典表：如天领业务、成事家办等细分市场代码",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "小规模在跑",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -3014,24 +4123,32 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 11,
       "schema": "public",
-      "table": "dim_segmentation"
+      "table": "dim_segmentation",
+      "table_type": "维度表"
     },
     {
+      "business_label": "策略主数据表",
+      "description": "策略主数据表：当前0行未populate",
       "layer1": {
         "fact_statement": "public.dim_strategy当前0行，尚无数据录入。策略主数据表：当前0行未populate",
         "has_data": false
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "未开始录入",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -3052,24 +4169,41 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 0,
       "schema": "public",
-      "table": "dim_strategy"
+      "table": "dim_strategy",
+      "table_type": "维度表"
     },
     {
+      "business_label": "KA渠道月度业绩汇总表",
+      "description": "KA渠道月度业绩汇总表：按月统计保单数/客户数/总保费/APE",
       "layer1": {
         "fact_statement": "public.fact_channel_ka现有845行数据。KA渠道月度业绩汇总表：按月统计保单数/客户数/总保费/APE",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "小规模在跑",
-        "positions": [],
-        "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "positions": [
+          "KA管理岗"
+        ],
+        "related_l3_l4": [
+          {
+            "l3_code": "L3-KAGA",
+            "l3_name": "KA业绩跟踪与运维",
+            "l4_code": "L4-KAGA-01",
+            "l4_name": "定期业绩数据收集"
+          }
+        ],
+        "status": "已定位关联"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -3090,20 +4224,39 @@
         "status": "BLOCKED"
       },
       "layer5": {
-        "note": "无关联L4，暂无法给出决策建议。",
-        "status": "NO_BASIS"
+        "l4_quadrants": [
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-KAGA-01",
+            "l4_name": "定期业绩数据收集",
+            "quadrant": "q1",
+            "quadrant_label": "优先验证",
+            "rationale": "D1-D6完整、候选Agent封装=A-高封装(理想条件下Skill候选)、Tier=Auto方向一致，且有业务数据证据支撑，可优先验证"
+          }
+        ],
+        "note": "1个关联L4已按面板D四象限语义(优先验证/治理后推进/补数据规则后推进/暂缓自动化)完成DERIVED归类；该归类只是同一套语义在表维度的推导参考，不等同于面板D工作坊的正式象限坐标，完整决策仍需等L3/L4层激活后补充定量支撑。",
+        "status": "PRELIMINARY"
       },
       "role": "业务数据",
       "row_count": 845,
       "schema": "public",
-      "table": "fact_channel_ka"
+      "table": "fact_channel_ka",
+      "table_type": "事实表"
     },
     {
+      "business_label": "渠道伙伴月度汇总表",
+      "description": "渠道伙伴月度汇总表：保单数、客户数、总保费、平均审批周期",
       "layer1": {
         "fact_statement": "public.fact_channel_partner现有1662行数据。渠道伙伴月度汇总表：保单数、客户数、总保费、平均审批周期",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "规模化在跑",
         "positions": [
           "佣金管理与合规岗"
@@ -3137,20 +4290,39 @@
         "status": "BLOCKED"
       },
       "layer5": {
-        "note": "已知关联L4的Tier/封装档位等流程模型结论可作初步参考，但完整决策需等L3/L4层激活后补充定量支撑，当前仅为初步判断。",
+        "l4_quadrants": [
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-COM-12",
+            "l4_name": "应派金额拆分与渠道对账（待注册）",
+            "quadrant": "q1",
+            "quadrant_label": "优先验证",
+            "rationale": "D1-D6完整、候选Agent封装=A-高封装(理想条件下Skill候选)、Tier=Auto方向一致，且有业务数据证据支撑，可优先验证"
+          }
+        ],
+        "note": "1个关联L4已按面板D四象限语义(优先验证/治理后推进/补数据规则后推进/暂缓自动化)完成DERIVED归类；该归类只是同一套语义在表维度的推导参考，不等同于面板D工作坊的正式象限坐标，完整决策仍需等L3/L4层激活后补充定量支撑。",
         "status": "PRELIMINARY"
       },
       "role": "业务数据",
       "row_count": 1662,
       "schema": "public",
-      "table": "fact_channel_partner"
+      "table": "fact_channel_partner",
+      "table_type": "事实表"
     },
     {
+      "business_label": "佣金费率主表",
+      "description": "佣金费率主表：按保司/产品/客户类型/年度的基础费率、超额费率、FYC/RYC费率，是佣金政策的核心事实表",
       "layer1": {
         "fact_statement": "public.fact_commission_rate现有25111行数据。佣金费率主表：按保司/产品/客户类型/年度的基础费率、超额费率、FYC/RYC费率，是佣金政策的核心事实表",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "规模化在跑",
         "positions": [
           "佣金管理与合规岗"
@@ -3184,24 +4356,43 @@
         "status": "BLOCKED"
       },
       "layer5": {
-        "note": "已知关联L4的Tier/封装档位等流程模型结论可作初步参考，但完整决策需等L3/L4层激活后补充定量支撑，当前仅为初步判断。",
+        "l4_quadrants": [
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-COM-01",
+            "l4_name": "佣金政策接收与校准",
+            "quadrant": "q1",
+            "quadrant_label": "优先验证",
+            "rationale": "D1-D6完整、候选Agent封装=A-高封装(理想条件下Skill候选)、Tier=Auto方向一致，且有业务数据证据支撑，可优先验证"
+          }
+        ],
+        "note": "1个关联L4已按面板D四象限语义(优先验证/治理后推进/补数据规则后推进/暂缓自动化)完成DERIVED归类；该归类只是同一套语义在表维度的推导参考，不等同于面板D工作坊的正式象限坐标，完整决策仍需等L3/L4层激活后补充定量支撑。",
         "status": "PRELIMINARY"
       },
       "role": "业务数据",
       "row_count": 25111,
       "schema": "public",
-      "table": "fact_commission_rate"
+      "table": "fact_commission_rate",
+      "table_type": "事实表"
     },
     {
+      "business_label": "客户月度业绩汇总表",
+      "description": "客户月度业绩汇总表：按月统计客户的保单数、保费、生效/退保/取消件数",
       "layer1": {
         "fact_statement": "public.fact_customer现有5275行数据。客户月度业绩汇总表：按月统计客户的保单数、保费、生效/退保/取消件数",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "规模化在跑",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -3222,24 +4413,41 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 5275,
       "schema": "public",
-      "table": "fact_customer"
+      "table": "fact_customer",
+      "table_type": "事实表"
     },
     {
+      "business_label": "保险计划书主表",
+      "description": "保险计划书主表：计划书参数(保额/保费/年龄/性别/吸烟状态)，来自计划书文件解析(source_file为xlsx)",
       "layer1": {
         "fact_statement": "public.fact_insurance_plan_header现有75行数据。保险计划书主表：计划书参数(保额/保费/年龄/性别/吸烟状态)，来自计划书文件解析(source_file为xlsx)",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "小规模在跑",
-        "positions": [],
-        "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "positions": [
+          "保单服务岗"
+        ],
+        "related_l3_l4": [
+          {
+            "l3_code": "L3-RSJD",
+            "l3_name": "经代机构销售业务执行流程",
+            "l4_code": "L4-RSJD-04",
+            "l4_name": "方案交付"
+          }
+        ],
+        "status": "已定位关联"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -3260,24 +4468,43 @@
         "status": "BLOCKED"
       },
       "layer5": {
-        "note": "无关联L4，暂无法给出决策建议。",
-        "status": "NO_BASIS"
+        "l4_quadrants": [
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-RSJD-04",
+            "l4_name": "方案交付",
+            "quadrant": "q1",
+            "quadrant_label": "优先验证",
+            "rationale": "D1-D6完整、候选Agent封装=A-高封装(理想条件下Skill候选)、Tier=Auto方向一致，且有业务数据证据支撑，可优先验证"
+          }
+        ],
+        "note": "1个关联L4已按面板D四象限语义(优先验证/治理后推进/补数据规则后推进/暂缓自动化)完成DERIVED归类；该归类只是同一套语义在表维度的推导参考，不等同于面板D工作坊的正式象限坐标，完整决策仍需等L3/L4层激活后补充定量支撑。",
+        "status": "PRELIMINARY"
       },
       "role": "业务数据",
       "row_count": 75,
       "schema": "public",
-      "table": "fact_insurance_plan_header"
+      "table": "fact_insurance_plan_header",
+      "table_type": "事实表"
     },
     {
+      "business_label": "保险计划书历史归档表",
+      "description": "保险计划书历史归档表：fact_insurance_plan_header的历史版本",
       "layer1": {
         "fact_statement": "public.fact_insurance_plan_header_history现有416行数据。保险计划书历史归档表：fact_insurance_plan_header的历史版本",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "小规模在跑",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -3298,24 +4525,41 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 416,
       "schema": "public",
-      "table": "fact_insurance_plan_header_history"
+      "table": "fact_insurance_plan_header_history",
+      "table_type": "事实表"
     },
     {
+      "business_label": "保险计划书逐年现金价值明细表",
+      "description": "保险计划书逐年现金价值明细表：每份计划书按保单年度展开的现价/身故赔付等精算数值(guaranteed/reversionary/terminal bonus拆分)",
       "layer1": {
         "fact_statement": "public.fact_insurance_plan_lines现有7393行数据。保险计划书逐年现金价值明细表：每份计划书按保单年度展开的现价/身故赔付等精算数值(guaranteed/reversionary/terminal bonus拆分)",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "规模化在跑",
-        "positions": [],
-        "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "positions": [
+          "保单服务岗"
+        ],
+        "related_l3_l4": [
+          {
+            "l3_code": "L3-RSJD",
+            "l3_name": "经代机构销售业务执行流程",
+            "l4_code": "L4-RSJD-04",
+            "l4_name": "方案交付"
+          }
+        ],
+        "status": "已定位关联"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -3336,24 +4580,43 @@
         "status": "BLOCKED"
       },
       "layer5": {
-        "note": "无关联L4，暂无法给出决策建议。",
-        "status": "NO_BASIS"
+        "l4_quadrants": [
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-RSJD-04",
+            "l4_name": "方案交付",
+            "quadrant": "q1",
+            "quadrant_label": "优先验证",
+            "rationale": "D1-D6完整、候选Agent封装=A-高封装(理想条件下Skill候选)、Tier=Auto方向一致，且有业务数据证据支撑，可优先验证"
+          }
+        ],
+        "note": "1个关联L4已按面板D四象限语义(优先验证/治理后推进/补数据规则后推进/暂缓自动化)完成DERIVED归类；该归类只是同一套语义在表维度的推导参考，不等同于面板D工作坊的正式象限坐标，完整决策仍需等L3/L4层激活后补充定量支撑。",
+        "status": "PRELIMINARY"
       },
       "role": "业务数据",
       "row_count": 7393,
       "schema": "public",
-      "table": "fact_insurance_plan_lines"
+      "table": "fact_insurance_plan_lines",
+      "table_type": "事实表"
     },
     {
+      "business_label": "保险计划书逐年现金价值历史归档表",
+      "description": "保险计划书逐年现金价值历史归档表：fact_insurance_plan_lines的历史版本，4万+行",
       "layer1": {
         "fact_statement": "public.fact_insurance_plan_lines_history现有41050行数据。保险计划书逐年现金价值历史归档表：fact_insurance_plan_lines的历史版本，4万+行",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "规模化在跑",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -3374,20 +4637,28 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 41050,
       "schema": "public",
-      "table": "fact_insurance_plan_lines_history"
+      "table": "fact_insurance_plan_lines_history",
+      "table_type": "事实表"
     },
     {
+      "business_label": "保单主表",
+      "description": "保单主表：保单号、产品、保费、状态、签单/生效日期、理财师归属等56个字段的完整保单信息",
       "layer1": {
         "fact_statement": "public.fact_policy现有6257行数据。保单主表：保单号、产品、保费、状态、签单/生效日期、理财师归属等56个字段的完整保单信息",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "规模化在跑",
         "positions": [
           "佣金管理与合规岗"
@@ -3421,24 +4692,43 @@
         "status": "BLOCKED"
       },
       "layer5": {
-        "note": "已知关联L4的Tier/封装档位等流程模型结论可作初步参考，但完整决策需等L3/L4层激活后补充定量支撑，当前仅为初步判断。",
+        "l4_quadrants": [
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-COM-10",
+            "l4_name": "保单信息整合与应收核算（待注册）",
+            "quadrant": "q1",
+            "quadrant_label": "优先验证",
+            "rationale": "D1-D6完整、候选Agent封装=A-高封装(理想条件下Skill候选)、Tier=Auto方向一致，且有业务数据证据支撑，可优先验证"
+          }
+        ],
+        "note": "1个关联L4已按面板D四象限语义(优先验证/治理后推进/补数据规则后推进/暂缓自动化)完成DERIVED归类；该归类只是同一套语义在表维度的推导参考，不等同于面板D工作坊的正式象限坐标，完整决策仍需等L3/L4层激活后补充定量支撑。",
         "status": "PRELIMINARY"
       },
       "role": "业务数据",
       "row_count": 6257,
       "schema": "public",
-      "table": "fact_policy"
+      "table": "fact_policy",
+      "table_type": "事实表"
     },
     {
+      "business_label": "fact_policy的ETL抽取范围参数记录表",
+      "description": "fact_policy的ETL抽取范围参数记录表",
       "layer1": {
         "fact_statement": "public.fact_policy_etl_scope现有30行数据。fact_policy的ETL抽取范围参数记录表",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "小规模在跑",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -3459,24 +4749,32 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 30,
       "schema": "public",
-      "table": "fact_policy_etl_scope"
+      "table": "fact_policy_etl_scope",
+      "table_type": "事实表"
     },
     {
+      "business_label": "产品月度业绩汇总表",
+      "description": "产品月度业绩汇总表：按product_id+月份统计保单数/保费/IRR均值",
       "layer1": {
         "fact_statement": "public.fact_product_id现有1017行数据。产品月度业绩汇总表：按product_id+月份统计保单数/保费/IRR均值",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "规模化在跑",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -3497,24 +4795,32 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 1017,
       "schema": "public",
-      "table": "fact_product_id"
+      "table": "fact_product_id",
+      "table_type": "事实表"
     },
     {
+      "business_label": "产品SKU月度业绩汇总表",
+      "description": "产品SKU月度业绩汇总表：按product_sku+月份统计保单数/保费",
       "layer1": {
         "fact_statement": "public.fact_product_sku现有767行数据。产品SKU月度业绩汇总表：按product_sku+月份统计保单数/保费",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "小规模在跑",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -3535,68 +4841,38 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 767,
       "schema": "public",
-      "table": "fact_product_sku"
+      "table": "fact_product_sku",
+      "table_type": "事实表"
     },
     {
+      "business_label": "保单生命周期事件流水表",
+      "description": "保单生命周期事件流水表：每张保单从预约、签单到核保等各阶段的事件时间戳，是v_policy_current_state等下游视图的事件源，4.8万行",
       "layer1": {
         "fact_statement": "public.fact_sales_activity现有48048行数据。保单生命周期事件流水表：每张保单从预约、签单到核保等各阶段的事件时间戳，是v_policy_current_state等下游视图的事件源，4.8万行",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "规模化在跑",
-        "positions": [],
-        "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
-      },
-      "layer3": {
-        "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
-        "reason": "全库唯一设计了耗时/错误率字段的两张表(fact_card/fact_agent)当前均为0行，没有可分析的真实任务级数据。",
-        "required_inputs": [
-          "process_analytics.fact_card：任务级耗时(duration_hours)/SLA达成(sla_hours_actual/sla_breach_flag)/错误(error_flag)/人工干预(agent_assist_hours)——当前0行",
-          "process_analytics.fact_agent：Agent执行统计(sla_breach_rate/error_count/rework_count_total)——当前0行"
-        ],
-        "status": "BLOCKED"
-      },
-      "layer4": {
-        "goal": "ROI测算(节省工时×人力成本)、质量预测(AI介入后错误率)、产能释放、敏感性分析",
-        "reason": "缺人力成本单价和真实任务执行数据，测算公式需要的输入今天不存在，不做近似替代。",
-        "required_inputs": [
-          "人力成本单价：全库任何schema都没有薪酬/人力成本字段(dim_employee只有档案信息)，需HR/Finance提供",
-          "process_analytics.fact_card真实运行数据：用于测算AI介入前后的耗时/错误率差异，当前0行"
-        ],
-        "status": "BLOCKED"
-      },
-      "layer5": {
-        "note": "无关联L4，暂无法给出决策建议。",
-        "status": "NO_BASIS"
-      },
-      "role": "业务数据",
-      "row_count": 48048,
-      "schema": "public",
-      "table": "fact_sales_activity"
-    },
-    {
-      "layer1": {
-        "fact_statement": "public.fact_target现有62行数据。业务目标表：按业务类型/细分市场/KA的年度APE等目标值",
-        "has_data": true
-      },
-      "layer2": {
-        "data_health": "小规模在跑",
         "positions": [
-          "佣金管理与合规岗"
+          "保单服务岗"
         ],
         "related_l3_l4": [
           {
-            "l3_code": "L3-COM",
-            "l3_name": "佣金全链路管理",
-            "l4_code": "L4-COM-04",
-            "l4_name": "年度预算与规划"
+            "l3_code": "L3-RSJD",
+            "l3_name": "经代机构销售业务执行流程",
+            "l4_code": "L4-RSJD-01",
+            "l4_name": "销售执行与客户管理"
           }
         ],
         "status": "已定位关联"
@@ -3620,24 +4896,65 @@
         "status": "BLOCKED"
       },
       "layer5": {
-        "note": "已知关联L4的Tier/封装档位等流程模型结论可作初步参考，但完整决策需等L3/L4层激活后补充定量支撑，当前仅为初步判断。",
+        "l4_quadrants": [
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-RSJD-01",
+            "l4_name": "销售执行与客户管理",
+            "quadrant": "q1",
+            "quadrant_label": "优先验证",
+            "rationale": "D1-D6完整、候选Agent封装=A-高封装(理想条件下Skill候选)、Tier=Auto方向一致，且有业务数据证据支撑，可优先验证"
+          }
+        ],
+        "note": "1个关联L4已按面板D四象限语义(优先验证/治理后推进/补数据规则后推进/暂缓自动化)完成DERIVED归类；该归类只是同一套语义在表维度的推导参考，不等同于面板D工作坊的正式象限坐标，完整决策仍需等L3/L4层激活后补充定量支撑。",
         "status": "PRELIMINARY"
       },
       "role": "业务数据",
-      "row_count": 62,
+      "row_count": 48048,
       "schema": "public",
-      "table": "fact_target"
+      "table": "fact_sales_activity",
+      "table_type": "事实表"
     },
     {
+      "business_label": "业务目标表",
+      "description": "业务目标表：按业务类型/细分市场/KA的年度APE等目标值",
       "layer1": {
-        "fact_statement": "public.map_name_entity_type现有67行数据。名称实体类型判定表：判断某个原始名称字符串是机构还是自然人，用于数据清洗人工复核记录",
+        "fact_statement": "public.fact_target现有62行数据。业务目标表：按业务类型/细分市场/KA的年度APE等目标值",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "小规模在跑",
-        "positions": [],
-        "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "positions": [
+          "人力资源管理岗",
+          "佣金管理与合规岗"
+        ],
+        "related_l3_l4": [
+          {
+            "l3_code": "L3-COM",
+            "l3_name": "佣金全链路管理",
+            "l4_code": "L4-COM-04",
+            "l4_name": "年度预算与规划"
+          },
+          {
+            "l3_code": "L3-HRA",
+            "l3_name": "人力分析与决策支持流程",
+            "l4_code": "L4-HRA-02",
+            "l4_name": "人效分析与对标"
+          },
+          {
+            "l3_code": "L3-HRM",
+            "l3_name": "人员全生命周期管理流程",
+            "l4_code": "L4-HRM-01",
+            "l4_name": "定岗定编与岗位设计"
+          }
+        ],
+        "status": "已定位关联"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -3658,24 +4975,109 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-COM-04",
+            "l4_name": "年度预算与规划",
+            "quadrant": "q3",
+            "quadrant_label": "补数据/规则后推进",
+            "rationale": "候选Agent封装=C-低封装(判断/策略/关系类,理论天花板)、Tier=Hybrid组合暂无法明确归入优先验证或暂缓，需人工判断"
+          },
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-HRA-02",
+            "l4_name": "人效分析与对标",
+            "quadrant": "q3",
+            "quadrant_label": "补数据/规则后推进",
+            "rationale": "候选Agent封装=C-低封装(判断/策略/关系类,理论天花板)、Tier=Hybrid组合暂无法明确归入优先验证或暂缓，需人工判断"
+          },
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-HRM-01",
+            "l4_name": "定岗定编与岗位设计",
+            "quadrant": "q3",
+            "quadrant_label": "补数据/规则后推进",
+            "rationale": "候选Agent封装=C-低封装(判断/策略/关系类,理论天花板)、Tier=Hybrid组合暂无法明确归入优先验证或暂缓，需人工判断"
+          }
+        ],
+        "note": "3个关联L4已按面板D四象限语义(优先验证/治理后推进/补数据规则后推进/暂缓自动化)完成DERIVED归类；该归类只是同一套语义在表维度的推导参考，不等同于面板D工作坊的正式象限坐标，完整决策仍需等L3/L4层激活后补充定量支撑。",
+        "status": "PRELIMINARY"
+      },
+      "role": "业务数据",
+      "row_count": 62,
+      "schema": "public",
+      "table": "fact_target",
+      "table_type": "事实表"
+    },
+    {
+      "business_label": "名称实体类型判定表",
+      "description": "名称实体类型判定表：判断某个原始名称字符串是机构还是自然人，用于数据清洗人工复核记录",
+      "layer1": {
+        "fact_statement": "public.map_name_entity_type现有67行数据。名称实体类型判定表：判断某个原始名称字符串是机构还是自然人，用于数据清洗人工复核记录",
+        "has_data": true
+      },
+      "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
+        "data_health": "小规模在跑",
+        "positions": [],
+        "related_l3_l4": [],
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+      },
+      "layer3": {
+        "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
+        "reason": "全库唯一设计了耗时/错误率字段的两张表(fact_card/fact_agent)当前均为0行，没有可分析的真实任务级数据。",
+        "required_inputs": [
+          "process_analytics.fact_card：任务级耗时(duration_hours)/SLA达成(sla_hours_actual/sla_breach_flag)/错误(error_flag)/人工干预(agent_assist_hours)——当前0行",
+          "process_analytics.fact_agent：Agent执行统计(sla_breach_rate/error_count/rework_count_total)——当前0行"
+        ],
+        "status": "BLOCKED"
+      },
+      "layer4": {
+        "goal": "ROI测算(节省工时×人力成本)、质量预测(AI介入后错误率)、产能释放、敏感性分析",
+        "reason": "缺人力成本单价和真实任务执行数据，测算公式需要的输入今天不存在，不做近似替代。",
+        "required_inputs": [
+          "人力成本单价：全库任何schema都没有薪酬/人力成本字段(dim_employee只有档案信息)，需HR/Finance提供",
+          "process_analytics.fact_card真实运行数据：用于测算AI介入前后的耗时/错误率差异，当前0行"
+        ],
+        "status": "BLOCKED"
+      },
+      "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 67,
       "schema": "public",
-      "table": "map_name_entity_type"
+      "table": "map_name_entity_type",
+      "table_type": "映射表"
     },
     {
+      "business_label": "伙伴-收款人映射及分成比例表",
+      "description": "伙伴-收款人映射及分成比例表：当前0行未populate",
       "layer1": {
         "fact_statement": "public.map_partner_payee当前0行，尚无数据录入。伙伴-收款人映射及分成比例表：当前0行未populate",
         "has_data": false
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "未开始录入",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -3696,24 +5098,32 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 0,
       "schema": "public",
-      "table": "map_partner_payee"
+      "table": "map_partner_payee",
+      "table_type": "映射表"
     },
     {
+      "business_label": "产品映射表",
+      "description": "产品映射表：当前0行未populate",
       "layer1": {
         "fact_statement": "public.mapping_product当前0行，尚无数据录入。产品映射表：当前0行未populate",
         "has_data": false
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "未开始录入",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -3734,20 +5144,28 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 0,
       "schema": "public",
-      "table": "mapping_product"
+      "table": "mapping_product",
+      "table_type": "映射表"
     },
     {
+      "business_label": "伙伴档位规则表",
+      "description": "伙伴档位规则表：按伙伴/保司/产品条件确定fyc/ryc档位及调整系数，与comm_sandbox的分档定价规则同类，适用范围不同",
       "layer1": {
         "fact_statement": "public.partner_tier_rules现有179行数据。伙伴档位规则表：按伙伴/保司/产品条件确定fyc/ryc档位及调整系数，与comm_sandbox的分档定价规则同类，适用范围不同",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "小规模在跑",
         "positions": [
           "佣金管理与合规岗"
@@ -3781,24 +5199,43 @@
         "status": "BLOCKED"
       },
       "layer5": {
-        "note": "已知关联L4的Tier/封装档位等流程模型结论可作初步参考，但完整决策需等L3/L4层激活后补充定量支撑，当前仅为初步判断。",
+        "l4_quadrants": [
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-COM-12",
+            "l4_name": "应派金额拆分与渠道对账（待注册）",
+            "quadrant": "q1",
+            "quadrant_label": "优先验证",
+            "rationale": "D1-D6完整、候选Agent封装=A-高封装(理想条件下Skill候选)、Tier=Auto方向一致，且有业务数据证据支撑，可优先验证"
+          }
+        ],
+        "note": "1个关联L4已按面板D四象限语义(优先验证/治理后推进/补数据规则后推进/暂缓自动化)完成DERIVED归类；该归类只是同一套语义在表维度的推导参考，不等同于面板D工作坊的正式象限坐标，完整决策仍需等L3/L4层激活后补充定量支撑。",
         "status": "PRELIMINARY"
       },
       "role": "业务数据",
       "row_count": 179,
       "schema": "public",
-      "table": "partner_tier_rules"
+      "table": "partner_tier_rules",
+      "table_type": "规则表"
     },
     {
+      "business_label": "人员身份匹配疑似项表",
+      "description": "人员身份匹配疑似项表：bridge_person_identity归一化过程中无法自动确认、需人工复核的姓名/工号(如\"LFX\"这种缩写)，是数据清洗待办清单",
       "layer1": {
         "fact_statement": "public.person_match_suspect现有202行数据。人员身份匹配疑似项表：bridge_person_identity归一化过程中无法自动确认、需人工复核的姓名/工号(如\"LFX\"这种缩写)，是数据清洗待办清单",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "小规模在跑",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -3819,24 +5256,32 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 202,
       "schema": "public",
-      "table": "person_match_suspect"
+      "table": "person_match_suspect",
+      "table_type": "疑似记录表"
     },
     {
+      "business_label": "产品业务线人工修正表",
+      "description": "产品业务线人工修正表：产品分类的人工覆盖调整记录及修正理由",
       "layer1": {
         "fact_statement": "public.product_risk_override现有92行数据。产品业务线人工修正表：产品分类的人工覆盖调整记录及修正理由",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "小规模在跑",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -3857,24 +5302,32 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 92,
       "schema": "public",
-      "table": "product_risk_override"
+      "table": "product_risk_override",
+      "table_type": "规则表"
     },
     {
+      "business_label": "保单续期到期日快照表",
+      "description": "保单续期到期日快照表：按快照日期记录每张保单的下次续期到期日和已缴至日期，近3万行",
       "layer1": {
         "fact_statement": "public.sales_renewal_due_snapshot现有29640行数据。保单续期到期日快照表：按快照日期记录每张保单的下次续期到期日和已缴至日期，近3万行",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "规模化在跑",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -3895,20 +5348,28 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 29640,
       "schema": "public",
-      "table": "sales_renewal_due_snapshot"
+      "table": "sales_renewal_due_snapshot",
+      "table_type": "快照表"
     },
     {
+      "business_label": "数据同步历史日志",
+      "description": "数据同步历史日志：记录哪张表何时从哪个源文件同步、影响行数、是否成功",
       "layer1": {
         "fact_statement": "public.sync_history现有305行数据。数据同步历史日志：记录哪张表何时从哪个源文件同步、影响行数、是否成功",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "小规模在跑",
         "positions": [
           "佣金管理与合规岗"
@@ -3948,24 +5409,53 @@
         "status": "BLOCKED"
       },
       "layer5": {
-        "note": "已知关联L4的Tier/封装档位等流程模型结论可作初步参考，但完整决策需等L3/L4层激活后补充定量支撑，当前仅为初步判断。",
+        "l4_quadrants": [
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-COM-15",
+            "l4_name": "付款回执归档与台账更新（待注册）",
+            "quadrant": "q1",
+            "quadrant_label": "优先验证",
+            "rationale": "D1-D6完整、候选Agent封装=A-高封装(理想条件下Skill候选)、Tier=Auto方向一致，且有业务数据证据支撑，可优先验证"
+          },
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-COM-16",
+            "l4_name": "佣金数据导入与格式转换（待注册）",
+            "quadrant": "q1",
+            "quadrant_label": "优先验证",
+            "rationale": "D1-D6完整、候选Agent封装=A-高封装(理想条件下Skill候选)、Tier=Auto方向一致，且有业务数据证据支撑，可优先验证"
+          }
+        ],
+        "note": "2个关联L4已按面板D四象限语义(优先验证/治理后推进/补数据规则后推进/暂缓自动化)完成DERIVED归类；该归类只是同一套语义在表维度的推导参考，不等同于面板D工作坊的正式象限坐标，完整决策仍需等L3/L4层激活后补充定量支撑。",
         "status": "PRELIMINARY"
       },
       "role": "业务数据",
       "row_count": 305,
       "schema": "public",
-      "table": "sync_history"
+      "table": "sync_history",
+      "table_type": "历史记录表"
     },
     {
+      "business_label": "dim_person的精简视图(去掉批次/审计字段)",
+      "description": "dim_person的精简视图(去掉批次/审计字段)",
       "layer1": {
         "fact_statement": "public.v_dim_person现有5273行数据。dim_person的精简视图(去掉批次/审计字段)",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "规模化在跑",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -3986,24 +5476,32 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 5273,
       "schema": "public",
-      "table": "v_dim_person"
+      "table": "v_dim_person",
+      "table_type": "视图"
     },
     {
+      "business_label": "保单-人员关联视图",
+      "description": "保单-人员关联视图：把fact_policy的伙伴/理财师/客户原始字段关联到person_id，供跨表按人查询",
       "layer1": {
         "fact_statement": "public.v_fact_policy_person现有6257行数据。保单-人员关联视图：把fact_policy的伙伴/理财师/客户原始字段关联到person_id，供跨表按人查询",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "规模化在跑",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -4024,24 +5522,32 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 6257,
       "schema": "public",
-      "table": "v_fact_policy_person"
+      "table": "v_fact_policy_person",
+      "table_type": "视图"
     },
     {
+      "business_label": "销售活动关联视图",
+      "description": "销售活动关联视图：fact_sales_activity关联客户/伙伴/产品信息后的宽表，含审批周期天数(approval_cycle_days)——与COM-11\"银行到账确认\"上游的保单审批环节相关",
       "layer1": {
         "fact_statement": "public.v_fact_sales_activity现有24396行数据。销售活动关联视图：fact_sales_activity关联客户/伙伴/产品信息后的宽表，含审批周期天数(approval_cycle_days)——与COM-11\"银行到账确认\"上游的保单审批环节相关",
         "has_data": true
       },
       "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "规模化在跑",
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -4062,182 +5568,38 @@
         "status": "BLOCKED"
       },
       "layer5": {
+        "l4_quadrants": [],
         "note": "无关联L4，暂无法给出决策建议。",
         "status": "NO_BASIS"
       },
       "role": "业务数据",
       "row_count": 24396,
       "schema": "public",
-      "table": "v_fact_sales_activity"
+      "table": "v_fact_sales_activity",
+      "table_type": "视图"
     },
     {
+      "business_label": "人员活动流水视图",
+      "description": "人员活动流水视图：person_id在各业务角色下的活动记录及金额，近4万行",
       "layer1": {
         "fact_statement": "public.v_person_activity现有39533行数据。人员活动流水视图：person_id在各业务角色下的活动记录及金额，近4万行",
         "has_data": true
       },
       "layer2": {
-        "data_health": "规模化在跑",
-        "positions": [],
-        "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
-      },
-      "layer3": {
-        "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
-        "reason": "全库唯一设计了耗时/错误率字段的两张表(fact_card/fact_agent)当前均为0行，没有可分析的真实任务级数据。",
-        "required_inputs": [
-          "process_analytics.fact_card：任务级耗时(duration_hours)/SLA达成(sla_hours_actual/sla_breach_flag)/错误(error_flag)/人工干预(agent_assist_hours)——当前0行",
-          "process_analytics.fact_agent：Agent执行统计(sla_breach_rate/error_count/rework_count_total)——当前0行"
-        ],
-        "status": "BLOCKED"
-      },
-      "layer4": {
-        "goal": "ROI测算(节省工时×人力成本)、质量预测(AI介入后错误率)、产能释放、敏感性分析",
-        "reason": "缺人力成本单价和真实任务执行数据，测算公式需要的输入今天不存在，不做近似替代。",
-        "required_inputs": [
-          "人力成本单价：全库任何schema都没有薪酬/人力成本字段(dim_employee只有档案信息)，需HR/Finance提供",
-          "process_analytics.fact_card真实运行数据：用于测算AI介入前后的耗时/错误率差异，当前0行"
-        ],
-        "status": "BLOCKED"
-      },
-      "layer5": {
-        "note": "无关联L4，暂无法给出决策建议。",
-        "status": "NO_BASIS"
-      },
-      "role": "业务数据",
-      "row_count": 39533,
-      "schema": "public",
-      "table": "v_person_activity"
-    },
-    {
-      "layer1": {
-        "fact_statement": "public.v_person_coverage现有10行数据。人员身份识别覆盖率统计视图：渠道理财师/个人客户等群体的身份匹配成功率统计，用于评估bridge_person_identity的数据质量",
-        "has_data": true
-      },
-      "layer2": {
-        "data_health": "小规模在跑",
-        "positions": [],
-        "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
-      },
-      "layer3": {
-        "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
-        "reason": "全库唯一设计了耗时/错误率字段的两张表(fact_card/fact_agent)当前均为0行，没有可分析的真实任务级数据。",
-        "required_inputs": [
-          "process_analytics.fact_card：任务级耗时(duration_hours)/SLA达成(sla_hours_actual/sla_breach_flag)/错误(error_flag)/人工干预(agent_assist_hours)——当前0行",
-          "process_analytics.fact_agent：Agent执行统计(sla_breach_rate/error_count/rework_count_total)——当前0行"
-        ],
-        "status": "BLOCKED"
-      },
-      "layer4": {
-        "goal": "ROI测算(节省工时×人力成本)、质量预测(AI介入后错误率)、产能释放、敏感性分析",
-        "reason": "缺人力成本单价和真实任务执行数据，测算公式需要的输入今天不存在，不做近似替代。",
-        "required_inputs": [
-          "人力成本单价：全库任何schema都没有薪酬/人力成本字段(dim_employee只有档案信息)，需HR/Finance提供",
-          "process_analytics.fact_card真实运行数据：用于测算AI介入前后的耗时/错误率差异，当前0行"
-        ],
-        "status": "BLOCKED"
-      },
-      "layer5": {
-        "note": "无关联L4，暂无法给出决策建议。",
-        "status": "NO_BASIS"
-      },
-      "role": "业务数据",
-      "row_count": 10,
-      "schema": "public",
-      "table": "v_person_coverage"
-    },
-    {
-      "layer1": {
-        "fact_statement": "public.v_plan_metrics现有103行数据。计划书精算指标视图：IRR、回本年份等从fact_insurance_plan_lines衍生出的精算指标",
-        "has_data": true
-      },
-      "layer2": {
-        "data_health": "小规模在跑",
-        "positions": [],
-        "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
-      },
-      "layer3": {
-        "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
-        "reason": "全库唯一设计了耗时/错误率字段的两张表(fact_card/fact_agent)当前均为0行，没有可分析的真实任务级数据。",
-        "required_inputs": [
-          "process_analytics.fact_card：任务级耗时(duration_hours)/SLA达成(sla_hours_actual/sla_breach_flag)/错误(error_flag)/人工干预(agent_assist_hours)——当前0行",
-          "process_analytics.fact_agent：Agent执行统计(sla_breach_rate/error_count/rework_count_total)——当前0行"
-        ],
-        "status": "BLOCKED"
-      },
-      "layer4": {
-        "goal": "ROI测算(节省工时×人力成本)、质量预测(AI介入后错误率)、产能释放、敏感性分析",
-        "reason": "缺人力成本单价和真实任务执行数据，测算公式需要的输入今天不存在，不做近似替代。",
-        "required_inputs": [
-          "人力成本单价：全库任何schema都没有薪酬/人力成本字段(dim_employee只有档案信息)，需HR/Finance提供",
-          "process_analytics.fact_card真实运行数据：用于测算AI介入前后的耗时/错误率差异，当前0行"
-        ],
-        "status": "BLOCKED"
-      },
-      "layer5": {
-        "note": "无关联L4，暂无法给出决策建议。",
-        "status": "NO_BASIS"
-      },
-      "role": "业务数据",
-      "row_count": 103,
-      "schema": "public",
-      "table": "v_plan_metrics"
-    },
-    {
-      "layer1": {
-        "fact_statement": "public.v_plan_year_snapshot现有7393行数据。fact_insurance_plan_lines的精简视图(去掉wth系列提取字段)",
-        "has_data": true
-      },
-      "layer2": {
-        "data_health": "规模化在跑",
-        "positions": [],
-        "related_l3_l4": [],
-        "status": "未定位关联(未进入试点范围或确实无关联L4)"
-      },
-      "layer3": {
-        "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
-        "reason": "全库唯一设计了耗时/错误率字段的两张表(fact_card/fact_agent)当前均为0行，没有可分析的真实任务级数据。",
-        "required_inputs": [
-          "process_analytics.fact_card：任务级耗时(duration_hours)/SLA达成(sla_hours_actual/sla_breach_flag)/错误(error_flag)/人工干预(agent_assist_hours)——当前0行",
-          "process_analytics.fact_agent：Agent执行统计(sla_breach_rate/error_count/rework_count_total)——当前0行"
-        ],
-        "status": "BLOCKED"
-      },
-      "layer4": {
-        "goal": "ROI测算(节省工时×人力成本)、质量预测(AI介入后错误率)、产能释放、敏感性分析",
-        "reason": "缺人力成本单价和真实任务执行数据，测算公式需要的输入今天不存在，不做近似替代。",
-        "required_inputs": [
-          "人力成本单价：全库任何schema都没有薪酬/人力成本字段(dim_employee只有档案信息)，需HR/Finance提供",
-          "process_analytics.fact_card真实运行数据：用于测算AI介入前后的耗时/错误率差异，当前0行"
-        ],
-        "status": "BLOCKED"
-      },
-      "layer5": {
-        "note": "无关联L4，暂无法给出决策建议。",
-        "status": "NO_BASIS"
-      },
-      "role": "业务数据",
-      "row_count": 7393,
-      "schema": "public",
-      "table": "v_plan_year_snapshot"
-    },
-    {
-      "layer1": {
-        "fact_statement": "public.v_policy_current_state现有6468行数据。保单当前状态视图：综合fact_sales_activity事件流水计算出的保单最新状态，是事件驱动状态机的下游汇总结果",
-        "has_data": true
-      },
-      "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
         "data_health": "规模化在跑",
         "positions": [
-          "佣金管理与合规岗"
+          "事业部运营管理岗"
         ],
         "related_l3_l4": [
           {
-            "l3_code": "L3-COM",
-            "l3_name": "佣金全链路管理",
-            "l4_code": "L4-COM-10",
-            "l4_name": "保单信息整合与应收核算（待注册）"
+            "l3_code": "L3-FBA",
+            "l3_name": "理财师业务分析",
+            "l4_code": "L4-FBA-02",
+            "l4_name": "月度业绩与活动率分析"
           }
         ],
         "status": "已定位关联"
@@ -4261,13 +5623,247 @@
         "status": "BLOCKED"
       },
       "layer5": {
-        "note": "已知关联L4的Tier/封装档位等流程模型结论可作初步参考，但完整决策需等L3/L4层激活后补充定量支撑，当前仅为初步判断。",
+        "l4_quadrants": [
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-FBA-02",
+            "l4_name": "月度业绩与活动率分析",
+            "quadrant": "q3",
+            "quadrant_label": "补数据/规则后推进",
+            "rationale": "候选Agent封装=C-低封装(判断/策略/关系类,理论天花板)、Tier=Hybrid组合暂无法明确归入优先验证或暂缓，需人工判断"
+          }
+        ],
+        "note": "1个关联L4已按面板D四象限语义(优先验证/治理后推进/补数据规则后推进/暂缓自动化)完成DERIVED归类；该归类只是同一套语义在表维度的推导参考，不等同于面板D工作坊的正式象限坐标，完整决策仍需等L3/L4层激活后补充定量支撑。",
+        "status": "PRELIMINARY"
+      },
+      "role": "业务数据",
+      "row_count": 39533,
+      "schema": "public",
+      "table": "v_person_activity",
+      "table_type": "视图"
+    },
+    {
+      "business_label": "人员身份识别覆盖率统计视图",
+      "description": "人员身份识别覆盖率统计视图：渠道理财师/个人客户等群体的身份匹配成功率统计，用于评估bridge_person_identity的数据质量",
+      "layer1": {
+        "fact_statement": "public.v_person_coverage现有10行数据。人员身份识别覆盖率统计视图：渠道理财师/个人客户等群体的身份匹配成功率统计，用于评估bridge_person_identity的数据质量",
+        "has_data": true
+      },
+      "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
+        "data_health": "小规模在跑",
+        "positions": [],
+        "related_l3_l4": [],
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+      },
+      "layer3": {
+        "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
+        "reason": "全库唯一设计了耗时/错误率字段的两张表(fact_card/fact_agent)当前均为0行，没有可分析的真实任务级数据。",
+        "required_inputs": [
+          "process_analytics.fact_card：任务级耗时(duration_hours)/SLA达成(sla_hours_actual/sla_breach_flag)/错误(error_flag)/人工干预(agent_assist_hours)——当前0行",
+          "process_analytics.fact_agent：Agent执行统计(sla_breach_rate/error_count/rework_count_total)——当前0行"
+        ],
+        "status": "BLOCKED"
+      },
+      "layer4": {
+        "goal": "ROI测算(节省工时×人力成本)、质量预测(AI介入后错误率)、产能释放、敏感性分析",
+        "reason": "缺人力成本单价和真实任务执行数据，测算公式需要的输入今天不存在，不做近似替代。",
+        "required_inputs": [
+          "人力成本单价：全库任何schema都没有薪酬/人力成本字段(dim_employee只有档案信息)，需HR/Finance提供",
+          "process_analytics.fact_card真实运行数据：用于测算AI介入前后的耗时/错误率差异，当前0行"
+        ],
+        "status": "BLOCKED"
+      },
+      "layer5": {
+        "l4_quadrants": [],
+        "note": "无关联L4，暂无法给出决策建议。",
+        "status": "NO_BASIS"
+      },
+      "role": "业务数据",
+      "row_count": 10,
+      "schema": "public",
+      "table": "v_person_coverage",
+      "table_type": "视图"
+    },
+    {
+      "business_label": "计划书精算指标视图",
+      "description": "计划书精算指标视图：IRR、回本年份等从fact_insurance_plan_lines衍生出的精算指标",
+      "layer1": {
+        "fact_statement": "public.v_plan_metrics现有103行数据。计划书精算指标视图：IRR、回本年份等从fact_insurance_plan_lines衍生出的精算指标",
+        "has_data": true
+      },
+      "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
+        "data_health": "小规模在跑",
+        "positions": [],
+        "related_l3_l4": [],
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+      },
+      "layer3": {
+        "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
+        "reason": "全库唯一设计了耗时/错误率字段的两张表(fact_card/fact_agent)当前均为0行，没有可分析的真实任务级数据。",
+        "required_inputs": [
+          "process_analytics.fact_card：任务级耗时(duration_hours)/SLA达成(sla_hours_actual/sla_breach_flag)/错误(error_flag)/人工干预(agent_assist_hours)——当前0行",
+          "process_analytics.fact_agent：Agent执行统计(sla_breach_rate/error_count/rework_count_total)——当前0行"
+        ],
+        "status": "BLOCKED"
+      },
+      "layer4": {
+        "goal": "ROI测算(节省工时×人力成本)、质量预测(AI介入后错误率)、产能释放、敏感性分析",
+        "reason": "缺人力成本单价和真实任务执行数据，测算公式需要的输入今天不存在，不做近似替代。",
+        "required_inputs": [
+          "人力成本单价：全库任何schema都没有薪酬/人力成本字段(dim_employee只有档案信息)，需HR/Finance提供",
+          "process_analytics.fact_card真实运行数据：用于测算AI介入前后的耗时/错误率差异，当前0行"
+        ],
+        "status": "BLOCKED"
+      },
+      "layer5": {
+        "l4_quadrants": [],
+        "note": "无关联L4，暂无法给出决策建议。",
+        "status": "NO_BASIS"
+      },
+      "role": "业务数据",
+      "row_count": 103,
+      "schema": "public",
+      "table": "v_plan_metrics",
+      "table_type": "视图"
+    },
+    {
+      "business_label": "fact_insurance_plan_lines的精简视图(去掉wth系列提取字段)",
+      "description": "fact_insurance_plan_lines的精简视图(去掉wth系列提取字段)",
+      "layer1": {
+        "fact_statement": "public.v_plan_year_snapshot现有7393行数据。fact_insurance_plan_lines的精简视图(去掉wth系列提取字段)",
+        "has_data": true
+      },
+      "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
+        "data_health": "规模化在跑",
+        "positions": [],
+        "related_l3_l4": [],
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+      },
+      "layer3": {
+        "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
+        "reason": "全库唯一设计了耗时/错误率字段的两张表(fact_card/fact_agent)当前均为0行，没有可分析的真实任务级数据。",
+        "required_inputs": [
+          "process_analytics.fact_card：任务级耗时(duration_hours)/SLA达成(sla_hours_actual/sla_breach_flag)/错误(error_flag)/人工干预(agent_assist_hours)——当前0行",
+          "process_analytics.fact_agent：Agent执行统计(sla_breach_rate/error_count/rework_count_total)——当前0行"
+        ],
+        "status": "BLOCKED"
+      },
+      "layer4": {
+        "goal": "ROI测算(节省工时×人力成本)、质量预测(AI介入后错误率)、产能释放、敏感性分析",
+        "reason": "缺人力成本单价和真实任务执行数据，测算公式需要的输入今天不存在，不做近似替代。",
+        "required_inputs": [
+          "人力成本单价：全库任何schema都没有薪酬/人力成本字段(dim_employee只有档案信息)，需HR/Finance提供",
+          "process_analytics.fact_card真实运行数据：用于测算AI介入前后的耗时/错误率差异，当前0行"
+        ],
+        "status": "BLOCKED"
+      },
+      "layer5": {
+        "l4_quadrants": [],
+        "note": "无关联L4，暂无法给出决策建议。",
+        "status": "NO_BASIS"
+      },
+      "role": "业务数据",
+      "row_count": 7393,
+      "schema": "public",
+      "table": "v_plan_year_snapshot",
+      "table_type": "视图"
+    },
+    {
+      "business_label": "保单当前状态视图",
+      "description": "保单当前状态视图：综合fact_sales_activity事件流水计算出的保单最新状态，是事件驱动状态机的下游汇总结果",
+      "layer1": {
+        "fact_statement": "public.v_policy_current_state现有6468行数据。保单当前状态视图：综合fact_sales_activity事件流水计算出的保单最新状态，是事件驱动状态机的下游汇总结果",
+        "has_data": true
+      },
+      "layer2": {
+        "analyzed_l3_coverage": {
+          "analyzed": 6,
+          "total": 74
+        },
+        "data_health": "规模化在跑",
+        "positions": [
+          "佣金管理与合规岗",
+          "保单服务岗"
+        ],
+        "related_l3_l4": [
+          {
+            "l3_code": "L3-COM",
+            "l3_name": "佣金全链路管理",
+            "l4_code": "L4-COM-10",
+            "l4_name": "保单信息整合与应收核算（待注册）"
+          },
+          {
+            "l3_code": "L3-RSJD",
+            "l3_name": "经代机构销售业务执行流程",
+            "l4_code": "L4-RSJD-03",
+            "l4_name": "内部审核与校准"
+          }
+        ],
+        "status": "已定位关联"
+      },
+      "layer3": {
+        "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
+        "reason": "全库唯一设计了耗时/错误率字段的两张表(fact_card/fact_agent)当前均为0行，没有可分析的真实任务级数据。",
+        "required_inputs": [
+          "process_analytics.fact_card：任务级耗时(duration_hours)/SLA达成(sla_hours_actual/sla_breach_flag)/错误(error_flag)/人工干预(agent_assist_hours)——当前0行",
+          "process_analytics.fact_agent：Agent执行统计(sla_breach_rate/error_count/rework_count_total)——当前0行"
+        ],
+        "status": "BLOCKED"
+      },
+      "layer4": {
+        "goal": "ROI测算(节省工时×人力成本)、质量预测(AI介入后错误率)、产能释放、敏感性分析",
+        "reason": "缺人力成本单价和真实任务执行数据，测算公式需要的输入今天不存在，不做近似替代。",
+        "required_inputs": [
+          "人力成本单价：全库任何schema都没有薪酬/人力成本字段(dim_employee只有档案信息)，需HR/Finance提供",
+          "process_analytics.fact_card真实运行数据：用于测算AI介入前后的耗时/错误率差异，当前0行"
+        ],
+        "status": "BLOCKED"
+      },
+      "layer5": {
+        "l4_quadrants": [
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-COM-10",
+            "l4_name": "保单信息整合与应收核算（待注册）",
+            "quadrant": "q1",
+            "quadrant_label": "优先验证",
+            "rationale": "D1-D6完整、候选Agent封装=A-高封装(理想条件下Skill候选)、Tier=Auto方向一致，且有业务数据证据支撑，可优先验证"
+          },
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-RSJD-03",
+            "l4_name": "内部审核与校准",
+            "quadrant": "q3",
+            "quadrant_label": "补数据/规则后推进",
+            "rationale": "候选Agent封装=C-低封装(判断/策略/关系类,理论天花板)、Tier=Hybrid组合暂无法明确归入优先验证或暂缓，需人工判断"
+          }
+        ],
+        "note": "2个关联L4已按面板D四象限语义(优先验证/治理后推进/补数据规则后推进/暂缓自动化)完成DERIVED归类；该归类只是同一套语义在表维度的推导参考，不等同于面板D工作坊的正式象限坐标，完整决策仍需等L3/L4层激活后补充定量支撑。",
         "status": "PRELIMINARY"
       },
       "role": "业务数据",
       "row_count": 6468,
       "schema": "public",
-      "table": "v_policy_current_state"
+      "table": "v_policy_current_state",
+      "table_type": "视图"
     }
   ]
 }

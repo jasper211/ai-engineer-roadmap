@@ -140,6 +140,45 @@ KNOWN_TABLES: dict[str, dict] = {
     "public.v_policy_current_state": {"role": "业务数据", "description": "保单当前状态视图：综合fact_sales_activity事件流水计算出的保单最新状态，是事件驱动状态机的下游汇总结果"},
 }
 
+# 表类型是命名规律的机械归类(前缀/后缀)，不是业务含义判断——业务含义仍然只
+# 来自KNOWN_TABLES里逐表核实的description，这里只是给"按结构分层"提供一个
+# 独立于业务含义的筛选维度。规则命中不到的表如实归"其他"，不强凑分类。
+_TABLE_TYPE_RULES = [
+    ("dim_", "维度表"),
+    ("fact_", "事实表"),
+    ("agg_", "汇总表"),
+    ("config_", "配置表"),
+    ("bridge_", "桥接表"),
+    ("mapping_", "映射表"),
+    ("map_", "映射表"),
+    ("auth_", "系统表"),
+    ("v_", "视图"),
+]
+_TABLE_TYPE_SUFFIX_RULES = [
+    ("_snapshot", "快照表"),
+    ("_history", "历史记录表"),
+    ("_history_long", "历史记录表"),
+    ("_rules", "规则表"),
+    ("_override", "规则表"),
+    ("_adjustment", "调整记录表"),
+    ("_suspect", "疑似记录表"),
+    ("_event", "事件记录表"),
+    ("_change", "事件记录表"),
+    ("_state", "状态记录表"),
+]
+
+
+def infer_table_type(table_name: str) -> str:
+    for prefix, label in _TABLE_TYPE_RULES:
+        if table_name.startswith(prefix):
+            return label
+    for suffix, label in _TABLE_TYPE_SUFFIX_RULES:
+        if table_name.endswith(suffix):
+            return label
+    if table_name.startswith("match_"):
+        return "核对匹配表"
+    return "其他"
+
 
 def build_catalog(db_query: Callable[[str, tuple], list[dict]]) -> dict:
     tables = db_query(
@@ -181,6 +220,7 @@ def build_catalog(db_query: Callable[[str, tuple], list[dict]]) -> dict:
             "columns": columns_by_table.get(key, []),
             "role": known["role"] if known else ("流程数据" if schema == "process_analytics" else "业务数据"),
             "description": known["description"] if known else None,
+            "table_type": infer_table_type(table),
         })
     return {
         "schema_version": "vnw.db-catalog.v1",

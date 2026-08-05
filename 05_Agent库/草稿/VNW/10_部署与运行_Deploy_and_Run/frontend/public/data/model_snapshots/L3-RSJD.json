@@ -604,8 +604,8 @@
       }
     ]
   },
-  "analysis_freshness": "CURRENT",
-  "analysis_input_hash": "80b7e8e7ea6ed6820c4bb5978a847760a617762fee1a835b3a565bb11b643c1a",
+  "analysis_freshness": "INPUT_CHANGED",
+  "analysis_input_hash": "f068c5c6a9f59fa7871aca569fa92445ddf01c3ed0a298169dc88751cecbfaab",
   "blueprint": {
     "blueprint_value_nodes": [],
     "coverage": "INDEXED",
@@ -915,6 +915,54 @@
       "value": 1
     },
     {
+      "confidence": "LOW",
+      "conflict_note": "人工按业务含义匹配到业务数据仓库表，非外键关联，未经业务方确认",
+      "evidence_class": "CONSENSUS",
+      "evidence_id": "EVD-1edb8342438fe99c7d19",
+      "field_name": "business_evidence",
+      "source": {
+        "observed_at": "",
+        "source_field": "人工匹配",
+        "source_key": "L4-RSJD-01",
+        "source_object": "public.fact_sales_activity, public.dim_customer",
+        "source_system": "业务数据仓库",
+        "source_version": "2026-08-04试点"
+      },
+      "status": "UNVERIFIED",
+      "transform_rule": "",
+      "value": [
+        {
+          "confidence": "strong",
+          "evidence_type": "output",
+          "matched_columns": [
+            "policy_id",
+            "event_type",
+            "status_after",
+            "event_date",
+            "operator"
+          ],
+          "rationale": "保单生命周期事件流水表，逐条记录销售执行动作",
+          "row_count": 48048,
+          "schema": "public",
+          "table": "fact_sales_activity"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "output",
+          "matched_columns": [
+            "customer_id",
+            "customer_type",
+            "occupation",
+            "income"
+          ],
+          "rationale": "客户主数据表，是客户管理的直接依据",
+          "row_count": 4699,
+          "schema": "public",
+          "table": "dim_customer"
+        }
+      ]
+    },
+    {
       "confidence": "HIGH",
       "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
@@ -1039,6 +1087,53 @@
       "status": "ACTIVE",
       "transform_rule": "",
       "value": 2
+    },
+    {
+      "confidence": "LOW",
+      "conflict_note": "人工按业务含义匹配到业务数据仓库表，非外键关联，未经业务方确认",
+      "evidence_class": "CONSENSUS",
+      "evidence_id": "EVD-321031a0f9d7bbf3e074",
+      "field_name": "business_evidence",
+      "source": {
+        "observed_at": "",
+        "source_field": "人工匹配",
+        "source_key": "L4-RSJD-04",
+        "source_object": "public.fact_insurance_plan_header, public.fact_insurance_plan_lines",
+        "source_system": "业务数据仓库",
+        "source_version": "2026-08-04试点"
+      },
+      "status": "UNVERIFIED",
+      "transform_rule": "",
+      "value": [
+        {
+          "confidence": "strong",
+          "evidence_type": "output",
+          "matched_columns": [
+            "plan_header_id",
+            "sum_assured",
+            "premium",
+            "product_name"
+          ],
+          "rationale": "保险计划书主表，本身就是\"方案\"这一交付物的数据化版本",
+          "row_count": 75,
+          "schema": "public",
+          "table": "fact_insurance_plan_header"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "output",
+          "matched_columns": [
+            "plan_line_id",
+            "policy_year",
+            "gcv",
+            "tcv_irr"
+          ],
+          "rationale": "计划书逐年现金价值明细，是方案交付内容的精算细节",
+          "row_count": 7393,
+          "schema": "public",
+          "table": "fact_insurance_plan_lines"
+        }
+      ]
     },
     {
       "confidence": "HIGH",
@@ -1476,6 +1571,39 @@
       "status": "ACTIVE",
       "transform_rule": "",
       "value": "PARTIAL"
+    },
+    {
+      "confidence": "LOW",
+      "conflict_note": "人工按业务含义匹配到业务数据仓库表，非外键关联，未经业务方确认",
+      "evidence_class": "CONSENSUS",
+      "evidence_id": "EVD-9a60fa6b26082274dad3",
+      "field_name": "business_evidence",
+      "source": {
+        "observed_at": "",
+        "source_field": "人工匹配",
+        "source_key": "L4-RSJD-02",
+        "source_object": "public.agg_sales_base",
+        "source_system": "业务数据仓库",
+        "source_version": "2026-08-04试点"
+      },
+      "status": "UNVERIFIED",
+      "transform_rule": "",
+      "value": [
+        {
+          "confidence": "strong",
+          "evidence_type": "output",
+          "matched_columns": [
+            "保费(hkd)",
+            "ape",
+            "是否融资",
+            "签批时效(天)"
+          ],
+          "rationale": "订单粒度的保费/APE/签批时效汇总表，是财务模型测算的直接输入",
+          "row_count": 6399,
+          "schema": "public",
+          "table": "agg_sales_base"
+        }
+      ]
     },
     {
       "confidence": "HIGH",
@@ -2077,6 +2205,38 @@
       "value": "销售执行与客户管理"
     },
     {
+      "confidence": "LOW",
+      "conflict_note": "人工按业务含义匹配到业务数据仓库表，非外键关联，未经业务方确认",
+      "evidence_class": "CONSENSUS",
+      "evidence_id": "EVD-f67479328bcb0e0495fb",
+      "field_name": "business_evidence",
+      "source": {
+        "observed_at": "",
+        "source_field": "人工匹配",
+        "source_key": "L4-RSJD-03",
+        "source_object": "public.v_policy_current_state",
+        "source_system": "业务数据仓库",
+        "source_version": "2026-08-04试点"
+      },
+      "status": "UNVERIFIED",
+      "transform_rule": "",
+      "value": [
+        {
+          "confidence": "strong",
+          "evidence_type": "workflow",
+          "matched_columns": [
+            "status_master",
+            "last_status_event_type",
+            "status_match"
+          ],
+          "rationale": "保单当前状态视图，status_match字段直接暴露状态是否校准一致，对应内部审核与校准",
+          "row_count": 6468,
+          "schema": "public",
+          "table": "v_policy_current_state"
+        }
+      ]
+    },
+    {
       "confidence": "HIGH",
       "conflict_note": "",
       "evidence_class": "SUPPLEMENTAL",
@@ -2231,7 +2391,6 @@
       "contribution_weight": 0.3,
       "kpi_code": "T09",
       "kpi_name": "签单转化率（周跟踪）",
-      "l3_code": "L3-RSJD",
       "row_status": "draft",
       "source_type": "mark_priority_draft",
       "weight_confirmed": "pending"
@@ -2293,7 +2452,37 @@
   "l3_name": "经代机构销售业务执行流程",
   "l4s": [
     {
-      "business_evidence": [],
+      "business_evidence": [
+        {
+          "confidence": "strong",
+          "evidence_type": "output",
+          "matched_columns": [
+            "policy_id",
+            "event_type",
+            "status_after",
+            "event_date",
+            "operator"
+          ],
+          "rationale": "保单生命周期事件流水表，逐条记录销售执行动作",
+          "row_count": 48048,
+          "schema": "public",
+          "table": "fact_sales_activity"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "output",
+          "matched_columns": [
+            "customer_id",
+            "customer_type",
+            "occupation",
+            "income"
+          ],
+          "rationale": "客户主数据表，是客户管理的直接依据",
+          "row_count": 4699,
+          "schema": "public",
+          "table": "dim_customer"
+        }
+      ],
       "d1_d6": {
         "agent_d1_input_struct": 2,
         "agent_d2_rule_clear": 1,
@@ -2313,6 +2502,7 @@
         "agent_d6_compliance": "EVD-048e938d9efdb4d73c94",
         "agent_human_touchpoint": "EVD-92d8ee4d0be4893685fd",
         "agentifiability": "EVD-b66391517adbf2ce7b6b",
+        "business_evidence": "EVD-1edb8342438fe99c7d19",
         "l4_deliverable": "EVD-2331f4a929569be63cd6",
         "l4_deliverable_type": "EVD-d96068363ed286500aee",
         "l4_name": "EVD-f1ab65ffdcd32f8fcf86",
@@ -2341,7 +2531,22 @@
       "tier": "Auto"
     },
     {
-      "business_evidence": [],
+      "business_evidence": [
+        {
+          "confidence": "strong",
+          "evidence_type": "output",
+          "matched_columns": [
+            "保费(hkd)",
+            "ape",
+            "是否融资",
+            "签批时效(天)"
+          ],
+          "rationale": "订单粒度的保费/APE/签批时效汇总表，是财务模型测算的直接输入",
+          "row_count": 6399,
+          "schema": "public",
+          "table": "agg_sales_base"
+        }
+      ],
       "d1_d6": {
         "agent_d1_input_struct": 2,
         "agent_d2_rule_clear": 2,
@@ -2361,6 +2566,7 @@
         "agent_d6_compliance": "EVD-3031a262ca00e4bedc0a",
         "agent_human_touchpoint": "EVD-8a5d1e22985afa2cd996",
         "agentifiability": "EVD-b1ab65ecc53c1950d77a",
+        "business_evidence": "EVD-9a60fa6b26082274dad3",
         "l4_deliverable": "EVD-9f5182d5d663d99cc11b",
         "l4_deliverable_type": "EVD-210de91f176a40b7964a",
         "l4_name": "EVD-58cdbff8771f58fb9c9b",
@@ -2389,7 +2595,21 @@
       "tier": "Hybrid"
     },
     {
-      "business_evidence": [],
+      "business_evidence": [
+        {
+          "confidence": "strong",
+          "evidence_type": "workflow",
+          "matched_columns": [
+            "status_master",
+            "last_status_event_type",
+            "status_match"
+          ],
+          "rationale": "保单当前状态视图，status_match字段直接暴露状态是否校准一致，对应内部审核与校准",
+          "row_count": 6468,
+          "schema": "public",
+          "table": "v_policy_current_state"
+        }
+      ],
       "d1_d6": {
         "agent_d1_input_struct": 2,
         "agent_d2_rule_clear": 1,
@@ -2409,6 +2629,7 @@
         "agent_d6_compliance": "EVD-1a4c38ed030570577f9f",
         "agent_human_touchpoint": "EVD-6cbe4876ab818902a4ca",
         "agentifiability": "EVD-9607b19e13e431b47298",
+        "business_evidence": "EVD-f67479328bcb0e0495fb",
         "l4_deliverable": "EVD-dd6c32a85f763e729cb3",
         "l4_deliverable_type": "EVD-b24581fcf57be877ec1e",
         "l4_name": "EVD-8837a3323a5d64a583cb",
@@ -2437,7 +2658,36 @@
       "tier": "Hybrid"
     },
     {
-      "business_evidence": [],
+      "business_evidence": [
+        {
+          "confidence": "strong",
+          "evidence_type": "output",
+          "matched_columns": [
+            "plan_header_id",
+            "sum_assured",
+            "premium",
+            "product_name"
+          ],
+          "rationale": "保险计划书主表，本身就是\"方案\"这一交付物的数据化版本",
+          "row_count": 75,
+          "schema": "public",
+          "table": "fact_insurance_plan_header"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "output",
+          "matched_columns": [
+            "plan_line_id",
+            "policy_year",
+            "gcv",
+            "tcv_irr"
+          ],
+          "rationale": "计划书逐年现金价值明细，是方案交付内容的精算细节",
+          "row_count": 7393,
+          "schema": "public",
+          "table": "fact_insurance_plan_lines"
+        }
+      ],
       "d1_d6": {
         "agent_d1_input_struct": 2,
         "agent_d2_rule_clear": 1,
@@ -2457,6 +2707,7 @@
         "agent_d6_compliance": "EVD-07c28d73b1a41b4e854b",
         "agent_human_touchpoint": "EVD-25bafe10e6814adab387",
         "agentifiability": "EVD-9f7abdbf7cd02a035868",
+        "business_evidence": "EVD-321031a0f9d7bbf3e074",
         "l4_deliverable": "EVD-267f4b747af709fe0dc8",
         "l4_deliverable_type": "EVD-b438542f9d16654833aa",
         "l4_name": "EVD-0dfd911e41bb2f4a8f84",
@@ -2591,7 +2842,7 @@
     "confirmed_at": null,
     "confirmed_by": null,
     "coverage": {
-      "business_evidence_covered": 0,
+      "business_evidence_covered": 4,
       "kpi_count": 6,
       "l4_total": 4,
       "position_covered": 4,
@@ -2606,11 +2857,11 @@
         "detail": {
           "KPI关联": true,
           "L2业务能力": true,
-          "业务数据证据": false,
+          "业务数据证据": true,
           "价值流位置": true,
           "岗位归属": true
         },
-        "item": "六个受控维度中4/5个有数据（缺项已显式标待补）",
+        "item": "六个受控维度中5/5个有数据（缺项已显式标待补）",
         "satisfied": true
       },
       {
@@ -2661,9 +2912,9 @@
           "statement": "候选Agent封装档位=A-高封装(理想条件下Skill候选)；优先进入Skill原型候选池"
         },
         {
-          "grade": "缺口",
+          "grade": "B",
           "layer": "结构层",
-          "statement": "业务数据证据类型=无业务数据证据；负责岗位=保单服务岗（机构业务族）"
+          "statement": "业务数据证据类型=output；负责岗位=保单服务岗（机构业务族）"
         },
         {
           "grade": "C",
@@ -2684,9 +2935,9 @@
           "statement": "候选Agent封装档位=C-低封装(判断/策略/关系类,理论天花板)；优先考虑Agent辅助或决策支持，不直接封装确定性Skill"
         },
         {
-          "grade": "缺口",
+          "grade": "B",
           "layer": "结构层",
-          "statement": "业务数据证据类型=无业务数据证据；负责岗位=保单服务岗（机构业务族）"
+          "statement": "业务数据证据类型=output；负责岗位=保单服务岗（机构业务族）"
         },
         {
           "grade": "C",
@@ -2707,9 +2958,9 @@
           "statement": "候选Agent封装档位=C-低封装(判断/策略/关系类,理论天花板)；优先考虑Agent辅助或决策支持，不直接封装确定性Skill"
         },
         {
-          "grade": "缺口",
+          "grade": "B",
           "layer": "结构层",
-          "statement": "业务数据证据类型=无业务数据证据；负责岗位=保单服务岗（机构业务族）"
+          "statement": "业务数据证据类型=workflow；负责岗位=保单服务岗（机构业务族）"
         },
         {
           "grade": "C",
@@ -2730,9 +2981,9 @@
           "statement": "候选Agent封装档位=A-高封装(理想条件下Skill候选)；优先进入Skill原型候选池"
         },
         {
-          "grade": "缺口",
+          "grade": "B",
           "layer": "结构层",
-          "statement": "业务数据证据类型=无业务数据证据；负责岗位=保单服务岗（机构业务族）"
+          "statement": "业务数据证据类型=output；负责岗位=保单服务岗（机构业务族）"
         },
         {
           "grade": "C",
@@ -2808,49 +3059,41 @@
   ],
   "vn_l4_mappings": [
     {
-      "l3_code": "L3-RSJD",
       "l4_code": "L4-RSJD-01",
       "mapping_status": "direct",
       "vn_id": "VN-RSJD-01"
     },
     {
-      "l3_code": "L3-RSJD",
       "l4_code": "L4-RSJD-02",
       "mapping_status": "direct",
       "vn_id": "VN-RSJD-01"
     },
     {
-      "l3_code": "L3-RSJD",
       "l4_code": "L4-RSJD-03",
       "mapping_status": "direct",
       "vn_id": "VN-RSJD-01"
     },
     {
-      "l3_code": "L3-RSJD",
       "l4_code": "L4-RSJD-04",
       "mapping_status": "direct",
       "vn_id": "VN-RSJD-02"
     },
     {
-      "l3_code": "L3-RSJD",
       "l4_code": "L4-RSJD-01",
       "mapping_status": "direct",
       "vn_id": "VN-RSJD-03"
     },
     {
-      "l3_code": "L3-RSJD",
       "l4_code": "L4-RSJD-02",
       "mapping_status": "direct",
       "vn_id": "VN-RSJD-03"
     },
     {
-      "l3_code": "L3-RSJD",
       "l4_code": "L4-RSJD-03",
       "mapping_status": "direct",
       "vn_id": "VN-RSJD-03"
     },
     {
-      "l3_code": "L3-RSJD",
       "l4_code": "L4-RSJD-04",
       "mapping_status": "direct",
       "vn_id": "VN-RSJD-03"

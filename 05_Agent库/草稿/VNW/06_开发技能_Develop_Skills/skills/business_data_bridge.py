@@ -1,4 +1,5 @@
-"""L4 → 业务数据仓库(public/comm_sandbox/fin_sandbox) 桥接：L3-COM参照模型。
+"""L4 → 业务数据仓库(public/comm_sandbox/fin_sandbox) 桥接：L3-COM参照模型，
+2026-08-05起扩展到HRA/HRM/RSJD/FBA/KAGA共5个L3。
 
 与position_bridge/l3_position_category不同，这条链路没有任何权威文档可依据——
 public(75表)/comm_sandbox(24表)/fin_sandbox(5表)三个schema此前VNW代码从未
@@ -21,6 +22,18 @@ public(75表)/comm_sandbox(24表)/fin_sandbox(5表)三个schema此前VNW代码�
 L3-COM是参照模型：其他L3的业务数据接入，应复用这四类evidence_type的判断
 方式，而不是重新发明匹配逻辑。confidence仍保留：strong=表名/字段直接对应
 该L4交付物，weak=业务领域相关但字段不完全对口或当前0行未populate。
+
+2026-08-05：发现"未定位关联"被误读为"确认无关联"——实际上74个L3里只有
+L3-COM做过这项分析，其余73个从未检查，被匹配成COM的0个关联表并不代表真的
+无关。为了不再制造这种误导，引入ANALYZED_L3_CODES这个显式登记表：只有登记
+在案的L3，其"某L4关联表数=0"才代表"查过、确认没有"，没登记的L3一律如实
+标注"未纳入本轮分析范围"，前端table_analysis.py据此区分两种状态。
+
+本轮新增HRA(人力分析)/HRM(人员全生命周期)/RSJD(经代机构销售执行)/
+FBA(理财师业务分析)/KAGA(KA业绩跟踪)共5个L3，同样基于122张表完整目录的
+真实字段核实，不是猜测。HRM/HRA里大量L4标注为空——这是真实数据缺口：
+全库没有薪酬/培训/绩效考核/招聘/岗位编制方案专属表，dim_employee只是
+基础档案表，不能代替这些环节的专属交付物表。
 """
 from __future__ import annotations
 
@@ -32,6 +45,11 @@ EVIDENCE_TYPE_LABELS = {
     "workflow": "流程状态证据",
     "audit": "追溯证据",
 }
+
+# 已完整核实过业务数据匹配的L3（哪怕结果是某些L4确认无关联表，也算"查过"）。
+# 不在这个集合里的L3，其L4在L4_BUSINESS_TABLE_MAP里没有任何entry——不是因为
+# 查过没有，是因为还没排到。table_analysis.py靠这个集合区分两种状态。
+ANALYZED_L3_CODES = {"COM", "HRA", "HRM", "RSJD", "FBA", "KAGA"}
 
 L4_BUSINESS_TABLE_MAP: dict[str, list[dict]] = {
     "L4-COM-01": [
@@ -104,13 +122,102 @@ L4_BUSINESS_TABLE_MAP: dict[str, list[dict]] = {
         {"schema": "comm_sandbox", "table": "market_table_header_state", "evidence_type": "audit", "matched_columns": ["row_version", "current_publish_no"], "rationale": "row_version字段直接对应\"版本管理\"，比结算周期规则更贴合该L4本身", "confidence": "strong"},
         {"schema": "fin_sandbox", "table": "config_carrier_settlement_schedule_rules", "evidence_type": "rule", "matched_columns": ["settlement_basis_type", "settlement_offset_months", "effective_start_date"], "rationale": "结算规则版本配置，与\"收款映射版本管理\"业务含义接近", "confidence": "weak"},
     ],
+    # L3-HRA 人力分析与决策支持流程：dim_employee是唯一的HR业务表，只有档案
+    # 字段(入职/转正/离职/学历/合同地区)，没有薪酬/绩效字段——02靠fact_target
+    # 的编制目标弱对应，03/04(成本/薪酬对标)全库确实没有薪酬字段，07是报告
+    # 交付物本身，不是数据表。
+    "L4-HRA-01": [
+        {"schema": "public", "table": "dim_employee", "evidence_type": "output", "matched_columns": ["employee_id", "first_hire_date", "regularization_date", "work_status", "contract_region", "employment_type"], "rationale": "HR员工档案表，是人效数据采集与清洗的原始输入", "confidence": "strong"},
+    ],
+    "L4-HRA-02": [
+        {"schema": "public", "table": "fact_target", "evidence_type": "output", "matched_columns": ["target_headcount", "period_key", "business_category"], "rationale": "业务目标表含target_headcount字段，可作对标的目标值一侧，但没有实际人效计算结果表", "confidence": "weak"},
+    ],
+    "L4-HRA-03": [],
+    "L4-HRA-04": [],
+    "L4-HRA-05": [
+        {"schema": "public", "table": "dim_employee", "evidence_type": "output", "matched_columns": ["highest_education", "employment_type", "contract_region", "nationality"], "rationale": "学历/雇佣类型/合同地区字段直接支持人员素质结构盘点", "confidence": "strong"},
+    ],
+    "L4-HRA-06": [
+        {"schema": "public", "table": "dim_employee", "evidence_type": "output", "matched_columns": ["recorded_term_date", "work_status", "first_hire_date"], "rationale": "离职登记日期与在职状态字段直接支持流失率计算", "confidence": "strong"},
+    ],
+    "L4-HRA-07": [],
+
+    # L3-HRM 人员全生命周期管理流程：dim_employee反复作为不同L4的证据(入职/
+    # 转正/退出)，字段互不重叠，这正是"同一张表服务多个L4"的真实例子；招聘/
+    # 培训/绩效/薪酬/晋升全库没有专属表，是真实数据缺口，不是没找。
+    "L4-HRM-01": [
+        {"schema": "public", "table": "fact_target", "evidence_type": "output", "matched_columns": ["target_headcount", "team_id", "period_key"], "rationale": "编制目标数字化依据，但没有岗位JD文本表", "confidence": "weak"},
+    ],
+    "L4-HRM-02": [],
+    "L4-HRM-03": [
+        {"schema": "public", "table": "dim_employee", "evidence_type": "output", "matched_columns": ["first_hire_date", "employment_type", "contract_region", "id_card_masked"], "rationale": "入职日期/雇佣类型/合同地区字段直接对应入职配置", "confidence": "strong"},
+    ],
+    "L4-HRM-04": [
+        {"schema": "public", "table": "dim_employee", "evidence_type": "output", "matched_columns": ["regularization_date", "work_status"], "rationale": "转正日期字段直接对应试用期考核结果", "confidence": "strong"},
+    ],
+    "L4-HRM-05": [],
+    "L4-HRM-06": [],
+    "L4-HRM-07": [],
+    "L4-HRM-08": [],
+    "L4-HRM-09": [
+        {"schema": "public", "table": "dim_employee", "evidence_type": "output", "matched_columns": ["recorded_term_date", "work_status"], "rationale": "离职登记日期与在职状态字段直接对应人员退出归档", "confidence": "strong"},
+    ],
+
+    # L3-RSJD 经代机构销售业务执行流程：数据基础比HRA/HRM扎实很多，销售链路
+    # 有完整的事件流水/汇总/状态视图/计划书表支撑。
+    "L4-RSJD-01": [
+        {"schema": "public", "table": "fact_sales_activity", "evidence_type": "output", "matched_columns": ["policy_id", "event_type", "status_after", "event_date", "operator"], "rationale": "保单生命周期事件流水表，逐条记录销售执行动作", "confidence": "strong"},
+        {"schema": "public", "table": "dim_customer", "evidence_type": "output", "matched_columns": ["customer_id", "customer_type", "occupation", "income"], "rationale": "客户主数据表，是客户管理的直接依据", "confidence": "strong"},
+    ],
+    "L4-RSJD-02": [
+        {"schema": "public", "table": "agg_sales_base", "evidence_type": "output", "matched_columns": ["保费(hkd)", "ape", "是否融资", "签批时效(天)"], "rationale": "订单粒度的保费/APE/签批时效汇总表，是财务模型测算的直接输入", "confidence": "strong"},
+    ],
+    "L4-RSJD-03": [
+        {"schema": "public", "table": "v_policy_current_state", "evidence_type": "workflow", "matched_columns": ["status_master", "last_status_event_type", "status_match"], "rationale": "保单当前状态视图，status_match字段直接暴露状态是否校准一致，对应内部审核与校准", "confidence": "strong"},
+    ],
+    "L4-RSJD-04": [
+        {"schema": "public", "table": "fact_insurance_plan_header", "evidence_type": "output", "matched_columns": ["plan_header_id", "sum_assured", "premium", "product_name"], "rationale": "保险计划书主表，本身就是\"方案\"这一交付物的数据化版本", "confidence": "strong"},
+        {"schema": "public", "table": "fact_insurance_plan_lines", "evidence_type": "output", "matched_columns": ["plan_line_id", "policy_year", "gcv", "tcv_irr"], "rationale": "计划书逐年现金价值明细，是方案交付内容的精算细节", "confidence": "strong"},
+    ],
+
+    # L3-FBA 理财师业务分析：与RSJD共用agg_sales_base(同一张原始销售汇总表
+    # 服务不同L3的不同L4，是"一表多L4/跨L3"的真实例子)；"分公司"维度全库
+    # 没有对应表(只有process_analytics.dim_org有编制层级，不在业务数据仓库
+    # 范围内)，03/04是真实数据缺口。
+    "L4-FBA-01": [
+        {"schema": "public", "table": "agg_sales_base", "evidence_type": "output", "matched_columns": ["签单日期", "保费(hkd)", "ape", "签单年月"], "rationale": "订单粒度销售汇总表，是月度/季度业绩数据汇总的原始输入", "confidence": "strong"},
+        {"schema": "comm_sandbox", "table": "config_quarter", "evidence_type": "rule", "matched_columns": ["quarter_code", "q_start", "q_end"], "rationale": "季度日历配置表，是\"按季度分析\"切分区间的规则依据", "confidence": "strong"},
+    ],
+    "L4-FBA-02": [
+        {"schema": "public", "table": "v_person_activity", "evidence_type": "output", "matched_columns": ["person_id", "role_code", "measure", "biz_date"], "rationale": "人员活动流水视图，measure字段可作活动率计算的原始输入，但未专门按理财师角色聚合", "confidence": "weak"},
+    ],
+    "L4-FBA-03": [],
+    "L4-FBA-04": [],
+
+    # L3-KAGA KA业绩跟踪与运维：fact_channel_ka是专属月度汇总表，字段与
+    # L4-KAGA-01几乎逐字对应，是本轮里置信度最高的匹配之一。
+    "L4-KAGA-01": [
+        {"schema": "public", "table": "fact_channel_ka", "evidence_type": "output", "matched_columns": ["ka_id", "month", "policy_count", "total_premium_hkd", "total_ape"], "rationale": "KA渠道月度业绩汇总表，字段与\"定期业绩数据收集\"逐项对应", "confidence": "strong"},
+    ],
+    "L4-KAGA-02": [
+        {"schema": "public", "table": "dim_ka", "evidence_type": "output", "matched_columns": ["ka_tier", "ka_status", "regulatory_status"], "rationale": "KA主数据表的分级/状态字段可作复盘诊断的维度依据，但没有专门的复盘结论表", "confidence": "weak"},
+    ],
+    "L4-KAGA-03": [],
+    "L4-KAGA-04": [
+        {"schema": "public", "table": "dim_ka", "evidence_type": "output", "matched_columns": ["contact_person", "support_team_org_id", "business_support_emp_id"], "rationale": "对接人与支持团队字段直接对应KA关系维护与长效运营", "confidence": "strong"},
+    ],
 }
 # L4-COM-06(佣金税务处理)/L4-COM-07(佣金争议处理)/L4-COM-17(IA合规拦截引擎)
 # 在完整122张表目录里逐一核实后仍未找到对应业务表——业务数据仓库本身没有
 # 税务专属表、争议工单表、合规规则拦截日志表，这是真实的数据侧空白，不是
 # 匹配方法的遗漏。
+#
+# L4-HRA-03/04(人员成本/薪酬市场对标)、L4-HRM-02/05/06/07/08(招聘/培训/
+# 绩效/薪酬/晋升)、L4-FBA-03/04(分公司维度/报告定稿)、L4-KAGA-03(策略调整)
+# 同理：全库没有薪酬字段、没有招聘/培训/绩效专属表、没有分公司组织维度表，
+# 这些是数据侧真实空白，不是分析没做到位。
 
-BUSINESS_TABLE_SOURCE = "public/comm_sandbox/fin_sandbox业务数据仓库（人工按业务含义匹配，非外键关联，2026-08-04 L3-COM参照模型，基于122张表完整目录核实）"
+BUSINESS_TABLE_SOURCE = "public/comm_sandbox/fin_sandbox业务数据仓库（人工按业务含义匹配，非外键关联，2026-08-04 L3-COM参照模型 + 2026-08-05扩展HRA/HRM/RSJD/FBA/KAGA，基于122张表完整目录核实）"
 
 
 def load_business_table_row_counts(db_query: Callable[[str, tuple], list[dict]]) -> dict[str, int]:

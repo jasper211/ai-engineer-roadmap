@@ -3,6 +3,9 @@ export interface TableAnalysisEntry {
   table: string
   row_count: number
   role: string
+  table_type: string
+  description: string | null
+  business_label: string
   layer1: {
     fact_statement: string
     has_data: boolean
@@ -12,6 +15,7 @@ export interface TableAnalysisEntry {
     positions: string[]
     data_health: string
     status: string
+    analyzed_l3_coverage: { analyzed: number; total: number }
   }
   layer3: {
     status: 'BLOCKED' | 'ACTIVE'
@@ -28,6 +32,16 @@ export interface TableAnalysisEntry {
   layer5: {
     status: 'PRELIMINARY' | 'NO_BASIS' | 'CONFIRMED'
     note: string
+    l4_quadrants: {
+      l4_code: string
+      l4_name: string
+      quadrant: 'q1' | 'q2' | 'q3' | 'q4'
+      quadrant_label: string
+      axis_conflict: boolean
+      confidence: 'confirmed_basis' | 'draft_basis'
+      rationale: string
+      classification_basis: 'DERIVED'
+    }[]
   }
 }
 
