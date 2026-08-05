@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router'
 import { AlertTriangle, ArrowRight, CheckCircle2, ChevronDown, ChevronUp, Database, GitBranch, LoaderCircle, Search, Star } from 'lucide-react'
-import { loadDeliverableAudit, loadModelIndex, loadPendingSourceUpdate, type DeliverableAudit, type ModelIndex, type ModelIndexItem, type SourceUpdateReport } from '../lib/l3Models'
+import { loadDeliverableAudit, loadModelIndex, loadPendingSourceUpdate, loadSourceUpdateHistory, type DeliverableAudit, type ModelIndex, type ModelIndexItem, type SourceUpdateHistoryEntry, type SourceUpdateReport } from '../lib/l3Models'
 
 const scopeLabels: Record<string, string> = {
   blueprint: '流程蓝图', l4_delivery: 'L4与交付物', value_nodes: '价值节点',
@@ -141,15 +141,21 @@ export default function L3Models() {
   const [data, setData] = useState<ModelIndex | null>(null)
   const [audit, setAudit] = useState<DeliverableAudit | null>(null)
   const [pendingUpdate, setPendingUpdate] = useState<SourceUpdateReport | null>(null)
+  const [updateHistory, setUpdateHistory] = useState<SourceUpdateHistoryEntry[]>([])
   const [error, setError] = useState('')
   const [showUpdateDetails, setShowUpdateDetails] = useState(false)
+  const [showHistory, setShowHistory] = useState(false)
+  const [expandedHistoryEvent, setExpandedHistoryEvent] = useState<string | null>(null)
   const [view, setView] = useState<'all' | 'ready' | 'evaluable' | 'missing' | 'demo' | 'quality'>('all')
   const [query, setQuery] = useState('')
   const [vsFilter, setVsFilter] = useState('all')
 
   useEffect(() => {
-    Promise.all([loadModelIndex(), loadDeliverableAudit(), loadPendingSourceUpdate()])
-      .then(([modelData, auditData, sourceUpdate]) => { setData(modelData); setAudit(auditData); setPendingUpdate(sourceUpdate) })
+    Promise.all([loadModelIndex(), loadDeliverableAudit(), loadPendingSourceUpdate(), loadSourceUpdateHistory()])
+      .then(([modelData, auditData, sourceUpdate, history]) => {
+        setData(modelData); setAudit(auditData); setPendingUpdate(sourceUpdate)
+        setUpdateHistory(history?.entries ?? [])
+      })
       .catch(error => setError(error.message))
   }, [])
 
@@ -279,6 +285,67 @@ export default function L3Models() {
                       </article>
                     )
                   })}
+                </div>
+              )}
+            </div>
+          )}
+
+          {updateHistory.length > 0 && (
+            <div className="border-t border-slate-100 px-5 py-4">
+              <button onClick={() => setShowHistory(value => !value)} className="flex w-full items-center justify-between text-left">
+                <div>
+                  <p className="text-sm font-semibold text-text-primary">重跑记录 · 历史留存</p>
+                  <p className="mt-1 text-xs text-text-secondary">每次"应用源头更新"的原因、内容、时间留存记录，供追溯核查——不是操作建议，是既成事实的留档。</p>
+                </div>
+                <span className="flex items-center gap-1 text-xs font-medium text-text-secondary">
+                  共 {updateHistory.length} 次 {showHistory ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                </span>
+              </button>
+
+              {showHistory && (
+                <div className="mt-3 space-y-2">
+                  {updateHistory.map(entry => (
+                    <div key={entry.event_id} className="rounded-xl border border-slate-200 bg-slate-50/60">
+                      <button
+                        onClick={() => setExpandedHistoryEvent(value => value === entry.event_id ? null : entry.event_id)}
+                        className="flex w-full flex-wrap items-center justify-between gap-2 px-4 py-3 text-left"
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono text-[11px] text-text-muted">{new Date(entry.generated_at).toLocaleString('zh-CN')}</span>
+                          {entry.has_report ? (
+                            <span className="rounded-full bg-indigo-100 px-2 py-0.5 text-[10px] font-medium text-indigo-700">
+                              {entry.changed_l3_count} 个L3变化 · {entry.reanalyze_l3_count} 个重跑 · {entry.blocked_l3_count} 个转入待补
+                            </span>
+                          ) : (
+                            <span className="rounded-full bg-slate-200 px-2 py-0.5 text-[10px] font-medium text-slate-500">早于留存机制上线</span>
+                          )}
+                        </div>
+                        {entry.has_report && (expandedHistoryEvent === entry.event_id ? <ChevronUp className="h-3.5 w-3.5 text-text-muted" /> : <ChevronDown className="h-3.5 w-3.5 text-text-muted" />)}
+                      </button>
+                      {!entry.has_report && (
+                        <p className="border-t border-slate-200 px-4 py-2 text-[11px] text-text-muted">{entry.note}</p>
+                      )}
+                      {entry.has_report && expandedHistoryEvent === entry.event_id && (
+                        <div className="space-y-2 border-t border-slate-200 px-4 py-3">
+                          {entry.changes.map(change => (
+                            <div key={change.l3_code} className="rounded-lg bg-white p-3 text-[11px]">
+                              <div className="flex flex-wrap items-center gap-2">
+                                <span className="font-mono font-semibold text-blue-700">{change.l3_code}</span>
+                                <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-medium text-amber-800">{changeMeaning(change).status}</span>
+                                <span className="text-text-muted">变化范围：{change.changed_scopes.map(scope => scopeLabels[scope] ?? scope).join('、')}</span>
+                              </div>
+                              {(change.added_source_objects.length > 0 || change.removed_source_objects.length > 0) && (
+                                <div className="mt-1.5 space-y-0.5 text-[10px] leading-4 text-text-muted">
+                                  {change.added_source_objects.length > 0 && <p>新增来源：{change.added_source_objects.join('、')}</p>}
+                                  {change.removed_source_objects.length > 0 && <p>移除来源：{change.removed_source_objects.join('、')}</p>}
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
                 </div>
               )}
             </div>

@@ -85,6 +85,22 @@ export interface SourceUpdateReport {
   }[]
 }
 
+export interface SourceUpdateHistoryEntry {
+  event_id: string
+  generated_at: string
+  has_report: boolean
+  changed_l3_count: number | null
+  reanalyze_l3_count: number | null
+  blocked_l3_count: number | null
+  changes: SourceUpdateReport['changes']
+  note?: string
+}
+
+export interface SourceUpdateHistoryIndex {
+  schema_version: string
+  entries: SourceUpdateHistoryEntry[]
+}
+
 export interface DeliverableAuditFinding {
   l3_code: string
   l4_code: string
@@ -325,6 +341,13 @@ export async function loadPendingSourceUpdate(): Promise<SourceUpdateReport | nu
   const response = await fetch('/data/source_updates/pending.json', { cache: 'no-store' })
   if (response.status === 404) return null
   if (!response.ok) throw new Error('源头更新检测结果读取失败')
+  return response.json()
+}
+
+export async function loadSourceUpdateHistory(): Promise<SourceUpdateHistoryIndex | null> {
+  const response = await fetch('/data/source_updates/history_index.json', { cache: 'no-store' })
+  if (response.status === 404) return null
+  if (!response.ok) throw new Error('重跑历史记录读取失败')
   return response.json()
 }
 

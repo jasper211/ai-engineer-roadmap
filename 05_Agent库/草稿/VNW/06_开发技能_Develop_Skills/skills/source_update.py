@@ -101,3 +101,59 @@ def write_update_report(report: dict, path: Path) -> None:
     temporary = path.with_suffix(".tmp")
     temporary.write_text(json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     temporary.replace(path)
+
+
+def _event_id_to_display_time(event_id: str) -> str:
+    """事件目录名形如'2026-08-05T162215.145222_0000'(由generated_at经
+    replace(":","").replace("+","_")而来)，还原成可读ISO时间仅用于展示排序，
+    不追求精确时区还原。解析失败时如实返回原始目录名，不猜。"""
+    try:
+        date_part, rest = event_id.split("T", 1)
+        time_and_us, _, _tz = rest.rpartition("_")
+        hhmmss, _, micros = time_and_us.partition(".")
+        hh, mm, ss = hhmmss[0:2], hhmmss[2:4], hhmmss[4:6]
+        return f"{date_part}T{hh}:{mm}:{ss}.{micros or '000000'}+00:00"
+    except Exception:
+        return event_id
+
+
+def build_history_index(history_dir: Path) -> dict:
+    """扫描source_updates/history/<event_id>/目录，汇总每次'应用源头更新'的
+    留存记录——原因(changed_scopes/新增移除来源对象)、内容(reanalyze/blocked
+    计数、逐L3明细)、时间——供前端"重跑记录·历史留存"展示。2026-08-05之前的
+    历史事件只归档了快照备份(before_snapshots)，没有保留report.json，如实
+    标注"早于留存机制上线"，不倒推假造原因。"""
+    entries = []
+    history_dir = Path(history_dir)
+    if history_dir.exists():
+        for event_dir in history_dir.iterdir():
+            if not event_dir.is_dir():
+                continue
+            report_path = event_dir / "report.json"
+            if report_path.exists():
+                report = json.loads(report_path.read_text(encoding="utf-8"))
+                entries.append({
+                    "event_id": event_dir.name,
+                    "generated_at": report["generated_at"],
+                    "has_report": True,
+                    "changed_l3_count": report["changed_l3_count"],
+                    "reanalyze_l3_count": report["reanalyze_l3_count"],
+                    "blocked_l3_count": report["blocked_l3_count"],
+                    "changes": report["changes"],
+                })
+            else:
+                entries.append({
+                    "event_id": event_dir.name,
+                    "generated_at": _event_id_to_display_time(event_dir.name),
+                    "has_report": False,
+                    "changed_l3_count": None,
+                    "reanalyze_l3_count": None,
+                    "blocked_l3_count": None,
+                    "changes": [],
+                    "note": "早于留存机制上线(2026-08-05)，仅归档了快照备份，原因/内容记录未保留",
+                })
+    entries.sort(key=lambda e: e["generated_at"], reverse=True)
+    return {
+        "schema_version": "vnw.source-update-history.v1",
+        "entries": entries,
+    }

@@ -446,10 +446,14 @@ def main() -> int:
             archive_dir = report_dir / "history" / report["generated_at"].replace(":", "").replace("+", "_")
             if current_dir.exists():
                 shutil.copytree(current_dir, archive_dir / "before_snapshots")
+            write_update_report(report, archive_dir / "report.json")
             frontend_sync = _sync_to_frontend(snapshot_dir)
             frontend_report = AGENT_ROOT / "10_部署与运行_Deploy_and_Run/frontend/public/data/source_updates/latest.json"
             write_update_report(report, frontend_report)
             write_update_report({**report, "applied": True}, frontend_update_dir / "pending.json")
+            from skills.source_update import build_history_index
+            history_index = build_history_index(report_dir / "history")
+            write_update_report(history_index, frontend_update_dir / "history_index.json")
             canonical_dir = workspace.root / "model_snapshots"
             if canonical_dir.exists():
                 shutil.rmtree(canonical_dir)

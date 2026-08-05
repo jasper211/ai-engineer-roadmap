@@ -1,0 +1,767 @@
+{
+  "schema_version": "vnw.l3-analysis.v1",
+  "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
+  "generation_mode": "UNIFIED_MODEL",
+  "analysis_status": "MODEL_DRAFT",
+  "model_run": null,
+  "source_scope": {
+    "database": "process_analytics",
+    "knowledge": "ACTIVE supplemental evidence only",
+    "evidence_count": 112
+  },
+  "l4_analysis": [
+    {
+      "l4_code": "L4-SLM-01",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-2fcdf021a000e4227319",
+        "EVD-d2148f71070d172a738b",
+        "EVD-f79dfa066519a5bc1f60",
+        "EVD-7071ba46a8986c49f844",
+        "EVD-6e2433740f416b96c8e3",
+        "EVD-389c7e5a098e01853a9c",
+        "EVD-8ede925cd245b8b614f6",
+        "EVD-826ca47d8d4981849830",
+        "EVD-64427bbf54b2b6d21c6f",
+        "EVD-c4cdd9f99b8208f34882",
+        "EVD-0bb9a7291128028baf7f"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "",
+      "specific_capabilities": [
+        "结构化成本数据采集与处理（D1=3）",
+        "定价规则引擎应用（D2=3）",
+        "定价计算与方案生成（D3=3）",
+        "系统API集成（D4=3）",
+        "合规检查（D6=2）"
+      ],
+      "ai_reshape": "通过拆分复合动作为独立子Skill，实现自动化定价计算与方案初稿生成；资金关卡仍需人工介入，因此整体重塑为Human-in-the-loop的Aug模式，待子Skill成熟后升级为Auto。",
+      "quality_anchor": "定价方案必须通过合规性审查（D6=2），资金安全闸门（funds_safety_hard_gate=true）作为最终放行条件。",
+      "ai_responsibility": "执行成本核算、应用定价规则、生成定价方案初稿及内部通知文本。",
+      "human_responsibility": "审核定价合理性、最终批准方案，特别是涉及资金安全的相关决策。",
+      "handoff_triggers": [
+        "当定价超出预设风险阈值时",
+        "资金闸门触发时",
+        "合规检查不通过时"
+      ],
+      "control_gates": [
+        "资金审批节点（不可绕过）"
+      ],
+      "data_basis": [
+        "成本数据源（EVD-389c7e5a098e01853a9c）",
+        "定价规则库（EVD-8ede925cd245b8b614f6）"
+      ],
+      "process_context": "作为权益上市推广的第一步，为后续合规审查和发布提供定价基础。",
+      "risks_limits": [
+        "复合动作未拆分可能导致Skill执行不确定",
+        "资金安全要求人工介入（funds_safety_hard_gate=true）",
+        "D5回退能力较弱（2/3），异常处理需人工接管"
+      ],
+      "current_recommendation": "优先拆分为可独立封装的子Skill（成本计算、规则引擎、方案生成），每项单独验证后再集成；资金审批保留人工。在拆分完成前建议整体以Aug模式运行。",
+      "database_tier": "Auto",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-SLM-02",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-b634f99ce5eff79c035e",
+        "EVD-9be281d0c9af17943c13",
+        "EVD-673504434613d15cdb59",
+        "EVD-28e1eb7d34817076ecf7",
+        "EVD-61c53e01fbefdc2cbb2a",
+        "EVD-0410a6d7e765cb9355f0",
+        "EVD-bed5307f203ad96a0fed",
+        "EVD-0f0b8c4fd4426d5801e5",
+        "EVD-3484db9b17f1cbac3ba3",
+        "EVD-223b7e9547c9d07f4021",
+        "EVD-fe057f06a50c93c9fc56"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "",
+      "specific_capabilities": [
+        "合规审查规则应用（D2=3）",
+        "审查意见书生成（D3=3）",
+        "系统接口集成（D4=3）",
+        "触达记录生成",
+        "人工复核判定"
+      ],
+      "ai_reshape": "利用合规审查模型自动执行规则检查并生成意见书初稿，但最终签字确认仍需人工；需补足报告模板标准化和系统接口才能实现有效封装。",
+      "quality_anchor": "合规审查意见书需经授权岗位复核确认，D6=2为中等合规要求。",
+      "ai_responsibility": "依据预置规则执行合规扫描、生成审查意见草稿和触达记录。",
+      "human_responsibility": "对AI生成的审查意见进行复核，签署最终意见书。",
+      "handoff_triggers": [
+        "AI判断存在合规风险且无法自动决策时",
+        "规则库未覆盖的新型场景"
+      ],
+      "control_gates": [
+        "合规审查签字节点（不可绕过）"
+      ],
+      "data_basis": [
+        "合规规则库（EVD-bed5307f203ad96a0fed）",
+        "输入结构化材料（EVD-0410a6d7e765cb9355f0）"
+      ],
+      "process_context": "在定价方案初步确定后进行法务与合规前置审查，确保上市前合规。",
+      "risks_limits": [
+        "复合动作拆分困难，模板与规则尚未完全固化",
+        "D5回退中等（2/3），异常需人工处理",
+        "技能封装度B级，仍需部分人工介入"
+      ],
+      "current_recommendation": "先补充标准化报告模板、固化合规规则并完善系统接口，再将审查流程拆分为规则扫描子Skill和人工复核决策点；当前建议Aug模式，目标状态仍为Aug。",
+      "database_tier": "Aug",
+      "recommended_tier": "Aug",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-SLM-03",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-63cae22b042af570bb0b",
+        "EVD-b6836d147653b6e03837",
+        "EVD-031e975cf86241699536",
+        "EVD-c782e935ad9de3ec5be1",
+        "EVD-ea3219669eea700611be",
+        "EVD-162ac854a1f00d89c812",
+        "EVD-138aa7c75f6df12bd882",
+        "EVD-8e2ee9a1c21a62e4c0f0",
+        "EVD-c9534cfceadf951e0bef",
+        "EVD-29b0198f864513e7ed19",
+        "EVD-af14a305f80e93ac2c92"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "",
+      "specific_capabilities": [
+        "跨部门沟通协调",
+        "会议纪要/沟通记录生成",
+        "试点方案协商"
+      ],
+      "ai_reshape": "由于任务本质是策略沟通与关系协调，AI无法直接替代；可采用Agent辅助模式，自动生成会议议程、沟通邮件，并跟踪行动项。",
+      "quality_anchor": "联动沟通记录需体现关键决策点，试点报告需经双方确认。",
+      "ai_responsibility": "辅助生成沟通材料、记录要点、跟踪任务完成情况。",
+      "human_responsibility": "主持跨部门沟通，做出策略决策，达成共识。",
+      "handoff_triggers": [
+        "出现重大分歧无法自动协调时"
+      ],
+      "control_gates": [
+        "跨部门沟通签字确认节点"
+      ],
+      "data_basis": [
+        "前期定价与合规结果",
+        "各部门输入信息（EVD-162ac854a1f00d89c812）"
+      ],
+      "process_context": "在内部定价与合规审查通过后，需与其他部门就权益上市进行联动沟通。",
+      "risks_limits": [
+        "封装度低，无法全自动执行",
+        "D4 API可达性一般（2/3），系统集成有限",
+        "依赖大量人工判断和策略思考"
+      ],
+      "current_recommendation": "优先采用Agent辅助模式，为沟通提供信息支持和任务管理，不尝试封装确定性Skill；当前建议Hybrid模式。",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-SLM-04",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-b2a925794c224d2d1893",
+        "EVD-162d04193fda5832053b",
+        "EVD-5ea13378feadcd6d06fd",
+        "EVD-05317bb5620ecb1fdf06",
+        "EVD-c40b2e59b07c5e8c712e",
+        "EVD-2b1f1827854355867284",
+        "EVD-2b461b137ace16568cc5",
+        "EVD-1087bf22f09464d23ee2",
+        "EVD-bf33b26dcd4fec847bfb",
+        "EVD-b8b61e4417a7aa827ba9",
+        "EVD-ac55a023d954a6bf347e"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "",
+      "specific_capabilities": [
+        "发布流程编排",
+        "内部通知发送",
+        "发布数据记录生成"
+      ],
+      "ai_reshape": "拆分复合动作为发布准备和内部通知两个子Skill，前者自动化物料准备，后者自动生成通知并发布，可达到高自动化。",
+      "quality_anchor": "发布数据需完整、准确，内部通知须在正式发布前送达。",
+      "ai_responsibility": "自动触发发布流程、生成内部通知并记录发布数据。",
+      "human_responsibility": "确认发布清单，最终启动发布。",
+      "handoff_triggers": [
+        "发布数据异常时",
+        "关键接收方未确认时"
+      ],
+      "control_gates": [
+        "发布审批节点"
+      ],
+      "data_basis": [
+        "发布清单（EVD-2b1f1827854355867284）",
+        "系统集成接口（EVD-bf33b26dcd4fec847bfb）"
+      ],
+      "process_context": "在跨部门沟通后，完成上市前最后的准备与内部发布。",
+      "risks_limits": [
+        "复合动作需合理拆分子Skill",
+        "D5回退中等（2/3），异常发布需人工介入"
+      ],
+      "current_recommendation": "拆分并封装为多个原子Skill，实现发布流程自动化；当前建议Hybrid，拆分完善后可升级为Auto。",
+      "database_tier": "Auto",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-SLM-05",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-cb75bcbb1b7504f1ff7a",
+        "EVD-31a4e568f4c1f26fc8c3",
+        "EVD-0a4a976ceaecb6cb98ee",
+        "EVD-cf168d4ef0dc9e4e75bd",
+        "EVD-ec6690791810361e03db",
+        "EVD-426b19cf69b33399b753",
+        "EVD-da70848cc3879cf7eac1",
+        "EVD-0a69733920b9925b8c88",
+        "EVD-b5bfbb5ab39aa833cd79",
+        "EVD-0c0d4890b0ad7ee515a8",
+        "EVD-1c52fdeb94c67e906b22"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "",
+      "specific_capabilities": [
+        "受益方名单筛选",
+        "触达消息生成与发送",
+        "推广素材整理",
+        "语义复核判断"
+      ],
+      "ai_reshape": "虽然可行性评估给出A级，但核心涉及语义复核判断，建议将可自动化部分（名单筛选、消息发送）封装为Skill，保留人工对消息内容的确认。",
+      "quality_anchor": "触达消息内容需经过语义复核，确保准确无误。",
+      "ai_responsibility": "自动生成候选名单、草拟触达消息、执行批量发送。",
+      "human_responsibility": "审核触达消息内容，确认最终发送。",
+      "handoff_triggers": [
+        "系统提示消息可能引发误解时",
+        "高价值客户需要个性化沟通时"
+      ],
+      "control_gates": [
+        "消息内容审批节点"
+      ],
+      "data_basis": [
+        "受益方数据库（EVD-426b19cf69b33399b753）",
+        "消息模板库"
+      ],
+      "process_context": "上市前进行目标受益方的触达与告知，是权益推广的关键环节。",
+      "risks_limits": [
+        "封装等级A但与语义复核属性冲突，实际需人工确认",
+        "D2规则清晰度中等（2/3），边缘场景需人工处理"
+      ],
+      "current_recommendation": "将执行动作拆分为自动化Skill，但保留人工复核消息内容这一桥接点；当前建议Aug模式，待语义验证规范建立后逐步向Auto过渡。",
+      "database_tier": "Auto",
+      "recommended_tier": "Aug",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-SLM-06",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-b08c40186671c94b1b42",
+        "EVD-e65cd613b265f2f325fd",
+        "EVD-190b063df99f593de785",
+        "EVD-a11cc73ec3229381787b",
+        "EVD-77aca3c9c74123928cf5",
+        "EVD-f4cdf1ccded2eb7092a2",
+        "EVD-d6d697ed8060722e5f0a",
+        "EVD-e364f9fe00cb210ef979",
+        "EVD-430ea9377dcc1094d000",
+        "EVD-15e766f20f16e0881a39",
+        "EVD-d63a1ee4c4f08e55ca4e"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "",
+      "specific_capabilities": [
+        "试点方案执行",
+        "数据收集与分析",
+        "试点报告生成"
+      ],
+      "ai_reshape": "拆分试点执行监控、数据采集和报告生成子Skill，实现试点流程的自动化；但由于D4 API可达性低（1/3），部分系统连接需人工完成。",
+      "quality_anchor": "试点报告必须基于真实完整的数据，D3验证能力中等（2/3）。",
+      "ai_responsibility": "自动收集试点数据、生成分析报表和报告初稿。",
+      "human_responsibility": "监督试点执行、确认数据准确性、撰写结论与建议。",
+      "handoff_triggers": [
+        "试点数据出现异常波动时",
+        "系统数据采集失败时"
+      ],
+      "control_gates": [
+        "试点报告审批节点"
+      ],
+      "data_basis": [
+        "试点方案（EVD-f4cdf1ccded2eb7092a2）",
+        "系统数据接口（部分不可达）"
+      ],
+      "process_context": "灰度发布前进行小范围试点，验证生效并收集反馈。",
+      "risks_limits": [
+        "复合动作需拆分，但D4接口薄弱可能限制自动化",
+        "D5回退能力弱（1/3），异常处理需人工接管"
+      ],
+      "current_recommendation": "优先解决系统接口可达性问题，之后拆分并封装数据采集Skill；当前建议Hybrid，接口改善后可部分升为Auto。",
+      "database_tier": "Auto",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-SLM-07",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-2a439fabb87787429d37",
+        "EVD-5b43240cac19312c3a95",
+        "EVD-672aa81e7cc16041955d",
+        "EVD-0d67138af42f5524af14",
+        "EVD-bd3fd8f0780fa1b445f1",
+        "EVD-cbe6816673e2146f11b2",
+        "EVD-d982e7aa2497e1b3c5e6",
+        "EVD-c6fb4a580384a4fc1671",
+        "EVD-1a6a0b74cefb5c1cc882",
+        "EVD-508917da677ed107c17c",
+        "EVD-9361d0360e28dbf96bf7"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "",
+      "specific_capabilities": [
+        "灰度策略编排",
+        "发布调度执行",
+        "监控与回滚能力"
+      ],
+      "ai_reshape": "拆分灰度规则配置、自动放量和监控回滚等子Skill，实现发布自动化；但D5回退弱（1/3），需要人工监控应急。",
+      "quality_anchor": "发布数据需实时准确，灰度过程可解释、可监控。",
+      "ai_responsibility": "按预设灰度策略自动执行放量，记录发布数据，触发监控告警。",
+      "human_responsibility": "监控发布过程，在异常时决策回滚或调整策略。",
+      "handoff_triggers": [
+        "监控指标超过阈值",
+        "系统自动回滚失败时"
+      ],
+      "control_gates": [
+        "灰度放量审批节点",
+        "全量发布最终确认"
+      ],
+      "data_basis": [
+        "灰度策略配置（EVD-cbe6816673e2146f11b2）",
+        "系统发布接口（EVD-1a6a0b74cefb5c1cc882）"
+      ],
+      "process_context": "试点成功后逐步扩大范围至全量发布，是上市推广的交付环节。",
+      "risks_limits": [
+        "复合动作需合理拆分，尤其是异常回滚逻辑",
+        "D5回退能力弱（1/3），高度依赖人工应急"
+      ],
+      "current_recommendation": "先建立灰度回滚SOP，再封装灰度执行Skill；人工保留监控和决策权，建议当前Hybrid，稳定后可向Auto过渡。",
+      "database_tier": "Auto",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-SLM-08",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-6bf1067f8d7173c0a9db",
+        "EVD-acb4396b8e295d69db74",
+        "EVD-99fa583a2d07db46fbd4",
+        "EVD-4510bd7751a18d62d64c",
+        "EVD-45f45742fe7b37235dbe",
+        "EVD-151ddaad5b2a7725e71f",
+        "EVD-28959dd9e2dd9aab0db5",
+        "EVD-ed7fba33cf032053ba2b",
+        "EVD-422e778148f1d2012e42",
+        "EVD-ca67de615dcfc04f8465",
+        "EVD-9a83ccada983a4b4c041"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "",
+      "specific_capabilities": [
+        "效果数据采集与分析",
+        "复盘报告撰写",
+        "策略调整建议"
+      ],
+      "ai_reshape": "该任务包含大量判断与策略思考，封装上限低；可采用Agent辅助，自动汇总数据、生成报表和复盘模板，但结论需人工。",
+      "quality_anchor": "评估报告需准确反映上市效果，D2规则清晰度低（1/3），依赖人工解读。",
+      "ai_responsibility": "自动收集多源效果数据、生成可视化报表和复盘文件框架。",
+      "human_responsibility": "分析数据、得出复盘结论、制定优化策略。",
+      "handoff_triggers": [
+        "效果数据出现矛盾或超出历史范围时",
+        "需要高层决策时"
+      ],
+      "control_gates": [
+        "评估报告审批节点"
+      ],
+      "data_basis": [
+        "上市效果数据源（EVD-151ddaad5b2a7725e71f）",
+        "历史复盘数据（部分不可达）"
+      ],
+      "process_context": "权益上市完成后进行效果评估与复盘，为下一期迭代提供输入。",
+      "risks_limits": [
+        "封装度C，不适合全自动",
+        "D4接口可达性低（1/3），数据自动采集受限",
+        "D6合规要求低（1/3），需加强治理"
+      ],
+      "current_recommendation": "聚焦Agent辅助的数据汇总与模板生成，不追求Skill封装；当前建议Hybrid模式，维持人工判断核心。",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "TSK-SLM-01-A",
+      "l4_code": "L4-SLM-01",
+      "task_name": "收集成本数据并执行初步定价计算",
+      "source_type": "blueprint_step",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-01",
+      "source_line": 40,
+      "previous_task_ids": [],
+      "next_task_ids": ["TSK-SLM-01-B"],
+      "relation_type": null,
+      "evidence_refs": [
+        "EVD-2fcdf021a000e4227319",
+        "EVD-d2148f71070d172a738b",
+        "EVD-6e2433740f416b96c8e3",
+        "EVD-389c7e5a098e01853a9c",
+        "EVD-8ede925cd245b8b614f6"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "成本数据采集和定价计算步骤规则清晰（D1=3,D2=3），输出可验证（D3=3），适合Auto模式；但作为复合动作的一部分，需在拆分后实现。"
+    },
+    {
+      "task_id": "TSK-SLM-01-B",
+      "l4_code": "L4-SLM-01",
+      "task_name": "审核定价方案并批准发布",
+      "source_type": "blueprint_step",
+      "sequence_no": 2,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-01",
+      "source_line": 40,
+      "previous_task_ids": ["TSK-SLM-01-A"],
+      "next_task_ids": ["TSK-SLM-02-A"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-2fcdf021a000e4227319",
+        "EVD-6e2433740f416b96c8e3",
+        "EVD-0bb9a7291128028baf7f"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "资金安全关卡（funds_safety_hard_gate=true）要求人工最终审批，且合规性检查（D6=2）需要人工判定。"
+    },
+    {
+      "task_id": "TSK-SLM-02-A",
+      "l4_code": "L4-SLM-02",
+      "task_name": "执行合规规则扫描并生成审查意见初稿",
+      "source_type": "blueprint_step",
+      "sequence_no": 3,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-02",
+      "source_line": 43,
+      "previous_task_ids": ["TSK-SLM-01-B"],
+      "next_task_ids": ["TSK-SLM-02-B"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-b634f99ce5eff79c035e",
+        "EVD-61c53e01fbefdc2cbb2a",
+        "EVD-0410a6d7e765cb9355f0",
+        "EVD-bed5307f203ad96a0fed",
+        "EVD-0f0b8c4fd4426d5801e5"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "合规规则清晰（D2=3），输出可自动生成（D3=3），适合Auto；但最终审查仍需人工，故此子任务可Auto。"
+    },
+    {
+      "task_id": "TSK-SLM-02-B",
+      "l4_code": "L4-SLM-02",
+      "task_name": "复核审查意见并签署最终合规意见书",
+      "source_type": "blueprint_step",
+      "sequence_no": 4,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-02",
+      "source_line": 43,
+      "previous_task_ids": ["TSK-SLM-02-A"],
+      "next_task_ids": ["TSK-SLM-03"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-b634f99ce5eff79c035e",
+        "EVD-61c53e01fbefdc2cbb2a",
+        "EVD-fe057f06a50c93c9fc56"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "合规类工作最终签字责任不可委托，需要人工复核并决策。"
+    },
+    {
+      "task_id": "TSK-SLM-03",
+      "l4_code": "L4-SLM-03",
+      "task_name": "组织跨部门沟通会议并生成联动记录",
+      "source_type": "blueprint_step",
+      "sequence_no": 5,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-03",
+      "source_line": 46,
+      "previous_task_ids": ["TSK-SLM-02-B"],
+      "next_task_ids": ["TSK-SLM-04-A"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-63cae22b042af570bb0b",
+        "EVD-ea3219669eea700611be"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "策略沟通需人类协调，AI辅助材料准备和记录；单一动作但性质复杂，适合Agent辅助的Hybrid模式。"
+    },
+    {
+      "task_id": "TSK-SLM-04-A",
+      "l4_code": "L4-SLM-04",
+      "task_name": "执行上市前物料准备与内部通知草拟",
+      "source_type": "blueprint_step",
+      "sequence_no": 6,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-04",
+      "source_line": 49,
+      "previous_task_ids": ["TSK-SLM-03"],
+      "next_task_ids": ["TSK-SLM-04-B"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-b2a925794c224d2d1893",
+        "EVD-c40b2e59b07c5e8c712e",
+        "EVD-2b1f1827854355867284"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "物料准备与通知生成规则明确（D1=3,D2=2），可自动化；属于整个步骤中的可封装部分。"
+    },
+    {
+      "task_id": "TSK-SLM-04-B",
+      "l4_code": "L4-SLM-04",
+      "task_name": "确认发布清单并授权正式内部发布",
+      "source_type": "blueprint_step",
+      "sequence_no": 7,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-04",
+      "source_line": 49,
+      "previous_task_ids": ["TSK-SLM-04-A"],
+      "next_task_ids": ["TSK-SLM-05-A"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-b2a925794c224d2d1893",
+        "EVD-ac55a023d954a6bf347e"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "发布审批不可绕过，需人工最终确认。"
+    },
+    {
+      "task_id": "TSK-SLM-05-A",
+      "l4_code": "L4-SLM-05",
+      "task_name": "生成受益方触达名单与自动化消息草稿",
+      "source_type": "blueprint_step",
+      "sequence_no": 8,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-05",
+      "source_line": 52,
+      "previous_task_ids": ["TSK-SLM-04-B"],
+      "next_task_ids": ["TSK-SLM-05-B"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-cb75bcbb1b7504f1ff7a",
+        "EVD-ec6690791810361e03db",
+        "EVD-426b19cf69b33399b753"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "名单筛选和消息生成规则较清晰（D1=2,D2=2），适合自动化封装；但消息内容需后续人工审核。"
+    },
+    {
+      "task_id": "TSK-SLM-05-B",
+      "l4_code": "L4-SLM-05",
+      "task_name": "审核并确认发送触达消息",
+      "source_type": "blueprint_step",
+      "sequence_no": 9,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-05",
+      "source_line": 52,
+      "previous_task_ids": ["TSK-SLM-05-A"],
+      "next_task_ids": ["TSK-SLM-06-A"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-cb75bcbb1b7504f1ff7a",
+        "EVD-ec6690791810361e03db",
+        "EVD-1c52fdeb94c67e906b22"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "语义复核及发送决策依赖人工判断，尤其是高价值客户或敏感消息。"
+    },
+    {
+      "task_id": "TSK-SLM-06-A",
+      "l4_code": "L4-SLM-06",
+      "task_name": "执行试点方案并自动采集反馈数据",
+      "source_type": "blueprint_step",
+      "sequence_no": 10,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-06",
+      "source_line": 55,
+      "previous_task_ids": ["TSK-SLM-05-B"],
+      "next_task_ids": ["TSK-SLM-06-B"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-b08c40186671c94b1b42",
+        "EVD-77aca3c9c74123928cf5",
+        "EVD-f4cdf1ccded2eb7092a2"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "试点执行可部分自动化，但D4接口不可达部分需人工辅助；数据采集在接口改善后可升为Auto。"
+    },
+    {
+      "task_id": "TSK-SLM-06-B",
+      "l4_code": "L4-SLM-06",
+      "task_name": "分析试点结果并撰写报告",
+      "source_type": "blueprint_step",
+      "sequence_no": 11,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-06",
+      "source_line": 55,
+      "previous_task_ids": ["TSK-SLM-06-A"],
+      "next_task_ids": ["TSK-SLM-07-A"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-b08c40186671c94b1b42",
+        "EVD-77aca3c9c74123928cf5",
+        "EVD-e364f9fe00cb210ef979"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "分析结论需专业判断，报告撰写需人工综合信息。"
+    },
+    {
+      "task_id": "TSK-SLM-07-A",
+      "l4_code": "L4-SLM-07",
+      "task_name": "配置灰度策略并自动执行分阶段放量",
+      "source_type": "blueprint_step",
+      "sequence_no": 12,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-07",
+      "source_line": 58,
+      "previous_task_ids": ["TSK-SLM-06-B"],
+      "next_task_ids": ["TSK-SLM-07-B"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-2a439fabb87787429d37",
+        "EVD-bd3fd8f0780fa1b445f1",
+        "EVD-cbe6816673e2146f11b2"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "灰度执行规则明确时可自动化；但需严格监控，此处作为子Skill可Auto。"
+    },
+    {
+      "task_id": "TSK-SLM-07-B",
+      "l4_code": "L4-SLM-07",
+      "task_name": "监控发布过程并决策异常回滚",
+      "source_type": "blueprint_step",
+      "sequence_no": 13,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-07",
+      "source_line": 58,
+      "previous_task_ids": ["TSK-SLM-07-A"],
+      "next_task_ids": ["TSK-SLM-08-A"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-2a439fabb87787429d37",
+        "EVD-bd3fd8f0780fa1b445f1",
+        "EVD-508917da677ed107c17c"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "回滚决策不可自动化，需人工基于实时数据判断。"
+    },
+    {
+      "task_id": "TSK-SLM-08-A",
+      "l4_code": "L4-SLM-08",
+      "task_name": "收集上市效果数据并生成分析报表",
+      "source_type": "blueprint_step",
+      "sequence_no": 14,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-08",
+      "source_line": 61,
+      "previous_task_ids": ["TSK-SLM-07-B"],
+      "next_task_ids": ["TSK-SLM-08-B"],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-6bf1067f8d7173c0a9db",
+        "EVD-45f45742fe7b37235dbe",
+        "EVD-151ddaad5b2a7725e71f"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "数据采集因接口限制仍需人工辅助，报表生成可自动化；整体为Aug。"
+    },
+    {
+      "task_id": "TSK-SLM-08-B",
+      "l4_code": "L4-SLM-08",
+      "task_name": "编写上市效果评估报告并提出策略建议",
+      "source_type": "blueprint_step",
+      "sequence_no": 15,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-08",
+      "source_line": 61,
+      "previous_task_ids": ["TSK-SLM-08-A"],
+      "next_task_ids": [],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-6bf1067f8d7173c0a9db",
+        "EVD-45f45742fe7b37235dbe",
+        "EVD-acb4396b8e295d69db74"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "复盘结论和策略建议需要高层级判断和行业经验。"
+    }
+  ],
+  "priority_drafts": [
+    {
+      "priority": "P0熔断",
+      "task_ids": ["TSK-SLM-05-A", "TSK-SLM-05-B"],
+      "title": "立即处理目标受益方触达与告知任务",
+      "rationale": "价值节点VN-EQ-09（权益上市推广素材）整体判定为FAIL且标记为P0熔断，该节点直接映射至L4-SLM-05，因此涉及的任务必须优先处理以解除熔断风险。数据依据：EVD-2ad49ea7bbc6a386840d等显示gate1-3均FAIL，优先级EVD-08b1f337ecc110fe5691标注P0。流程背景：该步骤是价值交付的关键，失败将导致整个上市推广无效。风险：继续延误会阻碍后续步骤。当前建议：立即组织人工审核触达消息内容，并优化自动化流程。",
+      "evidence_refs": [
+        "EVD-2ad49ea7bbc6a386840d",
+        "EVD-783dc16c5443857f0f29",
+        "EVD-b922bf3d57f9f464ae1c",
+        "EVD-08b1f337ecc110fe5691",
+        "EVD-f764c46d329f7948a000"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "decision_drafts": [
+    {
+      "priority": "P0熔断",
+      "task_ids": ["TSK-SLM-05-B"],
+      "title": "人工介入触达消息审核并启动试点",
+      "pilot_scope": "选择一到两个高价值客户群体进行首批触达，验证消息接收率和反馈质量。",
+      "human_boundary": "仅限权益战略与方案设计岗（JF-06）授权人员审核并发送；不得全量自动发送。",
+      "evidence_refs": [
+        "EVD-08b1f337ecc110fe5691",
+        "EVD-ba67c06e90176912e055",
+        "EVD-ec6690791810361e03db"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "control_chain": [],
+  "rejected_task_sources": [],
+  "missing_analysis": [
+    {
+      "field_path": "l4_analysis[*].deliverable_role",
+      "reason": "事实包未提供交付物角色描述，无法定义其在流程中的具体作用，留空。",
+      "evidence_refs": []
+    }
+  ]
+}

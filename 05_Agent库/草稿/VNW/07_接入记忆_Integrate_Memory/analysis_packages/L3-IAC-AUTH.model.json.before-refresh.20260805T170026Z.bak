@@ -1,0 +1,579 @@
+{
+  "schema_version": "vnw.l3-analysis.v1",
+  "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
+  "generation_mode": "UNIFIED_MODEL",
+  "analysis_status": "MODEL_DRAFT",
+  "model_run": {
+    "model_name": "deepseek-v4-pro",
+    "model_version": "deepseek-v4-pro",
+    "prompt_version": "VNW-L3-COM-GOLD-v1.0",
+    "generated_at": "2026-08-04T17:45:27.434469+00:00",
+    "input_snapshot_hash": "1b8db7fe6b97cc49b8c28400a1ef1b5097b17a53eb5fdcb638562ea36f4aabbf"
+  },
+  "source_scope": {
+    "database": "process_analytics",
+    "knowledge": "ACTIVE supplemental evidence only",
+    "evidence_count": 78
+  },
+  "l4_analysis": [
+    {
+      "l4_code": "L4-IAC-04",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-cf87a0c483dd3928b720",
+        "EVD-efc5eb8469677371a4d9",
+        "EVD-fe464d2f7357cb4c6989",
+        "EVD-7b2a62ee6ec7271100a5",
+        "EVD-5a1fb036c4ca77bdbf21"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "保司战略族 (目标态核心)",
+      "specific_capabilities": [
+        "合同条款匹配与生成",
+        "监管备案数据准备与提报",
+        "系统对接集成",
+        "拆分多个子动作"
+      ],
+      "ai_reshape": "通过Skill辅助合同生成与初审，但最终签署与监管备案仍须人工执行，AI负责数据准备与合规校验。",
+      "quality_anchor": "已签署合同+监管备案号",
+      "ai_responsibility": "合同初稿生成、合规条款校验、备案数据准备",
+      "human_responsibility": "最终签署、监管备案提交、异常判断与审批",
+      "handoff_triggers": [
+        "AI置信度不足",
+        "合规规则冲突",
+        "监管备案接口异常"
+      ],
+      "control_gates": [
+        "监管备案提交需人工审批"
+      ],
+      "data_basis": [
+        "skill_feasibility: B-中封装, 复合动作 (EVD-cf87a0c483dd3928b720)",
+        "human_touchpoint: 人工执行 (EVD-8c4557caa40f201c0d95)",
+        "蓝图STEP-01: 正式签署+监管备案 (EVD-7b2a62ee6ec7271100a5)"
+      ],
+      "process_context": "授权确认流程首步，确保合同完成签署及监管备案，为后续履约和生效奠定基础。",
+      "risks_limits": [
+        "合同条款法律风险",
+        "监管合规要求不可逆",
+        "AI不能替代最终法律审核"
+      ],
+      "current_recommendation": "先补充报告模板、规则固化或系统接口，再验证Skill；当前以人工为主，AI辅助合规校验。",
+      "database_tier": "Aug",
+      "recommended_tier": "Aug",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-IAC-05",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-05c6059ef88d2823f67e",
+        "EVD-686deb4715c8ca9fb0db",
+        "EVD-7c7f3f17d832bdf1e1e9",
+        "EVD-5d7b7480bf18dc5d9214",
+        "EVD-5a1fb036c4ca77bdbf21"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "保司战略族 (目标态核心)",
+      "specific_capabilities": [
+        "合同数据校验",
+        "IRI系统触发",
+        "状态同步",
+        "需拆分为独立子动作"
+      ],
+      "ai_reshape": "自动化合同数据校验与系统触发，需确认IRI系统接口；拆分后各子动作可分别封装为Skill。",
+      "quality_anchor": "进入指令成功输出",
+      "ai_responsibility": "数据校验、自动生成进入指令、调用API触发下游",
+      "human_responsibility": "IRI系统异常处理、人工确认",
+      "handoff_triggers": [
+        "系统返回错误",
+        "数据不完整"
+      ],
+      "control_gates": [
+        "必要的外部系统调用权限控制"
+      ],
+      "data_basis": [
+        "skill_feasibility: A-高封装, 复合动作 (EVD-05c6059ef88d2823f67e)",
+        "蓝图STEP-03: 合同生效与信息同步 (EVD-5d7b7480bf18dc5d9214)",
+        "D1-D6: 输入结构3, 规则3, 输出验证3, API可达3, 回退2, 合规2"
+      ],
+      "process_context": "合同签署后，在履约准备完成后触发，自动生成进入指令并更新下游系统。",
+      "risks_limits": [
+        "系统接口依赖",
+        "拆分未完成前不宜直接封装"
+      ],
+      "current_recommendation": "优先拆分为子Skill（如数据校验、API调用），进入原型候选池验证。",
+      "database_tier": "Auto",
+      "recommended_tier": "Auto",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-IAC-09",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-e9abb2cf8fa20d0cab47",
+        "EVD-1519036f08ea23ca5593",
+        "EVD-ad80911261173f0b9be4",
+        "EVD-5a1fb036c4ca77bdbf21"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "保司战略族 (目标态核心)",
+      "specific_capabilities": [
+        "信息处理与清单生成",
+        "单一确定性动作"
+      ],
+      "ai_reshape": "完全自动化生成履约前置清单，可封装为确定性Skill。",
+      "quality_anchor": "《履约前置清单》准确完整",
+      "ai_responsibility": "自动计算清单项目，输出结构化数据表",
+      "human_responsibility": "清单审核确认",
+      "handoff_triggers": [
+        "清单项缺失报警",
+        "异常数据"
+      ],
+      "control_gates": [],
+      "data_basis": [
+        "skill_feasibility: A-高封装, 单一动作 (EVD-e9abb2cf8fa20d0cab47)",
+        "蓝图STEP-02: 履约前置准备 (EVD-ad80911261173f0b9be4)"
+      ],
+      "process_context": "合同签署后，跨部门协同确认履约前置条件，为后续自动化生效做准备。",
+      "risks_limits": [
+        "数据源依赖性"
+      ],
+      "current_recommendation": "优先进入Skill原型候选池，快速实现自动化。",
+      "database_tier": "Auto",
+      "recommended_tier": "Auto",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-IAC-10",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-45525289382b48bbae58",
+        "EVD-e97ce5d56710fb9ba898",
+        "EVD-5d7b7480bf18dc5d9214",
+        "EVD-5a1fb036c4ca77bdbf21"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "保司战略族 (目标态核心)",
+      "specific_capabilities": [
+        "信息处理与通知分发",
+        "单一自动化动作"
+      ],
+      "ai_reshape": "自动生成生效通知并分发，封装为Skill。",
+      "quality_anchor": "《生效通知记录》准确分发",
+      "ai_responsibility": "自动创建通知记录、触发分发",
+      "human_responsibility": "通知异常处理",
+      "handoff_triggers": [
+        "分发失败",
+        "通知内容异常"
+      ],
+      "control_gates": [],
+      "data_basis": [
+        "skill_feasibility: A-高封装, 单一动作 (EVD-45525289382b48bbae58)",
+        "蓝图STEP-03: 合同生效与信息同步 (EVD-5d7b7480bf18dc5d9214)"
+      ],
+      "process_context": "合同生效后自动同步信息，确保相关方及时获知。",
+      "risks_limits": [
+        "通知渠道可靠性"
+      ],
+      "current_recommendation": "优先进入Skill原型候选池。",
+      "database_tier": "Auto",
+      "recommended_tier": "Auto",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-IAC-11",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-fcfb221a3d15a04d0547",
+        "EVD-2974698d816c1803c93a",
+        "EVD-5d7b7480bf18dc5d9214",
+        "EVD-5a1fb036c4ca77bdbf21"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "保司战略族 (目标态核心)",
+      "specific_capabilities": [
+        "版本信息归档",
+        "语义复核后确认",
+        "单一动作"
+      ],
+      "ai_reshape": "自动化版本归档与记录生成，语义复核后确认，可封装为Skill。",
+      "quality_anchor": "《版本变更记录》准确完整",
+      "ai_responsibility": "自动抓取变更内容、生成版本记录",
+      "human_responsibility": "语义复核确认",
+      "handoff_triggers": [
+        "版本差异异常"
+      ],
+      "control_gates": [],
+      "data_basis": [
+        "skill_feasibility: A-高封装, 单一动作 (EVD-fcfb221a3d15a04d0547)",
+        "蓝图STEP-03: 合同生效与信息同步 (EVD-5d7b7480bf18dc5d9214)"
+      ],
+      "process_context": "合同条款变更后归档版本记录，保证可追溯。",
+      "risks_limits": [
+        "语义准确性依赖AI"
+      ],
+      "current_recommendation": "优先进入Skill原型候选池。",
+      "database_tier": "Auto",
+      "recommended_tier": "Auto",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-IAC-13",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-de48a21f0a676feb5f24",
+        "EVD-0b753c9c098d26fac4db",
+        "EVD-25e68b363ea67305214c",
+        "EVD-5a1fb036c4ca77bdbf21"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "保司战略族 (目标态核心)",
+      "specific_capabilities": [
+        "紧急裁定判断",
+        "语义复核与决策支持",
+        "策略/关系类处理"
+      ],
+      "ai_reshape": "Agent辅助提供调整建议，最终人工决策，不直接封装确定性Skill。",
+      "quality_anchor": "《紧急调整记录》审批完整",
+      "ai_responsibility": "建议生成、影响分析",
+      "human_responsibility": "最终决策与审批",
+      "handoff_triggers": [
+        "低置信度",
+        "合规风险",
+        "策略模糊"
+      ],
+      "control_gates": [
+        "授权调整需审批"
+      ],
+      "data_basis": [
+        "skill_feasibility: C-低封装, 判断/策略类 (EVD-de48a21f0a676feb5f24)",
+        "蓝图Q1分支: 紧急授权调整 (EVD-25e68b363ea67305214c)"
+      ],
+      "process_context": "触发于条件判断，用于紧急场景下的授权调整，需快速响应及合规审批。",
+      "risks_limits": [
+        "决策错误风险高",
+        "合规监管严格"
+      ],
+      "current_recommendation": "优先考虑Agent辅助或决策支持，不直接封装Skill。",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "T1",
+      "l4_code": "L4-IAC-04",
+      "task_name": "合同签署与监管备案",
+      "source_type": "BLUEPRINT_STEP",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-01",
+      "source_line": 39,
+      "previous_task_ids": [],
+      "next_task_ids": [
+        "T2"
+      ],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-7b2a62ee6ec7271100a5",
+        "EVD-cf87a0c483dd3928b720",
+        "EVD-efc5eb8469677371a4d9"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "包含监管备案等人工签署动作，AI可辅助合规校验，但最终执行须人。"
+    },
+    {
+      "task_id": "T3",
+      "l4_code": "L4-IAC-13",
+      "task_name": "执行紧急授权调整",
+      "source_type": "BLUEPRINT_STEP",
+      "sequence_no": 3,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-01",
+      "source_line": 43,
+      "previous_task_ids": [
+        "T2"
+      ],
+      "next_task_ids": [],
+      "relation_type": "DECISION_BRANCH",
+      "evidence_refs": [
+        "EVD-de48a21f0a676feb5f24",
+        "EVD-25e68b363ea67305214c"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "涉及策略裁定，Agent可辅助建议，最终审批须人工。"
+    },
+    {
+      "task_id": "T4",
+      "l4_code": "L4-IAC-09",
+      "task_name": "跨部门履约前置清单确认",
+      "source_type": "BLUEPRINT_STEP",
+      "sequence_no": 4,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-02",
+      "source_line": 47,
+      "previous_task_ids": [
+        "T2"
+      ],
+      "next_task_ids": [
+        "T5",
+        "T6",
+        "T7"
+      ],
+      "relation_type": "DECISION_BRANCH",
+      "evidence_refs": [
+        "EVD-ad80911261173f0b9be4",
+        "EVD-e9abb2cf8fa20d0cab47"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "单一信息处理动作，规则明确，可实现完全自动化。"
+    },
+    {
+      "task_id": "T5",
+      "l4_code": "L4-IAC-05",
+      "task_name": "自动触发下游 DIM_License 更新",
+      "source_type": "BLUEPRINT_STEP",
+      "sequence_no": 3,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-03",
+      "source_line": 50,
+      "previous_task_ids": [
+        "T4"
+      ],
+      "next_task_ids": [
+        "T8"
+      ],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-5d7b7480bf18dc5d9214",
+        "EVD-05c6059ef88d2823f67e"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "自动触发下游，系统交互可封装，但需先完成动作拆分。"
+    },
+    {
+      "task_id": "T6",
+      "l4_code": "L4-IAC-10",
+      "task_name": "生效通知自动分发",
+      "source_type": "BLUEPRINT_STEP",
+      "sequence_no": 3,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-03",
+      "source_line": 51,
+      "previous_task_ids": [
+        "T4"
+      ],
+      "next_task_ids": [
+        "T8"
+      ],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-5d7b7480bf18dc5d9214",
+        "EVD-45525289382b48bbae58"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "信息分发自动化，高封装度，适合Skill。"
+    },
+    {
+      "task_id": "T7",
+      "l4_code": "L4-IAC-11",
+      "task_name": "版本归档",
+      "source_type": "BLUEPRINT_STEP",
+      "sequence_no": 3,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-03",
+      "source_line": 52,
+      "previous_task_ids": [
+        "T4"
+      ],
+      "next_task_ids": [
+        "T8"
+      ],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-5d7b7480bf18dc5d9214",
+        "EVD-fcfb221a3d15a04d0547"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "版本归档可自动化，语义复核后确认。"
+    }
+  ],
+  "priority_drafts": [
+    {
+      "l4_code": "L4-IAC-04",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "skill_feasibility: B-中封装, 复合动作 (EVD-cf87a0c483dd3928b720)",
+        "human_touchpoint: 人工执行 (EVD-8c4557caa40f201c0d95)",
+        "蓝图STEP-01: 正式签署+监管备案 (EVD-7b2a62ee6ec7271100a5)"
+      ],
+      "process_context": "授权确认流程首步，确保合同完成签署及监管备案，为后续履约和生效奠定基础。",
+      "risks_limits": [
+        "合同条款法律风险",
+        "监管合规要求不可逆",
+        "AI不能替代最终法律审核"
+      ],
+      "current_recommendation": "先补充报告模板、规则固化或系统接口，再验证Skill；当前以人工为主，AI辅助合规校验。",
+      "evidence_refs": [
+        "EVD-cf87a0c483dd3928b720",
+        "EVD-efc5eb8469677371a4d9",
+        "EVD-fe464d2f7357cb4c6989",
+        "EVD-7b2a62ee6ec7271100a5",
+        "EVD-5a1fb036c4ca77bdbf21"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-IAC-05",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "skill_feasibility: A-高封装, 复合动作 (EVD-05c6059ef88d2823f67e)",
+        "蓝图STEP-03: 合同生效与信息同步 (EVD-5d7b7480bf18dc5d9214)",
+        "D1-D6: 输入结构3, 规则3, 输出验证3, API可达3, 回退2, 合规2"
+      ],
+      "process_context": "合同签署后，在履约准备完成后触发，自动生成进入指令并更新下游系统。",
+      "risks_limits": [
+        "系统接口依赖",
+        "拆分未完成前不宜直接封装"
+      ],
+      "current_recommendation": "优先拆分为子Skill（如数据校验、API调用），进入原型候选池验证。",
+      "evidence_refs": [
+        "EVD-05c6059ef88d2823f67e",
+        "EVD-686deb4715c8ca9fb0db",
+        "EVD-7c7f3f17d832bdf1e1e9",
+        "EVD-5d7b7480bf18dc5d9214",
+        "EVD-5a1fb036c4ca77bdbf21"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-IAC-09",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "skill_feasibility: A-高封装, 单一动作 (EVD-e9abb2cf8fa20d0cab47)",
+        "蓝图STEP-02: 履约前置准备 (EVD-ad80911261173f0b9be4)"
+      ],
+      "process_context": "合同签署后，跨部门协同确认履约前置条件，为后续自动化生效做准备。",
+      "risks_limits": [
+        "数据源依赖性"
+      ],
+      "current_recommendation": "优先进入Skill原型候选池，快速实现自动化。",
+      "evidence_refs": [
+        "EVD-e9abb2cf8fa20d0cab47",
+        "EVD-1519036f08ea23ca5593",
+        "EVD-ad80911261173f0b9be4",
+        "EVD-5a1fb036c4ca77bdbf21"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-IAC-10",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "skill_feasibility: A-高封装, 单一动作 (EVD-45525289382b48bbae58)",
+        "蓝图STEP-03: 合同生效与信息同步 (EVD-5d7b7480bf18dc5d9214)"
+      ],
+      "process_context": "合同生效后自动同步信息，确保相关方及时获知。",
+      "risks_limits": [
+        "通知渠道可靠性"
+      ],
+      "current_recommendation": "优先进入Skill原型候选池。",
+      "evidence_refs": [
+        "EVD-45525289382b48bbae58",
+        "EVD-e97ce5d56710fb9ba898",
+        "EVD-5d7b7480bf18dc5d9214",
+        "EVD-5a1fb036c4ca77bdbf21"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-IAC-11",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "skill_feasibility: A-高封装, 单一动作 (EVD-fcfb221a3d15a04d0547)",
+        "蓝图STEP-03: 合同生效与信息同步 (EVD-5d7b7480bf18dc5d9214)"
+      ],
+      "process_context": "合同条款变更后归档版本记录，保证可追溯。",
+      "risks_limits": [
+        "语义准确性依赖AI"
+      ],
+      "current_recommendation": "优先进入Skill原型候选池。",
+      "evidence_refs": [
+        "EVD-fcfb221a3d15a04d0547",
+        "EVD-2974698d816c1803c93a",
+        "EVD-5d7b7480bf18dc5d9214",
+        "EVD-5a1fb036c4ca77bdbf21"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-IAC-13",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "skill_feasibility: C-低封装, 判断/策略类 (EVD-de48a21f0a676feb5f24)",
+        "蓝图Q1分支: 紧急授权调整 (EVD-25e68b363ea67305214c)"
+      ],
+      "process_context": "触发于条件判断，用于紧急场景下的授权调整，需快速响应及合规审批。",
+      "risks_limits": [
+        "决策错误风险高",
+        "合规监管严格"
+      ],
+      "current_recommendation": "优先考虑Agent辅助或决策支持，不直接封装Skill。",
+      "evidence_refs": [
+        "EVD-de48a21f0a676feb5f24",
+        "EVD-0b753c9c098d26fac4db",
+        "EVD-25e68b363ea67305214c",
+        "EVD-5a1fb036c4ca77bdbf21"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "decision_drafts": [
+    {
+      "priority": 1,
+      "task_ids": [
+        "T4",
+        "T6",
+        "T7"
+      ],
+      "title": "试点自动化履约前置清单与信息同步",
+      "pilot_scope": "授权确认流程中，保司战略族执行的L4-IAC-09、10、11",
+      "human_boundary": "清单最终审核确认、通知内容人工复核、版本语义确认",
+      "evidence_refs": [
+        "EVD-e9abb2cf8fa20d0cab47",
+        "EVD-45525289382b48bbae58",
+        "EVD-fcfb221a3d15a04d0547"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "priority": 2,
+      "task_ids": [
+        "T1",
+        "T3"
+      ],
+      "title": "强化人工控制门审批流程",
+      "pilot_scope": "合同签署与监管备案、紧急授权调整",
+      "human_boundary": "最终签署与备案提交、紧急裁定审批",
+      "evidence_refs": [
+        "EVD-cf87a0c483dd3928b720",
+        "EVD-de48a21f0a676feb5f24"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "control_chain": [],
+  "rejected_task_sources": [],
+  "missing_analysis": [
+    "L4-IAC-04 agent_d2_rule_clear",
+    "L4-IAC-13 agent_d2_rule_clear / d3_output_verify / d4_api_reach / d5_fallback",
+    "控制链缺少L4定位，已拒绝2条"
+  ]
+}

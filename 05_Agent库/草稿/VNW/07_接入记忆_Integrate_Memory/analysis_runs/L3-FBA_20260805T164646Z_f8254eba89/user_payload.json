@@ -1,0 +1,2016 @@
+{
+  "instruction": "只使用fact_pack。严格返回output_contract同结构JSON；所有MODEL_DRAFT结论必须引用fact_pack中的evidence_id。没有证据则留空并写入missing_analysis。",
+  "output_contract": {
+    "schema_version": "vnw.l3-analysis.v1",
+    "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
+    "generation_mode": "UNIFIED_MODEL",
+    "analysis_status": "MODEL_DRAFT",
+    "model_run": null,
+    "source_scope": {
+      "database": "process_analytics",
+      "knowledge": "ACTIVE supplemental evidence only",
+      "evidence_count": 64
+    },
+    "l4_analysis": [
+      {
+        "l4_code": "L4-FBA-01",
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [],
+        "confidence": "MODEL_DRAFT",
+        "deliverable_role": "",
+        "specific_capabilities": [],
+        "ai_reshape": "",
+        "quality_anchor": "",
+        "ai_responsibility": "",
+        "human_responsibility": "",
+        "handoff_triggers": [],
+        "control_gates": [],
+        "data_basis": [],
+        "process_context": "",
+        "risks_limits": [],
+        "current_recommendation": "",
+        "database_tier": "Auto",
+        "recommended_tier": "",
+        "quadrant": "unclassified"
+      },
+      {
+        "l4_code": "L4-FBA-02",
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [],
+        "confidence": "MODEL_DRAFT",
+        "deliverable_role": "",
+        "specific_capabilities": [],
+        "ai_reshape": "",
+        "quality_anchor": "",
+        "ai_responsibility": "",
+        "human_responsibility": "",
+        "handoff_triggers": [],
+        "control_gates": [],
+        "data_basis": [],
+        "process_context": "",
+        "risks_limits": [],
+        "current_recommendation": "",
+        "database_tier": "Hybrid",
+        "recommended_tier": "",
+        "quadrant": "unclassified"
+      },
+      {
+        "l4_code": "L4-FBA-03",
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [],
+        "confidence": "MODEL_DRAFT",
+        "deliverable_role": "",
+        "specific_capabilities": [],
+        "ai_reshape": "",
+        "quality_anchor": "",
+        "ai_responsibility": "",
+        "human_responsibility": "",
+        "handoff_triggers": [],
+        "control_gates": [],
+        "data_basis": [],
+        "process_context": "",
+        "risks_limits": [],
+        "current_recommendation": "",
+        "database_tier": "Hybrid",
+        "recommended_tier": "",
+        "quadrant": "unclassified"
+      },
+      {
+        "l4_code": "L4-FBA-04",
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [],
+        "confidence": "MODEL_DRAFT",
+        "deliverable_role": "",
+        "specific_capabilities": [],
+        "ai_reshape": "",
+        "quality_anchor": "",
+        "ai_responsibility": "",
+        "human_responsibility": "",
+        "handoff_triggers": [],
+        "control_gates": [],
+        "data_basis": [],
+        "process_context": "",
+        "risks_limits": [],
+        "current_recommendation": "",
+        "database_tier": "Hybrid",
+        "recommended_tier": "",
+        "quadrant": "unclassified"
+      }
+    ],
+    "tasks": [],
+    "priority_drafts": [],
+    "decision_drafts": [],
+    "control_chain": [],
+    "rejected_task_sources": [],
+    "missing_analysis": []
+  },
+  "fact_pack": {
+    "l3_code": "L3-FBA",
+    "l3_name": "理财师业务分析",
+    "snapshot_hash": "f8254eba89d97687c96ac2702cdfd1fbf8c047b2450dfd86a4a9638bb2e7a81b",
+    "source_policy": {
+      "consensus_separate": true,
+      "database_authority": "process_analytics",
+      "reverse_writeback": false,
+      "supplemental_requires_active": true
+    },
+    "gates": {
+      "A": {
+        "checks": [
+          {
+            "detail": "Gate E=CONDITIONAL",
+            "passed": true,
+            "rule_id": "A-001"
+          },
+          {
+            "detail": "D1-D6完整=4/4",
+            "passed": true,
+            "rule_id": "A-002"
+          },
+          {
+            "detail": "价值节点-L4映射=4",
+            "passed": true,
+            "rule_id": "A-003"
+          },
+          {
+            "detail": "存在熔断或无价值节点",
+            "passed": false,
+            "rule_id": "A-004"
+          }
+        ],
+        "status": "BLOCKED"
+      },
+      "E": {
+        "checks": [
+          {
+            "detail": "Gate M=PASS",
+            "passed": true,
+            "rule_id": "E-001"
+          },
+          {
+            "detail": "交付物完整=4/4（完整门槛90%）",
+            "passed": true,
+            "rule_id": "E-002"
+          },
+          {
+            "detail": "Tier合法",
+            "passed": true,
+            "rule_id": "E-003"
+          },
+          {
+            "detail": "可追溯任务覆盖=4/4（完整门槛80%）",
+            "passed": true,
+            "rule_id": "E-004"
+          },
+          {
+            "detail": "关键L4任务覆盖=4/4",
+            "passed": true,
+            "rule_id": "E-005"
+          },
+          {
+            "detail": "价值节点-L4映射=4",
+            "passed": true,
+            "rule_id": "E-006"
+          },
+          {
+            "detail": "规则可定位L4=0/4",
+            "passed": false,
+            "rule_id": "E-007"
+          },
+          {
+            "detail": "SOP/任务执行材料=1份",
+            "passed": true,
+            "rule_id": "E-008"
+          },
+          {
+            "detail": "缺少可关联的规则记录（不阻断建模）",
+            "passed": false,
+            "rule_id": "E-009"
+          }
+        ],
+        "status": "CONDITIONAL"
+      },
+      "M": {
+        "checks": [
+          {
+            "detail": "L4数量=4",
+            "passed": true,
+            "rule_id": "M-001"
+          },
+          {
+            "detail": "流程蓝图_L3-FBA_理财师业务分析_V1.0.md",
+            "passed": true,
+            "rule_id": "M-002"
+          },
+          {
+            "detail": "L4名称完整",
+            "passed": true,
+            "rule_id": "M-003"
+          },
+          {
+            "detail": "交付物完整=4/4（最低门槛70%）",
+            "passed": true,
+            "rule_id": "M-004"
+          },
+          {
+            "detail": "D1-D6完整=4/4",
+            "passed": true,
+            "rule_id": "M-005"
+          }
+        ],
+        "status": "PASS"
+      }
+    },
+    "l2_capabilities": [
+      {
+        "l2_code": "L2-04.4",
+        "l2_name": "绩效监控与增长驱动",
+        "l3_code": "L3-FBA"
+      }
+    ],
+    "l4s": [
+      {
+        "business_evidence": [
+          {
+            "confidence": "strong",
+            "evidence_type": "output",
+            "matched_columns": [
+              "签单日期",
+              "保费(hkd)",
+              "ape",
+              "签单年月"
+            ],
+            "rationale": "订单粒度销售汇总表，是月度/季度业绩数据汇总的原始输入",
+            "row_count": 6399,
+            "schema": "public",
+            "table": "agg_sales_base"
+          },
+          {
+            "confidence": "strong",
+            "evidence_type": "rule",
+            "matched_columns": [
+              "quarter_code",
+              "q_start",
+              "q_end"
+            ],
+            "rationale": "季度日历配置表，是\"按季度分析\"切分区间的规则依据",
+            "row_count": 4,
+            "schema": "comm_sandbox",
+            "table": "config_quarter"
+          },
+          {
+            "confidence": "strong",
+            "evidence_type": "rule",
+            "matched_columns": [
+              "quarter_code",
+              "q_start",
+              "q_end"
+            ],
+            "rationale": "与comm_sandbox.config_quarter同结构、同行数(两schema各维护一份)，同为季度日历规则依据",
+            "row_count": 4,
+            "schema": "public",
+            "table": "config_quarter"
+          }
+        ],
+        "d1_d6": {
+          "agent_d1_input_struct": 2,
+          "agent_d2_rule_clear": 2,
+          "agent_d3_output_verify": 2,
+          "agent_d4_api_reach": 2,
+          "agent_d5_fallback": 2,
+          "agent_d6_compliance": 2
+        },
+        "deliverable": "Excel/文档。按月分析业绩、活动率、转化率；按季度分析分公司经营情况",
+        "deliverable_type": "数据表",
+        "evidence_refs": {
+          "agent_d1_input_struct": "EVD-48c894e0dc69af5e8ee6",
+          "agent_d2_rule_clear": "EVD-12a09d75b3f745603463",
+          "agent_d3_output_verify": "EVD-f293a472a3c33143ca34",
+          "agent_d4_api_reach": "EVD-f3ebf7f0ec3dfd55c584",
+          "agent_d5_fallback": "EVD-588a621fe9768e90d159",
+          "agent_d6_compliance": "EVD-e9aab6f3d54a490658df",
+          "agent_human_touchpoint": "EVD-8f81780d994e76326212",
+          "agentifiability": "EVD-0122b63aac94d035a161",
+          "business_evidence": "EVD-11d29dbd9bafa8c5a14e",
+          "l4_deliverable": "EVD-b03f01c0471cb68248ee",
+          "l4_deliverable_type": "EVD-3b8520df1fa07fd18d8d",
+          "l4_name": "EVD-6b1aae1d8dd5dd31fc94",
+          "position_family": "EVD-5641a33d0834ca17085c",
+          "skill_feasibility": "EVD-40eef74d4a4ecff5cd32"
+        },
+        "human_touchpoint": null,
+        "l4_code": "L4-FBA-01",
+        "l4_name": "月度/季度业绩数据汇总",
+        "position_family": {
+          "category_name": "事业部运营管理岗",
+          "category_type": "目标态核心",
+          "family_code": "JF-04",
+          "family_name": "事业部运营族"
+        },
+        "skill_feasibility": {
+          "action_nature": "信息处理/事务类",
+          "action_singularity": "单一动作",
+          "funds_safety_hard_gate": false,
+          "grade": "A-高封装(理想条件下Skill候选)",
+          "judgment_basis": "A-高封装(单一信息处理动作)",
+          "physical_execution": false,
+          "recommended_path": "优先进入Skill原型候选池",
+          "verification_status": "VERIFIED"
+        },
+        "tier": "Auto"
+      },
+      {
+        "business_evidence": [
+          {
+            "confidence": "weak",
+            "evidence_type": "output",
+            "matched_columns": [
+              "person_id",
+              "role_code",
+              "measure",
+              "biz_date"
+            ],
+            "rationale": "人员活动流水视图，measure字段可作活动率计算的原始输入，但未专门按理财师角色聚合",
+            "row_count": 39533,
+            "schema": "public",
+            "table": "v_person_activity"
+          }
+        ],
+        "d1_d6": {
+          "agent_d1_input_struct": 2,
+          "agent_d2_rule_clear": 1,
+          "agent_d3_output_verify": 2,
+          "agent_d4_api_reach": 2,
+          "agent_d5_fallback": 1,
+          "agent_d6_compliance": 1
+        },
+        "deliverable": "Excel/文档。按月分析业绩、活动率、转化率；按季度分析分公司经营情况",
+        "deliverable_type": "数据表",
+        "evidence_refs": {
+          "agent_d1_input_struct": "EVD-966a033fd0906dff0355",
+          "agent_d2_rule_clear": "EVD-3dc75d31575d955ab6c7",
+          "agent_d3_output_verify": "EVD-9217b71b52bc0bced7b8",
+          "agent_d4_api_reach": "EVD-2b257febf312b471f2f1",
+          "agent_d5_fallback": "EVD-5354363f3b3d54fb6e2c",
+          "agent_d6_compliance": "EVD-bc769b5f7badec8cce04",
+          "agent_human_touchpoint": "EVD-89816f3238b0ab9475b8",
+          "agentifiability": "EVD-8aa21323db1abd5283f5",
+          "business_evidence": "EVD-e51e4973a7cb14308325",
+          "l4_deliverable": "EVD-faf31c10b4823959583f",
+          "l4_deliverable_type": "EVD-b131e156d611cbe844be",
+          "l4_name": "EVD-4fc28556d1fdd733a28c",
+          "position_family": "EVD-5641a33d0834ca17085c",
+          "skill_feasibility": "EVD-82ee6ada2b9b9b3570ef"
+        },
+        "human_touchpoint": "人工执行：月度业绩与活动率分析",
+        "l4_code": "L4-FBA-02",
+        "l4_name": "月度业绩与活动率分析",
+        "position_family": {
+          "category_name": "事业部运营管理岗",
+          "category_type": "目标态核心",
+          "family_code": "JF-04",
+          "family_name": "事业部运营族"
+        },
+        "skill_feasibility": {
+          "action_nature": "判断/策略/认知类",
+          "action_singularity": "复合动作(建议先拆分)",
+          "funds_safety_hard_gate": false,
+          "grade": "C-低封装(判断/策略/关系类,理论天花板)",
+          "judgment_basis": "C-仍低封装度(需判断/权威)",
+          "physical_execution": false,
+          "recommended_path": "优先考虑Agent辅助或决策支持，不直接封装确定性Skill",
+          "verification_status": "VERIFIED"
+        },
+        "tier": "Hybrid"
+      },
+      {
+        "business_evidence": [],
+        "d1_d6": {
+          "agent_d1_input_struct": 2,
+          "agent_d2_rule_clear": 1,
+          "agent_d3_output_verify": 2,
+          "agent_d4_api_reach": 1,
+          "agent_d5_fallback": 1,
+          "agent_d6_compliance": 1
+        },
+        "deliverable": "Excel/文档。按月分析业绩、活动率、转化率；按季度分析分公司经营情况",
+        "deliverable_type": "报告",
+        "evidence_refs": {
+          "agent_d1_input_struct": "EVD-b437be2a58559664197e",
+          "agent_d2_rule_clear": "EVD-9b5f9f26431e95051c01",
+          "agent_d3_output_verify": "EVD-f2e5341f5b9c640d1eb6",
+          "agent_d4_api_reach": "EVD-34f1b77eb2cfee455fbd",
+          "agent_d5_fallback": "EVD-3d97020c03b04a2e2960",
+          "agent_d6_compliance": "EVD-14897967825e1c1b2fd4",
+          "agent_human_touchpoint": "EVD-d470da07b5bd25178bec",
+          "agentifiability": "EVD-560eac5e8dc3b25f4193",
+          "l4_deliverable": "EVD-e16ba89a6150cc1a801b",
+          "l4_deliverable_type": "EVD-b20591697811d7129f66",
+          "l4_name": "EVD-e3ea5dcc6e6539efba94",
+          "position_family": "EVD-5641a33d0834ca17085c",
+          "skill_feasibility": "EVD-b7ea38bafa0e0faaa1d5"
+        },
+        "human_touchpoint": "人工执行：季度分公司经营分析",
+        "l4_code": "L4-FBA-03",
+        "l4_name": "季度分公司经营分析",
+        "position_family": {
+          "category_name": "事业部运营管理岗",
+          "category_type": "目标态核心",
+          "family_code": "JF-04",
+          "family_name": "事业部运营族"
+        },
+        "skill_feasibility": {
+          "action_nature": "判断/策略/认知类",
+          "action_singularity": "单一动作",
+          "funds_safety_hard_gate": false,
+          "grade": "C-低封装(判断/策略/关系类,理论天花板)",
+          "judgment_basis": "C-仍低封装度(需判断/权威)",
+          "physical_execution": false,
+          "recommended_path": "优先考虑Agent辅助或决策支持，不直接封装确定性Skill",
+          "verification_status": "VERIFIED"
+        },
+        "tier": "Hybrid"
+      },
+      {
+        "business_evidence": [],
+        "d1_d6": {
+          "agent_d1_input_struct": 3,
+          "agent_d2_rule_clear": 3,
+          "agent_d3_output_verify": 3,
+          "agent_d4_api_reach": 3,
+          "agent_d5_fallback": 2,
+          "agent_d6_compliance": 2
+        },
+        "deliverable": "Excel/文档。按月分析业绩、活动率、转化率；按季度分析分公司经营情况",
+        "deliverable_type": "报告",
+        "evidence_refs": {
+          "agent_d1_input_struct": "EVD-447e9c034b7554ab0952",
+          "agent_d2_rule_clear": "EVD-eefdfcb797ff4cc88dfa",
+          "agent_d3_output_verify": "EVD-116dd3de4ec8092944b3",
+          "agent_d4_api_reach": "EVD-51236b211426d3f94a7c",
+          "agent_d5_fallback": "EVD-9d303bc3b2de20772a2e",
+          "agent_d6_compliance": "EVD-cb1762e57e214b188c80",
+          "agent_human_touchpoint": "EVD-089039df868466b49541",
+          "agentifiability": "EVD-1eefd49cd12cf873ec82",
+          "l4_deliverable": "EVD-d5c13fe924c87d80f141",
+          "l4_deliverable_type": "EVD-815222d060cf0add7411",
+          "l4_name": "EVD-6eb8fe2383cefc7b836b",
+          "position_family": "EVD-5641a33d0834ca17085c",
+          "skill_feasibility": "EVD-5f1ba9fb6c91196a7543"
+        },
+        "human_touchpoint": "人工执行：分析报告定稿与总部上报",
+        "l4_code": "L4-FBA-04",
+        "l4_name": "分析报告定稿与总部上报",
+        "position_family": {
+          "category_name": "事业部运营管理岗",
+          "category_type": "目标态核心",
+          "family_code": "JF-04",
+          "family_name": "事业部运营族"
+        },
+        "skill_feasibility": {
+          "action_nature": "判断/策略/认知类",
+          "action_singularity": "复合动作(建议先拆分)",
+          "funds_safety_hard_gate": false,
+          "grade": "C-低封装(判断/策略/关系类,理论天花板)",
+          "judgment_basis": "C-仍低封装度(需判断/权威)",
+          "physical_execution": false,
+          "recommended_path": "优先考虑Agent辅助或决策支持，不直接封装确定性Skill",
+          "verification_status": "VERIFIED"
+        },
+        "tier": "Hybrid"
+      }
+    ],
+    "value_nodes": [
+      {
+        "evidence_refs": {
+          "gate1_data_linked": "EVD-81493bef19e5062cc44a",
+          "gate2_grounded": "EVD-1130570788860aae4f1e",
+          "gate3_traceable": "EVD-16c3cba5c3c09e715ca2",
+          "is_fused": "EVD-68fcbe40906e07a357e9",
+          "overall_judgment": "EVD-1fafddfcba6c01f0f92a",
+          "priority": "EVD-3b3e5e80df91953ce6a7",
+          "vn_name": "EVD-431c634fb72d0c698353"
+        },
+        "is_fused": true,
+        "overall_judgment": "FAIL",
+        "priority": "P1",
+        "vn_id": "VN-FBA-01",
+        "vn_name": "月度/季度经营分析报告"
+      }
+    ],
+    "vn_l4_mappings": [
+      {
+        "l3_code": "L3-FBA",
+        "l4_code": "L4-FBA-01",
+        "mapping_status": "expanded",
+        "vn_id": "VN-FBA-01"
+      },
+      {
+        "l3_code": "L3-FBA",
+        "l4_code": "L4-FBA-02",
+        "mapping_status": "expanded",
+        "vn_id": "VN-FBA-01"
+      },
+      {
+        "l3_code": "L3-FBA",
+        "l4_code": "L4-FBA-03",
+        "mapping_status": "expanded",
+        "vn_id": "VN-FBA-01"
+      },
+      {
+        "l3_code": "L3-FBA",
+        "l4_code": "L4-FBA-04",
+        "mapping_status": "expanded",
+        "vn_id": "VN-FBA-01"
+      }
+    ],
+    "kpi_mappings": [
+      {
+        "contribution_weight": 0.6,
+        "kpi_code": "T05",
+        "kpi_name": "理财师周活动量",
+        "l3_code": "L3-FBA",
+        "row_status": "draft",
+        "source_type": "mark_priority_draft",
+        "weight_confirmed": "pending"
+      },
+      {
+        "kpi_code": "KPI_03",
+        "kpi_formula": null,
+        "kpi_name": "目标达成率 (Achievement)",
+        "kpi_target": null,
+        "kpi_unit": null,
+        "measurement_cycle": "月",
+        "source_type": "definition"
+      },
+      {
+        "kpi_code": "KPI_15",
+        "kpi_formula": null,
+        "kpi_name": "排期转化率 (Sched Conv.)",
+        "kpi_target": null,
+        "kpi_unit": null,
+        "measurement_cycle": "月",
+        "source_type": "definition"
+      },
+      {
+        "kpi_code": "KPI_32",
+        "kpi_formula": null,
+        "kpi_name": "人均件数 (Activity)",
+        "kpi_target": null,
+        "kpi_unit": null,
+        "measurement_cycle": "月",
+        "source_type": "definition"
+      },
+      {
+        "kpi_code": "KPI_37",
+        "kpi_formula": null,
+        "kpi_name": "培训改善度",
+        "kpi_target": null,
+        "kpi_unit": null,
+        "measurement_cycle": "月",
+        "source_type": "definition"
+      }
+    ],
+    "value_stream_mappings": [
+      {
+        "l3_code": "L3-FBA",
+        "mapping_type": "primary",
+        "stage_code": "S5",
+        "stage_name": "BAU运营与业绩跟踪",
+        "stage_sequence": 5,
+        "vs_code": "VS-4",
+        "vs_name": "理财师发展旅程",
+        "vs_stakeholder": "理财师/代理人"
+      }
+    ],
+    "blueprint": {
+      "blueprint_value_nodes": [],
+      "coverage": "INDEXED",
+      "decisions": [
+        {
+          "after_step": "STEP-02",
+          "branches": [
+            {
+              "is_return": false,
+              "label": "发现低活跃/业绩下滑",
+              "source_line": 92,
+              "target_l4": "",
+              "target_step": "",
+              "target_text": "触发L3-FOR加强运营支持 / 触发L3-FPG绩效预警"
+            },
+            {
+              "is_return": false,
+              "label": "正常范围内",
+              "source_line": 93,
+              "target_l4": "",
+              "target_step": "STEP-03",
+              "target_text": "Step 3 继续季度分析"
+            }
+          ],
+          "decision_id": "Q1",
+          "evidence_ref": "EVD-d88d57d77ac715cfefab",
+          "question": "是否发现异常偏差",
+          "source_line": 89
+        }
+      ],
+      "diagnostics": {
+        "blueprint_l4_count": 4,
+        "db_l4_count": 4,
+        "extra_in_blueprint": [],
+        "missing_in_blueprint": [],
+        "parsed_step_l4_count": 4,
+        "retired_l4s_ignored": [],
+        "unmapped_step_count": 0
+      },
+      "edges": [
+        {
+          "edge_id": "SEQ-STEP-01-STEP-02",
+          "edge_type": "SEQUENCE",
+          "from": "STEP-01",
+          "label": "",
+          "source_rule": "蓝图显式编号步骤的相邻顺序",
+          "to": "STEP-02"
+        },
+        {
+          "edge_id": "SEQ-STEP-02-STEP-03",
+          "edge_type": "SEQUENCE",
+          "from": "STEP-02",
+          "label": "",
+          "source_rule": "蓝图显式编号步骤的相邻顺序",
+          "to": "STEP-03"
+        },
+        {
+          "edge_id": "SEQ-STEP-03-STEP-04",
+          "edge_type": "SEQUENCE",
+          "from": "STEP-03",
+          "label": "",
+          "source_rule": "蓝图显式编号步骤的相邻顺序",
+          "to": "STEP-04"
+        },
+        {
+          "edge_id": "Q1-4",
+          "edge_type": "DECISION",
+          "from": "Q1",
+          "label": "正常范围内",
+          "source_rule": "蓝图第93行显式分支",
+          "to": "STEP-03"
+        }
+      ],
+      "filename": "流程蓝图_L3-FBA_理财师业务分析_V1.0.md",
+      "note": "已从蓝图正文解析；步骤顺序边由显式步骤编号派生，判断分支保留原文行号",
+      "raci": [],
+      "source_hash": "97b99d14d4c2efad153f575b5469bc40b6024bac6b220603e1d7824b37f3701f",
+      "source_path": "/Users/a112233/Desktop/流程架构项目_jasper/02_过程成果-工作产出/L3流程库/流程蓝图_L3-FBA_理财师业务分析_V1.0.md",
+      "steps": [
+        {
+          "activities": [
+            "L4-FBA-01 月度/季度业绩数据汇总 → 《月度业绩数据包》(Aug)"
+          ],
+          "evidence_ref": "EVD-6167635186093c7f334a",
+          "l4_codes": [
+            "L4-FBA-01"
+          ],
+          "sequence": 1,
+          "source_line": 57,
+          "step_id": "STEP-01",
+          "step_name": "业绩数据汇总"
+        },
+        {
+          "activities": [
+            "L4-FBA-02 月度业绩与活动率分析 → 《月度业绩报表》+《活动率分析表》+《转化追踪表》(Human)"
+          ],
+          "evidence_ref": "EVD-e22c0ecedfacfd47f522",
+          "l4_codes": [
+            "L4-FBA-02"
+          ],
+          "sequence": 2,
+          "source_line": 63,
+          "step_id": "STEP-02",
+          "step_name": "月度经营分析"
+        },
+        {
+          "activities": [
+            "L4-FBA-03 季度分公司经营分析 → 《分公司经营分析报告》(Human)"
+          ],
+          "evidence_ref": "EVD-e9f53bea99ce15433632",
+          "l4_codes": [
+            "L4-FBA-03"
+          ],
+          "sequence": 3,
+          "source_line": 71,
+          "step_id": "STEP-03",
+          "step_name": "季度分公司经营分析"
+        },
+        {
+          "activities": [
+            "L4-FBA-04 分析报告定稿与总部上报 → 《月度/季度经营分析报告》[P1 VN-FBA-01](Human)"
+          ],
+          "evidence_ref": "EVD-0977af2849cc46dbe5bd",
+          "l4_codes": [
+            "L4-FBA-04"
+          ],
+          "sequence": 4,
+          "source_line": 78,
+          "step_id": "STEP-04",
+          "step_name": "经营分析报告定稿与上报"
+        }
+      ],
+      "structure_status": "PARSED",
+      "version": "V1.0"
+    },
+    "evidence_registry": [
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-0122b63aac94d035a161",
+        "field_name": "agentifiability",
+        "source": {
+          "observed_at": "",
+          "source_field": "agentifiability",
+          "source_key": "L4-FBA-01",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "Auto"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-089039df868466b49541",
+        "field_name": "agent_human_touchpoint",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_human_touchpoint",
+          "source_key": "L4-FBA-04",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "人工执行：分析报告定稿与总部上报"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-0977af2849cc46dbe5bd",
+        "field_name": "blueprint.steps.STEP-04",
+        "source": {
+          "observed_at": "",
+          "source_field": "step",
+          "source_key": "line:78",
+          "source_object": "流程蓝图_L3-FBA_理财师业务分析_V1.0.md",
+          "source_system": "L3流程库",
+          "source_version": "V1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "l4_codes": [
+            "L4-FBA-04"
+          ],
+          "step_name": "经营分析报告定稿与上报"
+        }
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-1130570788860aae4f1e",
+        "field_name": "gate2_grounded",
+        "source": {
+          "observed_at": "",
+          "source_field": "gate2_grounded",
+          "source_key": "VN-FBA-01",
+          "source_object": "process_analytics.dim_vn",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "FAIL"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-116dd3de4ec8092944b3",
+        "field_name": "agent_d3_output_verify",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d3_output_verify",
+          "source_key": "L4-FBA-04",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 3
+      },
+      {
+        "confidence": "LOW",
+        "conflict_note": "人工按业务含义匹配到业务数据仓库表，非外键关联，未经业务方确认",
+        "evidence_class": "CONSENSUS",
+        "evidence_id": "EVD-11d29dbd9bafa8c5a14e",
+        "field_name": "business_evidence",
+        "source": {
+          "observed_at": "",
+          "source_field": "人工匹配",
+          "source_key": "L4-FBA-01",
+          "source_object": "public.agg_sales_base, comm_sandbox.config_quarter, public.config_quarter",
+          "source_system": "业务数据仓库",
+          "source_version": "2026-08-04试点"
+        },
+        "status": "UNVERIFIED",
+        "transform_rule": "",
+        "value": [
+          {
+            "confidence": "strong",
+            "evidence_type": "output",
+            "matched_columns": [
+              "签单日期",
+              "保费(hkd)",
+              "ape",
+              "签单年月"
+            ],
+            "rationale": "订单粒度销售汇总表，是月度/季度业绩数据汇总的原始输入",
+            "row_count": 6399,
+            "schema": "public",
+            "table": "agg_sales_base"
+          },
+          {
+            "confidence": "strong",
+            "evidence_type": "rule",
+            "matched_columns": [
+              "quarter_code",
+              "q_start",
+              "q_end"
+            ],
+            "rationale": "季度日历配置表，是\"按季度分析\"切分区间的规则依据",
+            "row_count": 4,
+            "schema": "comm_sandbox",
+            "table": "config_quarter"
+          },
+          {
+            "confidence": "strong",
+            "evidence_type": "rule",
+            "matched_columns": [
+              "quarter_code",
+              "q_start",
+              "q_end"
+            ],
+            "rationale": "与comm_sandbox.config_quarter同结构、同行数(两schema各维护一份)，同为季度日历规则依据",
+            "row_count": 4,
+            "schema": "public",
+            "table": "config_quarter"
+          }
+        ]
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-12a09d75b3f745603463",
+        "field_name": "agent_d2_rule_clear",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d2_rule_clear",
+          "source_key": "L4-FBA-01",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-14897967825e1c1b2fd4",
+        "field_name": "agent_d6_compliance",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d6_compliance",
+          "source_key": "L4-FBA-03",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 1
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-16c3cba5c3c09e715ca2",
+        "field_name": "gate3_traceable",
+        "source": {
+          "observed_at": "",
+          "source_field": "gate3_traceable",
+          "source_key": "VN-FBA-01",
+          "source_object": "process_analytics.dim_vn",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "FAIL"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-1eefd49cd12cf873ec82",
+        "field_name": "agentifiability",
+        "source": {
+          "observed_at": "",
+          "source_field": "agentifiability",
+          "source_key": "L4-FBA-04",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "Hybrid"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-1fafddfcba6c01f0f92a",
+        "field_name": "overall_judgment",
+        "source": {
+          "observed_at": "",
+          "source_field": "overall_judgment",
+          "source_key": "VN-FBA-01",
+          "source_object": "process_analytics.dim_vn",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "FAIL"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-2b257febf312b471f2f1",
+        "field_name": "agent_d4_api_reach",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d4_api_reach",
+          "source_key": "L4-FBA-02",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-34f1b77eb2cfee455fbd",
+        "field_name": "agent_d4_api_reach",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d4_api_reach",
+          "source_key": "L4-FBA-03",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 1
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-3b3e5e80df91953ce6a7",
+        "field_name": "priority",
+        "source": {
+          "observed_at": "",
+          "source_field": "priority",
+          "source_key": "VN-FBA-01",
+          "source_object": "process_analytics.dim_vn",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "P1"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-3b8520df1fa07fd18d8d",
+        "field_name": "l4_deliverable_type",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_deliverable_type",
+          "source_key": "L4-FBA-01",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "数据表"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-3d97020c03b04a2e2960",
+        "field_name": "agent_d5_fallback",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d5_fallback",
+          "source_key": "L4-FBA-03",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 1
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-3dc75d31575d955ab6c7",
+        "field_name": "agent_d2_rule_clear",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d2_rule_clear",
+          "source_key": "L4-FBA-02",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 1
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-40eef74d4a4ecff5cd32",
+        "field_name": "skill_feasibility",
+        "source": {
+          "observed_at": "",
+          "source_field": "L4明细_最终确认版:A:N",
+          "source_key": "L4-FBA-01@row:84",
+          "source_object": "L4流程_Skill封装可行性评估_确认最终版_v2.xlsx",
+          "source_system": "OB知识库",
+          "source_version": "v2"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "action_nature": "信息处理/事务类",
+          "action_singularity": "单一动作",
+          "funds_safety_hard_gate": false,
+          "grade": "A-高封装(理想条件下Skill候选)",
+          "judgment_basis": "A-高封装(单一信息处理动作)",
+          "physical_execution": false,
+          "recommended_path": "优先进入Skill原型候选池",
+          "verification_status": "VERIFIED"
+        }
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-431c634fb72d0c698353",
+        "field_name": "vn_name",
+        "source": {
+          "observed_at": "",
+          "source_field": "vn_name",
+          "source_key": "VN-FBA-01",
+          "source_object": "process_analytics.dim_vn",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "月度/季度经营分析报告"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-447e9c034b7554ab0952",
+        "field_name": "agent_d1_input_struct",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d1_input_struct",
+          "source_key": "L4-FBA-04",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 3
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-48c894e0dc69af5e8ee6",
+        "field_name": "agent_d1_input_struct",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d1_input_struct",
+          "source_key": "L4-FBA-01",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-4fc28556d1fdd733a28c",
+        "field_name": "l4_name",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_name",
+          "source_key": "L4-FBA-02",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "月度业绩与活动率分析"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-51236b211426d3f94a7c",
+        "field_name": "agent_d4_api_reach",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d4_api_reach",
+          "source_key": "L4-FBA-04",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 3
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-5354363f3b3d54fb6e2c",
+        "field_name": "agent_d5_fallback",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d5_fallback",
+          "source_key": "L4-FBA-02",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 1
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-560eac5e8dc3b25f4193",
+        "field_name": "agentifiability",
+        "source": {
+          "observed_at": "",
+          "source_field": "agentifiability",
+          "source_key": "L4-FBA-03",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "Hybrid"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-5641a33d0834ca17085c",
+        "field_name": "position_family",
+        "source": {
+          "observed_at": "",
+          "source_field": "各族详细映射",
+          "source_key": "L3-FBA",
+          "source_object": "2026-07-20_68L3岗位族归属设计_v6.1_SUBMITTED.md",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v6.1"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "category_name": "事业部运营管理岗",
+          "category_type": "目标态核心",
+          "family_code": "JF-04",
+          "family_name": "事业部运营族"
+        }
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-588a621fe9768e90d159",
+        "field_name": "agent_d5_fallback",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d5_fallback",
+          "source_key": "L4-FBA-01",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-5f1ba9fb6c91196a7543",
+        "field_name": "skill_feasibility",
+        "source": {
+          "observed_at": "",
+          "source_field": "L4明细_最终确认版:A:N",
+          "source_key": "L4-FBA-04@row:87",
+          "source_object": "L4流程_Skill封装可行性评估_确认最终版_v2.xlsx",
+          "source_system": "OB知识库",
+          "source_version": "v2"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "action_nature": "判断/策略/认知类",
+          "action_singularity": "复合动作(建议先拆分)",
+          "funds_safety_hard_gate": false,
+          "grade": "C-低封装(判断/策略/关系类,理论天花板)",
+          "judgment_basis": "C-仍低封装度(需判断/权威)",
+          "physical_execution": false,
+          "recommended_path": "优先考虑Agent辅助或决策支持，不直接封装确定性Skill",
+          "verification_status": "VERIFIED"
+        }
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-6167635186093c7f334a",
+        "field_name": "blueprint.steps.STEP-01",
+        "source": {
+          "observed_at": "",
+          "source_field": "step",
+          "source_key": "line:57",
+          "source_object": "流程蓝图_L3-FBA_理财师业务分析_V1.0.md",
+          "source_system": "L3流程库",
+          "source_version": "V1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "l4_codes": [
+            "L4-FBA-01"
+          ],
+          "step_name": "业绩数据汇总"
+        }
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-68fcbe40906e07a357e9",
+        "field_name": "is_fused",
+        "source": {
+          "observed_at": "",
+          "source_field": "is_fused",
+          "source_key": "VN-FBA-01",
+          "source_object": "process_analytics.dim_vn",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": true
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-6b1aae1d8dd5dd31fc94",
+        "field_name": "l4_name",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_name",
+          "source_key": "L4-FBA-01",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "月度/季度业绩数据汇总"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-6eb8fe2383cefc7b836b",
+        "field_name": "l4_name",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_name",
+          "source_key": "L4-FBA-04",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "分析报告定稿与总部上报"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-7111a517585b8192d68e",
+        "field_name": "readiness.sop.VN-FBA-01",
+        "source": {
+          "observed_at": "",
+          "source_field": "sop_file",
+          "source_key": "VN-FBA-01",
+          "source_object": "T19_SOP生产进度_全域_v2.0.csv",
+          "source_system": "VNW数据基础",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "file": "SOP_VN-FBA-01_月度季度经营分析报告_v0.1.md",
+          "title": "VN-FBA-01 · 月度/季度经营分析报告 v0.1"
+        }
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-81493bef19e5062cc44a",
+        "field_name": "gate1_data_linked",
+        "source": {
+          "observed_at": "",
+          "source_field": "gate1_data_linked",
+          "source_key": "VN-FBA-01",
+          "source_object": "process_analytics.dim_vn",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "PARTIAL"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-815222d060cf0add7411",
+        "field_name": "l4_deliverable_type",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_deliverable_type",
+          "source_key": "L4-FBA-04",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "报告"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-82ee6ada2b9b9b3570ef",
+        "field_name": "skill_feasibility",
+        "source": {
+          "observed_at": "",
+          "source_field": "L4明细_最终确认版:A:N",
+          "source_key": "L4-FBA-02@row:85",
+          "source_object": "L4流程_Skill封装可行性评估_确认最终版_v2.xlsx",
+          "source_system": "OB知识库",
+          "source_version": "v2"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "action_nature": "判断/策略/认知类",
+          "action_singularity": "复合动作(建议先拆分)",
+          "funds_safety_hard_gate": false,
+          "grade": "C-低封装(判断/策略/关系类,理论天花板)",
+          "judgment_basis": "C-仍低封装度(需判断/权威)",
+          "physical_execution": false,
+          "recommended_path": "优先考虑Agent辅助或决策支持，不直接封装确定性Skill",
+          "verification_status": "VERIFIED"
+        }
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-89816f3238b0ab9475b8",
+        "field_name": "agent_human_touchpoint",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_human_touchpoint",
+          "source_key": "L4-FBA-02",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "人工执行：月度业绩与活动率分析"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-8aa21323db1abd5283f5",
+        "field_name": "agentifiability",
+        "source": {
+          "observed_at": "",
+          "source_field": "agentifiability",
+          "source_key": "L4-FBA-02",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "Hybrid"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-8f81780d994e76326212",
+        "field_name": "agent_human_touchpoint",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_human_touchpoint",
+          "source_key": "L4-FBA-01",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "MISSING",
+        "transform_rule": "",
+        "value": null
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-9217b71b52bc0bced7b8",
+        "field_name": "agent_d3_output_verify",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d3_output_verify",
+          "source_key": "L4-FBA-02",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-966a033fd0906dff0355",
+        "field_name": "agent_d1_input_struct",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d1_input_struct",
+          "source_key": "L4-FBA-02",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-9b5f9f26431e95051c01",
+        "field_name": "agent_d2_rule_clear",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d2_rule_clear",
+          "source_key": "L4-FBA-03",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 1
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-9d303bc3b2de20772a2e",
+        "field_name": "agent_d5_fallback",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d5_fallback",
+          "source_key": "L4-FBA-04",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-b03f01c0471cb68248ee",
+        "field_name": "l4_deliverable",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_deliverable",
+          "source_key": "L4-FBA-01",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "Excel/文档。按月分析业绩、活动率、转化率；按季度分析分公司经营情况"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-b131e156d611cbe844be",
+        "field_name": "l4_deliverable_type",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_deliverable_type",
+          "source_key": "L4-FBA-02",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "数据表"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-b20591697811d7129f66",
+        "field_name": "l4_deliverable_type",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_deliverable_type",
+          "source_key": "L4-FBA-03",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "报告"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-b437be2a58559664197e",
+        "field_name": "agent_d1_input_struct",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d1_input_struct",
+          "source_key": "L4-FBA-03",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-b7ea38bafa0e0faaa1d5",
+        "field_name": "skill_feasibility",
+        "source": {
+          "observed_at": "",
+          "source_field": "L4明细_最终确认版:A:N",
+          "source_key": "L4-FBA-03@row:86",
+          "source_object": "L4流程_Skill封装可行性评估_确认最终版_v2.xlsx",
+          "source_system": "OB知识库",
+          "source_version": "v2"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "action_nature": "判断/策略/认知类",
+          "action_singularity": "单一动作",
+          "funds_safety_hard_gate": false,
+          "grade": "C-低封装(判断/策略/关系类,理论天花板)",
+          "judgment_basis": "C-仍低封装度(需判断/权威)",
+          "physical_execution": false,
+          "recommended_path": "优先考虑Agent辅助或决策支持，不直接封装确定性Skill",
+          "verification_status": "VERIFIED"
+        }
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-bc769b5f7badec8cce04",
+        "field_name": "agent_d6_compliance",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d6_compliance",
+          "source_key": "L4-FBA-02",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 1
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-cb1762e57e214b188c80",
+        "field_name": "agent_d6_compliance",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d6_compliance",
+          "source_key": "L4-FBA-04",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-d470da07b5bd25178bec",
+        "field_name": "agent_human_touchpoint",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_human_touchpoint",
+          "source_key": "L4-FBA-03",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "人工执行：季度分公司经营分析"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-d5c13fe924c87d80f141",
+        "field_name": "l4_deliverable",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_deliverable",
+          "source_key": "L4-FBA-04",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "Excel/文档。按月分析业绩、活动率、转化率；按季度分析分公司经营情况"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-d88d57d77ac715cfefab",
+        "field_name": "blueprint.decisions.Q1",
+        "source": {
+          "observed_at": "",
+          "source_field": "decision",
+          "source_key": "line:89",
+          "source_object": "流程蓝图_L3-FBA_理财师业务分析_V1.0.md",
+          "source_system": "L3流程库",
+          "source_version": "V1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "branches": [
+            {
+              "is_return": false,
+              "label": "发现低活跃/业绩下滑",
+              "source_line": 92,
+              "target_l4": "",
+              "target_step": "",
+              "target_text": "触发L3-FOR加强运营支持 / 触发L3-FPG绩效预警"
+            },
+            {
+              "is_return": false,
+              "label": "正常范围内",
+              "source_line": 93,
+              "target_l4": "",
+              "target_step": "STEP-03",
+              "target_text": "Step 3 继续季度分析"
+            }
+          ],
+          "question": "是否发现异常偏差"
+        }
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-e16ba89a6150cc1a801b",
+        "field_name": "l4_deliverable",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_deliverable",
+          "source_key": "L4-FBA-03",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "Excel/文档。按月分析业绩、活动率、转化率；按季度分析分公司经营情况"
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-e22c0ecedfacfd47f522",
+        "field_name": "blueprint.steps.STEP-02",
+        "source": {
+          "observed_at": "",
+          "source_field": "step",
+          "source_key": "line:63",
+          "source_object": "流程蓝图_L3-FBA_理财师业务分析_V1.0.md",
+          "source_system": "L3流程库",
+          "source_version": "V1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "l4_codes": [
+            "L4-FBA-02"
+          ],
+          "step_name": "月度经营分析"
+        }
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-e3ea5dcc6e6539efba94",
+        "field_name": "l4_name",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_name",
+          "source_key": "L4-FBA-03",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "季度分公司经营分析"
+      },
+      {
+        "confidence": "LOW",
+        "conflict_note": "人工按业务含义匹配到业务数据仓库表，非外键关联，未经业务方确认",
+        "evidence_class": "CONSENSUS",
+        "evidence_id": "EVD-e51e4973a7cb14308325",
+        "field_name": "business_evidence",
+        "source": {
+          "observed_at": "",
+          "source_field": "人工匹配",
+          "source_key": "L4-FBA-02",
+          "source_object": "public.v_person_activity",
+          "source_system": "业务数据仓库",
+          "source_version": "2026-08-04试点"
+        },
+        "status": "UNVERIFIED",
+        "transform_rule": "",
+        "value": [
+          {
+            "confidence": "weak",
+            "evidence_type": "output",
+            "matched_columns": [
+              "person_id",
+              "role_code",
+              "measure",
+              "biz_date"
+            ],
+            "rationale": "人员活动流水视图，measure字段可作活动率计算的原始输入，但未专门按理财师角色聚合",
+            "row_count": 39533,
+            "schema": "public",
+            "table": "v_person_activity"
+          }
+        ]
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-e9aab6f3d54a490658df",
+        "field_name": "agent_d6_compliance",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d6_compliance",
+          "source_key": "L4-FBA-01",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-e9f53bea99ce15433632",
+        "field_name": "blueprint.steps.STEP-03",
+        "source": {
+          "observed_at": "",
+          "source_field": "step",
+          "source_key": "line:71",
+          "source_object": "流程蓝图_L3-FBA_理财师业务分析_V1.0.md",
+          "source_system": "L3流程库",
+          "source_version": "V1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": {
+          "l4_codes": [
+            "L4-FBA-03"
+          ],
+          "step_name": "季度分公司经营分析"
+        }
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-eefdfcb797ff4cc88dfa",
+        "field_name": "agent_d2_rule_clear",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d2_rule_clear",
+          "source_key": "L4-FBA-04",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 3
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-f293a472a3c33143ca34",
+        "field_name": "agent_d3_output_verify",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d3_output_verify",
+          "source_key": "L4-FBA-01",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-f2e5341f5b9c640d1eb6",
+        "field_name": "agent_d3_output_verify",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d3_output_verify",
+          "source_key": "L4-FBA-03",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "SUPPLEMENTAL",
+        "evidence_id": "EVD-f3ebf7f0ec3dfd55c584",
+        "field_name": "agent_d4_api_reach",
+        "source": {
+          "observed_at": "",
+          "source_field": "agent_d4_api_reach",
+          "source_key": "L4-FBA-01",
+          "source_object": "L4两阶段复核_全量368条_合并版_v1.0.csv",
+          "source_system": "EA项目_权威数据",
+          "source_version": "v1.0"
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": 2
+      },
+      {
+        "confidence": "HIGH",
+        "conflict_note": "",
+        "evidence_class": "AUTHORITATIVE",
+        "evidence_id": "EVD-faf31c10b4823959583f",
+        "field_name": "l4_deliverable",
+        "source": {
+          "observed_at": "",
+          "source_field": "l4_deliverable",
+          "source_key": "L4-FBA-02",
+          "source_object": "process_analytics.dim_process",
+          "source_system": "PostgreSQL",
+          "source_version": ""
+        },
+        "status": "ACTIVE",
+        "transform_rule": "",
+        "value": "Excel/文档。按月分析业绩、活动率、转化率；按季度分析分公司经营情况"
+      }
+    ]
+  }
+}
