@@ -85,6 +85,13 @@ class SuggestedTask:
     related_files: List[str] = field(default_factory=list)
     is_new: bool = True
     first_suggested: str = ""  # ISO 时间戳，供 format_text 算"搁置了几天"用
+    # 2026-08起：LLM 在发现任务的同一次调用里，基于这条任务自己的证据生成的
+    # 针对性分析——不是仪表盘按 personal_bucket 套模板那种通用文案。三者都
+    # 缺省为空/空列表，读取方（views.list_tasks_from_state 及更早的历史指纹）
+    # 据此区分"这条任务有没有针对性分析"，没有就走前端的旧模板兜底。
+    suggestion: str = ""
+    execution_steps: List[str] = field(default_factory=list)
+    ideal_deliverable: str = ""
 
 
 @dataclass
@@ -242,6 +249,8 @@ class DailySensor:
                     needs_mark_alignment=fp.get("needs_mark_alignment", False),
                     relevance_reason="沿用上次判断", related_files=fp.get("related_files", []), is_new=False,
                     first_suggested=fp.get("first_suggested", ""),
+                    suggestion=fp.get("suggestion", ""), execution_steps=fp.get("execution_steps", []),
+                    ideal_deliverable=fp.get("ideal_deliverable", ""),
                 )
                 for fp in base_fp.values()
                 if fp.get("status") == "pending"
@@ -377,6 +386,9 @@ class DailySensor:
             # 列表（提示词里说了不该这样，但不能只靠提示词兜底），这里再过滤一次。
             signal_to = [p for p in t.get("signal_to", []) if p in FOUR_PARTIES]
             needs_mark_alignment = bool(t.get("needs_mark_alignment", False))
+            suggestion = t.get("suggestion", "")
+            execution_steps = t.get("execution_steps", [])
+            ideal_deliverable = t.get("ideal_deliverable", "")
             fingerprint = _task_fingerprint(name)
 
             if fingerprint in existing_fp:
@@ -400,6 +412,8 @@ class DailySensor:
                                              "related_files": related_files,
                                              "rationale": t.get("rationale", ""),
                                              "relevance_reason": t.get("relevance_reason", ""),
+                                             "suggestion": suggestion, "execution_steps": execution_steps,
+                                             "ideal_deliverable": ideal_deliverable,
                                              "status": "pending" if reopened else prior_status}
                 if reopened:
                     updated_fp[fingerprint]["first_suggested"] = now_iso  # 重新计天数，不沿用旧的搁置时长
@@ -416,6 +430,8 @@ class DailySensor:
                                              "related_files": related_files,
                                              "rationale": t.get("rationale", ""),
                                              "relevance_reason": t.get("relevance_reason", ""),
+                                             "suggestion": suggestion, "execution_steps": execution_steps,
+                                             "ideal_deliverable": ideal_deliverable,
                                              "decision_status": "pending_review"}
 
             suggested_tasks.append(SuggestedTask(
@@ -423,6 +439,7 @@ class DailySensor:
                 priority=priority, signal_to=signal_to, needs_mark_alignment=needs_mark_alignment,
                 relevance_reason=t.get("relevance_reason", ""), related_files=related_files, is_new=is_new,
                 first_suggested=updated_fp[fingerprint]["first_suggested"],
+                suggestion=suggestion, execution_steps=execution_steps, ideal_deliverable=ideal_deliverable,
             ))
 
             task_map_entries[task_id] = {
@@ -537,6 +554,9 @@ def list_tasks_from_state(state: dict, project_name: str = "", resolved_within_d
             "related_files": fp.get("related_files", []), "project_name": project_name,
             "rationale": fp.get("rationale", ""),
             "relevance_reason": fp.get("relevance_reason", ""),
+            "suggestion": fp.get("suggestion", ""),
+            "execution_steps": fp.get("execution_steps", []),
+            "ideal_deliverable": fp.get("ideal_deliverable", ""),
             "decision_status": fp.get("decision_status", "pending_review"),
             "decision_updated_at": fp.get("decision_updated_at", ""),
             "owner": fp.get("owner", ""), "due_date": fp.get("due_date", ""),

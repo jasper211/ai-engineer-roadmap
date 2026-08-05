@@ -124,6 +124,7 @@ def _build_and_write_data_lineage(db_catalog: dict) -> dict:
         extract_foreign_keys,
         extract_pipeline_groups,
         extract_view_dependencies,
+        flag_zombie_tables,
         suggest_l4_candidates,
     )
     from skills.sync_data_foundation import db_query
@@ -139,12 +140,15 @@ def _build_and_write_data_lineage(db_catalog: dict) -> dict:
 
     table_to_l4_index, _ = _load_table_to_l4_index()
     graph["suggested_l4_candidates"] = suggest_l4_candidates(edges, table_to_l4_index, known_tables)
+    flag_zombie_tables(graph["nodes"], table_to_l4_index, graph["suggested_l4_candidates"])
 
     output_path = AGENT_ROOT / "10_部署与运行_Deploy_and_Run/frontend/public/data/data_lineage.json"
     output_path.write_text(json.dumps(graph, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    zombie_count = sum(1 for n in graph["nodes"] if n["zombie_flag"] == "suspected_zombie")
     return {
         "node_count": len(graph["nodes"]),
         "edge_count": len(graph["edges"]),
+        "suspected_zombie_count": zombie_count,
         "edge_type_counts": graph["edge_type_counts"],
         "suggested_candidate_table_count": len(graph["suggested_l4_candidates"]),
         "output": str(output_path),

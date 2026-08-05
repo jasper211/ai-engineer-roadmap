@@ -297,7 +297,10 @@ def test_12_daily_sensing_fingerprint_dedup(tmp_dir: Path):
             "relationships": [],
             "suggested_tasks": [{"name": "复核note.md", "rationale": "r", "priority": "P2",
                                    "signal_to": ["Jasper", "Terresa"], "needs_mark_alignment": True,
-                                   "relevance_reason": "rr", "related_files": ["note.md"]}],
+                                   "relevance_reason": "rr", "related_files": ["note.md"],
+                                   "suggestion": "针对性建议：先核对note.md的初始内容是否符合预期",
+                                   "execution_steps": ["打开note.md核对初始内容", "跟Terresa确认是否需要补充"],
+                                   "ideal_deliverable": "note.md内容经过核对并确认无误"}],
         }, ensure_ascii=False)
 
     daily_sensing.call_deepseek = _stub_with_task
@@ -311,6 +314,13 @@ def test_12_daily_sensing_fingerprint_dedup(tmp_dir: Path):
           f"signal_to 解析错误: {briefing1.suggested_tasks[0].signal_to}")
     check(briefing1.suggested_tasks[0].needs_mark_alignment is True,
           "needs_mark_alignment 正确解析为 True", "needs_mark_alignment 解析错误")
+    check(briefing1.suggested_tasks[0].suggestion == "针对性建议：先核对note.md的初始内容是否符合预期"
+          and briefing1.suggested_tasks[0].execution_steps == ["打开note.md核对初始内容", "跟Terresa确认是否需要补充"]
+          and briefing1.suggested_tasks[0].ideal_deliverable == "note.md内容经过核对并确认无误",
+          "suggestion/execution_steps/ideal_deliverable 正确从LLM输出解析（针对性分析，不是模板）",
+          f"针对性分析字段解析错误: suggestion={briefing1.suggested_tasks[0].suggestion!r}, "
+          f"execution_steps={briefing1.suggested_tasks[0].execution_steps!r}, "
+          f"ideal_deliverable={briefing1.suggested_tasks[0].ideal_deliverable!r}")
 
     # 第二次扫描：文件没有变化，stub 换成"一调用就报错"，验证真的零 LLM 调用
     def _boom(*a, **kw):
@@ -329,6 +339,11 @@ def test_12_daily_sensing_fingerprint_dedup(tmp_dir: Path):
           "复现的 pending 任务正确保留了 signal_to/needs_mark_alignment（指纹重建没有丢字段）",
           f"复现的 pending 任务丢失了字段: signal_to={briefing2.suggested_tasks[0].signal_to}, "
           f"needs_mark_alignment={briefing2.suggested_tasks[0].needs_mark_alignment}")
+    check(briefing2.suggested_tasks[0].suggestion == "针对性建议：先核对note.md的初始内容是否符合预期"
+          and briefing2.suggested_tasks[0].ideal_deliverable == "note.md内容经过核对并确认无误",
+          "复现的 pending 任务也正确保留了 suggestion/ideal_deliverable（无变化重建路径没有丢新字段）",
+          f"复现路径丢失了针对性分析字段: suggestion={briefing2.suggested_tasks[0].suggestion!r}, "
+          f"ideal_deliverable={briefing2.suggested_tasks[0].ideal_deliverable!r}")
 
 
 def test_13_daily_scan_cli_missing_api_key(tmp_dir: Path):
@@ -756,7 +771,9 @@ def test_25_list_tasks_from_state():
         "suggested_task_fingerprints": {
             "fp_new": {"task_id": "RPT-A", "name": "今天刚发现", "status": "pending",
                         "first_suggested": now.isoformat(), "priority": "P1",
-                        "signal_to": ["Jasper"], "needs_mark_alignment": False, "related_files": []},
+                        "signal_to": ["Jasper"], "needs_mark_alignment": False, "related_files": [],
+                        "suggestion": "先核对X", "execution_steps": ["步骤1", "步骤2"],
+                        "ideal_deliverable": "产出Y"},
             "fp_aging": {"task_id": "RPT-B", "name": "搁置很久了", "status": "pending",
                           "first_suggested": (now - timedelta(days=6)).isoformat(), "priority": "P0",
                           "signal_to": [], "needs_mark_alignment": True, "related_files": ["x.md"]},
@@ -784,6 +801,14 @@ def test_25_list_tasks_from_state():
           "只报一次，是持续滚动的时间窗）", f"resolved_recent不对: {result['resolved_recent']}")
     check(all(t["project_name"] == "测试项目" for bucket in result.values() for t in bucket),
           "每条任务都正确标注了project_name（供跨项目聚合视图使用）", "project_name标注缺失/错误")
+    check(result["new"][0]["suggestion"] == "先核对X" and result["new"][0]["execution_steps"] == ["步骤1", "步骤2"]
+          and result["new"][0]["ideal_deliverable"] == "产出Y",
+          "有针对性分析字段的指纹正确透出 suggestion/execution_steps/ideal_deliverable",
+          f"针对性分析字段透出错误: {result['new'][0]}")
+    check(result["aging"][0].get("suggestion") == "" and result["aging"][0].get("execution_steps") == [],
+          "没有针对性分析字段的旧指纹（预示着schema升级前的历史任务）优雅回退成空值，不报错",
+          f"旧指纹兼容回退错误: suggestion={result['aging'][0].get('suggestion')!r}, "
+          f"execution_steps={result['aging'][0].get('execution_steps')!r}")
 
 
 def test_26_summarize_latest_report(tmp_dir: Path):

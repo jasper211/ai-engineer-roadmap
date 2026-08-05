@@ -28,6 +28,13 @@ export interface Task {
   execution?: TaskExecution | null
   personal_bucket?: 'direct_action' | 'ea_application' | 'pending_evaluation'
   personal_reason?: string
+  // 2026-08起：daily_sensing的LLM在发现任务的同一次调用里，基于这条任务
+  // 自己的证据生成的针对性分析——跟personal_bucket套模板的旧写法不同。
+  // 三者都可能为空（旧schema下产生的历史任务没有这些字段），前端需要
+  // 优雅回退到通用文案，不能假设一定存在。
+  suggestion?: string
+  execution_steps?: string[]
+  ideal_deliverable?: string
 }
 
 export interface StepRisk { level: 'low' | 'high' | 'critical'; label: string; requires_reconfirm: boolean }

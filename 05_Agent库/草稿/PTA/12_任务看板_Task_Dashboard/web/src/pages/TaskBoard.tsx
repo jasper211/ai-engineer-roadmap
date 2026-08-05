@@ -152,8 +152,8 @@ function ProjectPanel({ project, primary = false, filtering = false }: { project
   )
 }
 
-function FilterAnalysis({ projects, type, member, query }: { projects: CommandProject[]; type: ChangeFilter; member: string; query: string }) {
-  const rows = projects.flatMap(project => project.changes.map(change => ({ project: project.project_name, change })))
+function FilterAnalysis({ project, type, member, query }: { project: CommandProject; type: ChangeFilter; member: string; query: string }) {
+  const rows = project.changes.map(change => ({ change }))
   if (!rows.length) return <section className="rounded-2xl border border-border-default bg-bg-elevated p-5"><div className="flex items-center gap-2 text-sm font-semibold"><BarChart3 size={16} className="text-accent-secondary"/>更新分析</div><p className="mt-3 text-xs text-text-muted">当前筛选条件没有匹配内容，暂时无法形成更新分析。</p></section>
   const domains = new Map<string, number>()
   const people = new Map<string, number>()
@@ -167,13 +167,13 @@ function FilterAnalysis({ projects, type, member, query }: { projects: CommandPr
   const typeText = type === 'all' ? '全部类型' : CHANGE_META[type].label
   return (
     <section className="rounded-2xl border border-accent-secondary/20 bg-gradient-to-br from-accent-secondary/8 to-bg-elevated p-5">
-      <div className="flex flex-col gap-3 md:flex-row md:items-start"><div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-accent-secondary/10 text-accent-secondary"><BarChart3 size={18}/></div><div className="min-w-0 flex-1"><h2 className="font-heading text-base font-semibold">筛选结果 · 更新分析</h2><p className="mt-1 text-xs leading-5 text-text-secondary">当前查看 {typeText}{member !== 'all' ? ` · ${member}` : ''}{query ? ` · 文件包含“${query}”` : ''}，共命中 {rows.length} 个文件，涉及 {new Set(rows.map(row => row.project)).size} 个项目。</p></div></div>
+      <div className="flex flex-col gap-3 md:flex-row md:items-start"><div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-accent-secondary/10 text-accent-secondary"><BarChart3 size={18}/></div><div className="min-w-0 flex-1"><h2 className="font-heading text-base font-semibold">筛选结果 · 更新分析</h2><p className="mt-1 text-xs leading-5 text-text-secondary">当前查看 {project.project_name} · {typeText}{member !== 'all' ? ` · ${member}` : ''}{query ? ` · 文件包含"${query}"` : ''}，共命中 {rows.length} 个文件。</p></div></div>
       <div className="mt-4 grid gap-3 md:grid-cols-3">
         <div className="analysis-stat"><span>主要更新领域</span><b>{topDomains.map(([name, count]) => `${name} ${count}`).join(' · ')}</b></div>
         <div className="analysis-stat"><span>主要更新成员</span><b>{topPeople.map(([name, count]) => `${name} ${count}`).join(' · ')}</b></div>
         <div className="analysis-stat"><span>风险提示</span><b className={removals ? 'text-accent-warning' : ''}>{removals ? `${removals} 个删除项，建议核对依赖关系` : '未发现删除项'}</b></div>
       </div>
-      <div className="mt-4 border-t border-border-default/70 pt-4"><div className="mb-2 text-[10px] font-semibold tracking-wide text-text-muted">重点更新速读</div><div className="grid gap-2 lg:grid-cols-2">{rows.slice(0, 6).map(({ project, change }, index) => <div key={`${project}-${change.file}-${index}`} className="rounded-lg bg-bg-base/60 p-3"><div className="flex items-center gap-2 text-[10px] text-text-muted"><span>{project}</span><span>·</span><span>{CHANGE_META[change.change_type].label}</span><span>·</span><span>{change.who || '未知来源'}</span></div><p className="mt-1 text-xs leading-5 text-text-secondary">{change.summary || change.file}</p></div>)}</div>{rows.length > 6 && <p className="mt-2 text-[10px] text-text-muted">其余 {rows.length - 6} 个匹配文件请在下方项目视图继续查阅。</p>}</div>
+      <div className="mt-4 border-t border-border-default/70 pt-4"><div className="mb-2 text-[10px] font-semibold tracking-wide text-text-muted">重点更新速读</div><div className="grid gap-2 lg:grid-cols-2">{rows.slice(0, 6).map(({ change }, index) => <div key={`${change.file}-${index}`} className="rounded-lg bg-bg-base/60 p-3"><div className="flex items-center gap-2 text-[10px] text-text-muted"><span>{CHANGE_META[change.change_type].label}</span><span>·</span><span>{change.who || '未知来源'}</span></div><p className="mt-1 text-xs leading-5 text-text-secondary">{change.summary || change.file}</p></div>)}</div>{rows.length > 6 && <p className="mt-2 text-[10px] text-text-muted">其余 {rows.length - 6} 个匹配文件请在下方项目视图继续查阅。</p>}</div>
     </section>
   )
 }
@@ -182,71 +182,105 @@ function RelationCard({ relation }: { relation: CrossProjectRelation }) {
   return <div className="rounded-xl border border-border-default bg-bg-elevated p-4"><div className="flex items-center gap-2 text-xs font-medium"><span>{relation.from_project}</span><ArrowRight size={13} className="text-accent-secondary"/><span>{relation.to_project}</span></div><p className="mt-2 text-xs leading-5 text-text-secondary">{relation.analysis}</p><div className="mt-3 flex flex-wrap gap-1">{relation.shared_domains.map(d => <span key={d} className="rounded bg-bg-surface px-2 py-1 text-[10px] text-text-muted">{d}</span>)}</div><p className="mt-3 text-[10px] text-accent-warning">关系线索，需结合文件内容核对，不视为已确认因果</p></div>
 }
 
+interface ProjectFilterState { changeType: ChangeFilter; member: string; fileQuery: string }
+const DEFAULT_PROJECT_FILTER: ProjectFilterState = { changeType: 'all', member: 'all', fileQuery: '' }
+const ROLE_ORDER: Record<string, number> = { core: 0, lab: 1, case: 2, other: 3 }
+
 export function TaskBoard() {
   const [data, setData] = useState<CommandCenterResponse | null>(null)
   const [error, setError] = useState('')
-  const [changeType, setChangeType] = useState<ChangeFilter>('all')
   const [rangeDays, setRangeDays] = useState<DateRange>(1)
-  const [member, setMember] = useState('all')
-  const [fileQuery, setFileQuery] = useState('')
+  const [activeProject, setActiveProject] = useState<string | null>(null)
+  const [filtersByProject, setFiltersByProject] = useState<Record<string, ProjectFilterState>>({})
+
   useEffect(() => {
     setData(null)
-    fetchCommandCenter(rangeDays).then(setData).catch(e => setError(String(e)))
+    fetchCommandCenter(rangeDays).then(response => {
+      setData(response)
+      setActiveProject(prev => {
+        if (prev && response.projects.some(project => project.project_name === prev)) return prev
+        const ordered = [...response.projects].sort((a, b) => (ROLE_ORDER[a.role] ?? 9) - (ROLE_ORDER[b.role] ?? 9))
+        return ordered[0]?.project_name ?? null
+      })
+    }).catch(e => setError(String(e)))
   }, [rangeDays])
 
+  const current = useMemo(() => data?.projects.find(project => project.project_name === activeProject) ?? null, [data, activeProject])
+  const currentFilter = (activeProject && filtersByProject[activeProject]) || DEFAULT_PROJECT_FILTER
+  const setCurrentFilter = (patch: Partial<ProjectFilterState>) => {
+    if (!activeProject) return
+    setFiltersByProject(prev => ({ ...prev, [activeProject]: { ...(prev[activeProject] || DEFAULT_PROJECT_FILTER), ...patch } }))
+  }
+  const { changeType, member, fileQuery } = currentFilter
+
   const members = useMemo(() => {
-    if (!data) return []
-    return [...new Set(data.projects.flatMap(project => project.changes.flatMap(change => peopleFromWho(change.who))))].sort((a, b) => a.localeCompare(b, 'zh-CN'))
-  }, [data])
+    if (!current) return []
+    return [...new Set(current.changes.flatMap(change => peopleFromWho(change.who)))].sort((a, b) => a.localeCompare(b, 'zh-CN'))
+  }, [current])
   const filtering = changeType !== 'all' || member !== 'all' || !!fileQuery.trim()
-  const filteredProjects = useMemo(() => {
-    if (!data) return []
+  const filteredProject = useMemo(() => {
+    if (!current) return null
     const query = fileQuery.trim().toLocaleLowerCase()
-    return data.projects.map(project => {
-      const changes = project.changes.filter(change => {
-        const typeMatch = changeType === 'all' || change.change_type === changeType
-        const memberMatch = member === 'all' || peopleFromWho(change.who).includes(member)
-        const fileMatch = matchesFileQuery(change, query)
-        return typeMatch && memberMatch && fileMatch
-      })
-      const files = new Set(changes.map(change => change.file))
-      return {
-        ...project,
-        changes,
-        total_changes: changes.length,
-        relationships: filtering ? project.relationships.filter(item => item.related_files.some(file => files.has(file))) : project.relationships,
-        related_tasks: filtering ? project.related_tasks.filter(task => task.related_files?.some(file => files.has(file))) : project.related_tasks,
-      }
+    const changes = current.changes.filter(change => {
+      const typeMatch = changeType === 'all' || change.change_type === changeType
+      const memberMatch = member === 'all' || peopleFromWho(change.who).includes(member)
+      const fileMatch = matchesFileQuery(change, query)
+      return typeMatch && memberMatch && fileMatch
     })
-  }, [data, changeType, member, fileQuery, filtering])
-  const core = filteredProjects.find(project => project.role === 'core')
-  const secondary = filteredProjects.filter(project => project.role !== 'core')
-  const total = data?.projects.reduce((sum, project) => sum + project.total_changes, 0) || 0
-  const filteredTotal = filteredProjects.reduce((sum, project) => sum + project.changes.length, 0)
-  const filteredFiles = new Set(filteredProjects.flatMap(project => project.changes.map(change => change.file)))
-  const filteredRelations = data?.cross_project_relations.filter(relation => !filtering || relation.evidence_files.some(file => filteredFiles.has(file))) || []
-  const resetFilters = () => { setChangeType('all'); setMember('all'); setFileQuery('') }
+    const files = new Set(changes.map(change => change.file))
+    return {
+      ...current,
+      changes,
+      total_changes: changes.length,
+      relationships: filtering ? current.relationships.filter(item => item.related_files.some(file => files.has(file))) : current.relationships,
+      related_tasks: filtering ? current.related_tasks.filter(task => task.related_files?.some(file => files.has(file))) : current.related_tasks,
+    }
+  }, [current, changeType, member, fileQuery, filtering])
+  const total = current?.total_changes || 0
+  const filteredTotal = filteredProject?.changes.length || 0
+  const filteredFiles = new Set(filteredProject?.changes.map(change => change.file) || [])
+  const filteredRelations = (data?.cross_project_relations || []).filter(relation =>
+    (relation.from_project === activeProject || relation.to_project === activeProject)
+    && (!filtering || relation.evidence_files.some(file => filteredFiles.has(file))))
+  const resetFilters = () => setCurrentFilter(DEFAULT_PROJECT_FILTER)
 
   if (error) return <div className="p-8 text-accent-danger">指挥中心加载失败：{error}</div>
   if (!data) return <div className="p-8 text-text-muted">正在汇总三个项目的最新文件事实…</div>
+  if (!current || !filteredProject) return <div className="p-8 text-text-muted">没有可用项目。</div>
   return (
     <main className="mx-auto max-w-[1440px] space-y-7 px-5 py-7 lg:px-8">
-      <header className="flex flex-col gap-4 lg:flex-row lg:items-end"><div><div className="eyebrow"><GitCompareArrows size={12}/>PERSONAL PROJECT INTELLIGENCE</div><h1 className="mt-2 font-heading text-2xl font-semibold tracking-tight lg:text-3xl">项目指挥中心</h1><p className="mt-2 max-w-3xl text-sm leading-6 text-text-secondary">文件事实是唯一源头：选择时间范围，筛选谁更新了什么，快速定位文件，再查看筛选范围内的更新分析。</p></div><div className="ml-auto rounded-xl border border-border-default bg-bg-elevated px-4 py-3"><div className="text-2xl font-semibold">{filtering ? filteredTotal : total}</div><div className="text-[10px] text-text-muted">{filtering ? `筛选命中 / 全部 ${total}` : `过去 ${rangeDays} 天文件变化`}</div></div></header>
+      <header className="flex flex-col gap-4 lg:flex-row lg:items-end"><div><div className="eyebrow"><GitCompareArrows size={12}/>PERSONAL PROJECT INTELLIGENCE</div><h1 className="mt-2 font-heading text-2xl font-semibold tracking-tight lg:text-3xl">项目指挥中心</h1><p className="mt-2 max-w-3xl text-sm leading-6 text-text-secondary">一次只看一个项目：选择项目和时间范围，筛选谁更新了什么，快速定位文件，再查看该项目筛选范围内的更新分析。</p></div><div className="ml-auto rounded-xl border border-border-default bg-bg-elevated px-4 py-3"><div className="text-2xl font-semibold">{filtering ? filteredTotal : total}</div><div className="text-[10px] text-text-muted">{filtering ? `筛选命中 / 全部 ${total}` : `${current.project_name} · 过去 ${rangeDays} 天文件变化`}</div></div></header>
       <div className="rounded-xl border border-accent-secondary/15 bg-accent-secondary/5 px-4 py-3 text-xs text-text-secondary"><b className="text-accent-secondary">SSOT 时间口径：</b>{data.period_basis}</div>
+
+      <div className="flex flex-wrap gap-2">
+        {[...data.projects].sort((a, b) => (ROLE_ORDER[a.role] ?? 9) - (ROLE_ORDER[b.role] ?? 9)).map(project => {
+          const importantCount = project.changes.filter(change => change.important_to_me).length
+          const isActive = project.project_name === activeProject
+          return (
+            <button key={project.project_name} onClick={() => setActiveProject(project.project_name)}
+              className={`flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm transition ${isActive ? 'border-accent-primary bg-accent-primary/10 text-text-primary' : 'border-border-default bg-bg-elevated text-text-secondary hover:text-text-primary'}`}>
+              <FolderKanban size={15}/>
+              <span className="font-medium">{project.project_name}</span>
+              <span className="rounded bg-bg-surface px-1.5 py-0.5 font-mono text-[10px] text-text-muted">{project.total_changes}</span>
+              {importantCount > 0 && <span className="flex items-center gap-0.5 rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold text-amber-800"><Sparkles size={10}/>{importantCount}</span>}
+            </button>
+          )
+        })}
+      </div>
 
       <section className="sticky top-[65px] z-30 rounded-2xl border border-border-default bg-bg-elevated/95 p-4 shadow-xl backdrop-blur-xl">
         <div className="mb-4 border-b border-border-default pb-4"><div className="mb-2 flex items-center gap-2 text-xs font-semibold"><CalendarDays size={14} className="text-accent-secondary"/>日期范围</div><div className="flex flex-wrap gap-2">{DATE_OPTIONS.map(option => <button key={option.value} onClick={() => setRangeDays(option.value)} aria-pressed={rangeDays === option.value} className={`filter-chip ${rangeDays === option.value ? 'filter-chip-active' : ''}`}>{option.label}</button>)}</div></div>
         <div className="flex flex-col gap-4 xl:flex-row xl:items-end">
-          <div className="min-w-0 flex-1"><div className="mb-2 flex items-center gap-2 text-xs font-semibold"><SlidersHorizontal size={14} className="text-accent-secondary"/>变更类型</div><div className="flex flex-wrap gap-2">{FILTER_OPTIONS.map(({ value, label, icon: Icon }) => <button key={value} onClick={() => setChangeType(value)} aria-pressed={changeType === value} className={`filter-chip ${changeType === value ? 'filter-chip-active' : ''}`}><Icon size={13}/>{label}</button>)}</div></div>
-          <label className="block min-w-[190px] text-xs font-semibold"><span className="mb-2 flex items-center gap-2"><Users size={14} className="text-accent-secondary"/>项目组成员</span><select value={member} onChange={event => setMember(event.target.value)} className="field h-10 py-0"><option value="all">全部成员</option>{members.map(name => <option key={name} value={name}>{name}</option>)}</select></label>
-          <label className="block min-w-0 flex-1 text-xs font-semibold xl:max-w-sm"><span className="mb-2 flex items-center gap-2"><Search size={14} className="text-accent-secondary"/>快速定位更新文件</span><div className="relative"><Search size={14} className="absolute left-3 top-3 text-text-muted"/><input value={fileQuery} onChange={event => setFileQuery(event.target.value)} className="field h-10 py-0 pl-9" placeholder="输入文件名、路径或更新摘要"/></div></label>
+          <div className="min-w-0 flex-1"><div className="mb-2 flex items-center gap-2 text-xs font-semibold"><SlidersHorizontal size={14} className="text-accent-secondary"/>变更类型</div><div className="flex flex-wrap gap-2">{FILTER_OPTIONS.map(({ value, label, icon: Icon }) => <button key={value} onClick={() => setCurrentFilter({ changeType: value })} aria-pressed={changeType === value} className={`filter-chip ${changeType === value ? 'filter-chip-active' : ''}`}><Icon size={13}/>{label}</button>)}</div></div>
+          <label className="block min-w-[190px] text-xs font-semibold"><span className="mb-2 flex items-center gap-2"><Users size={14} className="text-accent-secondary"/>项目组成员</span><select value={member} onChange={event => setCurrentFilter({ member: event.target.value })} className="field h-10 py-0"><option value="all">全部成员</option>{members.map(name => <option key={name} value={name}>{name}</option>)}</select></label>
+          <label className="block min-w-0 flex-1 text-xs font-semibold xl:max-w-sm"><span className="mb-2 flex items-center gap-2"><Search size={14} className="text-accent-secondary"/>快速定位更新文件</span><div className="relative"><Search size={14} className="absolute left-3 top-3 text-text-muted"/><input value={fileQuery} onChange={event => setCurrentFilter({ fileQuery: event.target.value })} className="field h-10 py-0 pl-9" placeholder="输入文件名、路径或更新摘要"/></div></label>
           <button onClick={resetFilters} disabled={!filtering} className="action-secondary h-10 px-3 py-0 text-xs"><RotateCcw size={13}/>清除筛选</button>
         </div>
       </section>
 
-      <FilterAnalysis projects={filteredProjects} type={changeType} member={member} query={fileQuery.trim()}/>
-      <section className="grid items-start gap-6 xl:grid-cols-[minmax(0,1.65fr)_minmax(360px,.85fr)]">{core ? <ProjectPanel project={core} primary filtering={filtering}/> : <div className="rounded-2xl border border-accent-danger/20 p-8 text-sm text-accent-danger">EA 核心项目尚无成功巡检报告</div>}<div className="space-y-6">{secondary.map(project => <ProjectPanel key={project.project_name} project={project} filtering={filtering}/>)}</div></section>
-      <section><div className="mb-3 flex items-center gap-2"><GitCompareArrows size={16} className="text-accent-secondary"/><h2 className="font-heading text-base font-semibold">{filtering ? '与筛选文件相关的跨项目关系' : '跨项目关系线索'}</h2><span className="text-[10px] text-text-muted">EA ↔ Jasper ↔ Rw</span></div>{filteredRelations.length ? <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">{filteredRelations.map((relation, index) => <RelationCard key={`${relation.from_project}-${relation.to_project}-${index}`} relation={relation}/>)}</div> : <div className="rounded-xl border border-border-default bg-bg-elevated px-5 py-8 text-center text-xs text-text-muted">{filtering ? '当前筛选文件没有已记录的跨项目关系线索' : '本轮三个项目暂未出现共同业务域的变化线索'}</div>}</section>
+      <FilterAnalysis project={filteredProject} type={changeType} member={member} query={fileQuery.trim()}/>
+      <ProjectPanel project={filteredProject} primary filtering={filtering}/>
+      <section><div className="mb-3 flex items-center gap-2"><GitCompareArrows size={16} className="text-accent-secondary"/><h2 className="font-heading text-base font-semibold">{filtering ? '与筛选文件相关的跨项目关系' : '跨项目关系线索'}</h2><span className="text-[10px] text-text-muted">涉及 {current.project_name} 的关系</span></div>{filteredRelations.length ? <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">{filteredRelations.map((relation, index) => <RelationCard key={`${relation.from_project}-${relation.to_project}-${index}`} relation={relation}/>)}</div> : <div className="rounded-xl border border-border-default bg-bg-elevated px-5 py-8 text-center text-xs text-text-muted">{filtering ? '当前筛选文件没有已记录的跨项目关系线索' : `本轮 ${current.project_name} 暂未出现与其他项目共同业务域的变化线索`}</div>}</section>
     </main>
   )
 }

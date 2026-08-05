@@ -10,7 +10,12 @@ interface Props {
   onSaved?: () => Promise<void>
 }
 
-function suggestionFor(task: Task) {
+// 以下三个 fallback* 函数只在任务缺少 daily_sensing 针对性分析字段时才使用——
+// 这类任务是 2026-08 该字段上线之前就已经进入指纹库的历史遗留任务，schema里
+// 没有 suggestion/execution_steps/ideal_deliverable，只能退回按 personal_bucket
+// 分四类的通用文案兜底。新任务应该优先展示 task.suggestion 等真实字段，
+// 那是 LLM 基于这条任务自己的证据生成的针对性内容，不是套模板。
+function fallbackSuggestionFor(task: Task) {
   if (task.personal_bucket === 'pending_evaluation') {
     return '先验证这项能力能否映射到 EA 的具体流程、任务或人机协同节点；映射成立后，再转为行动事项。'
   }
@@ -23,7 +28,7 @@ function suggestionFor(task: Task) {
   return '围绕受影响的 EA 流程定位人机分工、信号、响应规则和可 Agent 化任务，优先补齐规则缺口。'
 }
 
-function executionReferenceFor(task: Task) {
+function fallbackExecutionStepsFor(task: Task) {
   if (task.personal_bucket === 'pending_evaluation') return [
     '找到一个明确的 EA 流程、L3 或端到端任务作为映射对象。',
     '说明 Jasper 变化能解决什么问题，以及现行流程为什么无法满足。',
@@ -41,8 +46,7 @@ function executionReferenceFor(task: Task) {
   ]
 }
 
-function idealDeliverableFor(task: Task) {
-  if (task.acceptance_criteria) return task.acceptance_criteria
+function fallbackIdealDeliverableFor(task: Task) {
   if (task.personal_bucket === 'pending_evaluation') {
     return '一份 EA 应用评估结论：对应流程与任务、可解决的问题、应用前提、风险限制，以及是否进入行动区。'
   }
@@ -72,7 +76,10 @@ function Module({ icon: Icon, index, title, children }: {
 
 export function TaskDecisionDrawer({ task, onClose }: Props) {
   if (!task) return null
-  const steps = executionReferenceFor(task)
+  const hasTailoredAnalysis = !!(task.suggestion || task.execution_steps?.length || task.ideal_deliverable)
+  const suggestion = task.suggestion || fallbackSuggestionFor(task)
+  const steps = task.execution_steps?.length ? task.execution_steps : fallbackExecutionStepsFor(task)
+  const idealDeliverable = task.acceptance_criteria || task.ideal_deliverable || fallbackIdealDeliverableFor(task)
 
   return (
     <div className="fixed inset-0 z-50 flex justify-end" role="dialog" aria-modal="true" aria-label="工作事项详情">
@@ -97,7 +104,7 @@ export function TaskDecisionDrawer({ task, onClose }: Props) {
           </Module>
 
           <Module icon={Lightbulb} index="02" title="建议">
-            <p>{suggestionFor(task)}</p>
+            <p>{suggestion}</p>
             {task.signal_to?.length > 0 && <p className="mt-2 text-xs text-text-muted">建议协同核对：{task.signal_to.join('、')}</p>}
           </Module>
 
@@ -114,8 +121,10 @@ export function TaskDecisionDrawer({ task, onClose }: Props) {
           </Module>
 
           <Module icon={ClipboardCheck} index="04" title="理想化交付">
-            <div className="flex items-start gap-3"><CheckCircle2 size={17} className="mt-1 shrink-0 text-accent-success"/><p className="text-text-primary">{idealDeliverableFor(task)}</p></div>
+            <div className="flex items-start gap-3"><CheckCircle2 size={17} className="mt-1 shrink-0 text-accent-success"/><p className="text-text-primary">{idealDeliverable}</p></div>
           </Module>
+
+          {!hasTailoredAnalysis && <p className="px-1 text-[10px] text-text-muted">此任务在"针对性分析"功能上线前生成，以上02-04为按类型归纳的通用参考；新发现的任务会展示基于其自身证据生成的具体分析。</p>}
         </div>
       </aside>
     </div>

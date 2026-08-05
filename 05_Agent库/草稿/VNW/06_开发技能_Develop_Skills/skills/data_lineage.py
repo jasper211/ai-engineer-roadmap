@@ -217,3 +217,22 @@ def suggest_l4_candidates(edges: list[dict], table_to_l4_index: dict[str, list[d
         if seen:
             suggestions[key] = list(seen.values())
     return suggestions
+
+
+def flag_zombie_tables(nodes: list[dict], table_to_l4_index: dict[str, list[dict]], suggested_candidates: dict[str, list]) -> None:
+    """就地给每个node加zombie_flag字段。三种真实信号(血缘边/已确认L4关联/血缘候选)
+    一个都没有的表，才有资格被标——区分两种情况：0行是"从未启用"(可能只是还没到
+    这个环节，不算真问题)，有行数据但仍然三条信号全无，才是更接近字面意义的
+    "疑似僵尸表"(数据蓄在库里，血缘上无人产出/消费它，L4分析也没人认领)。
+    这不是删除或下线建议，只是标出来提醒去核实——核实结果可能是"确实没用了"，
+    也可能是"只是还没做匹配分析"，两种都要靠人判断，不能自动下结论。
+    """
+    for node in nodes:
+        key = f"{node['schema']}.{node['table']}"
+        has_signal = node["has_lineage"] or bool(table_to_l4_index.get(key)) or bool(suggested_candidates.get(key))
+        if has_signal:
+            node["zombie_flag"] = "none"
+        elif node["row_count"] == 0:
+            node["zombie_flag"] = "never_activated"
+        else:
+            node["zombie_flag"] = "suspected_zombie"

@@ -12,6 +12,7 @@ const EDGE_TONE: Record<LineageEdgeType, { stroke: string; dash?: string }> = {
 const RELATION_TONE = {
   confirmed: { fill: '#10b981', label: '已确认关联L4' },
   candidate: { fill: '#f59e0b', label: '血缘候选(待核实)' },
+  zombie: { fill: '#e11d48', label: '疑似僵尸表(有数据但无人认领)' },
   none: { fill: '#94a3b8', label: '暂无信号' },
 } as const
 
@@ -99,6 +100,7 @@ export default function DataLineage() {
   const [query, setQuery] = useState('')
   const [showPipelineSibling, setShowPipelineSibling] = useState(false)
   const [schemaFilter, setSchemaFilter] = useState<'all' | string>('all')
+  const [l3Slice, setL3Slice] = useState<'all' | string>('all')
 
   useEffect(() => {
     loadDataLineage().then(setLineage).catch(err => setError(err.message))
@@ -113,27 +115,62 @@ export default function DataLineage() {
     return set
   }, [tableAnalysis])
 
-  const connectedNodes = useMemo(() => lineage?.nodes.filter(n => n.has_lineage) ?? [], [lineage])
-  const isolatedNodes = useMemo(() => lineage?.nodes.filter(n => !n.has_lineage) ?? [], [lineage])
+  const l3ToTableKeys = useMemo(() => {
+    const map = new Map<string, { name: string; keys: Set<string> }>()
+    tableAnalysis?.tables.forEach(t => {
+      t.layer2.related_l3_l4.forEach(rel => {
+        const entry = map.get(rel.l3_code) ?? { name: rel.l3_name, keys: new Set<string>() }
+        entry.keys.add(nodeKey(t.schema, t.table))
+        map.set(rel.l3_code, entry)
+      })
+    })
+    return map
+  }, [tableAnalysis])
+
+  const l3Options = useMemo(() => Array.from(l3ToTableKeys.entries()).sort(([a], [b]) => a.localeCompare(b)), [l3ToTableKeys])
+
+  const sliceCoreKeys = useMemo(() => (l3Slice === 'all' ? null : l3ToTableKeys.get(l3Slice)?.keys ?? new Set<string>()), [l3Slice, l3ToTableKeys])
 
   const visibleEdges = useMemo(() => {
     if (!lineage) return []
-    return lineage.edges.filter(e => showPipelineSibling || e.edge_type !== 'pipeline_sibling')
-  }, [lineage, showPipelineSibling])
+    const base = lineage.edges.filter(e => showPipelineSibling || e.edge_type !== 'pipeline_sibling')
+    if (!sliceCoreKeys) return base
+    return base.filter(e => sliceCoreKeys.has(nodeKey(e.from_schema, e.from_table)) || sliceCoreKeys.has(nodeKey(e.to_schema, e.to_table)))
+  }, [lineage, showPipelineSibling, sliceCoreKeys])
+
+  const sliceNeighborKeys = useMemo(() => {
+    if (!sliceCoreKeys) return new Set<string>()
+    const set = new Set<string>()
+    visibleEdges.forEach(e => {
+      const a = nodeKey(e.from_schema, e.from_table)
+      const b = nodeKey(e.to_schema, e.to_table)
+      if (sliceCoreKeys.has(a) && !sliceCoreKeys.has(b)) set.add(b)
+      if (sliceCoreKeys.has(b) && !sliceCoreKeys.has(a)) set.add(a)
+    })
+    return set
+  }, [sliceCoreKeys, visibleEdges])
+
+  const graphNodes = useMemo(() => {
+    if (!lineage) return []
+    if (!sliceCoreKeys) return lineage.nodes.filter(n => n.has_lineage)
+    return lineage.nodes.filter(n => sliceCoreKeys.has(nodeKey(n.schema, n.table)) || sliceNeighborKeys.has(nodeKey(n.schema, n.table)))
+  }, [lineage, sliceCoreKeys, sliceNeighborKeys])
+
+  const isolatedNodes = useMemo(() => lineage?.nodes.filter(n => !n.has_lineage) ?? [], [lineage])
 
   const layout = useMemo(() => {
     if (!lineage) return new Map<string, { x: number; y: number }>()
-    return computeForceLayout(connectedNodes, lineage.edges, 1100, 820)
-  }, [lineage, connectedNodes])
+    return computeForceLayout(graphNodes, visibleEdges, 1100, 820)
+  }, [lineage, graphNodes, visibleEdges])
 
   const laidOutNodes: LaidOutNode[] = useMemo(() => {
-    return connectedNodes.map(n => {
+    return graphNodes.map(n => {
       const key = nodeKey(n.schema, n.table)
       const pos = layout.get(key) ?? { x: 0, y: 0 }
       const degree = visibleEdges.filter(e => nodeKey(e.from_schema, e.from_table) === key || nodeKey(e.to_schema, e.to_table) === key).length
       return { ...n, key, x: pos.x, y: pos.y, degree }
     })
-  }, [connectedNodes, layout, visibleEdges])
+  }, [graphNodes, layout, visibleEdges])
 
   const filteredKeys = useMemo(() => {
     const q = query.toLowerCase()
@@ -160,9 +197,11 @@ export default function DataLineage() {
       }))
   }, [selected, lineage])
 
-  const relationStatus = (key: string): keyof typeof RELATION_TONE => {
+  const relationStatus = (node: LineageNode): keyof typeof RELATION_TONE => {
+    const key = nodeKey(node.schema, node.table)
     if (confirmedRelationKeys.has(key)) return 'confirmed'
     if (lineage?.suggested_l4_candidates[key]?.length) return 'candidate'
+    if (node.zombie_flag === 'suspected_zombie') return 'zombie'
     return 'none'
   }
 
@@ -170,6 +209,8 @@ export default function DataLineage() {
   if (!lineage) return <div className="flex min-h-64 items-center justify-center text-text-muted">正在读取数据血缘图…</div>
 
   const candidateCount = Object.keys(lineage.suggested_l4_candidates).length
+  const zombieNodes = lineage.nodes.filter(n => n.zombie_flag === 'suspected_zombie')
+  const neverActivatedCount = lineage.nodes.filter(n => n.zombie_flag === 'never_activated').length
 
   return (
     <div className="space-y-6">
@@ -186,11 +227,12 @@ export default function DataLineage() {
         </p>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-4">
-        <div className="panel p-4"><p className="eyebrow">有血缘证据的表</p><p className="mt-2 metric-value">{connectedNodes.length}/{lineage.nodes.length}</p></div>
+      <div className="grid gap-3 sm:grid-cols-5">
+        <div className="panel p-4"><p className="eyebrow">有血缘证据的表</p><p className="mt-2 metric-value">{lineage.nodes.filter(n => n.has_lineage).length}/{lineage.nodes.length}</p></div>
         <div className="panel p-4"><p className="eyebrow">真实血缘边</p><p className="mt-2 metric-value">{lineage.edge_type_counts.view_dependency + lineage.edge_type_counts.foreign_key}</p><p className="mt-1 text-[11px] text-text-muted">视图依赖{lineage.edge_type_counts.view_dependency} + 外键{lineage.edge_type_counts.foreign_key}</p></div>
         <div className="panel p-4"><p className="eyebrow">同流水线批次边</p><p className="mt-2 metric-value">{lineage.edge_type_counts.pipeline_sibling}</p><p className="mt-1 text-[11px] text-text-muted">默认折叠，仅供参考</p></div>
         <div className="panel p-4"><p className="eyebrow">经血缘产生候选L4的表</p><p className="mt-2 metric-value text-amber-600">{candidateCount}</p><p className="mt-1 text-[11px] text-text-muted">此前均标"未定位关联"，未经人工核实</p></div>
+        <div className="panel p-4"><p className="eyebrow">疑似僵尸表</p><p className="mt-2 metric-value text-rose-600">{zombieNodes.length}</p><p className="mt-1 text-[11px] text-text-muted">有数据但血缘/L4关联都查不到，另有{neverActivatedCount}张0行未启用</p></div>
       </div>
 
       <div className="flex flex-wrap items-center gap-3">
@@ -200,6 +242,13 @@ export default function DataLineage() {
           ))}
         </div>
         <label className="flex items-center gap-1.5 text-[11px] text-text-muted">
+          按L3切片
+          <select value={l3Slice} onChange={e => { setL3Slice(e.target.value); setSelected(null) }} className="rounded-md border border-border-default bg-bg-elevated px-2 py-1 text-[11px] text-text-primary">
+            <option value="all">全部104张表(完整图)</option>
+            {l3Options.map(([code, entry]) => <option key={code} value={code}>{code} · {entry.name}（{entry.keys.size}张核心表）</option>)}
+          </select>
+        </label>
+        <label className="flex items-center gap-1.5 text-[11px] text-text-muted">
           <input type="checkbox" checked={showPipelineSibling} onChange={e => setShowPipelineSibling(e.target.checked)} />
           显示"同流水线批次"弱关联线({lineage.edge_type_counts.pipeline_sibling}条，默认隐藏)
         </label>
@@ -208,6 +257,11 @@ export default function DataLineage() {
           <input value={query} onChange={e => setQuery(e.target.value)} placeholder="搜索表名/中文含义高亮" className="w-full rounded-lg border border-border-default bg-bg-elevated py-1.5 pl-8 pr-3 text-xs text-text-primary placeholder:text-text-muted" />
         </div>
       </div>
+      {l3Slice !== 'all' && (
+        <p className="text-[11px] text-text-muted">
+          切片视图：绿色实心为{l3Slice}确认关联的核心表({sliceCoreKeys?.size ?? 0}张)，虚线边框的是它们的真实血缘邻居——不代表这些邻居也属于{l3Slice}，只是"和核心表有真实数据关系，值得去核实"。
+        </p>
+      )}
 
       <div className="grid gap-4 lg:grid-cols-[1fr_340px]">
         <div className="panel overflow-auto p-2" style={{ maxHeight: 720 }}>
@@ -236,16 +290,17 @@ export default function DataLineage() {
               )
             })}
             {laidOutNodes.map(n => {
-              const status = relationStatus(n.key)
+              const status = relationStatus(n)
               const dim = query && !filteredKeys.has(n.key)
               const isSelected = selected === n.key
+              const isNeighborOnly = sliceCoreKeys !== null && !sliceCoreKeys.has(n.key)
               const radius = 6 + Math.min(n.degree, 10) * 1.1
               return (
-                <g key={n.key} transform={`translate(${n.x},${n.y})`} className="cursor-pointer" onClick={() => setSelected(isSelected ? null : n.key)} opacity={dim ? 0.15 : 1}>
-                  <circle r={radius} fill={RELATION_TONE[status].fill} stroke={isSelected ? '#1e293b' : 'white'} strokeWidth={isSelected ? 2.5 : 1.5} />
-                  {(isSelected || n.degree >= 4 || (query && filteredKeys.has(n.key))) && (
+                <g key={n.key} transform={`translate(${n.x},${n.y})`} className="cursor-pointer" onClick={() => setSelected(isSelected ? null : n.key)} opacity={dim ? 0.15 : isNeighborOnly ? 0.6 : 1}>
+                  <circle r={radius} fill={RELATION_TONE[status].fill} stroke={isSelected ? '#1e293b' : 'white'} strokeWidth={isSelected ? 2.5 : 1.5} strokeDasharray={isNeighborOnly ? '2 2' : undefined} />
+                  {(isSelected || n.degree >= 4 || sliceCoreKeys !== null || (query && filteredKeys.has(n.key))) && (
                     <text x={radius + 4} y={4} fontSize={10} fill="currentColor" className="select-none fill-text-primary">
-                      {n.table}
+                      {n.table}{isNeighborOnly ? '（邻居）' : ''}
                     </text>
                   )}
                 </g>
@@ -309,7 +364,24 @@ export default function DataLineage() {
       </div>
 
       <div className="panel p-4">
-        <p className="text-sm font-semibold text-text-primary">无可查血缘的表（{isolatedNodes.length}）</p>
+        <p className="text-sm font-semibold text-rose-700">疑似僵尸表（{zombieNodes.length}）</p>
+        <p className="mt-1 text-[11px] text-text-muted">
+          有真实数据(非0行)，但血缘查不到谁产出它、谁消费它，L4分析也没人认领——值得去核实是不是真的没人用了。
+          这不是自动下线建议，核实结果可能是"确实废弃"，也可能只是"业务方在用、只是还没接入我们的分析"。
+        </p>
+        <div className="mt-3 space-y-1">
+          {zombieNodes.sort((a, b) => b.row_count - a.row_count).map(n => (
+            <div key={nodeKey(n.schema, n.table)} className="flex items-center gap-2 rounded-md bg-rose-50 px-2 py-1 text-[11px]">
+              <span className="font-mono text-rose-800">{n.schema}.{n.table}</span>
+              <span className="text-rose-700/80">{n.business_label}</span>
+              <span className="ml-auto text-rose-600">{n.row_count.toLocaleString()}行</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="panel p-4">
+        <p className="text-sm font-semibold text-text-primary">无可查血缘的表（{isolatedNodes.length}，含上面的疑似僵尸表）</p>
         <p className="mt-1 text-[11px] text-text-muted">已核实：既不是视图、没有声明外键，也没有命名ETL流水线的同批装载记录——真实生产者在本仓库之外，不是分析遗漏。</p>
         <div className="mt-3 flex flex-wrap gap-1.5">
           {isolatedNodes.map(n => (

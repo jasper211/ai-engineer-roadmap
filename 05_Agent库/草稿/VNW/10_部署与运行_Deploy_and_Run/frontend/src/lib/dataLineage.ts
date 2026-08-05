@@ -1,3 +1,5 @@
+export type ZombieFlag = 'none' | 'never_activated' | 'suspected_zombie'
+
 export interface LineageNode {
   schema: string
   table: string
@@ -5,6 +7,7 @@ export interface LineageNode {
   business_label: string
   row_count: number
   has_lineage: boolean
+  zombie_flag: ZombieFlag
 }
 
 export type LineageEdgeType = 'view_dependency' | 'foreign_key' | 'pipeline_sibling'

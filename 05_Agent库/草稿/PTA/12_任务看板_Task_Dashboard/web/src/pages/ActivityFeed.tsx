@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import {
-  AlertTriangle, ArrowRight, ArrowUpRight, Bot, CircleDot, Eye,
+  AlertTriangle, ArrowRight, ArrowUpRight, Bot, CircleDot,
   FileText, FlaskConical, Route, ShieldCheck, Sparkles,
 } from 'lucide-react'
 import { fetchPersonalWork, type PersonalWorkResponse, type Task } from '../lib/api'
@@ -103,23 +103,23 @@ export function ActivityFeed() {
 
       <section className="rounded-2xl border border-accent-secondary/20 bg-accent-secondary/5 p-5">
         <div className="flex items-center gap-2 text-xs font-semibold text-accent-secondary"><ShieldCheck size={15}/>当前生效的个人判断边界</div>
-        <div className="mt-4 grid gap-3 lg:grid-cols-[1.2fr_1fr_.8fr]">
+        <div className="mt-4 grid gap-3 lg:grid-cols-3">
           <div className="scope-card"><Route size={16}/><div><b>EA · 核心行动域</b><p>{data.scope.ea}</p></div></div>
           <div className="scope-card"><FlaskConical size={16}/><div><b>Jasper · 应用来源</b><p>{data.scope.jasper}</p></div></div>
-          <div className="scope-card opacity-70"><Eye size={16}/><div><b>RW · 暂不聚焦</b><p>{data.scope.rw}</p></div></div>
+          <div className="scope-card"><Route size={16}/><div><b>RW · 核心行动域</b><p>{data.scope.rw}</p></div></div>
         </div>
       </section>
 
       <div className="grid gap-3 rounded-xl border border-border-default bg-bg-elevated p-4 text-xs text-text-secondary md:grid-cols-[auto_1fr_auto_1fr_1.2fr]">
         <span className="font-semibold text-text-primary">判断链路</span>
         <span>文件变化</span><ArrowRight size={13} className="hidden text-text-muted md:block"/>
-        <span>是否影响 EA 人机协同</span>
+        <span>是否影响人机协同（EA / RW 同一标准）</span>
         <span className="text-accent-secondary">行动 / 评估 / 仅知悉</span>
       </div>
 
-      <WorkSection icon={Route} eyebrow="EA · DIRECT ACTION" title="EA 直接行动"
-        description="只保留明确影响人机协同流程与 SOP、信号与规则、端到端任务 Agent 化的事项。"
-        items={data.direct_actions} empty="当前没有命中个人职责边界的 EA 开放事项" tone="action" onOpen={setSelected}/>
+      <WorkSection icon={Route} eyebrow="EA / RW · DIRECT ACTION" title="核心业务直接行动"
+        description="只保留明确影响人机协同流程与 SOP、信号与规则、端到端任务 Agent 化的事项，EA 与 RW 使用同一套判断标准。"
+        items={data.direct_actions} empty="当前没有命中个人职责边界的 EA/RW 开放事项" tone="action" onOpen={setSelected}/>
       <WorkSection icon={Bot} eyebrow="JASPER → EA" title="可应用到 EA"
         description="Jasper 的技术或方法变化已经出现明确 EA 应用映射，可以进入行动区。"
         items={data.ea_applications} empty="当前没有已明确映射到 EA 的 Jasper 变化" tone="application" onOpen={setSelected}/>
@@ -128,7 +128,7 @@ export function ActivityFeed() {
         items={data.pending_evaluation} empty="当前没有需要判断 EA 应用价值的候选事项" tone="evaluation" onOpen={setSelected}/>
 
       <div className="rounded-xl border border-border-default bg-bg-base/50 px-4 py-3 text-[11px] leading-5 text-text-muted">
-        已留在知悉层：EA {data.excluded_counts.EA} 项、Jasper {data.excluded_counts.Jasper} 项、RW {data.excluded_counts.Rw} 项。请到“指挥中心”查看完整文件变化；RW 不在本页生成个人任务。
+        已留在知悉层：EA {data.excluded_counts.EA} 项、Jasper {data.excluded_counts.Jasper} 项、RW {data.excluded_counts.Rw} 项。请到"指挥中心"查看完整文件变化。
       </div>
       <TaskDecisionDrawer task={selected} onClose={() => setSelected(null)} onSaved={load}/>
     </main>
