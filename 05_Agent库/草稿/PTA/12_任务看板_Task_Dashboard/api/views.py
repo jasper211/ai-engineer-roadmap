@@ -221,7 +221,10 @@ def _task_search_text(task: dict) -> str:
 
 
 def personal_work() -> dict:
-    """按 Jasper 已确认的工作边界筛选开放任务，Rw 暂不参与个人判断。"""
+    """按 Jasper 已确认的工作边界筛选开放任务——EA 和 Rw 都是核心业务事实来源，
+    用完全相同的个人职责关键词判断（PERSONAL_ACTION_TERMS），不再把 Rw 排除在
+    个人行动区之外；Jasper 项目本身是方法论试验田，"是否已验证可应用到 EA/Rw"
+    这条额外判断逻辑不变。"""
     buckets = aggregate_tasks("all")
     tasks = buckets["new"] + buckets["aging"]
     direct_actions, ea_applications, pending_evaluation = [], [], []
@@ -234,16 +237,17 @@ def personal_work() -> dict:
         ea_hits = [term for term in EA_APPLICATION_TERMS if term in text]
         enriched = dict(task)
 
-        if "EA" in project:
+        if "EA" in project or "Rw" in project:
+            excluded_key = "EA" if "EA" in project else "Rw"
             if action_hits:
                 enriched["personal_bucket"] = "direct_action"
                 enriched["personal_reason"] = (
-                    "命中 EA 个人职责：" + "、".join(action_hits[:3])
+                    f"命中 {excluded_key} 个人职责：" + "、".join(action_hits[:3])
                     + "；需要判断其对人机协同流程、SOP、规则或 Agent 化的影响。"
                 )
                 direct_actions.append(enriched)
             else:
-                excluded["EA"] += 1
+                excluded[excluded_key] += 1
         elif "Jasper" in project:
             if action_hits and ea_hits:
                 enriched["personal_bucket"] = "ea_application"
@@ -261,8 +265,6 @@ def personal_work() -> dict:
                 pending_evaluation.append(enriched)
             else:
                 excluded["Jasper"] += 1
-        elif "Rw" in project:
-            excluded["Rw"] += 1
         else:
             excluded["other"] += 1
 
@@ -270,7 +272,7 @@ def personal_work() -> dict:
         "scope": {
             "ea": "人机协同流程与 SOP、信号与人机规则、端到端任务 Agent 化",
             "jasper": "只有能够应用到 EA 人机协同设计的变化进入行动区",
-            "rw": "暂不设计个人聚焦，仅在指挥中心知悉变化",
+            "rw": "人机协同流程与 SOP、信号与人机规则、端到端任务 Agent 化——与 EA 使用同一套判断标准",
         },
         "direct_actions": direct_actions,
         "ea_applications": ea_applications,

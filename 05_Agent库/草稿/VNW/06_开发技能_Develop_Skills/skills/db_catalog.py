@@ -189,6 +189,15 @@ def build_catalog(db_query: Callable[[str, tuple], list[dict]]) -> dict:
             ORDER BY table_schema, table_name""",
         (SCHEMAS,),
     )
+    # 有些视图按命名前缀会被误判成"事实表"(如fact_channel_ka实际是SQL视图，不是
+    # 物理表)——这里用information_schema.views查真实类型覆盖前缀猜测，不再靠命名判断。
+    real_views = {
+        (row["table_schema"], row["table_name"])
+        for row in db_query(
+            "SELECT table_schema, table_name FROM information_schema.views WHERE table_schema = ANY(%s)",
+            (SCHEMAS,),
+        )
+    }
     all_columns = db_query(
         """SELECT table_schema, table_name, column_name, data_type
              FROM information_schema.columns
@@ -220,7 +229,7 @@ def build_catalog(db_query: Callable[[str, tuple], list[dict]]) -> dict:
             "columns": columns_by_table.get(key, []),
             "role": known["role"] if known else ("流程数据" if schema == "process_analytics" else "业务数据"),
             "description": known["description"] if known else None,
-            "table_type": infer_table_type(table),
+            "table_type": "视图" if (schema, table) in real_views else infer_table_type(table),
         })
     return {
         "schema_version": "vnw.db-catalog.v1",

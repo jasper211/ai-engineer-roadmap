@@ -1,0 +1,2662 @@
+{
+  "edge_type_counts": {
+    "foreign_key": 21,
+    "pipeline_sibling": 76,
+    "view_dependency": 41
+  },
+  "edge_type_labels": {
+    "foreign_key": "数据库外键约束(高置信度)",
+    "pipeline_sibling": "同ETL流水线批次产出(中置信度，非上下游)",
+    "view_dependency": "视图SQL依赖(最高置信度)"
+  },
+  "edges": [
+    {
+      "edge_type": "view_dependency",
+      "evidence": "public.v_policy_current_state的真实视图定义中FROM/JOIN引用了public.fact_policy",
+      "from_schema": "public",
+      "from_table": "fact_policy",
+      "to_schema": "public",
+      "to_table": "v_policy_current_state"
+    },
+    {
+      "edge_type": "view_dependency",
+      "evidence": "public.v_policy_current_state的真实视图定义中FROM/JOIN引用了public.fact_sales_activity",
+      "from_schema": "public",
+      "from_table": "fact_sales_activity",
+      "to_schema": "public",
+      "to_table": "v_policy_current_state"
+    },
+    {
+      "edge_type": "view_dependency",
+      "evidence": "public.fact_channel_partner的真实视图定义中FROM/JOIN引用了public.dim_partner",
+      "from_schema": "public",
+      "from_table": "dim_partner",
+      "to_schema": "public",
+      "to_table": "fact_channel_partner"
+    },
+    {
+      "edge_type": "view_dependency",
+      "evidence": "public.fact_channel_partner的真实视图定义中FROM/JOIN引用了public.v_fact_sales_activity",
+      "from_schema": "public",
+      "from_table": "v_fact_sales_activity",
+      "to_schema": "public",
+      "to_table": "fact_channel_partner"
+    },
+    {
+      "edge_type": "view_dependency",
+      "evidence": "public.v_fact_sales_activity的真实视图定义中FROM/JOIN引用了public.agg_sales_base",
+      "from_schema": "public",
+      "from_table": "agg_sales_base",
+      "to_schema": "public",
+      "to_table": "v_fact_sales_activity"
+    },
+    {
+      "edge_type": "view_dependency",
+      "evidence": "public.fact_channel_ka的真实视图定义中FROM/JOIN引用了public.bridge_partner_ka",
+      "from_schema": "public",
+      "from_table": "bridge_partner_ka",
+      "to_schema": "public",
+      "to_table": "fact_channel_ka"
+    },
+    {
+      "edge_type": "view_dependency",
+      "evidence": "public.fact_channel_ka的真实视图定义中FROM/JOIN引用了public.dim_ka",
+      "from_schema": "public",
+      "from_table": "dim_ka",
+      "to_schema": "public",
+      "to_table": "fact_channel_ka"
+    },
+    {
+      "edge_type": "view_dependency",
+      "evidence": "public.fact_channel_ka的真实视图定义中FROM/JOIN引用了public.v_fact_sales_activity",
+      "from_schema": "public",
+      "from_table": "v_fact_sales_activity",
+      "to_schema": "public",
+      "to_table": "fact_channel_ka"
+    },
+    {
+      "edge_type": "view_dependency",
+      "evidence": "public.fact_customer的真实视图定义中FROM/JOIN引用了public.v_fact_sales_activity",
+      "from_schema": "public",
+      "from_table": "v_fact_sales_activity",
+      "to_schema": "public",
+      "to_table": "fact_customer"
+    },
+    {
+      "edge_type": "view_dependency",
+      "evidence": "public.fact_product_id的真实视图定义中FROM/JOIN引用了public.dim_product_benefit_profile",
+      "from_schema": "public",
+      "from_table": "dim_product_benefit_profile",
+      "to_schema": "public",
+      "to_table": "fact_product_id"
+    },
+    {
+      "edge_type": "view_dependency",
+      "evidence": "public.fact_product_id的真实视图定义中FROM/JOIN引用了public.dim_product_id",
+      "from_schema": "public",
+      "from_table": "dim_product_id",
+      "to_schema": "public",
+      "to_table": "fact_product_id"
+    },
+    {
+      "edge_type": "view_dependency",
+      "evidence": "public.fact_product_id的真实视图定义中FROM/JOIN引用了public.fact_insurance_plan_header",
+      "from_schema": "public",
+      "from_table": "fact_insurance_plan_header",
+      "to_schema": "public",
+      "to_table": "fact_product_id"
+    },
+    {
+      "edge_type": "view_dependency",
+      "evidence": "public.fact_product_id的真实视图定义中FROM/JOIN引用了public.fact_insurance_plan_lines",
+      "from_schema": "public",
+      "from_table": "fact_insurance_plan_lines",
+      "to_schema": "public",
+      "to_table": "fact_product_id"
+    },
+    {
+      "edge_type": "view_dependency",
+      "evidence": "public.fact_product_id的真实视图定义中FROM/JOIN引用了public.fact_policy",
+      "from_schema": "public",
+      "from_table": "fact_policy",
+      "to_schema": "public",
+      "to_table": "fact_product_id"
+    },
+    {
+      "edge_type": "view_dependency",
+      "evidence": "public.fact_product_sku的真实视图定义中FROM/JOIN引用了public.dim_product_sku",
+      "from_schema": "public",
+      "from_table": "dim_product_sku",
+      "to_schema": "public",
+      "to_table": "fact_product_sku"
+    },
+    {
+      "edge_type": "view_dependency",
+      "evidence": "public.fact_product_sku的真实视图定义中FROM/JOIN引用了public.fact_policy",
+      "from_schema": "public",
+      "from_table": "fact_policy",
+      "to_schema": "public",
+      "to_table": "fact_product_sku"
+    },
+    {
+      "edge_type": "view_dependency",
+      "evidence": "public.v_plan_metrics的真实视图定义中FROM/JOIN引用了public.dim_product_id",
+      "from_schema": "public",
+      "from_table": "dim_product_id",
+      "to_schema": "public",
+      "to_table": "v_plan_metrics"
+    },
+    {
+      "edge_type": "view_dependency",
+      "evidence": "public.v_plan_metrics的真实视图定义中FROM/JOIN引用了public.fact_insurance_plan_header",
+      "from_schema": "public",
+      "from_table": "fact_insurance_plan_header",
+      "to_schema": "public",
+      "to_table": "v_plan_metrics"
+    },
+    {
+      "edge_type": "view_dependency",
+      "evidence": "public.v_plan_metrics的真实视图定义中FROM/JOIN引用了public.fact_insurance_plan_lines",
+      "from_schema": "public",
+      "from_table": "fact_insurance_plan_lines",
+      "to_schema": "public",
+      "to_table": "v_plan_metrics"
+    },
+    {
+      "edge_type": "view_dependency",
+      "evidence": "public.v_plan_year_snapshot的真实视图定义中FROM/JOIN引用了public.fact_insurance_plan_lines",
+      "from_schema": "public",
+      "from_table": "fact_insurance_plan_lines",
+      "to_schema": "public",
+      "to_table": "v_plan_year_snapshot"
+    },
+    {
+      "edge_type": "view_dependency",
+      "evidence": "public.v_fact_policy_person的真实视图定义中FROM/JOIN引用了public.bridge_person_identity",
+      "from_schema": "public",
+      "from_table": "bridge_person_identity",
+      "to_schema": "public",
+      "to_table": "v_fact_policy_person"
+    },
+    {
+      "edge_type": "view_dependency",
+      "evidence": "public.v_fact_policy_person的真实视图定义中FROM/JOIN引用了public.fact_policy",
+      "from_schema": "public",
+      "from_table": "fact_policy",
+      "to_schema": "public",
+      "to_table": "v_fact_policy_person"
+    },
+    {
+      "edge_type": "view_dependency",
+      "evidence": "public.v_person_activity的真实视图定义中FROM/JOIN引用了fin_sandbox.fact_receipt",
+      "from_schema": "fin_sandbox",
+      "from_table": "fact_receipt",
+      "to_schema": "public",
+      "to_table": "v_person_activity"
+    },
+    {
+      "edge_type": "view_dependency",
+      "evidence": "public.v_person_activity的真实视图定义中FROM/JOIN引用了public.bridge_person_identity",
+      "from_schema": "public",
+      "from_table": "bridge_person_identity",
+      "to_schema": "public",
+      "to_table": "v_person_activity"
+    },
+    {
+      "edge_type": "view_dependency",
+      "evidence": "public.v_person_activity的真实视图定义中FROM/JOIN引用了public.dim_role_type",
+      "from_schema": "public",
+      "from_table": "dim_role_type",
+      "to_schema": "public",
+      "to_table": "v_person_activity"
+    },
+    {
+      "edge_type": "view_dependency",
+      "evidence": "public.v_person_activity的真实视图定义中FROM/JOIN引用了public.fact_policy",
+      "from_schema": "public",
+      "from_table": "fact_policy",
+      "to_schema": "public",
+      "to_table": "v_person_activity"
+    },
+    {
+      "edge_type": "view_dependency",
+      "evidence": "public.v_person_activity的真实视图定义中FROM/JOIN引用了public.fact_sales_activity",
+      "from_schema": "public",
+      "from_table": "fact_sales_activity",
+      "to_schema": "public",
+      "to_table": "v_person_activity"
+    },
+    {
+      "edge_type": "view_dependency",
+      "evidence": "public.v_person_coverage的真实视图定义中FROM/JOIN引用了fin_sandbox.fact_receipt",
+      "from_schema": "fin_sandbox",
+      "from_table": "fact_receipt",
+      "to_schema": "public",
+      "to_table": "v_person_coverage"
+    },
+    {
+      "edge_type": "view_dependency",
+      "evidence": "public.v_person_coverage的真实视图定义中FROM/JOIN引用了public.bridge_person_identity",
+      "from_schema": "public",
+      "from_table": "bridge_person_identity",
+      "to_schema": "public",
+      "to_table": "v_person_coverage"
+    },
+    {
+      "edge_type": "view_dependency",
+      "evidence": "public.v_person_coverage的真实视图定义中FROM/JOIN引用了public.dim_ka",
+      "from_schema": "public",
+      "from_table": "dim_ka",
+      "to_schema": "public",
+      "to_table": "v_person_coverage"
+    },
+    {
+      "edge_type": "view_dependency",
+      "evidence": "public.v_person_coverage的真实视图定义中FROM/JOIN引用了public.dim_role_type",
+      "from_schema": "public",
+      "from_table": "dim_role_type",
+      "to_schema": "public",
+      "to_table": "v_person_coverage"
+    },
+    {
+      "edge_type": "view_dependency",
+      "evidence": "public.v_person_coverage的真实视图定义中FROM/JOIN引用了public.fact_policy",
+      "from_schema": "public",
+      "from_table": "fact_policy",
+      "to_schema": "public",
+      "to_table": "v_person_coverage"
+    },
+    {
+      "edge_type": "view_dependency",
+      "evidence": "public.v_person_coverage的真实视图定义中FROM/JOIN引用了public.person_match_suspect",
+      "from_schema": "public",
+      "from_table": "person_match_suspect",
+      "to_schema": "public",
+      "to_table": "v_person_coverage"
+    },
+    {
+      "edge_type": "view_dependency",
+      "evidence": "public.v_dim_person的真实视图定义中FROM/JOIN引用了public.dim_person",
+      "from_schema": "public",
+      "from_table": "dim_person",
+      "to_schema": "public",
+      "to_table": "v_dim_person"
+    },
+    {
+      "edge_type": "view_dependency",
+      "evidence": "comm_sandbox.v_commission_tier_effective的真实视图定义中FROM/JOIN引用了comm_sandbox.commission_tier_adjustment",
+      "from_schema": "comm_sandbox",
+      "from_table": "commission_tier_adjustment",
+      "to_schema": "comm_sandbox",
+      "to_table": "v_commission_tier_effective"
+    },
+    {
+      "edge_type": "view_dependency",
+      "evidence": "comm_sandbox.v_commission_tier_effective的真实视图定义中FROM/JOIN引用了comm_sandbox.fact_commission_tier_rate",
+      "from_schema": "comm_sandbox",
+      "from_table": "fact_commission_tier_rate",
+      "to_schema": "comm_sandbox",
+      "to_table": "v_commission_tier_effective"
+    },
+    {
+      "edge_type": "view_dependency",
+      "evidence": "comm_sandbox.v_commission_tier_published的真实视图定义中FROM/JOIN引用了comm_sandbox.market_row_state",
+      "from_schema": "comm_sandbox",
+      "from_table": "market_row_state",
+      "to_schema": "comm_sandbox",
+      "to_table": "v_commission_tier_published"
+    },
+    {
+      "edge_type": "view_dependency",
+      "evidence": "comm_sandbox.v_tier_rate_readable的真实视图定义中FROM/JOIN引用了comm_sandbox.v_commission_tier_effective",
+      "from_schema": "comm_sandbox",
+      "from_table": "v_commission_tier_effective",
+      "to_schema": "comm_sandbox",
+      "to_table": "v_tier_rate_readable"
+    },
+    {
+      "edge_type": "view_dependency",
+      "evidence": "comm_sandbox.v_qoq_rate_compare的真实视图定义中FROM/JOIN引用了comm_sandbox.config_quarter",
+      "from_schema": "comm_sandbox",
+      "from_table": "config_quarter",
+      "to_schema": "comm_sandbox",
+      "to_table": "v_qoq_rate_compare"
+    },
+    {
+      "edge_type": "view_dependency",
+      "evidence": "comm_sandbox.v_qoq_rate_compare的真实视图定义中FROM/JOIN引用了comm_sandbox.fact_commission_tier_rate",
+      "from_schema": "comm_sandbox",
+      "from_table": "fact_commission_tier_rate",
+      "to_schema": "comm_sandbox",
+      "to_table": "v_qoq_rate_compare"
+    },
+    {
+      "edge_type": "view_dependency",
+      "evidence": "comm_sandbox.v_payout_ratio_check的真实视图定义中FROM/JOIN引用了comm_sandbox.fact_commission_tier_rate",
+      "from_schema": "comm_sandbox",
+      "from_table": "fact_commission_tier_rate",
+      "to_schema": "comm_sandbox",
+      "to_table": "v_payout_ratio_check"
+    },
+    {
+      "edge_type": "foreign_key",
+      "evidence": "public.fact_sales_activity.event_type 外键引用 public.dim_predicate_library.event_type",
+      "from_schema": "public",
+      "from_table": "dim_predicate_library",
+      "to_schema": "public",
+      "to_table": "fact_sales_activity"
+    },
+    {
+      "edge_type": "foreign_key",
+      "evidence": "public.auth_audit_log.user_id 外键引用 public.auth_users.id",
+      "from_schema": "public",
+      "from_table": "auth_users",
+      "to_schema": "public",
+      "to_table": "auth_audit_log"
+    },
+    {
+      "edge_type": "foreign_key",
+      "evidence": "public.auth_sessions.user_id 外键引用 public.auth_users.id",
+      "from_schema": "public",
+      "from_table": "auth_users",
+      "to_schema": "public",
+      "to_table": "auth_sessions"
+    },
+    {
+      "edge_type": "foreign_key",
+      "evidence": "public.bridge_person_identity.person_id 外键引用 public.dim_person.person_id",
+      "from_schema": "public",
+      "from_table": "dim_person",
+      "to_schema": "public",
+      "to_table": "bridge_person_identity"
+    },
+    {
+      "edge_type": "foreign_key",
+      "evidence": "public.bridge_person_role.person_id 外键引用 public.dim_person.person_id",
+      "from_schema": "public",
+      "from_table": "dim_person",
+      "to_schema": "public",
+      "to_table": "bridge_person_role"
+    },
+    {
+      "edge_type": "foreign_key",
+      "evidence": "public.bridge_person_relationship.person_id 外键引用 public.dim_person.person_id",
+      "from_schema": "public",
+      "from_table": "dim_person",
+      "to_schema": "public",
+      "to_table": "bridge_person_relationship"
+    },
+    {
+      "edge_type": "foreign_key",
+      "evidence": "public.bridge_person_relationship.target_person_id 外键引用 public.dim_person.person_id",
+      "from_schema": "public",
+      "from_table": "dim_person",
+      "to_schema": "public",
+      "to_table": "bridge_person_relationship"
+    },
+    {
+      "edge_type": "foreign_key",
+      "evidence": "public.fact_insurance_plan_header.product_sku 外键引用 public.dim_product_sku.product_sku",
+      "from_schema": "public",
+      "from_table": "dim_product_sku",
+      "to_schema": "public",
+      "to_table": "fact_insurance_plan_header"
+    },
+    {
+      "edge_type": "foreign_key",
+      "evidence": "public.fact_insurance_plan_header.carrier_code 外键引用 public.dim_carrier.carrier_code",
+      "from_schema": "public",
+      "from_table": "dim_carrier",
+      "to_schema": "public",
+      "to_table": "fact_insurance_plan_header"
+    },
+    {
+      "edge_type": "foreign_key",
+      "evidence": "public.fact_insurance_plan_lines.plan_header_id 外键引用 public.fact_insurance_plan_header.plan_header_id",
+      "from_schema": "public",
+      "from_table": "fact_insurance_plan_header",
+      "to_schema": "public",
+      "to_table": "fact_insurance_plan_lines"
+    },
+    {
+      "edge_type": "foreign_key",
+      "evidence": "public.fact_policy.carrier_code 外键引用 public.dim_carrier.carrier_code",
+      "from_schema": "public",
+      "from_table": "dim_carrier",
+      "to_schema": "public",
+      "to_table": "fact_policy"
+    },
+    {
+      "edge_type": "foreign_key",
+      "evidence": "public.fact_policy.product_sku 外键引用 public.dim_product_sku.product_sku",
+      "from_schema": "public",
+      "from_table": "dim_product_sku",
+      "to_schema": "public",
+      "to_table": "fact_policy"
+    },
+    {
+      "edge_type": "foreign_key",
+      "evidence": "public.fact_policy.partner_code 外键引用 public.dim_partner.partner_code",
+      "from_schema": "public",
+      "from_table": "dim_partner",
+      "to_schema": "public",
+      "to_table": "fact_policy"
+    },
+    {
+      "edge_type": "foreign_key",
+      "evidence": "public.fact_policy.ka_id 外键引用 public.dim_ka.ka_id",
+      "from_schema": "public",
+      "from_table": "dim_ka",
+      "to_schema": "public",
+      "to_table": "fact_policy"
+    },
+    {
+      "edge_type": "foreign_key",
+      "evidence": "public.fact_policy.license_code 外键引用 public.dim_license.license_code",
+      "from_schema": "public",
+      "from_table": "dim_license",
+      "to_schema": "public",
+      "to_table": "fact_policy"
+    },
+    {
+      "edge_type": "foreign_key",
+      "evidence": "public.fact_policy.segment_code 外键引用 public.dim_segmentation.segment_code",
+      "from_schema": "public",
+      "from_table": "dim_segmentation",
+      "to_schema": "public",
+      "to_table": "fact_policy"
+    },
+    {
+      "edge_type": "foreign_key",
+      "evidence": "public.fact_policy.customer_id 外键引用 public.dim_customer.customer_id",
+      "from_schema": "public",
+      "from_table": "dim_customer",
+      "to_schema": "public",
+      "to_table": "fact_policy"
+    },
+    {
+      "edge_type": "foreign_key",
+      "evidence": "public.fact_commission_rate.carrier_code 外键引用 public.dim_carrier.carrier_code",
+      "from_schema": "public",
+      "from_table": "dim_carrier",
+      "to_schema": "public",
+      "to_table": "fact_commission_rate"
+    },
+    {
+      "edge_type": "foreign_key",
+      "evidence": "public.fact_commission_rate.license_code 外键引用 public.dim_license.license_code",
+      "from_schema": "public",
+      "from_table": "dim_license",
+      "to_schema": "public",
+      "to_table": "fact_commission_rate"
+    },
+    {
+      "edge_type": "foreign_key",
+      "evidence": "public.fact_commission_rate.product_sku 外键引用 public.dim_product_sku.product_sku",
+      "from_schema": "public",
+      "from_table": "dim_product_sku",
+      "to_schema": "public",
+      "to_table": "fact_commission_rate"
+    },
+    {
+      "edge_type": "foreign_key",
+      "evidence": "comm_sandbox.market_publish_change.publish_event_id 外键引用 comm_sandbox.market_publish_event.publish_event_id",
+      "from_schema": "comm_sandbox",
+      "from_table": "market_publish_event",
+      "to_schema": "comm_sandbox",
+      "to_table": "market_publish_change"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "agg_sales_base",
+      "to_schema": "public",
+      "to_table": "bridge_partner_ka"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "agg_sales_base",
+      "to_schema": "public",
+      "to_table": "dim_customer"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "agg_sales_base",
+      "to_schema": "public",
+      "to_table": "dim_ka"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "agg_sales_base",
+      "to_schema": "public",
+      "to_table": "dim_lookup_code"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "agg_sales_base",
+      "to_schema": "public",
+      "to_table": "dim_partner"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "agg_sales_base",
+      "to_schema": "public",
+      "to_table": "dim_product_id"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "agg_sales_base",
+      "to_schema": "public",
+      "to_table": "dim_product_sku"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "agg_sales_base",
+      "to_schema": "public",
+      "to_table": "dim_segmentation"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "agg_sales_base",
+      "to_schema": "public",
+      "to_table": "fact_policy"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "agg_sales_base",
+      "to_schema": "public",
+      "to_table": "fact_policy_etl_scope"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "bridge_partner_ka",
+      "to_schema": "public",
+      "to_table": "dim_customer"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "bridge_partner_ka",
+      "to_schema": "public",
+      "to_table": "dim_ka"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "bridge_partner_ka",
+      "to_schema": "public",
+      "to_table": "dim_lookup_code"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "bridge_partner_ka",
+      "to_schema": "public",
+      "to_table": "dim_partner"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "bridge_partner_ka",
+      "to_schema": "public",
+      "to_table": "dim_product_id"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "bridge_partner_ka",
+      "to_schema": "public",
+      "to_table": "dim_product_sku"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "bridge_partner_ka",
+      "to_schema": "public",
+      "to_table": "dim_segmentation"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "bridge_partner_ka",
+      "to_schema": "public",
+      "to_table": "fact_policy"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "bridge_partner_ka",
+      "to_schema": "public",
+      "to_table": "fact_policy_etl_scope"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "dim_customer",
+      "to_schema": "public",
+      "to_table": "dim_ka"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "dim_customer",
+      "to_schema": "public",
+      "to_table": "dim_lookup_code"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "dim_customer",
+      "to_schema": "public",
+      "to_table": "dim_partner"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "dim_customer",
+      "to_schema": "public",
+      "to_table": "dim_product_id"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "dim_customer",
+      "to_schema": "public",
+      "to_table": "dim_product_sku"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "dim_customer",
+      "to_schema": "public",
+      "to_table": "dim_segmentation"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "dim_customer",
+      "to_schema": "public",
+      "to_table": "fact_policy"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "dim_customer",
+      "to_schema": "public",
+      "to_table": "fact_policy_etl_scope"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "dim_ka",
+      "to_schema": "public",
+      "to_table": "dim_lookup_code"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "dim_ka",
+      "to_schema": "public",
+      "to_table": "dim_partner"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "dim_ka",
+      "to_schema": "public",
+      "to_table": "dim_product_id"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "dim_ka",
+      "to_schema": "public",
+      "to_table": "dim_product_sku"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "dim_ka",
+      "to_schema": "public",
+      "to_table": "dim_segmentation"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "dim_ka",
+      "to_schema": "public",
+      "to_table": "fact_policy"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "dim_ka",
+      "to_schema": "public",
+      "to_table": "fact_policy_etl_scope"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "dim_lookup_code",
+      "to_schema": "public",
+      "to_table": "dim_partner"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "dim_lookup_code",
+      "to_schema": "public",
+      "to_table": "dim_product_id"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "dim_lookup_code",
+      "to_schema": "public",
+      "to_table": "dim_product_sku"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "dim_lookup_code",
+      "to_schema": "public",
+      "to_table": "dim_segmentation"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "dim_lookup_code",
+      "to_schema": "public",
+      "to_table": "fact_policy"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "dim_lookup_code",
+      "to_schema": "public",
+      "to_table": "fact_policy_etl_scope"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "dim_partner",
+      "to_schema": "public",
+      "to_table": "dim_product_id"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "dim_partner",
+      "to_schema": "public",
+      "to_table": "dim_product_sku"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "dim_partner",
+      "to_schema": "public",
+      "to_table": "dim_segmentation"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "dim_partner",
+      "to_schema": "public",
+      "to_table": "fact_policy"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "dim_partner",
+      "to_schema": "public",
+      "to_table": "fact_policy_etl_scope"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "dim_product_id",
+      "to_schema": "public",
+      "to_table": "dim_product_sku"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "dim_product_id",
+      "to_schema": "public",
+      "to_table": "dim_segmentation"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "dim_product_id",
+      "to_schema": "public",
+      "to_table": "fact_policy"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "dim_product_id",
+      "to_schema": "public",
+      "to_table": "fact_policy_etl_scope"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "dim_product_sku",
+      "to_schema": "public",
+      "to_table": "dim_segmentation"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "dim_product_sku",
+      "to_schema": "public",
+      "to_table": "fact_policy"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "dim_product_sku",
+      "to_schema": "public",
+      "to_table": "fact_policy_etl_scope"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "dim_segmentation",
+      "to_schema": "public",
+      "to_table": "fact_policy"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "dim_segmentation",
+      "to_schema": "public",
+      "to_table": "fact_policy_etl_scope"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "fact_policy",
+      "to_schema": "public",
+      "to_table": "fact_policy_etl_scope"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"commission_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "agg_market_commission_tier_rate",
+      "to_schema": "public",
+      "to_table": "agg_source_commission_wide"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"commission_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "agg_market_commission_tier_rate",
+      "to_schema": "public",
+      "to_table": "config_license_carrier_mapping"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"commission_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "agg_market_commission_tier_rate",
+      "to_schema": "public",
+      "to_table": "dim_product_id"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"commission_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "agg_market_commission_tier_rate",
+      "to_schema": "public",
+      "to_table": "dim_product_sku"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"commission_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "agg_market_commission_tier_rate",
+      "to_schema": "public",
+      "to_table": "fact_commission_rate"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"commission_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "agg_source_commission_wide",
+      "to_schema": "public",
+      "to_table": "config_license_carrier_mapping"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"commission_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "agg_source_commission_wide",
+      "to_schema": "public",
+      "to_table": "dim_product_id"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"commission_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "agg_source_commission_wide",
+      "to_schema": "public",
+      "to_table": "dim_product_sku"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"commission_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "agg_source_commission_wide",
+      "to_schema": "public",
+      "to_table": "fact_commission_rate"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"commission_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "config_license_carrier_mapping",
+      "to_schema": "public",
+      "to_table": "dim_product_id"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"commission_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "config_license_carrier_mapping",
+      "to_schema": "public",
+      "to_table": "dim_product_sku"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"commission_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "config_license_carrier_mapping",
+      "to_schema": "public",
+      "to_table": "fact_commission_rate"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"commission_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "dim_product_id",
+      "to_schema": "public",
+      "to_table": "dim_product_sku"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"commission_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "dim_product_id",
+      "to_schema": "public",
+      "to_table": "fact_commission_rate"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"commission_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "dim_product_sku",
+      "to_schema": "public",
+      "to_table": "fact_commission_rate"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"insurance_plan_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "dim_product_benefit_profile",
+      "to_schema": "public",
+      "to_table": "dim_product_id"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"insurance_plan_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "dim_product_benefit_profile",
+      "to_schema": "public",
+      "to_table": "fact_insurance_plan_header"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"insurance_plan_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "dim_product_benefit_profile",
+      "to_schema": "public",
+      "to_table": "fact_insurance_plan_lines"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"insurance_plan_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "dim_product_id",
+      "to_schema": "public",
+      "to_table": "fact_insurance_plan_header"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"insurance_plan_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "dim_product_id",
+      "to_schema": "public",
+      "to_table": "fact_insurance_plan_lines"
+    },
+    {
+      "edge_type": "pipeline_sibling",
+      "evidence": "两表都由真实ETL流水线\"insurance_plan_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+      "from_schema": "public",
+      "from_table": "fact_insurance_plan_header",
+      "to_schema": "public",
+      "to_table": "fact_insurance_plan_lines"
+    }
+  ],
+  "nodes": [
+    {
+      "business_label": "佣金档位调整记录表",
+      "has_lineage": true,
+      "row_count": 0,
+      "schema": "comm_sandbox",
+      "table": "commission_tier_adjustment",
+      "table_type": "调整记录表"
+    },
+    {
+      "business_label": "佣金档位调整历史归档表",
+      "has_lineage": false,
+      "row_count": 0,
+      "schema": "comm_sandbox",
+      "table": "commission_tier_adjustment_history_long",
+      "table_type": "历史记录表"
+    },
+    {
+      "business_label": "竞品费率对比表",
+      "has_lineage": false,
+      "row_count": 0,
+      "schema": "comm_sandbox",
+      "table": "competitor_rate",
+      "table_type": "其他"
+    },
+    {
+      "business_label": "渠道路由规则表",
+      "has_lineage": false,
+      "row_count": 41,
+      "schema": "comm_sandbox",
+      "table": "config_partner_routing",
+      "table_type": "配置表"
+    },
+    {
+      "business_label": "产品定价分组映射表",
+      "has_lineage": false,
+      "row_count": 31,
+      "schema": "comm_sandbox",
+      "table": "config_product_pricing_group",
+      "table_type": "配置表"
+    },
+    {
+      "business_label": "季度日历表",
+      "has_lineage": true,
+      "row_count": 4,
+      "schema": "comm_sandbox",
+      "table": "config_quarter",
+      "table_type": "配置表"
+    },
+    {
+      "business_label": "费率折算系数配置",
+      "has_lineage": false,
+      "row_count": 0,
+      "schema": "comm_sandbox",
+      "table": "config_table_type_coefficient",
+      "table_type": "配置表"
+    },
+    {
+      "business_label": "佣金制表类型定义表",
+      "has_lineage": false,
+      "row_count": 20,
+      "schema": "comm_sandbox",
+      "table": "config_table_type_def",
+      "table_type": "配置表"
+    },
+    {
+      "business_label": "制表类型产品范围配置",
+      "has_lineage": false,
+      "row_count": 251,
+      "schema": "comm_sandbox",
+      "table": "config_table_type_product_scope",
+      "table_type": "配置表"
+    },
+    {
+      "business_label": "分档定价规则表",
+      "has_lineage": false,
+      "row_count": 109,
+      "schema": "comm_sandbox",
+      "table": "config_table_type_tier_pricing_rules",
+      "table_type": "配置表"
+    },
+    {
+      "business_label": "佣金方案定义表",
+      "has_lineage": false,
+      "row_count": 173,
+      "schema": "comm_sandbox",
+      "table": "dim_comm_scheme",
+      "table_type": "维度表"
+    },
+    {
+      "business_label": "佣金分档费率表",
+      "has_lineage": true,
+      "row_count": 7639,
+      "schema": "comm_sandbox",
+      "table": "fact_commission_tier_rate",
+      "table_type": "事实表"
+    },
+    {
+      "business_label": "佣金分档费率历史归档表",
+      "has_lineage": false,
+      "row_count": 337610,
+      "schema": "comm_sandbox",
+      "table": "fact_commission_tier_rate_history_long",
+      "table_type": "事实表"
+    },
+    {
+      "business_label": "佣金方案代码映射表",
+      "has_lineage": false,
+      "row_count": 349,
+      "schema": "comm_sandbox",
+      "table": "map_commission_plan_scheme",
+      "table_type": "映射表"
+    },
+    {
+      "business_label": "费率发布变更明细表",
+      "has_lineage": true,
+      "row_count": 0,
+      "schema": "comm_sandbox",
+      "table": "market_publish_change",
+      "table_type": "事件记录表"
+    },
+    {
+      "business_label": "市场费率发布事件表",
+      "has_lineage": true,
+      "row_count": 0,
+      "schema": "comm_sandbox",
+      "table": "market_publish_event",
+      "table_type": "事件记录表"
+    },
+    {
+      "business_label": "费率行状态跟踪表",
+      "has_lineage": true,
+      "row_count": 3718,
+      "schema": "comm_sandbox",
+      "table": "market_row_state",
+      "table_type": "状态记录表"
+    },
+    {
+      "business_label": "费率表头审批工作流表",
+      "has_lineage": false,
+      "row_count": 20,
+      "schema": "comm_sandbox",
+      "table": "market_table_header_state",
+      "table_type": "状态记录表"
+    },
+    {
+      "business_label": "费率来源差异确认表",
+      "has_lineage": false,
+      "row_count": 0,
+      "schema": "comm_sandbox",
+      "table": "source_diff_confirm",
+      "table_type": "其他"
+    },
+    {
+      "business_label": "生效佣金费率视图",
+      "has_lineage": true,
+      "row_count": 7384,
+      "schema": "comm_sandbox",
+      "table": "v_commission_tier_effective",
+      "table_type": "视图"
+    },
+    {
+      "business_label": "已正式发布费率视图",
+      "has_lineage": true,
+      "row_count": 0,
+      "schema": "comm_sandbox",
+      "table": "v_commission_tier_published",
+      "table_type": "视图"
+    },
+    {
+      "business_label": "佣金支出比率校验视图",
+      "has_lineage": true,
+      "row_count": 7384,
+      "schema": "comm_sandbox",
+      "table": "v_payout_ratio_check",
+      "table_type": "视图"
+    },
+    {
+      "business_label": "费率环比对比视图",
+      "has_lineage": true,
+      "row_count": 7294,
+      "schema": "comm_sandbox",
+      "table": "v_qoq_rate_compare",
+      "table_type": "视图"
+    },
+    {
+      "business_label": "费率中文可读视图",
+      "has_lineage": true,
+      "row_count": 7384,
+      "schema": "comm_sandbox",
+      "table": "v_tier_rate_readable",
+      "table_type": "视图"
+    },
+    {
+      "business_label": "保司结算周期规则配置",
+      "has_lineage": false,
+      "row_count": 36,
+      "schema": "fin_sandbox",
+      "table": "config_carrier_settlement_schedule_rules",
+      "table_type": "配置表"
+    },
+    {
+      "business_label": "实收流水主表",
+      "has_lineage": true,
+      "row_count": 1219,
+      "schema": "fin_sandbox",
+      "table": "fact_receipt",
+      "table_type": "事实表"
+    },
+    {
+      "business_label": "应收明细主表",
+      "has_lineage": false,
+      "row_count": 47142,
+      "schema": "fin_sandbox",
+      "table": "fact_receivable",
+      "table_type": "事实表"
+    },
+    {
+      "business_label": "财务数据同步历史日志",
+      "has_lineage": false,
+      "row_count": 1,
+      "schema": "fin_sandbox",
+      "table": "fin_sync_history",
+      "table_type": "历史记录表"
+    },
+    {
+      "business_label": "应收实收匹配与差异对照表",
+      "has_lineage": false,
+      "row_count": 1154,
+      "schema": "fin_sandbox",
+      "table": "match_receipt_receivable",
+      "table_type": "核对匹配表"
+    },
+    {
+      "business_label": "市场佣金费率汇总宽表",
+      "has_lineage": true,
+      "row_count": 7518,
+      "schema": "public",
+      "table": "agg_market_commission_tier_rate",
+      "table_type": "汇总表"
+    },
+    {
+      "business_label": "销售业务基础汇总表",
+      "has_lineage": true,
+      "row_count": 6399,
+      "schema": "public",
+      "table": "agg_sales_base",
+      "table_type": "汇总表"
+    },
+    {
+      "business_label": "agg_sales_base的ETL抽取范围参数记录表(记录抽取用的起止日期字段)",
+      "has_lineage": false,
+      "row_count": 30,
+      "schema": "public",
+      "table": "agg_sales_base_etl_scope",
+      "table_type": "汇总表"
+    },
+    {
+      "business_label": "来源佣金费率宽表",
+      "has_lineage": true,
+      "row_count": 5734,
+      "schema": "public",
+      "table": "agg_source_commission_wide",
+      "table_type": "汇总表"
+    },
+    {
+      "business_label": "本数据系统(非保险业务)的用户登录/操作审计日志，与保险业务流程无关",
+      "has_lineage": true,
+      "row_count": 47,
+      "schema": "public",
+      "table": "auth_audit_log",
+      "table_type": "系统表"
+    },
+    {
+      "business_label": "本数据系统的登录会话表，与保险业务流程无关",
+      "has_lineage": true,
+      "row_count": 18,
+      "schema": "public",
+      "table": "auth_sessions",
+      "table_type": "系统表"
+    },
+    {
+      "business_label": "本数据系统的用户账号表，当前仅1个admin账号，与保险业务流程无关",
+      "has_lineage": true,
+      "row_count": 1,
+      "schema": "public",
+      "table": "auth_users",
+      "table_type": "系统表"
+    },
+    {
+      "business_label": "渠道伙伴-KA归属桥接表",
+      "has_lineage": true,
+      "row_count": 704,
+      "schema": "public",
+      "table": "bridge_partner_ka",
+      "table_type": "桥接表"
+    },
+    {
+      "business_label": "人员身份归一化桥接表",
+      "has_lineage": true,
+      "row_count": 15833,
+      "schema": "public",
+      "table": "bridge_person_identity",
+      "table_type": "桥接表"
+    },
+    {
+      "business_label": "人员关系桥接表",
+      "has_lineage": true,
+      "row_count": 418,
+      "schema": "public",
+      "table": "bridge_person_relationship",
+      "table_type": "桥接表"
+    },
+    {
+      "business_label": "人员角色桥接表",
+      "has_lineage": true,
+      "row_count": 5442,
+      "schema": "public",
+      "table": "bridge_person_role",
+      "table_type": "桥接表"
+    },
+    {
+      "business_label": "策略路由配置表",
+      "has_lineage": false,
+      "row_count": 0,
+      "schema": "public",
+      "table": "bridge_strategy_routing",
+      "table_type": "桥接表"
+    },
+    {
+      "business_label": "佣金制表业务类型配置",
+      "has_lineage": false,
+      "row_count": 23,
+      "schema": "public",
+      "table": "config_commission_table_type",
+      "table_type": "配置表"
+    },
+    {
+      "business_label": "人员身份来源映射配置",
+      "has_lineage": false,
+      "row_count": 22,
+      "schema": "public",
+      "table": "config_identity_source_map",
+      "table_type": "配置表"
+    },
+    {
+      "business_label": "牌照-保司佣金方案映射配置",
+      "has_lineage": true,
+      "row_count": 90,
+      "schema": "public",
+      "table": "config_license_carrier_mapping",
+      "table_type": "配置表"
+    },
+    {
+      "business_label": "牌照平台服务费扣除配置",
+      "has_lineage": false,
+      "row_count": 0,
+      "schema": "public",
+      "table": "config_license_cost_deduction",
+      "table_type": "配置表"
+    },
+    {
+      "business_label": "渠道路由规则表",
+      "has_lineage": false,
+      "row_count": 67,
+      "schema": "public",
+      "table": "config_partner_routing",
+      "table_type": "配置表"
+    },
+    {
+      "business_label": "产品佣金计算公式配置",
+      "has_lineage": false,
+      "row_count": 32,
+      "schema": "public",
+      "table": "config_product_commission_formula",
+      "table_type": "配置表"
+    },
+    {
+      "business_label": "产品排除范围配置",
+      "has_lineage": false,
+      "row_count": 228,
+      "schema": "public",
+      "table": "config_product_exclusion_range",
+      "table_type": "配置表"
+    },
+    {
+      "business_label": "产品特征类型字典",
+      "has_lineage": false,
+      "row_count": 25,
+      "schema": "public",
+      "table": "config_product_feature_type",
+      "table_type": "配置表"
+    },
+    {
+      "business_label": "季度日历表",
+      "has_lineage": false,
+      "row_count": 4,
+      "schema": "public",
+      "table": "config_quarter",
+      "table_type": "配置表"
+    },
+    {
+      "business_label": "策略头配置表",
+      "has_lineage": false,
+      "row_count": 0,
+      "schema": "public",
+      "table": "config_strategy_header",
+      "table_type": "配置表"
+    },
+    {
+      "business_label": "策略分档奖励配置表",
+      "has_lineage": false,
+      "row_count": 0,
+      "schema": "public",
+      "table": "config_strategy_tiers",
+      "table_type": "配置表"
+    },
+    {
+      "business_label": "转介协议主表",
+      "has_lineage": false,
+      "row_count": 32,
+      "schema": "public",
+      "table": "dim_binder_agreement",
+      "table_type": "维度表"
+    },
+    {
+      "business_label": "保司主数据表",
+      "has_lineage": true,
+      "row_count": 26,
+      "schema": "public",
+      "table": "dim_carrier",
+      "table_type": "维度表"
+    },
+    {
+      "business_label": "佣金方案主表",
+      "has_lineage": false,
+      "row_count": 0,
+      "schema": "public",
+      "table": "dim_comm_scheme",
+      "table_type": "维度表"
+    },
+    {
+      "business_label": "客户主数据表",
+      "has_lineage": true,
+      "row_count": 4699,
+      "schema": "public",
+      "table": "dim_customer",
+      "table_type": "维度表"
+    },
+    {
+      "business_label": "客户类型字典表",
+      "has_lineage": false,
+      "row_count": 0,
+      "schema": "public",
+      "table": "dim_customer_type",
+      "table_type": "维度表"
+    },
+    {
+      "business_label": "日期维度表",
+      "has_lineage": false,
+      "row_count": 1826,
+      "schema": "public",
+      "table": "dim_date",
+      "table_type": "维度表"
+    },
+    {
+      "business_label": "HR员工档案表",
+      "has_lineage": false,
+      "row_count": 209,
+      "schema": "public",
+      "table": "dim_employee",
+      "table_type": "维度表"
+    },
+    {
+      "business_label": "KA(经代机构)主数据表",
+      "has_lineage": true,
+      "row_count": 109,
+      "schema": "public",
+      "table": "dim_ka",
+      "table_type": "维度表"
+    },
+    {
+      "business_label": "持牌机构主数据表",
+      "has_lineage": true,
+      "row_count": 12,
+      "schema": "public",
+      "table": "dim_license",
+      "table_type": "维度表"
+    },
+    {
+      "business_label": "通用代码字典表",
+      "has_lineage": true,
+      "row_count": 150,
+      "schema": "public",
+      "table": "dim_lookup_code",
+      "table_type": "维度表"
+    },
+    {
+      "business_label": "渠道伙伴主数据表",
+      "has_lineage": true,
+      "row_count": 727,
+      "schema": "public",
+      "table": "dim_partner",
+      "table_type": "维度表"
+    },
+    {
+      "business_label": "伙伴权益配置表",
+      "has_lineage": false,
+      "row_count": 0,
+      "schema": "public",
+      "table": "dim_partner_equity",
+      "table_type": "维度表"
+    },
+    {
+      "business_label": "收款人银行账户信息表",
+      "has_lineage": false,
+      "row_count": 0,
+      "schema": "public",
+      "table": "dim_payee",
+      "table_type": "维度表"
+    },
+    {
+      "business_label": "统一人员主数据表",
+      "has_lineage": true,
+      "row_count": 5291,
+      "schema": "public",
+      "table": "dim_person",
+      "table_type": "维度表"
+    },
+    {
+      "business_label": "保单生命周期事件类型定义库",
+      "has_lineage": true,
+      "row_count": 75,
+      "schema": "public",
+      "table": "dim_predicate_library",
+      "table_type": "维度表"
+    },
+    {
+      "business_label": "产品权益特征一致性检查表",
+      "has_lineage": true,
+      "row_count": 69,
+      "schema": "public",
+      "table": "dim_product_benefit_profile",
+      "table_type": "维度表"
+    },
+    {
+      "business_label": "产品特征取值表",
+      "has_lineage": false,
+      "row_count": 1014,
+      "schema": "public",
+      "table": "dim_product_feature_value",
+      "table_type": "维度表"
+    },
+    {
+      "business_label": "产品ID主数据表",
+      "has_lineage": true,
+      "row_count": 728,
+      "schema": "public",
+      "table": "dim_product_id",
+      "table_type": "维度表"
+    },
+    {
+      "business_label": "产品SKU主数据表",
+      "has_lineage": true,
+      "row_count": 223,
+      "schema": "public",
+      "table": "dim_product_sku",
+      "table_type": "维度表"
+    },
+    {
+      "business_label": "人员角色类型字典表",
+      "has_lineage": true,
+      "row_count": 35,
+      "schema": "public",
+      "table": "dim_role_type",
+      "table_type": "维度表"
+    },
+    {
+      "business_label": "业务细分市场字典表",
+      "has_lineage": true,
+      "row_count": 11,
+      "schema": "public",
+      "table": "dim_segmentation",
+      "table_type": "维度表"
+    },
+    {
+      "business_label": "策略主数据表",
+      "has_lineage": false,
+      "row_count": 0,
+      "schema": "public",
+      "table": "dim_strategy",
+      "table_type": "维度表"
+    },
+    {
+      "business_label": "KA渠道月度业绩汇总表",
+      "has_lineage": true,
+      "row_count": 845,
+      "schema": "public",
+      "table": "fact_channel_ka",
+      "table_type": "视图"
+    },
+    {
+      "business_label": "渠道伙伴月度汇总表",
+      "has_lineage": true,
+      "row_count": 1662,
+      "schema": "public",
+      "table": "fact_channel_partner",
+      "table_type": "视图"
+    },
+    {
+      "business_label": "佣金费率主表",
+      "has_lineage": true,
+      "row_count": 25111,
+      "schema": "public",
+      "table": "fact_commission_rate",
+      "table_type": "事实表"
+    },
+    {
+      "business_label": "客户月度业绩汇总表",
+      "has_lineage": true,
+      "row_count": 5275,
+      "schema": "public",
+      "table": "fact_customer",
+      "table_type": "视图"
+    },
+    {
+      "business_label": "保险计划书主表",
+      "has_lineage": true,
+      "row_count": 75,
+      "schema": "public",
+      "table": "fact_insurance_plan_header",
+      "table_type": "事实表"
+    },
+    {
+      "business_label": "保险计划书历史归档表",
+      "has_lineage": false,
+      "row_count": 416,
+      "schema": "public",
+      "table": "fact_insurance_plan_header_history",
+      "table_type": "事实表"
+    },
+    {
+      "business_label": "保险计划书逐年现金价值明细表",
+      "has_lineage": true,
+      "row_count": 7393,
+      "schema": "public",
+      "table": "fact_insurance_plan_lines",
+      "table_type": "事实表"
+    },
+    {
+      "business_label": "保险计划书逐年现金价值历史归档表",
+      "has_lineage": false,
+      "row_count": 41050,
+      "schema": "public",
+      "table": "fact_insurance_plan_lines_history",
+      "table_type": "事实表"
+    },
+    {
+      "business_label": "保单主表",
+      "has_lineage": true,
+      "row_count": 6257,
+      "schema": "public",
+      "table": "fact_policy",
+      "table_type": "事实表"
+    },
+    {
+      "business_label": "fact_policy的ETL抽取范围参数记录表",
+      "has_lineage": true,
+      "row_count": 30,
+      "schema": "public",
+      "table": "fact_policy_etl_scope",
+      "table_type": "事实表"
+    },
+    {
+      "business_label": "产品月度业绩汇总表",
+      "has_lineage": true,
+      "row_count": 1017,
+      "schema": "public",
+      "table": "fact_product_id",
+      "table_type": "视图"
+    },
+    {
+      "business_label": "产品SKU月度业绩汇总表",
+      "has_lineage": true,
+      "row_count": 767,
+      "schema": "public",
+      "table": "fact_product_sku",
+      "table_type": "视图"
+    },
+    {
+      "business_label": "保单生命周期事件流水表",
+      "has_lineage": true,
+      "row_count": 48048,
+      "schema": "public",
+      "table": "fact_sales_activity",
+      "table_type": "事实表"
+    },
+    {
+      "business_label": "业务目标表",
+      "has_lineage": false,
+      "row_count": 62,
+      "schema": "public",
+      "table": "fact_target",
+      "table_type": "事实表"
+    },
+    {
+      "business_label": "名称实体类型判定表",
+      "has_lineage": false,
+      "row_count": 67,
+      "schema": "public",
+      "table": "map_name_entity_type",
+      "table_type": "映射表"
+    },
+    {
+      "business_label": "伙伴-收款人映射及分成比例表",
+      "has_lineage": false,
+      "row_count": 0,
+      "schema": "public",
+      "table": "map_partner_payee",
+      "table_type": "映射表"
+    },
+    {
+      "business_label": "产品映射表",
+      "has_lineage": false,
+      "row_count": 0,
+      "schema": "public",
+      "table": "mapping_product",
+      "table_type": "映射表"
+    },
+    {
+      "business_label": "伙伴档位规则表",
+      "has_lineage": false,
+      "row_count": 179,
+      "schema": "public",
+      "table": "partner_tier_rules",
+      "table_type": "规则表"
+    },
+    {
+      "business_label": "人员身份匹配疑似项表",
+      "has_lineage": true,
+      "row_count": 202,
+      "schema": "public",
+      "table": "person_match_suspect",
+      "table_type": "疑似记录表"
+    },
+    {
+      "business_label": "产品业务线人工修正表",
+      "has_lineage": false,
+      "row_count": 92,
+      "schema": "public",
+      "table": "product_risk_override",
+      "table_type": "规则表"
+    },
+    {
+      "business_label": "保单续期到期日快照表",
+      "has_lineage": false,
+      "row_count": 29640,
+      "schema": "public",
+      "table": "sales_renewal_due_snapshot",
+      "table_type": "快照表"
+    },
+    {
+      "business_label": "数据同步历史日志",
+      "has_lineage": false,
+      "row_count": 305,
+      "schema": "public",
+      "table": "sync_history",
+      "table_type": "历史记录表"
+    },
+    {
+      "business_label": "dim_person的精简视图(去掉批次/审计字段)",
+      "has_lineage": true,
+      "row_count": 5273,
+      "schema": "public",
+      "table": "v_dim_person",
+      "table_type": "视图"
+    },
+    {
+      "business_label": "保单-人员关联视图",
+      "has_lineage": true,
+      "row_count": 6257,
+      "schema": "public",
+      "table": "v_fact_policy_person",
+      "table_type": "视图"
+    },
+    {
+      "business_label": "销售活动关联视图",
+      "has_lineage": true,
+      "row_count": 24396,
+      "schema": "public",
+      "table": "v_fact_sales_activity",
+      "table_type": "视图"
+    },
+    {
+      "business_label": "人员活动流水视图",
+      "has_lineage": true,
+      "row_count": 39533,
+      "schema": "public",
+      "table": "v_person_activity",
+      "table_type": "视图"
+    },
+    {
+      "business_label": "人员身份识别覆盖率统计视图",
+      "has_lineage": true,
+      "row_count": 10,
+      "schema": "public",
+      "table": "v_person_coverage",
+      "table_type": "视图"
+    },
+    {
+      "business_label": "计划书精算指标视图",
+      "has_lineage": true,
+      "row_count": 103,
+      "schema": "public",
+      "table": "v_plan_metrics",
+      "table_type": "视图"
+    },
+    {
+      "business_label": "fact_insurance_plan_lines的精简视图(去掉wth系列提取字段)",
+      "has_lineage": true,
+      "row_count": 7393,
+      "schema": "public",
+      "table": "v_plan_year_snapshot",
+      "table_type": "视图"
+    },
+    {
+      "business_label": "保单当前状态视图",
+      "has_lineage": true,
+      "row_count": 6468,
+      "schema": "public",
+      "table": "v_policy_current_state",
+      "table_type": "视图"
+    }
+  ],
+  "schema_version": "vnw.data-lineage.v1",
+  "source_policy": "边只来自三类真实证据：视图SQL定义(pg_get_viewdef)/数据库外键约束/ETL流水线同批装载日志(sync_history，仅认可命名的可重复airflow流水线)，不做同名字段或表名相似度的推测性连接；无证据的表如实标注无可查血缘(已核实仓库内外都没有对应ETL脚本，生产者在仓库之外)",
+  "suggested_l4_candidates": {
+    "comm_sandbox.market_publish_change": [
+      {
+        "edge_type": "foreign_key",
+        "evidence": "comm_sandbox.market_publish_change.publish_event_id 外键引用 comm_sandbox.market_publish_event.publish_event_id",
+        "l3_code": "L3-COM",
+        "l3_name": "佣金全链路管理",
+        "l4_code": "L4-COM-03",
+        "l4_name": "佣金整合与外发",
+        "via_table": "comm_sandbox.market_publish_event"
+      }
+    ],
+    "comm_sandbox.v_commission_tier_effective": [
+      {
+        "edge_type": "view_dependency",
+        "evidence": "comm_sandbox.v_commission_tier_effective的真实视图定义中FROM/JOIN引用了comm_sandbox.commission_tier_adjustment",
+        "l3_code": "L3-COM",
+        "l3_name": "佣金全链路管理",
+        "l4_code": "L4-COM-02",
+        "l4_name": "差异化拆解与验证",
+        "via_table": "comm_sandbox.commission_tier_adjustment"
+      },
+      {
+        "edge_type": "view_dependency",
+        "evidence": "comm_sandbox.v_commission_tier_effective的真实视图定义中FROM/JOIN引用了comm_sandbox.commission_tier_adjustment",
+        "l3_code": "L3-COM",
+        "l3_name": "佣金全链路管理",
+        "l4_code": "L4-COM-05",
+        "l4_name": "追溯调整与退保倒扣",
+        "via_table": "comm_sandbox.commission_tier_adjustment"
+      }
+    ],
+    "public.bridge_partner_ka": [
+      {
+        "edge_type": "view_dependency",
+        "evidence": "public.fact_channel_ka的真实视图定义中FROM/JOIN引用了public.bridge_partner_ka",
+        "l3_code": "L3-KAGA",
+        "l3_name": "KA业绩跟踪与运维",
+        "l4_code": "L4-KAGA-01",
+        "l4_name": "定期业绩数据收集",
+        "via_table": "public.fact_channel_ka"
+      },
+      {
+        "edge_type": "pipeline_sibling",
+        "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+        "l3_code": "L3-FBA",
+        "l3_name": "理财师业务分析",
+        "l4_code": "L4-FBA-01",
+        "l4_name": "月度/季度业绩数据汇总",
+        "via_table": "public.agg_sales_base"
+      },
+      {
+        "edge_type": "pipeline_sibling",
+        "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+        "l3_code": "L3-RSJD",
+        "l3_name": "经代机构销售业务执行流程",
+        "l4_code": "L4-RSJD-02",
+        "l4_name": "财务模型测算",
+        "via_table": "public.agg_sales_base"
+      },
+      {
+        "edge_type": "pipeline_sibling",
+        "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+        "l3_code": "L3-RSJD",
+        "l3_name": "经代机构销售业务执行流程",
+        "l4_code": "L4-RSJD-01",
+        "l4_name": "销售执行与客户管理",
+        "via_table": "public.dim_customer"
+      },
+      {
+        "edge_type": "pipeline_sibling",
+        "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+        "l3_code": "L3-KAGA",
+        "l3_name": "KA业绩跟踪与运维",
+        "l4_code": "L4-KAGA-02",
+        "l4_name": "业绩复盘与问题诊断",
+        "via_table": "public.dim_ka"
+      },
+      {
+        "edge_type": "pipeline_sibling",
+        "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+        "l3_code": "L3-KAGA",
+        "l3_name": "KA业绩跟踪与运维",
+        "l4_code": "L4-KAGA-04",
+        "l4_name": "KA关系维护与长效运营",
+        "via_table": "public.dim_ka"
+      },
+      {
+        "edge_type": "pipeline_sibling",
+        "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+        "l3_code": "L3-COM",
+        "l3_name": "佣金全链路管理",
+        "l4_code": "L4-COM-12",
+        "l4_name": "应派金额拆分与渠道对账（待注册）",
+        "via_table": "public.dim_partner"
+      },
+      {
+        "edge_type": "pipeline_sibling",
+        "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+        "l3_code": "L3-COM",
+        "l3_name": "佣金全链路管理",
+        "l4_code": "L4-COM-10",
+        "l4_name": "保单信息整合与应收核算（待注册）",
+        "via_table": "public.fact_policy"
+      }
+    ],
+    "public.bridge_person_identity": [
+      {
+        "edge_type": "view_dependency",
+        "evidence": "public.v_person_activity的真实视图定义中FROM/JOIN引用了public.bridge_person_identity",
+        "l3_code": "L3-FBA",
+        "l3_name": "理财师业务分析",
+        "l4_code": "L4-FBA-02",
+        "l4_name": "月度业绩与活动率分析",
+        "via_table": "public.v_person_activity"
+      }
+    ],
+    "public.dim_carrier": [
+      {
+        "edge_type": "foreign_key",
+        "evidence": "public.fact_insurance_plan_header.carrier_code 外键引用 public.dim_carrier.carrier_code",
+        "l3_code": "L3-RSJD",
+        "l3_name": "经代机构销售业务执行流程",
+        "l4_code": "L4-RSJD-04",
+        "l4_name": "方案交付",
+        "via_table": "public.fact_insurance_plan_header"
+      },
+      {
+        "edge_type": "foreign_key",
+        "evidence": "public.fact_policy.carrier_code 外键引用 public.dim_carrier.carrier_code",
+        "l3_code": "L3-COM",
+        "l3_name": "佣金全链路管理",
+        "l4_code": "L4-COM-10",
+        "l4_name": "保单信息整合与应收核算（待注册）",
+        "via_table": "public.fact_policy"
+      },
+      {
+        "edge_type": "foreign_key",
+        "evidence": "public.fact_commission_rate.carrier_code 外键引用 public.dim_carrier.carrier_code",
+        "l3_code": "L3-COM",
+        "l3_name": "佣金全链路管理",
+        "l4_code": "L4-COM-01",
+        "l4_name": "佣金政策接收与校准",
+        "via_table": "public.fact_commission_rate"
+      }
+    ],
+    "public.dim_lookup_code": [
+      {
+        "edge_type": "pipeline_sibling",
+        "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+        "l3_code": "L3-FBA",
+        "l3_name": "理财师业务分析",
+        "l4_code": "L4-FBA-01",
+        "l4_name": "月度/季度业绩数据汇总",
+        "via_table": "public.agg_sales_base"
+      },
+      {
+        "edge_type": "pipeline_sibling",
+        "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+        "l3_code": "L3-RSJD",
+        "l3_name": "经代机构销售业务执行流程",
+        "l4_code": "L4-RSJD-02",
+        "l4_name": "财务模型测算",
+        "via_table": "public.agg_sales_base"
+      },
+      {
+        "edge_type": "pipeline_sibling",
+        "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+        "l3_code": "L3-RSJD",
+        "l3_name": "经代机构销售业务执行流程",
+        "l4_code": "L4-RSJD-01",
+        "l4_name": "销售执行与客户管理",
+        "via_table": "public.dim_customer"
+      },
+      {
+        "edge_type": "pipeline_sibling",
+        "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+        "l3_code": "L3-KAGA",
+        "l3_name": "KA业绩跟踪与运维",
+        "l4_code": "L4-KAGA-02",
+        "l4_name": "业绩复盘与问题诊断",
+        "via_table": "public.dim_ka"
+      },
+      {
+        "edge_type": "pipeline_sibling",
+        "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+        "l3_code": "L3-KAGA",
+        "l3_name": "KA业绩跟踪与运维",
+        "l4_code": "L4-KAGA-04",
+        "l4_name": "KA关系维护与长效运营",
+        "via_table": "public.dim_ka"
+      },
+      {
+        "edge_type": "pipeline_sibling",
+        "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+        "l3_code": "L3-COM",
+        "l3_name": "佣金全链路管理",
+        "l4_code": "L4-COM-12",
+        "l4_name": "应派金额拆分与渠道对账（待注册）",
+        "via_table": "public.dim_partner"
+      },
+      {
+        "edge_type": "pipeline_sibling",
+        "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+        "l3_code": "L3-COM",
+        "l3_name": "佣金全链路管理",
+        "l4_code": "L4-COM-10",
+        "l4_name": "保单信息整合与应收核算（待注册）",
+        "via_table": "public.fact_policy"
+      }
+    ],
+    "public.dim_predicate_library": [
+      {
+        "edge_type": "foreign_key",
+        "evidence": "public.fact_sales_activity.event_type 外键引用 public.dim_predicate_library.event_type",
+        "l3_code": "L3-RSJD",
+        "l3_name": "经代机构销售业务执行流程",
+        "l4_code": "L4-RSJD-01",
+        "l4_name": "销售执行与客户管理",
+        "via_table": "public.fact_sales_activity"
+      }
+    ],
+    "public.dim_product_benefit_profile": [
+      {
+        "edge_type": "pipeline_sibling",
+        "evidence": "两表都由真实ETL流水线\"insurance_plan_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+        "l3_code": "L3-RSJD",
+        "l3_name": "经代机构销售业务执行流程",
+        "l4_code": "L4-RSJD-04",
+        "l4_name": "方案交付",
+        "via_table": "public.fact_insurance_plan_header"
+      }
+    ],
+    "public.dim_product_id": [
+      {
+        "edge_type": "pipeline_sibling",
+        "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+        "l3_code": "L3-FBA",
+        "l3_name": "理财师业务分析",
+        "l4_code": "L4-FBA-01",
+        "l4_name": "月度/季度业绩数据汇总",
+        "via_table": "public.agg_sales_base"
+      },
+      {
+        "edge_type": "pipeline_sibling",
+        "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+        "l3_code": "L3-RSJD",
+        "l3_name": "经代机构销售业务执行流程",
+        "l4_code": "L4-RSJD-02",
+        "l4_name": "财务模型测算",
+        "via_table": "public.agg_sales_base"
+      },
+      {
+        "edge_type": "pipeline_sibling",
+        "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+        "l3_code": "L3-RSJD",
+        "l3_name": "经代机构销售业务执行流程",
+        "l4_code": "L4-RSJD-01",
+        "l4_name": "销售执行与客户管理",
+        "via_table": "public.dim_customer"
+      },
+      {
+        "edge_type": "pipeline_sibling",
+        "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+        "l3_code": "L3-KAGA",
+        "l3_name": "KA业绩跟踪与运维",
+        "l4_code": "L4-KAGA-02",
+        "l4_name": "业绩复盘与问题诊断",
+        "via_table": "public.dim_ka"
+      },
+      {
+        "edge_type": "pipeline_sibling",
+        "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+        "l3_code": "L3-KAGA",
+        "l3_name": "KA业绩跟踪与运维",
+        "l4_code": "L4-KAGA-04",
+        "l4_name": "KA关系维护与长效运营",
+        "via_table": "public.dim_ka"
+      },
+      {
+        "edge_type": "pipeline_sibling",
+        "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+        "l3_code": "L3-COM",
+        "l3_name": "佣金全链路管理",
+        "l4_code": "L4-COM-12",
+        "l4_name": "应派金额拆分与渠道对账（待注册）",
+        "via_table": "public.dim_partner"
+      },
+      {
+        "edge_type": "pipeline_sibling",
+        "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+        "l3_code": "L3-COM",
+        "l3_name": "佣金全链路管理",
+        "l4_code": "L4-COM-10",
+        "l4_name": "保单信息整合与应收核算（待注册）",
+        "via_table": "public.fact_policy"
+      },
+      {
+        "edge_type": "pipeline_sibling",
+        "evidence": "两表都由真实ETL流水线\"commission_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+        "l3_code": "L3-COM",
+        "l3_name": "佣金全链路管理",
+        "l4_code": "L4-COM-08",
+        "l4_name": "跨保司佣金整合",
+        "via_table": "public.agg_market_commission_tier_rate"
+      },
+      {
+        "edge_type": "pipeline_sibling",
+        "evidence": "两表都由真实ETL流水线\"commission_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+        "l3_code": "L3-COM",
+        "l3_name": "佣金全链路管理",
+        "l4_code": "L4-COM-01",
+        "l4_name": "佣金政策接收与校准",
+        "via_table": "public.config_license_carrier_mapping"
+      },
+      {
+        "edge_type": "pipeline_sibling",
+        "evidence": "两表都由真实ETL流水线\"insurance_plan_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+        "l3_code": "L3-RSJD",
+        "l3_name": "经代机构销售业务执行流程",
+        "l4_code": "L4-RSJD-04",
+        "l4_name": "方案交付",
+        "via_table": "public.fact_insurance_plan_header"
+      }
+    ],
+    "public.dim_product_sku": [
+      {
+        "edge_type": "foreign_key",
+        "evidence": "public.fact_insurance_plan_header.product_sku 外键引用 public.dim_product_sku.product_sku",
+        "l3_code": "L3-RSJD",
+        "l3_name": "经代机构销售业务执行流程",
+        "l4_code": "L4-RSJD-04",
+        "l4_name": "方案交付",
+        "via_table": "public.fact_insurance_plan_header"
+      },
+      {
+        "edge_type": "foreign_key",
+        "evidence": "public.fact_policy.product_sku 外键引用 public.dim_product_sku.product_sku",
+        "l3_code": "L3-COM",
+        "l3_name": "佣金全链路管理",
+        "l4_code": "L4-COM-10",
+        "l4_name": "保单信息整合与应收核算（待注册）",
+        "via_table": "public.fact_policy"
+      },
+      {
+        "edge_type": "foreign_key",
+        "evidence": "public.fact_commission_rate.product_sku 外键引用 public.dim_product_sku.product_sku",
+        "l3_code": "L3-COM",
+        "l3_name": "佣金全链路管理",
+        "l4_code": "L4-COM-01",
+        "l4_name": "佣金政策接收与校准",
+        "via_table": "public.fact_commission_rate"
+      },
+      {
+        "edge_type": "pipeline_sibling",
+        "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+        "l3_code": "L3-FBA",
+        "l3_name": "理财师业务分析",
+        "l4_code": "L4-FBA-01",
+        "l4_name": "月度/季度业绩数据汇总",
+        "via_table": "public.agg_sales_base"
+      },
+      {
+        "edge_type": "pipeline_sibling",
+        "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+        "l3_code": "L3-RSJD",
+        "l3_name": "经代机构销售业务执行流程",
+        "l4_code": "L4-RSJD-02",
+        "l4_name": "财务模型测算",
+        "via_table": "public.agg_sales_base"
+      },
+      {
+        "edge_type": "pipeline_sibling",
+        "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+        "l3_code": "L3-RSJD",
+        "l3_name": "经代机构销售业务执行流程",
+        "l4_code": "L4-RSJD-01",
+        "l4_name": "销售执行与客户管理",
+        "via_table": "public.dim_customer"
+      },
+      {
+        "edge_type": "pipeline_sibling",
+        "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+        "l3_code": "L3-KAGA",
+        "l3_name": "KA业绩跟踪与运维",
+        "l4_code": "L4-KAGA-02",
+        "l4_name": "业绩复盘与问题诊断",
+        "via_table": "public.dim_ka"
+      },
+      {
+        "edge_type": "pipeline_sibling",
+        "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+        "l3_code": "L3-KAGA",
+        "l3_name": "KA业绩跟踪与运维",
+        "l4_code": "L4-KAGA-04",
+        "l4_name": "KA关系维护与长效运营",
+        "via_table": "public.dim_ka"
+      },
+      {
+        "edge_type": "pipeline_sibling",
+        "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+        "l3_code": "L3-COM",
+        "l3_name": "佣金全链路管理",
+        "l4_code": "L4-COM-12",
+        "l4_name": "应派金额拆分与渠道对账（待注册）",
+        "via_table": "public.dim_partner"
+      },
+      {
+        "edge_type": "pipeline_sibling",
+        "evidence": "两表都由真实ETL流水线\"commission_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+        "l3_code": "L3-COM",
+        "l3_name": "佣金全链路管理",
+        "l4_code": "L4-COM-08",
+        "l4_name": "跨保司佣金整合",
+        "via_table": "public.agg_market_commission_tier_rate"
+      }
+    ],
+    "public.dim_role_type": [
+      {
+        "edge_type": "view_dependency",
+        "evidence": "public.v_person_activity的真实视图定义中FROM/JOIN引用了public.dim_role_type",
+        "l3_code": "L3-FBA",
+        "l3_name": "理财师业务分析",
+        "l4_code": "L4-FBA-02",
+        "l4_name": "月度业绩与活动率分析",
+        "via_table": "public.v_person_activity"
+      }
+    ],
+    "public.dim_segmentation": [
+      {
+        "edge_type": "foreign_key",
+        "evidence": "public.fact_policy.segment_code 外键引用 public.dim_segmentation.segment_code",
+        "l3_code": "L3-COM",
+        "l3_name": "佣金全链路管理",
+        "l4_code": "L4-COM-10",
+        "l4_name": "保单信息整合与应收核算（待注册）",
+        "via_table": "public.fact_policy"
+      },
+      {
+        "edge_type": "pipeline_sibling",
+        "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+        "l3_code": "L3-FBA",
+        "l3_name": "理财师业务分析",
+        "l4_code": "L4-FBA-01",
+        "l4_name": "月度/季度业绩数据汇总",
+        "via_table": "public.agg_sales_base"
+      },
+      {
+        "edge_type": "pipeline_sibling",
+        "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+        "l3_code": "L3-RSJD",
+        "l3_name": "经代机构销售业务执行流程",
+        "l4_code": "L4-RSJD-02",
+        "l4_name": "财务模型测算",
+        "via_table": "public.agg_sales_base"
+      },
+      {
+        "edge_type": "pipeline_sibling",
+        "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+        "l3_code": "L3-RSJD",
+        "l3_name": "经代机构销售业务执行流程",
+        "l4_code": "L4-RSJD-01",
+        "l4_name": "销售执行与客户管理",
+        "via_table": "public.dim_customer"
+      },
+      {
+        "edge_type": "pipeline_sibling",
+        "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+        "l3_code": "L3-KAGA",
+        "l3_name": "KA业绩跟踪与运维",
+        "l4_code": "L4-KAGA-02",
+        "l4_name": "业绩复盘与问题诊断",
+        "via_table": "public.dim_ka"
+      },
+      {
+        "edge_type": "pipeline_sibling",
+        "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+        "l3_code": "L3-KAGA",
+        "l3_name": "KA业绩跟踪与运维",
+        "l4_code": "L4-KAGA-04",
+        "l4_name": "KA关系维护与长效运营",
+        "via_table": "public.dim_ka"
+      },
+      {
+        "edge_type": "pipeline_sibling",
+        "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+        "l3_code": "L3-COM",
+        "l3_name": "佣金全链路管理",
+        "l4_code": "L4-COM-12",
+        "l4_name": "应派金额拆分与渠道对账（待注册）",
+        "via_table": "public.dim_partner"
+      }
+    ],
+    "public.fact_policy_etl_scope": [
+      {
+        "edge_type": "pipeline_sibling",
+        "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+        "l3_code": "L3-FBA",
+        "l3_name": "理财师业务分析",
+        "l4_code": "L4-FBA-01",
+        "l4_name": "月度/季度业绩数据汇总",
+        "via_table": "public.agg_sales_base"
+      },
+      {
+        "edge_type": "pipeline_sibling",
+        "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+        "l3_code": "L3-RSJD",
+        "l3_name": "经代机构销售业务执行流程",
+        "l4_code": "L4-RSJD-02",
+        "l4_name": "财务模型测算",
+        "via_table": "public.agg_sales_base"
+      },
+      {
+        "edge_type": "pipeline_sibling",
+        "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+        "l3_code": "L3-RSJD",
+        "l3_name": "经代机构销售业务执行流程",
+        "l4_code": "L4-RSJD-01",
+        "l4_name": "销售执行与客户管理",
+        "via_table": "public.dim_customer"
+      },
+      {
+        "edge_type": "pipeline_sibling",
+        "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+        "l3_code": "L3-KAGA",
+        "l3_name": "KA业绩跟踪与运维",
+        "l4_code": "L4-KAGA-02",
+        "l4_name": "业绩复盘与问题诊断",
+        "via_table": "public.dim_ka"
+      },
+      {
+        "edge_type": "pipeline_sibling",
+        "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+        "l3_code": "L3-KAGA",
+        "l3_name": "KA业绩跟踪与运维",
+        "l4_code": "L4-KAGA-04",
+        "l4_name": "KA关系维护与长效运营",
+        "via_table": "public.dim_ka"
+      },
+      {
+        "edge_type": "pipeline_sibling",
+        "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+        "l3_code": "L3-COM",
+        "l3_name": "佣金全链路管理",
+        "l4_code": "L4-COM-12",
+        "l4_name": "应派金额拆分与渠道对账（待注册）",
+        "via_table": "public.dim_partner"
+      },
+      {
+        "edge_type": "pipeline_sibling",
+        "evidence": "两表都由真实ETL流水线\"performance_pipeline\"在同一批次装载(sync_history记录)，同源不代表互为上下游",
+        "l3_code": "L3-COM",
+        "l3_name": "佣金全链路管理",
+        "l4_code": "L4-COM-10",
+        "l4_name": "保单信息整合与应收核算（待注册）",
+        "via_table": "public.fact_policy"
+      }
+    ],
+    "public.fact_product_id": [
+      {
+        "edge_type": "view_dependency",
+        "evidence": "public.fact_product_id的真实视图定义中FROM/JOIN引用了public.fact_insurance_plan_header",
+        "l3_code": "L3-RSJD",
+        "l3_name": "经代机构销售业务执行流程",
+        "l4_code": "L4-RSJD-04",
+        "l4_name": "方案交付",
+        "via_table": "public.fact_insurance_plan_header"
+      },
+      {
+        "edge_type": "view_dependency",
+        "evidence": "public.fact_product_id的真实视图定义中FROM/JOIN引用了public.fact_policy",
+        "l3_code": "L3-COM",
+        "l3_name": "佣金全链路管理",
+        "l4_code": "L4-COM-10",
+        "l4_name": "保单信息整合与应收核算（待注册）",
+        "via_table": "public.fact_policy"
+      }
+    ],
+    "public.fact_product_sku": [
+      {
+        "edge_type": "view_dependency",
+        "evidence": "public.fact_product_sku的真实视图定义中FROM/JOIN引用了public.fact_policy",
+        "l3_code": "L3-COM",
+        "l3_name": "佣金全链路管理",
+        "l4_code": "L4-COM-10",
+        "l4_name": "保单信息整合与应收核算（待注册）",
+        "via_table": "public.fact_policy"
+      }
+    ],
+    "public.v_fact_policy_person": [
+      {
+        "edge_type": "view_dependency",
+        "evidence": "public.v_fact_policy_person的真实视图定义中FROM/JOIN引用了public.fact_policy",
+        "l3_code": "L3-COM",
+        "l3_name": "佣金全链路管理",
+        "l4_code": "L4-COM-10",
+        "l4_name": "保单信息整合与应收核算（待注册）",
+        "via_table": "public.fact_policy"
+      }
+    ],
+    "public.v_fact_sales_activity": [
+      {
+        "edge_type": "view_dependency",
+        "evidence": "public.fact_channel_partner的真实视图定义中FROM/JOIN引用了public.v_fact_sales_activity",
+        "l3_code": "L3-COM",
+        "l3_name": "佣金全链路管理",
+        "l4_code": "L4-COM-12",
+        "l4_name": "应派金额拆分与渠道对账（待注册）",
+        "via_table": "public.fact_channel_partner"
+      },
+      {
+        "edge_type": "view_dependency",
+        "evidence": "public.v_fact_sales_activity的真实视图定义中FROM/JOIN引用了public.agg_sales_base",
+        "l3_code": "L3-FBA",
+        "l3_name": "理财师业务分析",
+        "l4_code": "L4-FBA-01",
+        "l4_name": "月度/季度业绩数据汇总",
+        "via_table": "public.agg_sales_base"
+      },
+      {
+        "edge_type": "view_dependency",
+        "evidence": "public.v_fact_sales_activity的真实视图定义中FROM/JOIN引用了public.agg_sales_base",
+        "l3_code": "L3-RSJD",
+        "l3_name": "经代机构销售业务执行流程",
+        "l4_code": "L4-RSJD-02",
+        "l4_name": "财务模型测算",
+        "via_table": "public.agg_sales_base"
+      },
+      {
+        "edge_type": "view_dependency",
+        "evidence": "public.fact_channel_ka的真实视图定义中FROM/JOIN引用了public.v_fact_sales_activity",
+        "l3_code": "L3-KAGA",
+        "l3_name": "KA业绩跟踪与运维",
+        "l4_code": "L4-KAGA-01",
+        "l4_name": "定期业绩数据收集",
+        "via_table": "public.fact_channel_ka"
+      }
+    ],
+    "public.v_person_coverage": [
+      {
+        "edge_type": "view_dependency",
+        "evidence": "public.v_person_coverage的真实视图定义中FROM/JOIN引用了fin_sandbox.fact_receipt",
+        "l3_code": "L3-COM",
+        "l3_name": "佣金全链路管理",
+        "l4_code": "L4-COM-11",
+        "l4_name": "银行到账确认与实收对账（待注册）",
+        "via_table": "fin_sandbox.fact_receipt"
+      },
+      {
+        "edge_type": "view_dependency",
+        "evidence": "public.v_person_coverage的真实视图定义中FROM/JOIN引用了fin_sandbox.fact_receipt",
+        "l3_code": "L3-COM",
+        "l3_name": "佣金全链路管理",
+        "l4_code": "L4-COM-16",
+        "l4_name": "佣金数据导入与格式转换（待注册）",
+        "via_table": "fin_sandbox.fact_receipt"
+      },
+      {
+        "edge_type": "view_dependency",
+        "evidence": "public.v_person_coverage的真实视图定义中FROM/JOIN引用了public.dim_ka",
+        "l3_code": "L3-KAGA",
+        "l3_name": "KA业绩跟踪与运维",
+        "l4_code": "L4-KAGA-02",
+        "l4_name": "业绩复盘与问题诊断",
+        "via_table": "public.dim_ka"
+      },
+      {
+        "edge_type": "view_dependency",
+        "evidence": "public.v_person_coverage的真实视图定义中FROM/JOIN引用了public.dim_ka",
+        "l3_code": "L3-KAGA",
+        "l3_name": "KA业绩跟踪与运维",
+        "l4_code": "L4-KAGA-04",
+        "l4_name": "KA关系维护与长效运营",
+        "via_table": "public.dim_ka"
+      },
+      {
+        "edge_type": "view_dependency",
+        "evidence": "public.v_person_coverage的真实视图定义中FROM/JOIN引用了public.fact_policy",
+        "l3_code": "L3-COM",
+        "l3_name": "佣金全链路管理",
+        "l4_code": "L4-COM-10",
+        "l4_name": "保单信息整合与应收核算（待注册）",
+        "via_table": "public.fact_policy"
+      }
+    ],
+    "public.v_plan_metrics": [
+      {
+        "edge_type": "view_dependency",
+        "evidence": "public.v_plan_metrics的真实视图定义中FROM/JOIN引用了public.fact_insurance_plan_header",
+        "l3_code": "L3-RSJD",
+        "l3_name": "经代机构销售业务执行流程",
+        "l4_code": "L4-RSJD-04",
+        "l4_name": "方案交付",
+        "via_table": "public.fact_insurance_plan_header"
+      }
+    ],
+    "public.v_plan_year_snapshot": [
+      {
+        "edge_type": "view_dependency",
+        "evidence": "public.v_plan_year_snapshot的真实视图定义中FROM/JOIN引用了public.fact_insurance_plan_lines",
+        "l3_code": "L3-RSJD",
+        "l3_name": "经代机构销售业务执行流程",
+        "l4_code": "L4-RSJD-04",
+        "l4_name": "方案交付",
+        "via_table": "public.fact_insurance_plan_lines"
+      }
+    ]
+  }
+}

@@ -6,6 +6,7 @@ import NodeDetail from './pages/NodeDetail'
 import Tables from './pages/Tables'
 import Database from './pages/Database'
 import BusinessData from './pages/BusinessData'
+import DataLineage from './pages/DataLineage'
 import Domains from './pages/Domains'
 import GapsActions from './pages/GapsActions'
 import InterviewSOP from './pages/InterviewSOP'
@@ -42,6 +43,7 @@ export default function App() {
             <Route path="/tables" element={<Tables />} />
             <Route path="/database" element={<Database />} />
             <Route path="/business-data" element={<BusinessData />} />
+            <Route path="/data-lineage" element={<DataLineage />} />
             <Route path="/domains" element={<Domains />} />
             <Route path="/gaps-actions" element={<GapsActions />} />
             <Route path="/interview-sop" element={<InterviewSOP />} />

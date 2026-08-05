@@ -43,7 +43,8 @@ def parse_args():
     parser.add_argument("--build-db-catalog", action="store_true", help="只读构建数据库现状目录(process_analytics+业务数据仓库表结构+行数)")
     parser.add_argument("--sync-business-scenarios", action="store_true", help="同步人工authoring的业务数据场景记录到前端")
     parser.add_argument("--build-table-analysis", action="store_true", help="构建业务数据入口②五层分析结构(基于已有db_catalog.json，不重新查库)")
-    parser.add_argument("--refresh-business-data", action="store_true", help="实时查库刷新db_catalog+重建入口②五层分析，一条命令覆盖表数量变化(如新增表)")
+    parser.add_argument("--refresh-business-data", action="store_true", help="实时查库刷新db_catalog+重建入口②五层分析+重建数据血缘图，一条命令覆盖表数量变化(如新增表)")
+    parser.add_argument("--build-data-lineage", action="store_true", help="用视图SQL定义/外键约束/命名ETL流水线三类真实证据构建104张表的数据血缘图")
     parser.add_argument("--check-source-updates", action="store_true", help="候选重建并输出L3/面板影响清单，不更新前端")
     parser.add_argument("--apply-source-updates", action="store_true", help="安全发布源头变化后的事实快照与影响报告")
     parser.add_argument("--l3-code", action="append", help="要构建的L3编码；可重复传入")
@@ -86,11 +87,11 @@ def _sync_to_frontend(snapshot_dir: Path) -> dict:
     return {"snapshot_files_synced": True, "demos_synced": copied_demos, "demos_missing": missing_demos}
 
 
-def _build_and_write_table_analysis(db_catalog: dict) -> dict:
-    """--build-table-analysis和--refresh-business-data共用：拿一份db_catalog(可以是刚查库的
-    最新版，也可以是磁盘上的旧版)反查全部L3快照，重建入口②五层分析并写盘。表数量变化
-    (新增/删除表)会在下次跑这里时自动体现，不需要改代码。"""
-    from skills.table_analysis import build_table_analysis, build_table_to_l4_index
+def _load_table_to_l4_index() -> tuple[dict, list[str]]:
+    """--build-table-analysis/--build-data-lineage/--refresh-business-data共用：从
+    model_snapshots反查全部L3快照，建立table->L4关联索引。表数量变化(新增/删除表)、
+    L3数量变化会在下次跑这里时自动体现，不需要改代码。"""
+    from skills.table_analysis import build_table_to_l4_index
 
     snapshot_dir = AGENT_ROOT / "10_部署与运行_Deploy_and_Run/frontend/public/data/model_snapshots"
     model_index = json.loads((snapshot_dir / "index.json").read_text(encoding="utf-8"))
@@ -102,11 +103,52 @@ def _build_and_write_table_analysis(db_catalog: dict) -> dict:
             return None
         return json.loads(path.read_text(encoding="utf-8"))
 
-    table_to_l4_index = build_table_to_l4_index(l3_codes, load_l3_snapshot)
+    return build_table_to_l4_index(l3_codes, load_l3_snapshot), l3_codes
+
+
+def _build_and_write_table_analysis(db_catalog: dict) -> dict:
+    from skills.table_analysis import build_table_analysis
+
+    table_to_l4_index, l3_codes = _load_table_to_l4_index()
     analysis = build_table_analysis(db_catalog, table_to_l4_index, l3_codes)
     output_path = AGENT_ROOT / "10_部署与运行_Deploy_and_Run/frontend/public/data/table_analysis.json"
     output_path.write_text(json.dumps(analysis, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     return {"table_count": len(analysis["tables"]), "output": str(output_path)}
+
+
+def _build_and_write_data_lineage(db_catalog: dict) -> dict:
+    """三类真实证据(视图SQL定义/外键约束/命名ETL流水线同批日志)查库建血缘图，
+    再结合business_data_bridge的已确认L4关联算出DERIVED候选提示，写盘。"""
+    from skills.data_lineage import (
+        build_lineage_graph,
+        extract_foreign_keys,
+        extract_pipeline_groups,
+        extract_view_dependencies,
+        suggest_l4_candidates,
+    )
+    from skills.sync_data_foundation import db_query
+    from skills.table_analysis import business_label
+
+    known_tables = {(t["schema"], t["table"]) for t in db_catalog["tables"] if t["schema"] != "process_analytics"}
+    edges = (
+        extract_view_dependencies(db_query, known_tables)
+        + extract_foreign_keys(db_query, known_tables)
+        + extract_pipeline_groups(db_query, known_tables)
+    )
+    graph = build_lineage_graph(db_catalog, business_label, edges)
+
+    table_to_l4_index, _ = _load_table_to_l4_index()
+    graph["suggested_l4_candidates"] = suggest_l4_candidates(edges, table_to_l4_index, known_tables)
+
+    output_path = AGENT_ROOT / "10_部署与运行_Deploy_and_Run/frontend/public/data/data_lineage.json"
+    output_path.write_text(json.dumps(graph, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    return {
+        "node_count": len(graph["nodes"]),
+        "edge_count": len(graph["edges"]),
+        "edge_type_counts": graph["edge_type_counts"],
+        "suggested_candidate_table_count": len(graph["suggested_l4_candidates"]),
+        "output": str(output_path),
+    }
 
 
 def main() -> int:
@@ -252,6 +294,12 @@ def main() -> int:
         result = _build_and_write_table_analysis(db_catalog)
         print(json.dumps({"status": "built", **result}, ensure_ascii=False, indent=2))
         return 0
+    if args.build_data_lineage:
+        catalog_path = AGENT_ROOT / "10_部署与运行_Deploy_and_Run/frontend/public/data/db_catalog.json"
+        db_catalog = json.loads(catalog_path.read_text(encoding="utf-8"))
+        result = _build_and_write_data_lineage(db_catalog)
+        print(json.dumps({"status": "built", **result}, ensure_ascii=False, indent=2))
+        return 0
     if args.build_db_catalog:
         from skills.db_catalog import build_catalog
         from skills.sync_data_foundation import db_query
@@ -269,10 +317,12 @@ def main() -> int:
         catalog_path = AGENT_ROOT / "10_部署与运行_Deploy_and_Run/frontend/public/data/db_catalog.json"
         catalog_path.write_text(json.dumps(catalog, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
         result = _build_and_write_table_analysis(catalog)
+        lineage_result = _build_and_write_data_lineage(catalog)
         print(json.dumps({
             "status": "refreshed",
             "db_catalog_table_count": len(catalog["tables"]),
             **result,
+            "data_lineage": lineage_result,
         }, ensure_ascii=False, indent=2))
         return 0
     if args.build_model_snapshots or args.build_all_model_snapshots or args.check_source_updates or args.apply_source_updates:
