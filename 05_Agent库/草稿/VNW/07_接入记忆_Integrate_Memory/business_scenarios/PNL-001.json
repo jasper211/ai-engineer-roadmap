@@ -1,0 +1,79 @@
+{
+  "schema_version": "vnw.business-scenario.v1",
+  "scenario_id": "PNL-001",
+  "scenario_name": "P&L定期核算",
+  "raised_by": "老板",
+  "raised_at": "2026-08-05",
+  "status": "DRAFT",
+  "definition": "毛利 = 收入（4类12条业务细分） − 成本（佣金拨出 / 采购成本） − 费用（运营 + 人力）",
+  "definition_note": "4类12条业务细分的具体分类口径未在现有文档中找到，需业务方（Carrie/Finance）确认后补充；本记录先按能查到的KPI/L3/表做追溯，口径本身如实标注待确认。",
+  "components": [
+    {
+      "component_name": "收入",
+      "component_type": "revenue",
+      "kpi_refs": ["KPI_04"],
+      "kpi_note": "dim_kpi.KPI_04净营收(Net Revenue)的l3_codes声明了6个L3：L3-COM/L3-STLM/L3-MED/L3-CBD/L3-CMU/L3-CVI",
+      "l3_trace": [
+        {"l3_code": "L3-COM", "in_current_db": true, "gate_a": "BLOCKED", "note": "佣金合规族核心L3，业务数据证据强(见business_evidence)"},
+        {"l3_code": "L3-STLM", "in_current_db": true, "gate_a": "BLOCKED", "note": "委外供应商类L3(结算服务执行·塞尔斯)，model_generation_allowed=false，D1-D6未完整，暂不可靠"},
+        {"l3_code": "L3-MED", "in_current_db": true, "gate_a": "PASS", "note": "实际L4是渠道策略设计/定价与收入模式设计/财务模型可行性分析——这是市场进入策略设计流程，不是实际收入入账流程，与\"净营收\"的业务关联较弱，疑似KPI-L3映射口径过时，需业务方核实KPI_04是否还应该关联L3-MED"},
+        {"l3_code": "L3-CBD", "in_current_db": false, "note": "当前process_analytics.dim_process里找不到此编码，可能已改名/合并/从未建"},
+        {"l3_code": "L3-CMU", "in_current_db": false, "note": "同上，不存在于当前DB"},
+        {"l3_code": "L3-CVI", "in_current_db": false, "note": "同上，不存在于当前DB"}
+      ],
+      "business_evidence": [
+        {"schema": "public", "table": "fact_commission_rate", "row_count": 25111, "note": "佣金费率主表，与收入计算直接相关"},
+        {"schema": "public", "table": "agg_source_commission_wide", "row_count": 5734, "note": "来源佣金费率宽表，跨保司整合"},
+        {"schema": "public", "table": "agg_market_commission_tier_rate", "row_count": 7518, "note": "市场佣金费率汇总，含合作伙伴层级"},
+        {"schema": "public", "table": "agg_sales_base", "row_count": 6399, "note": "销售业务基础汇总表，含保费/APE"}
+      ],
+      "state": "A",
+      "conclusion": "佣金收入这条线有真实、活跃的数据支撑（4张表均有大量真实行数）。但KPI_04声明的完整营收口径覆盖6个L3，其中3个不存在于当前数据库、1个(MED)业务关联存疑、1个(STLM)是Gate未过的委外L3——只有L3-COM是明确可靠的。这套KPI定义本身可能需要业务方重新核实和更新。"
+    },
+    {
+      "component_name": "佣金拨出成本",
+      "component_type": "cost",
+      "kpi_refs": [],
+      "l3_trace": [
+        {"l3_code": "L3-COM", "in_current_db": true, "gate_a": "BLOCKED", "note": "佣金全链路管理，应收/实收/应派/差异对照全链路已有强证据"}
+      ],
+      "business_evidence": [
+        {"schema": "fin_sandbox", "table": "fact_receivable", "row_count": 47142, "note": "应收明细主表"},
+        {"schema": "fin_sandbox", "table": "fact_receipt", "row_count": 1219, "note": "实收清单主表"},
+        {"schema": "fin_sandbox", "table": "match_receipt_receivable", "row_count": 1154, "note": "应收实收差异对照表"},
+        {"schema": "public", "table": "partner_tier_rules", "row_count": 179, "note": "伙伴档位规则，应派金额计算依据"}
+      ],
+      "state": "A",
+      "conclusion": "佣金拨出成本这条线数据基础扎实，能从真实系统数据算出来。"
+    },
+    {
+      "component_name": "采购成本",
+      "component_type": "cost",
+      "kpi_refs": [],
+      "l3_trace": [],
+      "business_evidence": [],
+      "state": "C",
+      "conclusion": "在122张业务数据仓库表（public/comm_sandbox/fin_sandbox）逐一核实后，没有找到任何采购/供应商成本相关表；dim_kpi里也没有对应的采购成本KPI；process_analytics里没有可识别的采购类L3。这条成本线目前完全没有系统化数据来源，大概率在财务系统或Excel里单独核算，是真实的数据空白，不是匹配遗漏。"
+    },
+    {
+      "component_name": "运营+人力费用",
+      "component_type": "expense",
+      "kpi_refs": [],
+      "l3_trace": [
+        {"l3_code": "L3-HRA", "in_current_db": true, "gate_a": "BLOCKED", "note": "人力分析与决策支持流程，L4-HRA-03\"人员成本分析\"交付物是\"各类分析报告\"(非结构化命名)，Gate A未过"},
+        {"l3_code": "L3-HRM", "in_current_db": true, "gate_a": "BLOCKED", "note": "人员全生命周期管理流程，L4-HRM-07\"薪酬激励与发放\"交付物是\"薪酬记录\"(非结构化命名)，Gate A未过"}
+      ],
+      "business_evidence": [
+        {"schema": "public", "table": "dim_employee", "row_count": 209, "note": "员工档案表，含姓名/入职日期/合同地区/学历等，但没有薪酬/成本字段，不能直接支持人力成本计算"}
+      ],
+      "state": "C",
+      "conclusion": "人力成本这条线是双重缺口：流程模型层面L3-HRA/HRM的Gate A都未通过（说明连\"人员成本分析\"这个流程本身的D1-D6/价值节点映射都还没做完整）；业务数据层面122张表里也没有找到薪酬/工资记录表，唯一相关的dim_employee只有员工档案没有成本字段。这条线目前无法从我们已知的数据源产出。"
+    }
+  ],
+  "overall_conclusion": "P&L的四条组成线里，佣金收入和佣金拨出成本（都集中在L3-COM）today有真实数据支撑，状态A；采购成本和人力费用完全没有结构化数据源，状态C，且人力费用对应的L3-HRA/HRM本身流程建模也未完成。营收侧还有个独立问题：KPI_04净营收声明关联6个L3，只有L3-COM明确可靠，其余5个要么不在当前DB、要么业务关联存疑、要么Gate未过，这个KPI定义本身值得拉着业务方重新核实。结论：今天不能端到端自动产出P&L，佣金相关的两条线可以，采购成本和人力费用这两条线需要先补数据源（或先明确目前是通过什么外部方式核算的）。",
+  "next_steps": [
+    "找Carrie/Finance确认\"收入4类12条业务细分\"的具体口径定义，并核实KPI_04净营收的6个L3引用是否需要更新",
+    "确认采购成本目前的核算方式（哪个系统/谁维护），判断要不要纳入VNW数据范围、要纳入的话需要建什么表",
+    "确认人力成本/薪酬数据目前的核算方式，同时推进L3-HRA/HRM本身的Gate A建模（这是流程模型侧的独立缺口，业务数据缺口只是结果之一）"
+  ]
+}
