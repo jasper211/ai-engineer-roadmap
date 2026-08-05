@@ -177,6 +177,8 @@ export default function DataLineage() {
 
   const candidateCount = Object.keys(lineage.suggested_l4_candidates).length
   const suspectedCount = tables.filter(t => t.zombie_flag === 'suspected_zombie').length
+  const fieldAnchoredCount = tables.filter(t => t.zombie_flag === 'field_anchored').length
+  const utilitySupportCount = tables.filter(t => t.zombie_flag === 'utility_support').length
   const withL4 = tables.filter(t => t.related_l3_l4.length > 0).length
   const noLineage = tables.filter(t => !t.has_lineage).length
 
@@ -194,12 +196,14 @@ export default function DataLineage() {
         </p>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-5">
+      <div className="grid gap-3 sm:grid-cols-7">
         <div className="panel p-4"><p className="eyebrow">全部业务表</p><p className="mt-2 metric-value">{tables.length}</p></div>
         <div className="panel p-4"><p className="eyebrow">已定位 L3/L4</p><p className="mt-2 metric-value text-indigo-500">{withL4}</p><p className="mt-1 text-[11px] text-text-muted">映射到业务模型的表</p></div>
         <div className="panel p-4"><p className="eyebrow">有血缘证据</p><p className="mt-2 metric-value">{lineage.nodes.filter(n=>n.has_lineage).length}</p><p className="mt-1 text-[11px] text-text-muted">真实边 {lineage.edge_type_counts.view_dependency+lineage.edge_type_counts.foreign_key}</p></div>
         <div className="panel p-4"><p className="eyebrow">血缘候选 L4</p><p className="mt-2 metric-value text-amber-600">{candidateCount}</p><p className="mt-1 text-[11px] text-text-muted">未经人工核实</p></div>
-        <div className="panel p-4"><p className="eyebrow">真断点(待核实)</p><p className="mt-2 metric-value text-rose-600">{suspectedCount}</p><p className="mt-1 text-[11px] text-text-muted">有数据但血缘/语义查不到</p></div>
+        <div className="panel p-4"><p className="eyebrow">字段锚定(非孤立)</p><p className="mt-2 metric-value text-sky-600">{fieldAnchoredCount}</p><p className="mt-1 text-[11px] text-text-muted">无血缘边/L4，但有真实主键字段连回主链</p></div>
+        <div className="panel p-4"><p className="eyebrow">工具/服务支撑</p><p className="mt-2 metric-value text-violet-600">{utilitySupportCount}</p><p className="mt-1 text-[11px] text-text-muted">业务方核实非断点，方法论对其天然失效</p></div>
+        <div className="panel p-4"><p className="eyebrow">真断点(待核实)</p><p className="mt-2 metric-value text-rose-600">{suspectedCount}</p><p className="mt-1 text-[11px] text-text-muted">血缘/语义/字段锚定/工具登记均查不到</p></div>
       </div>
 
       {/* 主体：左树 + 中卡片 */}
@@ -262,7 +266,7 @@ export default function DataLineage() {
               </div>
             )}
           </div>
-          <p className="mt-3 border-t border-border-default pt-2 text-[10px] text-text-muted">{tables.length}张表 · 41张已映射L4/岗位，其余为服务支撑/独立表</p>
+          <p className="mt-3 border-t border-border-default pt-2 text-[10px] text-text-muted">{tables.length}张表 · {withL4}张已映射L4/岗位 · {utilitySupportCount}张工具/服务支撑 · 其余为字段锚定/独立表</p>
         </div>
 
         {/* 中栏：表卡片网格 */}
@@ -278,6 +282,9 @@ export default function DataLineage() {
             {visibleTables.map(t => {
               const hasL4 = t.related_l3_l4.length > 0
               const isZombie = t.zombie_flag === 'suspected_zombie'
+              const isFieldAnchored = t.zombie_flag === 'field_anchored'
+              const isUtilitySupport = t.zombie_flag === 'utility_support'
+              const anchorLinks = lineage.field_anchor_links[t.key]
               const isFocus = focus === t.key
               return (
                 <div key={t.key} onClick={() => setFocus(t.key)} className={`panel cursor-pointer p-3 transition ${isFocus ? 'ring-2 ring-accent-primary' : 'hover:border-accent-primary'} ${hasL4 ? '' : 'opacity-80'}`}>
@@ -286,8 +293,8 @@ export default function DataLineage() {
                       <p className="font-mono text-xs font-bold text-text-primary">{t.schema}.{t.table}</p>
                       <p className="mt-0.5 truncate text-[11px] text-text-secondary">{t.business_label}</p>
                     </div>
-                    <span className={`shrink-0 rounded px-1.5 py-0.5 text-[9px] font-medium ${isZombie ? 'bg-rose-100 text-rose-700' : hasL4 ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-500'}`}>
-                      {isZombie ? '断点' : hasL4 ? '已定位L4' : '支撑/独立'}
+                    <span className={`shrink-0 rounded px-1.5 py-0.5 text-[9px] font-medium ${isZombie ? 'bg-rose-100 text-rose-700' : hasL4 ? 'bg-indigo-100 text-indigo-700' : isFieldAnchored ? 'bg-sky-100 text-sky-700' : isUtilitySupport ? 'bg-violet-100 text-violet-700' : 'bg-slate-100 text-slate-500'}`}>
+                      {isZombie ? '断点' : hasL4 ? '已定位L4' : isFieldAnchored ? '字段锚定' : isUtilitySupport ? '工具/服务支撑' : '支撑/独立'}
                     </span>
                   </div>
                   <div className="mt-2 flex flex-wrap gap-1 text-[9px]">
@@ -302,6 +309,16 @@ export default function DataLineage() {
                         <p key={i} title={r.l4_name} className="truncate text-[9px] text-indigo-700">{r.l3_code} · {r.l4_code} · {r.l4_name}</p>
                       ))}
                       {t.related_l3_l4.length > 2 && <p className="text-[9px] text-text-muted">+{t.related_l3_l4.length-2} 个L4…</p>}
+                    </div>
+                  )}
+                  {isFieldAnchored && anchorLinks && anchorLinks.length > 0 && (
+                    <div className="mt-2 rounded-md border border-dashed border-sky-300 bg-sky-50/60 p-1.5">
+                      <p className="text-[9px] font-semibold text-sky-800">无血缘边/L4，但字段"{anchorLinks[0].field}"是{anchorLinks[0].origin_tables.join('、')}的真实主键，且被{anchorLinks[0].linked_tables.length}张表共用——非孤立</p>
+                    </div>
+                  )}
+                  {isUtilitySupport && (
+                    <div className="mt-2 rounded-md border border-dashed border-violet-300 bg-violet-50/60 p-1.5">
+                      <p className="text-[9px] font-semibold text-violet-800">{lineage.nodes.find(n => `${n.schema}.${n.table}` === t.key)?.utility_support_reason}</p>
                     </div>
                   )}
                   {t.positions.length > 0 && (

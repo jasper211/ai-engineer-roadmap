@@ -42,6 +42,11 @@ bridge.py的人工核实决定。
   源头的标"外键确认"；只是同名但没建外键的标"同名(业务方确认含义一致)"——2026-08-05
   向业务数据方核实过，字段名相同时业务含义确实一致，这条备注写死在index里，不是
   每次都要重新假设。
+
+- build_field_anchor_links + UTILITY_SUPPORT_TABLES：僵尸判定的第4/第5类补充信号。
+  第4类(field_anchored)是字段级真实主键锚定，纯数据驱动。第5类(utility_support)是
+  人工登记表——按字段名匹配的方法论对"控制表/通用维度/清洗工具"这类表天然失效，
+  每条都由业务方逐条核实过具体理由(2026-08-05)，不是自动推断出来的。
 """
 from __future__ import annotations
 
@@ -239,14 +244,76 @@ def suggest_l4_candidates(edges: list[dict], table_to_l4_index: dict[str, list[d
     return suggestions
 
 
-def flag_zombie_tables(nodes: list[dict], table_to_l4_index: dict[str, list[dict]], suggested_candidates: dict[str, list]) -> None:
-    """就地给每个node加zombie_flag字段。三种真实信号(血缘边/已确认L4关联/血缘候选)
-    一个都没有的表，才有资格被标——区分两种情况：0行是"从未启用"(可能只是还没到
-    这个环节，不算真问题)，有行数据但仍然三条信号全无，才是更接近字面意义的
-    "疑似僵尸表"(数据蓄在库里，血缘上无人产出/消费它，L4分析也没人认领)。
+# 第5类信号——人工核实的"工具/服务支撑表"：既没有血缘边/L4关联，也没有字段级
+# 主键锚定，但业务上已核实其存在是为了支撑其他表/流程运转(ETL控制、通用维度、
+# 数据清洗工具)，不是真断点。这是人工登记表，不是自动推断——每条都要有可核查的
+# 具体理由，不能拿"看起来像工具表"就往里塞。2026-08-05由Jasper逐条核实确认。
+UTILITY_SUPPORT_TABLES: dict[tuple[str, str], str] = {
+    ("public", "agg_sales_base_etl_scope"): (
+        "agg_sales_base流水线的ETL范围控制表(哪些渠道/期间纳入本轮汇总计算)，"
+        "服务于流水线运行本身，不是业务实体，字段命名匹配不到血缘也在预期内"
+    ),
+    ("public", "dim_date"): (
+        "通用日期维度表，供任意表按日期值(而非声明的字段名/主键)关联，"
+        "血缘/字段索引按字段名匹配的方法论对它天然失效，不代表未被使用"
+    ),
+    ("public", "map_name_entity_type"): (
+        "名称实体类型判定表：判断原始名称字符串是机构还是自然人，用于数据清洗"
+        "人工复核记录，服务于姓名/机构识别的清洗环节而非直接挂业务L4——"
+        "2026-08-05业务方确认其真实用途"
+    ),
+}
+
+
+def build_field_anchor_links(field_index: dict) -> dict[str, list[dict]]:
+    """第4类连接信号——字段级真实主键锚定，供角色分类/僵尸判定做补充信号用，
+    不算血缘边(不进edges/has_lineage，避免和view/FK/pipeline三类证据混淆强度)。
+
+    只认"该字段是某张表真实声明的主键"(field_index里origin_tables非空)这一种情况，
+    纯粹同名但两边都不是任何人主键的通用属性字段(active/remark/is_active/quarter
+    这类)明确不算——2026-08-05实测过，同名不代表锚定，必须要求真实PK背书。
+    """
+    links: dict[str, list[dict]] = {}
+    for field_name, entry in field_index["fields"].items():
+        if not entry["origin_tables"]:
+            continue
+        usages = entry["usages"]
+        all_keys = [f"{u['schema']}.{u['table']}" for u in usages]
+        for u in usages:
+            key = f"{u['schema']}.{u['table']}"
+            others = [k for k in all_keys if k != key]
+            if not others:
+                continue
+            links.setdefault(key, []).append({
+                "field": field_name,
+                "linked_tables": others,
+                "origin_tables": [f"{o['schema']}.{o['table']}" for o in entry["origin_tables"]],
+            })
+    return links
+
+
+def flag_zombie_tables(
+    nodes: list[dict],
+    table_to_l4_index: dict[str, list[dict]],
+    suggested_candidates: dict[str, list],
+    field_anchor_links: dict[str, list[dict]] | None = None,
+    utility_support_tables: dict[tuple[str, str], str] | None = None,
+) -> None:
+    """就地给每个node加zombie_flag字段。五种真实信号(血缘边/已确认L4关联/血缘候选/
+    字段级主键锚定/人工核实的工具支撑表)一个都没有的表，才有资格被标——区分四种情况：
+    - 0行是"从未启用"(可能只是还没到这个环节，不算真问题)；
+    - 有数据、但能用真实主键锚定字段连回其他有血缘/有L4的表，标"field_anchored"
+      (2026-08-05新增：这类表此前被误标疑似僵尸，实测33张"独立/工具/配置"表里
+      有25张其实能用这条证据连回主链，不是真孤立，只是没做正式判定)；
+    - 有数据、无字段锚定，但业务方已核实是工具/服务支撑表(UTILITY_SUPPORT_TABLES
+      登记表)，标"utility_support"——这类表的方法论局限(按字段名匹配)天然找不到
+      它们，不代表真断点；
+    - 有数据、五种信号全无，才是更接近字面意义的"疑似僵尸表"。
     这不是删除或下线建议，只是标出来提醒去核实——核实结果可能是"确实没用了"，
     也可能是"只是还没做匹配分析"，两种都要靠人判断，不能自动下结论。
     """
+    field_anchor_links = field_anchor_links or {}
+    utility_support_tables = utility_support_tables or {}
     for node in nodes:
         key = f"{node['schema']}.{node['table']}"
         has_signal = node["has_lineage"] or bool(table_to_l4_index.get(key)) or bool(suggested_candidates.get(key))
@@ -254,6 +321,11 @@ def flag_zombie_tables(nodes: list[dict], table_to_l4_index: dict[str, list[dict
             node["zombie_flag"] = "none"
         elif node["row_count"] == 0:
             node["zombie_flag"] = "never_activated"
+        elif field_anchor_links.get(key):
+            node["zombie_flag"] = "field_anchored"
+        elif (node["schema"], node["table"]) in utility_support_tables:
+            node["zombie_flag"] = "utility_support"
+            node["utility_support_reason"] = utility_support_tables[(node["schema"], node["table"])]
         else:
             node["zombie_flag"] = "suspected_zombie"
 

@@ -102,6 +102,7 @@ L4_BUSINESS_TABLE_MAP: dict[str, list[dict]] = {
         {"schema": "public", "table": "partner_tier_rules", "evidence_type": "rule", "matched_columns": ["fyc_tier", "ryc_tier", "fyc_adjustment", "ryc_adjustment"], "rationale": "伙伴档位规则，是\"应派金额拆分\"的计算依据，规则已参数化", "confidence": "strong"},
         {"schema": "public", "table": "dim_partner", "evidence_type": "output", "matched_columns": ["payment_cycle", "min_payout_threshold", "partner_status"], "rationale": "渠道伙伴主档，含结算周期与起付额，是\"渠道对账\"的伙伴侧依据", "confidence": "strong"},
         {"schema": "comm_sandbox", "table": "config_partner_routing", "evidence_type": "rule", "matched_columns": ["assigned_license_code", "priority"], "rationale": "渠道路由规则，决定应派归属到哪个牌照", "confidence": "strong"},
+        {"schema": "public", "table": "config_partner_routing", "evidence_type": "rule", "matched_columns": ["assigned_license_code", "priority", "partner_code_condition"], "rationale": "同为渠道路由规则表(所有合作伙伴的合作匹配规则)，与comm_sandbox同名表功能等价但字段命名独立维护(含拼写差异bussiness_line_comdition)，2026-08-05业务方确认其为真实有效的路由规则表，非断点", "confidence": "strong"},
         {"schema": "public", "table": "fact_channel_partner", "evidence_type": "output", "matched_columns": ["partner_code", "total_premium_hkd", "policy_count"], "rationale": "渠道月度汇总表，弱对应\"应派清单\"（无逐笔应派落地表）", "confidence": "weak"},
     ],
     "L4-COM-13": [

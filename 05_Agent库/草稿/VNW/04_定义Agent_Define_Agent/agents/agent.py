@@ -120,6 +120,8 @@ def _build_and_write_data_lineage(db_catalog: dict) -> dict:
     """三类真实证据(视图SQL定义/外键约束/命名ETL流水线同批日志)查库建血缘图，
     再结合business_data_bridge的已确认L4关联算出DERIVED候选提示，写盘。"""
     from skills.data_lineage import (
+        UTILITY_SUPPORT_TABLES,
+        build_field_anchor_links,
         build_field_index,
         build_lineage_graph,
         extract_field_column_lineage,
@@ -142,17 +144,26 @@ def _build_and_write_data_lineage(db_catalog: dict) -> dict:
 
     table_to_l4_index, _ = _load_table_to_l4_index()
     graph["suggested_l4_candidates"] = suggest_l4_candidates(edges, table_to_l4_index, known_tables)
-    flag_zombie_tables(graph["nodes"], table_to_l4_index, graph["suggested_l4_candidates"])
     graph["field_lineage"] = extract_field_column_lineage(db_query, known_tables)
     graph["field_index"] = build_field_index(db_catalog, db_query)
+    field_anchor_links = build_field_anchor_links(graph["field_index"])
+    graph["field_anchor_links"] = field_anchor_links
+    flag_zombie_tables(
+        graph["nodes"], table_to_l4_index, graph["suggested_l4_candidates"],
+        field_anchor_links, UTILITY_SUPPORT_TABLES,
+    )
 
     output_path = AGENT_ROOT / "10_部署与运行_Deploy_and_Run/frontend/public/data/data_lineage.json"
     output_path.write_text(json.dumps(graph, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     zombie_count = sum(1 for n in graph["nodes"] if n["zombie_flag"] == "suspected_zombie")
+    field_anchored_count = sum(1 for n in graph["nodes"] if n["zombie_flag"] == "field_anchored")
+    utility_support_count = sum(1 for n in graph["nodes"] if n["zombie_flag"] == "utility_support")
     return {
         "node_count": len(graph["nodes"]),
         "edge_count": len(graph["edges"]),
         "suspected_zombie_count": zombie_count,
+        "field_anchored_count": field_anchored_count,
+        "utility_support_count": utility_support_count,
         "edge_type_counts": graph["edge_type_counts"],
         "suggested_candidate_table_count": len(graph["suggested_l4_candidates"]),
         "field_lineage_resolved_views": len(graph["field_lineage"]["resolved_views"]),

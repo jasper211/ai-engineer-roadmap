@@ -27,6 +27,7 @@ const EDGE_COLOR: Record<LineageEdgeType, string> = {
 function nodeColor(n: LineageNode): string {
   if (n.row_count === 0) return '#e2e8f0'
   if (n.zombie_flag === 'suspected_zombie') return '#e11d48'
+  if (n.zombie_flag === 'utility_support') return '#a78bfa'
   const t = n.table_type
   if (t === '视图' || t === '桥接表' || t === '映射表') return '#0ea5e9'
   if (t === '配置表' || t === '维度表' || t === '规则表') return '#8ca3e8'
@@ -83,6 +84,7 @@ export default function LineageGraph({ nodes, edges, hops, focusKey, focusSchema
           table_type: n.table_type,
           row_count: n.row_count,
           isFocus: k === focusKey,
+          fieldAnchored: n.zombie_flag === 'field_anchored',
           color: !focusSchema || n.schema === focusSchema ? nodeColor(n) : '#cbd5e1',
           longLabel: (n.business_label || n.table) + '\n' + n.table,
         },
@@ -148,6 +150,10 @@ export default function LineageGraph({ nodes, edges, hops, focusKey, focusSchema
       {
         selector: 'node:selected',
         style: { 'border-width': 4, 'border-color': '#f59e0b' },
+      },
+      {
+        selector: 'node[?fieldAnchored]',
+        style: { 'border-width': 2, 'border-color': '#0ea5e9', 'border-style': 'dashed' as const },
       },
       {
         selector: 'edge',
@@ -260,6 +266,12 @@ export default function LineageGraph({ nodes, edges, hops, focusKey, focusSchema
           <span className="inline-block h-2.5 w-2.5 rounded-sm bg-[#e11d48]" /> 疑似断点/僵尸
         </span>
         <span className="flex items-center gap-1.5">
+          <span className="inline-block h-2.5 w-2.5 rounded-sm border-2 border-dashed border-[#0ea5e9] bg-white" /> 字段锚定(无血缘边但共用真实主键字段)
+        </span>
+        <span className="flex items-center gap-1.5">
+          <span className="inline-block h-2.5 w-2.5 rounded-sm bg-[#a78bfa]" /> 工具/服务支撑(业务方核实非断点)
+        </span>
+        <span className="flex items-center gap-1.5">
           <span className="inline-block h-2.5 w-2.5 rounded-sm bg-[#0f172a]" /> 边框加粗 = 当前焦点表
         </span>
       </div>
@@ -269,8 +281,13 @@ export default function LineageGraph({ nodes, edges, hops, focusKey, focusSchema
       </div>
       <p className="text-[10px] text-text-muted">
         节点下方为业务中文名（与业务分析对齐），第二行小字为物理表名。箭头方向 = 数据流向（A→B 表示 A 供给 B）。
-        孤立表（无任何连线）多为<b>配置/维度等参考表</b>或<b>未激活/归档表</b>（如 never_activated / 0 行 / 历史归档），
-        业务上本就无血缘；少数大表（如应收主表 fact_receivable）无血缘则是<b>血缘采集缺口</b>，属后续补采范围。
+        孤立表（图上无任何连线）不等于和业务无关：其中一部分（如应收主表 fact_receivable、渠道路由规则表
+        config_partner_routing）已被业务语义层（business_data_bridge）确认关联到具体 L4，只是没有
+        view/FK/流水线这类客观血缘边；另一部分虽然既没有血缘边也没有 L4 关联，但字段级索引显示它和其他表
+        共用真实主键字段（如 carrier_code/product_id），同样<b>不算孤立</b>，标记为"字段锚定"；还有一类
+        （如 dim_date、agg_sales_base_etl_scope、map_name_entity_type）是按字段名匹配的方法论天然覆盖不到
+        的工具/服务支撑表（通用维度、ETL控制、数据清洗工具），业务方逐条核实过用途，标记为"工具/服务支撑"。
+        五类信号都查不到，才是<b>真断点</b>，需要人工核实。
       </p>
     </div>
   )

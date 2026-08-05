@@ -1,4 +1,4 @@
-export type ZombieFlag = 'none' | 'never_activated' | 'suspected_zombie'
+export type ZombieFlag = 'none' | 'never_activated' | 'field_anchored' | 'utility_support' | 'suspected_zombie'
 
 export interface LineageNode {
   schema: string
@@ -8,6 +8,7 @@ export interface LineageNode {
   row_count: number
   has_lineage: boolean
   zombie_flag: ZombieFlag
+  utility_support_reason?: string
 }
 
 export type LineageEdgeType = 'view_dependency' | 'foreign_key' | 'pipeline_sibling'
@@ -83,6 +84,12 @@ export interface FieldIndex {
   fields: Record<string, FieldIndexEntry>
 }
 
+export interface FieldAnchorLink {
+  field: string
+  linked_tables: string[]
+  origin_tables: string[]
+}
+
 export interface DataLineage {
   schema_version: string
   source_policy: string
@@ -93,6 +100,7 @@ export interface DataLineage {
   suggested_l4_candidates: Record<string, LineageL4Candidate[]>
   field_lineage: FieldLineage
   field_index: FieldIndex
+  field_anchor_links: Record<string, FieldAnchorLink[]>
 }
 
 export async function loadDataLineage(): Promise<DataLineage> {

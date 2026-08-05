@@ -2810,7 +2810,7 @@
     ]
   },
   "analysis_freshness": "UNVERSIONED_REVIEWED_BASELINE",
-  "analysis_input_hash": "463c28e4e1750660623bc13dc2c6a80307d017cfb301384e61f1ee6be2607116",
+  "analysis_input_hash": "93043855cb37084c8f2ff3e9bfff6f252cdf357133ad7a54eb3ac68dd3ac9651",
   "blueprint": {
     "blueprint_value_nodes": [
       {
@@ -5003,6 +5003,90 @@
       "status": "ACTIVE",
       "transform_rule": "",
       "value": "FAIL"
+    },
+    {
+      "confidence": "LOW",
+      "conflict_note": "人工按业务含义匹配到业务数据仓库表，非外键关联，未经业务方确认",
+      "evidence_class": "CONSENSUS",
+      "evidence_id": "EVD-391023cece7a93df0375",
+      "field_name": "business_evidence",
+      "source": {
+        "observed_at": "",
+        "source_field": "人工匹配",
+        "source_key": "L4-COM-12",
+        "source_object": "public.partner_tier_rules, public.dim_partner, comm_sandbox.config_partner_routing, public.config_partner_routing, public.fact_channel_partner",
+        "source_system": "业务数据仓库",
+        "source_version": "2026-08-04试点"
+      },
+      "status": "UNVERIFIED",
+      "transform_rule": "",
+      "value": [
+        {
+          "confidence": "strong",
+          "evidence_type": "rule",
+          "matched_columns": [
+            "fyc_tier",
+            "ryc_tier",
+            "fyc_adjustment",
+            "ryc_adjustment"
+          ],
+          "rationale": "伙伴档位规则，是\"应派金额拆分\"的计算依据，规则已参数化",
+          "row_count": 179,
+          "schema": "public",
+          "table": "partner_tier_rules"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "output",
+          "matched_columns": [
+            "payment_cycle",
+            "min_payout_threshold",
+            "partner_status"
+          ],
+          "rationale": "渠道伙伴主档，含结算周期与起付额，是\"渠道对账\"的伙伴侧依据",
+          "row_count": 727,
+          "schema": "public",
+          "table": "dim_partner"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "rule",
+          "matched_columns": [
+            "assigned_license_code",
+            "priority"
+          ],
+          "rationale": "渠道路由规则，决定应派归属到哪个牌照",
+          "row_count": 41,
+          "schema": "comm_sandbox",
+          "table": "config_partner_routing"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "rule",
+          "matched_columns": [
+            "assigned_license_code",
+            "priority",
+            "partner_code_condition"
+          ],
+          "rationale": "同为渠道路由规则表(所有合作伙伴的合作匹配规则)，与comm_sandbox同名表功能等价但字段命名独立维护(含拼写差异bussiness_line_comdition)，2026-08-05业务方确认其为真实有效的路由规则表，非断点",
+          "row_count": 67,
+          "schema": "public",
+          "table": "config_partner_routing"
+        },
+        {
+          "confidence": "weak",
+          "evidence_type": "output",
+          "matched_columns": [
+            "partner_code",
+            "total_premium_hkd",
+            "policy_count"
+          ],
+          "rationale": "渠道月度汇总表，弱对应\"应派清单\"（无逐笔应派落地表）",
+          "row_count": 1662,
+          "schema": "public",
+          "table": "fact_channel_partner"
+        }
+      ]
     },
     {
       "confidence": "HIGH",
@@ -9961,77 +10045,6 @@
       "value": "《应收明细清单》"
     },
     {
-      "confidence": "LOW",
-      "conflict_note": "人工按业务含义匹配到业务数据仓库表，非外键关联，未经业务方确认",
-      "evidence_class": "CONSENSUS",
-      "evidence_id": "EVD-d4d3c1f4cc691195e421",
-      "field_name": "business_evidence",
-      "source": {
-        "observed_at": "",
-        "source_field": "人工匹配",
-        "source_key": "L4-COM-12",
-        "source_object": "public.partner_tier_rules, public.dim_partner, comm_sandbox.config_partner_routing, public.fact_channel_partner",
-        "source_system": "业务数据仓库",
-        "source_version": "2026-08-04试点"
-      },
-      "status": "UNVERIFIED",
-      "transform_rule": "",
-      "value": [
-        {
-          "confidence": "strong",
-          "evidence_type": "rule",
-          "matched_columns": [
-            "fyc_tier",
-            "ryc_tier",
-            "fyc_adjustment",
-            "ryc_adjustment"
-          ],
-          "rationale": "伙伴档位规则，是\"应派金额拆分\"的计算依据，规则已参数化",
-          "row_count": 179,
-          "schema": "public",
-          "table": "partner_tier_rules"
-        },
-        {
-          "confidence": "strong",
-          "evidence_type": "output",
-          "matched_columns": [
-            "payment_cycle",
-            "min_payout_threshold",
-            "partner_status"
-          ],
-          "rationale": "渠道伙伴主档，含结算周期与起付额，是\"渠道对账\"的伙伴侧依据",
-          "row_count": 727,
-          "schema": "public",
-          "table": "dim_partner"
-        },
-        {
-          "confidence": "strong",
-          "evidence_type": "rule",
-          "matched_columns": [
-            "assigned_license_code",
-            "priority"
-          ],
-          "rationale": "渠道路由规则，决定应派归属到哪个牌照",
-          "row_count": 41,
-          "schema": "comm_sandbox",
-          "table": "config_partner_routing"
-        },
-        {
-          "confidence": "weak",
-          "evidence_type": "output",
-          "matched_columns": [
-            "partner_code",
-            "total_premium_hkd",
-            "policy_count"
-          ],
-          "rationale": "渠道月度汇总表，弱对应\"应派清单\"（无逐笔应派落地表）",
-          "row_count": 1662,
-          "schema": "public",
-          "table": "fact_channel_partner"
-        }
-      ]
-    },
-    {
       "confidence": "HIGH",
       "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
@@ -12298,6 +12311,19 @@
           "table": "config_partner_routing"
         },
         {
+          "confidence": "strong",
+          "evidence_type": "rule",
+          "matched_columns": [
+            "assigned_license_code",
+            "priority",
+            "partner_code_condition"
+          ],
+          "rationale": "同为渠道路由规则表(所有合作伙伴的合作匹配规则)，与comm_sandbox同名表功能等价但字段命名独立维护(含拼写差异bussiness_line_comdition)，2026-08-05业务方确认其为真实有效的路由规则表，非断点",
+          "row_count": 67,
+          "schema": "public",
+          "table": "config_partner_routing"
+        },
+        {
           "confidence": "weak",
           "evidence_type": "output",
           "matched_columns": [
@@ -12330,7 +12356,7 @@
         "agent_d6_compliance": "EVD-b839f8dcd4ea3fd3a570",
         "agent_human_touchpoint": "EVD-3a5dfd4aae70d01ee437",
         "agentifiability": "EVD-e4573dab6044d8374475",
-        "business_evidence": "EVD-d4d3c1f4cc691195e421",
+        "business_evidence": "EVD-391023cece7a93df0375",
         "l4_deliverable": "EVD-1b9206cbf7054edfde19",
         "l4_deliverable_type": "EVD-9fdb424c96a791445a5e",
         "l4_name": "EVD-6d8f25e35f9390785832",
@@ -14030,67 +14056,56 @@
   "value_stream_mappings": [],
   "vn_l4_mappings": [
     {
-      "l3_code": "L3-COM",
       "l4_code": "L4-COM-01",
       "mapping_status": "direct",
       "vn_id": "VN-PAY-01"
     },
     {
-      "l3_code": "L3-COM",
       "l4_code": "L4-COM-02",
       "mapping_status": "direct",
       "vn_id": "VN-PAY-01"
     },
     {
-      "l3_code": "L3-COM",
       "l4_code": "L4-COM-10",
       "mapping_status": "direct",
       "vn_id": "VN-PAY-02"
     },
     {
-      "l3_code": "L3-COM",
       "l4_code": "L4-COM-11",
       "mapping_status": "direct",
       "vn_id": "VN-PAY-02"
     },
     {
-      "l3_code": "L3-COM",
       "l4_code": "L4-COM-03",
       "mapping_status": "direct",
       "vn_id": "VN-PAY-03"
     },
     {
-      "l3_code": "L3-COM",
       "l4_code": "L4-COM-12",
       "mapping_status": "direct",
       "vn_id": "VN-PAY-03"
     },
     {
-      "l3_code": "L3-COM",
       "l4_code": "L4-COM-03",
       "mapping_status": "direct",
       "vn_id": "VN-PAY-04"
     },
     {
-      "l3_code": "L3-COM",
       "l4_code": "L4-COM-14",
       "mapping_status": "direct",
       "vn_id": "VN-PAY-04"
     },
     {
-      "l3_code": "L3-COM",
       "l4_code": "L4-COM-15",
       "mapping_status": "direct",
       "vn_id": "VN-PAY-04"
     },
     {
-      "l3_code": "L3-COM",
       "l4_code": "L4-COM-17",
       "mapping_status": "direct",
       "vn_id": "VN-PAY-04"
     },
     {
-      "l3_code": "L3-COM",
       "l4_code": "L4-COM-03",
       "mapping_status": "direct",
       "vn_id": "VN-PAY-06"
