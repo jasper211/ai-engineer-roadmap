@@ -1,475 +1,346 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Workflow, Search, Info } from 'lucide-react'
-import { loadDataLineage, type DataLineage, type FieldTransform, type LineageEdge, type LineageEdgeType, type LineageNode } from '../lib/dataLineage'
+import { Workflow, Search, Database, FolderTree, Briefcase, Boxes, Network } from 'lucide-react'
+import { loadDataLineage, type DataLineage, type LineageEdge, type LineageNode } from '../lib/dataLineage'
 import { loadTableAnalysis, type TableAnalysis } from '../lib/tableAnalysis'
+import LineageGraph from '../components/LineageGraph'
 
-const TRANSFORM_LABEL: Record<FieldTransform, string> = {
-  direct: '直接透传',
-  derived: '由源字段计算',
-  computed_literal: '常量/无法追溯到源字段',
-}
-
-const FIELD_CONFIDENCE_TONE: Record<string, string> = {
-  origin: 'bg-emerald-400/10 text-emerald-700',
-  foreign_key_confirmed: 'bg-sky-400/10 text-sky-700',
-  same_name_business_confirmed: 'bg-amber-400/10 text-amber-700',
-}
-const FIELD_CONFIDENCE_LABEL: Record<string, string> = {
-  origin: '源头(主键)',
-  foreign_key_confirmed: '外键确认',
-  same_name_business_confirmed: '同名(业务方确认一致)',
-}
-
-const EDGE_TONE: Record<LineageEdgeType, { stroke: string; dash?: string }> = {
-  view_dependency: { stroke: '#6366f1' },
-  foreign_key: { stroke: '#0ea5e9' },
-  pipeline_sibling: { stroke: '#94a3b8', dash: '4 3' },
-}
-
-const RELATION_TONE = {
-  confirmed: { fill: '#10b981', label: '已确认关联L4' },
-  candidate: { fill: '#f59e0b', label: '血缘候选(待核实)' },
-  zombie: { fill: '#e11d48', label: '疑似僵尸表(有数据但无人认领)' },
-  none: { fill: '#94a3b8', label: '暂无信号' },
-} as const
-
-function nodeKey(schema: string, table: string) {
-  return `${schema}.${table}`
-}
-
-interface LaidOutNode extends LineageNode {
+/** 合并后的统一表记录 */
+interface TableRecord {
+  schema: string
+  table: string
   key: string
-  x: number
-  y: number
-  degree: number
+  business_label: string
+  table_type: string
+  row_count: number
+  has_lineage: boolean
+  zombie_flag: string
+  // 血缘
+  inDegree: number
+  outDegree: number
+  // 语义（合并自 table_analysis）
+  description: string | null
+  related_l3_l4: { l3_code: string; l3_name: string; l4_code: string; l4_name: string }[]
+  positions: string[]
+  data_health: string
+  status: string
 }
 
-function computeForceLayout(nodes: LineageNode[], edges: LineageEdge[], width: number, height: number): Map<string, { x: number; y: number }> {
-  const keys = nodes.map(n => nodeKey(n.schema, n.table))
-  const index = new Map(keys.map((k, i) => [k, i]))
-  const n = keys.length
-  const positions = keys.map((_, i) => {
-    const angle = (i / n) * Math.PI * 2
-    const r = Math.min(width, height) * 0.35
-    return { x: width / 2 + r * Math.cos(angle), y: height / 2 + r * Math.sin(angle) }
-  })
-  const velocities = keys.map(() => ({ x: 0, y: 0 }))
-  const edgePairs = edges
-    .map(e => [index.get(nodeKey(e.from_schema, e.from_table)), index.get(nodeKey(e.to_schema, e.to_table))])
-    .filter((pair): pair is [number, number] => pair[0] !== undefined && pair[1] !== undefined)
+const SCHEMA_ALL = ['public', 'comm_sandbox', 'fin_sandbox'] as const
 
-  const area = width * height
-  const k = Math.sqrt(area / Math.max(n, 1)) * 0.9
-  let temperature = width / 10
-
-  for (let iter = 0; iter < 250; iter++) {
-    const disp = keys.map(() => ({ x: 0, y: 0 }))
-    for (let i = 0; i < n; i++) {
-      for (let j = i + 1; j < n; j++) {
-        const dx = positions[i].x - positions[j].x
-        const dy = positions[i].y - positions[j].y
-        const dist = Math.max(Math.sqrt(dx * dx + dy * dy), 0.01)
-        const force = (k * k) / dist
-        const fx = (dx / dist) * force
-        const fy = (dy / dist) * force
-        disp[i].x += fx
-        disp[i].y += fy
-        disp[j].x -= fx
-        disp[j].y -= fy
-      }
-    }
-    for (const [a, b] of edgePairs) {
-      const dx = positions[a].x - positions[b].x
-      const dy = positions[a].y - positions[b].y
-      const dist = Math.max(Math.sqrt(dx * dx + dy * dy), 0.01)
-      const force = (dist * dist) / k
-      const fx = (dx / dist) * force
-      const fy = (dy / dist) * force
-      disp[a].x -= fx
-      disp[a].y -= fy
-      disp[b].x += fx
-      disp[b].y += fy
-    }
-    for (let i = 0; i < n; i++) {
-      const dx = disp[i].x
-      const dy = disp[i].y
-      const dist = Math.max(Math.sqrt(dx * dx + dy * dy), 0.01)
-      const capped = Math.min(dist, temperature)
-      positions[i].x += (dx / dist) * capped
-      positions[i].y += (dy / dist) * capped
-      positions[i].x = Math.min(width - 30, Math.max(30, positions[i].x))
-      positions[i].y = Math.min(height - 30, Math.max(30, positions[i].y))
-      velocities[i] = { x: 0, y: 0 }
-    }
-    temperature *= 0.97
-  }
-
-  const result = new Map<string, { x: number; y: number }>()
-  keys.forEach((key, i) => result.set(key, positions[i]))
-  return result
-}
+/** 分类：用于树导航第一层 */
+const TYPE_ORDER = ['事实表', '维度表', '汇总表', '配置表', '规则表', '映射表', '桥接表', '视图', '状态记录表', '事件记录表', '调整记录表', '历史记录表', '快照表', '核对匹配表', '系统表', '疑似记录表', '其他']
 
 export default function DataLineage() {
   const [lineage, setLineage] = useState<DataLineage | null>(null)
   const [tableAnalysis, setTableAnalysis] = useState<TableAnalysis | null>(null)
   const [error, setError] = useState('')
-  const [selected, setSelected] = useState<string | null>(null)
   const [query, setQuery] = useState('')
-  const [showPipelineSibling, setShowPipelineSibling] = useState(false)
-  const [schemaFilter, setSchemaFilter] = useState<'all' | string>('all')
-  const [l3Slice, setL3Slice] = useState<'all' | string>('all')
-  const [fieldQuery, setFieldQuery] = useState('')
+  // 树导航：当前维度视图
+  const [navView, setNavView] = useState<'schema' | 'l3l4' | 'position'>('schema')
+  // 选中的树节点（按视图不同含义不同）
+  const [navSelection, setNavSelection] = useState<string>('')
+  // 选中表（焦点），schema.table
+  const [focus, setFocus] = useState<string | null>(null)
+  // 血缘子图跳数 1|2，'all' 总览
+  const [hops, setHops] = useState<1 | 2>(1)
+  const [showOverview, setShowOverview] = useState(false)
 
   useEffect(() => {
     loadDataLineage().then(setLineage).catch(err => setError(err.message))
     loadTableAnalysis().then(setTableAnalysis).catch(() => setTableAnalysis(null))
   }, [])
 
-  const confirmedRelationKeys = useMemo(() => {
-    const set = new Set<string>()
+  /** 统一表记录 */
+  const tables: TableRecord[] = useMemo(() => {
+    if (!lineage) return []
+    const nodeMap = new Map<string, LineageNode>()
+    lineage.nodes.forEach(n => { nodeMap.set(`${n.schema}.${n.table}`, n) })
+    const taMap = new Map<string, { description: string | null; related_l3_l4: TableRecord['related_l3_l4']; positions: string[]; data_health: string; status: string }>()
     tableAnalysis?.tables.forEach(t => {
-      if (t.layer2.related_l3_l4.length > 0) set.add(nodeKey(t.schema, t.table))
-    })
-    return set
-  }, [tableAnalysis])
-
-  const l3ToTableKeys = useMemo(() => {
-    const map = new Map<string, { name: string; keys: Set<string> }>()
-    tableAnalysis?.tables.forEach(t => {
-      t.layer2.related_l3_l4.forEach(rel => {
-        const entry = map.get(rel.l3_code) ?? { name: rel.l3_name, keys: new Set<string>() }
-        entry.keys.add(nodeKey(t.schema, t.table))
-        map.set(rel.l3_code, entry)
+      taMap.set(`${t.schema}.${t.table}`, {
+        description: t.description,
+        related_l3_l4: t.layer2.related_l3_l4,
+        positions: t.layer2.positions,
+        data_health: t.layer2.data_health,
+        status: t.layer2.status,
       })
     })
-    return map
-  }, [tableAnalysis])
+    const inDeg = new Map<string, number>()
+    const outDeg = new Map<string, number>()
+    lineage.edges.forEach(e => {
+      const a = `${e.from_schema}.${e.from_table}`
+      const b = `${e.to_schema}.${e.to_table}`
+      outDeg.set(a, (outDeg.get(a) ?? 0) + 1)
+      inDeg.set(b, (inDeg.get(b) ?? 0) + 1)
+    })
+    return lineage.nodes.map(n => {
+      const k = `${n.schema}.${n.table}`
+      const ta = taMap.get(k)
+      return {
+        schema: n.schema,
+        table: n.table,
+        key: k,
+        business_label: n.business_label,
+        table_type: n.table_type,
+        row_count: n.row_count,
+        has_lineage: n.has_lineage,
+        zombie_flag: n.zombie_flag,
+        inDegree: inDeg.get(k) ?? 0,
+        outDegree: outDeg.get(k) ?? 0,
+        description: ta?.description ?? null,
+        related_l3_l4: ta?.related_l3_l4 ?? [],
+        positions: ta?.positions ?? [],
+        data_health: ta?.data_health ?? '',
+        status: ta?.status ?? '',
+      }
+    })
+  }, [lineage, tableAnalysis])
 
-  const l3Options = useMemo(() => Array.from(l3ToTableKeys.entries()).sort(([a], [b]) => a.localeCompare(b)), [l3ToTableKeys])
+  /** 树数据构建 */
+  const schemaTree = useMemo(() => {
+    const map = new Map<string, Map<string, TableRecord[]>>()
+    tables.forEach(t => {
+      const byType = map.get(t.schema) ?? new Map<string, TableRecord[]>()
+      ;(byType.get(t.table_type) ?? byType.set(t.table_type, []).get(t.table_type)!).push(t)
+      map.set(t.schema, byType)
+    })
+    return Array.from(map.entries()).map(([schema, types]) => ({
+      schema,
+      types: Array.from(types.entries()).map(([type, list]) => ({ type, list: list.sort((a,b)=>b.row_count-a.row_count) })),
+    }))
+  }, [tables])
 
-  const sliceCoreKeys = useMemo(() => (l3Slice === 'all' ? null : l3ToTableKeys.get(l3Slice)?.keys ?? new Set<string>()), [l3Slice, l3ToTableKeys])
+  const l3L4Tree = useMemo(() => {
+    const map = new Map<string, Map<string, Map<string, string[]>>>() // l3 -> l4 -> list of keys
+    tables.forEach(t => {
+      t.related_l3_l4.forEach(r => {
+        const l4 = map.get(r.l3_code) ?? new Map<string, Map<string, string[]>>()
+        const keyList = l4.get(r.l4_code) ?? new Map<string, string[]>()
+        ;(keyList.get(r.l4_name) ?? keyList.set(r.l4_name, []).get(r.l4_name)!).push(t.key)
+        l4.set(r.l4_code, keyList)
+        map.set(r.l3_code, l4)
+      })
+    })
+    return Array.from(map.entries()).map(([l3, l4map]) => ({
+      l3,
+      l4s: Array.from(l4map.entries()).map(([l4code, names]) => ({ l4code, names: Array.from(names.entries()).map(([name, keys]) => ({ name, keys })) })),
+    }))
+  }, [tables])
 
-  const visibleEdges = useMemo(() => {
-    if (!lineage) return []
-    const base = lineage.edges.filter(e => showPipelineSibling || e.edge_type !== 'pipeline_sibling')
-    if (!sliceCoreKeys) return base
-    return base.filter(e => sliceCoreKeys.has(nodeKey(e.from_schema, e.from_table)) || sliceCoreKeys.has(nodeKey(e.to_schema, e.to_table)))
-  }, [lineage, showPipelineSibling, sliceCoreKeys])
+  const positionTree = useMemo(() => {
+    const map = new Map<string, TableRecord[]>()
+    tables.forEach(t => {
+      t.positions.forEach(p => { (map.get(p) ?? map.set(p, []).get(p)!).push(t) })
+    })
+    return Array.from(map.entries()).map(([pos, list]) => ({ pos, list: list.sort((a,b)=>b.row_count-a.row_count) }))
+  }, [tables])
 
-  const sliceNeighborKeys = useMemo(() => {
-    if (!sliceCoreKeys) return new Set<string>()
+  /** 当前树过滤出的表集合（全部 key） */
+  const navFilteredKeys = useMemo(() => {
     const set = new Set<string>()
-    visibleEdges.forEach(e => {
-      const a = nodeKey(e.from_schema, e.from_table)
-      const b = nodeKey(e.to_schema, e.to_table)
-      if (sliceCoreKeys.has(a) && !sliceCoreKeys.has(b)) set.add(b)
-      if (sliceCoreKeys.has(b) && !sliceCoreKeys.has(a)) set.add(a)
-    })
+    if (navSelection === '' ) return set
+    if (navView === 'schema') {
+      const [schema, type] = navSelection.split('::')
+      tables.forEach(t => {
+        if (t.schema === schema && (!type || t.table_type === type)) set.add(t.key)
+      })
+    } else if (navView === 'l3l4') {
+      const [l3, l4, l4name] = navSelection.split('::')
+      tables.forEach(t => {
+        t.related_l3_l4.forEach(r => {
+          if (r.l3_code === (l3 ?? r.l3_code)) {
+            if (!l4 || (r.l4_code === l4 && (!l4name || r.l4_name === l4name))) set.add(t.key)
+          }
+        })
+      })
+    } else if (navView === 'position') {
+      tables.forEach(t => { if (t.positions.includes(navSelection)) set.add(t.key) })
+    }
     return set
-  }, [sliceCoreKeys, visibleEdges])
+  }, [tables, navView, navSelection])
 
-  const graphNodes = useMemo(() => {
-    if (!lineage) return []
-    if (!sliceCoreKeys) return lineage.nodes.filter(n => n.has_lineage)
-    return lineage.nodes.filter(n => sliceCoreKeys.has(nodeKey(n.schema, n.table)) || sliceNeighborKeys.has(nodeKey(n.schema, n.table)))
-  }, [lineage, sliceCoreKeys, sliceNeighborKeys])
-
-  const isolatedNodes = useMemo(() => lineage?.nodes.filter(n => !n.has_lineage) ?? [], [lineage])
-
-  const layout = useMemo(() => {
-    if (!lineage) return new Map<string, { x: number; y: number }>()
-    return computeForceLayout(graphNodes, visibleEdges, 1100, 820)
-  }, [lineage, graphNodes, visibleEdges])
-
-  const laidOutNodes: LaidOutNode[] = useMemo(() => {
-    return graphNodes.map(n => {
-      const key = nodeKey(n.schema, n.table)
-      const pos = layout.get(key) ?? { x: 0, y: 0 }
-      const degree = visibleEdges.filter(e => nodeKey(e.from_schema, e.from_table) === key || nodeKey(e.to_schema, e.to_table) === key).length
-      return { ...n, key, x: pos.x, y: pos.y, degree }
+  /** 显示在卡片网格的表 */
+  const visibleTables = useMemo(() => {
+    const q = query.trim().toLowerCase()
+    return tables.filter(t => {
+      if (navSelection !== '' && navFilteredKeys.size > 0 && !navFilteredKeys.has(t.key)) return false
+      if (q && !`${t.key} ${t.business_label} ${t.table_type}`.toLowerCase().includes(q)) return false
+      return true
     })
-  }, [graphNodes, layout, visibleEdges])
+  }, [tables, navView, navSelection, navFilteredKeys, query])
 
-  const filteredKeys = useMemo(() => {
-    const q = query.toLowerCase()
-    const set = new Set<string>()
-    lineage?.nodes.forEach(n => {
-      const key = nodeKey(n.schema, n.table)
-      if (schemaFilter !== 'all' && n.schema !== schemaFilter) return
-      if (q && !`${key} ${n.business_label}`.toLowerCase().includes(q)) return
-      set.add(key)
-    })
-    return set
-  }, [lineage, query, schemaFilter])
-
-  const selectedNode = useMemo(() => lineage?.nodes.find(n => nodeKey(n.schema, n.table) === selected) ?? null, [lineage, selected])
-  const selectedNeighbors = useMemo(() => {
-    if (!selected || !lineage) return []
-    return lineage.edges
-      .filter(e => nodeKey(e.from_schema, e.from_table) === selected || nodeKey(e.to_schema, e.to_table) === selected)
-      .map(e => ({
-        direction: nodeKey(e.from_schema, e.from_table) === selected ? ('downstream' as const) : ('upstream' as const),
-        neighbor: nodeKey(e.from_schema, e.from_table) === selected ? nodeKey(e.to_schema, e.to_table) : nodeKey(e.from_schema, e.from_table),
-        edge_type: e.edge_type,
-        evidence: e.evidence,
-      }))
-  }, [selected, lineage])
-
-  const selectedFieldView = useMemo(() => lineage?.field_lineage.resolved_views.find(v => nodeKey(v.schema, v.table) === selected) ?? null, [lineage, selected])
-  const selectedFieldUnparsed = useMemo(() => lineage?.field_lineage.unparsed_views.find(v => nodeKey(v.schema, v.table) === selected) ?? null, [lineage, selected])
-
-  const fieldEntries = useMemo(() => {
-    if (!lineage) return []
-    const q = fieldQuery.trim().toLowerCase()
-    return Object.values(lineage.field_index.fields)
-      .filter(f => !q || f.field_name.toLowerCase().includes(q))
-      .sort((a, b) => b.usages.length - a.usages.length)
-      .slice(0, 40)
-  }, [lineage, fieldQuery])
-
-  const relationStatus = (node: LineageNode): keyof typeof RELATION_TONE => {
-    const key = nodeKey(node.schema, node.table)
-    if (confirmedRelationKeys.has(key)) return 'confirmed'
-    if (lineage?.suggested_l4_candidates[key]?.length) return 'candidate'
-    if (node.zombie_flag === 'suspected_zombie') return 'zombie'
-    return 'none'
-  }
+  // 用于血缘子图的原始数据（供 LineageGraph 全量或子图）
+  const focusNodeInfo = useMemo(() => tables.find(t => t.key === focus) ?? null, [tables, focus])
 
   if (error) return <div className="panel p-5 text-sm text-accent-danger">{error}</div>
-  if (!lineage) return <div className="flex min-h-64 items-center justify-center text-text-muted">正在读取数据血缘图…</div>
+  if (!lineage) return <div className="flex min-h-64 items-center justify-center text-text-muted">正在读取数据血缘…</div>
 
   const candidateCount = Object.keys(lineage.suggested_l4_candidates).length
-  const zombieNodes = lineage.nodes.filter(n => n.zombie_flag === 'suspected_zombie')
-  const neverActivatedCount = lineage.nodes.filter(n => n.zombie_flag === 'never_activated').length
+  const suspectedCount = tables.filter(t => t.zombie_flag === 'suspected_zombie').length
+  const withL4 = tables.filter(t => t.related_l3_l4.length > 0).length
+  const noLineage = tables.filter(t => !t.has_lineage).length
+
+  const nodeByIds = new Map<TableRecord['key'], TableRecord>()
 
   return (
     <div className="space-y-6">
+      {/* 顶部统计带 */}
       <div>
-        <div className="flex items-center gap-2 text-xs text-accent-primary-light"><Workflow className="h-4 w-4" /> 业务数据分析 · 血缘视角</div>
-        <h1 className="mt-2 font-heading text-3xl font-bold">104张表谁产出谁、谁消费谁</h1>
-        <p className="mt-2 max-w-3xl text-sm leading-6 text-text-secondary">
-          边只来自三类真实证据，不做同名字段/表名相似度的推测连接：
-          <b className="text-indigo-600">视图SQL依赖</b>(pg_get_viewdef读出的真实FROM/JOIN，最高置信度)、
-          <b className="text-sky-600">数据库外键约束</b>(information_schema里声明的真实FK，高置信度)、
-          <b className="text-slate-500">同ETL流水线批次产出</b>(sync_history记录的真实airflow流水线同批装载，中置信度——
-          只说明"同源"，不代表互为上下游，默认折叠)。没有任何证据的表如实标为"无可查血缘"——
-          已核实仓库内外都没有对应ETL脚本，真实生产者在仓库之外，不是分析没做到位。
+        <div className="flex items-center gap-2 text-xs text-accent-primary-light"><Workflow className="h-4 w-4" /> 业务数据表 · 分类分层分级 · 血缘关系</div>
+        <h1 className="mt-2 font-heading text-3xl font-bold">104张业务表：分类 · 分层 · 关系</h1>
+        <p className="mt-2 max-w-4xl text-sm leading-6 text-text-secondary">
+          从「分类(Schema/表型) / 分层(L3-L4) / 分级(岗位)」三个维度浏览全部业务表；
+          点任意表卡片，在下方血缘图聚焦看它 1~2 跳的真实上下游（视图依赖/外键/流水线同批）。
         </p>
       </div>
 
       <div className="grid gap-3 sm:grid-cols-5">
-        <div className="panel p-4"><p className="eyebrow">有血缘证据的表</p><p className="mt-2 metric-value">{lineage.nodes.filter(n => n.has_lineage).length}/{lineage.nodes.length}</p></div>
-        <div className="panel p-4"><p className="eyebrow">真实血缘边</p><p className="mt-2 metric-value">{lineage.edge_type_counts.view_dependency + lineage.edge_type_counts.foreign_key}</p><p className="mt-1 text-[11px] text-text-muted">视图依赖{lineage.edge_type_counts.view_dependency} + 外键{lineage.edge_type_counts.foreign_key}</p></div>
-        <div className="panel p-4"><p className="eyebrow">同流水线批次边</p><p className="mt-2 metric-value">{lineage.edge_type_counts.pipeline_sibling}</p><p className="mt-1 text-[11px] text-text-muted">默认折叠，仅供参考</p></div>
-        <div className="panel p-4"><p className="eyebrow">经血缘产生候选L4的表</p><p className="mt-2 metric-value text-amber-600">{candidateCount}</p><p className="mt-1 text-[11px] text-text-muted">此前均标"未定位关联"，未经人工核实</p></div>
-        <div className="panel p-4"><p className="eyebrow">疑似僵尸表</p><p className="mt-2 metric-value text-rose-600">{zombieNodes.length}</p><p className="mt-1 text-[11px] text-text-muted">有数据但血缘/L4关联都查不到，另有{neverActivatedCount}张0行未启用</p></div>
+        <div className="panel p-4"><p className="eyebrow">全部业务表</p><p className="mt-2 metric-value">{tables.length}</p></div>
+        <div className="panel p-4"><p className="eyebrow">已定位 L3/L4</p><p className="mt-2 metric-value text-indigo-500">{withL4}</p><p className="mt-1 text-[11px] text-text-muted">映射到业务模型的表</p></div>
+        <div className="panel p-4"><p className="eyebrow">有血缘证据</p><p className="mt-2 metric-value">{lineage.nodes.filter(n=>n.has_lineage).length}</p><p className="mt-1 text-[11px] text-text-muted">真实边 {lineage.edge_type_counts.view_dependency+lineage.edge_type_counts.foreign_key}</p></div>
+        <div className="panel p-4"><p className="eyebrow">血缘候选 L4</p><p className="mt-2 metric-value text-amber-600">{candidateCount}</p><p className="mt-1 text-[11px] text-text-muted">未经人工核实</p></div>
+        <div className="panel p-4"><p className="eyebrow">真断点(待核实)</p><p className="mt-2 metric-value text-rose-600">{suspectedCount}</p><p className="mt-1 text-[11px] text-text-muted">有数据但血缘/语义查不到</p></div>
       </div>
 
-      <div className="flex flex-wrap items-center gap-3">
-        <div className="flex flex-wrap gap-1 rounded-lg bg-bg-elevated p-1">
-          {(['all', 'public', 'comm_sandbox', 'fin_sandbox'] as const).map(schema => (
-            <button key={schema} onClick={() => setSchemaFilter(schema)} className={`rounded-md px-2.5 py-1 text-[11px] transition-colors ${schemaFilter === schema ? 'bg-accent-primary text-white' : 'text-text-secondary hover:text-text-primary hover:bg-bg-surface'}`}>{schema === 'all' ? '全部Schema' : schema}</button>
-          ))}
-        </div>
-        <label className="flex items-center gap-1.5 text-[11px] text-text-muted">
-          按L3切片
-          <select value={l3Slice} onChange={e => { setL3Slice(e.target.value); setSelected(null) }} className="rounded-md border border-border-default bg-bg-elevated px-2 py-1 text-[11px] text-text-primary">
-            <option value="all">全部104张表(完整图)</option>
-            {l3Options.map(([code, entry]) => <option key={code} value={code}>{code} · {entry.name}（{entry.keys.size}张核心表）</option>)}
-          </select>
-        </label>
-        <label className="flex items-center gap-1.5 text-[11px] text-text-muted">
-          <input type="checkbox" checked={showPipelineSibling} onChange={e => setShowPipelineSibling(e.target.checked)} />
-          显示"同流水线批次"弱关联线({lineage.edge_type_counts.pipeline_sibling}条，默认隐藏)
-        </label>
-        <div className="relative ml-auto max-w-xs">
-          <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-text-muted" />
-          <input value={query} onChange={e => setQuery(e.target.value)} placeholder="搜索表名/中文含义高亮" className="w-full rounded-lg border border-border-default bg-bg-elevated py-1.5 pl-8 pr-3 text-xs text-text-primary placeholder:text-text-muted" />
-        </div>
-      </div>
-      {l3Slice !== 'all' && (
-        <p className="text-[11px] text-text-muted">
-          切片视图：绿色实心为{l3Slice}确认关联的核心表({sliceCoreKeys?.size ?? 0}张)，虚线边框的是它们的真实血缘邻居——不代表这些邻居也属于{l3Slice}，只是"和核心表有真实数据关系，值得去核实"。
-        </p>
-      )}
-
-      <div className="grid gap-4 lg:grid-cols-[1fr_340px]">
-        <div className="panel overflow-auto p-2" style={{ maxHeight: 720 }}>
-          <svg viewBox="0 0 1100 820" width={1100} height={820} className="block">
-            <defs>
-              <marker id="arrow-view" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 z" fill={EDGE_TONE.view_dependency.stroke} /></marker>
-              <marker id="arrow-fk" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 z" fill={EDGE_TONE.foreign_key.stroke} /></marker>
-            </defs>
-            {visibleEdges.map((e, i) => {
-              const a = layout.get(nodeKey(e.from_schema, e.from_table))
-              const b = layout.get(nodeKey(e.to_schema, e.to_table))
-              if (!a || !b) return null
-              const tone = EDGE_TONE[e.edge_type]
-              const dim = query && !filteredKeys.has(nodeKey(e.from_schema, e.from_table)) && !filteredKeys.has(nodeKey(e.to_schema, e.to_table))
-              const highlighted = selected && (nodeKey(e.from_schema, e.from_table) === selected || nodeKey(e.to_schema, e.to_table) === selected)
-              return (
-                <line
-                  key={i}
-                  x1={a.x} y1={a.y} x2={b.x} y2={b.y}
-                  stroke={tone.stroke}
-                  strokeWidth={highlighted ? 2.5 : 1}
-                  strokeDasharray={tone.dash}
-                  opacity={dim ? 0.08 : highlighted ? 0.95 : e.edge_type === 'pipeline_sibling' ? 0.25 : 0.45}
-                  markerEnd={e.edge_type === 'view_dependency' ? 'url(#arrow-view)' : e.edge_type === 'foreign_key' ? 'url(#arrow-fk)' : undefined}
-                />
-              )
-            })}
-            {laidOutNodes.map(n => {
-              const status = relationStatus(n)
-              const dim = query && !filteredKeys.has(n.key)
-              const isSelected = selected === n.key
-              const isNeighborOnly = sliceCoreKeys !== null && !sliceCoreKeys.has(n.key)
-              const radius = 6 + Math.min(n.degree, 10) * 1.1
-              return (
-                <g key={n.key} transform={`translate(${n.x},${n.y})`} className="cursor-pointer" onClick={() => setSelected(isSelected ? null : n.key)} opacity={dim ? 0.15 : isNeighborOnly ? 0.6 : 1}>
-                  <circle r={radius} fill={RELATION_TONE[status].fill} stroke={isSelected ? '#1e293b' : 'white'} strokeWidth={isSelected ? 2.5 : 1.5} strokeDasharray={isNeighborOnly ? '2 2' : undefined} />
-                  {(isSelected || n.degree >= 4 || sliceCoreKeys !== null || (query && filteredKeys.has(n.key))) && (
-                    <text x={radius + 4} y={4} fontSize={10} fill="currentColor" className="select-none fill-text-primary">
-                      {n.table}{isNeighborOnly ? '（邻居）' : ''}
-                    </text>
-                  )}
-                </g>
-              )
-            })}
-          </svg>
-        </div>
-
-        <div className="space-y-3">
-          <div className="panel p-3">
-            <p className="text-xs font-semibold text-text-primary">图例</p>
-            <div className="mt-2 space-y-1.5 text-[11px] text-text-secondary">
-              {(Object.entries(RELATION_TONE) as [keyof typeof RELATION_TONE, typeof RELATION_TONE[keyof typeof RELATION_TONE]][]).map(([key, tone]) => (
-                <div key={key} className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full" style={{ background: tone.fill }} />{tone.label}</div>
-              ))}
-              {(Object.entries(lineage.edge_type_labels) as [LineageEdgeType, string][]).map(([key, label]) => (
-                <div key={key} className="flex items-center gap-2"><span className="h-0.5 w-4" style={{ background: EDGE_TONE[key].stroke, opacity: key === 'pipeline_sibling' ? 0.5 : 1 }} />{label}</div>
-              ))}
-            </div>
+      {/* 主体：左树 + 中卡片 */}
+      <div className="grid gap-4 lg:grid-cols-[260px_1fr]">
+        {/* 左栏：树导航 */}
+        <div className="panel flex flex-col p-3">
+          <p className="text-xs font-semibold text-text-primary">浏览维度</p>
+          <div className="mt-2 flex flex-col gap-1">
+            <button onClick={() => { setNavView('schema'); setNavSelection(''); setFocus(null) }} className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-[11px] text-left ${navView==='schema' ? 'bg-accent-primary text-white' : 'text-text-secondary hover:bg-bg-surface'}`}><FolderTree className="h-3.5 w-3.5" />按Schema/表型 分类</button>
+            <button onClick={() => { setNavView('l3l4'); setNavSelection(''); setFocus(null) }} className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-[11px] text-left ${navView==='l3l4' ? 'bg-accent-primary text-white' : 'text-text-secondary hover:bg-bg-surface'}`}><Database className="h-3.5 w-3.5" />按L3-L4 分层</button>
+            <button onClick={() => { setNavView('position'); setNavSelection(''); setFocus(null) }} className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-[11px] text-left ${navView==='position' ? 'bg-accent-primary text-white' : 'text-text-secondary hover:bg-bg-surface'}`}><Briefcase className="h-3.5 w-3.5" />按岗位 分级</button>
           </div>
 
-          {selectedNode ? (
-            <div className="panel p-3">
-              <p className="font-mono text-sm font-bold text-text-primary">{selected}</p>
-              <p className="mt-0.5 text-xs text-text-secondary">{selectedNode.business_label}</p>
-              <p className="mt-1 text-[10px] text-text-muted">{selectedNode.table_type} · {selectedNode.row_count.toLocaleString()}行</p>
-
-              {lineage.suggested_l4_candidates[selected ?? '']?.length ? (
-                <div className="mt-3 rounded-md border border-dashed border-amber-300 bg-amber-400/10 p-2">
-                  <p className="text-[11px] font-semibold text-amber-800">血缘候选L4(待核实，非确认关联)</p>
-                  {lineage.suggested_l4_candidates[selected ?? ''].map((c, i) => (
-                    <div key={i} className="mt-1.5 text-[10px] leading-4 text-amber-800">
-                      <span className="font-mono">{c.l3_code}</span> {c.l4_name} · 经由 <span className="font-mono">{c.via_table}</span>（{lineage.edge_type_labels[c.edge_type]}）
-                      <p className="text-amber-700/80">{c.evidence}</p>
+          <div className="mt-3 max-h-[520px] overflow-auto pr-1 text-[11px]">
+            {navView === 'schema' && (
+              <div className="space-y-1.5">
+                {schemaTree.map(s => (
+                  <details key={s.schema} className="group" open={true}>
+                    <summary className="cursor-pointer rounded-md px-2 py-1 font-semibold text-text-primary hover:bg-bg-surface">{s.schema}</summary>
+                    <button onClick={() => { setNavSelection(s.schema); setFocus(null) }} className={`ml-3 mt-1 flex items-center gap-1 rounded-md px-2 py-0.5 text-[10px] ${navSelection===s.schema?'bg-accent-primary text-white':'text-text-secondary hover:bg-bg-surface'}`}>全部({s.types.reduce((x,t)=>x+t.list.length,0)})</button>
+                    <div className="ml-3 space-y-0.5">
+                      {s.types.map(t => (
+                        <button key={t.type} onClick={() => { setNavSelection(`${s.schema}::${t.type}`); setFocus(null) }} className={`flex w-full items-center justify-between rounded-md px-2 py-0.5 text-left ${navSelection===`${s.schema}::${t.type}`?'bg-accent-primary text-white':'text-text-secondary hover:bg-bg-surface'}`}>
+                          <span>{t.type}</span><span className="opacity-60">{t.list.length}</span>
+                        </button>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              ) : null}
-
-              <div className="mt-3">
-                <p className="text-[11px] font-semibold text-text-primary">上下游({selectedNeighbors.length})</p>
-                <div className="mt-1.5 max-h-80 space-y-1.5 overflow-auto">
-                  {selectedNeighbors.length === 0 && <p className="text-[10px] text-text-muted">无</p>}
-                  {selectedNeighbors.map((nb, i) => (
-                    <div key={i} className="rounded-md bg-bg-surface p-1.5 text-[10px] leading-4">
-                      <span className={`mr-1 rounded px-1 ${nb.direction === 'upstream' ? 'bg-sky-100 text-sky-700' : 'bg-emerald-100 text-emerald-700'}`}>{nb.direction === 'upstream' ? '上游→本表' : '本表→下游'}</span>
-                      <span className="font-mono text-text-secondary">{nb.neighbor}</span>
-                      <p className="text-text-muted">{nb.evidence}</p>
-                    </div>
-                  ))}
-                </div>
+                  </details>
+                ))}
               </div>
-
-              {selectedFieldView && (
-                <div className="mt-3">
-                  <p className="text-[11px] font-semibold text-text-primary">字段级血缘({selectedFieldView.columns.length}列，来自真实SQL解析)</p>
-                  <div className="mt-1.5 max-h-80 space-y-1 overflow-auto">
-                    {selectedFieldView.columns.map((col, i) => (
-                      <div key={i} className="rounded-md bg-bg-surface p-1.5 text-[10px] leading-4">
-                        <span className="font-mono text-text-primary">{col.output_column}</span>
-                        <span className="ml-1.5 rounded bg-indigo-100 px-1 text-indigo-700">{TRANSFORM_LABEL[col.transform]}</span>
-                        {col.sources.length > 0 && (
-                          <p className="mt-0.5 text-text-muted">
-                            {col.sources.map(s => `${s.schema}.${s.table}.${s.column}`).join('、')}
-                          </p>
-                        )}
+            )}
+            {navView === 'l3l4' && (
+              <div className="space-y-1.5">
+                {l3L4Tree.map(grp => (
+                  <details key={grp.l3} className="group">
+                    <summary className="cursor-pointer rounded-md px-2 py-1 font-semibold text-text-primary hover:bg-bg-surface">{grp.l3}</summary>
+                    {grp.l4s.map(l4 => (
+                      <div key={l4.l4code} className="ml-2">
+                        <button onClick={() => { setNavSelection(`${grp.l3}::${l4.l4code}`); setFocus(null) }} className={`mt-0.5 flex w-full items-center justify-between rounded-md px-2 py-0.5 text-left font-medium text-indigo-700 ${navSelection===`${grp.l3}::${l4.l4code}`?'bg-indigo-100 text-indigo-900':'hover:bg-bg-surface'}`}>
+                          <span>{l4.l4code}</span>
+                        </button>
+                        {l4.names.map(nm => (
+                          <button key={nm.name} onClick={() => { setNavSelection(`${grp.l3}::${l4.l4code}::${nm.name}`); setFocus(null) }} className={`mt-0.5 ml-3 flex w-full items-center justify-between rounded-md px-2 py-0.5 text-left text-text-secondary ${navSelection===`${grp.l3}::${l4.l4code}::${nm.name}`?'bg-accent-primary text-white':'hover:bg-bg-surface'}`}>
+                            <span>{nm.name}</span><span className="opacity-60">{nm.keys.length}</span>
+                          </button>
+                        ))}
                       </div>
                     ))}
+                  </details>
+                ))}
+              </div>
+            )}
+            {navView === 'position' && (
+              <div className="space-y-1.5">
+                {positionTree.map(p => (
+                  <button key={p.pos} onClick={() => { setNavSelection(p.pos); setFocus(null) }} className={`flex w-full items-center justify-between rounded-md px-2 py-1 text-left ${navSelection===p.pos?'bg-accent-primary text-white':'text-text-secondary hover:bg-bg-surface'}`}>
+                    <span className="flex items-center gap-1.5"><Briefcase className="h-3 w-3" />{p.pos}</span><span className="opacity-60">{p.list.length}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+          <p className="mt-3 border-t border-border-default pt-2 text-[10px] text-text-muted">{tables.length}张表 · 41张已映射L4/岗位，其余为服务支撑/独立表</p>
+        </div>
+
+        {/* 中栏：表卡片网格 */}
+        <div className="space-y-3">
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="relative ml-auto w-full max-w-xs">
+              <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-text-muted" />
+              <input value={query} onChange={e => setQuery(e.target.value)} placeholder="搜索表名/中文/类型" className="w-full rounded-lg border border-border-default bg-bg-elevated py-1.5 pl-8 pr-3 text-xs text-text-primary placeholder:text-text-muted" />
+            </div>
+          </div>
+          <p className="text-[11px] text-text-muted">显示 {visibleTables.length} / {tables.length} 张表</p>
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            {visibleTables.map(t => {
+              const hasL4 = t.related_l3_l4.length > 0
+              const isZombie = t.zombie_flag === 'suspected_zombie'
+              const isFocus = focus === t.key
+              return (
+                <div key={t.key} onClick={() => setFocus(t.key)} className={`panel cursor-pointer p-3 transition ${isFocus ? 'ring-2 ring-accent-primary' : 'hover:border-accent-primary'} ${hasL4 ? '' : 'opacity-80'}`}>
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <p className="font-mono text-xs font-bold text-text-primary">{t.schema}.{t.table}</p>
+                      <p className="mt-0.5 truncate text-[11px] text-text-secondary">{t.business_label}</p>
+                    </div>
+                    <span className={`shrink-0 rounded px-1.5 py-0.5 text-[9px] font-medium ${isZombie ? 'bg-rose-100 text-rose-700' : hasL4 ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-500'}`}>
+                      {isZombie ? '断点' : hasL4 ? '已定位L4' : '支撑/独立'}
+                    </span>
                   </div>
+                  <div className="mt-2 flex flex-wrap gap-1 text-[9px]">
+                    <span className="rounded bg-bg-surface px-1.5 py-0.5 text-text-muted">{t.table_type}</span>
+                    <span className="rounded bg-bg-surface px-1.5 py-0.5 text-text-muted">{t.row_count.toLocaleString()}行</span>
+                    <span className="rounded bg-bg-surface px-1.5 py-0.5 text-sky-600">↑{t.inDegree}</span>
+                    <span className="rounded bg-bg-surface px-1.5 py-0.5 text-emerald-600">↓{t.outDegree}</span>
+                  </div>
+                  {hasL4 && (
+                    <div className="mt-2 space-y-0.5">
+                      {t.related_l3_l4.slice(0, 2).map((r, i) => (
+                        <p key={i} title={r.l4_name} className="truncate text-[9px] text-indigo-700">{r.l3_code} · {r.l4_code} · {r.l4_name}</p>
+                      ))}
+                      {t.related_l3_l4.length > 2 && <p className="text-[9px] text-text-muted">+{t.related_l3_l4.length-2} 个L4…</p>}
+                    </div>
+                  )}
+                  {t.positions.length > 0 && (
+                    <div className="mt-2 flex flex-wrap gap-1">
+                      {t.positions.map(p => <span key={p} className="rounded-full bg-amber-50 px-1.5 py-0.5 text-[9px] font-medium text-amber-700">{p}</span>)}
+                    </div>
+                  )}
                 </div>
-              )}
-              {selectedFieldUnparsed && (
-                <p className="mt-3 text-[10px] text-text-muted">字段级血缘：{selectedFieldUnparsed.reason}，如实跳过，不猜测。</p>
-              )}
-            </div>
-          ) : (
-            <div className="panel flex items-start gap-2 p-3 text-[11px] text-text-muted">
-              <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-              点击图上任意一个点，查看该表的真实上下游、证据原文，以及经血缘推导出的候选L4关联。
-            </div>
-          )}
-        </div>
-      </div>
-
-      <div className="panel p-4">
-        <p className="text-sm font-semibold text-rose-700">疑似僵尸表（{zombieNodes.length}）</p>
-        <p className="mt-1 text-[11px] text-text-muted">
-          有真实数据(非0行)，但血缘查不到谁产出它、谁消费它，L4分析也没人认领——值得去核实是不是真的没人用了。
-          这不是自动下线建议，核实结果可能是"确实废弃"，也可能只是"业务方在用、只是还没接入我们的分析"。
-        </p>
-        <div className="mt-3 space-y-1">
-          {zombieNodes.sort((a, b) => b.row_count - a.row_count).map(n => (
-            <div key={nodeKey(n.schema, n.table)} className="flex items-center gap-2 rounded-md bg-rose-50 px-2 py-1 text-[11px]">
-              <span className="font-mono text-rose-800">{n.schema}.{n.table}</span>
-              <span className="text-rose-700/80">{n.business_label}</span>
-              <span className="ml-auto text-rose-600">{n.row_count.toLocaleString()}行</span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="panel p-4">
-        <p className="text-sm font-semibold text-text-primary">无可查血缘的表（{isolatedNodes.length}，含上面的疑似僵尸表）</p>
-        <p className="mt-1 text-[11px] text-text-muted">已核实：既不是视图、没有声明外键，也没有命名ETL流水线的同批装载记录——真实生产者在本仓库之外，不是分析遗漏。</p>
-        <div className="mt-3 flex flex-wrap gap-1.5">
-          {isolatedNodes.map(n => (
-            <span key={nodeKey(n.schema, n.table)} className="rounded-full bg-bg-surface px-2 py-1 font-mono text-[10px] text-text-muted" title={n.business_label}>{n.schema}.{n.table}</span>
-          ))}
-        </div>
-      </div>
-
-      <div className="panel p-4">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <p className="text-sm font-semibold text-text-primary">同名字段跨表索引（{Object.keys(lineage.field_index.fields).length}个共享字段名，按使用表数排序显示前40个）</p>
-          <div className="relative max-w-xs">
-            <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-text-muted" />
-            <input value={fieldQuery} onChange={e => setFieldQuery(e.target.value)} placeholder="搜索字段名" className="w-full rounded-lg border border-border-default bg-bg-elevated py-1.5 pl-8 pr-3 text-xs text-text-primary placeholder:text-text-muted" />
+              )
+            })}
           </div>
         </div>
-        <p className="mt-1 text-[11px] text-text-muted">{lineage.field_index.source_policy}</p>
-        <div className="mt-3 space-y-2">
-          {fieldEntries.map(field => (
-            <details key={field.field_name} className="rounded-lg border border-border-default bg-bg-elevated">
-              <summary className="flex cursor-pointer flex-wrap items-center gap-2 px-3 py-2">
-                <span className="font-mono text-xs font-bold text-text-primary">{field.field_name}</span>
-                <span className="text-[10px] text-text-muted">源头：{field.origin_tables.length > 0 ? field.origin_tables.map(o => `${o.schema}.${o.table}`).join('、') : '无声明主键的源头'}</span>
-                <span className="ml-auto rounded-full bg-bg-surface px-2 py-0.5 text-[10px] text-text-secondary">出现在{field.usages.length}张表</span>
-              </summary>
-              <div className="border-t border-border-default p-2">
-                <div className="flex flex-wrap gap-1.5">
-                  {field.usages.map(u => (
-                    <span key={`${u.schema}.${u.table}`} className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${FIELD_CONFIDENCE_TONE[u.confidence]}`} title={u.fk_target ? `外键指向${u.fk_target.schema}.${u.fk_target.table}.${u.fk_target.column}` : undefined}>
-                      {u.schema}.{u.table} · {FIELD_CONFIDENCE_LABEL[u.confidence]}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </details>
-          ))}
+      </div>
+
+      {/* 底部：血缘关系子图 */}
+      <div className="panel p-3">
+        <div className="flex flex-wrap items-center gap-3">
+          <p className="text-sm font-semibold text-text-primary flex items-center gap-2"><Network className="h-4 w-4" />数据血缘关系图</p>
+          {focusNodeInfo ? (
+            <span className="rounded-md bg-accent-primary/10 px-2 py-0.5 font-mono text-[11px] text-accent-primary-light">焦点：{focus}</span>
+          ) : (
+            <span className="text-[11px] text-text-muted">点上方表卡片聚焦看它的血缘，或切换"全图总览"</span>
+          )}
+          <div className="ml-auto flex items-center gap-1 rounded-lg bg-bg-elevated p-1 text-[11px]">
+            {([1, 2] as const).map(h => (
+              <button key={h} disabled={showOverview} onClick={() => { setHops(h); setShowOverview(false) }} className={`rounded-md px-2 py-1 disabled:opacity-40 ${!showOverview && hops===h ? 'bg-accent-primary text-white' : 'text-text-secondary hover:bg-bg-surface'}`}>{h}跳到上游/下游</button>
+            ))}
+            <button onClick={() => setShowOverview(v => !v)} className={`rounded-md px-2 py-1 ${showOverview ? 'bg-accent-primary text-white' : 'text-text-secondary hover:bg-bg-surface'}`}>全图总览</button>
+          </div>
+        </div>
+        <div className="mt-3">
+          <LineageGraph
+            nodes={lineage.nodes}
+            edges={lineage.edges}
+            hops={hops}
+            focusKey={showOverview ? null : focus}
+            focusSchema={!showOverview && focus ? focus.split('.')[0] : null}
+            onSelect={(schema, table) => setFocus(`${schema}.${table}`)}
+          />
         </div>
       </div>
     </div>
