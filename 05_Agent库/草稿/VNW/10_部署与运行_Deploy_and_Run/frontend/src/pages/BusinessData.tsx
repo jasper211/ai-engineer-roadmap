@@ -234,6 +234,7 @@ export default function BusinessData() {
   const utilitySupportCount = useMemo(() => tableAnalysis?.tables.filter(t => t.layer2.utility_support).length ?? 0, [tableAnalysis])
   const fieldAnchoredCount = useMemo(() => tableAnalysis?.tables.filter(t => t.layer2.field_anchored).length ?? 0, [tableAnalysis])
   const nonBusinessCount = useMemo(() => tableAnalysis?.tables.filter(t => t.layer2.non_business).length ?? 0, [tableAnalysis])
+  const neverActivatedCount = useMemo(() => tableAnalysis?.tables.filter(t => t.layer2.never_activated).length ?? 0, [tableAnalysis])
   const l3Coverage = tableAnalysis?.tables[0]?.layer2.analyzed_l3_coverage ?? { analyzed: 0, total: 0 }
 
   const schemas = useMemo(() => Array.from(new Set(tableAnalysis?.tables.map(t => t.schema) ?? [])).sort(), [tableAnalysis])
@@ -327,6 +328,7 @@ export default function BusinessData() {
           <div className="panel p-4"><p className="eyebrow">工具/服务支撑</p><p className="mt-2 metric-value text-violet-600">{utilitySupportCount}</p><p className="mt-1 text-[11px] text-text-muted">业务方核实非断点，方法论对其天然失效</p></div>
           <div className="panel p-4"><p className="eyebrow">字段锚定(非孤立)</p><p className="mt-2 metric-value text-sky-600">{fieldAnchoredCount}</p><p className="mt-1 text-[11px] text-text-muted">无L4/血缘边，但有真实主键字段连回主链</p></div>
           <div className="panel p-4"><p className="eyebrow">系统表/非业务表</p><p className="mt-2 metric-value text-slate-500">{nonBusinessCount}</p><p className="mt-1 text-[11px] text-text-muted">已核实与保险业务无关，非"未分析"</p></div>
+          <div className="panel p-4"><p className="eyebrow">0行·从未启用</p><p className="mt-2 metric-value text-slate-400">{neverActivatedCount}</p><p className="mt-1 text-[11px] text-text-muted">还没到这个业务环节，非分析缺口</p></div>
           <div className="panel p-4"><p className="eyebrow">有真实数据的表</p><p className="mt-2 metric-value">{hasDataCount}/{tableAnalysis.tables.length}</p></div>
           <div className="panel p-4"><p className="eyebrow">L3归因层/L4预测层</p><p className="mt-2 text-sm font-semibold text-slate-500">全部 BLOCKED</p><p className="mt-1 text-[11px] text-text-muted">fact_card/fact_agent(唯一含耗时/错误率字段的表)当前0行，无薪酬成本字段——分析维度保留，不做降级替代</p></div>
         </div>
@@ -393,8 +395,9 @@ export default function BusinessData() {
                         : entry.layer2.shared_master_data ? 'bg-cyan-400/10 text-cyan-700'
                           : entry.layer2.utility_support ? 'bg-violet-400/10 text-violet-700'
                             : entry.layer2.field_anchored ? 'bg-sky-400/10 text-sky-700'
-                              : entry.layer2.analyzed_l3_coverage.analyzed >= entry.layer2.analyzed_l3_coverage.total ? 'bg-slate-100 text-slate-500'
-                                : 'border border-dashed border-amber-300 bg-amber-400/10 text-amber-700'
+                              : entry.layer2.never_activated ? 'border border-dashed border-slate-300 bg-slate-50 text-slate-400'
+                                : entry.layer2.analyzed_l3_coverage.analyzed >= entry.layer2.analyzed_l3_coverage.total ? 'bg-slate-100 text-slate-500'
+                                  : 'border border-dashed border-amber-300 bg-amber-400/10 text-amber-700'
                   }`}>
                     {entry.layer2.related_l3_l4.length > 0
                       ? `关联${entry.layer2.related_l3_l4.length}个L4`
@@ -406,7 +409,9 @@ export default function BusinessData() {
                             ? '工具/服务支撑'
                             : entry.layer2.field_anchored
                               ? '字段锚定(非孤立)'
-                              : entry.layer2.analyzed_l3_coverage.analyzed >= entry.layer2.analyzed_l3_coverage.total ? '已核实无关联' : '未纳入分析范围'}
+                              : entry.layer2.never_activated
+                                ? '0行·从未启用'
+                                : entry.layer2.analyzed_l3_coverage.analyzed >= entry.layer2.analyzed_l3_coverage.total ? '已核实无关联' : '未纳入分析范围'}
                   </span>
                 </summary>
                 {expandedTable === key && (

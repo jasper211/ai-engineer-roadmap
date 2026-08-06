@@ -59,6 +59,7 @@ L4_BUSINESS_TABLE_MAP: dict[str, list[dict]] = {
         {"schema": "comm_sandbox", "table": "config_table_type_def", "evidence_type": "rule", "matched_columns": ["table_type_name", "business_category", "partner_category", "ryc_max_year"], "rationale": "20种制表类型的分类规则，正是\"标准化政策库\"的分类体系本身", "confidence": "strong"},
         {"schema": "public", "table": "config_license_carrier_mapping", "evidence_type": "rule", "matched_columns": ["license_code", "carrier_code", "commission_plan_code"], "rationale": "牌照-保司-方案映射规则，是政策接收后的落地配置", "confidence": "strong"},
         {"schema": "comm_sandbox", "table": "market_table_header_state", "evidence_type": "workflow", "matched_columns": ["header_status", "submitted_by", "approved_by", "published_by"], "rationale": "费率表提交/审批/发布工作流状态，直接暴露\"政策接收与校准\"当前的人工关卡在哪一步", "confidence": "strong"},
+        {"schema": "public", "table": "dim_carrier", "evidence_type": "rule", "matched_columns": ["carrier_code", "carrier_cn_name", "rating"], "rationale": "保司主数据表，外键被fact_commission_rate引用，是佣金政策按保司接收/校准的基础参照维度；同一维度被多个L4复用(COM-02/COM-10/RSJD-04)", "confidence": "strong"},
     ],
     "L4-COM-02": [
         {"schema": "comm_sandbox", "table": "fact_commission_tier_rate", "evidence_type": "output", "matched_columns": ["tier_level", "customer_type", "product_sku", "rate_y1"], "rationale": "分档/细分市场费率表，对应\"各细分市场配置\"", "confidence": "strong"},
@@ -66,6 +67,7 @@ L4_BUSINESS_TABLE_MAP: dict[str, list[dict]] = {
         {"schema": "comm_sandbox", "table": "config_table_type_tier_pricing_rules", "evidence_type": "rule", "matched_columns": ["fyc_tier", "ryc_tier", "fyc_adjustment", "ryc_adjustment"], "rationale": "分档定价规则，验证环节的判断依据已参数化", "confidence": "strong"},
         {"schema": "comm_sandbox", "table": "market_row_state", "evidence_type": "workflow", "matched_columns": ["row_status", "change_type", "confirmed_by"], "rationale": "逐条费率行的确认状态(待确认/新增等)，是\"验证\"过程的真实工作流留痕", "confidence": "strong"},
         {"schema": "comm_sandbox", "table": "commission_tier_adjustment", "evidence_type": "output", "matched_columns": ["adj_y1", "adjust_reason"], "rationale": "档位调整记录；口径已建但当前0行，未产生数据", "confidence": "weak"},
+        {"schema": "comm_sandbox", "table": "v_commission_tier_effective", "evidence_type": "output", "matched_columns": ["tier_level", "customer_type", "rate_y1", "is_adjusted"], "rationale": "生效佣金费率视图，视图依赖commission_tier_adjustment，是差异化拆解与验证后的当前生效结果快照", "confidence": "strong"},
     ],
     "L4-COM-03": [
         {"schema": "comm_sandbox", "table": "market_publish_event", "evidence_type": "workflow", "matched_columns": ["action", "affected_rows", "published_by"], "rationale": "费率发布事件表，字段含义正对应\"外发\"动作；当前0行，说明外发流程尚未在系统内走过", "confidence": "weak"},
@@ -78,6 +80,7 @@ L4_BUSINESS_TABLE_MAP: dict[str, list[dict]] = {
     "L4-COM-05": [
         {"schema": "comm_sandbox", "table": "commission_tier_adjustment", "evidence_type": "output", "matched_columns": ["adjust_reason", "adjusted_by"], "rationale": "调整记录表理论对口\"追溯调整\"；当前0行，未populate", "confidence": "weak"},
         {"schema": "comm_sandbox", "table": "commission_tier_adjustment_history_long", "evidence_type": "audit", "matched_columns": ["adjustment_id", "effective_start_date", "effective_end_date"], "rationale": "调整历史归档表，理论上承接追溯轨迹；当前0行", "confidence": "weak"},
+        {"schema": "comm_sandbox", "table": "v_commission_tier_effective", "evidence_type": "output", "matched_columns": ["is_adjusted", "adjust_reason", "adjusted_by"], "rationale": "生效佣金费率视图，视图依赖commission_tier_adjustment，含is_adjusted/adjust_reason字段，是追溯调整后的当前生效结果", "confidence": "strong"},
     ],
     "L4-COM-06": [],
     "L4-COM-07": [],
@@ -94,6 +97,10 @@ L4_BUSINESS_TABLE_MAP: dict[str, list[dict]] = {
         {"schema": "fin_sandbox", "table": "fact_receivable", "evidence_type": "output", "matched_columns": ["policy_no", "commission_amount", "premium_hkd", "commission_rate"], "rationale": "应收明细主表，字段直接对应\"应收明细清单\"", "confidence": "strong"},
         {"schema": "public", "table": "fact_policy", "evidence_type": "output", "matched_columns": ["policy_no", "premium", "ape", "issue_date"], "rationale": "保单信息整合来源", "confidence": "strong"},
         {"schema": "public", "table": "v_policy_current_state", "evidence_type": "output", "matched_columns": ["status_master", "ape", "premium_hkd"], "rationale": "保单当前状态视图，为应收核算提供保单状态口径", "confidence": "weak"},
+        {"schema": "public", "table": "dim_carrier", "evidence_type": "rule", "matched_columns": ["carrier_code", "carrier_cn_name", "rating"], "rationale": "保司主数据表，外键被fact_policy引用，是保单信息整合的保司侧参照维度", "confidence": "strong"},
+        {"schema": "public", "table": "fact_product_id", "evidence_type": "output", "matched_columns": ["product_id", "policy_count", "total_premium_hkd"], "rationale": "产品月度业绩汇总视图，视图依赖fact_policy，是保单信息整合按产品维度的汇总产出", "confidence": "strong"},
+        {"schema": "public", "table": "fact_product_sku", "evidence_type": "output", "matched_columns": ["product_sku", "policy_count", "total_premium_hkd"], "rationale": "产品SKU月度业绩汇总视图，视图依赖fact_policy，是保单信息整合按SKU维度的汇总产出", "confidence": "strong"},
+        {"schema": "public", "table": "v_fact_policy_person", "evidence_type": "output", "matched_columns": ["policy_id", "customer_id", "tr_person_id", "premium"], "rationale": "保单-人员关联视图，视图依赖fact_policy，是保单信息整合的人员维度关联", "confidence": "strong"},
     ],
     "L4-COM-11": [
         {"schema": "fin_sandbox", "table": "fact_receipt", "evidence_type": "output", "matched_columns": ["receipt_amount_hkd", "process_date", "policy_no"], "rationale": "实收清单主表", "confidence": "strong"},
@@ -170,6 +177,7 @@ L4_BUSINESS_TABLE_MAP: dict[str, list[dict]] = {
     "L4-RSJD-01": [
         {"schema": "public", "table": "fact_sales_activity", "evidence_type": "output", "matched_columns": ["policy_id", "event_type", "status_after", "event_date", "operator"], "rationale": "保单生命周期事件流水表，逐条记录销售执行动作", "confidence": "strong"},
         {"schema": "public", "table": "dim_customer", "evidence_type": "output", "matched_columns": ["customer_id", "customer_type", "occupation", "income"], "rationale": "客户主数据表，是客户管理的直接依据", "confidence": "strong"},
+        {"schema": "public", "table": "dim_predicate_library", "evidence_type": "rule", "matched_columns": ["event_type", "lifecycle_stage", "name_cn"], "rationale": "保单生命周期事件类型定义库，外键被fact_sales_activity的event_type引用，是销售执行事件的分类规则依据", "confidence": "strong"},
     ],
     "L4-RSJD-02": [
         {"schema": "public", "table": "agg_sales_base", "evidence_type": "output", "matched_columns": ["保费(hkd)", "ape", "是否融资", "签批时效(天)"], "rationale": "订单粒度的保费/APE/签批时效汇总表，是财务模型测算的直接输入", "confidence": "strong"},
@@ -180,6 +188,11 @@ L4_BUSINESS_TABLE_MAP: dict[str, list[dict]] = {
     "L4-RSJD-04": [
         {"schema": "public", "table": "fact_insurance_plan_header", "evidence_type": "output", "matched_columns": ["plan_header_id", "sum_assured", "premium", "product_name"], "rationale": "保险计划书主表，本身就是\"方案\"这一交付物的数据化版本", "confidence": "strong"},
         {"schema": "public", "table": "fact_insurance_plan_lines", "evidence_type": "output", "matched_columns": ["plan_line_id", "policy_year", "gcv", "tcv_irr"], "rationale": "计划书逐年现金价值明细，是方案交付内容的精算细节", "confidence": "strong"},
+        {"schema": "public", "table": "dim_carrier", "evidence_type": "rule", "matched_columns": ["carrier_code", "carrier_cn_name", "rating"], "rationale": "保司主数据表，外键被fact_insurance_plan_header引用，是方案交付的保司侧参照维度", "confidence": "strong"},
+        {"schema": "public", "table": "dim_product_benefit_profile", "evidence_type": "output", "matched_columns": ["product_id", "consistency_status", "plan_count"], "rationale": "产品权益特征一致性检查表，与fact_insurance_plan_header同属流水线批次产出，核验方案交付内容的权益一致性", "confidence": "strong"},
+        {"schema": "public", "table": "fact_product_id", "evidence_type": "output", "matched_columns": ["product_id", "benefit_consistency_status", "policy_count"], "rationale": "产品月度业绩汇总视图，视图依赖fact_insurance_plan_header，是方案交付按产品维度的业绩汇总", "confidence": "strong"},
+        {"schema": "public", "table": "v_plan_metrics", "evidence_type": "output", "matched_columns": ["plan_header_id", "sum_assured", "max_exp_irr"], "rationale": "计划书精算指标视图，视图依赖fact_insurance_plan_header，是方案交付的精算指标输出", "confidence": "strong"},
+        {"schema": "public", "table": "v_plan_year_snapshot", "evidence_type": "output", "matched_columns": ["plan_header_id", "policy_year", "gcv", "tcv"], "rationale": "fact_insurance_plan_lines的精简视图，是方案交付逐年现金价值的展示口径", "confidence": "strong"},
     ],
 
     # L3-FBA 理财师业务分析：与RSJD共用agg_sales_base(同一张原始销售汇总表
@@ -193,6 +206,9 @@ L4_BUSINESS_TABLE_MAP: dict[str, list[dict]] = {
     ],
     "L4-FBA-02": [
         {"schema": "public", "table": "v_person_activity", "evidence_type": "output", "matched_columns": ["person_id", "role_code", "measure", "biz_date"], "rationale": "人员活动流水视图，measure字段可作活动率计算的原始输入，但未专门按理财师角色聚合", "confidence": "weak"},
+        {"schema": "public", "table": "bridge_person_identity", "evidence_type": "output", "matched_columns": ["person_id", "source_system", "match_method", "confidence_tier"], "rationale": "人员身份归一化桥接表，视图依赖被v_person_activity引用，是活动率分析按人员归一化统计的身份识别基础", "confidence": "strong"},
+        {"schema": "public", "table": "dim_role_type", "evidence_type": "rule", "matched_columns": ["role_code", "role_name_cn", "is_person_role"], "rationale": "人员角色类型字典表，外键被v_person_activity的role_code引用，是活动率按角色聚合的分类规则依据", "confidence": "strong"},
+        {"schema": "public", "table": "v_person_coverage", "evidence_type": "output", "matched_columns": ["population", "matched_keys", "pending_suspects"], "rationale": "人员身份识别覆盖率统计视图，2026-08-05业务方确认其用途是评估bridge_person_identity的数据质量(渠道理财师/个人客户等群体的身份匹配成功率)，与bridge_person_identity同挂此L4", "confidence": "strong"},
     ],
     "L4-FBA-03": [],
     "L4-FBA-04": [],

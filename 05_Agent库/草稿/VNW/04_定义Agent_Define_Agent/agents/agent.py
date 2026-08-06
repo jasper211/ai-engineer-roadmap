@@ -117,6 +117,7 @@ def _build_and_write_table_analysis(db_catalog: dict) -> dict:
     shared_master_data: dict = {}
     utility_support_info: dict = {}
     field_anchor_info: dict = {}
+    never_activated: set = set()
     if lineage_path.exists():
         lineage = json.loads(lineage_path.read_text(encoding="utf-8"))
         shared_master_data = lineage.get("shared_master_data", {})
@@ -127,9 +128,11 @@ def _build_and_write_table_analysis(db_catalog: dict) -> dict:
                 utility_support_info[key] = node.get("utility_support_reason", "")
             elif node["zombie_flag"] == "field_anchored":
                 field_anchor_info[key] = field_anchor_links.get(key, [])
+            elif node["zombie_flag"] == "never_activated":
+                never_activated.add(key)
     analysis = build_table_analysis(
         db_catalog, table_to_l4_index, l3_codes,
-        shared_master_data, utility_support_info, field_anchor_info,
+        shared_master_data, utility_support_info, field_anchor_info, never_activated,
     )
     output_path = AGENT_ROOT / "10_部署与运行_Deploy_and_Run/frontend/public/data/table_analysis.json"
     output_path.write_text(json.dumps(analysis, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
