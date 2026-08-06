@@ -21,6 +21,26 @@ from skills.l3_analysis_contract import (
 from tools.llm_client import DEFAULT_MODEL, call_json_model
 
 
+def _rerun_history_path(agent_root: Path) -> Path:
+    # 直接写frontend/public/data，前端按l3_code过滤即可读到——这份记录本身
+    # 就是留存证据，不需要像source_updates那样区分内部工作区/发布态两份。
+    return Path(agent_root) / "10_部署与运行_Deploy_and_Run/frontend/public/data/source_updates/analysis_run_history.json"
+
+
+def record_rerun_history(agent_root: Path, entry: dict) -> None:
+    """给单个L3自己的"重跑记录"追加一条留存——不管这次重跑是发布成功还是被
+    校验拒绝，都要记录，因为"曾经跑过一次但被拒绝"本身就是有价值的历史事实，
+    不能只记录成功的那部分。原因/内容/时间由调用方算好传入，这里只负责追加、
+    不覆盖旧记录。"""
+    path = _rerun_history_path(agent_root)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    existing = json.loads(path.read_text(encoding="utf-8")) if path.exists() else []
+    existing.append(entry)
+    temporary = path.with_suffix(".tmp")
+    temporary.write_text(json.dumps(existing, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    temporary.replace(path)
+
+
 def canonical_hash(value: dict) -> str:
     payload = json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
     return hashlib.sha256(payload.encode("utf-8")).hexdigest()
@@ -686,13 +706,41 @@ class L3AnalysisRunner:
             replaced_package = output.with_name(f"{output.name}.before-refresh.{timestamp}.bak")
             shutil.copy2(output, replaced_package)
         output.write_text(json.dumps(package, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        published_at = datetime.now(timezone.utc).isoformat()
         request.update({
             "status": "PUBLISHED",
             "published_path": str(output),
             "replaced_package_backup": str(replaced_package) if replaced_package else "",
-            "published_at": datetime.now(timezone.utc).isoformat(),
+            "published_at": published_at,
         })
         (run_dir / "request.json").write_text(json.dumps(request, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+        old_package = json.loads(replaced_package.read_text(encoding="utf-8")) if replaced_package else None
+        old_run = (old_package or {}).get("model_run") or {}
+        if old_package is None:
+            trigger_reason = "首次生成分析（此前未运行过统一分析模型）"
+        elif old_run.get("input_snapshot_hash") != request["input_snapshot_hash"]:
+            trigger_reason = "事实输入哈希变化，旧分析结论已过期，按最新事实重新生成"
+        else:
+            trigger_reason = "事实输入未变化的手动重新生成"
+        record_rerun_history(self.agent_root, {
+            "l3_code": request["l3_code"],
+            "run_dir": run_dir.name,
+            "generated_at": published_at,
+            "status": "published",
+            "trigger_reason": trigger_reason,
+            "error": None,
+            "diff": {
+                "previous_generated_at": old_run.get("generated_at"),
+                "previous_task_count": len((old_package or {}).get("tasks", [])),
+                "previous_l4_count": len((old_package or {}).get("l4_analysis", [])),
+                "previous_analysis_status": (old_package or {}).get("analysis_status"),
+                "new_task_count": validation["task_count"],
+                "new_l4_count": validation["l4_count"],
+                "new_analysis_status": package["analysis_status"],
+                "model_name": request.get("model", "external-import"),
+            } if old_package else None,
+        })
         return output
 
     def _validate_and_merge_l4_refresh(

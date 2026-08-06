@@ -101,6 +101,27 @@ export interface SourceUpdateHistoryIndex {
   entries: SourceUpdateHistoryEntry[]
 }
 
+export interface AnalysisRerunDiff {
+  previous_generated_at: string | null
+  previous_task_count: number
+  previous_l4_count: number
+  previous_analysis_status: string | null
+  new_task_count: number
+  new_l4_count: number
+  new_analysis_status: string
+  model_name: string
+}
+
+export interface AnalysisRerunHistoryEntry {
+  l3_code: string
+  run_dir: string
+  generated_at: string
+  status: 'published' | 'rejected'
+  trigger_reason: string
+  error: string | null
+  diff: AnalysisRerunDiff | null
+}
+
 export interface DeliverableAuditFinding {
   l3_code: string
   l4_code: string
@@ -348,6 +369,13 @@ export async function loadSourceUpdateHistory(): Promise<SourceUpdateHistoryInde
   const response = await fetch('/data/source_updates/history_index.json', { cache: 'no-store' })
   if (response.status === 404) return null
   if (!response.ok) throw new Error('重跑历史记录读取失败')
+  return response.json()
+}
+
+export async function loadAnalysisRerunHistory(): Promise<AnalysisRerunHistoryEntry[]> {
+  const response = await fetch('/data/source_updates/analysis_run_history.json', { cache: 'no-store' })
+  if (response.status === 404) return []
+  if (!response.ok) throw new Error('分析重跑记录读取失败')
   return response.json()
 }
 

@@ -297,8 +297,26 @@ def main() -> int:
             print(f"错误：{parser_error}", file=sys.stderr)
             return 2
         if args.run_analysis_dir:
+            from datetime import datetime, timezone
+
+            from skills.l3_analysis_runner import record_rerun_history
+
             response = args.import_analysis_output or runner.run(args.run_analysis_dir, model=args.analysis_model)
-            output = runner.validate_and_publish(args.run_analysis_dir, response)
+            try:
+                output = runner.validate_and_publish(args.run_analysis_dir, response)
+            except ValueError as exc:
+                run_dir_path = Path(args.run_analysis_dir)
+                request_json = json.loads((run_dir_path / "request.json").read_text(encoding="utf-8"))
+                record_rerun_history(AGENT_ROOT, {
+                    "l3_code": request_json.get("l3_code", run_dir_path.name.split("_")[0]),
+                    "run_dir": run_dir_path.name,
+                    "generated_at": datetime.now(timezone.utc).isoformat(),
+                    "status": "rejected",
+                    "trigger_reason": "重跑后模型输出未通过契约校验，未发布，旧分析保持不变",
+                    "error": str(exc),
+                    "diff": None,
+                })
+                raise
             print(json.dumps({"status": "published", "analysis_package": str(output)}, ensure_ascii=False, indent=2))
             return 0
     if args.sync_business_scenarios:

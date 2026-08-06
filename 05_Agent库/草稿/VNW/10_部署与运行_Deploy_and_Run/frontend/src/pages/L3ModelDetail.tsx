@@ -1,7 +1,25 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router'
-import { AlertTriangle, ArrowLeft, ArrowRight, Bot, Download, GitBranch, GripVertical, Info, Layers3, LoaderCircle, RotateCcw, Save, ShieldCheck } from 'lucide-react'
-import { loadL3Model, type L3Model } from '../lib/l3Models'
+import { AlertTriangle, ArrowLeft, ArrowRight, Bot, ChevronDown, ChevronUp, Download, GitBranch, GripVertical, Info, Layers3, LoaderCircle, RotateCcw, Save, ShieldCheck } from 'lucide-react'
+import { loadAnalysisRerunHistory, loadL3Model, loadSourceUpdateHistory, type AnalysisRerunHistoryEntry, type L3Model, type SourceUpdateReport } from '../lib/l3Models'
+
+const scopeLabels: Record<string, string> = {
+  blueprint: '流程蓝图', l4_delivery: 'L4与交付物', value_nodes: '价值节点',
+  vn_l4_mapping: '价值节点-L4映射', l2_capability: 'L2能力', kpi: 'KPI',
+  value_stream: '价值流', readiness: '建模准入', evidence: '证据注册表',
+  l3_removed: 'L3已从源头移除',
+}
+
+const actionLabels: Record<string, string> = {
+  REANALYSIS_REQUIRED: '事实变化，需重跑分析',
+  BLOCKED_INPUT: '输入不满足准入，转入待补（模型入口关闭）',
+  FACTS_REFRESHED: '事实刷新（无需重跑分析）',
+  REMOVE_FROM_CURRENT_SET: 'L3已从当前正式集合移除',
+}
+
+type L3RerunHistoryItem =
+  | { kind: 'fact_change'; time: string; change: SourceUpdateReport['changes'][number] }
+  | { kind: 'analysis_rerun'; time: string; entry: AnalysisRerunHistoryEntry }
 
 const COLUMNS = [
   { id: 'Human', label: 'Human · 人工主导', explanation: '任务由人完成；AI最多提供资料检索或记录支持，不替代判断与执行。', color: 'border-rose-400/30 bg-rose-400/5' },
@@ -279,6 +297,8 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
   const storageKey = `vnw-workshop-v1:${l3Code}`
   const [session, setSession] = useState<WorkshopState>({ placements: {}, priorityPlacements: {}, note: '', updatedAt: '', baseSnapshotHash: '' })
   const [taskL4Filter, setTaskL4Filter] = useState('ALL')
+  const [rerunHistory, setRerunHistory] = useState<L3RerunHistoryItem[]>([])
+  const [expandedRerunEvent, setExpandedRerunEvent] = useState<string | null>(null)
 
   useEffect(() => {
     loadL3Model(l3Code).then(setModel).catch(error => setError(error.message))
@@ -290,6 +310,23 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
       } catch { localStorage.removeItem(storageKey) }
     }
   }, [l3Code, storageKey])
+
+  useEffect(() => {
+    if (!l3Code) return
+    Promise.all([loadSourceUpdateHistory(), loadAnalysisRerunHistory()])
+      .then(([sourceHistory, analysisHistory]) => {
+        const factChanges: L3RerunHistoryItem[] = (sourceHistory?.entries ?? [])
+          .filter(event => event.has_report)
+          .flatMap(event => event.changes
+            .filter(change => change.l3_code === l3Code)
+            .map(change => ({ kind: 'fact_change' as const, time: event.generated_at, change })))
+        const analysisReruns: L3RerunHistoryItem[] = analysisHistory
+          .filter(entry => entry.l3_code === l3Code)
+          .map(entry => ({ kind: 'analysis_rerun' as const, time: entry.generated_at, entry }))
+        setRerunHistory([...factChanges, ...analysisReruns].sort((a, b) => b.time.localeCompare(a.time)))
+      })
+      .catch(() => setRerunHistory([]))
+  }, [l3Code])
 
   const cards = useMemo(() => {
     if (!model) return []
@@ -1123,6 +1160,67 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
         <Info className="mt-0.5 h-4 w-4 shrink-0" />
         <span>本页业务事实来自 process_analytics 快照，共 {model.evidence_registry.length} 条字段证据。浏览器保存内容属于 CONSENSUS 层，不参与 Gate 自动判断。</span>
       </div>
+
+      {rerunHistory.length > 0 && (
+        <section className="rounded-2xl border border-slate-200 bg-white p-4">
+          <p className="text-sm font-semibold text-text-primary">{l3Code} 重跑记录</p>
+          <p className="mt-1 text-xs text-text-secondary">该L3自己的每次重跑——原因、内容、较上次的变化细节、时间——只要跑过、哪怕结果是作废/待补，都留档，不是操作建议。</p>
+          <div className="mt-3 space-y-2">
+            {rerunHistory.map((item, index) => {
+              const key = item.kind === 'fact_change' ? `fact-${item.time}-${index}` : `analysis-${item.entry.run_dir}`
+              const isExpanded = expandedRerunEvent === key
+              return (
+                <div key={key} className="rounded-xl border border-slate-200 bg-slate-50/60">
+                  <button
+                    onClick={() => setExpandedRerunEvent(value => value === key ? null : key)}
+                    className="flex w-full flex-wrap items-center justify-between gap-2 px-4 py-3 text-left"
+                  >
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="font-mono text-[11px] text-text-muted">{new Date(item.time).toLocaleString('zh-CN')}</span>
+                      {item.kind === 'fact_change' ? (
+                        <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${item.change.action === 'BLOCKED_INPUT' ? 'bg-rose-100 text-rose-700' : 'bg-amber-100 text-amber-800'}`}>
+                          事实变化 · {actionLabels[item.change.action] ?? item.change.action}
+                        </span>
+                      ) : (
+                        <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${item.entry.status === 'published' ? 'bg-indigo-100 text-indigo-700' : 'bg-rose-100 text-rose-700'}`}>
+                          分析重跑 · {item.entry.status === 'published' ? '已发布新分析' : '被拒绝(未发布)'}
+                        </span>
+                      )}
+                    </div>
+                    {isExpanded ? <ChevronUp className="h-3.5 w-3.5 text-text-muted" /> : <ChevronDown className="h-3.5 w-3.5 text-text-muted" />}
+                  </button>
+                  {isExpanded && item.kind === 'fact_change' && (
+                    <div className="space-y-1.5 border-t border-slate-200 px-4 py-3 text-[11px] leading-5">
+                      <p><span className="font-semibold text-text-primary">重跑原因：</span><span className="text-text-secondary">变化范围 {item.change.changed_scopes.map(scope => scopeLabels[scope] ?? scope).join('、')}</span></p>
+                      {(item.change.added_source_objects.length > 0 || item.change.removed_source_objects.length > 0) && (
+                        <div className="text-text-muted">
+                          {item.change.added_source_objects.length > 0 && <p>新增来源：{item.change.added_source_objects.join('、')}</p>}
+                          {item.change.removed_source_objects.length > 0 && <p>移除来源：{item.change.removed_source_objects.join('、')}</p>}
+                        </div>
+                      )}
+                      <p className="text-text-muted">较上次调整：事实输入哈希 {item.change.previous_analysis_input_hash.slice(0, 10)}… → {item.change.current_analysis_input_hash.slice(0, 10)}…</p>
+                    </div>
+                  )}
+                  {isExpanded && item.kind === 'analysis_rerun' && (
+                    <div className="space-y-1.5 border-t border-slate-200 px-4 py-3 text-[11px] leading-5">
+                      <p><span className="font-semibold text-text-primary">重跑原因：</span><span className="text-text-secondary">{item.entry.trigger_reason}</span></p>
+                      {item.entry.status === 'rejected' && (
+                        <p className="text-rose-700"><span className="font-semibold">拒绝原因：</span>{item.entry.error}</p>
+                      )}
+                      {item.entry.diff && (
+                        <div className="text-text-muted">
+                          <p>较上次调整：任务数 {item.entry.diff.previous_task_count} → {item.entry.diff.new_task_count}；L4分析数 {item.entry.diff.previous_l4_count} → {item.entry.diff.new_l4_count}</p>
+                          <p>模型：{item.entry.diff.model_name}</p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+        </section>
+      )}
     </div>
   )
 }
