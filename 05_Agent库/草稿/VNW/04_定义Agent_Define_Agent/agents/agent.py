@@ -85,7 +85,31 @@ def _sync_to_frontend(snapshot_dir: Path) -> dict:
             copied_demos.append(filename)
         else:
             missing_demos.append(filename)
-    return {"snapshot_files_synced": True, "demos_synced": copied_demos, "demos_missing": missing_demos}
+
+    # 每个已评审通过的demo，同步导出一份离线分析报告(HTML给负责人读、MD给
+    # 负责人喂AI分析)。报告内容完全从demo文件本身提取，不带日期后缀——
+    # 重新生成直接原地更新，前端下载链接不会因为改日期而失效。
+    from skills.l3_report_export import export_l3_report
+
+    report_source_dir = AGENT_ROOT / "03_规划项目结构_Plan_Project_Structure"
+    report_dest_dir = AGENT_ROOT / "10_部署与运行_Deploy_and_Run/frontend/public/reports"
+    report_dest_dir.mkdir(parents=True, exist_ok=True)
+    generated_reports = []
+    for l3_code, filename in DEMO_REGISTRY.items():
+        src = DEMO_SOURCE_DIR / filename
+        if not src.exists():
+            continue
+        result = export_l3_report(l3_code, src)
+        for ext, key in ((".html", "html"), (".md", "md")):
+            name = f"L3流程分析报告_{l3_code}{ext}"
+            (report_source_dir / name).write_text(result[key], encoding="utf-8")
+            shutil.copy2(report_source_dir / name, report_dest_dir / name)
+            generated_reports.append(name)
+
+    return {
+        "snapshot_files_synced": True, "demos_synced": copied_demos, "demos_missing": missing_demos,
+        "reports_generated": generated_reports,
+    }
 
 
 def _load_table_to_l4_index() -> tuple[dict, list[str]]:

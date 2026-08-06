@@ -289,6 +289,121 @@ function downloadMarkdown(model: L3Model) {
   URL.revokeObjectURL(url)
 }
 
+const HTML_REPORT_STYLE = `
+:root{--bg:#f5f7fa;--paper:#fff;--ink:#172033;--muted:#667085;--line:#d9dee8;--blue:#3157d5;--soft:#eef2ff;--green:#16866b;--amber:#b7791f;--red:#c43d3d}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.6 Inter,"PingFang SC","Microsoft YaHei",sans-serif}
+.wrap{max-width:920px;margin:auto;padding:28px}
+.banner{background:var(--paper);border:1px solid var(--line);border-left:5px solid var(--amber);border-radius:14px;padding:20px 24px;margin-bottom:16px}
+h1{margin:3px 0 4px;font-size:24px}h2{font-size:16px;margin:22px 0 10px;border-bottom:1px solid var(--line);padding-bottom:8px}h3{font-size:13px;margin:14px 0 6px}
+.eyebrow{font-size:11px;color:var(--muted)}
+.status{display:inline-block;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:600;margin-top:6px}
+.status.confirmed{background:#e3f5ef;color:var(--green)}.status.draft{background:#fff2d7;color:var(--amber)}
+.kpis{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
+.kpi{flex:1;min-width:160px;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:13px}
+.kpi b{display:block;font-size:18px}.kpi span{font-size:11px;color:var(--muted)}
+.warning{padding:10px 12px;border-radius:9px;font-size:12.5px;background:#fff8e8;color:#875b0a;border:1px solid #ecd39c;margin-bottom:10px}
+.note{padding:10px 12px;border-radius:9px;font-size:12.5px;background:#f7f8fb;color:var(--muted);margin-bottom:10px}
+.card{border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:10px;background:#fff}
+.tag{display:inline-block;padding:2px 7px;border-radius:5px;font-size:10px;font-weight:600;background:var(--soft);color:var(--blue);margin-right:6px}
+ul{margin:6px 0;padding-left:20px;font-size:12.5px}li{margin-bottom:4px}
+.dod li{list-style:none;margin-left:-20px}.dod li.done{color:var(--green)}
+footer{text-align:center;color:var(--muted);font-size:11px;padding:18px}
+`
+
+function buildHtmlReport(model: L3Model): string {
+  const ua = model.unified_analysis
+  const esc = (value: unknown) => String(value ?? '')
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+
+  const statusHtml = ua.status === 'CONFIRMED'
+    ? `<span class="status confirmed">已确认（${esc(ua.confirmed_by ?? '')} · ${esc(ua.confirmed_at ?? '')}）</span>`
+    : '<span class="status draft">草稿 · 尚未人工确认，不可作为最终投入决策依据</span>'
+
+  const axisHtml = ua.axis_conflicts.length > 0
+    ? `<div class="warning">⚠️ 两轴方向冲突：${esc(ua.axis_conflicts.join('、'))} —— 需业务方澄清，本报告不自动选边。</div>`
+    : '<div class="note">本L3当前两轴方向一致，无冲突。</div>'
+
+  const laddersHtml = model.l4s.map(l4 => {
+    const ladder = ua.root_cause_ladders[l4.l4_code]
+    const items = ladder && ladder.length > 0
+      ? ladder.map(layer => `<li><span class="tag">${esc(layer.layer)}·${esc(layer.grade)}级</span>${esc(layer.statement)}</li>`).join('')
+      : '<li style="color:var(--muted)">待补</li>'
+    return `<div class="card"><h3>${esc(l4.l4_code)} · ${esc(l4.l4_name)}</h3><ul>${items}</ul></div>`
+  }).join('')
+
+  const dodHtml = ua.dod_checklist
+    .map(item => `<li class="${item.satisfied ? 'done' : ''}">${item.satisfied ? '☑' : '☐'} ${esc(item.item)}</li>`)
+    .join('')
+
+  const conclusion = ua.status === 'DRAFT'
+    ? '本报告为VNW自动生成的草稿，仅供参考，须经Jasper/L3业务负责人复核并写入决策确认记录后才可作为最终投入依据。'
+    : `本报告已由${esc(ua.confirmed_by ?? '业务负责人')}于${esc(ua.confirmed_at ?? '')}确认。${esc(ua.confirmation_notes ?? '')}`
+
+  const l2Names = model.l2_capabilities.length > 0
+    ? model.l2_capabilities.map(row => String((row as Record<string, unknown>).l2_name ?? '')).join('、')
+    : '待补'
+  const vsNames = model.value_stream_mappings.length > 0
+    ? model.value_stream_mappings.map(row => { const r = row as Record<string, unknown>; return `${r.vs_name}·${r.stage_name}` }).join('、')
+    : '未定位到客户旅程/价值流阶段'
+  const kpiNames = model.kpi_mappings.length > 0
+    ? model.kpi_mappings.map(kpi => `${kpi.kpi_name}${kpi.source_type === 'mark_priority_draft' ? '(战略权重草稿)' : ''}`).join('、')
+    : '待补'
+
+  return `<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${esc(model.l3_code)} · ${esc(model.l3_name)} · VNW统一分析报告</title><style>${HTML_REPORT_STYLE}</style></head>
+<body><div class="wrap">
+<section class="banner">
+<div class="eyebrow">VNW统一分析Spec v1.0 · 快照 ${esc(model.snapshot_hash.slice(0, 12))} · Gate M/E/A = ${esc(model.gates.M.status)}/${esc(model.gates.E.status)}/${esc(model.gates.A.status)}</div>
+<h1>${esc(model.l3_code)} · ${esc(model.l3_name)} · VNW统一分析报告</h1>
+${statusHtml}
+</section>
+
+<h2>一、分析基线</h2>
+<div class="kpis">
+<div class="kpi"><b>${esc(model.snapshot_hash.slice(0, 12))}</b><span>数据快照</span></div>
+<div class="kpi"><b>${esc(model.blueprint.version || '未覆盖')}</b><span>蓝图版本</span></div>
+<div class="kpi"><b>${model.l4s.length}</b><span>L4总数</span></div>
+<div class="kpi"><b>${model.value_nodes.length}</b><span>价值节点</span></div>
+</div>
+
+<h2>二、受控维度</h2>
+<ul>
+<li>L2业务能力：${esc(l2Names)}</li>
+<li>价值流位置：${esc(vsNames)}</li>
+<li>关联KPI：${esc(kpiNames)}</li>
+<li>岗位归属：${ua.coverage.position_covered}/${ua.coverage.l4_total} 个L4已归口</li>
+<li>业务数据证据：${ua.coverage.business_evidence_covered}/${ua.coverage.l4_total} 个L4定位到业务数据仓库表</li>
+</ul>
+
+<h2>三、双轴声明（D1-D6/Tier轴 与 候选Agent封装轴，禁止合并）</h2>
+${axisHtml}
+
+<h2>四、逐L4根因阶梯（事实→机制→结构→策略）</h2>
+${laddersHtml}
+
+<h2>五、Definition of Done</h2>
+<ul class="dod">${dodHtml}</ul>
+
+<h2>六、综合判断</h2>
+<p>${esc(conclusion)}</p>
+
+<footer>来源：03_规划项目结构_Plan_Project_Structure/VNW统一分析Spec_v1.0.md</footer>
+</div></body></html>
+`
+}
+
+function downloadHtml(model: L3Model) {
+  const content = buildHtmlReport(model)
+  const blob = new Blob([content], { type: 'text/html;charset=utf-8' })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = `${model.l3_code}_统一分析报告.html`
+  link.click()
+  URL.revokeObjectURL(url)
+}
+
 export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}) {
   const params = useParams()
   const l3Code = modelCode || params.l3Code || ''
@@ -543,12 +658,20 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
           <div className="flex gap-2">
             {(['M', 'E', 'A'] as const).map(gate => <span key={gate} className={`rounded-lg border px-3 py-2 font-mono text-xs ${gateTone(model.gates[gate].status)}`}>Gate {gate} · {model.gates[gate].status}</span>)}
           </div>
-          <button
-            onClick={() => downloadMarkdown(model)}
-            className="flex items-center gap-1.5 rounded-lg border border-border-default bg-bg-surface px-3 py-2 text-xs text-text-secondary hover:bg-bg-elevated"
-          >
-            <Download className="h-3.5 w-3.5" /> 导出统一分析报告（.md）
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={() => downloadMarkdown(model)}
+              className="flex items-center gap-1.5 rounded-lg border border-border-default bg-bg-surface px-3 py-2 text-xs text-text-secondary hover:bg-bg-elevated"
+            >
+              <Download className="h-3.5 w-3.5" /> 导出统一分析报告（.md）
+            </button>
+            <button
+              onClick={() => downloadHtml(model)}
+              className="flex items-center gap-1.5 rounded-lg border border-border-default bg-bg-surface px-3 py-2 text-xs text-text-secondary hover:bg-bg-elevated"
+            >
+              <Download className="h-3.5 w-3.5" /> 导出统一分析报告（.html）
+            </button>
+          </div>
         </div>
       </div>
 

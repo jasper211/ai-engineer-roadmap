@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router'
-import { ArrowLeft, Database, ExternalLink, GitBranch, ShieldCheck } from 'lucide-react'
+import { ArrowLeft, Database, Download, ExternalLink, GitBranch, ShieldCheck } from 'lucide-react'
 
 const SECTIONS = [
   ['panel-a', 'A 流程蓝图'],
@@ -50,14 +50,22 @@ export default function L3ComDemo() {
         <Link to="/models" className="inline-flex items-center gap-2 text-xs text-text-muted hover:text-text-primary">
           <ArrowLeft className="h-4 w-4" />返回模型清单
         </Link>
-        <a
-          href="/demos/L3流程模型_demo_L3-COM_标准测试版_20260728.html"
-          target="_blank"
-          rel="noreferrer"
-          className="inline-flex items-center gap-1.5 text-xs text-text-muted hover:text-accent-primary"
-        >
-          独立页面打开 <ExternalLink className="h-3.5 w-3.5" />
-        </a>
+        <div className="flex flex-wrap items-center gap-3">
+          <a
+            href="/demos/L3流程模型_demo_L3-COM_标准测试版_20260728.html"
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1.5 text-xs text-text-muted hover:text-accent-primary"
+          >
+            独立页面打开 <ExternalLink className="h-3.5 w-3.5" />
+          </a>
+          <span className="flex items-center gap-1.5 text-xs text-text-muted">
+            <Download className="h-3.5 w-3.5" />下载分析报告
+            <a href="/reports/L3流程分析报告_L3-COM.html" download className="text-accent-primary hover:underline">HTML</a>
+            ·
+            <a href="/reports/L3流程分析报告_L3-COM.md" download className="text-accent-primary hover:underline">MD</a>
+          </span>
+        </div>
       </div>
 
       <section className="overflow-hidden rounded-2xl border border-border-default bg-bg-elevated shadow-panel">
