@@ -1,88 +1,68 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-HKIA · 2023Q1→2026Q1 全行业分析报告 · HTML 生成器
-====================================================
-读取 report_data_2023_2026Q1.json，按《香港长期保险统一分析Spec体系》模板
-生成自包含、可分页的 HTML 报告（>=50 屏）。
-
-报告边界（遵用户确认）：仅三大业务类——个人业务 / 团体业务 / 退休计划。
-不做产品细分 / 渠道 / 货币 / 缴费年期 / MCV / 在岸离岸交叉。
-"""
-import json
+"""主装配：组合所有页面输出最终 HTML。"""
+import sys, re
 from pathlib import Path
+SCRIPT = Path(__file__).resolve().parent
+REPORT = SCRIPT.parent / "report"
+sys.path.insert(0, str(REPORT))
 
-BASE = Path(__file__).resolve().parents[1]
-DATA = BASE / "scripts" / "data" / "report_data_2023_2026Q1.json"
-OUT = BASE / "香港长期保险行业2023-2026Q1全行业分析.html"
+from report_lib import CSS, BASE, nsec
+from pages_p1_p2 import (cover, toc, p03_layers, p04_dims, p05_workflow,
+                         p06_antipattern, p07_lenses, p08_evidence)
+from pages_p3_p4 import (p09_time, p10_breakpoint, p11_measure, p12_source,
+                         p13_total, p14_structure, p15_yoy,
+                         p16_ind_total, p17_ind_measure, p18_ind_quantity_price, p19_ind_trend)
+from pages_p4b import (p20_group_new, p21_group_inforce, p22_group_note,
+                       p23_ret_total, p24_ret_fund, p25_ret_contrib)
+from pages_p5 import (p26_rank_single, p27_rank_ape, p28_rank_inforce,
+                      p29_increment, p30_transfer, p31_outlier)
+from pages_p6_p7 import (p32_conclusion_who, p33_lens_roots, p34_dod, p35_conclusion,
+                         p36_formula, p37_evidence_index, p38_sources, p39_disclaimer)
 
-D = json.load(open(DATA, encoding="utf-8"))
-
-# ---------------- 样式 ----------------
-CSS = """
-:root{
-  --ink:#1a2233;--mut:#5b6675;--line:#e3e7ef;--bg:#f6f8fb;
-  --brand:#0d5c8c;--brand2:#1f7ab6;--accent:#c8860a;
-  --ok:#1e7d4f;--warn:#b26a00;--bad:#b3372d;--hint:#6b54a3;--page:#fff;
-  --shadow:0 2px 10px rgba(26,34,51,.08)}
-*{box-sizing:border-box}
-html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,
-  "Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;line-height:1.62;font-size:15px}
-a{color:var(--brand2);text-decoration:none}
-.page{max-width:1200px;margin:26px auto;background:var(--page);border-radius:10px;
-  box-shadow:var(--shadow);padding:44px 60px;page-break-after:always}
-.pghead{display:flex;justify-content:space-between;align-items:baseline;border-bottom:2px solid var(--brand);
-  padding-bottom:8px;margin-bottom:26px;color:var(--mut);font-size:12.5px}
-.pghead b{color:var(--brand)}
-.cover{min-height:82vh;display:flex;flex-direction:column;justify-content:center}
-.cover .kicker{color:var(--accent);letter-spacing:4px;font-weight:600;font-size:13px;margin-bottom:14px}
-.cover h1{font-size:34px;line-height:1.22;margin:0 0 8px}
-.cover h2{font-size:19px;color:var(--mut);font-weight:500;margin:0 0 30px}
-.cover .meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-top:26px}
-.cover .meta .m{border-left:4px solid var(--brand);padding:6px 14px;background:var(--bg);border-radius:4px}
-.cover .meta .m small{display:block;color:var(--mut)}
-h1.ph{font-size:25px;margin:4px 0 18px;padding-bottom:12px;border-bottom:2px solid var(--line);
-  display:flex;align-items:center;gap:12px}
-h1.ph .no{background:var(--brand);color:#fff;min-width:42px;height:42px;border-radius:8px;display:inline-flex;
-  align-items:center;justify-content:center;font-size:18px;padding:0 10px;flex:none}
-h2{font-size:18.5px;color:var(--brand);margin:28px 0 10px;border-left:4px solid var(--accent);padding-left:10px}
-h3{font-size:15px;color:#33415c;margin:18px 0 6px}
-p{margin:9px 0}
-small{color:var(--mut)}
-.lead{font-size:15.5px;color:#33415c;background:var(--bg);border-left:4px solid var(--brand);
-  padding:11px 15px;border-radius:4px;margin:14px 0}
-.tag{display:inline-block;font-size:10.5px;font-weight:600;padding:1px 7px;border-radius:20px;letter-spacing:.4px;vertical-align:middle}
-.tag.c{background:#eaf4ff;color:var(--brand2)}
-.tag.p{background:#fdf3e3;color:var(--warn)}
-.tag.i{background:#f0eefa;color:var(--hint)}
-.tag.f{background:#e9f7ef;color:var(--ok)}
-.tag.w{background:#fdecea;color:var(--bad)}
-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13.7px}
-th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:right}
-th{background:#f2f5fa;color:#33415c;font-weight:650}
-th:first-child,td:first-child{text-align:left}
-tr:hover td{background:#f8fafd}
-td.neg{color:var(--bad)} td.pos{color:var(--ok)} td.anom{background:#fdecea;color:var(--bad);font-weight:600}
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin:18px 0}
-.kpi{background:var(--bg);border-top:3px solid var(--brand);border-radius:6px;padding:11px 14px}
-.kpi .k{font-size:12px;color:var(--mut)}
-.kpi .v{font-size:19px;font-weight:700}
-.kpi .d{font-size:12.5px;color:var(--mut)}
-.kpi .d.up{color:var(--ok)}.kpi .d.dn{color:var(--bad)}
-.insight{background:#eef6fc;border-left:4px solid var(--brand2);border-radius:4px;padding:10px 15px;margin:12px 0}
-.insight b{color:var(--brand)}
-.spec{background:#fbf7ed;border:1px solid #efdcaa;border-left:4px solid var(--accent);border-radius:6px;
-  padding:13px 17px;margin:13px 0}
-.spec b{color:var(--accent)}
-.warnbox{background:#fdecea;border-left:4px solid var(--bad);border-radius:4px;padding:10px 15px;margin:12px 0;font-size:14px}
-.notebox{background:#f0f4f8;border-left:4px solid var(--mut);border-radius:4px;padding:10px 15px;margin:12px 0;font-size:14px}
-.toc{columns:2;column-gap:34px;font-size:14px}.toc .lv{break-inside:avoid;margin-bottom:5px}
-.toc .l1{font-weight:700;color:var(--brand);margin-top:10px}.toc a{color:#33415c}
-.pgfoot{margin-top:30px;border-top:1px solid var(--line);padding-top:10px;color:var(--mut);font-size:11.5px;display:flex;justify-content:space-between}
-nav{position:sticky;top:0;z-index:50;background:rgba(246,248,251,.97);padding:8px 12px;display:flex;gap:5px;
-  overflow-x:auto;border-bottom:1px solid var(--line);font-size:12.5px}
-nav a{padding:4px 9px;border-radius:16px;white-space:nowrap;color:#33415c}
-nav a:hover{background:var(--brand);color:#fff}
-nav b.pg{color:var(--mut);margin-left:auto;white-space:nowrap}
-@media print{nav{display:none}.page{margin:0;box-shadow:none;border-radius:0}}
+NAV = """
+<nav>
+<a href='#sec01'>封面</a><a href='#sec02'>目录</a>
+<a>▌一 方法</a><a href='#sec03'>L0-L5</a><a href='#sec04'>十维度</a><a href='#sec05'>七步</a><a href='#sec06'>反模式</a><a href='#sec07'>三镜</a><a href='#sec08'>证据</a>
+<a>▌二 口径</a><a href='#sec09'>时间</a><a href='#sec10'>断点</a><a href='#sec11'>口径</a><a href='#sec12'>来源</a>
+<a>▌三 总览</a><a href='#sec13'>规模</a><a href='#sec14'>结构</a><a href='#sec15'>同比</a>
+<a>▌四 个人</a><a href='#sec16'>总量</a><a href='#sec17'>双口径</a><a href='#sec18'>量价</a><a href='#sec19'>趋势</a>
+<a>四 团体</a><a href='#sec20'>新造</a><a href='#sec21'>有效</a><a href='#sec22'>注释</a>
+<a>四 退休</a><a href='#sec23'>数量</a><a href='#sec24'>基金</a><a href='#sec25'>供款</a>
+<a>▌五 公司</a><a href='#sec26'>整付</a><a href='#sec27'>年度化</a><a href='#sec28'>保单</a><a href='#sec29'>增量</a><a href='#sec30'>转移</a><a href='#sec31'>异常</a>
+<a>▌六 综合</a><a href='#sec32'>谁增</a><a href='#sec33'>三镜</a><a href='#sec34'>DoD</a><a href='#sec35'>结论</a>
+<a>▌附录</a><a href='#sec36'>公式</a><a href='#sec37'>证据</a><a href='#sec38'>来源</a><a href='#sec39'>免责</a>
+<b class='pg'>39 屏</b></nav>
 """
+
+def build():
+    sections = [
+        cover(), toc(),
+        p03_layers(), p04_dims(), p05_workflow(), p06_antipattern(), p07_lenses(), p08_evidence(),
+        p09_time(), p10_breakpoint(), p11_measure(), p12_source(),
+        p13_total(), p14_structure(), p15_yoy(),
+        p16_ind_total(), p17_ind_measure(), p18_ind_quantity_price(), p19_ind_trend(),
+        p20_group_new(), p21_group_inforce(), p22_group_note(),
+        p23_ret_total(), p24_ret_fund(), p25_ret_contrib(),
+        p26_rank_single(), p27_rank_ape(), p28_rank_inforce(), p29_increment(), p30_transfer(), p31_outlier(),
+        p32_conclusion_who(), p33_lens_roots(), p34_dod(), p35_conclusion(),
+        p36_formula(), p37_evidence_index(), p38_sources(), p39_disclaimer(),
+    ]
+    body = "".join(sections)
+    # 后处理：按出现顺序为各 H1 徽章顺序编号（对齐 secNN 序号）
+    badge = {"n": 0}
+    def _renum(m):
+        badge["n"] += 1
+        return f"<span class='no' data-h1>{badge['n']:02d}</span>"
+    body = re.sub(r"<span class='no' data-h1>#</span>", _renum, body)
+    html = ("<!DOCTYPE html><html lang='zh-HK'><head><meta charset='utf-8'>"
+            "<meta name='viewport' content='width=device-width,initial-scale=1'>"
+            "<title>香港长期保险行业全行业分析 2023Q1–2026Q1</title>"
+            f"<style>{CSS}</style></head><body>"
+            f"{NAV}" + body + "</body></html>")
+    out = REPORT / "香港长期保险行业2023-2026Q1全行业分析.html"
+    out.write_text(html, encoding="utf-8")
+    print(f"完成：共 {badge['n']} 屏（39 页内容），写入\n  {out}\n  （{len(html)/1024:.0f} KB）")
+
+if __name__ == "__main__":
+    build()

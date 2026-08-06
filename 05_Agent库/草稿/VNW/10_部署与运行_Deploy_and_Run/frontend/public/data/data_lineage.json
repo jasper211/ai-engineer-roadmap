@@ -18637,12 +18637,13 @@
     "public.bridge_partner_ka": {
       "l3_codes": [
         "L3-COM",
+        "L3-CPM",
         "L3-FBA",
         "L3-KAGA",
         "L3-RSJD"
       ],
-      "l3_span_count": 4,
-      "reason": "血缘候选覆盖4个L3：L3-COM(经由public.dim_partner、public.fact_policy)；L3-FBA(经由public.agg_sales_base)；L3-KAGA(经由public.dim_ka、public.fact_channel_ka)；L3-RSJD(经由public.agg_sales_base、public.dim_customer)——跨L3共用的主数据/维度表，不建议归入单一L4"
+      "l3_span_count": 5,
+      "reason": "血缘候选覆盖5个L3：L3-COM(经由public.dim_partner、public.fact_policy)；L3-CPM(经由public.fact_channel_ka)；L3-FBA(经由public.agg_sales_base)；L3-KAGA(经由public.dim_ka、public.fact_channel_ka)；L3-RSJD(经由public.agg_sales_base、public.dim_customer)——跨L3共用的主数据/维度表，不建议归入单一L4"
     },
     "public.dim_lookup_code": {
       "l3_codes": [
@@ -18657,22 +18658,24 @@
     "public.dim_product_id": {
       "l3_codes": [
         "L3-COM",
+        "L3-CPM",
         "L3-FBA",
         "L3-KAGA",
         "L3-RSJD"
       ],
-      "l3_span_count": 4,
-      "reason": "血缘候选覆盖4个L3：L3-COM(经由public.agg_market_commission_tier_rate、public.config_license_carrier_mapping、public.dim_partner、public.fact_product_id)；L3-FBA(经由public.agg_sales_base)；L3-KAGA(经由public.dim_ka)；L3-RSJD(经由public.agg_sales_base、public.dim_customer、public.fact_product_id)——跨L3共用的主数据/维度表，不建议归入单一L4"
+      "l3_span_count": 5,
+      "reason": "血缘候选覆盖5个L3：L3-COM(经由public.agg_market_commission_tier_rate、public.config_license_carrier_mapping、public.dim_partner、public.fact_product_id)；L3-CPM(经由public.fact_product_id)；L3-FBA(经由public.agg_sales_base)；L3-KAGA(经由public.dim_ka)；L3-RSJD(经由public.agg_sales_base、public.dim_customer、public.fact_product_id)——跨L3共用的主数据/维度表，不建议归入单一L4"
     },
     "public.dim_product_sku": {
       "l3_codes": [
         "L3-COM",
+        "L3-CPM",
         "L3-FBA",
         "L3-KAGA",
         "L3-RSJD"
       ],
-      "l3_span_count": 4,
-      "reason": "血缘候选覆盖4个L3：L3-COM(经由public.agg_market_commission_tier_rate、public.dim_partner、public.fact_commission_rate、public.fact_product_sku)；L3-FBA(经由public.agg_sales_base)；L3-KAGA(经由public.dim_ka)；L3-RSJD(经由public.agg_sales_base、public.dim_customer、public.fact_insurance_plan_header)——跨L3共用的主数据/维度表，不建议归入单一L4"
+      "l3_span_count": 5,
+      "reason": "血缘候选覆盖5个L3：L3-COM(经由public.agg_market_commission_tier_rate、public.dim_partner、public.fact_commission_rate、public.fact_product_sku)；L3-CPM(经由public.fact_product_sku)；L3-FBA(经由public.agg_sales_base)；L3-KAGA(经由public.dim_ka)；L3-RSJD(经由public.agg_sales_base、public.dim_customer、public.fact_insurance_plan_header)——跨L3共用的主数据/维度表，不建议归入单一L4"
     },
     "public.dim_segmentation": {
       "l3_codes": [
@@ -18697,17 +18700,27 @@
     "public.v_fact_sales_activity": {
       "l3_codes": [
         "L3-COM",
+        "L3-CPM",
         "L3-FBA",
         "L3-KAGA",
         "L3-RSJD"
       ],
-      "l3_span_count": 4,
-      "reason": "血缘候选覆盖4个L3：L3-COM(经由public.fact_channel_partner)；L3-FBA(经由public.agg_sales_base)；L3-KAGA(经由public.fact_channel_ka)；L3-RSJD(经由public.agg_sales_base)——跨L3共用的主数据/维度表，不建议归入单一L4"
+      "l3_span_count": 5,
+      "reason": "血缘候选覆盖5个L3：L3-COM(经由public.fact_channel_partner)；L3-CPM(经由public.fact_channel_partner)；L3-FBA(经由public.agg_sales_base)；L3-KAGA(经由public.fact_channel_ka)；L3-RSJD(经由public.agg_sales_base)——跨L3共用的主数据/维度表，不建议归入单一L4"
     }
   },
   "source_policy": "边只来自三类真实证据：视图SQL定义(pg_get_viewdef)/数据库外键约束/ETL流水线同批装载日志(sync_history，仅认可命名的可重复airflow流水线)，不做同名字段或表名相似度的推测性连接；无证据的表如实标注无可查血缘(已核实仓库内外都没有对应ETL脚本，生产者在仓库之外)",
   "suggested_l4_candidates": {
     "public.bridge_partner_ka": [
+      {
+        "edge_type": "view_dependency",
+        "evidence": "public.fact_channel_ka的真实视图定义中FROM/JOIN引用了public.bridge_partner_ka",
+        "l3_code": "L3-CPM",
+        "l3_name": "流程持续监控与优化闭环管理",
+        "l4_code": "L4-CPM-03",
+        "l4_name": "定期深度分析",
+        "via_table": "public.fact_channel_ka"
+      },
       {
         "edge_type": "view_dependency",
         "evidence": "public.fact_channel_ka的真实视图定义中FROM/JOIN引用了public.bridge_partner_ka",
@@ -18859,6 +18872,15 @@
       {
         "edge_type": "view_dependency",
         "evidence": "public.fact_product_id的真实视图定义中FROM/JOIN引用了public.dim_product_id",
+        "l3_code": "L3-CPM",
+        "l3_name": "流程持续监控与优化闭环管理",
+        "l4_code": "L4-CPM-03",
+        "l4_name": "定期深度分析",
+        "via_table": "public.fact_product_id"
+      },
+      {
+        "edge_type": "view_dependency",
+        "evidence": "public.fact_product_id的真实视图定义中FROM/JOIN引用了public.dim_product_id",
         "l3_code": "L3-RSJD",
         "l3_name": "经代机构销售业务执行流程",
         "l4_code": "L4-RSJD-04",
@@ -18946,6 +18968,15 @@
         "l3_name": "佣金全链路管理",
         "l4_code": "L4-COM-10",
         "l4_name": "保单信息整合与应收核算（待注册）",
+        "via_table": "public.fact_product_sku"
+      },
+      {
+        "edge_type": "view_dependency",
+        "evidence": "public.fact_product_sku的真实视图定义中FROM/JOIN引用了public.dim_product_sku",
+        "l3_code": "L3-CPM",
+        "l3_name": "流程持续监控与优化闭环管理",
+        "l4_code": "L4-CPM-03",
+        "l4_name": "定期深度分析",
         "via_table": "public.fact_product_sku"
       },
       {
@@ -19168,6 +19199,15 @@
         "l3_name": "佣金全链路管理",
         "l4_code": "L4-COM-12",
         "l4_name": "应派金额拆分与渠道对账（待注册）",
+        "via_table": "public.fact_channel_partner"
+      },
+      {
+        "edge_type": "view_dependency",
+        "evidence": "public.fact_channel_partner的真实视图定义中FROM/JOIN引用了public.v_fact_sales_activity",
+        "l3_code": "L3-CPM",
+        "l3_name": "流程持续监控与优化闭环管理",
+        "l4_code": "L4-CPM-03",
+        "l4_name": "定期深度分析",
         "via_table": "public.fact_channel_partner"
       },
       {

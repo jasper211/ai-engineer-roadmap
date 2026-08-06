@@ -49,7 +49,7 @@ EVIDENCE_TYPE_LABELS = {
 # 已完整核实过业务数据匹配的L3（哪怕结果是某些L4确认无关联表，也算"查过"）。
 # 不在这个集合里的L3，其L4在L4_BUSINESS_TABLE_MAP里没有任何entry——不是因为
 # 查过没有，是因为还没排到。table_analysis.py靠这个集合区分两种状态。
-ANALYZED_L3_CODES = {"COM", "HRA", "HRM", "RSJD", "FBA", "KAGA", "RPD"}
+ANALYZED_L3_CODES = {"COM", "HRA", "HRM", "RSJD", "FBA", "KAGA", "RPD", "CPM"}
 
 L4_BUSINESS_TABLE_MAP: dict[str, list[dict]] = {
     "L4-COM-01": [
@@ -255,6 +255,22 @@ L4_BUSINESS_TABLE_MAP: dict[str, list[dict]] = {
         {"schema": "public", "table": "config_strategy_header", "evidence_type": "rule", "matched_columns": ["strategy_id", "strategy_type", "evaluation_cycle"], "rationale": "蓝图L4-RPD-06交付物明确指名Config_Strategy_Header为四张配置表之一；当前0行未populate", "confidence": "strong"},
         {"schema": "public", "table": "config_strategy_tiers", "evidence_type": "rule", "matched_columns": ["strategy_id", "tier_level", "target_metric", "reward_cash_amount"], "rationale": "蓝图L4-RPD-06交付物明确指名Config_Strategy_Tiers为四张配置表之一；当前0行未populate", "confidence": "strong"},
         {"schema": "public", "table": "bridge_strategy_routing", "evidence_type": "rule", "matched_columns": ["scheme_id", "target_strategy_id", "partner_category"], "rationale": "蓝图L4-RPD-06交付物明确指名Bridge_Strategy_Routing为四张配置表之一；当前0行未populate", "confidence": "strong"},
+    ],
+
+    # L3-CPM 流程持续监控与优化闭环管理：2026-08-06新纳入分析范围。L4-CPM-02
+    # 蓝图步骤原文"机构运营数据自动采集：从4张关联表定时拉取数据"，L4-CPM-03
+    # 步骤原文"月度数据汇总与趋势分析：时间序列分析、同比/环比、机构横向对标"——
+    # fact_customer/fact_product_id/fact_product_sku/fact_channel_partner/
+    # fact_channel_ka五张表结构完全同构(均含month/policy_count/total_premium_hkd/
+    # total_ape/view_built_at字段)，是同一批"月度业绩汇总"监控数据源，与蓝图描述
+    # 的"月度数据汇总与趋势分析"直接对应；与各表已有的其他L4归属(RSJD-04/COM-10/
+    # COM-12/KAGA-01)不冲突，是"一表多L4"的真实例子。
+    "L4-CPM-03": [
+        {"schema": "public", "table": "fact_customer", "evidence_type": "output", "matched_columns": ["customer_id", "month", "policy_count", "total_premium_hkd"], "rationale": "客户月度业绩汇总表，与fact_product_id/fact_channel_partner/fact_channel_ka同构，是月度深度分析/趋势对标的客户维度数据源", "confidence": "strong"},
+        {"schema": "public", "table": "fact_product_id", "evidence_type": "output", "matched_columns": ["product_id", "month", "policy_count", "total_premium_hkd"], "rationale": "产品月度业绩汇总表，是月度深度分析/趋势对标的产品维度数据源", "confidence": "strong"},
+        {"schema": "public", "table": "fact_product_sku", "evidence_type": "output", "matched_columns": ["product_sku", "month", "policy_count", "total_premium_hkd"], "rationale": "产品SKU月度业绩汇总表，是月度深度分析/趋势对标的SKU维度数据源", "confidence": "strong"},
+        {"schema": "public", "table": "fact_channel_partner", "evidence_type": "output", "matched_columns": ["partner_code", "month", "policy_count", "avg_approval_cycle_days"], "rationale": "渠道伙伴月度汇总表，avg_approval_cycle_days等字段直接支持机构横向对标", "confidence": "strong"},
+        {"schema": "public", "table": "fact_channel_ka", "evidence_type": "output", "matched_columns": ["ka_id", "month", "policy_count", "effective_rate"], "rationale": "KA渠道月度业绩汇总表，是月度深度分析/趋势对标的KA维度数据源", "confidence": "strong"},
     ],
 }
 # L4-COM-06(佣金税务处理)/L4-COM-07(佣金争议处理)/L4-COM-17(IA合规拦截引擎)
