@@ -108,6 +108,14 @@ def build_prompt_payload(fact_packs: list[dict]) -> str:
     return json.dumps({"tables": fact_packs}, ensure_ascii=False, separators=(",", ":"))
 
 
+def chunk_fact_packs(fact_packs: list[dict], batch_size: int = 15) -> list[list[dict]]:
+    """104张表一次性喂给模型会导致输出被截断/连接中断(实测出现过
+    JSONDecodeError和IncompleteRead两种失败)。按批拆分是安全的——
+    task_cluster的判定依据(自身in/out-degree、has_lineage、table_type)
+    都是表自己的属性，不需要跨表比较，拆批不影响聚类质量。"""
+    return [fact_packs[i:i + batch_size] for i in range(0, len(fact_packs), batch_size)]
+
+
 def _known_keys(fact_packs: list[dict]) -> dict[str, dict]:
     return {p["key"]: p for p in fact_packs}
 
@@ -154,8 +162,12 @@ def validate_table_root_cause(package: dict, fact_packs: list[dict]) -> None:
         raise ValueError(f"输出缺少{len(missing)}张表的分析结果，例如：{sorted(missing)[:5]}")
 
 
-def run_table_root_cause_analysis(agent_root: Path, db_catalog: dict, data_lineage: dict, table_to_l4_index: dict) -> dict:
-    """prepare + call + validate 一体化——没有人工预审门槛，校验通过即为发布态。"""
+def run_table_root_cause_analysis(
+    agent_root: Path, db_catalog: dict, data_lineage: dict, table_to_l4_index: dict, batch_size: int = 15,
+) -> dict:
+    """prepare + call + validate 一体化——没有人工预审门槛，校验通过即为发布态。
+    按批调用模型(见chunk_fact_packs)，每批各自校验，全部通过后再合并发布；
+    任何一批校验失败都会中止整体发布，不会写入部分结果。"""
     agent_root = Path(agent_root)
     prompt_path = agent_root / "08_设计提示词_Design_Prompts/表级根因分析模型_v1.0.md"
     system_prompt = prompt_path.read_text(encoding="utf-8")
@@ -165,15 +177,22 @@ def run_table_root_cause_analysis(agent_root: Path, db_catalog: dict, data_linea
     if not api_key:
         raise RuntimeError("VNW未配置模型凭证(DEEPSEEK_API_KEY或deepseek_config.json)")
 
-    raw = call_json_model(system_prompt, build_prompt_payload(fact_packs), api_key=api_key, model=model)
-    package = _json_from_text(raw)
-    validate_table_root_cause(package, fact_packs)
+    batches = chunk_fact_packs(fact_packs, batch_size)
+    all_tables: list[dict] = []
+    for batch in batches:
+        raw = call_json_model(system_prompt, build_prompt_payload(batch), api_key=api_key, model=model)
+        package = _json_from_text(raw)
+        validate_table_root_cause(package, batch)
+        all_tables.extend(package["tables"])
 
     return {
         "schema_version": SCHEMA_VERSION,
         "generated_at": datetime.now(timezone.utc).isoformat(),
-        "model_run": {"model_name": model, "generated_at": datetime.now(timezone.utc).isoformat()},
-        "tables": package["tables"],
+        "model_run": {
+            "model_name": model, "generated_at": datetime.now(timezone.utc).isoformat(),
+            "batch_count": len(batches), "batch_size": batch_size,
+        },
+        "tables": all_tables,
     }
 
 

@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router'
-import { Database, LoaderCircle, Lock, Search, Target } from 'lucide-react'
+import { ArrowRight, Compass, Database, LoaderCircle, Lock, Search, Sparkles, Target } from 'lucide-react'
 import { loadScenarioIndex, loadScenario, type ScenarioIndex, type BusinessScenario } from '../lib/businessScenarios'
-import { loadTableAnalysis, type TableAnalysis, type TableAnalysisEntry } from '../lib/tableAnalysis'
+import { loadTableAnalysis, type TableAnalysis, type TableAnalysisEntry, type TaskClusterLabel } from '../lib/tableAnalysis'
 
 const STATE_INFO: Record<string, { label: string; tone: string }> = {
   A: { label: 'A·有表有数据(任务真实在跑)', tone: 'bg-emerald-400/10 text-emerald-700' },
@@ -97,12 +97,21 @@ const HEALTH_TONE: Record<string, string> = {
 const LAYER_NOTES: Record<'L1' | 'L2' | 'L3' | 'L4' | 'L5', string> = {
   L1: '层说明：这张表的事实是什么——有没有数据、数据量多少，建立分析基线',
   L2: '层说明：现状分析——这张表关联哪些L3/L4、谁负责、数据录入健康度如何',
-  L3: '层说明：相关性/跟进/聚类分析——找耗时高、错误多、成本高的任务，判断根因(流程设计/岗位能力/系统支撑不够/纯劳动密集型)，哪类任务天然适合AI',
-  L4: '层说明：AI介入后的ROI/质量/产能测算，把可行性从定性变定量',
-  L5: '层说明：该做什么——复用流程模型面板D的四象限语义，给出优先级参考',
+  L3: '层说明：根因分析——这张表的上下游血缘是谁(表名+中文)，基于血缘位置+表类型做任务特征聚类，识别数据加工环节的瓶颈',
+  L4: '层说明：反向补全——基于血缘位置+所处L4+L3识别出的隐形任务，反向推断这张表背后可能存在的隐藏产出(此前未记录的交付物或过程产物)',
+  L5: '层说明：该做什么——复用流程模型面板D的四象限语义给优先级参考，并给出两条机械判定轨道：数据治理优先 / 流程补全杠杆',
 }
 
-function BlockedLayer({ title, noteKey, layer }: { title: string; noteKey: 'L3' | 'L4'; layer: { status: string; goal: string; required_inputs: string[]; reason: string } }) {
+const TASK_CLUSTER_TONE: Record<TaskClusterLabel, string> = {
+  源头采集型: 'bg-emerald-400/10 text-emerald-700',
+  枢纽整合型: 'bg-rose-400/10 text-rose-700',
+  终端消费型: 'bg-sky-400/10 text-sky-700',
+  规则配置型: 'bg-violet-400/10 text-violet-700',
+  直通转换型: 'bg-amber-400/10 text-amber-700',
+  孤立支撑型: 'bg-slate-100 text-slate-500',
+}
+
+function BlockedLayer({ title, noteKey, reason }: { title: string; noteKey: 'L3' | 'L4'; reason?: string }) {
   return (
     <div className="rounded-lg border border-dashed border-slate-300 bg-slate-50/60 p-3">
       <div className="flex items-center gap-2">
@@ -110,11 +119,97 @@ function BlockedLayer({ title, noteKey, layer }: { title: string; noteKey: 'L3' 
         <p className="text-xs font-semibold text-slate-500">{title} · <span className="font-mono">BLOCKED</span></p>
       </div>
       <p className="mt-1 text-[10px] italic leading-4 text-slate-400">{LAYER_NOTES[noteKey]}</p>
-      <p className="mt-1.5 text-[11px] leading-5 text-text-secondary"><b>分析目标：</b>{layer.goal}</p>
-      <p className="mt-1 text-[11px] leading-5 text-text-secondary"><b>卡在：</b>{layer.reason}</p>
-      <ul className="mt-1 list-disc space-y-0.5 pl-4 text-[10px] leading-4 text-slate-500">
-        {layer.required_inputs.map((input, index) => <li key={index}>{input}</li>)}
-      </ul>
+      {reason && <p className="mt-1.5 text-[11px] leading-5 text-text-secondary"><b>卡在：</b>{reason}</p>}
+    </div>
+  )
+}
+
+function ModelDraftBadge() {
+  return (
+    <span className="inline-flex items-center gap-1 rounded-full bg-amber-400/10 px-2 py-0.5 text-[10px] font-medium text-amber-700">
+      <Sparkles className="h-2.5 w-2.5" /> AI生成草稿·待人工复核
+    </span>
+  )
+}
+
+function L3RootCauseLayer({ layer }: { layer: TableAnalysisEntry['layer3'] }) {
+  if (layer.status === 'BLOCKED') return <BlockedLayer title="L3 根因分析层" noteKey="L3" reason={layer.reason} />
+  return (
+    <div className="rounded-lg border border-border-default bg-bg-surface p-3">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <p className="text-[11px] font-semibold text-text-primary">L3 根因分析层</p>
+        <ModelDraftBadge />
+      </div>
+      <p className="mt-1 text-[10px] italic leading-4 text-text-muted">{LAYER_NOTES.L3}</p>
+
+      {layer.task_cluster && (
+        <span className={`mt-2 inline-block rounded-full px-2.5 py-1 text-[11px] font-medium ${TASK_CLUSTER_TONE[layer.task_cluster.label]}`}>
+          任务聚类·{layer.task_cluster.label}
+        </span>
+      )}
+      {layer.task_cluster && <p className="mt-1 text-[10px] leading-4 text-text-muted">{layer.task_cluster.rationale}</p>}
+
+      <div className="mt-2 grid gap-2 sm:grid-cols-2">
+        <div>
+          <p className="text-[10px] font-semibold text-text-muted">上游（{layer.upstream.length}）</p>
+          {layer.upstream.length === 0 ? (
+            <p className="mt-1 text-[10px] text-slate-400">无真实上游</p>
+          ) : (
+            <ul className="mt-1 space-y-0.5">
+              {layer.upstream.map((u, i) => (
+                <li key={`${u.key}-${u.edge_type}-${i}`} className="text-[10px] leading-4 text-text-secondary">
+                  <span className="font-mono text-accent-primary-light">{u.key}</span> {u.business_label}
+                  <span className="ml-1 text-slate-400">({u.edge_type})</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+        <div>
+          <p className="text-[10px] font-semibold text-text-muted">下游（{layer.downstream.length}）</p>
+          {layer.downstream.length === 0 ? (
+            <p className="mt-1 text-[10px] text-slate-400">无真实下游</p>
+          ) : (
+            <ul className="mt-1 space-y-0.5">
+              {layer.downstream.map((d, i) => (
+                <li key={`${d.key}-${d.edge_type}-${i}`} className="text-[10px] leading-4 text-text-secondary">
+                  <span className="font-mono text-accent-primary-light">{d.key}</span> {d.business_label}
+                  <span className="ml-1 text-slate-400">({d.edge_type})</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function L4ReverseCompletionLayer({ layer }: { layer: TableAnalysisEntry['layer4'] }) {
+  if (layer.status === 'BLOCKED') return <BlockedLayer title="L4 反向补全层" noteKey="L4" reason={layer.reason} />
+  return (
+    <div className="rounded-lg border border-border-default bg-bg-surface p-3">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <p className="text-[11px] font-semibold text-text-primary">L4 反向补全层</p>
+        <ModelDraftBadge />
+      </div>
+      <p className="mt-1 text-[10px] italic leading-4 text-text-muted">{LAYER_NOTES.L4}</p>
+      {layer.hidden_deliverables.length === 0 ? (
+        <p className="mt-1.5 text-[10px] text-slate-400">该表加工模式与已记录交付物一致，未发现缺口</p>
+      ) : (
+        <div className="mt-2 space-y-1.5">
+          {layer.hidden_deliverables.map((hd, i) => (
+            <div key={i} className="rounded-md border border-dashed border-amber-300 bg-amber-50/60 p-2">
+              <div className="flex flex-wrap items-center gap-1.5">
+                <span className="font-mono text-[10px] text-accent-primary-light">{hd.l4_code}</span>
+                <span className="text-[10px] text-text-secondary">{hd.l4_name}</span>
+                <span className="rounded-full bg-amber-400/20 px-2 py-0.5 text-[10px] font-semibold text-amber-800">候选：{hd.candidate_name}</span>
+              </div>
+              <p className="mt-1 text-[10px] leading-4 text-text-muted">{hd.rationale}</p>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
@@ -181,13 +276,29 @@ function TableFiveLayerDetail({ entry }: { entry: TableAnalysisEntry }) {
         <span className={`mt-2 inline-block rounded-full px-2 py-0.5 text-[10px] font-medium ${HEALTH_TONE[entry.layer2.data_health] ?? 'bg-slate-100 text-slate-500'}`}>{entry.layer2.data_health}</span>
       </div>
 
-      <BlockedLayer title="L3 归因层" noteKey="L3" layer={entry.layer3} />
-      <BlockedLayer title="L4 预测层" noteKey="L4" layer={entry.layer4} />
+      <L3RootCauseLayer layer={entry.layer3} />
+      <L4ReverseCompletionLayer layer={entry.layer4} />
 
       <div className="rounded-lg border border-indigo-200 bg-indigo-50/70 p-3">
         <p className="text-[11px] font-semibold text-indigo-800">L5 决策层 · {entry.layer5.status === 'PRELIMINARY' ? '初步判断' : entry.layer5.status === 'CONFIRMED' ? '已确认' : '暂无依据'}</p>
         <p className="mt-1 text-[10px] italic leading-4 text-indigo-400">{LAYER_NOTES.L5}</p>
         <p className="mt-1.5 text-[11px] leading-5 text-text-secondary">{entry.layer5.note}</p>
+        {(entry.layer5.governance_track || entry.layer5.process_lever_track) && (
+          <div className="mt-2 space-y-1.5">
+            {entry.layer5.governance_track && (
+              <div className="flex items-start gap-1.5 rounded-md border border-amber-300 bg-amber-50/70 p-2">
+                <Compass className="mt-0.5 h-3 w-3 shrink-0 text-amber-700" />
+                <p className="text-[10px] leading-4 text-amber-800"><b>轨道A·先立数据标准：</b>{entry.layer5.governance_track.reason}</p>
+              </div>
+            )}
+            {entry.layer5.process_lever_track && (
+              <div className="flex items-start gap-1.5 rounded-md border border-indigo-300 bg-indigo-100/60 p-2">
+                <ArrowRight className="mt-0.5 h-3 w-3 shrink-0 text-indigo-700" />
+                <p className="text-[10px] leading-4 text-indigo-800"><b>轨道B·可撬动流程补全：</b>{entry.layer5.process_lever_track.reason}</p>
+              </div>
+            )}
+          </div>
+        )}
         {entry.layer5.l4_quadrants.length > 0 && (
           <div className="mt-2 space-y-1.5">
             {entry.layer5.l4_quadrants.map(q => (
@@ -235,6 +346,9 @@ export default function BusinessData() {
   const fieldAnchoredCount = useMemo(() => tableAnalysis?.tables.filter(t => t.layer2.field_anchored).length ?? 0, [tableAnalysis])
   const nonBusinessCount = useMemo(() => tableAnalysis?.tables.filter(t => t.layer2.non_business).length ?? 0, [tableAnalysis])
   const l3Coverage = tableAnalysis?.tables[0]?.layer2.analyzed_l3_coverage ?? { analyzed: 0, total: 0 }
+  const hiddenDeliverableCount = useMemo(() => tableAnalysis?.tables.filter(t => t.layer4.hidden_deliverables.length > 0).length ?? 0, [tableAnalysis])
+  const governanceFlaggedCount = useMemo(() => tableAnalysis?.tables.filter(t => t.layer5.governance_track?.flagged).length ?? 0, [tableAnalysis])
+  const processLeverFlaggedCount = useMemo(() => tableAnalysis?.tables.filter(t => t.layer5.process_lever_track?.flagged).length ?? 0, [tableAnalysis])
 
   const schemas = useMemo(() => Array.from(new Set(tableAnalysis?.tables.map(t => t.schema) ?? [])).sort(), [tableAnalysis])
   const tableTypes = useMemo(() => Array.from(new Set(tableAnalysis?.tables.map(t => t.table_type) ?? [])).sort(), [tableAnalysis])
@@ -275,10 +389,10 @@ export default function BusinessData() {
           追溯到L3/L4/KPI/表，判断今天能不能端到端产出，卡在哪段；场景随真实问题产生，不预先穷举。
           <b>②系统性覆盖扫描</b>——以当前{tableAnalysis.tables.length}张业务数据表（public/comm_sandbox/fin_sandbox，
           不含process_analytics；表数量随数据库真实变化，见下方"表数量"指标）为锚点逐张五层展开：
-          L1描述层→L2诊断层（关联哪些L3/L4、谁负责、数据录入健康度）→L3归因层→L4预测层→L5决策层，
-          作为兜底层防止没人恰好问到的角落被漏掉。L3/L4两层今天全部标注BLOCKED——不是没做，是核查后
-          发现底层输入（任务耗时/错误率、人力成本单价）真实不存在，如实呈现缺口，不做代理指标替代，
-          等输入产生后再激活。
+          L1描述层→L2诊断层（关联哪些L3/L4、谁负责、数据录入健康度）→L3根因分析层（基于真实数据血缘做表级
+          上下游归因+任务特征聚类）→L4反向补全层（反推隐藏产出候选）→L5决策层（四象限优先级+数据治理/流程
+          补全两条判定轨道），作为兜底层防止没人恰好问到的角落被漏掉。L3/L4两层由AI辅助推理生成，统一标注
+          <span className="font-mono">MODEL_DRAFT</span>，复核在页面上进行；尚未纳入本轮血缘分析范围的表如实标注BLOCKED，不做代理指标替代。
         </p>
       </div>
 
@@ -328,7 +442,9 @@ export default function BusinessData() {
           <div className="panel p-4"><p className="eyebrow">字段锚定(非孤立)</p><p className="mt-2 metric-value text-sky-600">{fieldAnchoredCount}</p><p className="mt-1 text-[11px] text-text-muted">无L4/血缘边，但有真实主键字段连回主链</p></div>
           <div className="panel p-4"><p className="eyebrow">系统表/非业务表</p><p className="mt-2 metric-value text-slate-500">{nonBusinessCount}</p><p className="mt-1 text-[11px] text-text-muted">已核实与保险业务无关，非"未分析"</p></div>
           <div className="panel p-4"><p className="eyebrow">有真实数据的表</p><p className="mt-2 metric-value">{hasDataCount}/{tableAnalysis.tables.length}</p></div>
-          <div className="panel p-4"><p className="eyebrow">L3归因层/L4预测层</p><p className="mt-2 text-sm font-semibold text-slate-500">全部 BLOCKED</p><p className="mt-1 text-[11px] text-text-muted">fact_card/fact_agent(唯一含耗时/错误率字段的表)当前0行，无薪酬成本字段——分析维度保留，不做降级替代</p></div>
+          <div className="panel p-4"><p className="eyebrow">L4隐藏产出候选</p><p className="mt-2 metric-value text-amber-600">{hiddenDeliverableCount}</p><p className="mt-1 text-[11px] text-text-muted">AI根因分析(MODEL_DRAFT)反推出的可能未记录交付物</p></div>
+          <div className="panel p-4"><p className="eyebrow">轨道A·建议先立数据标准</p><p className="mt-2 metric-value text-amber-600">{governanceFlaggedCount}</p><p className="mt-1 text-[11px] text-text-muted">枢纽整合型但暂无明确负责岗位</p></div>
+          <div className="panel p-4"><p className="eyebrow">轨道B·可撬动流程补全</p><p className="mt-2 metric-value text-indigo-600">{processLeverFlaggedCount}</p><p className="mt-1 text-[11px] text-text-muted">数据证据可用于反推流程蓝图缺口</p></div>
         </div>
 
         <div className="mt-3 space-y-2">

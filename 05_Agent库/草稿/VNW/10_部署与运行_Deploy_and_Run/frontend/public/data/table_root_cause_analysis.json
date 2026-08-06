@@ -1,0 +1,3439 @@
+{
+  "generated_at": "2026-08-06T09:11:21.342091+00:00",
+  "model_run": {
+    "batch_count": 7,
+    "batch_size": 15,
+    "generated_at": "2026-08-06T09:11:21.342131+00:00",
+    "model_name": "deepseek-v4-pro"
+  },
+  "schema_version": "vnw.table-root-cause.v1",
+  "tables": [
+    {
+      "key": "comm_sandbox.commission_tier_adjustment",
+      "layer3": {
+        "downstream": [
+          {
+            "business_label": "生效佣金费率视图",
+            "edge_type": "view_dependency",
+            "key": "comm_sandbox.v_commission_tier_effective"
+          }
+        ],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "源头采集型",
+          "rationale": "上游0条/下游1条，无上游仅向下游视图提供数据，符合源头采集型定义"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "comm_sandbox.commission_tier_adjustment_history_long",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "孤立支撑型",
+          "rationale": "has_lineage为false，无上下游血缘，独立于主链路之外"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "comm_sandbox.competitor_rate",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "孤立支撑型",
+          "rationale": "has_lineage为false，无上下游血缘，独立于可追踪主链路之外"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [
+          {
+            "candidate_name": "竞品费率维护表",
+            "l4_code": "L4-COM-01",
+            "l4_name": "佣金政策接收与校准",
+            "rationale": "《标准化政策库》为方案，未覆盖竞品费率数据的维护"
+          }
+        ],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "comm_sandbox.config_partner_routing",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "规则配置型",
+          "rationale": "table_type为配置表，无血缘，属于规则配置型"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [
+          {
+            "candidate_name": "渠道路由配置维护",
+            "l4_code": "L4-COM-12",
+            "l4_name": "应派金额拆分与渠道对账（待注册）",
+            "rationale": "L4-COM-12的交付物为应派清单和对账单，未明确包含渠道路由规则配置的维护"
+          }
+        ],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "comm_sandbox.config_product_pricing_group",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "规则配置型",
+          "rationale": "table_type为配置表，无血缘，属于规则配置型"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "comm_sandbox.config_quarter",
+      "layer3": {
+        "downstream": [
+          {
+            "business_label": "费率环比对比视图",
+            "edge_type": "view_dependency",
+            "key": "comm_sandbox.v_qoq_rate_compare"
+          }
+        ],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "规则配置型",
+          "rationale": "table_type为配置表，仅1条下游，属于规则配置型任务"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [
+          {
+            "candidate_name": "季度日历维护",
+            "l4_code": "L4-FBA-01",
+            "l4_name": "月度/季度业绩数据汇总",
+            "rationale": "L4-FBA-01的交付物为业绩汇总文档，未覆盖季度日历配置表的维护"
+          }
+        ],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "comm_sandbox.config_table_type_coefficient",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "规则配置型",
+          "rationale": "table_type为配置表，无血缘，属于规则配置型"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "comm_sandbox.config_table_type_def",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "规则配置型",
+          "rationale": "table_type为配置表，无血缘，属于规则配置型"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [
+          {
+            "candidate_name": "制表类型定义维护",
+            "l4_code": "L4-COM-01",
+            "l4_name": "佣金政策接收与校准",
+            "rationale": "《标准化政策库》为方案，未明确包含制表类型定义配置"
+          }
+        ],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "comm_sandbox.config_table_type_product_scope",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "规则配置型",
+          "rationale": "table_type为配置表，无血缘，属于规则配置型"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "comm_sandbox.config_table_type_tier_pricing_rules",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "规则配置型",
+          "rationale": "table_type为配置表，无血缘，属于规则配置型"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "comm_sandbox.dim_comm_scheme",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "孤立支撑型",
+          "rationale": "has_lineage为false，无上下游血缘，属于孤立支撑型"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [
+          {
+            "candidate_name": "佣金方案定义维护",
+            "l4_code": "L4-COM-01",
+            "l4_name": "佣金政策接收与校准",
+            "rationale": "《标准化政策库》为方案，未覆盖方案定义表维护"
+          }
+        ],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "comm_sandbox.fact_commission_tier_rate",
+      "layer3": {
+        "downstream": [
+          {
+            "business_label": "生效佣金费率视图",
+            "edge_type": "view_dependency",
+            "key": "comm_sandbox.v_commission_tier_effective"
+          },
+          {
+            "business_label": "费率环比对比视图",
+            "edge_type": "view_dependency",
+            "key": "comm_sandbox.v_qoq_rate_compare"
+          },
+          {
+            "business_label": "佣金支出比率校验视图",
+            "edge_type": "view_dependency",
+            "key": "comm_sandbox.v_payout_ratio_check"
+          }
+        ],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "源头采集型",
+          "rationale": "上游0条/下游3条，无上游，数据进入系统后向下游视图提供数据，为源头采集型"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "comm_sandbox.fact_commission_tier_rate_history_long",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "孤立支撑型",
+          "rationale": "has_lineage为false，无上下游血缘，属于孤立支撑型"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "comm_sandbox.map_commission_plan_scheme",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "孤立支撑型",
+          "rationale": "has_lineage为false，无上下游血缘，属于孤立支撑型"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "comm_sandbox.market_publish_change",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "终端消费型",
+          "rationale": "上游1条/下游0条，处于数据链路末端，为终端消费型"
+        },
+        "upstream": [
+          {
+            "business_label": "市场费率发布事件表",
+            "edge_type": "foreign_key",
+            "key": "comm_sandbox.market_publish_event"
+          }
+        ]
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "comm_sandbox.market_publish_event",
+      "layer3": {
+        "downstream": [
+          {
+            "business_label": "费率发布变更明细表",
+            "edge_type": "foreign_key",
+            "key": "comm_sandbox.market_publish_change"
+          }
+        ],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "源头采集型",
+          "rationale": "无上游，下游1条，table_type为事件记录表，属于数据源头的事件录入类任务"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [
+          {
+            "candidate_name": "市场费率发布事件记录",
+            "l4_code": "L4-COM-03",
+            "l4_name": "佣金整合与外发",
+            "rationale": "该表记录费率发布事件，是生成《佣金外发凭证》的过程数据，但交付物仅提及凭证，未覆盖事件记录本身"
+          }
+        ],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "comm_sandbox.market_row_state",
+      "layer3": {
+        "downstream": [
+          {
+            "business_label": "已正式发布费率视图",
+            "edge_type": "view_dependency",
+            "key": "comm_sandbox.v_commission_tier_published"
+          }
+        ],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "源头采集型",
+          "rationale": "无上游，下游1条，table_type为状态记录表，是费率行状态的原始记录来源"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [
+          {
+            "candidate_name": "费率行状态跟踪记录",
+            "l4_code": "L4-COM-02",
+            "l4_name": "差异化拆解与验证",
+            "rationale": "该表跟踪费率配置行的状态变化，是形成《各细分市场配置》的支撑数据，但交付物未明确包含状态跟踪记录"
+          }
+        ],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "comm_sandbox.market_table_header_state",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "孤立支撑型",
+          "rationale": "has_lineage为false，无上下游血缘，table_type为状态记录表，独立于可追踪链路"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [
+          {
+            "candidate_name": "费率表头审批工作流记录",
+            "l4_code": "L4-COM-01",
+            "l4_name": "佣金政策接收与校准",
+            "rationale": "该表记录费率表头的审批流程，是形成《标准化政策库》的审批环节，但交付物仅提及方案，未包含审批工作流"
+          }
+        ],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "comm_sandbox.source_diff_confirm",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "孤立支撑型",
+          "rationale": "has_lineage为false，无上下游血缘，table_type为其他，独立于可追踪链路"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [
+          {
+            "candidate_name": "费率来源差异确认记录",
+            "l4_code": "L4-COM-02",
+            "l4_name": "差异化拆解与验证",
+            "rationale": "该表记录不同费率来源的差异确认过程，是产生《各细分市场配置》的验证环节，但交付物未单独记录确认信息"
+          }
+        ],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "comm_sandbox.v_commission_tier_effective",
+      "layer3": {
+        "downstream": [
+          {
+            "business_label": "费率中文可读视图",
+            "edge_type": "view_dependency",
+            "key": "comm_sandbox.v_tier_rate_readable"
+          }
+        ],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "直通转换型",
+          "rationale": "上游2条，下游1条，table_type为视图，处于链路中段进行整合转换"
+        },
+        "upstream": [
+          {
+            "business_label": "佣金档位调整记录表",
+            "edge_type": "view_dependency",
+            "key": "comm_sandbox.commission_tier_adjustment"
+          },
+          {
+            "business_label": "佣金分档费率表",
+            "edge_type": "view_dependency",
+            "key": "comm_sandbox.fact_commission_tier_rate"
+          }
+        ]
+      },
+      "layer4": {
+        "hidden_deliverables": [
+          {
+            "candidate_name": "生效佣金费率视图",
+            "l4_code": "L4-COM-02",
+            "l4_name": "差异化拆解与验证",
+            "rationale": "该视图整合了调整记录与基础费率，是《各细分市场配置》的数据源之一，但交付物未涵盖此中间视图"
+          }
+        ],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "comm_sandbox.v_commission_tier_published",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "终端消费型",
+          "rationale": "上游1条，无下游，table_type为视图，处于数据链路末端"
+        },
+        "upstream": [
+          {
+            "business_label": "费率行状态跟踪表",
+            "edge_type": "view_dependency",
+            "key": "comm_sandbox.market_row_state"
+          }
+        ]
+      },
+      "layer4": {
+        "hidden_deliverables": [
+          {
+            "candidate_name": "已正式发布费率视图",
+            "l4_code": "L4-COM-03",
+            "l4_name": "佣金整合与外发",
+            "rationale": "该视图是《佣金外发凭证》的直接数据源，但交付物仅提及凭证本身，未包含此数据视图"
+          }
+        ],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "comm_sandbox.v_payout_ratio_check",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "终端消费型",
+          "rationale": "上游1条，无下游，table_type为视图，处于链路末端用于校验"
+        },
+        "upstream": [
+          {
+            "business_label": "佣金分档费率表",
+            "edge_type": "view_dependency",
+            "key": "comm_sandbox.fact_commission_tier_rate"
+          }
+        ]
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "comm_sandbox.v_qoq_rate_compare",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "终端消费型",
+          "rationale": "上游2条，无下游，table_type为视图，属于分析对比类末端视图"
+        },
+        "upstream": [
+          {
+            "business_label": "季度日历表",
+            "edge_type": "view_dependency",
+            "key": "comm_sandbox.config_quarter"
+          },
+          {
+            "business_label": "佣金分档费率表",
+            "edge_type": "view_dependency",
+            "key": "comm_sandbox.fact_commission_tier_rate"
+          }
+        ]
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "comm_sandbox.v_tier_rate_readable",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "终端消费型",
+          "rationale": "上游1条，无下游，table_type为视图，将费率转为可读格式的末端视图"
+        },
+        "upstream": [
+          {
+            "business_label": "生效佣金费率视图",
+            "edge_type": "view_dependency",
+            "key": "comm_sandbox.v_commission_tier_effective"
+          }
+        ]
+      },
+      "layer4": {
+        "hidden_deliverables": [
+          {
+            "candidate_name": "费率中文可读视图",
+            "l4_code": "L4-COM-02",
+            "l4_name": "差异化拆解与验证",
+            "rationale": "该视图将生效的佣金费率转换为中文可读格式，是《各细分市场配置》的用户友好展示，但交付物未明确包含可读视图"
+          }
+        ],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "fin_sandbox.config_carrier_settlement_schedule_rules",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "规则配置型",
+          "rationale": "table_type为配置表，且has_lineage为false，属于参数维护类任务"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [
+          {
+            "candidate_name": "保司结算周期规则配置",
+            "l4_code": "L4-COM-18",
+            "l4_name": "收款映射版本管理",
+            "rationale": "该表记录保司结算周期规则，是收款映射版本管理的配置基础，但交付物未包含此规则配置"
+          }
+        ],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "fin_sandbox.fact_receipt",
+      "layer3": {
+        "downstream": [
+          {
+            "business_label": "人员活动流水视图",
+            "edge_type": "view_dependency",
+            "key": "public.v_person_activity"
+          },
+          {
+            "business_label": "人员身份识别覆盖率统计视图",
+            "edge_type": "view_dependency",
+            "key": "public.v_person_coverage"
+          }
+        ],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "源头采集型",
+          "rationale": "无上游，下游2条，table_type为事实表，是实收流水的原始数据来源"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "fin_sandbox.fact_receivable",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "孤立支撑型",
+          "rationale": "has_lineage为false，无上下游血缘，table_type为事实表，独立于可追踪链路"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "fin_sandbox.fin_sync_history",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "孤立支撑型",
+          "rationale": "has_lineage为false，无上下游血缘，table_type为历史记录表，独立于可追踪链路"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "fin_sandbox.match_receipt_receivable",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "孤立支撑型",
+          "rationale": "has_lineage为false，无上下游血缘，table_type为核对匹配表，独立于可追踪链路"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.agg_market_commission_tier_rate",
+      "layer3": {
+        "downstream": [
+          {
+            "business_label": "来源佣金费率宽表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.agg_source_commission_wide"
+          },
+          {
+            "business_label": "牌照-保司佣金方案映射配置",
+            "edge_type": "pipeline_sibling",
+            "key": "public.config_license_carrier_mapping"
+          },
+          {
+            "business_label": "产品ID主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_product_id"
+          },
+          {
+            "business_label": "产品SKU主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_product_sku"
+          },
+          {
+            "business_label": "佣金费率主表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.fact_commission_rate"
+          }
+        ],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "源头采集型",
+          "rationale": "无上游，下游5条，table_type为汇总表，是市场佣金费率汇总的源头数据，被广泛引用"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.agg_sales_base",
+      "layer3": {
+        "downstream": [
+          {
+            "business_label": "销售活动关联视图",
+            "edge_type": "view_dependency",
+            "key": "public.v_fact_sales_activity"
+          },
+          {
+            "business_label": "渠道伙伴-KA归属桥接表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.bridge_partner_ka"
+          },
+          {
+            "business_label": "客户主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_customer"
+          },
+          {
+            "business_label": "KA(经代机构)主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_ka"
+          },
+          {
+            "business_label": "通用代码字典表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_lookup_code"
+          },
+          {
+            "business_label": "渠道伙伴主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_partner"
+          },
+          {
+            "business_label": "产品ID主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_product_id"
+          },
+          {
+            "business_label": "产品SKU主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_product_sku"
+          },
+          {
+            "business_label": "业务细分市场字典表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_segmentation"
+          },
+          {
+            "business_label": "保单主表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.fact_policy"
+          },
+          {
+            "business_label": "fact_policy的ETL抽取范围参数记录表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.fact_policy_etl_scope"
+          }
+        ],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "源头采集型",
+          "rationale": "上游0条/下游11条，且table_type为汇总表，无真实上游而有大量下游，是数据进入本系统的起点"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.agg_sales_base_etl_scope",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "孤立支撑型",
+          "rationale": "has_lineage为false，无上下游，独立于可追踪主链路之外"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.agg_source_commission_wide",
+      "layer3": {
+        "downstream": [
+          {
+            "business_label": "牌照-保司佣金方案映射配置",
+            "edge_type": "pipeline_sibling",
+            "key": "public.config_license_carrier_mapping"
+          },
+          {
+            "business_label": "产品ID主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_product_id"
+          },
+          {
+            "business_label": "产品SKU主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_product_sku"
+          },
+          {
+            "business_label": "佣金费率主表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.fact_commission_rate"
+          }
+        ],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "直通转换型",
+          "rationale": "上游1条/下游4条，处于链路中段，符合直通转换型"
+        },
+        "upstream": [
+          {
+            "business_label": "市场佣金费率汇总宽表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.agg_market_commission_tier_rate"
+          }
+        ]
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.auth_audit_log",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "终端消费型",
+          "rationale": "上游1条/下游0条，无下游，为数据链路末端"
+        },
+        "upstream": [
+          {
+            "business_label": "本数据系统的用户账号表，当前仅1个admin账号，与保险业务流程无关",
+            "edge_type": "foreign_key",
+            "key": "public.auth_users"
+          }
+        ]
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.auth_sessions",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "终端消费型",
+          "rationale": "上游1条/下游0条，无下游，为数据链路末端"
+        },
+        "upstream": [
+          {
+            "business_label": "本数据系统的用户账号表，当前仅1个admin账号，与保险业务流程无关",
+            "edge_type": "foreign_key",
+            "key": "public.auth_users"
+          }
+        ]
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.auth_users",
+      "layer3": {
+        "downstream": [
+          {
+            "business_label": "本数据系统(非保险业务)的用户登录/操作审计日志，与保险业务流程无关",
+            "edge_type": "foreign_key",
+            "key": "public.auth_audit_log"
+          },
+          {
+            "business_label": "本数据系统的登录会话表，与保险业务流程无关",
+            "edge_type": "foreign_key",
+            "key": "public.auth_sessions"
+          }
+        ],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "源头采集型",
+          "rationale": "上游0条/下游2条，无上游但有下游，为数据进入系统的起点"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.bridge_partner_ka",
+      "layer3": {
+        "downstream": [
+          {
+            "business_label": "KA渠道月度业绩汇总表",
+            "edge_type": "view_dependency",
+            "key": "public.fact_channel_ka"
+          },
+          {
+            "business_label": "客户主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_customer"
+          },
+          {
+            "business_label": "KA(经代机构)主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_ka"
+          },
+          {
+            "business_label": "通用代码字典表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_lookup_code"
+          },
+          {
+            "business_label": "渠道伙伴主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_partner"
+          },
+          {
+            "business_label": "产品ID主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_product_id"
+          },
+          {
+            "business_label": "产品SKU主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_product_sku"
+          },
+          {
+            "business_label": "业务细分市场字典表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_segmentation"
+          },
+          {
+            "business_label": "保单主表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.fact_policy"
+          },
+          {
+            "business_label": "fact_policy的ETL抽取范围参数记录表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.fact_policy_etl_scope"
+          }
+        ],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "直通转换型",
+          "rationale": "上游1条/下游10条，处于链路中段，上下游数量不均衡但无更贴切类型，归为直通转换型"
+        },
+        "upstream": [
+          {
+            "business_label": "销售业务基础汇总表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.agg_sales_base"
+          }
+        ]
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.bridge_person_identity",
+      "layer3": {
+        "downstream": [
+          {
+            "business_label": "保单-人员关联视图",
+            "edge_type": "view_dependency",
+            "key": "public.v_fact_policy_person"
+          },
+          {
+            "business_label": "人员活动流水视图",
+            "edge_type": "view_dependency",
+            "key": "public.v_person_activity"
+          },
+          {
+            "business_label": "人员身份识别覆盖率统计视图",
+            "edge_type": "view_dependency",
+            "key": "public.v_person_coverage"
+          }
+        ],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "直通转换型",
+          "rationale": "上游1条/下游3条，处于链路中段，符合直通转换型"
+        },
+        "upstream": [
+          {
+            "business_label": "统一人员主数据表",
+            "edge_type": "foreign_key",
+            "key": "public.dim_person"
+          }
+        ]
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.bridge_person_relationship",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "终端消费型",
+          "rationale": "上游2条/下游0条，无下游，为数据链路末端"
+        },
+        "upstream": [
+          {
+            "business_label": "统一人员主数据表",
+            "edge_type": "foreign_key",
+            "key": "public.dim_person"
+          },
+          {
+            "business_label": "统一人员主数据表",
+            "edge_type": "foreign_key",
+            "key": "public.dim_person"
+          }
+        ]
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.bridge_person_role",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "终端消费型",
+          "rationale": "上游1条/下游0条，无下游，为数据链路末端"
+        },
+        "upstream": [
+          {
+            "business_label": "统一人员主数据表",
+            "edge_type": "foreign_key",
+            "key": "public.dim_person"
+          }
+        ]
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.bridge_strategy_routing",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "孤立支撑型",
+          "rationale": "has_lineage为false，无上下游，独立于主链路之外"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.config_commission_table_type",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "孤立支撑型",
+          "rationale": "has_lineage为false，无上下游，独立于主链路之外"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.config_identity_source_map",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "孤立支撑型",
+          "rationale": "has_lineage为false，无上下游，独立于主链路之外"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.config_license_carrier_mapping",
+      "layer3": {
+        "downstream": [
+          {
+            "business_label": "产品ID主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_product_id"
+          },
+          {
+            "business_label": "产品SKU主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_product_sku"
+          },
+          {
+            "business_label": "佣金费率主表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.fact_commission_rate"
+          }
+        ],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "规则配置型",
+          "rationale": "table_type为配置表，上游2条/下游3条，连接度不高，属于规则/参数维护类任务"
+        },
+        "upstream": [
+          {
+            "business_label": "市场佣金费率汇总宽表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.agg_market_commission_tier_rate"
+          },
+          {
+            "business_label": "来源佣金费率宽表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.agg_source_commission_wide"
+          }
+        ]
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.config_license_cost_deduction",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "孤立支撑型",
+          "rationale": "has_lineage为false，无上下游，独立于主链路之外"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.config_partner_routing",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "孤立支撑型",
+          "rationale": "has_lineage为false，无真实血缘边，独立于主链路之外，为孤立支撑的配置表。"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [
+          {
+            "candidate_name": "渠道路由规则配置维护",
+            "l4_code": "L4-COM-12",
+            "l4_name": "应派金额拆分与渠道对账（待注册）",
+            "rationale": "L4-COM-12的交付物《应派清单》+《理财师对账单》未涵盖渠道路由规则配置表的维护工作，该表作为佣金计算的路由依据，其规则维护是独立任务。"
+          }
+        ],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.config_product_commission_formula",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "孤立支撑型",
+          "rationale": "has_lineage为false，无真实血缘边，属于独立维护的配置表。"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [
+          {
+            "candidate_name": "佣金计算公式配置维护",
+            "l4_code": "L4-COM-01",
+            "l4_name": "佣金政策接收与校准",
+            "rationale": "L4-COM-01产出《标准化政策库》方案，未明确涵盖佣金计算公式配置表的系统维护任务，该表是政策落地的关键配置。"
+          }
+        ],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.config_product_exclusion_range",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "孤立支撑型",
+          "rationale": "has_lineage为false，无真实血缘边，独立于主链路之外的配置表。"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.config_product_feature_type",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "孤立支撑型",
+          "rationale": "has_lineage为false，无真实血缘边，独立字典配置。"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.config_quarter",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "孤立支撑型",
+          "rationale": "has_lineage为false，无真实血缘边，独立时间配置表。"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [
+          {
+            "candidate_name": "季度日历维护",
+            "l4_code": "L4-FBA-01",
+            "l4_name": "月度/季度业绩数据汇总",
+            "rationale": "L4-FBA-01产出分析Excel/文档，未涵盖季度日历配置表的维护工作，该表是季度分析的时间维度基础。"
+          }
+        ],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.config_strategy_header",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "孤立支撑型",
+          "rationale": "has_lineage为false，无真实血缘边，独立配置表。"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.config_strategy_tiers",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "孤立支撑型",
+          "rationale": "has_lineage为false，无真实血缘边，独立配置表。"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.dim_binder_agreement",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "孤立支撑型",
+          "rationale": "has_lineage为false，无真实血缘边，独立维度表。"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.dim_carrier",
+      "layer3": {
+        "downstream": [
+          {
+            "business_label": "保险计划书主表",
+            "edge_type": "foreign_key",
+            "key": "public.fact_insurance_plan_header"
+          },
+          {
+            "business_label": "保单主表",
+            "edge_type": "foreign_key",
+            "key": "public.fact_policy"
+          },
+          {
+            "business_label": "佣金费率主表",
+            "edge_type": "foreign_key",
+            "key": "public.fact_commission_rate"
+          }
+        ],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "源头采集型",
+          "rationale": "上游0条，下游3条，无上游但有下游，为数据进入本系统的起点，是保司主数据的源头。"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [
+          {
+            "candidate_name": "保司主数据维护",
+            "l4_code": "L4-COM-10",
+            "l4_name": "保单信息整合与应收核算（待注册）",
+            "rationale": "L4-COM-10的《应收明细清单》未涵盖保司主数据的维护工作，该表是应收核算的维度基础，其新增/变更维护需纳入。"
+          }
+        ],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.dim_comm_scheme",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "孤立支撑型",
+          "rationale": "has_lineage为false，无真实血缘边，独立维度表。"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [
+          {
+            "candidate_name": "佣金方案配置维护",
+            "l4_code": "L4-COM-01",
+            "l4_name": "佣金政策接收与校准",
+            "rationale": "L4-COM-01产出《标准化政策库》方案，未涵盖佣金方案主表的系统配置维护，该表是方案落地的数据载体。"
+          }
+        ],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.dim_customer",
+      "layer3": {
+        "downstream": [
+          {
+            "business_label": "保单主表",
+            "edge_type": "foreign_key",
+            "key": "public.fact_policy"
+          },
+          {
+            "business_label": "KA(经代机构)主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_ka"
+          },
+          {
+            "business_label": "通用代码字典表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_lookup_code"
+          },
+          {
+            "business_label": "渠道伙伴主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_partner"
+          },
+          {
+            "business_label": "产品ID主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_product_id"
+          },
+          {
+            "business_label": "产品SKU主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_product_sku"
+          },
+          {
+            "business_label": "业务细分市场字典表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_segmentation"
+          },
+          {
+            "business_label": "保单主表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.fact_policy"
+          },
+          {
+            "business_label": "fact_policy的ETL抽取范围参数记录表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.fact_policy_etl_scope"
+          }
+        ],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "枢纽整合型",
+          "rationale": "上游2条，下游9条，虽上游略少于3，但被大量下游引用，属于核心客户数据整合点，出错会向外扩散。"
+        },
+        "upstream": [
+          {
+            "business_label": "销售业务基础汇总表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.agg_sales_base"
+          },
+          {
+            "business_label": "渠道伙伴-KA归属桥接表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.bridge_partner_ka"
+          }
+        ]
+      },
+      "layer4": {
+        "hidden_deliverables": [
+          {
+            "candidate_name": "客户主数据维护",
+            "l4_code": "L4-RSJD-01",
+            "l4_name": "销售执行与客户管理",
+            "rationale": "L4-RSJD-01产出销售合规审计报告，未涵盖客户主数据表的日常维护工作，该表是客户管理的基础数据源。"
+          }
+        ],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.dim_customer_type",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "孤立支撑型",
+          "rationale": "has_lineage为false，无真实血缘边，独立字典表。"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [
+          {
+            "candidate_name": "客户类型字典维护",
+            "l4_code": "L4-RSJD-01",
+            "l4_name": "销售执行与客户管理",
+            "rationale": "L4-RSJD-01产出销售合规审计报告，未涵盖客户类型字典表的维护工作。"
+          }
+        ],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.dim_date",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "孤立支撑型",
+          "rationale": "has_lineage为false，无真实血缘边，独立维度表。"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.dim_employee",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "孤立支撑型",
+          "rationale": "has_lineage为false，无真实血缘边，独立维度表。"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.dim_ka",
+      "layer3": {
+        "downstream": [
+          {
+            "business_label": "KA渠道月度业绩汇总表",
+            "edge_type": "view_dependency",
+            "key": "public.fact_channel_ka"
+          },
+          {
+            "business_label": "人员身份识别覆盖率统计视图",
+            "edge_type": "view_dependency",
+            "key": "public.v_person_coverage"
+          },
+          {
+            "business_label": "保单主表",
+            "edge_type": "foreign_key",
+            "key": "public.fact_policy"
+          },
+          {
+            "business_label": "通用代码字典表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_lookup_code"
+          },
+          {
+            "business_label": "渠道伙伴主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_partner"
+          },
+          {
+            "business_label": "产品ID主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_product_id"
+          },
+          {
+            "business_label": "产品SKU主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_product_sku"
+          },
+          {
+            "business_label": "业务细分市场字典表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_segmentation"
+          },
+          {
+            "business_label": "保单主表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.fact_policy"
+          },
+          {
+            "business_label": "fact_policy的ETL抽取范围参数记录表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.fact_policy_etl_scope"
+          }
+        ],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "枢纽整合型",
+          "rationale": "上游3条，下游10条，上下游均较多，是被广泛引用的核心KA数据整合点，出错会扩散至多个下游。"
+        },
+        "upstream": [
+          {
+            "business_label": "销售业务基础汇总表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.agg_sales_base"
+          },
+          {
+            "business_label": "渠道伙伴-KA归属桥接表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.bridge_partner_ka"
+          },
+          {
+            "business_label": "客户主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_customer"
+          }
+        ]
+      },
+      "layer4": {
+        "hidden_deliverables": [
+          {
+            "candidate_name": "KA主数据维护",
+            "l4_code": "L4-KAGA-04",
+            "l4_name": "KA关系维护与长效运营",
+            "rationale": "L4-KAGA-04的《KA运营记录》未包含KA主数据表的维护工作，该表是KA运营的基础维度，需单独维护。"
+          }
+        ],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.dim_license",
+      "layer3": {
+        "downstream": [
+          {
+            "business_label": "保单主表",
+            "edge_type": "foreign_key",
+            "key": "public.fact_policy"
+          },
+          {
+            "business_label": "佣金费率主表",
+            "edge_type": "foreign_key",
+            "key": "public.fact_commission_rate"
+          }
+        ],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "源头采集型",
+          "rationale": "上游0条，下游2条，作为持牌机构主数据，是原始录入的起点"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [
+          {
+            "candidate_name": "持牌机构主数据维护",
+            "l4_code": "L4-COM-13",
+            "l4_name": "实派清单确认与财务制单（待注册）",
+            "rationale": "L4-COM-13交付物为《实派执行表》，L4-COM-14交付物为银行转账回执，均未覆盖持牌机构主数据的维护过程"
+          }
+        ],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.dim_lookup_code",
+      "layer3": {
+        "downstream": [
+          {
+            "business_label": "渠道伙伴主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_partner"
+          },
+          {
+            "business_label": "产品ID主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_product_id"
+          },
+          {
+            "business_label": "产品SKU主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_product_sku"
+          },
+          {
+            "business_label": "业务细分市场字典表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_segmentation"
+          },
+          {
+            "business_label": "保单主表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.fact_policy"
+          },
+          {
+            "business_label": "fact_policy的ETL抽取范围参数记录表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.fact_policy_etl_scope"
+          }
+        ],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "枢纽整合型",
+          "rationale": "上游4条，下游6条，作为通用代码字典，被广泛引用构建其他主数据"
+        },
+        "upstream": [
+          {
+            "business_label": "销售业务基础汇总表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.agg_sales_base"
+          },
+          {
+            "business_label": "渠道伙伴-KA归属桥接表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.bridge_partner_ka"
+          },
+          {
+            "business_label": "客户主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_customer"
+          },
+          {
+            "business_label": "KA(经代机构)主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_ka"
+          }
+        ]
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.dim_partner",
+      "layer3": {
+        "downstream": [
+          {
+            "business_label": "渠道伙伴月度汇总表",
+            "edge_type": "view_dependency",
+            "key": "public.fact_channel_partner"
+          },
+          {
+            "business_label": "保单主表",
+            "edge_type": "foreign_key",
+            "key": "public.fact_policy"
+          },
+          {
+            "business_label": "产品ID主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_product_id"
+          },
+          {
+            "business_label": "产品SKU主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_product_sku"
+          },
+          {
+            "business_label": "业务细分市场字典表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_segmentation"
+          },
+          {
+            "business_label": "保单主表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.fact_policy"
+          },
+          {
+            "business_label": "fact_policy的ETL抽取范围参数记录表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.fact_policy_etl_scope"
+          }
+        ],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "枢纽整合型",
+          "rationale": "上游5条，下游7条，作为渠道伙伴主数据，被多个下游消费"
+        },
+        "upstream": [
+          {
+            "business_label": "销售业务基础汇总表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.agg_sales_base"
+          },
+          {
+            "business_label": "渠道伙伴-KA归属桥接表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.bridge_partner_ka"
+          },
+          {
+            "business_label": "客户主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_customer"
+          },
+          {
+            "business_label": "KA(经代机构)主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_ka"
+          },
+          {
+            "business_label": "通用代码字典表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_lookup_code"
+          }
+        ]
+      },
+      "layer4": {
+        "hidden_deliverables": [
+          {
+            "candidate_name": "渠道伙伴主数据维护",
+            "l4_code": "L4-COM-12",
+            "l4_name": "应派金额拆分与渠道对账（待注册）",
+            "rationale": "L4-COM-12交付物为《应派清单》和《理财师对账单》，未包含渠道伙伴主数据的维护过程"
+          }
+        ],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.dim_partner_equity",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "孤立支撑型",
+          "rationale": "has_lineage为false，无上下游，row_count为0，独立于主链路之外的配置表"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [
+          {
+            "candidate_name": "伙伴权益配置数据维护",
+            "l4_code": "L4-RPD-01",
+            "l4_name": "权益包核心构建",
+            "rationale": "L4-RPD-01交付物为权益包使用规则（方案），未明确包含该配置表的维护过程"
+          }
+        ],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.dim_payee",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "孤立支撑型",
+          "rationale": "has_lineage为false，无上下游，独立于主链路之外的信息表"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [
+          {
+            "candidate_name": "收款人账户信息维护",
+            "l4_code": "L4-COM-12",
+            "l4_name": "应派金额拆分与渠道对账（待注册）",
+            "rationale": "L4-COM-12交付物涉及应派清单和对账单，但未覆盖收款人银行账户信息的维护过程"
+          }
+        ],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.dim_person",
+      "layer3": {
+        "downstream": [
+          {
+            "business_label": "dim_person的精简视图(去掉批次/审计字段)",
+            "edge_type": "view_dependency",
+            "key": "public.v_dim_person"
+          },
+          {
+            "business_label": "人员身份归一化桥接表",
+            "edge_type": "foreign_key",
+            "key": "public.bridge_person_identity"
+          },
+          {
+            "business_label": "人员角色桥接表",
+            "edge_type": "foreign_key",
+            "key": "public.bridge_person_role"
+          },
+          {
+            "business_label": "人员关系桥接表",
+            "edge_type": "foreign_key",
+            "key": "public.bridge_person_relationship"
+          },
+          {
+            "business_label": "人员关系桥接表",
+            "edge_type": "foreign_key",
+            "key": "public.bridge_person_relationship"
+          }
+        ],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "源头采集型",
+          "rationale": "上游0条，下游5条，作为统一人员主数据，是人员数据的起点"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [
+          {
+            "candidate_name": "人员主数据维护",
+            "l4_code": "L4-FBA-02",
+            "l4_name": "月度业绩与活动率分析",
+            "rationale": "L4-FBA-02交付物为业绩分析Excel/文档，未包含人员主数据的采集与维护过程"
+          }
+        ],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.dim_predicate_library",
+      "layer3": {
+        "downstream": [
+          {
+            "business_label": "保单生命周期事件流水表",
+            "edge_type": "foreign_key",
+            "key": "public.fact_sales_activity"
+          }
+        ],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "规则配置型",
+          "rationale": "表类型为维度表但内容为事件类型定义库，用于保单生命周期，属于规则配置，下游1条"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [
+          {
+            "candidate_name": "保单生命周期事件定义维护",
+            "l4_code": "L4-RSJD-01",
+            "l4_name": "销售执行与客户管理",
+            "rationale": "L4-RSJD-01交付物为销售合规审计报告，未覆盖事件类型定义的维护"
+          }
+        ],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.dim_product_benefit_profile",
+      "layer3": {
+        "downstream": [
+          {
+            "business_label": "产品月度业绩汇总表",
+            "edge_type": "view_dependency",
+            "key": "public.fact_product_id"
+          },
+          {
+            "business_label": "产品ID主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_product_id"
+          },
+          {
+            "business_label": "保险计划书主表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.fact_insurance_plan_header"
+          },
+          {
+            "business_label": "保险计划书逐年现金价值明细表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.fact_insurance_plan_lines"
+          }
+        ],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "源头采集型",
+          "rationale": "上游0条，下游4条，作为产品权益特征检查表，是原始维护的起点"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [
+          {
+            "candidate_name": "产品权益特征维护",
+            "l4_code": "L4-RSJD-04",
+            "l4_name": "方案交付",
+            "rationale": "L4-RSJD-04交付物为销售合规审计报告，未包含产品权益特征的检查与维护过程"
+          }
+        ],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.dim_product_feature_value",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "孤立支撑型",
+          "rationale": "has_lineage为false，无上下游，独立于主链路之外"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.dim_product_id",
+      "layer3": {
+        "downstream": [
+          {
+            "business_label": "产品月度业绩汇总表",
+            "edge_type": "view_dependency",
+            "key": "public.fact_product_id"
+          },
+          {
+            "business_label": "计划书精算指标视图",
+            "edge_type": "view_dependency",
+            "key": "public.v_plan_metrics"
+          },
+          {
+            "business_label": "产品SKU主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_product_sku"
+          },
+          {
+            "business_label": "业务细分市场字典表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_segmentation"
+          },
+          {
+            "business_label": "保单主表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.fact_policy"
+          },
+          {
+            "business_label": "fact_policy的ETL抽取范围参数记录表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.fact_policy_etl_scope"
+          },
+          {
+            "business_label": "产品SKU主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_product_sku"
+          },
+          {
+            "business_label": "佣金费率主表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.fact_commission_rate"
+          },
+          {
+            "business_label": "保险计划书主表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.fact_insurance_plan_header"
+          },
+          {
+            "business_label": "保险计划书逐年现金价值明细表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.fact_insurance_plan_lines"
+          }
+        ],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "枢纽整合型",
+          "rationale": "上游10条，下游10条，作为产品ID主数据，被广泛引用整合"
+        },
+        "upstream": [
+          {
+            "business_label": "销售业务基础汇总表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.agg_sales_base"
+          },
+          {
+            "business_label": "渠道伙伴-KA归属桥接表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.bridge_partner_ka"
+          },
+          {
+            "business_label": "客户主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_customer"
+          },
+          {
+            "business_label": "KA(经代机构)主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_ka"
+          },
+          {
+            "business_label": "通用代码字典表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_lookup_code"
+          },
+          {
+            "business_label": "渠道伙伴主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_partner"
+          },
+          {
+            "business_label": "市场佣金费率汇总宽表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.agg_market_commission_tier_rate"
+          },
+          {
+            "business_label": "来源佣金费率宽表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.agg_source_commission_wide"
+          },
+          {
+            "business_label": "牌照-保司佣金方案映射配置",
+            "edge_type": "pipeline_sibling",
+            "key": "public.config_license_carrier_mapping"
+          },
+          {
+            "business_label": "产品权益特征一致性检查表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_product_benefit_profile"
+          }
+        ]
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.dim_product_sku",
+      "layer3": {
+        "downstream": [
+          {
+            "business_label": "产品SKU月度业绩汇总表",
+            "edge_type": "view_dependency",
+            "key": "public.fact_product_sku"
+          },
+          {
+            "business_label": "保险计划书主表",
+            "edge_type": "foreign_key",
+            "key": "public.fact_insurance_plan_header"
+          },
+          {
+            "business_label": "保单主表",
+            "edge_type": "foreign_key",
+            "key": "public.fact_policy"
+          },
+          {
+            "business_label": "佣金费率主表",
+            "edge_type": "foreign_key",
+            "key": "public.fact_commission_rate"
+          },
+          {
+            "business_label": "业务细分市场字典表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_segmentation"
+          },
+          {
+            "business_label": "保单主表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.fact_policy"
+          },
+          {
+            "business_label": "fact_policy的ETL抽取范围参数记录表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.fact_policy_etl_scope"
+          },
+          {
+            "business_label": "佣金费率主表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.fact_commission_rate"
+          }
+        ],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "枢纽整合型",
+          "rationale": "上游11条，下游8条，作为产品SKU主数据，枢纽整合多个来源"
+        },
+        "upstream": [
+          {
+            "business_label": "销售业务基础汇总表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.agg_sales_base"
+          },
+          {
+            "business_label": "渠道伙伴-KA归属桥接表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.bridge_partner_ka"
+          },
+          {
+            "business_label": "客户主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_customer"
+          },
+          {
+            "business_label": "KA(经代机构)主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_ka"
+          },
+          {
+            "business_label": "通用代码字典表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_lookup_code"
+          },
+          {
+            "business_label": "渠道伙伴主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_partner"
+          },
+          {
+            "business_label": "产品ID主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_product_id"
+          },
+          {
+            "business_label": "市场佣金费率汇总宽表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.agg_market_commission_tier_rate"
+          },
+          {
+            "business_label": "来源佣金费率宽表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.agg_source_commission_wide"
+          },
+          {
+            "business_label": "牌照-保司佣金方案映射配置",
+            "edge_type": "pipeline_sibling",
+            "key": "public.config_license_carrier_mapping"
+          },
+          {
+            "business_label": "产品ID主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_product_id"
+          }
+        ]
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.dim_role_type",
+      "layer3": {
+        "downstream": [
+          {
+            "business_label": "人员活动流水视图",
+            "edge_type": "view_dependency",
+            "key": "public.v_person_activity"
+          },
+          {
+            "business_label": "人员身份识别覆盖率统计视图",
+            "edge_type": "view_dependency",
+            "key": "public.v_person_coverage"
+          }
+        ],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "源头采集型",
+          "rationale": "上游0条，下游2条，作为角色类型字典，源头采集"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [
+          {
+            "candidate_name": "角色类型维护",
+            "l4_code": "L4-FBA-02",
+            "l4_name": "月度业绩与活动率分析",
+            "rationale": "L4-FBA-02仅涉及业绩分析，未包含角色类型字典的维护过程"
+          }
+        ],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.dim_segmentation",
+      "layer3": {
+        "downstream": [
+          {
+            "business_label": "保单主表",
+            "edge_type": "foreign_key",
+            "key": "public.fact_policy"
+          },
+          {
+            "business_label": "保单主表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.fact_policy"
+          },
+          {
+            "business_label": "fact_policy的ETL抽取范围参数记录表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.fact_policy_etl_scope"
+          }
+        ],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "枢纽整合型",
+          "rationale": "上游8条，下游3条，作为细分市场字典，整合多个主数据"
+        },
+        "upstream": [
+          {
+            "business_label": "销售业务基础汇总表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.agg_sales_base"
+          },
+          {
+            "business_label": "渠道伙伴-KA归属桥接表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.bridge_partner_ka"
+          },
+          {
+            "business_label": "客户主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_customer"
+          },
+          {
+            "business_label": "KA(经代机构)主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_ka"
+          },
+          {
+            "business_label": "通用代码字典表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_lookup_code"
+          },
+          {
+            "business_label": "渠道伙伴主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_partner"
+          },
+          {
+            "business_label": "产品ID主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_product_id"
+          },
+          {
+            "business_label": "产品SKU主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_product_sku"
+          }
+        ]
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.dim_strategy",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "孤立支撑型",
+          "rationale": "has_lineage为false，无上下游，row_count为0，独立于主链路之外的策略配置"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.fact_channel_ka",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "终端消费型",
+          "rationale": "上游3条，下游0条，作为KA渠道月度业绩汇总视图，是终端消费型报表"
+        },
+        "upstream": [
+          {
+            "business_label": "渠道伙伴-KA归属桥接表",
+            "edge_type": "view_dependency",
+            "key": "public.bridge_partner_ka"
+          },
+          {
+            "business_label": "KA(经代机构)主数据表",
+            "edge_type": "view_dependency",
+            "key": "public.dim_ka"
+          },
+          {
+            "business_label": "销售活动关联视图",
+            "edge_type": "view_dependency",
+            "key": "public.v_fact_sales_activity"
+          }
+        ]
+      },
+      "layer4": {
+        "hidden_deliverables": [
+          {
+            "candidate_name": "KA渠道月度业绩汇总加工",
+            "l4_code": "L4-CPM-03",
+            "l4_name": "定期深度分析",
+            "rationale": "L4-CPM-03交付物为《月度健康度报告》，L4-KAGA-01交付物为Excel报表包，均未明确包含该视图的汇总加工过程"
+          }
+        ],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.fact_channel_partner",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "终端消费型",
+          "rationale": "上游2条，下游0条，且table_type为视图"
+        },
+        "upstream": [
+          {
+            "business_label": "渠道伙伴主数据表",
+            "edge_type": "view_dependency",
+            "key": "public.dim_partner"
+          },
+          {
+            "business_label": "销售活动关联视图",
+            "edge_type": "view_dependency",
+            "key": "public.v_fact_sales_activity"
+          }
+        ]
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.fact_commission_rate",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "终端消费型",
+          "rationale": "上游8条，下游0条，且table_type为事实表"
+        },
+        "upstream": [
+          {
+            "business_label": "保司主数据表",
+            "edge_type": "foreign_key",
+            "key": "public.dim_carrier"
+          },
+          {
+            "business_label": "持牌机构主数据表",
+            "edge_type": "foreign_key",
+            "key": "public.dim_license"
+          },
+          {
+            "business_label": "产品SKU主数据表",
+            "edge_type": "foreign_key",
+            "key": "public.dim_product_sku"
+          },
+          {
+            "business_label": "市场佣金费率汇总宽表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.agg_market_commission_tier_rate"
+          },
+          {
+            "business_label": "来源佣金费率宽表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.agg_source_commission_wide"
+          },
+          {
+            "business_label": "牌照-保司佣金方案映射配置",
+            "edge_type": "pipeline_sibling",
+            "key": "public.config_license_carrier_mapping"
+          },
+          {
+            "business_label": "产品ID主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_product_id"
+          },
+          {
+            "business_label": "产品SKU主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_product_sku"
+          }
+        ]
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.fact_customer",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "终端消费型",
+          "rationale": "上游1条，下游0条，且table_type为视图"
+        },
+        "upstream": [
+          {
+            "business_label": "销售活动关联视图",
+            "edge_type": "view_dependency",
+            "key": "public.v_fact_sales_activity"
+          }
+        ]
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.fact_insurance_plan_header",
+      "layer3": {
+        "downstream": [
+          {
+            "business_label": "产品月度业绩汇总表",
+            "edge_type": "view_dependency",
+            "key": "public.fact_product_id"
+          },
+          {
+            "business_label": "计划书精算指标视图",
+            "edge_type": "view_dependency",
+            "key": "public.v_plan_metrics"
+          },
+          {
+            "business_label": "保险计划书逐年现金价值明细表",
+            "edge_type": "foreign_key",
+            "key": "public.fact_insurance_plan_lines"
+          },
+          {
+            "business_label": "保险计划书逐年现金价值明细表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.fact_insurance_plan_lines"
+          }
+        ],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "枢纽整合型",
+          "rationale": "上游4条，下游4条，且table_type为事实表，是计划书相关数据的核心整合点"
+        },
+        "upstream": [
+          {
+            "business_label": "产品SKU主数据表",
+            "edge_type": "foreign_key",
+            "key": "public.dim_product_sku"
+          },
+          {
+            "business_label": "保司主数据表",
+            "edge_type": "foreign_key",
+            "key": "public.dim_carrier"
+          },
+          {
+            "business_label": "产品权益特征一致性检查表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_product_benefit_profile"
+          },
+          {
+            "business_label": "产品ID主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_product_id"
+          }
+        ]
+      },
+      "layer4": {
+        "hidden_deliverables": [
+          {
+            "candidate_name": "保险计划书数据生成",
+            "l4_code": "L4-RSJD-04",
+            "l4_name": "方案交付",
+            "rationale": "交付物仅含销售合规审计报告，未覆盖保险计划书主数据的生成与维护工作"
+          }
+        ],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.fact_insurance_plan_header_history",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "孤立支撑型",
+          "rationale": "has_lineage为false，无上下游血缘依赖，属于历史归档表"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.fact_insurance_plan_lines",
+      "layer3": {
+        "downstream": [
+          {
+            "business_label": "产品月度业绩汇总表",
+            "edge_type": "view_dependency",
+            "key": "public.fact_product_id"
+          },
+          {
+            "business_label": "计划书精算指标视图",
+            "edge_type": "view_dependency",
+            "key": "public.v_plan_metrics"
+          },
+          {
+            "business_label": "fact_insurance_plan_lines的精简视图(去掉wth系列提取字段)",
+            "edge_type": "view_dependency",
+            "key": "public.v_plan_year_snapshot"
+          }
+        ],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "枢纽整合型",
+          "rationale": "上游4条，下游3条，且table_type为事实表，是计划书明细数据的整合点"
+        },
+        "upstream": [
+          {
+            "business_label": "保险计划书主表",
+            "edge_type": "foreign_key",
+            "key": "public.fact_insurance_plan_header"
+          },
+          {
+            "business_label": "产品权益特征一致性检查表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_product_benefit_profile"
+          },
+          {
+            "business_label": "产品ID主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_product_id"
+          },
+          {
+            "business_label": "保险计划书主表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.fact_insurance_plan_header"
+          }
+        ]
+      },
+      "layer4": {
+        "hidden_deliverables": [
+          {
+            "candidate_name": "计划书逐年现金价值明细数据",
+            "l4_code": "L4-RSJD-04",
+            "l4_name": "方案交付",
+            "rationale": "交付物仅含销售合规审计报告，未覆盖该明细数据的生成与维护工作"
+          }
+        ],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.fact_insurance_plan_lines_history",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "孤立支撑型",
+          "rationale": "has_lineage为false，无上下游血缘依赖，属于历史归档表"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.fact_policy",
+      "layer3": {
+        "downstream": [
+          {
+            "business_label": "保单当前状态视图",
+            "edge_type": "view_dependency",
+            "key": "public.v_policy_current_state"
+          },
+          {
+            "business_label": "产品月度业绩汇总表",
+            "edge_type": "view_dependency",
+            "key": "public.fact_product_id"
+          },
+          {
+            "business_label": "产品SKU月度业绩汇总表",
+            "edge_type": "view_dependency",
+            "key": "public.fact_product_sku"
+          },
+          {
+            "business_label": "保单-人员关联视图",
+            "edge_type": "view_dependency",
+            "key": "public.v_fact_policy_person"
+          },
+          {
+            "business_label": "人员活动流水视图",
+            "edge_type": "view_dependency",
+            "key": "public.v_person_activity"
+          },
+          {
+            "business_label": "人员身份识别覆盖率统计视图",
+            "edge_type": "view_dependency",
+            "key": "public.v_person_coverage"
+          },
+          {
+            "business_label": "fact_policy的ETL抽取范围参数记录表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.fact_policy_etl_scope"
+          }
+        ],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "枢纽整合型",
+          "rationale": "上游16条，下游7条，且table_type为事实表，是保单数据的核心整合点"
+        },
+        "upstream": [
+          {
+            "business_label": "保司主数据表",
+            "edge_type": "foreign_key",
+            "key": "public.dim_carrier"
+          },
+          {
+            "business_label": "产品SKU主数据表",
+            "edge_type": "foreign_key",
+            "key": "public.dim_product_sku"
+          },
+          {
+            "business_label": "渠道伙伴主数据表",
+            "edge_type": "foreign_key",
+            "key": "public.dim_partner"
+          },
+          {
+            "business_label": "KA(经代机构)主数据表",
+            "edge_type": "foreign_key",
+            "key": "public.dim_ka"
+          },
+          {
+            "business_label": "持牌机构主数据表",
+            "edge_type": "foreign_key",
+            "key": "public.dim_license"
+          },
+          {
+            "business_label": "业务细分市场字典表",
+            "edge_type": "foreign_key",
+            "key": "public.dim_segmentation"
+          },
+          {
+            "business_label": "客户主数据表",
+            "edge_type": "foreign_key",
+            "key": "public.dim_customer"
+          },
+          {
+            "business_label": "销售业务基础汇总表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.agg_sales_base"
+          },
+          {
+            "business_label": "渠道伙伴-KA归属桥接表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.bridge_partner_ka"
+          },
+          {
+            "business_label": "客户主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_customer"
+          },
+          {
+            "business_label": "KA(经代机构)主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_ka"
+          },
+          {
+            "business_label": "通用代码字典表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_lookup_code"
+          },
+          {
+            "business_label": "渠道伙伴主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_partner"
+          },
+          {
+            "business_label": "产品ID主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_product_id"
+          },
+          {
+            "business_label": "产品SKU主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_product_sku"
+          },
+          {
+            "business_label": "业务细分市场字典表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_segmentation"
+          }
+        ]
+      },
+      "layer4": {
+        "hidden_deliverables": [
+          {
+            "candidate_name": "保单主数据整合",
+            "l4_code": "L4-COM-10",
+            "l4_name": "保单信息整合与应收核算（待注册）",
+            "rationale": "交付物仅含应收明细清单，未覆盖保单主数据的整合生成过程"
+          }
+        ],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.fact_policy_etl_scope",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "终端消费型",
+          "rationale": "上游10条，下游0条，且table_type为事实表"
+        },
+        "upstream": [
+          {
+            "business_label": "销售业务基础汇总表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.agg_sales_base"
+          },
+          {
+            "business_label": "渠道伙伴-KA归属桥接表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.bridge_partner_ka"
+          },
+          {
+            "business_label": "客户主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_customer"
+          },
+          {
+            "business_label": "KA(经代机构)主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_ka"
+          },
+          {
+            "business_label": "通用代码字典表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_lookup_code"
+          },
+          {
+            "business_label": "渠道伙伴主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_partner"
+          },
+          {
+            "business_label": "产品ID主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_product_id"
+          },
+          {
+            "business_label": "产品SKU主数据表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_product_sku"
+          },
+          {
+            "business_label": "业务细分市场字典表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.dim_segmentation"
+          },
+          {
+            "business_label": "保单主表",
+            "edge_type": "pipeline_sibling",
+            "key": "public.fact_policy"
+          }
+        ]
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.fact_product_id",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "终端消费型",
+          "rationale": "上游5条，下游0条，且table_type为视图"
+        },
+        "upstream": [
+          {
+            "business_label": "产品权益特征一致性检查表",
+            "edge_type": "view_dependency",
+            "key": "public.dim_product_benefit_profile"
+          },
+          {
+            "business_label": "产品ID主数据表",
+            "edge_type": "view_dependency",
+            "key": "public.dim_product_id"
+          },
+          {
+            "business_label": "保险计划书主表",
+            "edge_type": "view_dependency",
+            "key": "public.fact_insurance_plan_header"
+          },
+          {
+            "business_label": "保险计划书逐年现金价值明细表",
+            "edge_type": "view_dependency",
+            "key": "public.fact_insurance_plan_lines"
+          },
+          {
+            "business_label": "保单主表",
+            "edge_type": "view_dependency",
+            "key": "public.fact_policy"
+          }
+        ]
+      },
+      "layer4": {
+        "hidden_deliverables": [
+          {
+            "candidate_name": "产品月度业绩汇总数据",
+            "l4_code": "L4-COM-10",
+            "l4_name": "保单信息整合与应收核算（待注册）",
+            "rationale": "交付物仅含应收明细清单，未覆盖产品月度业绩汇总的生成工作"
+          },
+          {
+            "candidate_name": "产品月度业绩汇总数据",
+            "l4_code": "L4-CPM-03",
+            "l4_name": "定期深度分析",
+            "rationale": "交付物仅含月度健康度报告，未覆盖此汇总表的数据生成"
+          },
+          {
+            "candidate_name": "产品月度业绩汇总数据",
+            "l4_code": "L4-RSJD-04",
+            "l4_name": "方案交付",
+            "rationale": "交付物仅含销售合规审计报告，未覆盖此汇总表的数据生成"
+          }
+        ],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.fact_product_sku",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "终端消费型",
+          "rationale": "上游2条，下游0条，且table_type为视图"
+        },
+        "upstream": [
+          {
+            "business_label": "产品SKU主数据表",
+            "edge_type": "view_dependency",
+            "key": "public.dim_product_sku"
+          },
+          {
+            "business_label": "保单主表",
+            "edge_type": "view_dependency",
+            "key": "public.fact_policy"
+          }
+        ]
+      },
+      "layer4": {
+        "hidden_deliverables": [
+          {
+            "candidate_name": "产品SKU月度业绩汇总数据",
+            "l4_code": "L4-COM-10",
+            "l4_name": "保单信息整合与应收核算（待注册）",
+            "rationale": "交付物仅含应收明细清单，未覆盖产品SKU月度业绩汇总的生成工作"
+          },
+          {
+            "candidate_name": "产品SKU月度业绩汇总数据",
+            "l4_code": "L4-CPM-03",
+            "l4_name": "定期深度分析",
+            "rationale": "交付物仅含月度健康度报告，未覆盖此汇总表的数据生成"
+          }
+        ],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.fact_sales_activity",
+      "layer3": {
+        "downstream": [
+          {
+            "business_label": "保单当前状态视图",
+            "edge_type": "view_dependency",
+            "key": "public.v_policy_current_state"
+          },
+          {
+            "business_label": "人员活动流水视图",
+            "edge_type": "view_dependency",
+            "key": "public.v_person_activity"
+          }
+        ],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "直通转换型",
+          "rationale": "上游1条，下游2条，且table_type为事实表，处于事件流水到下游视图的中间环节"
+        },
+        "upstream": [
+          {
+            "business_label": "保单生命周期事件类型定义库",
+            "edge_type": "foreign_key",
+            "key": "public.dim_predicate_library"
+          }
+        ]
+      },
+      "layer4": {
+        "hidden_deliverables": [
+          {
+            "candidate_name": "保单生命周期事件流水数据管理",
+            "l4_code": "L4-RSJD-01",
+            "l4_name": "销售执行与客户管理",
+            "rationale": "交付物仅含销售合规审计报告，未覆盖事件流水数据的生成与维护工作"
+          }
+        ],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.fact_target",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "孤立支撑型",
+          "rationale": "has_lineage为false，无上下游血缘依赖，属于外部导入或人工维护的业务目标表"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [
+          {
+            "candidate_name": "业务目标数据采集与维护",
+            "l4_code": "L4-COM-04",
+            "l4_name": "年度预算与规划",
+            "rationale": "交付物为方案《年度预算与规划》，未覆盖业务目标数据表的生成"
+          },
+          {
+            "candidate_name": "业务目标数据采集与维护",
+            "l4_code": "L4-HRA-02",
+            "l4_name": "人效分析与对标",
+            "rationale": "交付物为各类分析报告，未覆盖业务目标数据表的生成"
+          },
+          {
+            "candidate_name": "业务目标数据采集与维护",
+            "l4_code": "L4-HRM-01",
+            "l4_name": "定岗定编与岗位设计",
+            "rationale": "交付物为岗位编制方案，未覆盖业务目标数据表的生成"
+          }
+        ],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.map_name_entity_type",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "孤立支撑型",
+          "rationale": "has_lineage为false，无上下游血缘依赖，属于名称实体类型映射表"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.map_partner_payee",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "孤立支撑型",
+          "rationale": "has_lineage为false，无上下游血缘依赖，属于映射配置表"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [
+          {
+            "candidate_name": "伙伴-收款人分成映射表维护",
+            "l4_code": "L4-COM-12",
+            "l4_name": "应派金额拆分与渠道对账（待注册）",
+            "rationale": "交付物仅含应派清单和理财师对账单，未覆盖此映射表的生成与维护工作"
+          }
+        ],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.mapping_product",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "孤立支撑型",
+          "rationale": "has_lineage为false，无真实血缘边，为孤立支撑型"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.partner_tier_rules",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "孤立支撑型",
+          "rationale": "has_lineage为false，且为规则表，无血缘"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [
+          {
+            "candidate_name": "伙伴档位规则维护",
+            "l4_code": "L4-COM-12",
+            "l4_name": "应派金额拆分与渠道对账（待注册）",
+            "rationale": "该规则表用于佣金拆分，但L4交付物《应派清单》和对账单未包含规则维护任务"
+          }
+        ],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.person_match_suspect",
+      "layer3": {
+        "downstream": [
+          {
+            "business_label": "人员身份识别覆盖率统计视图",
+            "edge_type": "view_dependency",
+            "key": "public.v_person_coverage"
+          }
+        ],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "源头采集型",
+          "rationale": "无上游，有1个下游，为数据进入系统的起点"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [
+          {
+            "candidate_name": "人员身份匹配清洗与确认",
+            "l4_code": "L4-FBA-02",
+            "l4_name": "月度业绩与活动率分析",
+            "rationale": "该表为人员身份匹配的疑似记录，需人工确认，但L4-FBA-02的交付物仅为分析文档，未包含该数据清洗任务"
+          }
+        ],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.product_risk_override",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "孤立支撑型",
+          "rationale": "has_lineage为false，规则表无血缘"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.sales_renewal_due_snapshot",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "孤立支撑型",
+          "rationale": "has_lineage为false，快照表无血缘"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.sync_history",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "孤立支撑型",
+          "rationale": "has_lineage为false，历史记录表无血缘"
+        },
+        "upstream": []
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.v_dim_person",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "终端消费型",
+          "rationale": "只有上游（1条），无下游，是数据链路的末端产出"
+        },
+        "upstream": [
+          {
+            "business_label": "统一人员主数据表",
+            "edge_type": "view_dependency",
+            "key": "public.dim_person"
+          }
+        ]
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.v_fact_policy_person",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "终端消费型",
+          "rationale": "只有上游（2条），无下游，是数据链路的末端产出"
+        },
+        "upstream": [
+          {
+            "business_label": "人员身份归一化桥接表",
+            "edge_type": "view_dependency",
+            "key": "public.bridge_person_identity"
+          },
+          {
+            "business_label": "保单主表",
+            "edge_type": "view_dependency",
+            "key": "public.fact_policy"
+          }
+        ]
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.v_fact_sales_activity",
+      "layer3": {
+        "downstream": [
+          {
+            "business_label": "渠道伙伴月度汇总表",
+            "edge_type": "view_dependency",
+            "key": "public.fact_channel_partner"
+          },
+          {
+            "business_label": "KA渠道月度业绩汇总表",
+            "edge_type": "view_dependency",
+            "key": "public.fact_channel_ka"
+          },
+          {
+            "business_label": "客户月度业绩汇总表",
+            "edge_type": "view_dependency",
+            "key": "public.fact_customer"
+          }
+        ],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "直通转换型",
+          "rationale": "上游1条，下游3条，属于从上游简单转换后提供给多个下游"
+        },
+        "upstream": [
+          {
+            "business_label": "销售业务基础汇总表",
+            "edge_type": "view_dependency",
+            "key": "public.agg_sales_base"
+          }
+        ]
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.v_person_activity",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "终端消费型",
+          "rationale": "只有上游（5条），无下游，是数据链路的末端产出"
+        },
+        "upstream": [
+          {
+            "business_label": "实收流水主表",
+            "edge_type": "view_dependency",
+            "key": "fin_sandbox.fact_receipt"
+          },
+          {
+            "business_label": "人员身份归一化桥接表",
+            "edge_type": "view_dependency",
+            "key": "public.bridge_person_identity"
+          },
+          {
+            "business_label": "人员角色类型字典表",
+            "edge_type": "view_dependency",
+            "key": "public.dim_role_type"
+          },
+          {
+            "business_label": "保单主表",
+            "edge_type": "view_dependency",
+            "key": "public.fact_policy"
+          },
+          {
+            "business_label": "保单生命周期事件流水表",
+            "edge_type": "view_dependency",
+            "key": "public.fact_sales_activity"
+          }
+        ]
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.v_person_coverage",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "终端消费型",
+          "rationale": "只有上游（6条），无下游，是数据链路的末端产出"
+        },
+        "upstream": [
+          {
+            "business_label": "实收流水主表",
+            "edge_type": "view_dependency",
+            "key": "fin_sandbox.fact_receipt"
+          },
+          {
+            "business_label": "人员身份归一化桥接表",
+            "edge_type": "view_dependency",
+            "key": "public.bridge_person_identity"
+          },
+          {
+            "business_label": "KA(经代机构)主数据表",
+            "edge_type": "view_dependency",
+            "key": "public.dim_ka"
+          },
+          {
+            "business_label": "人员角色类型字典表",
+            "edge_type": "view_dependency",
+            "key": "public.dim_role_type"
+          },
+          {
+            "business_label": "保单主表",
+            "edge_type": "view_dependency",
+            "key": "public.fact_policy"
+          },
+          {
+            "business_label": "人员身份匹配疑似项表",
+            "edge_type": "view_dependency",
+            "key": "public.person_match_suspect"
+          }
+        ]
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.v_plan_metrics",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "终端消费型",
+          "rationale": "只有上游（3条），无下游，是数据链路的末端产出"
+        },
+        "upstream": [
+          {
+            "business_label": "产品ID主数据表",
+            "edge_type": "view_dependency",
+            "key": "public.dim_product_id"
+          },
+          {
+            "business_label": "保险计划书主表",
+            "edge_type": "view_dependency",
+            "key": "public.fact_insurance_plan_header"
+          },
+          {
+            "business_label": "保险计划书逐年现金价值明细表",
+            "edge_type": "view_dependency",
+            "key": "public.fact_insurance_plan_lines"
+          }
+        ]
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.v_plan_year_snapshot",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "终端消费型",
+          "rationale": "只有上游（1条），无下游，是数据链路的末端产出"
+        },
+        "upstream": [
+          {
+            "business_label": "保险计划书逐年现金价值明细表",
+            "edge_type": "view_dependency",
+            "key": "public.fact_insurance_plan_lines"
+          }
+        ]
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    },
+    {
+      "key": "public.v_policy_current_state",
+      "layer3": {
+        "downstream": [],
+        "status": "MODEL_DRAFT",
+        "task_cluster": {
+          "label": "终端消费型",
+          "rationale": "只有上游（2条），无下游，是数据链路的末端产出"
+        },
+        "upstream": [
+          {
+            "business_label": "保单主表",
+            "edge_type": "view_dependency",
+            "key": "public.fact_policy"
+          },
+          {
+            "business_label": "保单生命周期事件流水表",
+            "edge_type": "view_dependency",
+            "key": "public.fact_sales_activity"
+          }
+        ]
+      },
+      "layer4": {
+        "hidden_deliverables": [],
+        "status": "MODEL_DRAFT"
+      }
+    }
+  ]
+}

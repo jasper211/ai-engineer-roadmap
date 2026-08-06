@@ -22,16 +22,21 @@ export interface TableAnalysisEntry {
     non_business: { reason: string } | null
   }
   layer3: {
-    status: 'BLOCKED' | 'ACTIVE'
-    goal: string
-    required_inputs: string[]
-    reason: string
+    status: 'BLOCKED' | 'MODEL_DRAFT'
+    upstream: { key: string; business_label: string; edge_type: string }[]
+    downstream: { key: string; business_label: string; edge_type: string }[]
+    task_cluster: { label: TaskClusterLabel; rationale: string } | null
+    reason?: string
   }
   layer4: {
-    status: 'BLOCKED' | 'ACTIVE'
-    goal: string
-    required_inputs: string[]
-    reason: string
+    status: 'BLOCKED' | 'MODEL_DRAFT'
+    hidden_deliverables: {
+      l4_code: string
+      l4_name: string
+      candidate_name: string
+      rationale: string
+    }[]
+    reason?: string
   }
   layer5: {
     status: 'PRELIMINARY' | 'NO_BASIS' | 'CONFIRMED'
@@ -46,8 +51,18 @@ export interface TableAnalysisEntry {
       rationale: string
       classification_basis: 'DERIVED'
     }[]
+    governance_track: { flagged: true; reason: string } | null
+    process_lever_track: { flagged: true; reason: string } | null
   }
 }
+
+export type TaskClusterLabel =
+  | '源头采集型'
+  | '枢纽整合型'
+  | '终端消费型'
+  | '规则配置型'
+  | '直通转换型'
+  | '孤立支撑型'
 
 export interface TableAnalysis {
   schema_version: string
