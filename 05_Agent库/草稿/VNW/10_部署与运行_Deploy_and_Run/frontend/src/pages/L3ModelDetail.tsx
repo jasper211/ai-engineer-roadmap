@@ -223,186 +223,210 @@ function deliverableQuality(rawDeliverable: string, sameValueCount: number) {
   return null
 }
 
-function buildMarkdownReport(model: L3Model): string {
-  const ua = model.unified_analysis
+function mdTable(headers: string[], rows: string[][]): string {
+  if (rows.length === 0) return '（无）\n'
+  const lines = [
+    `| ${headers.join(' | ')} |`,
+    `|${headers.map(() => '---').join('|')}|`,
+    ...rows.map(row => `| ${row.map(cell => String(cell ?? '').replace(/\n/g, '<br>').replace(/\|/g, '\\|')).join(' | ')} |`),
+  ]
+  return lines.join('\n') + '\n'
+}
+
+function asString(value: unknown): string {
+  return value === null || value === undefined ? '' : String(value)
+}
+
+function asStringList(value: unknown): string[] {
+  return Array.isArray(value) ? value.map(String) : []
+}
+
+const TIER_ORDER = ['Human', 'Hybrid', 'Aug', 'Auto'] as const
+
+// L3流程分析报告：面板A-F+决策的通用标准，对任何有完整统一模型的L3都
+// 从同一份model_snapshot(analysis.l4_analysis/tasks/priority_drafts/
+// decision_drafts + blueprint + value_nodes)现算，不依赖某个L3专属的
+// 手工demo文件，也不写盘——每次下载都是当前数据的实时投影。
+function buildL3FlowReportMarkdown(model: L3Model): string {
+  const generatedAt = new Date().toISOString().slice(0, 10)
+  const l4ByCode = new Map(model.l4s.map(l4 => [l4.l4_code, l4]))
   const lines: string[] = []
-  lines.push(`# ${model.l3_code} · ${model.l3_name} · VNW统一分析报告`)
-  lines.push('')
-  lines.push(`> 状态：**${ua.status === 'CONFIRMED' ? `已确认（${ua.confirmed_by ?? ''} · ${ua.confirmed_at ?? ''}）` : '草稿 · 尚未人工确认，不可作为最终投入决策依据'}**`)
-  lines.push(`> 依据：VNW统一分析Spec v1.0 · 快照 ${model.snapshot_hash.slice(0, 12)} · Gate M/E/A = ${model.gates.M.status}/${model.gates.E.status}/${model.gates.A.status}`)
-  lines.push('')
-  lines.push('## 一、分析基线')
-  lines.push(`- 数据快照：\`${model.snapshot_hash}\``)
-  lines.push(`- 蓝图版本：${model.blueprint.version || '未覆盖'}`)
-  lines.push(`- L4总数：${model.l4s.length} · 价值节点：${model.value_nodes.length}`)
-  lines.push('')
-  lines.push('## 二、受控维度')
-  lines.push(`- L2业务能力：${model.l2_capabilities.length > 0 ? model.l2_capabilities.map(row => String((row as Record<string, unknown>).l2_name ?? '')).join('、') : '待补'}`)
-  lines.push(`- 价值流位置：${model.value_stream_mappings.length > 0 ? model.value_stream_mappings.map(row => { const r = row as Record<string, unknown>; return `${r.vs_name}·${r.stage_name}` }).join('、') : '未定位到客户旅程/价值流阶段'}`)
-  lines.push(`- 关联KPI：${model.kpi_mappings.length > 0 ? model.kpi_mappings.map(kpi => `${kpi.kpi_name}${kpi.source_type === 'mark_priority_draft' ? '(战略权重草稿)' : ''}`).join('、') : '待补'}`)
-  lines.push(`- 岗位归属：${ua.coverage.position_covered}/${ua.coverage.l4_total} 个L4已归口`)
-  lines.push(`- 业务数据证据：${ua.coverage.business_evidence_covered}/${ua.coverage.l4_total} 个L4定位到业务数据仓库表`)
-  lines.push('')
-  lines.push('## 三、双轴声明（D1-D6/Tier轴 与 候选Agent封装轴，禁止合并）')
-  if (ua.axis_conflicts.length > 0) {
-    lines.push(`⚠️ 两轴方向冲突：${ua.axis_conflicts.join('、')} —— 需业务方澄清，本报告不自动选边。`)
+
+  lines.push(`# ${model.l3_code} · ${model.l3_name} · L3流程分析报告\n`)
+  lines.push(`> VNW流程模型统一模板 v1.0 · 快照 ${model.snapshot_hash.slice(0, 12)} · Gate M/E/A = ${model.gates.M.status}/${model.gates.E.status}/${model.gates.A.status} · 生成日期：${generatedAt}\n`)
+  lines.push('> 本报告由AI辅助分析生成的内容（人机协作建议、优先级矩阵、任务拆分等）标注MODEL_DRAFT，仍需负责人复核；页面互动版见系统内对应L3详情页。\n')
+
+  const tierCounts: Record<string, number> = { Auto: 0, Aug: 0, Hybrid: 0, Human: 0 }
+  for (const l4 of model.l4s) tierCounts[l4.tier] = (tierCounts[l4.tier] ?? 0) + 1
+  const d1d6Complete = model.l4s.filter(l4 => Object.values(l4.d1_d6 || {}).every(v => v !== null && v !== undefined)).length
+  lines.push('## 关键指标\n')
+  lines.push(mdTable(['指标', '数值'], [
+    ['数据库 L4', String(model.l4s.length)],
+    ['蓝图主链步骤', String(model.blueprint.steps.length)],
+    ['复核 Auto / Aug / Hybrid / Human', `${tierCounts.Auto} / ${tierCounts.Aug} / ${tierCounts.Hybrid} / ${tierCounts.Human}`],
+    ['D1-D6已复核', `${d1d6Complete} / ${model.l4s.length}`],
+    ['价值节点', String(model.value_nodes.length)],
+    ['Gate 状态', `M${model.gates.M.status === 'PASS' ? '✓' : '×'} E${model.gates.E.status === 'PASS' ? '✓' : '×'} A${model.gates.A.status === 'PASS' ? '✓' : '×'}`],
+  ]))
+
+  lines.push('## Tier定义\n')
+  lines.push(mdTable(['Tier', '定义'], TIER_ORDER.map(id => {
+    const column = COLUMNS.find(c => c.id === id)
+    return [id, column?.explanation ?? '']
+  })))
+
+  lines.push('\n## A · 流程叙事（理想态执行路径）\n')
+  lines.push(`来源：${model.blueprint.filename || '流程蓝图待补'}\n`)
+  if (model.blueprint.structure_status === 'PARSED' && model.blueprint.steps.length > 0) {
+    const chain = [...model.blueprint.steps]
+      .sort((a, b) => a.sequence - b.sequence)
+      .map(step => {
+        const tiers = [...new Set(step.l4_codes.map(code => l4ByCode.get(code)?.tier).filter(Boolean))]
+        return `${step.l4_codes.join('/') || `步骤${step.sequence}`}(${tiers.join('/') || '待评估'})${step.step_name}`
+      })
+      .join(' → ')
+    lines.push(`流程链：${chain}\n`)
   } else {
-    lines.push('本L3当前两轴方向一致，无冲突。')
+    lines.push(`当前不生成流程图：${model.blueprint.structure_status}；${model.blueprint.note}\n`)
   }
-  lines.push('')
-  lines.push('## 四、逐L4根因阶梯（事实→机制→结构→策略）')
-  for (const l4 of model.l4s) {
-    const ladder = ua.root_cause_ladders[l4.l4_code]
-    lines.push(`### ${l4.l4_code} · ${l4.l4_name}`)
-    if (ladder) {
-      for (const layer of ladder) {
-        lines.push(`- **[${layer.layer}·${layer.grade}级]** ${layer.statement}`)
-      }
-    } else {
-      lines.push('- 待补')
+  const controlChain = (model.analysis.control_chain ?? []).filter(item => item.l4_code && item.label)
+  if (controlChain.length > 0) {
+    lines.push(controlChain.map(item => `- ${item.level || '控制点'} · ${item.l4_code.replace('L4-', '')}：${item.label}`).join('\n') + '\n')
+  }
+
+  lines.push('\n## E · L4交付物地图\n')
+  lines.push(mdTable(
+    ['L4', '交付物', '角色', '具体能力', 'AI重塑方式', '质量锚点', 'Tier(数据库/建议)'],
+    model.l4s.map(l4 => {
+      const a = model.analysis.l4_analysis.find(item => String(item.l4_code) === l4.l4_code) as Record<string, unknown> | undefined
+      const dbTier = asString(a?.database_tier) || l4.tier
+      const recTier = asString(a?.recommended_tier)
+      return [
+        `${l4.l4_code} ${l4.l4_name}`,
+        asString(l4.deliverable) || '待补',
+        asString(a?.deliverable_role) || '待补',
+        asStringList(a?.specific_capabilities).join('、') || '待补',
+        asString(a?.ai_reshape) || '待补',
+        asString(a?.quality_anchor) || '待补',
+        recTier && recTier !== dbTier ? `${dbTier} / ${recTier}` : dbTier,
+      ]
+    })
+  ))
+  if (model.blueprint.blueprint_value_nodes.length > 0) {
+    lines.push('\n蓝图关联价值节点（补充关系，数据库桥接见下表）：\n')
+    lines.push(mdTable(['VN', '名称', '交付物', '关联L4', '状态'],
+      model.blueprint.blueprint_value_nodes.map(vn => [vn.vn_id, vn.vn_name, vn.deliverable, vn.l4_codes.join('、'), vn.status_text])))
+  }
+  if (model.value_nodes.length > 0) {
+    const l4sByVn = new Map<string, string[]>()
+    for (const m of model.vn_l4_mappings as Record<string, unknown>[]) {
+      const vnId = String(m.vn_id)
+      l4sByVn.set(vnId, [...(l4sByVn.get(vnId) ?? []), String(m.l4_code)])
     }
-    lines.push('')
+    lines.push('\n数据库正式价值节点桥接：\n')
+    lines.push(mdTable(['VN', '名称', '综合判定', '关联L4'],
+      (model.value_nodes as Record<string, unknown>[]).map(vn => [
+        String(vn.vn_id), String(vn.vn_name),
+        vn.is_fused ? '熔断' : asString(vn.overall_judgment),
+        (l4sByVn.get(String(vn.vn_id)) ?? []).join('、') || '—',
+      ])))
   }
-  lines.push('## 五、Definition of Done')
-  for (const item of ua.dod_checklist) {
-    lines.push(`- [${item.satisfied ? 'x' : ' '}] ${item.item}`)
+
+  lines.push('\n## C · AI任务清单\n')
+  if (model.analysis.tasks.length === 0) {
+    lines.push('当前没有通过证据与结构校验的任务拆分。\n')
+  } else {
+    for (const tierId of TIER_ORDER) {
+      const tasks = model.analysis.tasks.filter(t => t.suggested_tier === tierId)
+      if (tasks.length === 0) continue
+      const label = COLUMNS.find(c => c.id === tierId)?.label ?? tierId
+      lines.push(`\n### ${tierId} · ${label}（${tasks.length}项）\n`)
+      lines.push(mdTable(['任务', '所属L4', '来源', '说明'],
+        tasks.map(t => [
+          `${t.task_id} ${t.task_name}`,
+          `${t.l4_code} ${l4ByCode.get(t.l4_code)?.l4_name ?? ''}`,
+          t.source_type,
+          t.tier_rationale,
+        ])))
+    }
   }
-  lines.push('')
-  lines.push('## 六、综合判断')
-  lines.push(ua.status === 'DRAFT'
-    ? '本报告为VNW自动生成的草稿，仅供参考，须经Jasper/L3业务负责人复核并写入决策确认记录后才可作为最终投入依据。'
-    : `本报告已由${ua.confirmed_by ?? '业务负责人'}于${ua.confirmed_at ?? ''}确认。${ua.confirmation_notes ?? ''}`)
-  lines.push('')
-  lines.push('---')
-  lines.push(`来源：03_规划项目结构_Plan_Project_Structure/VNW统一分析Spec_v1.0.md`)
+
+  lines.push('\n## B · 人机协作与控制地图\n')
+  if (model.analysis.analysis_status === 'PENDING_MODEL' || model.analysis.l4_analysis.length === 0) {
+    lines.push('当前只有数据库Tier和人工触点，尚未生成逐L4的人机责任、异常升级条件和控制门。\n')
+  } else {
+    lines.push(mdTable(['L4', 'AI负责', '人负责', '何时转人工', '不可绕过控制门'],
+      model.analysis.l4_analysis.map(item => {
+        const row = item as Record<string, unknown>
+        const code = String(row.l4_code ?? '')
+        return [
+          `${code} ${l4ByCode.get(code)?.l4_name ?? ''}`,
+          asString(row.ai_responsibility) || '待补',
+          asString(row.human_responsibility) || '待补',
+          asStringList(row.handoff_triggers).join('；') || '待补',
+          asStringList(row.control_gates).join('；') || '待补',
+        ]
+      })))
+  }
+
+  lines.push('\n## D · AI机会优先级矩阵\n')
+  if (model.analysis.priority_drafts.length === 0) {
+    lines.push('当前没有经过证据校验的逐L4优先级坐标，不生成假坐标。\n')
+  } else {
+    for (const zone of PRIORITY_ZONES) {
+      const items = (model.analysis.priority_drafts as Record<string, unknown>[]).filter(item => String(item.quadrant) === zone.id)
+      if (items.length === 0) continue
+      lines.push(`\n### ${zone.id} · ${zone.label}（${items.length}项）\n`)
+      lines.push(mdTable(['L4', '数据依据', '流程背景', '风险/限制', '当前建议'],
+        items.map(item => {
+          const code = String(item.l4_code)
+          return [
+            `${code} ${l4ByCode.get(code)?.l4_name ?? ''}`,
+            asStringList(item.data_basis).join('；') || '待补',
+            asString(item.process_context) || '待补',
+            asStringList(item.risks_limits).join('；') || '待补',
+            asString(item.current_recommendation) || '待补',
+          ]
+        })))
+    }
+  }
+
+  lines.push('\n## 负责人决策 · 先试哪些AI任务\n')
+  if (model.analysis.decision_drafts.length === 0) {
+    lines.push('当前没有通过证据校验的负责人决策草稿。\n')
+  } else {
+    lines.push(mdTable(['优先级', '建议先试的任务', '首轮最小范围', '必须保留的人工边界'],
+      (model.analysis.decision_drafts as Record<string, unknown>[]).map(d => [
+        asString(d.priority),
+        `${asString(d.title)}${Array.isArray(d.task_ids) ? '（' + d.task_ids.join('、') + '）' : ''}`,
+        asString(d.pilot_scope) || '待补',
+        asString(d.human_boundary) || '待补',
+      ])))
+  }
+
+  lines.push('\n## F · 标准数据表\n')
+  lines.push(mdTable(['l4_code', 'l4_name', 'deliverable', 'Tier', 'human_touchpoint'],
+    model.l4s.map(l4 => [l4.l4_code, l4.l4_name, l4.deliverable || '', l4.tier, l4.human_touchpoint || '—'])))
+  if (model.kpi_mappings.length > 0) {
+    lines.push('\n关联KPI：\n')
+    lines.push(mdTable(['KPI', '统计周期'], model.kpi_mappings.map(kpi => [kpi.kpi_name, kpi.measurement_cycle || '—'])))
+  }
+
+  lines.push(`\n---\n来源：03_规划项目结构_Plan_Project_Structure/VNW统一分析Spec_v1.0.md · L3流程模型统一模板_v1.0.md`)
   return lines.join('\n')
 }
 
-function downloadMarkdown(model: L3Model) {
-  const content = buildMarkdownReport(model)
+function downloadL3FlowReportMarkdown(model: L3Model) {
+  const content = buildL3FlowReportMarkdown(model)
   const blob = new Blob([content], { type: 'text/markdown;charset=utf-8' })
   const url = URL.createObjectURL(blob)
   const link = document.createElement('a')
   link.href = url
-  link.download = `${model.l3_code}_统一分析报告.md`
+  link.download = `L3流程分析报告_${model.l3_code}.md`
   link.click()
   URL.revokeObjectURL(url)
 }
 
-const HTML_REPORT_STYLE = `
-:root{--bg:#f5f7fa;--paper:#fff;--ink:#172033;--muted:#667085;--line:#d9dee8;--blue:#3157d5;--soft:#eef2ff;--green:#16866b;--amber:#b7791f;--red:#c43d3d}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.6 Inter,"PingFang SC","Microsoft YaHei",sans-serif}
-.wrap{max-width:920px;margin:auto;padding:28px}
-.banner{background:var(--paper);border:1px solid var(--line);border-left:5px solid var(--amber);border-radius:14px;padding:20px 24px;margin-bottom:16px}
-h1{margin:3px 0 4px;font-size:24px}h2{font-size:16px;margin:22px 0 10px;border-bottom:1px solid var(--line);padding-bottom:8px}h3{font-size:13px;margin:14px 0 6px}
-.eyebrow{font-size:11px;color:var(--muted)}
-.status{display:inline-block;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:600;margin-top:6px}
-.status.confirmed{background:#e3f5ef;color:var(--green)}.status.draft{background:#fff2d7;color:var(--amber)}
-.kpis{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
-.kpi{flex:1;min-width:160px;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:13px}
-.kpi b{display:block;font-size:18px}.kpi span{font-size:11px;color:var(--muted)}
-.warning{padding:10px 12px;border-radius:9px;font-size:12.5px;background:#fff8e8;color:#875b0a;border:1px solid #ecd39c;margin-bottom:10px}
-.note{padding:10px 12px;border-radius:9px;font-size:12.5px;background:#f7f8fb;color:var(--muted);margin-bottom:10px}
-.card{border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:10px;background:#fff}
-.tag{display:inline-block;padding:2px 7px;border-radius:5px;font-size:10px;font-weight:600;background:var(--soft);color:var(--blue);margin-right:6px}
-ul{margin:6px 0;padding-left:20px;font-size:12.5px}li{margin-bottom:4px}
-.dod li{list-style:none;margin-left:-20px}.dod li.done{color:var(--green)}
-footer{text-align:center;color:var(--muted);font-size:11px;padding:18px}
-`
-
-function buildHtmlReport(model: L3Model): string {
-  const ua = model.unified_analysis
-  const esc = (value: unknown) => String(value ?? '')
-    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-
-  const statusHtml = ua.status === 'CONFIRMED'
-    ? `<span class="status confirmed">已确认（${esc(ua.confirmed_by ?? '')} · ${esc(ua.confirmed_at ?? '')}）</span>`
-    : '<span class="status draft">草稿 · 尚未人工确认，不可作为最终投入决策依据</span>'
-
-  const axisHtml = ua.axis_conflicts.length > 0
-    ? `<div class="warning">⚠️ 两轴方向冲突：${esc(ua.axis_conflicts.join('、'))} —— 需业务方澄清，本报告不自动选边。</div>`
-    : '<div class="note">本L3当前两轴方向一致，无冲突。</div>'
-
-  const laddersHtml = model.l4s.map(l4 => {
-    const ladder = ua.root_cause_ladders[l4.l4_code]
-    const items = ladder && ladder.length > 0
-      ? ladder.map(layer => `<li><span class="tag">${esc(layer.layer)}·${esc(layer.grade)}级</span>${esc(layer.statement)}</li>`).join('')
-      : '<li style="color:var(--muted)">待补</li>'
-    return `<div class="card"><h3>${esc(l4.l4_code)} · ${esc(l4.l4_name)}</h3><ul>${items}</ul></div>`
-  }).join('')
-
-  const dodHtml = ua.dod_checklist
-    .map(item => `<li class="${item.satisfied ? 'done' : ''}">${item.satisfied ? '☑' : '☐'} ${esc(item.item)}</li>`)
-    .join('')
-
-  const conclusion = ua.status === 'DRAFT'
-    ? '本报告为VNW自动生成的草稿，仅供参考，须经Jasper/L3业务负责人复核并写入决策确认记录后才可作为最终投入依据。'
-    : `本报告已由${esc(ua.confirmed_by ?? '业务负责人')}于${esc(ua.confirmed_at ?? '')}确认。${esc(ua.confirmation_notes ?? '')}`
-
-  const l2Names = model.l2_capabilities.length > 0
-    ? model.l2_capabilities.map(row => String((row as Record<string, unknown>).l2_name ?? '')).join('、')
-    : '待补'
-  const vsNames = model.value_stream_mappings.length > 0
-    ? model.value_stream_mappings.map(row => { const r = row as Record<string, unknown>; return `${r.vs_name}·${r.stage_name}` }).join('、')
-    : '未定位到客户旅程/价值流阶段'
-  const kpiNames = model.kpi_mappings.length > 0
-    ? model.kpi_mappings.map(kpi => `${kpi.kpi_name}${kpi.source_type === 'mark_priority_draft' ? '(战略权重草稿)' : ''}`).join('、')
-    : '待补'
-
-  return `<!doctype html>
-<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>${esc(model.l3_code)} · ${esc(model.l3_name)} · VNW统一分析报告</title><style>${HTML_REPORT_STYLE}</style></head>
-<body><div class="wrap">
-<section class="banner">
-<div class="eyebrow">VNW统一分析Spec v1.0 · 快照 ${esc(model.snapshot_hash.slice(0, 12))} · Gate M/E/A = ${esc(model.gates.M.status)}/${esc(model.gates.E.status)}/${esc(model.gates.A.status)}</div>
-<h1>${esc(model.l3_code)} · ${esc(model.l3_name)} · VNW统一分析报告</h1>
-${statusHtml}
-</section>
-
-<h2>一、分析基线</h2>
-<div class="kpis">
-<div class="kpi"><b>${esc(model.snapshot_hash.slice(0, 12))}</b><span>数据快照</span></div>
-<div class="kpi"><b>${esc(model.blueprint.version || '未覆盖')}</b><span>蓝图版本</span></div>
-<div class="kpi"><b>${model.l4s.length}</b><span>L4总数</span></div>
-<div class="kpi"><b>${model.value_nodes.length}</b><span>价值节点</span></div>
-</div>
-
-<h2>二、受控维度</h2>
-<ul>
-<li>L2业务能力：${esc(l2Names)}</li>
-<li>价值流位置：${esc(vsNames)}</li>
-<li>关联KPI：${esc(kpiNames)}</li>
-<li>岗位归属：${ua.coverage.position_covered}/${ua.coverage.l4_total} 个L4已归口</li>
-<li>业务数据证据：${ua.coverage.business_evidence_covered}/${ua.coverage.l4_total} 个L4定位到业务数据仓库表</li>
-</ul>
-
-<h2>三、双轴声明（D1-D6/Tier轴 与 候选Agent封装轴，禁止合并）</h2>
-${axisHtml}
-
-<h2>四、逐L4根因阶梯（事实→机制→结构→策略）</h2>
-${laddersHtml}
-
-<h2>五、Definition of Done</h2>
-<ul class="dod">${dodHtml}</ul>
-
-<h2>六、综合判断</h2>
-<p>${esc(conclusion)}</p>
-
-<footer>来源：03_规划项目结构_Plan_Project_Structure/VNW统一分析Spec_v1.0.md</footer>
-</div></body></html>
-`
-}
-
-function downloadHtml(model: L3Model) {
-  const content = buildHtmlReport(model)
-  const blob = new Blob([content], { type: 'text/html;charset=utf-8' })
-  const url = URL.createObjectURL(blob)
-  const link = document.createElement('a')
-  link.href = url
-  link.download = `${model.l3_code}_统一分析报告.html`
-  link.click()
-  URL.revokeObjectURL(url)
-}
 
 export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}) {
   const params = useParams()
@@ -660,16 +684,10 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
           </div>
           <div className="flex gap-2">
             <button
-              onClick={() => downloadMarkdown(model)}
+              onClick={() => downloadL3FlowReportMarkdown(model)}
               className="flex items-center gap-1.5 rounded-lg border border-border-default bg-bg-surface px-3 py-2 text-xs text-text-secondary hover:bg-bg-elevated"
             >
-              <Download className="h-3.5 w-3.5" /> 导出统一分析报告（.md）
-            </button>
-            <button
-              onClick={() => downloadHtml(model)}
-              className="flex items-center gap-1.5 rounded-lg border border-border-default bg-bg-surface px-3 py-2 text-xs text-text-secondary hover:bg-bg-elevated"
-            >
-              <Download className="h-3.5 w-3.5" /> 导出统一分析报告（.html）
+              <Download className="h-3.5 w-3.5" /> 导出L3流程分析报告（.md）
             </button>
           </div>
         </div>
