@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState } from 'react'
-import { useSearchParams } from 'react-router'
+import { useEffect, useMemo, useState, type ReactNode } from 'react'
+import { Link, useSearchParams } from 'react-router'
 import { ArrowRight, Compass, Database, LoaderCircle, Lock, Search, Sparkles, Target } from 'lucide-react'
-import { loadScenarioIndex, loadScenario, type ScenarioIndex, type BusinessScenario } from '../lib/businessScenarios'
+import { loadScenarioIndex, loadScenario, loadScenarioAnalysis, type ScenarioIndex, type BusinessScenario, type ScenarioAnalysis } from '../lib/businessScenarios'
 import { loadTableAnalysis, type TableAnalysis, type TableAnalysisEntry, type TaskClusterLabel } from '../lib/tableAnalysis'
 
 const STATE_INFO: Record<string, { label: string; tone: string }> = {
@@ -10,20 +10,58 @@ const STATE_INFO: Record<string, { label: string; tone: string }> = {
   C: { label: 'C·应有而无表(数据空白)', tone: 'bg-rose-50 text-rose-700 border border-dashed border-rose-300' },
 }
 
+function gateBadgeTone(status: string) {
+  return status === 'PASS' ? 'border-emerald-400/25 bg-emerald-400/10 text-emerald-700' : 'border-amber-400/25 bg-amber-400/10 text-amber-700'
+}
+
+const GOVERNANCE_TONE: Record<string, string> = {
+  DATA_GAP: 'border-amber-200 bg-amber-50 text-amber-800',
+  PROCESS_MISSING: 'border-rose-200 bg-rose-50 text-rose-800',
+  GATE_A_BLOCKED: 'border-rose-200 bg-rose-50 text-rose-800',
+}
+
+function AnalysisNote({ children }: { children: ReactNode }) {
+  return <p className="mb-2 text-[10px] italic leading-4 text-text-muted">{children}</p>
+}
+
 function ScenarioCard({ file }: { file: string }) {
   const [scenario, setScenario] = useState<BusinessScenario | null>(null)
+  const [analysis, setAnalysis] = useState<ScenarioAnalysis | null>(null)
   const [error, setError] = useState('')
 
   useEffect(() => {
     loadScenario(file).then(setScenario).catch(err => setError(err.message))
   }, [file])
 
+  useEffect(() => {
+    if (!scenario) return
+    loadScenarioAnalysis(scenario.scenario_id).then(setAnalysis).catch(() => setAnalysis(null))
+  }, [scenario])
+
   if (error) return <p className="p-3 text-xs text-accent-danger">{error}</p>
   if (!scenario) return <p className="p-3 text-xs text-text-muted">加载中…</p>
 
   return (
     <div className="space-y-4 p-4">
+      <div className="rounded-lg border border-indigo-200 bg-indigo-50/60 p-3">
+        <p className="text-xs font-semibold text-indigo-800">目标</p>
+        <p className="mt-1 text-[11px] leading-5 text-text-secondary">
+          这不是为了证明VNW这套系统本身建得怎么样——是为了把公司/部门真正关心的问题讲清楚：
+          "{scenario.scenario_name}"这件事，今天到底能不能做出来、卡在哪、谁该做什么去解决。
+          Gate、MODEL_DRAFT这些是我们内部工作用的标注，不是给业务负责人看的重点，
+          业务负责人只需要看结论和行动项。
+        </p>
+        <p className="mt-2 text-xs font-semibold text-indigo-800">框架逻辑</p>
+        <p className="mt-1 text-[11px] leading-5 text-text-secondary">
+          先把这个业务问题拆解成可追溯的组成项，看今天有没有真实数据支撑（数据现状）；
+          对牵涉到的流程，查它现在处于什么建模阶段（流程现状）；把两边暴露出的缺口整理成
+          需要谁来处理的清单（数据治理→任务清单）；最后看这些缺口有没有已经在做的流程优化能覆盖，
+          没有就反馈去补流程模型的输入材料、重新分析（流程优化）。
+        </p>
+      </div>
+
       <div>
+        <AnalysisNote>场景需求：从真实业务问题出发拆解出的组成项定义，人工authoring，不是模板穷举出来的。</AnalysisNote>
         <p className="text-xs font-semibold text-text-primary">场景定义</p>
         <p className="mt-1 text-sm leading-6 text-text-secondary">{scenario.definition}</p>
         {scenario.definition_note && <p className="mt-1 text-[11px] text-amber-700">{scenario.definition_note}</p>}
@@ -31,6 +69,7 @@ function ScenarioCard({ file }: { file: string }) {
       </div>
 
       <div className="space-y-3">
+        <AnalysisNote>数据现状：逐组成项追溯到真实业务数据表和关联L3，用行数/表结构判断今天是否有真实数据支撑（A/B/C三态），不是猜测。</AnalysisNote>
         {scenario.components.map(component => (
           <div key={component.component_name} className="rounded-lg border border-border-default bg-bg-surface p-3">
             <div className="flex flex-wrap items-center justify-between gap-2">
@@ -74,6 +113,111 @@ function ScenarioCard({ file }: { file: string }) {
               {scenario.next_steps.map((step, index) => <li key={index}>{step}</li>)}
             </ul>
           </>
+        )}
+      </div>
+
+      <div className="rounded-lg border border-border-default bg-bg-surface p-3">
+        <p className="text-xs font-semibold text-text-primary">流程现状</p>
+        <AnalysisNote>把场景涉及的每个L3，去查model_snapshots里的真实Gate M/E/A状态——人工判断(manual_gate_a)和实时查询(live_gates)并列展示，不用后者静默覆盖前者。</AnalysisNote>
+        {!analysis || analysis.process_status.length === 0 ? (
+          <p className="mt-1 text-[11px] text-text-muted">待生成</p>
+        ) : (
+          <div className="mt-2 space-y-1.5">
+            {analysis.process_status.map(ps => (
+              <div key={ps.l3_code} className="flex flex-wrap items-center gap-2 text-[11px]">
+                {ps.in_current_db ? (
+                  <Link to={`/models/${ps.l3_code}`} className="font-mono text-accent-primary-light hover:underline">{ps.l3_code}</Link>
+                ) : (
+                  <span className="font-mono text-text-muted">{ps.l3_code}</span>
+                )}
+                <span className="text-text-secondary">{ps.l3_name ?? '不在当前DB'}</span>
+                {ps.live_gates ? (
+                  (['M', 'E', 'A'] as const).map(gate => (
+                    <span key={gate} className={`rounded border px-1.5 py-0.5 font-mono text-[9px] ${gateBadgeTone(ps.live_gates![gate])}`}>{gate}·{ps.live_gates![gate]}</span>
+                  ))
+                ) : (
+                  <span className="rounded border border-border-default px-1.5 py-0.5 text-[9px] text-text-muted">不在当前DB</span>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="rounded-lg border border-border-default bg-bg-surface p-3">
+        <p className="text-xs font-semibold text-text-primary">数据治理</p>
+        <AnalysisNote>两条机械规则：组成项状态B/C(有表没数据/应有无表)标数据缺口；关联L3不在当前DB或Gate A未过标流程建模缺口——判定语言复用入口②L5层同一套说法，不是另外发明的标准。</AnalysisNote>
+        {!analysis || analysis.data_governance.length === 0 ? (
+          <p className="mt-1 text-[11px] text-text-muted">当前无治理缺口</p>
+        ) : (
+          <div className="mt-2 space-y-1.5">
+            {analysis.data_governance.map((item, index) => (
+              <div key={index} className={`rounded border px-2 py-1.5 text-[11px] leading-4 ${GOVERNANCE_TONE[item.flag]}`}>
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <span className="font-mono text-[9px]">{item.flag}</span>
+                  {item.component_name && <b>{item.component_name}</b>}{item.l3_code && <b className="font-mono">{item.l3_code}</b>}
+                </div>
+                <p className="mt-1">{item.reason}</p>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="rounded-lg border border-border-default bg-bg-surface p-3">
+        <p className="text-xs font-semibold text-text-primary">任务清单</p>
+        <AnalysisNote>人工写的下一步(next_steps)和机械算出的治理缺口统一转成结构化任务，各自标注来源；优先级/负责人没有依据的字段不臆造。</AnalysisNote>
+        {!analysis || analysis.task_list.length === 0 ? (
+          <p className="mt-1 text-[11px] text-text-muted">待生成</p>
+        ) : (
+          <table className="mt-2 w-full text-[11px]">
+            <tbody>
+              {analysis.task_list.map(task => (
+                <tr key={task.task_id} className="border-t border-border-default/60 align-top">
+                  <td className="py-1.5 pr-2 font-mono text-[9px] text-text-muted">{task.task_id}</td>
+                  <td className="py-1.5 pr-2"><span className="rounded bg-bg-elevated px-1.5 py-0.5 text-[9px] text-text-secondary">{task.type}</span></td>
+                  <td className="py-1.5 pr-2 leading-4 text-text-secondary">{task.description}</td>
+                  <td className="py-1.5 text-[9px] text-text-muted">{task.source}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+
+      <div className="rounded-lg border border-border-default bg-bg-surface p-3">
+        <p className="text-xs font-semibold text-text-primary">流程优化</p>
+        <AnalysisNote>
+          只对场景本身发现的建模缺口(Gate A未过)生成条目。这类缺口是"价值节点映射/熔断判定未完成"，
+          和该L3已有的AI任务试点建议(decision_drafts)是两件不同层次的事，机械规则判断不出语义上是否覆盖，
+          因此如实并列展示两边证据，不假装匹配——如果下面的AI任务建议里确实没有能解决这个缺口的，
+          说明是本场景新发现的优化点，需要把发现补充进该L3的分析输入材料后重跑统一分析。
+        </AnalysisNote>
+        {!analysis || analysis.process_optimization.length === 0 ? (
+          <p className="mt-1 text-[11px] text-text-muted">当前场景未发现需要流程优化的建模缺口</p>
+        ) : (
+          <div className="mt-2 space-y-2">
+            {analysis.process_optimization.map(opt => (
+              <div key={opt.l3_code} className="rounded border border-border-default bg-bg-elevated p-2">
+                <div className="flex flex-wrap items-center gap-1.5 text-[11px]">
+                  <Link to={`/models/${opt.l3_code}`} className="font-mono text-accent-primary-light hover:underline">{opt.l3_code}</Link>
+                  <span className="text-text-secondary">{opt.l3_name}</span>
+                </div>
+                <p className="mt-1.5 text-[10px] leading-4 text-rose-800"><b>本场景发现：</b>{opt.scenario_finding}</p>
+                {opt.existing_decision_drafts.length > 0 && (
+                  <>
+                    <p className="mt-1.5 text-[10px] font-medium text-text-secondary">该L3已有的AI任务试点建议 <span className="text-amber-700">MODEL_DRAFT</span></p>
+                    <ul className="mt-0.5 space-y-0.5 pl-3 text-[10px] leading-4 text-text-secondary">
+                      {opt.existing_decision_drafts.map((draft, index) => (
+                        <li key={index} className="list-disc"><b>{draft.priority}</b> {draft.title}</li>
+                      ))}
+                    </ul>
+                  </>
+                )}
+                <p className="mt-1.5 text-[10px] leading-4 text-indigo-700">{opt.conclusion}</p>
+              </div>
+            ))}
+          </div>
         )}
       </div>
     </div>

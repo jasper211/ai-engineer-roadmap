@@ -41,7 +41,7 @@ def parse_args():
     parser.add_argument("--build-model-snapshots", action="store_true", help="只读构建L3流程模型基础快照")
     parser.add_argument("--build-all-model-snapshots", action="store_true", help="批量只读构建数据库中的全部L3模型")
     parser.add_argument("--build-db-catalog", action="store_true", help="只读构建数据库现状目录(process_analytics+业务数据仓库表结构+行数)")
-    parser.add_argument("--sync-business-scenarios", action="store_true", help="同步人工authoring的业务数据场景记录到前端")
+    parser.add_argument("--sync-business-scenarios", action="store_true", help="同步人工authoring的业务数据场景记录到前端，并基于model_snapshots机械派生流程现状/数据治理/任务清单/流程优化四环")
     parser.add_argument("--build-table-analysis", action="store_true", help="构建业务数据入口②五层分析结构(基于已有db_catalog.json，不重新查库)")
     parser.add_argument("--refresh-business-data", action="store_true", help="实时查库刷新db_catalog+重建入口②五层分析+重建数据血缘图，一条命令覆盖表数量变化(如新增表)")
     parser.add_argument("--build-data-lineage", action="store_true", help="用视图SQL定义/外键约束/命名ETL流水线三类真实证据构建104张表的数据血缘图")
@@ -355,13 +355,41 @@ def main() -> int:
             print(json.dumps({"status": "published", "analysis_package": str(output)}, ensure_ascii=False, indent=2))
             return 0
     if args.sync_business_scenarios:
+        from skills.business_scenario_analysis import build_scenario_analysis
         from skills.business_scenario_sync import sync_business_scenarios
 
-        index = sync_business_scenarios(
-            AGENT_ROOT / "07_接入记忆_Integrate_Memory/business_scenarios",
-            AGENT_ROOT / "10_部署与运行_Deploy_and_Run/frontend/public/data/business_scenarios",
-        )
-        print(json.dumps({"status": "synced", "scenario_count": len(index["scenarios"])}, ensure_ascii=False, indent=2))
+        scenario_source_dir = AGENT_ROOT / "07_接入记忆_Integrate_Memory/business_scenarios"
+        scenario_dest_dir = AGENT_ROOT / "10_部署与运行_Deploy_and_Run/frontend/public/data/business_scenarios"
+        index = sync_business_scenarios(scenario_source_dir, scenario_dest_dir)
+
+        # 场景记录同步完后，紧接着派生入口①后四环(流程现状/数据治理/任务
+        # 清单/流程优化)——全部基于model_snapshots真实数据机械推导，不
+        # 触碰scenario_dest_dir里刚同步的人工authoring记录。
+        snapshot_dir = AGENT_ROOT / "10_部署与运行_Deploy_and_Run/frontend/public/data/model_snapshots"
+        model_index_data = json.loads((snapshot_dir / "index.json").read_text(encoding="utf-8"))
+        model_index = {m["l3_code"]: m for m in model_index_data["models"]}
+        snapshot_cache: dict[str, dict | None] = {}
+
+        def load_snapshot(l3_code: str) -> dict | None:
+            if l3_code not in snapshot_cache:
+                path = snapshot_dir / f"{l3_code}.json"
+                snapshot_cache[l3_code] = json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
+            return snapshot_cache[l3_code]
+
+        analysis_dest_dir = AGENT_ROOT / "10_部署与运行_Deploy_and_Run/frontend/public/data/business_scenario_analysis"
+        analysis_dest_dir.mkdir(parents=True, exist_ok=True)
+        analyzed_scenarios = []
+        for entry in index["scenarios"]:
+            scenario = json.loads((scenario_dest_dir / entry["file"]).read_text(encoding="utf-8"))
+            analysis = build_scenario_analysis(scenario, model_index, load_snapshot)
+            (analysis_dest_dir / f"{scenario['scenario_id']}.json").write_text(
+                json.dumps(analysis, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8",
+            )
+            analyzed_scenarios.append(scenario["scenario_id"])
+
+        print(json.dumps({
+            "status": "synced", "scenario_count": len(index["scenarios"]), "analyzed_scenarios": analyzed_scenarios,
+        }, ensure_ascii=False, indent=2))
         return 0
     if args.build_table_analysis:
         catalog_path = AGENT_ROOT / "10_部署与运行_Deploy_and_Run/frontend/public/data/db_catalog.json"
