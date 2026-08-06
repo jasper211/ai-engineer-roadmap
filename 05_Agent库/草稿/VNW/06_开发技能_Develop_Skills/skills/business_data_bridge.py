@@ -49,7 +49,7 @@ EVIDENCE_TYPE_LABELS = {
 # 已完整核实过业务数据匹配的L3（哪怕结果是某些L4确认无关联表，也算"查过"）。
 # 不在这个集合里的L3，其L4在L4_BUSINESS_TABLE_MAP里没有任何entry——不是因为
 # 查过没有，是因为还没排到。table_analysis.py靠这个集合区分两种状态。
-ANALYZED_L3_CODES = {"COM", "HRA", "HRM", "RSJD", "FBA", "KAGA"}
+ANALYZED_L3_CODES = {"COM", "HRA", "HRM", "RSJD", "FBA", "KAGA", "RPD"}
 
 L4_BUSINESS_TABLE_MAP: dict[str, list[dict]] = {
     "L4-COM-01": [
@@ -221,6 +221,9 @@ L4_BUSINESS_TABLE_MAP: dict[str, list[dict]] = {
         {"schema": "public", "table": "v_person_coverage", "evidence_type": "output", "matched_columns": ["population", "matched_keys", "pending_suspects"], "rationale": "人员身份识别覆盖率统计视图，2026-08-05业务方确认其用途是评估bridge_person_identity的数据质量(渠道理财师/个人客户等群体的身份匹配成功率)，与bridge_person_identity同挂此L4", "confidence": "strong"},
         {"schema": "public", "table": "dim_person", "evidence_type": "output", "matched_columns": ["person_id", "person_scope", "person_group"], "rationale": "统一人员主数据表，外键被bridge_person_identity的person_id引用，是活动率分析人员归一化后的主档", "confidence": "strong"},
         {"schema": "public", "table": "person_match_suspect", "evidence_type": "audit", "matched_columns": ["pending_key_value", "proposed_action", "status"], "rationale": "人员身份匹配疑似项表，视图依赖被v_person_coverage引用，是身份归一化过程中待人工复核的清单，与v_person_coverage同挂此L4", "confidence": "strong"},
+        {"schema": "public", "table": "bridge_person_relationship", "evidence_type": "output", "matched_columns": ["person_id", "relationship_type", "target_person_id"], "rationale": "人员关系桥接表，外键指向dim_person，记录推荐/管理等人际关系，是活动率分析人员归一化后的关系维度扩展", "confidence": "strong"},
+        {"schema": "public", "table": "bridge_person_role", "evidence_type": "output", "matched_columns": ["person_id", "role_code", "org_code"], "rationale": "人员角色桥接表，外键指向dim_person，记录担任角色及所属组织，是活动率分析按角色维度聚合的基础", "confidence": "strong"},
+        {"schema": "public", "table": "v_dim_person", "evidence_type": "output", "matched_columns": ["person_id", "person_scope", "person_group"], "rationale": "dim_person的精简视图(去掉批次/审计字段)，视图依赖dim_person，供业务查阅使用", "confidence": "strong"},
     ],
     "L4-FBA-03": [],
     "L4-FBA-04": [],
@@ -236,6 +239,22 @@ L4_BUSINESS_TABLE_MAP: dict[str, list[dict]] = {
     "L4-KAGA-03": [],
     "L4-KAGA-04": [
         {"schema": "public", "table": "dim_ka", "evidence_type": "output", "matched_columns": ["contact_person", "support_team_org_id", "business_support_emp_id"], "rationale": "对接人与支持团队字段直接对应KA关系维护与长效运营", "confidence": "strong"},
+    ],
+
+    # L3-RPD 权益包设计与发布：2026-08-06新纳入分析范围。L4-RPD-06"系统配置"
+    # 的deliverable字段在蓝图里直接写明"DIM_Strategy/Config_Strategy_Header/
+    # Tiers/Bridge_Strategy_Routing（四张配置表）"——不是推断，是蓝图本身指名
+    # 的交付物，是本轮里置信度最高的匹配之一。dim_partner_equity未被蓝图直接
+    # 点名，但字段(equity_type/equity_value/partner_code)与L4-RPD-01"权益包
+    # 核心构建"的交付物"权益包使用规则"语义对应，标weak。
+    "L4-RPD-01": [
+        {"schema": "public", "table": "dim_partner_equity", "evidence_type": "output", "matched_columns": ["partner_code", "equity_type", "equity_value", "strategy_id"], "rationale": "伙伴权益配置表，equity_type/equity_value字段对应\"权益包使用规则\"的伙伴侧落地台账；当前0行未populate", "confidence": "weak"},
+    ],
+    "L4-RPD-06": [
+        {"schema": "public", "table": "dim_strategy", "evidence_type": "output", "matched_columns": ["strategy_id", "strategy_name", "base_tier_code"], "rationale": "蓝图L4-RPD-06\"系统配置\"交付物明确指名DIM_Strategy为四张配置表之一；当前0行未populate", "confidence": "strong"},
+        {"schema": "public", "table": "config_strategy_header", "evidence_type": "rule", "matched_columns": ["strategy_id", "strategy_type", "evaluation_cycle"], "rationale": "蓝图L4-RPD-06交付物明确指名Config_Strategy_Header为四张配置表之一；当前0行未populate", "confidence": "strong"},
+        {"schema": "public", "table": "config_strategy_tiers", "evidence_type": "rule", "matched_columns": ["strategy_id", "tier_level", "target_metric", "reward_cash_amount"], "rationale": "蓝图L4-RPD-06交付物明确指名Config_Strategy_Tiers为四张配置表之一；当前0行未populate", "confidence": "strong"},
+        {"schema": "public", "table": "bridge_strategy_routing", "evidence_type": "rule", "matched_columns": ["scheme_id", "target_strategy_id", "partner_category"], "rationale": "蓝图L4-RPD-06交付物明确指名Bridge_Strategy_Routing为四张配置表之一；当前0行未populate", "confidence": "strong"},
     ],
 }
 # L4-COM-06(佣金税务处理)/L4-COM-07(佣金争议处理)/L4-COM-17(IA合规拦截引擎)

@@ -1,0 +1,523 @@
+{
+  "schema_version": "vnw.l3-analysis.v1",
+  "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
+  "generation_mode": "UNIFIED_MODEL",
+  "analysis_status": "MODEL_DRAFT",
+  "model_run": {
+    "model_name": "deepseek-v4-pro",
+    "model_version": "deepseek-v4-pro",
+    "prompt_version": "VNW-L3-COM-GOLD-v1.0",
+    "generated_at": "2026-08-06T05:45:21.956910+00:00",
+    "input_snapshot_hash": "855511673a3cb78d1c5ba085cd9ea232270b836994569fa8f44816f7faa01615"
+  },
+  "source_scope": {
+    "database": "process_analytics",
+    "knowledge": "ACTIVE supplemental evidence only",
+    "evidence_count": 64
+  },
+  "l4_analysis": [
+    {
+      "l4_code": "L4-FBA-01",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-6b1aae1d8dd5dd31fc94",
+        "EVD-b03f01c0471cb68248ee",
+        "EVD-3b8520df1fa07fd18d8d",
+        "EVD-40eef74d4a4ecff5cd32",
+        "EVD-0122b63aac94d035a161",
+        "EVD-6167635186093c7f334a",
+        "EVD-48c894e0dc69af5e8ee6",
+        "EVD-12a09d75b3f745603463",
+        "EVD-f293a472a3c33143ca34",
+        "EVD-f3ebf7f0ec3dfd55c584",
+        "EVD-588a621fe9768e90d159",
+        "EVD-e9aab6f3d54a490658df"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "事业部运营管理岗",
+      "specific_capabilities": [
+        "从销售汇总表(agg_sales_base)提取月度/季度保费、APE数据",
+        "结合季度日历配置表划分统计区间",
+        "生成标准化月度业绩数据包"
+      ],
+      "ai_reshape": "可封装为确定性Skill，自动完成数据提取、汇总和格式化，输出《月度业绩数据包》",
+      "quality_anchor": "数据汇总准确度：与源表行数一致，季度区间划分正确",
+      "ai_responsibility": "保证数据提取的完整性、汇总逻辑的正确性",
+      "human_responsibility": "审核自动生成结果的数据完整性，处理数据源缺失等异常情况",
+      "handoff_triggers": [
+        "数据源表结构变更",
+        "汇总结果与业务预期偏差超过5%"
+      ],
+      "control_gates": [],
+      "data_basis": [
+        "agg_sales_base(订单粒度销售数据)",
+        "config_quarter(季度日历配置)"
+      ],
+      "process_context": "蓝图STEP-01：业绩数据汇总，是整个经营分析的数据基础",
+      "risks_limits": [
+        "数据源表变更可能导致提取脚本失效",
+        "季度日历配置表维护不及时可能切错区间"
+      ],
+      "current_recommendation": "优先开发确定性Skill原型，实现从数据库到Excel/报表的自动化输出，辅以人工抽检",
+      "database_tier": "Auto",
+      "recommended_tier": "Auto",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-FBA-02",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-4fc28556d1fdd733a28c",
+        "EVD-faf31c10b4823959583f",
+        "EVD-b131e156d611cbe844be",
+        "EVD-82ee6ada2b9b9b3570ef",
+        "EVD-8aa21323db1abd5283f5",
+        "EVD-89816f3238b0ab9475b8",
+        "EVD-e22c0ecedfacfd47f522",
+        "EVD-966a033fd0906dff0355",
+        "EVD-3dc75d31575d955ab6c7",
+        "EVD-9217b71b52bc0bced7b8",
+        "EVD-2b257febf312b471f2f1",
+        "EVD-5354363f3b3d54fb6e2c",
+        "EVD-bc769b5f7badec8cce04"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "事业部运营管理岗",
+      "specific_capabilities": [
+        "整合业绩数据与人员活动数据",
+        "计算活动率、转化率等KPI",
+        "识别异常偏差（如低活跃、业绩下滑）",
+        "结合业务背景分析原因并输出建议"
+      ],
+      "ai_reshape": "Agent辅助模式：自动完成指标计算和数据可视化，提供异常预警；人工聚焦于原因分析和对策制定",
+      "quality_anchor": "分析准确度：指标计算无误；异常识别准召回率；分析洞察落地可执行",
+      "ai_responsibility": "准确计算所有可量化的KPI，提供数据支撑和初步趋势标注",
+      "human_responsibility": "解读异常原因，判断业务影响，制定行动计划；确保分析逻辑符合业务理解",
+      "handoff_triggers": [
+        "指标计算异常（如分母为零）",
+        "数据源缺失导致部分指标无法计算",
+        "发现重大业务异常（如业绩骤降30%）",
+        "需决策触发L3-FOR/FPG等下游流程"
+      ],
+      "control_gates": [],
+      "data_basis": [
+        "v_person_activity(人员活动流水)",
+        "bridge_person_identity(人员身份归一化)",
+        "dim_role_type(角色字典)",
+        "月度业绩数据包(来自L4-FBA-01)"
+      ],
+      "process_context": "蓝图STEP-02：月度经营分析，产出月度业绩报表、活动率分析表、转化追踪表，并作为异常决策的输入",
+      "risks_limits": [
+        "活动率计算依赖人员身份匹配准确度，身份匹配悬疑项需人工复核",
+        "转化追踪需关联保单数据，若数据延迟可能影响时效",
+        "分析结果受分析人员业务水平影响"
+      ],
+      "current_recommendation": "采用Agent辅助路径，自动生成分析看板，重点培养分析人员的业务解读能力；异常分支先人机协同，逐步积累规则后可部分自动化",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-FBA-03",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-e3ea5dcc6e6539efba94",
+        "EVD-e16ba89a6150cc1a801b",
+        "EVD-b20591697811d7129f66",
+        "EVD-b7ea38bafa0e0faaa1d5",
+        "EVD-560eac5e8dc3b25f4193",
+        "EVD-d470da07b5bd25178bec",
+        "EVD-e9f53bea99ce15433632",
+        "EVD-b437be2a58559664197e",
+        "EVD-9b5f9f26431e95051c01",
+        "EVD-f2e5341f5b9c640d1eb6",
+        "EVD-34f1b77eb2cfee455fbd",
+        "EVD-3d97020c03b04a2e2960",
+        "EVD-14897967825e1c1b2fd4"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "事业部运营管理岗",
+      "specific_capabilities": [
+        "按分公司维度汇总季度业绩与活动数据",
+        "对比分公司经营表现",
+        "识别分公司经营亮点与问题",
+        "输出分公司经营分析报告"
+      ],
+      "ai_reshape": "Agent辅助：自动拉取分公司数据，生成横向对比视图；人工进行归因分析和管理建议",
+      "quality_anchor": "分析客观性、建议可落地性",
+      "ai_responsibility": "提供准确的分公司数据和多维度对比",
+      "human_responsibility": "基于分公司实际情况和战略，进行归因和制定改善措施",
+      "handoff_triggers": [
+        "分公司数据严重缺失",
+        "建议涉及资源调配需上级审批"
+      ],
+      "control_gates": [],
+      "data_basis": [],
+      "process_context": "蓝图STEP-03：季度分公司经营分析，承接月度分析结果，为总部上报报告提供分公司层面洞察",
+      "risks_limits": [
+        "分公司数据维度可能不完整，部分指标需估算",
+        "分析过于依赖个人经验"
+      ],
+      "current_recommendation": "为事业部运营岗配置AI数据分析副驾驶，辅助进行分公司比较，减少数据准备时间",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-FBA-04",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-6eb8fe2383cefc7b836b",
+        "EVD-d5c13fe924c87d80f141",
+        "EVD-815222d060cf0add7411",
+        "EVD-5f1ba9fb6c91196a7543",
+        "EVD-1eefd49cd12cf873ec82",
+        "EVD-089039df868466b49541",
+        "EVD-0977af2849cc46dbe5bd",
+        "EVD-447e9c034b7554ab0952",
+        "EVD-eefdfcb797ff4cc88dfa",
+        "EVD-116dd3de4ec8092944b3",
+        "EVD-51236b211426d3f94a7c",
+        "EVD-9d303bc3b2de20772a2e",
+        "EVD-cb1762e57e214b188c80"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "事业部运营管理岗",
+      "specific_capabilities": [
+        "审核报告内容的准确性和逻辑一致性",
+        "确保分析结论与管理要求对齐",
+        "撰写呈报摘要",
+        "提交总部并沟通反馈"
+      ],
+      "ai_reshape": "AI辅助：校对数据、格式检查、生成摘要草案；最终定稿和上报决策由人完成",
+      "quality_anchor": "报告准确性、上报及时性",
+      "ai_responsibility": "提供报告数据复查和初稿格式化",
+      "human_responsibility": "最终内容审核、签署上报，对报告结论负责",
+      "handoff_triggers": [
+        "发现数据矛盾或逻辑错误",
+        "需修改分析结论",
+        "需要额外补充内容"
+      ],
+      "control_gates": [
+        "对外报告发布前必须经过主管审批",
+        "涉及敏感业绩信息需遵守信息安全规定"
+      ],
+      "data_basis": [
+        "前置分析报告（月度、季度）",
+        "公司标准报告模板"
+      ],
+      "process_context": "蓝图STEP-04：经营分析报告定稿与上报，是整个价值流交付的输出环节，融合了前序所有分析结果",
+      "risks_limits": [
+        "上报时间窗口紧张可能导致审核不充分",
+        "人工判断可能受主观影响"
+      ],
+      "current_recommendation": "强化报告审核流程自动化检查（数据一致性、必填项），减少纯编辑时间；保留人工最终审批权",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "T-FBA-01-01",
+      "l4_code": "L4-FBA-01",
+      "task_name": "汇总月度/季度业绩数据",
+      "source_type": "BLUEPRINT_STEP",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-01",
+      "source_line": 57,
+      "previous_task_ids": [],
+      "next_task_ids": [
+        "T-FBA-02-01",
+        "T-FBA-02-02"
+      ],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-6167635186093c7f334a",
+        "EVD-6b1aae1d8dd5dd31fc94",
+        "EVD-40eef74d4a4ecff5cd32",
+        "EVD-0122b63aac94d035a161"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "单一数据提取与汇总动作，规则明确（季度日历），适合完全自动化Skill实现"
+    },
+    {
+      "task_id": "T-FBA-02-01",
+      "l4_code": "L4-FBA-02",
+      "task_name": "核算月度关键指标（业绩、活动率、转化率）",
+      "source_type": "BLUEPRINT_STEP",
+      "sequence_no": 2,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-02",
+      "source_line": 63,
+      "previous_task_ids": [
+        "T-FBA-01-01"
+      ],
+      "next_task_ids": [
+        "T-FBA-03-01"
+      ],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-e22c0ecedfacfd47f522",
+        "EVD-4fc28556d1fdd733a28c",
+        "EVD-82ee6ada2b9b9b3570ef",
+        "EVD-8aa21323db1abd5283f5"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "指标计算公式明确，数据源通过视图可自动获取，适合封装为Auto任务，作为Agent辅助的数据底座"
+    },
+    {
+      "task_id": "T-FBA-02-02",
+      "l4_code": "L4-FBA-02",
+      "task_name": "识别异常偏差并输出分析初稿",
+      "source_type": "BLUEPRINT_STEP",
+      "sequence_no": 2,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-02",
+      "source_line": 63,
+      "previous_task_ids": [
+        "T-FBA-01-01"
+      ],
+      "next_task_ids": [
+        "T-FBA-03-01"
+      ],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-e22c0ecedfacfd47f522",
+        "EVD-4fc28556d1fdd733a28c",
+        "EVD-82ee6ada2b9b9b3570ef",
+        "EVD-89816f3238b0ab9475b8"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "异常识别需结合业务背景和历史趋势，AI可标注异常点，但最终解释和决策仍需人工确认，适合Hybrid模式"
+    },
+    {
+      "task_id": "T-FBA-03-01",
+      "l4_code": "L4-FBA-03",
+      "task_name": "季度分公司经营分析",
+      "source_type": "BLUEPRINT_STEP",
+      "sequence_no": 3,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-03",
+      "source_line": 71,
+      "previous_task_ids": [
+        "T-FBA-02-01",
+        "T-FBA-02-02"
+      ],
+      "next_task_ids": [
+        "T-FBA-04-01",
+        "T-FBA-04-02"
+      ],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-e9f53bea99ce15433632",
+        "EVD-e3ea5dcc6e6539efba94",
+        "EVD-b7ea38bafa0e0faaa1d5",
+        "EVD-d470da07b5bd25178bec"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "需要多维度分析和业务判断，AI可辅助数据整理和对比，但经营建议须人工提供"
+    },
+    {
+      "task_id": "T-FBA-04-01",
+      "l4_code": "L4-FBA-04",
+      "task_name": "审核分析报告内容的准确性与逻辑一致性",
+      "source_type": "BLUEPRINT_STEP",
+      "sequence_no": 4,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-04",
+      "source_line": 78,
+      "previous_task_ids": [
+        "T-FBA-03-01"
+      ],
+      "next_task_ids": [],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-0977af2849cc46dbe5bd",
+        "EVD-6eb8fe2383cefc7b836b",
+        "EVD-5f1ba9fb6c91196a7543",
+        "EVD-089039df868466b49541"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "审核包含逻辑校验和业务判断，AI可实施数据一致性检查和报告模板规范性检查，但最终审核决策需人工"
+    },
+    {
+      "task_id": "T-FBA-04-02",
+      "l4_code": "L4-FBA-04",
+      "task_name": "报告定稿并提交总部上报",
+      "source_type": "BLUEPRINT_STEP",
+      "sequence_no": 4,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-04",
+      "source_line": 78,
+      "previous_task_ids": [
+        "T-FBA-03-01"
+      ],
+      "next_task_ids": [],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-0977af2849cc46dbe5bd",
+        "EVD-6eb8fe2383cefc7b836b",
+        "EVD-5f1ba9fb6c91196a7543",
+        "EVD-089039df868466b49541"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "报告定稿和上报涉及组织外部沟通，具有不可逆性和合规要求，必须由人工执行，但可由AI协助准备最终版本和发送清单"
+    }
+  ],
+  "priority_drafts": [
+    {
+      "l4_code": "L4-FBA-01",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "agg_sales_base(订单粒度销售数据)",
+        "config_quarter(季度日历配置)"
+      ],
+      "process_context": "蓝图STEP-01：业绩数据汇总，是整个经营分析的数据基础",
+      "risks_limits": [
+        "数据源表变更可能导致提取脚本失效",
+        "季度日历配置表维护不及时可能切错区间"
+      ],
+      "current_recommendation": "优先开发确定性Skill原型，实现从数据库到Excel/报表的自动化输出，辅以人工抽检",
+      "evidence_refs": [
+        "EVD-6b1aae1d8dd5dd31fc94",
+        "EVD-b03f01c0471cb68248ee",
+        "EVD-3b8520df1fa07fd18d8d",
+        "EVD-40eef74d4a4ecff5cd32",
+        "EVD-0122b63aac94d035a161",
+        "EVD-6167635186093c7f334a",
+        "EVD-48c894e0dc69af5e8ee6",
+        "EVD-12a09d75b3f745603463",
+        "EVD-f293a472a3c33143ca34",
+        "EVD-f3ebf7f0ec3dfd55c584",
+        "EVD-588a621fe9768e90d159",
+        "EVD-e9aab6f3d54a490658df"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-FBA-02",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "v_person_activity(人员活动流水)",
+        "bridge_person_identity(人员身份归一化)",
+        "dim_role_type(角色字典)",
+        "月度业绩数据包(来自L4-FBA-01)"
+      ],
+      "process_context": "蓝图STEP-02：月度经营分析，产出月度业绩报表、活动率分析表、转化追踪表，并作为异常决策的输入",
+      "risks_limits": [
+        "活动率计算依赖人员身份匹配准确度，身份匹配悬疑项需人工复核",
+        "转化追踪需关联保单数据，若数据延迟可能影响时效",
+        "分析结果受分析人员业务水平影响"
+      ],
+      "current_recommendation": "采用Agent辅助路径，自动生成分析看板，重点培养分析人员的业务解读能力；异常分支先人机协同，逐步积累规则后可部分自动化",
+      "evidence_refs": [
+        "EVD-4fc28556d1fdd733a28c",
+        "EVD-faf31c10b4823959583f",
+        "EVD-b131e156d611cbe844be",
+        "EVD-82ee6ada2b9b9b3570ef",
+        "EVD-8aa21323db1abd5283f5",
+        "EVD-89816f3238b0ab9475b8",
+        "EVD-e22c0ecedfacfd47f522",
+        "EVD-966a033fd0906dff0355",
+        "EVD-3dc75d31575d955ab6c7",
+        "EVD-9217b71b52bc0bced7b8",
+        "EVD-2b257febf312b471f2f1",
+        "EVD-5354363f3b3d54fb6e2c",
+        "EVD-bc769b5f7badec8cce04"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-FBA-03",
+      "quadrant": "unclassified",
+      "data_basis": [],
+      "process_context": "蓝图STEP-03：季度分公司经营分析，承接月度分析结果，为总部上报报告提供分公司层面洞察",
+      "risks_limits": [
+        "分公司数据维度可能不完整，部分指标需估算",
+        "分析过于依赖个人经验"
+      ],
+      "current_recommendation": "为事业部运营岗配置AI数据分析副驾驶，辅助进行分公司比较，减少数据准备时间",
+      "evidence_refs": [
+        "EVD-e3ea5dcc6e6539efba94",
+        "EVD-e16ba89a6150cc1a801b",
+        "EVD-b20591697811d7129f66",
+        "EVD-b7ea38bafa0e0faaa1d5",
+        "EVD-560eac5e8dc3b25f4193",
+        "EVD-d470da07b5bd25178bec",
+        "EVD-e9f53bea99ce15433632",
+        "EVD-b437be2a58559664197e",
+        "EVD-9b5f9f26431e95051c01",
+        "EVD-f2e5341f5b9c640d1eb6",
+        "EVD-34f1b77eb2cfee455fbd",
+        "EVD-3d97020c03b04a2e2960",
+        "EVD-14897967825e1c1b2fd4"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-FBA-04",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "前置分析报告（月度、季度）",
+        "公司标准报告模板"
+      ],
+      "process_context": "蓝图STEP-04：经营分析报告定稿与上报，是整个价值流交付的输出环节，融合了前序所有分析结果",
+      "risks_limits": [
+        "上报时间窗口紧张可能导致审核不充分",
+        "人工判断可能受主观影响"
+      ],
+      "current_recommendation": "强化报告审核流程自动化检查（数据一致性、必填项），减少纯编辑时间；保留人工最终审批权",
+      "evidence_refs": [
+        "EVD-6eb8fe2383cefc7b836b",
+        "EVD-d5c13fe924c87d80f141",
+        "EVD-815222d060cf0add7411",
+        "EVD-5f1ba9fb6c91196a7543",
+        "EVD-1eefd49cd12cf873ec82",
+        "EVD-089039df868466b49541",
+        "EVD-0977af2849cc46dbe5bd",
+        "EVD-447e9c034b7554ab0952",
+        "EVD-eefdfcb797ff4cc88dfa",
+        "EVD-116dd3de4ec8092944b3",
+        "EVD-51236b211426d3f94a7c",
+        "EVD-9d303bc3b2de20772a2e",
+        "EVD-cb1762e57e214b188c80"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "decision_drafts": [
+    {
+      "priority": "P1",
+      "task_ids": [
+        "T-FBA-01-01"
+      ],
+      "title": "立即启动L4-FBA-01月度/季度业绩数据汇总的自动化开发",
+      "pilot_scope": "事业部运营管理岗一名员工试点，使用指定数据源，试运行两个月度周期",
+      "human_boundary": "数据源变更需人工审核更新脚本；首次输出需与现有手工报表交叉验证两个月；异常值自动告警但由人工处理",
+      "evidence_refs": [
+        "EVD-40eef74d4a4ecff5cd32",
+        "EVD-0122b63aac94d035a161",
+        "EVD-6167635186093c7f334a"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "control_chain": [],
+  "rejected_task_sources": [],
+  "missing_analysis": [
+    "L4-FBA-01 business_evidence (EVD-11d29dbd9bafa8c5a14e) 状态为UNVERIFIED，无法用作数据依据",
+    "L4-FBA-02 business_evidence (EVD-64693772a73cfec921e3) 状态为UNVERIFIED，无法用作数据依据",
+    "L4-FBA-03 缺少business_evidence，无法确认用于季度分公司经营分析的具体数据源",
+    "L4-FBA-04 缺少business_evidence，报告审核与上报环节的支撑数据源未登记",
+    "规则可定位L4数量=0/4，缺少可关联的规则记录，可能影响合规与标准化分析",
+    "控制链缺少L4定位，已拒绝2条"
+  ]
+}

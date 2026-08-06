@@ -8,172 +8,230 @@
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
           "EVD-40eef74d4a4ecff5cd32",
-          "EVD-6167635186093c7f334a"
+          "EVD-82ee6ada2b9b9b3570ef",
+          "EVD-8f81780d994e76326212",
+          "EVD-89816f3238b0ab9475b8"
         ],
-        "human_boundary": "试点期间，自动化生成的《月度业绩数据包》需与手工报表并行核对一个月，确认无差异后方可正式切换；人工负责数据质量校验与异常标记。",
-        "pilot_scope": "选取2026年Q3数据，在事业部运营管理岗位族内进行自动化汇总试点",
+        "human_boundary": "自动化汇总结果需经运营管理岗抽检验收；分析规则变更由业务负责人审批；异常数据暂停自动化，转人工处理",
+        "pilot_scope": "选取1-2个事业部作为试点，部署Skill原型自动生成月度业绩数据包和基础报表，试点周期3个月",
         "priority": "P1",
         "task_ids": [
-          "TASK-L4-FBA-01-001"
+          "T-001",
+          "T-002"
         ],
-        "title": "启动L4-FBA-01 Skill开发试点"
+        "title": "启动数据汇总与报表生成自动化试点"
+      },
+      {
+        "analysis_status": "MODEL_DRAFT",
+        "evidence_refs": [
+          "EVD-5f1ba9fb6c91196a7543",
+          "EVD-089039df868466b49541",
+          "EVD-cb1762e57e214b188c80",
+          "EVD-51236b211426d3f94a7c"
+        ],
+        "human_boundary": "最终报告由事业部运营管理岗负责人签字后方可上报；上报动作二次确认；任何驳回需人工重新提交",
+        "pilot_scope": "在现有事业部下，设计电子审批链条，试点T-005报告定稿与T-006上报的审批门",
+        "priority": "P1",
+        "task_ids": [
+          "T-005",
+          "T-006"
+        ],
+        "title": "建立经营分析报告上报审批流程"
       }
     ],
     "generation_mode": "UNIFIED_MODEL",
     "l4_analysis": [
       {
-        "ai_reshape": "通过确定性Skill自动执行，从数据库提取数据、聚合计算，生成标准格式的数据包。",
-        "ai_responsibility": "负责数据提取、清洗、聚合计算，生成《月度业绩数据包》。",
+        "ai_reshape": "使用确定性Skill自动执行数据提取、清洗与汇总，无需人工介入，输出标准化数据包",
+        "ai_responsibility": "定期自动执行数据汇总任务，生成《月度业绩数据包》",
         "analysis_status": "MODEL_DRAFT",
         "confidence": "MODEL_DRAFT",
         "control_gates": [],
-        "current_recommendation": "由于动作为单一结构化信息处理，具备A级封装条件，建议直接开发为Skill，完全自动化。",
-        "data_basis": [
-          "流程蓝图STEP-01将本活动描述为'月度/季度业绩数据汇总 → 《月度业绩数据包》(Aug)'",
-          "Skill可行性评估为A级，单一信息处理动作"
-        ],
+        "current_recommendation": "优先进入Skill原型候选池，建立自动化汇总管道，并配置输出自动校验规则",
+        "data_basis": [],
         "database_tier": "Auto",
-        "deliverable_role": "事业部运营管理岗",
+        "deliverable_role": "提供按月度/季度汇总的业绩基础数据表，作为后续分析的输入",
         "evidence_refs": [
+          "EVD-6b1aae1d8dd5dd31fc94",
+          "EVD-b03f01c0471cb68248ee",
+          "EVD-3b8520df1fa07fd18d8d",
           "EVD-40eef74d4a4ecff5cd32",
+          "EVD-48c894e0dc69af5e8ee6",
+          "EVD-12a09d75b3f745603463",
           "EVD-f293a472a3c33143ca34",
-          "EVD-6167635186093c7f334a",
-          "EVD-5641a33d0834ca17085c"
-        ],
-        "handoff_triggers": [],
-        "human_responsibility": "",
-        "l4_code": "L4-FBA-01",
-        "process_context": "理财师业务分析L3的第一步，为后续月度分析和季度分析提供数据基础。",
-        "quadrant": "unclassified",
-        "quality_anchor": "输出验证需达到agent_d3_output_verify=2，可采用自动化数据校验规则。",
-        "recommended_tier": "Auto",
-        "risks_limits": [
-          "数据源质量依赖agg_sales_base等表，若数据不全或延迟会影响分析"
-        ],
-        "specific_capabilities": [
-          "从agg_sales_base等数据源汇总月度/季度业绩数据，生成结构化数据表",
-          "按config_quarter季度日历切分区间"
-        ]
-      },
-      {
-        "ai_reshape": "引入Agent辅助：AI自动生成报表初稿和异常指标高亮，人工聚焦于解读和决策。",
-        "ai_responsibility": "负责数据聚合、报表生成、基于规则识别异常指标。",
-        "analysis_status": "MODEL_DRAFT",
-        "confidence": "MODEL_DRAFT",
-        "control_gates": [],
-        "current_recommendation": "建议先实现Agent辅助：自动生成报表和异常标记，人工确认与解读。同时，尝试将报表生成部分封装为Skill，异常判断部分保持人工。",
-        "data_basis": [
-          "蓝图STEP-02定义为'月度经营分析'，交付《月度业绩报表》等，标注Human",
-          "产出异常判断分支，正常继续季度分析，异常触发其他L3"
-        ],
-        "database_tier": "Hybrid",
-        "deliverable_role": "事业部运营管理岗",
-        "evidence_refs": [
-          "EVD-82ee6ada2b9b9b3570ef",
-          "EVD-89816f3238b0ab9475b8",
-          "EVD-d88d57d77ac715cfefab",
-          "EVD-e22c0ecedfacfd47f522",
-          "EVD-5641a33d0834ca17085c"
+          "EVD-f3ebf7f0ec3dfd55c584",
+          "EVD-588a621fe9768e90d159",
+          "EVD-e9aab6f3d54a490658df",
+          "EVD-8f81780d994e76326212"
         ],
         "handoff_triggers": [
-          "发现低活跃/业绩下滑时，转人工并触发相关L3流程"
+          "数据源连接失败或返回空结果",
+          "汇总结果与预定义阈值偏差超过20%",
+          "数据质量稽核不通过（如缺失率>5%）"
         ],
-        "human_responsibility": "负责趋势解读、深挖异常原因，并触发L3-FOR或L3-FPG支持。",
-        "l4_code": "L4-FBA-02",
-        "process_context": "承接STEP-01数据包，进行月度分析，并决策是否触发后续流程。",
+        "human_responsibility": "监控数据源可用性、处理规则变更、异常数据人工复核",
+        "l4_code": "L4-FBA-01",
+        "process_context": "作为月度/季度经营分析报告的数据基础，承接理财师发展旅程的BAU运营与业绩跟踪阶段",
         "quadrant": "unclassified",
-        "quality_anchor": "输出验证达到agent_d3_output_verify=2，人工复核异常点。",
-        "recommended_tier": "Hybrid",
+        "quality_anchor": "汇总结果需与源数据抽样核对；输出格式、指标口径符合业务定义",
+        "recommended_tier": "Auto",
         "risks_limits": [
-          "规则清晰度较低(D2=1)，自动化报表可能存在错漏，需人工审核",
-          "v_person_activity等数据源未专门按理财师角色聚合，可能影响活动率准确性"
+          "数据源不稳定可能导致汇总缺失（D5回退得分为2，需建立手动补录流程）",
+          "Skill封装高度依赖稳定的数据接口，若上游系统变更需同步更新"
         ],
         "specific_capabilities": [
-          "基于规则自动生成月度业绩、活动率、转化率报表（规则清晰度D2=1，需人工校验）",
-          "识别异常指标并触发跨L3流程（判断/决策类）"
+          "从多数据源提取销售订单数据",
+          "按时间维度（月度/季度）聚合计算保费、APE等指标",
+          "输出标准化数据表格"
         ]
       },
       {
-        "ai_reshape": "Agent辅助生成季度报告框架和数据图表，人工完成诊断和建议部分。",
-        "ai_responsibility": "负责数据汇总、图表生成。",
+        "ai_reshape": "AI自动生成基础数据表与可视化，并提供初步趋势摘要；人工审核摘要并撰写分析结论与改进建议",
+        "ai_responsibility": "执行数据计算、生成《月度业绩报表》《活动率分析表》《转化追踪表》，并输出异常点提示",
         "analysis_status": "MODEL_DRAFT",
         "confidence": "MODEL_DRAFT",
         "control_gates": [],
-        "current_recommendation": "优先梳理和结构化分公司经营分析所需的数据指标，再考虑Agent辅助。当前阶段建议以人工为主，AI提供数据可视化支持。",
-        "data_basis": [
-          "蓝图STEP-03定义该活动为'季度分公司经营分析'，产出报告，标注Human"
-        ],
+        "current_recommendation": "将数据计算与报表生成封装为Skill，分析部分采用Agent辅助，配合人工决策",
+        "data_basis": [],
         "database_tier": "Hybrid",
-        "deliverable_role": "事业部运营管理岗",
+        "deliverable_role": "产出月度业绩报表、活动率分析表和转化追踪表，为运营决策提供数据支持",
         "evidence_refs": [
-          "EVD-b7ea38bafa0e0faaa1d5",
-          "EVD-d470da07b5bd25178bec",
-          "EVD-e9f53bea99ce15433632",
-          "EVD-5641a33d0834ca17085c"
+          "EVD-4fc28556d1fdd733a28c",
+          "EVD-faf31c10b4823959583f",
+          "EVD-b131e156d611cbe844be",
+          "EVD-82ee6ada2b9b9b3570ef",
+          "EVD-966a033fd0906dff0355",
+          "EVD-3dc75d31575d955ab6c7",
+          "EVD-9217b71b52bc0bced7b8",
+          "EVD-2b257febf312b471f2f1",
+          "EVD-5354363f3b3d54fb6e2c",
+          "EVD-bc769b5f7badec8cce04",
+          "EVD-89816f3238b0ab9475b8"
         ],
-        "handoff_triggers": [],
-        "human_responsibility": "负责分公司经营状况的深度分析、报告撰写。",
-        "l4_code": "L4-FBA-03",
-        "process_context": "在月度分析正常后执行，为最终经营分析报告提供分公司视角素材。",
+        "handoff_triggers": [
+          "AI检测到指标波动超过历史波动率的2倍标准差",
+          "业务规则不明确导致AI无法判断（如新业务类型）",
+          "人工主动请求详细数据回溯"
+        ],
+        "human_responsibility": "对AI生成的异常标记进行业务解读，完成分析报告撰写，确保结论符合管理意图",
+        "l4_code": "L4-FBA-02",
+        "process_context": "在月度业绩数据汇总后，执行深度分析，是季度分公司经营分析的前置环节",
         "quadrant": "unclassified",
-        "quality_anchor": "依赖人工审核，确保分析深度与业务洞察。",
+        "quality_anchor": "报表数据与源数据交叉验证，分析结论需经业务主管确认",
         "recommended_tier": "Hybrid",
         "risks_limits": [
-          "缺乏具体数据源关联，自动化基础薄弱，需大量人工经验判断"
+          "分析所需规则清晰度低（D2=1），AI自动分析可能存在偏差",
+          "复合动作中的人工判断部分不可完全替代，Skill封装仅适用于数据计算部分"
         ],
         "specific_capabilities": [
-          "按季度维度聚合分公司数据，生成初步经营分析报告",
-          "进行分公司经营诊断与趋势判断（需经验）"
+          "数据预处理与KPI计算（可封装为Skill）",
+          "多维度图表生成与趋势可视化",
+          "业绩、活动率、转化率的异常识别与业务解读（需人工判断）"
         ]
       },
       {
-        "ai_reshape": "Agent辅助：自动进行报告格式校验、数据一致性检查，生成终稿版本；人工负责签批和上报。",
-        "ai_responsibility": "负责报告格式审查、数据准确性校验、版本控制。",
+        "ai_reshape": "Agent辅助模式：AI自动生成报告初稿（含图表、对比分析、异常标注），人工审核并补充经营建议",
+        "ai_responsibility": "提供数据可视化、自动生成分析草稿",
+        "analysis_status": "MODEL_DRAFT",
+        "confidence": "MODEL_DRAFT",
+        "control_gates": [],
+        "current_recommendation": "优先提升数据可及性，采用Agent辅助生成报告草案，人工定稿",
+        "data_basis": [],
+        "database_tier": "Hybrid",
+        "deliverable_role": "生成季度分公司经营分析报告，支持管理层决策",
+        "evidence_refs": [
+          "EVD-e3ea5dcc6e6539efba94",
+          "EVD-e16ba89a6150cc1a801b",
+          "EVD-b20591697811d7129f66",
+          "EVD-b7ea38bafa0e0faaa1d5",
+          "EVD-b437be2a58559664197e",
+          "EVD-9b5f9f26431e95051c01",
+          "EVD-f2e5341f5b9c640d1eb6",
+          "EVD-34f1b77eb2cfee455fbd",
+          "EVD-3d97020c03b04a2e2960",
+          "EVD-14897967825e1c1b2fd4",
+          "EVD-d470da07b5bd25178bec"
+        ],
+        "handoff_triggers": [
+          "AI分析结果置信度低（如数据矛盾或缺失）",
+          "季度数据出现非预期大幅波动",
+          "业务规则变更导致原有分析模型失效"
+        ],
+        "human_responsibility": "验证AI分析逻辑，添加主观判断和经营建议，最终定稿",
+        "l4_code": "L4-FBA-03",
+        "process_context": "在完成月度业绩与活动率分析后，按季度维度对分公司进行全面经营诊断",
+        "quadrant": "unclassified",
+        "quality_anchor": "报告结论需与月度跟踪数据一致，且经事业部运营管理岗确认",
+        "recommended_tier": "Hybrid",
+        "risks_limits": [
+          "数据可及性低（D4=1），部分分公司数据可能无法及时获取，影响分析全面性",
+          "分析完全依赖人工经验，AI辅助效果有限"
+        ],
+        "specific_capabilities": [
+          "汇总并对比分公司经营数据（业绩、活动率、转化率等）",
+          "识别分公司间的异常表现和趋势",
+          "撰写经营分析报告并提出建议"
+        ]
+      },
+      {
+        "ai_reshape": "将报告整合与格式检查自动化，设置上报审批门；人工负责内容终审与提交决策",
+        "ai_responsibility": "自动拼接报告各部分，检查格式、数据一致性，生成终稿版本",
         "analysis_status": "MODEL_DRAFT",
         "confidence": "MODEL_DRAFT",
         "control_gates": [
-          "上报总部为对外发布动作，需人工签批确认，不可自动执行"
+          "部门负责人审批方可上报",
+          "上报动作不可逆，需二次确认"
         ],
-        "current_recommendation": "建议Agent辅助审核与定稿流程，但上报操作保留人工控制门。可先实现自动校验和版本管理，试点范围包括格式审核。",
-        "data_basis": [
-          "蓝图STEP-04定义为'经营分析报告定稿与上报'，交付《月度/季度经营分析报告》[P1 VN-FBA-01]，标注Human"
-        ],
+        "current_recommendation": "拆分定稿与上报为两个独立任务，定稿部分Agent辅助，上报设置审批门",
+        "data_basis": [],
         "database_tier": "Hybrid",
-        "deliverable_role": "事业部运营管理岗",
+        "deliverable_role": "形成并提交月度/季度经营分析报告至总部，作为事业部的最终经营总结",
         "evidence_refs": [
+          "EVD-6eb8fe2383cefc7b836b",
+          "EVD-d5c13fe924c87d80f141",
+          "EVD-815222d060cf0add7411",
           "EVD-5f1ba9fb6c91196a7543",
-          "EVD-089039df868466b49541",
-          "EVD-0977af2849cc46dbe5bd",
-          "EVD-5641a33d0834ca17085c"
+          "EVD-447e9c034b7554ab0952",
+          "EVD-eefdfcb797ff4cc88dfa",
+          "EVD-116dd3de4ec8092944b3",
+          "EVD-51236b211426d3f94a7c",
+          "EVD-9d303bc3b2de20772a2e",
+          "EVD-cb1762e57e214b188c80",
+          "EVD-089039df868466b49541"
         ],
         "handoff_triggers": [
-          "发现数据错误或报告需要修改时，返回修正"
+          "报告内容存在逻辑矛盾或数据错误",
+          "合规检查不通过（如未脱敏数据）",
+          "审批链中任一节点驳回"
         ],
-        "human_responsibility": "负责报告内容的业务审核、签批，并执行上报总部操作。",
+        "human_responsibility": "终审报告内容，决策是否上报，执行上报操作",
         "l4_code": "L4-FBA-04",
-        "process_context": "整合前三步成果，形成最终报告并上报，价值节点VN-FBA-01的核心交付环节。",
+        "process_context": "作为流程最后一步，输出价值节点VN-FBA-01《月度/季度经营分析报告》",
         "quadrant": "unclassified",
-        "quality_anchor": "需人工最终确认，特别是对外发布环节。",
+        "quality_anchor": "报告符合总部模板要求，数据与源系统一致，所有修改有留痕",
         "recommended_tier": "Hybrid",
         "risks_limits": [
-          "上报操作不可逆，一旦发出可能影响业绩评估，必须有人工审批"
+          "上报错误可能影响事业部考核结果",
+          "定稿与上报属于复合动作，人工审查环节不可跳过"
         ],
         "specific_capabilities": [
-          "报告格式与数据审核（可自动化校验）",
-          "内容审核与签批（决策权）",
-          "总部上报及发布（不可逆）"
+          "整合各分析模块的内容，确保报告逻辑连贯、格式统一",
+          "审核数据准确性、合规性及结论合理性",
+          "提交报告并触发上报流程"
         ]
       }
     ],
     "missing_analysis": [
-      "L4-FBA-01.human_responsibility · 证据EVD-8f81780d994e76326212状态为MISSING，无法确定人工责任范围。",
-      "L4-FBA-03.data_basis · L4-FBA-03无business_evidence关联，数据来源不明确。",
-      "L4-FBA-04.tasks_sequence · 蓝图STEP-04内部未定义子步骤顺序，审核、定稿、上报的先后关系需工作坊确认。",
-      "控制链缺少L4定位，已拒绝1条"
+      "L4-FBA-01 · data_basis · 业务数据证据（EVD-11d29dbd9bafa8c5a14e）处于UNVERIFIED状态，不可用于业务结论，故无法引用数据依据",
+      "L4-FBA-02 · data_basis · 业务数据证据（EVD-36d560a806b3d568bbf5）处于UNVERIFIED状态，不可用于业务结论，故无法引用数据依据",
+      "L4-FBA-03 · data_basis · 无可用业务数据证据，需补充分公司经营数据源及KPI定义",
+      "L4-FBA-04 · data_basis · 无可用业务数据证据，需明确报告整合的数据输入及总部上报规范",
+      "L4-FBA-01 · human_responsibility · Agent human touchpoint记录为MISSING，无法明确人工职责，需工作坊补充",
+      "控制链缺少L4定位，已拒绝2条"
     ],
     "model_run": {
-      "generated_at": "2026-08-06T04:21:45.981548+00:00",
-      "input_snapshot_hash": "247a6c3d3abe5038dd5533d174122047c821fb3b053a891ceaacb9405f9c19c5",
+      "generated_at": "2026-08-06T06:04:28.357207+00:00",
+      "input_snapshot_hash": "715dcb99b152a0cb2c78b6139b05121f426c6c09321d643b21e7572dfe14c0ca",
       "model_name": "deepseek-v4-pro",
       "model_version": "deepseek-v4-pro",
       "prompt_version": "VNW-L3-COM-GOLD-v1.0"
@@ -181,82 +239,102 @@
     "priority_drafts": [
       {
         "analysis_status": "MODEL_DRAFT",
-        "current_recommendation": "由于动作为单一结构化信息处理，具备A级封装条件，建议直接开发为Skill，完全自动化。",
-        "data_basis": [
-          "流程蓝图STEP-01将本活动描述为'月度/季度业绩数据汇总 → 《月度业绩数据包》(Aug)'",
-          "Skill可行性评估为A级，单一信息处理动作"
-        ],
+        "current_recommendation": "优先进入Skill原型候选池，建立自动化汇总管道，并配置输出自动校验规则",
+        "data_basis": [],
         "evidence_refs": [
+          "EVD-6b1aae1d8dd5dd31fc94",
+          "EVD-b03f01c0471cb68248ee",
+          "EVD-3b8520df1fa07fd18d8d",
           "EVD-40eef74d4a4ecff5cd32",
+          "EVD-48c894e0dc69af5e8ee6",
+          "EVD-12a09d75b3f745603463",
           "EVD-f293a472a3c33143ca34",
-          "EVD-6167635186093c7f334a",
-          "EVD-5641a33d0834ca17085c"
+          "EVD-f3ebf7f0ec3dfd55c584",
+          "EVD-588a621fe9768e90d159",
+          "EVD-e9aab6f3d54a490658df",
+          "EVD-8f81780d994e76326212"
         ],
         "l4_code": "L4-FBA-01",
-        "process_context": "理财师业务分析L3的第一步，为后续月度分析和季度分析提供数据基础。",
+        "process_context": "作为月度/季度经营分析报告的数据基础，承接理财师发展旅程的BAU运营与业绩跟踪阶段",
         "quadrant": "unclassified",
         "risks_limits": [
-          "数据源质量依赖agg_sales_base等表，若数据不全或延迟会影响分析"
+          "数据源不稳定可能导致汇总缺失（D5回退得分为2，需建立手动补录流程）",
+          "Skill封装高度依赖稳定的数据接口，若上游系统变更需同步更新"
         ]
       },
       {
         "analysis_status": "MODEL_DRAFT",
-        "current_recommendation": "建议先实现Agent辅助：自动生成报表和异常标记，人工确认与解读。同时，尝试将报表生成部分封装为Skill，异常判断部分保持人工。",
-        "data_basis": [
-          "蓝图STEP-02定义为'月度经营分析'，交付《月度业绩报表》等，标注Human",
-          "产出异常判断分支，正常继续季度分析，异常触发其他L3"
-        ],
+        "current_recommendation": "将数据计算与报表生成封装为Skill，分析部分采用Agent辅助，配合人工决策",
+        "data_basis": [],
         "evidence_refs": [
+          "EVD-4fc28556d1fdd733a28c",
+          "EVD-faf31c10b4823959583f",
+          "EVD-b131e156d611cbe844be",
           "EVD-82ee6ada2b9b9b3570ef",
-          "EVD-89816f3238b0ab9475b8",
-          "EVD-d88d57d77ac715cfefab",
-          "EVD-e22c0ecedfacfd47f522",
-          "EVD-5641a33d0834ca17085c"
+          "EVD-966a033fd0906dff0355",
+          "EVD-3dc75d31575d955ab6c7",
+          "EVD-9217b71b52bc0bced7b8",
+          "EVD-2b257febf312b471f2f1",
+          "EVD-5354363f3b3d54fb6e2c",
+          "EVD-bc769b5f7badec8cce04",
+          "EVD-89816f3238b0ab9475b8"
         ],
         "l4_code": "L4-FBA-02",
-        "process_context": "承接STEP-01数据包，进行月度分析，并决策是否触发后续流程。",
+        "process_context": "在月度业绩数据汇总后，执行深度分析，是季度分公司经营分析的前置环节",
         "quadrant": "unclassified",
         "risks_limits": [
-          "规则清晰度较低(D2=1)，自动化报表可能存在错漏，需人工审核",
-          "v_person_activity等数据源未专门按理财师角色聚合，可能影响活动率准确性"
+          "分析所需规则清晰度低（D2=1），AI自动分析可能存在偏差",
+          "复合动作中的人工判断部分不可完全替代，Skill封装仅适用于数据计算部分"
         ]
       },
       {
         "analysis_status": "MODEL_DRAFT",
-        "current_recommendation": "优先梳理和结构化分公司经营分析所需的数据指标，再考虑Agent辅助。当前阶段建议以人工为主，AI提供数据可视化支持。",
-        "data_basis": [
-          "蓝图STEP-03定义该活动为'季度分公司经营分析'，产出报告，标注Human"
-        ],
+        "current_recommendation": "优先提升数据可及性，采用Agent辅助生成报告草案，人工定稿",
+        "data_basis": [],
         "evidence_refs": [
+          "EVD-e3ea5dcc6e6539efba94",
+          "EVD-e16ba89a6150cc1a801b",
+          "EVD-b20591697811d7129f66",
           "EVD-b7ea38bafa0e0faaa1d5",
-          "EVD-d470da07b5bd25178bec",
-          "EVD-e9f53bea99ce15433632",
-          "EVD-5641a33d0834ca17085c"
+          "EVD-b437be2a58559664197e",
+          "EVD-9b5f9f26431e95051c01",
+          "EVD-f2e5341f5b9c640d1eb6",
+          "EVD-34f1b77eb2cfee455fbd",
+          "EVD-3d97020c03b04a2e2960",
+          "EVD-14897967825e1c1b2fd4",
+          "EVD-d470da07b5bd25178bec"
         ],
         "l4_code": "L4-FBA-03",
-        "process_context": "在月度分析正常后执行，为最终经营分析报告提供分公司视角素材。",
+        "process_context": "在完成月度业绩与活动率分析后，按季度维度对分公司进行全面经营诊断",
         "quadrant": "unclassified",
         "risks_limits": [
-          "缺乏具体数据源关联，自动化基础薄弱，需大量人工经验判断"
+          "数据可及性低（D4=1），部分分公司数据可能无法及时获取，影响分析全面性",
+          "分析完全依赖人工经验，AI辅助效果有限"
         ]
       },
       {
         "analysis_status": "MODEL_DRAFT",
-        "current_recommendation": "建议Agent辅助审核与定稿流程，但上报操作保留人工控制门。可先实现自动校验和版本管理，试点范围包括格式审核。",
-        "data_basis": [
-          "蓝图STEP-04定义为'经营分析报告定稿与上报'，交付《月度/季度经营分析报告》[P1 VN-FBA-01]，标注Human"
-        ],
+        "current_recommendation": "拆分定稿与上报为两个独立任务，定稿部分Agent辅助，上报设置审批门",
+        "data_basis": [],
         "evidence_refs": [
+          "EVD-6eb8fe2383cefc7b836b",
+          "EVD-d5c13fe924c87d80f141",
+          "EVD-815222d060cf0add7411",
           "EVD-5f1ba9fb6c91196a7543",
-          "EVD-089039df868466b49541",
-          "EVD-0977af2849cc46dbe5bd",
-          "EVD-5641a33d0834ca17085c"
+          "EVD-447e9c034b7554ab0952",
+          "EVD-eefdfcb797ff4cc88dfa",
+          "EVD-116dd3de4ec8092944b3",
+          "EVD-51236b211426d3f94a7c",
+          "EVD-9d303bc3b2de20772a2e",
+          "EVD-cb1762e57e214b188c80",
+          "EVD-089039df868466b49541"
         ],
         "l4_code": "L4-FBA-04",
-        "process_context": "整合前三步成果，形成最终报告并上报，价值节点VN-FBA-01的核心交付环节。",
+        "process_context": "作为流程最后一步，输出价值节点VN-FBA-01《月度/季度经营分析报告》",
         "quadrant": "unclassified",
         "risks_limits": [
-          "上报操作不可逆，一旦发出可能影响业绩评估，必须有人工审批"
+          "上报错误可能影响事业部考核结果",
+          "定稿与上报属于复合动作，人工审查环节不可跳过"
         ]
       }
     ],
@@ -276,8 +354,8 @@
         ],
         "l4_code": "L4-FBA-01",
         "next_task_ids": [
-          "TASK-L4-FBA-02-001",
-          "TASK-L4-FBA-02-002"
+          "T-002",
+          "T-003"
         ],
         "previous_task_ids": [],
         "relation_type": "SEQUENCE",
@@ -285,11 +363,11 @@
         "sequence_status": "SOURCE_CONFIRMED",
         "source_line": 57,
         "source_step_id": "STEP-01",
-        "source_type": "blueprint",
+        "source_type": "blueprint_step",
         "suggested_tier": "Auto",
-        "task_id": "TASK-L4-FBA-01-001",
+        "task_id": "T-001",
         "task_name": "执行月度/季度业绩数据汇总",
-        "tier_rationale": "单一数据汇总动作，结构化输入输出，规则清晰，适合完全自动化。"
+        "tier_rationale": "单一信息处理动作，Skill可行性评为A，可全自动化"
       },
       {
         "analysis_status": "MODEL_DRAFT",
@@ -298,44 +376,47 @@
           "EVD-82ee6ada2b9b9b3570ef"
         ],
         "l4_code": "L4-FBA-02",
-        "next_task_ids": [],
-        "previous_task_ids": [
-          "TASK-L4-FBA-01-001"
+        "next_task_ids": [
+          "T-004"
         ],
-        "relation_type": "SEQUENCE",
+        "previous_task_ids": [
+          "T-001"
+        ],
+        "relation_type": null,
         "sequence_no": 2,
         "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 63,
         "source_step_id": "STEP-02",
-        "source_type": "blueprint",
+        "source_type": "blueprint_step",
         "suggested_tier": "Hybrid",
-        "task_id": "TASK-L4-FBA-02-001",
-        "task_name": "生成月度业绩、活动率与转化率报表",
-        "tier_rationale": "报表生成依赖部分规则，但数据聚合与格式可自动化；规则清晰度D2=1，需人工校验异常值。"
+        "task_id": "T-002",
+        "task_name": "生成月度业绩报表、活动率分析表和转化追踪表",
+        "tier_rationale": "数据计算与报表生成可自动化，但需配置业务规则并人工校验异常，混合模式更稳妥"
       },
       {
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-d88d57d77ac715cfefab",
+          "EVD-e22c0ecedfacfd47f522",
+          "EVD-82ee6ada2b9b9b3570ef",
           "EVD-89816f3238b0ab9475b8"
         ],
         "l4_code": "L4-FBA-02",
         "next_task_ids": [
-          "TASK-L4-FBA-03-001"
+          "T-004"
         ],
         "previous_task_ids": [
-          "TASK-L4-FBA-01-001"
+          "T-001"
         ],
-        "relation_type": "DECISION",
-        "sequence_no": null,
+        "relation_type": null,
+        "sequence_no": 2,
         "sequence_status": "SOURCE_STEP_ONLY",
-        "source_line": 89,
+        "source_line": 63,
         "source_step_id": "STEP-02",
-        "source_type": "blueprint",
-        "suggested_tier": "Human",
-        "task_id": "TASK-L4-FBA-02-002",
-        "task_name": "分析异常偏差并触发跨流程决策",
-        "tier_rationale": "需要人工判断异常根源，决策是否触发L3-FOR/FPL；正常时继续季度分析。"
+        "source_type": "blueprint_step",
+        "suggested_tier": "Aug",
+        "task_id": "T-003",
+        "task_name": "审查分析表并撰写月度经营分析解读",
+        "tier_rationale": "需人工解读数据并给出管理建议，AI提供初步分析摘要辅助决策"
       },
       {
         "analysis_status": "MODEL_DRAFT",
@@ -345,23 +426,23 @@
         ],
         "l4_code": "L4-FBA-03",
         "next_task_ids": [
-          "TASK-L4-FBA-04-001",
-          "TASK-L4-FBA-04-002",
-          "TASK-L4-FBA-04-003"
+          "T-005",
+          "T-006"
         ],
         "previous_task_ids": [
-          "TASK-L4-FBA-02-002"
+          "T-002",
+          "T-003"
         ],
         "relation_type": "SEQUENCE",
         "sequence_no": 3,
         "sequence_status": "SOURCE_CONFIRMED",
         "source_line": 71,
         "source_step_id": "STEP-03",
-        "source_type": "blueprint",
+        "source_type": "blueprint_step",
         "suggested_tier": "Hybrid",
-        "task_id": "TASK-L4-FBA-03-001",
-        "task_name": "执行季度分公司经营分析",
-        "tier_rationale": "分析需人工经验判断，但数据聚合和图表生成可借助Agent辅助。"
+        "task_id": "T-004",
+        "task_name": "执行季度分公司经营分析并生成报告",
+        "tier_rationale": "分析涉及判断，AI生成初稿由人工定稿，混合模式"
       },
       {
         "analysis_status": "MODEL_DRAFT",
@@ -370,67 +451,50 @@
           "EVD-5f1ba9fb6c91196a7543"
         ],
         "l4_code": "L4-FBA-04",
-        "next_task_ids": [],
-        "previous_task_ids": [
-          "TASK-L4-FBA-03-001"
+        "next_task_ids": [
+          "T-006"
         ],
-        "relation_type": "UNCONFIRMED",
+        "previous_task_ids": [
+          "T-004"
+        ],
+        "relation_type": null,
         "sequence_no": 4,
         "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 78,
         "source_step_id": "STEP-04",
-        "source_type": "blueprint",
+        "source_type": "blueprint_step",
         "suggested_tier": "Hybrid",
-        "task_id": "TASK-L4-FBA-04-001",
-        "task_name": "审核报告格式与数据准确性",
-        "tier_rationale": "格式校验与数据一致性检查可自动化，但内容审核需要人工判断。"
+        "task_id": "T-005",
+        "task_name": "整合报告并完成内容审核与格式定稿",
+        "tier_rationale": "报告整合可自动化，但内容审核需人工，混合模式"
       },
       {
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-089039df868466b49541",
-          "EVD-5f1ba9fb6c91196a7543"
+          "EVD-0977af2849cc46dbe5bd",
+          "EVD-5f1ba9fb6c91196a7543",
+          "EVD-089039df868466b49541"
         ],
         "l4_code": "L4-FBA-04",
         "next_task_ids": [],
         "previous_task_ids": [
-          "TASK-L4-FBA-03-001"
+          "T-004"
         ],
-        "relation_type": "UNCONFIRMED",
-        "sequence_no": null,
-        "sequence_status": "SOURCE_STEP_ONLY",
-        "source_line": 78,
-        "source_step_id": "STEP-04",
-        "source_type": "blueprint",
-        "suggested_tier": "Human",
-        "task_id": "TASK-L4-FBA-04-002",
-        "task_name": "报告内容定稿与签批",
-        "tier_rationale": "最终业务判断与审批权限，不可自动执行。"
-      },
-      {
-        "analysis_status": "MODEL_DRAFT",
-        "evidence_refs": [
-          "EVD-089039df868466b49541",
-          "EVD-0977af2849cc46dbe5bd"
-        ],
-        "l4_code": "L4-FBA-04",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "UNCONFIRMED",
+        "relation_type": null,
         "sequence_no": 4,
         "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 78,
         "source_step_id": "STEP-04",
-        "source_type": "blueprint",
+        "source_type": "blueprint_step",
         "suggested_tier": "Human",
-        "task_id": "TASK-L4-FBA-04-003",
-        "task_name": "上报总部（控制门）",
-        "tier_rationale": "对外发布操作，不可逆，必须人工执行且需前序签批完成。"
+        "task_id": "T-006",
+        "task_name": "提交报告至总部并经审批后上报",
+        "tier_rationale": "上报为不可逆操作且需要审批，必须由人执行并承担责任"
       }
     ]
   },
-  "analysis_freshness": "INPUT_CHANGED",
-  "analysis_input_hash": "855511673a3cb78d1c5ba085cd9ea232270b836994569fa8f44816f7faa01615",
+  "analysis_freshness": "CURRENT",
+  "analysis_input_hash": "715dcb99b152a0cb2c78b6139b05121f426c6c09321d643b21e7572dfe14c0ca",
   "blueprint": {
     "blueprint_value_nodes": [],
     "coverage": "INDEXED",
@@ -849,6 +913,144 @@
       "value": 1
     },
     {
+      "confidence": "LOW",
+      "conflict_note": "人工按业务含义匹配到业务数据仓库表，非外键关联，未经业务方确认",
+      "evidence_class": "CONSENSUS",
+      "evidence_id": "EVD-36d560a806b3d568bbf5",
+      "field_name": "business_evidence",
+      "source": {
+        "observed_at": "",
+        "source_field": "人工匹配",
+        "source_key": "L4-FBA-02",
+        "source_object": "public.v_person_activity, public.bridge_person_identity, public.dim_role_type, public.v_person_coverage, public.dim_person, public.person_match_suspect, public.bridge_person_relationship, public.bridge_person_role, public.v_dim_person",
+        "source_system": "业务数据仓库",
+        "source_version": "2026-08-04试点"
+      },
+      "status": "UNVERIFIED",
+      "transform_rule": "",
+      "value": [
+        {
+          "confidence": "weak",
+          "evidence_type": "output",
+          "matched_columns": [
+            "person_id",
+            "role_code",
+            "measure",
+            "biz_date"
+          ],
+          "rationale": "人员活动流水视图，measure字段可作活动率计算的原始输入，但未专门按理财师角色聚合",
+          "row_count": 39533,
+          "schema": "public",
+          "table": "v_person_activity"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "output",
+          "matched_columns": [
+            "person_id",
+            "source_system",
+            "match_method",
+            "confidence_tier"
+          ],
+          "rationale": "人员身份归一化桥接表，视图依赖被v_person_activity引用，是活动率分析按人员归一化统计的身份识别基础",
+          "row_count": 15833,
+          "schema": "public",
+          "table": "bridge_person_identity"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "rule",
+          "matched_columns": [
+            "role_code",
+            "role_name_cn",
+            "is_person_role"
+          ],
+          "rationale": "人员角色类型字典表，外键被v_person_activity的role_code引用，是活动率按角色聚合的分类规则依据",
+          "row_count": 35,
+          "schema": "public",
+          "table": "dim_role_type"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "output",
+          "matched_columns": [
+            "population",
+            "matched_keys",
+            "pending_suspects"
+          ],
+          "rationale": "人员身份识别覆盖率统计视图，2026-08-05业务方确认其用途是评估bridge_person_identity的数据质量(渠道理财师/个人客户等群体的身份匹配成功率)，与bridge_person_identity同挂此L4",
+          "row_count": 10,
+          "schema": "public",
+          "table": "v_person_coverage"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "output",
+          "matched_columns": [
+            "person_id",
+            "person_scope",
+            "person_group"
+          ],
+          "rationale": "统一人员主数据表，外键被bridge_person_identity的person_id引用，是活动率分析人员归一化后的主档",
+          "row_count": 5291,
+          "schema": "public",
+          "table": "dim_person"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "audit",
+          "matched_columns": [
+            "pending_key_value",
+            "proposed_action",
+            "status"
+          ],
+          "rationale": "人员身份匹配疑似项表，视图依赖被v_person_coverage引用，是身份归一化过程中待人工复核的清单，与v_person_coverage同挂此L4",
+          "row_count": 202,
+          "schema": "public",
+          "table": "person_match_suspect"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "output",
+          "matched_columns": [
+            "person_id",
+            "relationship_type",
+            "target_person_id"
+          ],
+          "rationale": "人员关系桥接表，外键指向dim_person，记录推荐/管理等人际关系，是活动率分析人员归一化后的关系维度扩展",
+          "row_count": 418,
+          "schema": "public",
+          "table": "bridge_person_relationship"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "output",
+          "matched_columns": [
+            "person_id",
+            "role_code",
+            "org_code"
+          ],
+          "rationale": "人员角色桥接表，外键指向dim_person，记录担任角色及所属组织，是活动率分析按角色维度聚合的基础",
+          "row_count": 5442,
+          "schema": "public",
+          "table": "bridge_person_role"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "output",
+          "matched_columns": [
+            "person_id",
+            "person_scope",
+            "person_group"
+          ],
+          "rationale": "dim_person的精简视图(去掉批次/审计字段)，视图依赖dim_person，供业务查阅使用",
+          "row_count": 5273,
+          "schema": "public",
+          "table": "v_dim_person"
+        }
+      ]
+    },
+    {
       "confidence": "HIGH",
       "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
@@ -1163,105 +1365,6 @@
         ],
         "step_name": "业绩数据汇总"
       }
-    },
-    {
-      "confidence": "LOW",
-      "conflict_note": "人工按业务含义匹配到业务数据仓库表，非外键关联，未经业务方确认",
-      "evidence_class": "CONSENSUS",
-      "evidence_id": "EVD-64693772a73cfec921e3",
-      "field_name": "business_evidence",
-      "source": {
-        "observed_at": "",
-        "source_field": "人工匹配",
-        "source_key": "L4-FBA-02",
-        "source_object": "public.v_person_activity, public.bridge_person_identity, public.dim_role_type, public.v_person_coverage, public.dim_person, public.person_match_suspect",
-        "source_system": "业务数据仓库",
-        "source_version": "2026-08-04试点"
-      },
-      "status": "UNVERIFIED",
-      "transform_rule": "",
-      "value": [
-        {
-          "confidence": "weak",
-          "evidence_type": "output",
-          "matched_columns": [
-            "person_id",
-            "role_code",
-            "measure",
-            "biz_date"
-          ],
-          "rationale": "人员活动流水视图，measure字段可作活动率计算的原始输入，但未专门按理财师角色聚合",
-          "row_count": 39533,
-          "schema": "public",
-          "table": "v_person_activity"
-        },
-        {
-          "confidence": "strong",
-          "evidence_type": "output",
-          "matched_columns": [
-            "person_id",
-            "source_system",
-            "match_method",
-            "confidence_tier"
-          ],
-          "rationale": "人员身份归一化桥接表，视图依赖被v_person_activity引用，是活动率分析按人员归一化统计的身份识别基础",
-          "row_count": 15833,
-          "schema": "public",
-          "table": "bridge_person_identity"
-        },
-        {
-          "confidence": "strong",
-          "evidence_type": "rule",
-          "matched_columns": [
-            "role_code",
-            "role_name_cn",
-            "is_person_role"
-          ],
-          "rationale": "人员角色类型字典表，外键被v_person_activity的role_code引用，是活动率按角色聚合的分类规则依据",
-          "row_count": 35,
-          "schema": "public",
-          "table": "dim_role_type"
-        },
-        {
-          "confidence": "strong",
-          "evidence_type": "output",
-          "matched_columns": [
-            "population",
-            "matched_keys",
-            "pending_suspects"
-          ],
-          "rationale": "人员身份识别覆盖率统计视图，2026-08-05业务方确认其用途是评估bridge_person_identity的数据质量(渠道理财师/个人客户等群体的身份匹配成功率)，与bridge_person_identity同挂此L4",
-          "row_count": 10,
-          "schema": "public",
-          "table": "v_person_coverage"
-        },
-        {
-          "confidence": "strong",
-          "evidence_type": "output",
-          "matched_columns": [
-            "person_id",
-            "person_scope",
-            "person_group"
-          ],
-          "rationale": "统一人员主数据表，外键被bridge_person_identity的person_id引用，是活动率分析人员归一化后的主档",
-          "row_count": 5291,
-          "schema": "public",
-          "table": "dim_person"
-        },
-        {
-          "confidence": "strong",
-          "evidence_type": "audit",
-          "matched_columns": [
-            "pending_key_value",
-            "proposed_action",
-            "status"
-          ],
-          "rationale": "人员身份匹配疑似项表，视图依赖被v_person_coverage引用，是身份归一化过程中待人工复核的清单，与v_person_coverage同挂此L4",
-          "row_count": 202,
-          "schema": "public",
-          "table": "person_match_suspect"
-        }
-      ]
     },
     {
       "confidence": "HIGH",
@@ -2263,6 +2366,45 @@
           "row_count": 202,
           "schema": "public",
           "table": "person_match_suspect"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "output",
+          "matched_columns": [
+            "person_id",
+            "relationship_type",
+            "target_person_id"
+          ],
+          "rationale": "人员关系桥接表，外键指向dim_person，记录推荐/管理等人际关系，是活动率分析人员归一化后的关系维度扩展",
+          "row_count": 418,
+          "schema": "public",
+          "table": "bridge_person_relationship"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "output",
+          "matched_columns": [
+            "person_id",
+            "role_code",
+            "org_code"
+          ],
+          "rationale": "人员角色桥接表，外键指向dim_person，记录担任角色及所属组织，是活动率分析按角色维度聚合的基础",
+          "row_count": 5442,
+          "schema": "public",
+          "table": "bridge_person_role"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "output",
+          "matched_columns": [
+            "person_id",
+            "person_scope",
+            "person_group"
+          ],
+          "rationale": "dim_person的精简视图(去掉批次/审计字段)，视图依赖dim_person，供业务查阅使用",
+          "row_count": 5273,
+          "schema": "public",
+          "table": "v_dim_person"
         }
       ],
       "d1_d6": {
@@ -2284,7 +2426,7 @@
         "agent_d6_compliance": "EVD-bc769b5f7badec8cce04",
         "agent_human_touchpoint": "EVD-89816f3238b0ab9475b8",
         "agentifiability": "EVD-8aa21323db1abd5283f5",
-        "business_evidence": "EVD-64693772a73cfec921e3",
+        "business_evidence": "EVD-36d560a806b3d568bbf5",
         "l4_deliverable": "EVD-faf31c10b4823959583f",
         "l4_deliverable_type": "EVD-b131e156d611cbe844be",
         "l4_name": "EVD-4fc28556d1fdd733a28c",

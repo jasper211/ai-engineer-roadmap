@@ -18060,7 +18060,7 @@
       "schema": "public",
       "table": "bridge_strategy_routing",
       "table_type": "桥接表",
-      "zombie_flag": "never_activated"
+      "zombie_flag": "none"
     },
     {
       "business_label": "佣金制表业务类型配置",
@@ -18150,7 +18150,7 @@
       "schema": "public",
       "table": "config_strategy_header",
       "table_type": "配置表",
-      "zombie_flag": "never_activated"
+      "zombie_flag": "none"
     },
     {
       "business_label": "策略分档奖励配置表",
@@ -18159,7 +18159,7 @@
       "schema": "public",
       "table": "config_strategy_tiers",
       "table_type": "配置表",
-      "zombie_flag": "never_activated"
+      "zombie_flag": "none"
     },
     {
       "business_label": "转介协议主表",
@@ -18268,7 +18268,7 @@
       "schema": "public",
       "table": "dim_partner_equity",
       "table_type": "维度表",
-      "zombie_flag": "never_activated"
+      "zombie_flag": "none"
     },
     {
       "business_label": "收款人银行账户信息表",
@@ -18358,7 +18358,7 @@
       "schema": "public",
       "table": "dim_strategy",
       "table_type": "维度表",
-      "zombie_flag": "never_activated"
+      "zombie_flag": "none"
     },
     {
       "business_label": "KA渠道月度业绩汇总表",
@@ -18781,28 +18781,6 @@
         "via_table": "public.fact_policy"
       }
     ],
-    "public.bridge_person_relationship": [
-      {
-        "edge_type": "foreign_key",
-        "evidence": "public.bridge_person_relationship.person_id 外键引用 public.dim_person.person_id",
-        "l3_code": "L3-FBA",
-        "l3_name": "理财师业务分析",
-        "l4_code": "L4-FBA-02",
-        "l4_name": "月度业绩与活动率分析",
-        "via_table": "public.dim_person"
-      }
-    ],
-    "public.bridge_person_role": [
-      {
-        "edge_type": "foreign_key",
-        "evidence": "public.bridge_person_role.person_id 外键引用 public.dim_person.person_id",
-        "l3_code": "L3-FBA",
-        "l3_name": "理财师业务分析",
-        "l4_code": "L4-FBA-02",
-        "l4_name": "月度业绩与活动率分析",
-        "via_table": "public.dim_person"
-      }
-    ],
     "public.dim_lookup_code": [
       {
         "edge_type": "pipeline_sibling",
@@ -19180,17 +19158,6 @@
         "l4_code": "L4-COM-10",
         "l4_name": "保单信息整合与应收核算（待注册）",
         "via_table": "public.fact_policy"
-      }
-    ],
-    "public.v_dim_person": [
-      {
-        "edge_type": "view_dependency",
-        "evidence": "public.v_dim_person的真实视图定义中FROM/JOIN引用了public.dim_person",
-        "l3_code": "L3-FBA",
-        "l3_name": "理财师业务分析",
-        "l4_code": "L4-FBA-02",
-        "l4_name": "月度业绩与活动率分析",
-        "via_table": "public.dim_person"
       }
     ],
     "public.v_fact_sales_activity": [

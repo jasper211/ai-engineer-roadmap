@@ -7,315 +7,278 @@
       {
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-5d7e1225362808f4d5cf",
-          "EVD-012be406a905dc0c0e4a",
-          "EVD-d65fddcecdba69a5d9b2"
+          "EVD-6608a11cfbefb264987c",
+          "EVD-4090dc3e74b49f2d93ce"
         ],
-        "human_boundary": "人工必须承担对外发布前的最终审批责任，控制品牌风险和合规风险；试点期不开放任何自动发布能力",
-        "pilot_scope": "选择1个典型权益包，限定内部渠道和受控受众群，由权益服务族设计师与合规人员共同监督Agent生成结果",
+        "human_boundary": "权益战略与方案设计岗负责人最终确认规则内容，AI不得自行发布规则",
+        "pilot_scope": "选择权益类型X和Y进行试构建",
         "priority": "P1",
         "task_ids": [
-          "TASK-06"
+          "T-01"
         ],
-        "title": "启动推广营销Agent辅助试点"
+        "title": "启动权益包核心构建试点"
       }
     ],
     "generation_mode": "UNIFIED_MODEL",
     "l4_analysis": [
       {
-        "ai_reshape": "优先采用Agent辅助或决策支持，不直接封装确定性Skill；AI可生成规则初稿与合规提示，人做最终确认",
-        "ai_responsibility": "提供权益包使用规则初稿、相关数据分析和合规预警",
+        "ai_reshape": "AI辅助生成规则草案并进行语义复核确认，不直接封装Skill；Agent辅助模式",
+        "ai_responsibility": "提供结构化输入模板、历史规则参考、输出合规校验",
         "analysis_status": "MODEL_DRAFT",
         "confidence": "MODEL_DRAFT",
         "control_gates": [
-          "合规审核（必须人工确认）"
+          "权益包规则审批"
         ],
-        "current_recommendation": "建议维持Hybrid模式，试点Agent辅助生成规则初稿，加强人工复核与合规校验，暂不封装Skill",
-        "data_basis": [
-          "D1输入结构化: 1（中等）",
-          "D2规则清晰度: 0（低）",
-          "D3输出可验证: 1（可验证）",
-          "D4 API可达性: 0（不可达）",
-          "D5回退机制: 0（无）",
-          "D6合规要求: 1（有）"
-        ],
+        "current_recommendation": "采用Agent辅助模式，由权益战略与方案设计岗主导规则构建，AI提供合规校验与历史规则参考；暂不封装Skill",
+        "data_basis": [],
         "database_tier": "Hybrid",
-        "deliverable_role": "交付物：权益包使用规则（方案）",
+        "deliverable_role": "权益战略与方案设计岗",
         "evidence_refs": [
+          "EVD-441b84ba0909a7270939",
           "EVD-971a07ee169f3526be99",
           "EVD-46be961d5a73fbc38830",
-          "EVD-441b84ba0909a7270939",
+          "EVD-a7e03f6723b046b85178",
+          "EVD-4090dc3e74b49f2d93ce",
           "EVD-7d176ba4b3ae12eb546d",
           "EVD-0211cd0eb13be03cb109",
-          "EVD-4090dc3e74b49f2d93ce",
           "EVD-fa0f77352d90c5a2ce3c",
           "EVD-1a0f9a22b8f9a91ffff6",
           "EVD-fb514f2f61ef9ae522b9",
           "EVD-a6e8b09dd4b32602658e",
           "EVD-0afd1a54a36fb0e3d445",
           "EVD-6170a7d0d28d963d66bd",
-          "EVD-a7e03f6723b046b85178",
           "EVD-6608a11cfbefb264987c"
         ],
         "handoff_triggers": [
-          "合规检查不通过",
-          "策略冲突或规则模糊",
-          "需要人工决策的特殊场景"
+          "当规则涉及新权益类型或重大战略调整时"
         ],
-        "human_responsibility": "复核并确认规则内容，决策策略方向，承担最终合规责任",
+        "human_responsibility": "最终规则设计决策、语义确认与战略对齐",
         "l4_code": "L4-RPD-01",
-        "process_context": "位于流程蓝图STEP-01权益包核心构建，是后续规划与细化的输入基础",
+        "process_context": "作为权益包设计流程的第一步，为后续资源规划与规则细化提供基础",
         "quadrant": "unclassified",
-        "quality_anchor": "人工执行：权益包核心构建，需确保规则逻辑合理、符合业务策略与合规要求",
+        "quality_anchor": "权益包使用规则的业务合规性与战略一致性",
         "recommended_tier": "Hybrid",
         "risks_limits": [
-          "C级低封装（判断/策略/关系类），理论天花板，不适合全自动",
-          "规则错误可能导致权益包不可用或违规",
-          "回退机制缺失，需强化人工监控"
+          "规则设计依赖人工经验，一致性风险高",
+          "缺少历史规则库与自动化API支撑",
+          "合规性需人工最终确认"
         ],
         "specific_capabilities": [
-          "语义复核判定",
-          "单一动作执行",
-          "权益规则编写与合规校验"
+          "权益包规则设计",
+          "业务语义判断",
+          "结构化输入处理",
+          "输出一致性校验",
+          "合规性检查"
         ]
       },
       {
-        "ai_reshape": "复合动作建议先拆分为可执行任务；AI可辅助数据收集与分析、生成规划草案，人工主导决策会议",
-        "ai_responsibility": "提供市场数据、资源分析、初步规划选项与风险评估",
+        "ai_reshape": "AI辅助进行资源数据聚合与规划草案生成，人工进行战略判断与优先级确认",
+        "ai_responsibility": "聚合历史资源数据，生成资源规划建议草稿",
         "analysis_status": "MODEL_DRAFT",
         "confidence": "MODEL_DRAFT",
         "control_gates": [
-          "战略决策必须有人工负责人签字确认"
+          "资源分配审批"
         ],
-        "current_recommendation": "立即拆分任务：数据准备与分析阶段可Agent辅助，决策会议保留为纯人工，后续可探索决策支持工具",
-        "data_basis": [
-          "D1输入结构化: 1（中等）",
-          "D2规则清晰度: 0（低）",
-          "D3输出可验证: 1（可验证）",
-          "D4 API可达性: 0（不可达）",
-          "D5回退机制: 0（无）",
-          "D6合规要求: 1（有）"
-        ],
+        "current_recommendation": "优先考虑Agent辅助，将资源数据聚合与初步规划分离为可执行任务，由人工负责最终决策",
+        "data_basis": [],
         "database_tier": "Hybrid",
-        "deliverable_role": "交付物：权益包使用规则；服务使用规则（方案）",
+        "deliverable_role": "权益战略与方案设计岗",
         "evidence_refs": [
+          "EVD-022a54766627f24219b7",
           "EVD-c9135b83dff8aa4893e5",
           "EVD-40b0fd16c5f4c99e5454",
-          "EVD-022a54766627f24219b7",
+          "EVD-a7e03f6723b046b85178",
+          "EVD-597305d9ec84bb80e938",
           "EVD-a6b88b57752fd474008e",
           "EVD-5614d0168198599b961b",
-          "EVD-597305d9ec84bb80e938",
           "EVD-96a2e040f133ae43a7f4",
           "EVD-8a3dd4c9d5258479063a",
           "EVD-dd7ca72bdf87a0a1752c",
           "EVD-ca24dc26bd6f3f7e1b38",
           "EVD-ccbf0a8457dea71e72b2",
           "EVD-1a664af1f0dae1ac39c3",
-          "EVD-a7e03f6723b046b85178",
           "EVD-fa878b66a6f1d83f6670"
         ],
         "handoff_triggers": [
-          "数据不足或矛盾",
-          "多部门意见冲突",
-          "需要高层授权"
+          "资源限制或战略冲突时"
         ],
-        "human_responsibility": "召开决策会议，综合判断并确定最终资源与目标规划",
+        "human_responsibility": "资源分配决策、战略目标设定、优先级确认",
         "l4_code": "L4-RPD-02",
-        "process_context": "位于流程蓝图STEP-02资源与目标规划，承接核心构建输出，为规则细化提供方向",
+        "process_context": "第二步，承接权益包核心构建，进行资源和目标的统一规划",
         "quadrant": "unclassified",
-        "quality_anchor": "人工执行：资源与目标规划，战略方向须经权威确认",
+        "quality_anchor": "权益包与资源匹配的可行性、服务规则一致性",
         "recommended_tier": "Hybrid",
         "risks_limits": [
-          "C级低封装（判断/策略/关系类），高度依赖人工权威",
-          "复合动作未拆分时无法有效自动化",
-          "决策失误将影响后续全部环节"
+          "资源数据不完整或滞后",
+          "战略判断主观性强，难以量化",
+          "多目标优化复杂"
         ],
         "specific_capabilities": [
-          "判断/策略/认知类决策",
-          "复合动作（需拆分）",
-          "资源与目标分析能力"
+          "资源评估与目标规划",
+          "权益包与服务规则协调设计",
+          "战略判断",
+          "跨系统数据整合需求"
         ]
       },
       {
-        "ai_reshape": "复合动作建议拆分：AI辅助生成细化草案与合规检查，人工组织审核会确认最终规则",
-        "ai_responsibility": "根据前期规划生成服务使用规则细化草案，标记合规风险点",
+        "ai_reshape": "AI辅助规则细化与冲突检测，人工进行最终确认与利益方协调",
+        "ai_responsibility": "提供规则模板、校验一致性、标记潜在冲突",
         "analysis_status": "MODEL_DRAFT",
         "confidence": "MODEL_DRAFT",
         "control_gates": [
-          "跨部门审核必须有正式会议纪要，规则发布需负责人批准"
+          "服务使用规则审批"
         ],
-        "current_recommendation": "拆分：草案生成可Agent辅助，审核会保留人工；长期可探索规则库与冲突检测工具",
-        "data_basis": [
-          "D1输入结构化: 1（中等）",
-          "D2规则清晰度: 0（低）",
-          "D3输出可验证: 1（可验证）",
-          "D4 API可达性: 0（不可达）",
-          "D5回退机制: 0（无）",
-          "D6合规要求: 1（有）"
-        ],
+        "current_recommendation": "将规则细化分为分析任务和确认任务，AI执行规则草案生成与冲突检测，人工负责最终拍板",
+        "data_basis": [],
         "database_tier": "Hybrid",
-        "deliverable_role": "交付物：服务使用规则（方案）",
+        "deliverable_role": "权益战略与方案设计岗",
         "evidence_refs": [
+          "EVD-ebb253670ae7ff4059ee",
           "EVD-10e62d147d42280b38f8",
           "EVD-8d3dbaf305cea1b0de93",
-          "EVD-ebb253670ae7ff4059ee",
+          "EVD-a7e03f6723b046b85178",
+          "EVD-4b79f3400dd182ea5458",
           "EVD-277b0bea6fe5e00b1706",
           "EVD-a6e0c4512b0c9491eb0b",
-          "EVD-4b79f3400dd182ea5458",
           "EVD-e8c0c21e9f3eed248a1c",
           "EVD-905b8cfc4f0f07f8da14",
           "EVD-2ba3dea5b7267364724f",
           "EVD-83ead19e97e1b80c33cf",
           "EVD-0dbd913d18c812470ce9",
           "EVD-fb843ebe976ed09c1fe0",
-          "EVD-a7e03f6723b046b85178",
           "EVD-bfd225ec99fe3bfdea22"
         ],
         "handoff_triggers": [
-          "部门意见冲突无法达成共识",
-          "规则与现有政策冲突",
-          "需要高层裁决"
+          "规则涉及资金流、新服务类型或跨部门合规时"
         ],
-        "human_responsibility": "组织跨部门审核会议，确认规则内容，处理分歧",
+        "human_responsibility": "规则内容细化决策、业务场景确认、合规批准",
         "l4_code": "L4-RPD-04",
-        "process_context": "位于流程蓝图STEP-03规则细化与完善，是权益包落地的关键细化环节",
+        "process_context": "第三步，基于资源和目标规划细化服务使用规则",
         "quadrant": "unclassified",
-        "quality_anchor": "人工执行：规则细化与完善，必须通过跨部门审核",
+        "quality_anchor": "服务使用规则的完整性、无二义性及业务适配度",
         "recommended_tier": "Hybrid",
         "risks_limits": [
-          "C级低封装（判断/策略/关系类），理论天花板",
-          "复合动作导致自动化难度高",
-          "规则错误将直接影响用户服务体验和合规性"
+          "规则细化涉及多业务线，对齐难度大",
+          "缺乏自动化规则引擎，人工校验负担重"
         ],
         "specific_capabilities": [
-          "语义复核判定",
-          "复合动作（需拆分）",
-          "规则细化与跨部门共识"
+          "服务使用规则细化",
+          "业务场景适配",
+          "合规性审核",
+          "多利益方对齐"
         ]
       },
       {
-        "ai_reshape": "Agent辅助生成素材初稿，人负责合规与品牌审核后对外发布",
-        "ai_responsibility": "根据产品信息自动生成海报、PPT和文案草稿",
+        "ai_reshape": "AI辅助生成营销素材初稿，人工进行调性把控与合规确认",
+        "ai_responsibility": "根据产品信息生成海报/PPT草案、文案建议",
         "analysis_status": "MODEL_DRAFT",
         "confidence": "MODEL_DRAFT",
         "control_gates": [
-          "对外发布必须有人工最终审批，不可自动发布"
+          "营销素材合规审批",
+          "对外发布审核"
         ],
-        "current_recommendation": "优先试点Agent辅助生成，强化人工审核环节，补充人工触点定义，暂不开放自动发布",
-        "data_basis": [
-          "D1输入结构化: 1（中等）",
-          "D2规则清晰度: 1（有）",
-          "D3输出可验证: 1（可验证）",
-          "D4 API可达性: 1（可达）",
-          "D5回退机制: 0（无）",
-          "D6合规要求: 1（有）"
-        ],
+        "current_recommendation": "采用Hybrid模式，AI生成初稿减少人工重复劳动，人工负责调性调整与最终审批",
+        "data_basis": [],
         "database_tier": "Hybrid",
-        "deliverable_role": "交付物：权益海报/PPT/宣达文案（方案）",
+        "deliverable_role": "权益战略与方案设计岗",
         "evidence_refs": [
+          "EVD-033c429afa90e692310a",
           "EVD-4c39cedae2ab8da61f31",
           "EVD-8bf612d28982d8a77a18",
-          "EVD-033c429afa90e692310a",
-          "EVD-d65fddcecdba69a5d9b2",
-          "EVD-78e37f0ad8ef9750cbc4",
+          "EVD-a7e03f6723b046b85178",
           "EVD-012be406a905dc0c0e4a",
+          "EVD-78e37f0ad8ef9750cbc4",
           "EVD-fca76df26e5ebc2991c7",
           "EVD-52a28b1a9a31e6db424c",
           "EVD-48f56697cb9812c3697e",
           "EVD-8ea81f54aa15bcb25ae4",
           "EVD-32957136ffa689187919",
           "EVD-59eecb3ce5e59f43445a",
-          "EVD-a7e03f6723b046b85178",
-          "EVD-5d7e1225362808f4d5cf"
+          "EVD-5d7e1225362808f4d5cf",
+          "EVD-5af4af2949bb04b0d29e",
+          "EVD-0337907bf633a40e8c50"
         ],
         "handoff_triggers": [
-          "合规风险提示",
-          "品牌调性不符",
-          "对外发布前必须人工确认"
+          "涉及对外发布、品牌声誉、法律合规时"
         ],
-        "human_responsibility": "审核内容合规性、品牌调性、对外发布适宜性",
+        "human_responsibility": "最终视觉调性确认、合规审批、发布策略",
         "l4_code": "L4-RPD-05",
-        "process_context": "位于流程蓝图STEP-04推广营销，直接关联价值节点VN-EQ-03权益推广素材包（P1）",
+        "process_context": "第四步，权益包设计完成后，产出推广物料",
         "quadrant": "unclassified",
-        "quality_anchor": "人工触点缺失（需补充确认），素材必须符合品牌调性和合规要求",
+        "quality_anchor": "品牌调性一致性、合规性、传播效果预估",
         "recommended_tier": "Hybrid",
         "risks_limits": [
-          "C级低封装，需人工语义复核",
-          "回退机制缺失，一旦自动发布错误素材影响品牌形象",
-          "人工触点未确认，当前风险较高"
+          "对外发布风险高，需严格审批",
+          "AI生成内容可能不符合品牌调性",
+          "海报设计主观性强"
         ],
         "specific_capabilities": [
-          "语义复核判定",
-          "单一动作执行",
-          "创意内容生成与合规审核"
+          "营销策划",
+          "海报/PPT设计",
+          "宣达文案撰写",
+          "品牌合规检查"
         ]
       },
       {
-        "ai_reshape": "高封装，优先进入Skill原型候选池；AI完全自动生成配置表，人工仅最终抽查确认",
-        "ai_responsibility": "自动读取规则，计算并生成四张配置表",
+        "ai_reshape": "完全自动化：基于历史数据与模板生成配置表，人工仅做最终确认",
+        "ai_responsibility": "自动生成配置表草稿，执行数据校验",
         "analysis_status": "MODEL_DRAFT",
         "confidence": "MODEL_DRAFT",
         "control_gates": [
-          "系统配置变更必须有人工审批（若涉及正式环境发布）"
+          "配置表上线审批"
         ],
-        "current_recommendation": "立即纳入Skill原型候选池，补充回退方案与人工监控触点，试点自动配置并人工确认发布",
-        "data_basis": [
-          "D1输入结构化: 2（高）",
-          "D2规则清晰度: 2（高）",
-          "D3输出可验证: 2（高）",
-          "D4 API可达性: 2（高）",
-          "D5回退机制: 1（有）",
-          "D6合规要求: 2（高）"
-        ],
+        "current_recommendation": "作为高封装Skill候选，优先进入自动化原型；上线前需人工验证配置正确性",
+        "data_basis": [],
         "database_tier": "Auto",
-        "deliverable_role": "交付物：DIM_Strategy/Config_Strategy_Header/Tiers/Bridge_Strategy_Routing（四张配置表，数据表）",
+        "deliverable_role": "权益战略与方案设计岗（配置执行）",
         "evidence_refs": [
+          "EVD-7612a37263beaae3b586",
           "EVD-fe274f986f00fb980878",
           "EVD-e64c828ff2fde7366d63",
-          "EVD-7612a37263beaae3b586",
-          "EVD-faea24f44617a1315ae4",
-          "EVD-30ad5ffbe6caa83b54c3",
+          "EVD-a7e03f6723b046b85178",
           "EVD-fd414d73203984302d35",
+          "EVD-30ad5ffbe6caa83b54c3",
           "EVD-c1390454f76da9e45f6d",
           "EVD-6ba49fc7505bc34f14a0",
           "EVD-0412ca7fedff2b2ff99f",
           "EVD-36a28749c4cff7d4a4d7",
           "EVD-670cb5d644ba7a74c7d7",
           "EVD-84f894def647771fd159",
-          "EVD-a7e03f6723b046b85178",
           "EVD-5cc90321e72efbd3c188"
         ],
         "handoff_triggers": [
-          "校验失败",
-          "异常数据输入",
-          "配置与规则冲突"
+          "系统异常、配置冲突、新策略类型时"
         ],
-        "human_responsibility": "定期抽查配置结果，审批对外发布变更",
+        "human_responsibility": "配置表最终确认与异常处理",
         "l4_code": "L4-RPD-06",
-        "process_context": "位于流程蓝图STEP-05系统配置，是权益包上线的最后技术环节",
+        "process_context": "最后一步，将设计好的权益包规则配置进系统",
         "quadrant": "unclassified",
-        "quality_anchor": "配置表输出可通过规则引擎校验，与业务规则一致；人工触点缺失，需补充监控",
+        "quality_anchor": "配置表的完整性与数据一致性",
         "recommended_tier": "Auto",
         "risks_limits": [
-          "A级高封装，但回退机制仅部分，需加强故障恢复",
-          "人工触点缺失，若校验失败可能无人及时发现"
+          "配置错误可能导致权益发放错误",
+          "缺乏fallback机制"
         ],
         "specific_capabilities": [
-          "信息处理/事务类",
-          "单一动作执行",
-          "确定性的数据配置生成"
+          "系统配置表填充",
+          "数据映射",
+          "规则参数化"
         ]
       }
     ],
     "missing_analysis": [
-      "L4-RPD-05 · human_touchpoint",
-      "L4-RPD-06 · human_touchpoint",
-      "L3-RPD · rule_book_link",
-      "L3-RPD · sop"
+      "L4-RPD-01 · business_evidence · EVD-bd7398614a3494360f24 (UNVERIFIED) not usable",
+      "L4-RPD-02 · business_evidence · No business evidence provided",
+      "L4-RPD-04 · business_evidence · No business evidence provided",
+      "L4-RPD-05 · human_touchpoint · EVD-d65fddcecdba69a5d9b2 status MISSING",
+      "L4-RPD-05 · business_evidence · No business evidence provided",
+      "L4-RPD-06 · human_touchpoint · EVD-faea24f44617a1315ae4 status MISSING",
+      "L4-RPD-06 · business_evidence · EVD-cc924a07a78a860c3200 (UNVERIFIED) not usable",
+      "控制链缺少L4定位，已拒绝5条"
     ],
     "model_run": {
-      "generated_at": "2026-08-04T19:09:35.694385+00:00",
-      "input_snapshot_hash": "3c7319ae95bb53daded094a80ebd7bbb08646dd51bc729246ffa282cebf3f04b",
+      "generated_at": "2026-08-06T06:35:58.965350+00:00",
+      "input_snapshot_hash": "9cac3f8177d7703fbba8ecd23764e2f4628d469e9ba4f142789d3b181ebfef6c",
       "model_name": "deepseek-v4-pro",
       "model_version": "deepseek-v4-pro",
       "prompt_version": "VNW-L3-COM-GOLD-v1.0"
@@ -323,181 +286,145 @@
     "priority_drafts": [
       {
         "analysis_status": "MODEL_DRAFT",
-        "current_recommendation": "建议维持Hybrid模式，试点Agent辅助生成规则初稿，加强人工复核与合规校验，暂不封装Skill",
-        "data_basis": [
-          "D1输入结构化: 1（中等）",
-          "D2规则清晰度: 0（低）",
-          "D3输出可验证: 1（可验证）",
-          "D4 API可达性: 0（不可达）",
-          "D5回退机制: 0（无）",
-          "D6合规要求: 1（有）"
-        ],
+        "current_recommendation": "采用Agent辅助模式，由权益战略与方案设计岗主导规则构建，AI提供合规校验与历史规则参考；暂不封装Skill",
+        "data_basis": [],
         "evidence_refs": [
+          "EVD-441b84ba0909a7270939",
           "EVD-971a07ee169f3526be99",
           "EVD-46be961d5a73fbc38830",
-          "EVD-441b84ba0909a7270939",
+          "EVD-a7e03f6723b046b85178",
+          "EVD-4090dc3e74b49f2d93ce",
           "EVD-7d176ba4b3ae12eb546d",
           "EVD-0211cd0eb13be03cb109",
-          "EVD-4090dc3e74b49f2d93ce",
           "EVD-fa0f77352d90c5a2ce3c",
           "EVD-1a0f9a22b8f9a91ffff6",
           "EVD-fb514f2f61ef9ae522b9",
           "EVD-a6e8b09dd4b32602658e",
           "EVD-0afd1a54a36fb0e3d445",
           "EVD-6170a7d0d28d963d66bd",
-          "EVD-a7e03f6723b046b85178",
           "EVD-6608a11cfbefb264987c"
         ],
         "l4_code": "L4-RPD-01",
-        "process_context": "位于流程蓝图STEP-01权益包核心构建，是后续规划与细化的输入基础",
+        "process_context": "作为权益包设计流程的第一步，为后续资源规划与规则细化提供基础",
         "quadrant": "unclassified",
         "risks_limits": [
-          "C级低封装（判断/策略/关系类），理论天花板，不适合全自动",
-          "规则错误可能导致权益包不可用或违规",
-          "回退机制缺失，需强化人工监控"
+          "规则设计依赖人工经验，一致性风险高",
+          "缺少历史规则库与自动化API支撑",
+          "合规性需人工最终确认"
         ]
       },
       {
         "analysis_status": "MODEL_DRAFT",
-        "current_recommendation": "立即拆分任务：数据准备与分析阶段可Agent辅助，决策会议保留为纯人工，后续可探索决策支持工具",
-        "data_basis": [
-          "D1输入结构化: 1（中等）",
-          "D2规则清晰度: 0（低）",
-          "D3输出可验证: 1（可验证）",
-          "D4 API可达性: 0（不可达）",
-          "D5回退机制: 0（无）",
-          "D6合规要求: 1（有）"
-        ],
+        "current_recommendation": "优先考虑Agent辅助，将资源数据聚合与初步规划分离为可执行任务，由人工负责最终决策",
+        "data_basis": [],
         "evidence_refs": [
+          "EVD-022a54766627f24219b7",
           "EVD-c9135b83dff8aa4893e5",
           "EVD-40b0fd16c5f4c99e5454",
-          "EVD-022a54766627f24219b7",
+          "EVD-a7e03f6723b046b85178",
+          "EVD-597305d9ec84bb80e938",
           "EVD-a6b88b57752fd474008e",
           "EVD-5614d0168198599b961b",
-          "EVD-597305d9ec84bb80e938",
           "EVD-96a2e040f133ae43a7f4",
           "EVD-8a3dd4c9d5258479063a",
           "EVD-dd7ca72bdf87a0a1752c",
           "EVD-ca24dc26bd6f3f7e1b38",
           "EVD-ccbf0a8457dea71e72b2",
           "EVD-1a664af1f0dae1ac39c3",
-          "EVD-a7e03f6723b046b85178",
           "EVD-fa878b66a6f1d83f6670"
         ],
         "l4_code": "L4-RPD-02",
-        "process_context": "位于流程蓝图STEP-02资源与目标规划，承接核心构建输出，为规则细化提供方向",
+        "process_context": "第二步，承接权益包核心构建，进行资源和目标的统一规划",
         "quadrant": "unclassified",
         "risks_limits": [
-          "C级低封装（判断/策略/关系类），高度依赖人工权威",
-          "复合动作未拆分时无法有效自动化",
-          "决策失误将影响后续全部环节"
+          "资源数据不完整或滞后",
+          "战略判断主观性强，难以量化",
+          "多目标优化复杂"
         ]
       },
       {
         "analysis_status": "MODEL_DRAFT",
-        "current_recommendation": "拆分：草案生成可Agent辅助，审核会保留人工；长期可探索规则库与冲突检测工具",
-        "data_basis": [
-          "D1输入结构化: 1（中等）",
-          "D2规则清晰度: 0（低）",
-          "D3输出可验证: 1（可验证）",
-          "D4 API可达性: 0（不可达）",
-          "D5回退机制: 0（无）",
-          "D6合规要求: 1（有）"
-        ],
+        "current_recommendation": "将规则细化分为分析任务和确认任务，AI执行规则草案生成与冲突检测，人工负责最终拍板",
+        "data_basis": [],
         "evidence_refs": [
+          "EVD-ebb253670ae7ff4059ee",
           "EVD-10e62d147d42280b38f8",
           "EVD-8d3dbaf305cea1b0de93",
-          "EVD-ebb253670ae7ff4059ee",
+          "EVD-a7e03f6723b046b85178",
+          "EVD-4b79f3400dd182ea5458",
           "EVD-277b0bea6fe5e00b1706",
           "EVD-a6e0c4512b0c9491eb0b",
-          "EVD-4b79f3400dd182ea5458",
           "EVD-e8c0c21e9f3eed248a1c",
           "EVD-905b8cfc4f0f07f8da14",
           "EVD-2ba3dea5b7267364724f",
           "EVD-83ead19e97e1b80c33cf",
           "EVD-0dbd913d18c812470ce9",
           "EVD-fb843ebe976ed09c1fe0",
-          "EVD-a7e03f6723b046b85178",
           "EVD-bfd225ec99fe3bfdea22"
         ],
         "l4_code": "L4-RPD-04",
-        "process_context": "位于流程蓝图STEP-03规则细化与完善，是权益包落地的关键细化环节",
+        "process_context": "第三步，基于资源和目标规划细化服务使用规则",
         "quadrant": "unclassified",
         "risks_limits": [
-          "C级低封装（判断/策略/关系类），理论天花板",
-          "复合动作导致自动化难度高",
-          "规则错误将直接影响用户服务体验和合规性"
+          "规则细化涉及多业务线，对齐难度大",
+          "缺乏自动化规则引擎，人工校验负担重"
         ]
       },
       {
         "analysis_status": "MODEL_DRAFT",
-        "current_recommendation": "优先试点Agent辅助生成，强化人工审核环节，补充人工触点定义，暂不开放自动发布",
-        "data_basis": [
-          "D1输入结构化: 1（中等）",
-          "D2规则清晰度: 1（有）",
-          "D3输出可验证: 1（可验证）",
-          "D4 API可达性: 1（可达）",
-          "D5回退机制: 0（无）",
-          "D6合规要求: 1（有）"
-        ],
+        "current_recommendation": "采用Hybrid模式，AI生成初稿减少人工重复劳动，人工负责调性调整与最终审批",
+        "data_basis": [],
         "evidence_refs": [
+          "EVD-033c429afa90e692310a",
           "EVD-4c39cedae2ab8da61f31",
           "EVD-8bf612d28982d8a77a18",
-          "EVD-033c429afa90e692310a",
-          "EVD-d65fddcecdba69a5d9b2",
-          "EVD-78e37f0ad8ef9750cbc4",
+          "EVD-a7e03f6723b046b85178",
           "EVD-012be406a905dc0c0e4a",
+          "EVD-78e37f0ad8ef9750cbc4",
           "EVD-fca76df26e5ebc2991c7",
           "EVD-52a28b1a9a31e6db424c",
           "EVD-48f56697cb9812c3697e",
           "EVD-8ea81f54aa15bcb25ae4",
           "EVD-32957136ffa689187919",
           "EVD-59eecb3ce5e59f43445a",
-          "EVD-a7e03f6723b046b85178",
-          "EVD-5d7e1225362808f4d5cf"
+          "EVD-5d7e1225362808f4d5cf",
+          "EVD-5af4af2949bb04b0d29e",
+          "EVD-0337907bf633a40e8c50"
         ],
         "l4_code": "L4-RPD-05",
-        "process_context": "位于流程蓝图STEP-04推广营销，直接关联价值节点VN-EQ-03权益推广素材包（P1）",
+        "process_context": "第四步，权益包设计完成后，产出推广物料",
         "quadrant": "unclassified",
         "risks_limits": [
-          "C级低封装，需人工语义复核",
-          "回退机制缺失，一旦自动发布错误素材影响品牌形象",
-          "人工触点未确认，当前风险较高"
+          "对外发布风险高，需严格审批",
+          "AI生成内容可能不符合品牌调性",
+          "海报设计主观性强"
         ]
       },
       {
         "analysis_status": "MODEL_DRAFT",
-        "current_recommendation": "立即纳入Skill原型候选池，补充回退方案与人工监控触点，试点自动配置并人工确认发布",
-        "data_basis": [
-          "D1输入结构化: 2（高）",
-          "D2规则清晰度: 2（高）",
-          "D3输出可验证: 2（高）",
-          "D4 API可达性: 2（高）",
-          "D5回退机制: 1（有）",
-          "D6合规要求: 2（高）"
-        ],
+        "current_recommendation": "作为高封装Skill候选，优先进入自动化原型；上线前需人工验证配置正确性",
+        "data_basis": [],
         "evidence_refs": [
+          "EVD-7612a37263beaae3b586",
           "EVD-fe274f986f00fb980878",
           "EVD-e64c828ff2fde7366d63",
-          "EVD-7612a37263beaae3b586",
-          "EVD-faea24f44617a1315ae4",
-          "EVD-30ad5ffbe6caa83b54c3",
+          "EVD-a7e03f6723b046b85178",
           "EVD-fd414d73203984302d35",
+          "EVD-30ad5ffbe6caa83b54c3",
           "EVD-c1390454f76da9e45f6d",
           "EVD-6ba49fc7505bc34f14a0",
           "EVD-0412ca7fedff2b2ff99f",
           "EVD-36a28749c4cff7d4a4d7",
           "EVD-670cb5d644ba7a74c7d7",
           "EVD-84f894def647771fd159",
-          "EVD-a7e03f6723b046b85178",
           "EVD-5cc90321e72efbd3c188"
         ],
         "l4_code": "L4-RPD-06",
-        "process_context": "位于流程蓝图STEP-05系统配置，是权益包上线的最后技术环节",
+        "process_context": "最后一步，将设计好的权益包规则配置进系统",
         "quadrant": "unclassified",
         "risks_limits": [
-          "A级高封装，但回退机制仅部分，需加强故障恢复",
-          "人工触点缺失，若校验失败可能无人及时发现"
+          "配置错误可能导致权益发放错误",
+          "缺乏fallback机制"
         ]
       }
     ],
@@ -505,30 +432,31 @@
     "schema_version": "vnw.l3-analysis.v1",
     "source_scope": {
       "database": "process_analytics",
-      "evidence_count": 73,
+      "evidence_count": 75,
       "knowledge": "ACTIVE supplemental evidence only"
     },
     "tasks": [
       {
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-6608a11cfbefb264987c",
-          "EVD-4090dc3e74b49f2d93ce",
-          "EVD-7d176ba4b3ae12eb546d"
+          "EVD-6608a11cfbefb264987c"
         ],
         "l4_code": "L4-RPD-01",
-        "next_task_ids": [],
+        "next_task_ids": [
+          "T-02",
+          "T-03"
+        ],
         "previous_task_ids": [],
-        "relation_type": "",
+        "relation_type": "SEQUENCE",
         "sequence_no": 1,
-        "sequence_status": "SOURCE_STEP_ONLY",
+        "sequence_status": "SOURCE_CONFIRMED",
         "source_line": 46,
         "source_step_id": "STEP-01",
-        "source_type": "BLUEPRINT_STEP",
+        "source_type": "blueprint_step",
         "suggested_tier": "Hybrid",
-        "task_id": "TASK-01",
-        "task_name": "编写权益包使用规则（含合规约束）",
-        "tier_rationale": "依据Skill可行性评估：C级低封装，单一动作，建议Agent辅助生成规则初稿，人复核确认，不能全自动封装"
+        "task_id": "T-01",
+        "task_name": "执行权益包核心构建",
+        "tier_rationale": "C级封装，需语义复核，AI辅助校验，人工最终决策"
       },
       {
         "analysis_status": "MODEL_DRAFT",
@@ -537,39 +465,48 @@
           "EVD-597305d9ec84bb80e938"
         ],
         "l4_code": "L4-RPD-02",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "",
+        "next_task_ids": [
+          "T-04",
+          "T-05"
+        ],
+        "previous_task_ids": [
+          "T-01"
+        ],
+        "relation_type": "PARALLEL",
         "sequence_no": 2,
         "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 51,
         "source_step_id": "STEP-02",
-        "source_type": "BLUEPRINT_STEP",
+        "source_type": "blueprint_step",
         "suggested_tier": "Hybrid",
-        "task_id": "TASK-02",
-        "task_name": "收集与分析资源、市场和目标数据",
-        "tier_rationale": "复合动作拆分出的数据准备环节：Agent可辅助收集和初步分析，人工设定分析框架和范围"
+        "task_id": "T-02",
+        "task_name": "制定权益包使用规则",
+        "tier_rationale": "复合动作拆分：权益包使用规则侧重于资源匹配，建议Agent辅助"
       },
       {
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
           "EVD-fa878b66a6f1d83f6670",
-          "EVD-597305d9ec84bb80e938",
-          "EVD-a6b88b57752fd474008e"
+          "EVD-597305d9ec84bb80e938"
         ],
         "l4_code": "L4-RPD-02",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "",
+        "next_task_ids": [
+          "T-04",
+          "T-05"
+        ],
+        "previous_task_ids": [
+          "T-01"
+        ],
+        "relation_type": "PARALLEL",
         "sequence_no": 2,
         "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 51,
         "source_step_id": "STEP-02",
-        "source_type": "BLUEPRINT_STEP",
-        "suggested_tier": "Human",
-        "task_id": "TASK-03",
-        "task_name": "召开资源与目标规划决策会议",
-        "tier_rationale": "决策会议包含判断/策略/认知类活动，必须人工主导并最终确认，AI仅能做辅助准备"
+        "source_type": "blueprint_step",
+        "suggested_tier": "Hybrid",
+        "task_id": "T-03",
+        "task_name": "制定服务使用规则",
+        "tier_rationale": "复合动作拆分：服务使用规则侧重于目标规划，建议Agent辅助"
       },
       {
         "analysis_status": "MODEL_DRAFT",
@@ -578,86 +515,98 @@
           "EVD-4b79f3400dd182ea5458"
         ],
         "l4_code": "L4-RPD-04",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "",
+        "next_task_ids": [
+          "T-06"
+        ],
+        "previous_task_ids": [
+          "T-02",
+          "T-03"
+        ],
+        "relation_type": "PARALLEL",
         "sequence_no": 3,
         "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 56,
         "source_step_id": "STEP-03",
-        "source_type": "BLUEPRINT_STEP",
+        "source_type": "blueprint_step",
         "suggested_tier": "Hybrid",
-        "task_id": "TASK-04",
-        "task_name": "生成服务使用规则细化草案",
-        "tier_rationale": "复合动作拆分出的草案生成，可Agent辅助根据前期输出细化规则，人工预审后提交会议"
+        "task_id": "T-04",
+        "task_name": "执行规则细化分析",
+        "tier_rationale": "复合动作拆分：先进行规则草案生成与冲突检测"
       },
       {
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
           "EVD-bfd225ec99fe3bfdea22",
-          "EVD-4b79f3400dd182ea5458",
-          "EVD-277b0bea6fe5e00b1706"
+          "EVD-4b79f3400dd182ea5458"
         ],
         "l4_code": "L4-RPD-04",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "",
+        "next_task_ids": [
+          "T-06"
+        ],
+        "previous_task_ids": [
+          "T-02",
+          "T-03"
+        ],
+        "relation_type": "PARALLEL",
         "sequence_no": 3,
         "sequence_status": "SOURCE_STEP_ONLY",
         "source_line": 56,
         "source_step_id": "STEP-03",
-        "source_type": "BLUEPRINT_STEP",
+        "source_type": "blueprint_step",
         "suggested_tier": "Human",
-        "task_id": "TASK-05",
-        "task_name": "组织跨部门规则审核会",
-        "tier_rationale": "审核会需要多部门人工协商、确认共识，无法自动化，属于判断/策略活动"
+        "task_id": "T-05",
+        "task_name": "确认规则细化结果",
+        "tier_rationale": "需人工进行语义复核与最终确认"
       },
       {
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-5d7e1225362808f4d5cf",
-          "EVD-012be406a905dc0c0e4a",
-          "EVD-4c39cedae2ab8da61f31"
+          "EVD-5d7e1225362808f4d5cf"
         ],
         "l4_code": "L4-RPD-05",
-        "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "",
+        "next_task_ids": [
+          "T-07"
+        ],
+        "previous_task_ids": [
+          "T-04",
+          "T-05"
+        ],
+        "relation_type": "SEQUENCE",
         "sequence_no": 4,
-        "sequence_status": "SOURCE_STEP_ONLY",
+        "sequence_status": "SOURCE_CONFIRMED",
         "source_line": 61,
         "source_step_id": "STEP-04",
-        "source_type": "BLUEPRINT_STEP",
+        "source_type": "blueprint_step",
         "suggested_tier": "Hybrid",
-        "task_id": "TASK-06",
-        "task_name": "制作权益推广素材并编写宣发文案",
-        "tier_rationale": "单一动作，语义复核判定，建议Agent辅助生成素材初稿，人工审核合规与品牌后方可对外发布；人工触点缺失需补充"
+        "task_id": "T-06",
+        "task_name": "产出权益推广营销素材",
+        "tier_rationale": "AI生成初稿，人工调性与合规确认"
       },
       {
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
-          "EVD-5cc90321e72efbd3c188",
-          "EVD-fd414d73203984302d35",
-          "EVD-fe274f986f00fb980878"
+          "EVD-5cc90321e72efbd3c188"
         ],
         "l4_code": "L4-RPD-06",
         "next_task_ids": [],
-        "previous_task_ids": [],
-        "relation_type": "",
+        "previous_task_ids": [
+          "T-06"
+        ],
+        "relation_type": "SEQUENCE",
         "sequence_no": 5,
-        "sequence_status": "SOURCE_STEP_ONLY",
+        "sequence_status": "SOURCE_CONFIRMED",
         "source_line": 66,
         "source_step_id": "STEP-05",
-        "source_type": "BLUEPRINT_STEP",
+        "source_type": "blueprint_step",
         "suggested_tier": "Auto",
-        "task_id": "TASK-07",
-        "task_name": "配置系统权益策略表",
-        "tier_rationale": "A级高封装，确定性信息处理动作；建议自动化执行，人工仅监控和异常处理；需补充回退机制与人工触点"
+        "task_id": "T-07",
+        "task_name": "执行系统配置",
+        "tier_rationale": "A级封装，单一信息处理动作，可自动化；上线前人工验证"
       }
     ]
   },
   "analysis_freshness": "CURRENT",
-  "analysis_input_hash": "3c7319ae95bb53daded094a80ebd7bbb08646dd51bc729246ffa282cebf3f04b",
+  "analysis_input_hash": "9cac3f8177d7703fbba8ecd23764e2f4628d469e9ba4f142789d3b181ebfef6c",
   "blueprint": {
     "blueprint_value_nodes": [],
     "coverage": "INDEXED",
@@ -1811,6 +1760,39 @@
       "value": "PASS"
     },
     {
+      "confidence": "LOW",
+      "conflict_note": "人工按业务含义匹配到业务数据仓库表，非外键关联，未经业务方确认",
+      "evidence_class": "CONSENSUS",
+      "evidence_id": "EVD-bd7398614a3494360f24",
+      "field_name": "business_evidence",
+      "source": {
+        "observed_at": "",
+        "source_field": "人工匹配",
+        "source_key": "L4-RPD-01",
+        "source_object": "public.dim_partner_equity",
+        "source_system": "业务数据仓库",
+        "source_version": "2026-08-04试点"
+      },
+      "status": "UNVERIFIED",
+      "transform_rule": "",
+      "value": [
+        {
+          "confidence": "weak",
+          "evidence_type": "output",
+          "matched_columns": [
+            "partner_code",
+            "equity_type",
+            "equity_value",
+            "strategy_id"
+          ],
+          "rationale": "伙伴权益配置表，equity_type/equity_value字段对应\"权益包使用规则\"的伙伴侧落地台账；当前0行未populate",
+          "row_count": 0,
+          "schema": "public",
+          "table": "dim_partner_equity"
+        }
+      ]
+    },
+    {
       "confidence": "HIGH",
       "conflict_note": "",
       "evidence_class": "SUPPLEMENTAL",
@@ -1886,6 +1868,78 @@
       "status": "ACTIVE",
       "transform_rule": "",
       "value": 0
+    },
+    {
+      "confidence": "LOW",
+      "conflict_note": "人工按业务含义匹配到业务数据仓库表，非外键关联，未经业务方确认",
+      "evidence_class": "CONSENSUS",
+      "evidence_id": "EVD-cc924a07a78a860c3200",
+      "field_name": "business_evidence",
+      "source": {
+        "observed_at": "",
+        "source_field": "人工匹配",
+        "source_key": "L4-RPD-06",
+        "source_object": "public.dim_strategy, public.config_strategy_header, public.config_strategy_tiers, public.bridge_strategy_routing",
+        "source_system": "业务数据仓库",
+        "source_version": "2026-08-04试点"
+      },
+      "status": "UNVERIFIED",
+      "transform_rule": "",
+      "value": [
+        {
+          "confidence": "strong",
+          "evidence_type": "output",
+          "matched_columns": [
+            "strategy_id",
+            "strategy_name",
+            "base_tier_code"
+          ],
+          "rationale": "蓝图L4-RPD-06\"系统配置\"交付物明确指名DIM_Strategy为四张配置表之一；当前0行未populate",
+          "row_count": 0,
+          "schema": "public",
+          "table": "dim_strategy"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "rule",
+          "matched_columns": [
+            "strategy_id",
+            "strategy_type",
+            "evaluation_cycle"
+          ],
+          "rationale": "蓝图L4-RPD-06交付物明确指名Config_Strategy_Header为四张配置表之一；当前0行未populate",
+          "row_count": 0,
+          "schema": "public",
+          "table": "config_strategy_header"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "rule",
+          "matched_columns": [
+            "strategy_id",
+            "tier_level",
+            "target_metric",
+            "reward_cash_amount"
+          ],
+          "rationale": "蓝图L4-RPD-06交付物明确指名Config_Strategy_Tiers为四张配置表之一；当前0行未populate",
+          "row_count": 0,
+          "schema": "public",
+          "table": "config_strategy_tiers"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "rule",
+          "matched_columns": [
+            "scheme_id",
+            "target_strategy_id",
+            "partner_category"
+          ],
+          "rationale": "蓝图L4-RPD-06交付物明确指名Bridge_Strategy_Routing为四张配置表之一；当前0行未populate",
+          "row_count": 0,
+          "schema": "public",
+          "table": "bridge_strategy_routing"
+        }
+      ]
     },
     {
       "confidence": "HIGH",
@@ -2311,7 +2365,22 @@
   "l3_name": "权益包设计与发布",
   "l4s": [
     {
-      "business_evidence": [],
+      "business_evidence": [
+        {
+          "confidence": "weak",
+          "evidence_type": "output",
+          "matched_columns": [
+            "partner_code",
+            "equity_type",
+            "equity_value",
+            "strategy_id"
+          ],
+          "rationale": "伙伴权益配置表，equity_type/equity_value字段对应\"权益包使用规则\"的伙伴侧落地台账；当前0行未populate",
+          "row_count": 0,
+          "schema": "public",
+          "table": "dim_partner_equity"
+        }
+      ],
       "d1_d6": {
         "agent_d1_input_struct": 1,
         "agent_d2_rule_clear": 0,
@@ -2331,6 +2400,7 @@
         "agent_d6_compliance": "EVD-6170a7d0d28d963d66bd",
         "agent_human_touchpoint": "EVD-7d176ba4b3ae12eb546d",
         "agentifiability": "EVD-0211cd0eb13be03cb109",
+        "business_evidence": "EVD-bd7398614a3494360f24",
         "l4_deliverable": "EVD-971a07ee169f3526be99",
         "l4_deliverable_type": "EVD-46be961d5a73fbc38830",
         "l4_name": "EVD-441b84ba0909a7270939",
@@ -2503,7 +2573,61 @@
       "tier": "Hybrid"
     },
     {
-      "business_evidence": [],
+      "business_evidence": [
+        {
+          "confidence": "strong",
+          "evidence_type": "output",
+          "matched_columns": [
+            "strategy_id",
+            "strategy_name",
+            "base_tier_code"
+          ],
+          "rationale": "蓝图L4-RPD-06\"系统配置\"交付物明确指名DIM_Strategy为四张配置表之一；当前0行未populate",
+          "row_count": 0,
+          "schema": "public",
+          "table": "dim_strategy"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "rule",
+          "matched_columns": [
+            "strategy_id",
+            "strategy_type",
+            "evaluation_cycle"
+          ],
+          "rationale": "蓝图L4-RPD-06交付物明确指名Config_Strategy_Header为四张配置表之一；当前0行未populate",
+          "row_count": 0,
+          "schema": "public",
+          "table": "config_strategy_header"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "rule",
+          "matched_columns": [
+            "strategy_id",
+            "tier_level",
+            "target_metric",
+            "reward_cash_amount"
+          ],
+          "rationale": "蓝图L4-RPD-06交付物明确指名Config_Strategy_Tiers为四张配置表之一；当前0行未populate",
+          "row_count": 0,
+          "schema": "public",
+          "table": "config_strategy_tiers"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "rule",
+          "matched_columns": [
+            "scheme_id",
+            "target_strategy_id",
+            "partner_category"
+          ],
+          "rationale": "蓝图L4-RPD-06交付物明确指名Bridge_Strategy_Routing为四张配置表之一；当前0行未populate",
+          "row_count": 0,
+          "schema": "public",
+          "table": "bridge_strategy_routing"
+        }
+      ],
       "d1_d6": {
         "agent_d1_input_struct": 2,
         "agent_d2_rule_clear": 2,
@@ -2523,6 +2647,7 @@
         "agent_d6_compliance": "EVD-84f894def647771fd159",
         "agent_human_touchpoint": "EVD-faea24f44617a1315ae4",
         "agentifiability": "EVD-30ad5ffbe6caa83b54c3",
+        "business_evidence": "EVD-cc924a07a78a860c3200",
         "l4_deliverable": "EVD-fe274f986f00fb980878",
         "l4_deliverable_type": "EVD-e64c828ff2fde7366d63",
         "l4_name": "EVD-7612a37263beaae3b586",
@@ -2659,7 +2784,7 @@
     "confirmed_at": null,
     "confirmed_by": null,
     "coverage": {
-      "business_evidence_covered": 0,
+      "business_evidence_covered": 2,
       "kpi_count": 2,
       "l4_total": 5,
       "position_covered": 5,
@@ -2674,11 +2799,11 @@
         "detail": {
           "KPI关联": true,
           "L2业务能力": true,
-          "业务数据证据": false,
+          "业务数据证据": true,
           "价值流位置": true,
           "岗位归属": true
         },
-        "item": "六个受控维度中4/5个有数据（缺项已显式标待补）",
+        "item": "六个受控维度中5/5个有数据（缺项已显式标待补）",
         "satisfied": true
       },
       {
@@ -2729,9 +2854,9 @@
           "statement": "候选Agent封装档位=C-低封装(判断/策略/关系类,理论天花板)；优先考虑Agent辅助或决策支持，不直接封装确定性Skill"
         },
         {
-          "grade": "缺口",
+          "grade": "B",
           "layer": "结构层",
-          "statement": "业务数据证据类型=无业务数据证据；负责岗位=权益战略与方案设计岗（权益服务族）"
+          "statement": "业务数据证据类型=output；负责岗位=权益战略与方案设计岗（权益服务族）"
         },
         {
           "grade": "C",
@@ -2821,9 +2946,9 @@
           "statement": "候选Agent封装档位=A-高封装(理想条件下Skill候选)；优先进入Skill原型候选池"
         },
         {
-          "grade": "缺口",
+          "grade": "B",
           "layer": "结构层",
-          "statement": "业务数据证据类型=无业务数据证据；负责岗位=权益战略与方案设计岗（权益服务族）"
+          "statement": "业务数据证据类型=output、rule；负责岗位=权益战略与方案设计岗（权益服务族）"
         },
         {
           "grade": "C",
