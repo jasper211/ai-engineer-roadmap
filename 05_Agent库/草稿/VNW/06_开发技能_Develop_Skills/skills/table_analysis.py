@@ -157,7 +157,6 @@ def build_table_analysis(
     shared_master_data: dict[str, dict] | None = None,
     utility_support_info: dict[str, str] | None = None,
     field_anchor_info: dict[str, list[dict]] | None = None,
-    never_activated: set[str] | None = None,
 ) -> dict:
     # "未定位关联"必须区分"查过、确认没有" vs "这个L3还没排到分析"——否则73个
     # 从未分析过的L3会被误读成"确认和这张表无关"。ANALYZED_L3_CODES是显式登记
@@ -167,7 +166,6 @@ def build_table_analysis(
     shared_master_data = shared_master_data or {}
     utility_support_info = utility_support_info or {}
     field_anchor_info = field_anchor_info or {}
-    never_activated = never_activated or set()
 
     entries = []
     for table in db_catalog["tables"]:
@@ -218,7 +216,6 @@ def build_table_analysis(
                 {"anchors": field_anchor_info[key]}
                 if not related and not non_business_reason and key in field_anchor_info else None
             ),
-            "never_activated": bool(not related and not non_business_reason and key in never_activated),
         }
 
         layer3 = {

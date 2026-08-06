@@ -60,6 +60,9 @@ L4_BUSINESS_TABLE_MAP: dict[str, list[dict]] = {
         {"schema": "public", "table": "config_license_carrier_mapping", "evidence_type": "rule", "matched_columns": ["license_code", "carrier_code", "commission_plan_code"], "rationale": "牌照-保司-方案映射规则，是政策接收后的落地配置", "confidence": "strong"},
         {"schema": "comm_sandbox", "table": "market_table_header_state", "evidence_type": "workflow", "matched_columns": ["header_status", "submitted_by", "approved_by", "published_by"], "rationale": "费率表提交/审批/发布工作流状态，直接暴露\"政策接收与校准\"当前的人工关卡在哪一步", "confidence": "strong"},
         {"schema": "public", "table": "dim_carrier", "evidence_type": "rule", "matched_columns": ["carrier_code", "carrier_cn_name", "rating"], "rationale": "保司主数据表，外键被fact_commission_rate引用，是佣金政策按保司接收/校准的基础参照维度；同一维度被多个L4复用(COM-02/COM-10/RSJD-04)", "confidence": "strong"},
+        {"schema": "comm_sandbox", "table": "competitor_rate", "evidence_type": "rule", "matched_columns": ["product_id", "quarter", "y1", "source_name"], "rationale": "竞品费率对比表，按产品/季度记录竞品Y1-Y10费率及来源，是政策接收/校准阶段做市场对标的输入依据；当前0行未populate，但业务定义与字段结构明确对口该L4", "confidence": "weak"},
+        {"schema": "public", "table": "dim_comm_scheme", "evidence_type": "rule", "matched_columns": ["scheme_name", "scheme_type", "valid_from", "valid_to"], "rationale": "与comm_sandbox.dim_comm_scheme同名同结构(已确认为该L4强证据)，是同一佣金方案定义表在public schema下的重复副本；当前0行未populate，按业务定义与其schema-twin同等对待", "confidence": "weak"},
+        {"schema": "public", "table": "mapping_product", "evidence_type": "rule", "matched_columns": ["product_id", "product_sku", "carrier_code", "product_category"], "rationale": "产品ID/SKU/名称跨系统映射表，是佣金政策按产品口径接收/校准时的产品主数据参照，与dim_product_id/dim_product_sku同类；当前0行未populate", "confidence": "weak"},
     ],
     "L4-COM-02": [
         {"schema": "comm_sandbox", "table": "fact_commission_tier_rate", "evidence_type": "output", "matched_columns": ["tier_level", "customer_type", "product_sku", "rate_y1"], "rationale": "分档/细分市场费率表，对应\"各细分市场配置\"", "confidence": "strong"},
@@ -68,6 +71,9 @@ L4_BUSINESS_TABLE_MAP: dict[str, list[dict]] = {
         {"schema": "comm_sandbox", "table": "market_row_state", "evidence_type": "workflow", "matched_columns": ["row_status", "change_type", "confirmed_by"], "rationale": "逐条费率行的确认状态(待确认/新增等)，是\"验证\"过程的真实工作流留痕", "confidence": "strong"},
         {"schema": "comm_sandbox", "table": "commission_tier_adjustment", "evidence_type": "output", "matched_columns": ["adj_y1", "adjust_reason"], "rationale": "档位调整记录；口径已建但当前0行，未产生数据", "confidence": "weak"},
         {"schema": "comm_sandbox", "table": "v_commission_tier_effective", "evidence_type": "output", "matched_columns": ["tier_level", "customer_type", "rate_y1", "is_adjusted"], "rationale": "生效佣金费率视图，视图依赖commission_tier_adjustment，是差异化拆解与验证后的当前生效结果快照", "confidence": "strong"},
+        {"schema": "comm_sandbox", "table": "v_tier_rate_readable", "evidence_type": "output", "matched_columns": ["tier_level", "客户类型", "有效Y1", "是否微调"], "rationale": "v_commission_tier_effective的中文可读版本，同一视图依赖链，供业务人员核对差异化拆解结果", "confidence": "strong"},
+        {"schema": "comm_sandbox", "table": "config_table_type_coefficient", "evidence_type": "rule", "matched_columns": ["table_type", "premium_term", "coefficient"], "rationale": "按table_type/premium_term/费率区间的系数换算规则，与config_table_type_tier_pricing_rules同维度，是差异化拆解的折标计算依据；当前0行未populate", "confidence": "weak"},
+        {"schema": "comm_sandbox", "table": "source_diff_confirm", "evidence_type": "workflow", "matched_columns": ["carrier_code", "product_id", "confirmed_by", "confirmed_at"], "rationale": "费率来源差异确认表，字段与market_row_state同类(逐条确认工作流)，是验证环节的确认留痕；当前0行未populate", "confidence": "weak"},
     ],
     "L4-COM-03": [
         {"schema": "comm_sandbox", "table": "market_publish_event", "evidence_type": "workflow", "matched_columns": ["action", "affected_rows", "published_by"], "rationale": "费率发布事件表，字段含义正对应\"外发\"动作；当前0行，说明外发流程尚未在系统内走过", "confidence": "weak"},
@@ -112,6 +118,9 @@ L4_BUSINESS_TABLE_MAP: dict[str, list[dict]] = {
         {"schema": "comm_sandbox", "table": "config_partner_routing", "evidence_type": "rule", "matched_columns": ["assigned_license_code", "priority"], "rationale": "渠道路由规则，决定应派归属到哪个牌照", "confidence": "strong"},
         {"schema": "public", "table": "config_partner_routing", "evidence_type": "rule", "matched_columns": ["assigned_license_code", "priority", "partner_code_condition"], "rationale": "同为渠道路由规则表(所有合作伙伴的合作匹配规则)，与comm_sandbox同名表功能等价但字段命名独立维护(含拼写差异bussiness_line_comdition)，2026-08-05业务方确认其为真实有效的路由规则表，非断点", "confidence": "strong"},
         {"schema": "public", "table": "fact_channel_partner", "evidence_type": "output", "matched_columns": ["partner_code", "total_premium_hkd", "policy_count"], "rationale": "渠道月度汇总表，弱对应\"应派清单\"（无逐笔应派落地表）", "confidence": "weak"},
+        {"schema": "public", "table": "config_license_cost_deduction", "evidence_type": "rule", "matched_columns": ["license_code", "carrier_code", "platform_service_fee_rate"], "rationale": "牌照平台服务费扣除配置，是应派金额拆分前的费用扣减规则；当前0行未populate", "confidence": "weak"},
+        {"schema": "public", "table": "dim_payee", "evidence_type": "output", "matched_columns": ["payee_sk", "bank_name", "payment_cycle"], "rationale": "收款人银行账户信息表，与map_partner_payee配套构成\"伙伴-收款人-分成比例\"的应派拆分模型(区别于dim_license单一牌照账户模型)；当前0行未populate", "confidence": "weak"},
+        {"schema": "public", "table": "map_partner_payee", "evidence_type": "rule", "matched_columns": ["partner_code", "payee_sk", "split_ratio"], "rationale": "伙伴-收款人映射及分成比例表，split_ratio字段直接对应\"应派金额拆分\"到多个收款人的规则；当前0行未populate", "confidence": "weak"},
     ],
     "L4-COM-13": [
         {"schema": "public", "table": "dim_license", "evidence_type": "output", "matched_columns": ["bank_name_for_settlement", "bank_account_hash_for_settlement", "payment_cycle"], "rationale": "持牌机构结算银行账户信息（已脱敏），是\"实派执行\"真实的付款账户依据；此前误判dim_payee(空表)为数据缺口，实际付款信息在dim_license", "confidence": "strong"},
@@ -178,6 +187,7 @@ L4_BUSINESS_TABLE_MAP: dict[str, list[dict]] = {
         {"schema": "public", "table": "fact_sales_activity", "evidence_type": "output", "matched_columns": ["policy_id", "event_type", "status_after", "event_date", "operator"], "rationale": "保单生命周期事件流水表，逐条记录销售执行动作", "confidence": "strong"},
         {"schema": "public", "table": "dim_customer", "evidence_type": "output", "matched_columns": ["customer_id", "customer_type", "occupation", "income"], "rationale": "客户主数据表，是客户管理的直接依据", "confidence": "strong"},
         {"schema": "public", "table": "dim_predicate_library", "evidence_type": "rule", "matched_columns": ["event_type", "lifecycle_stage", "name_cn"], "rationale": "保单生命周期事件类型定义库，外键被fact_sales_activity的event_type引用，是销售执行事件的分类规则依据", "confidence": "strong"},
+        {"schema": "public", "table": "dim_customer_type", "evidence_type": "rule", "matched_columns": ["customer_type", "is_pi", "residency", "risk_level"], "rationale": "客户类型字典表，外键被dim_customer的customer_type引用，是客户管理的分类规则依据；当前0行未populate", "confidence": "weak"},
     ],
     "L4-RSJD-02": [
         {"schema": "public", "table": "agg_sales_base", "evidence_type": "output", "matched_columns": ["保费(hkd)", "ape", "是否融资", "签批时效(天)"], "rationale": "订单粒度的保费/APE/签批时效汇总表，是财务模型测算的直接输入", "confidence": "strong"},
@@ -209,6 +219,8 @@ L4_BUSINESS_TABLE_MAP: dict[str, list[dict]] = {
         {"schema": "public", "table": "bridge_person_identity", "evidence_type": "output", "matched_columns": ["person_id", "source_system", "match_method", "confidence_tier"], "rationale": "人员身份归一化桥接表，视图依赖被v_person_activity引用，是活动率分析按人员归一化统计的身份识别基础", "confidence": "strong"},
         {"schema": "public", "table": "dim_role_type", "evidence_type": "rule", "matched_columns": ["role_code", "role_name_cn", "is_person_role"], "rationale": "人员角色类型字典表，外键被v_person_activity的role_code引用，是活动率按角色聚合的分类规则依据", "confidence": "strong"},
         {"schema": "public", "table": "v_person_coverage", "evidence_type": "output", "matched_columns": ["population", "matched_keys", "pending_suspects"], "rationale": "人员身份识别覆盖率统计视图，2026-08-05业务方确认其用途是评估bridge_person_identity的数据质量(渠道理财师/个人客户等群体的身份匹配成功率)，与bridge_person_identity同挂此L4", "confidence": "strong"},
+        {"schema": "public", "table": "dim_person", "evidence_type": "output", "matched_columns": ["person_id", "person_scope", "person_group"], "rationale": "统一人员主数据表，外键被bridge_person_identity的person_id引用，是活动率分析人员归一化后的主档", "confidence": "strong"},
+        {"schema": "public", "table": "person_match_suspect", "evidence_type": "audit", "matched_columns": ["pending_key_value", "proposed_action", "status"], "rationale": "人员身份匹配疑似项表，视图依赖被v_person_coverage引用，是身份归一化过程中待人工复核的清单，与v_person_coverage同挂此L4", "confidence": "strong"},
     ],
     "L4-FBA-03": [],
     "L4-FBA-04": [],

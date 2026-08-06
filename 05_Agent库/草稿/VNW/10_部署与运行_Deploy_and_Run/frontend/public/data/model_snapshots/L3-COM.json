@@ -2810,7 +2810,7 @@
     ]
   },
   "analysis_freshness": "UNVERSIONED_REVIEWED_BASELINE",
-  "analysis_input_hash": "321bb306ca19c011a1a56e1a311672010bd4061df18936a65d1b8b09c08a59a0",
+  "analysis_input_hash": "9e333405640e2abda8d034515e11d33f3d75f811ffcdd669f7d3154cd7bb00b8",
   "blueprint": {
     "blueprint_value_nodes": [
       {
@@ -4223,6 +4223,129 @@
       "value": "数据表"
     },
     {
+      "confidence": "LOW",
+      "conflict_note": "人工按业务含义匹配到业务数据仓库表，非外键关联，未经业务方确认",
+      "evidence_class": "CONSENSUS",
+      "evidence_id": "EVD-21baab369affcfdc718f",
+      "field_name": "business_evidence",
+      "source": {
+        "observed_at": "",
+        "source_field": "人工匹配",
+        "source_key": "L4-COM-12",
+        "source_object": "public.partner_tier_rules, public.dim_partner, comm_sandbox.config_partner_routing, public.config_partner_routing, public.fact_channel_partner, public.config_license_cost_deduction, public.dim_payee, public.map_partner_payee",
+        "source_system": "业务数据仓库",
+        "source_version": "2026-08-04试点"
+      },
+      "status": "UNVERIFIED",
+      "transform_rule": "",
+      "value": [
+        {
+          "confidence": "strong",
+          "evidence_type": "rule",
+          "matched_columns": [
+            "fyc_tier",
+            "ryc_tier",
+            "fyc_adjustment",
+            "ryc_adjustment"
+          ],
+          "rationale": "伙伴档位规则，是\"应派金额拆分\"的计算依据，规则已参数化",
+          "row_count": 179,
+          "schema": "public",
+          "table": "partner_tier_rules"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "output",
+          "matched_columns": [
+            "payment_cycle",
+            "min_payout_threshold",
+            "partner_status"
+          ],
+          "rationale": "渠道伙伴主档，含结算周期与起付额，是\"渠道对账\"的伙伴侧依据",
+          "row_count": 727,
+          "schema": "public",
+          "table": "dim_partner"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "rule",
+          "matched_columns": [
+            "assigned_license_code",
+            "priority"
+          ],
+          "rationale": "渠道路由规则，决定应派归属到哪个牌照",
+          "row_count": 41,
+          "schema": "comm_sandbox",
+          "table": "config_partner_routing"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "rule",
+          "matched_columns": [
+            "assigned_license_code",
+            "priority",
+            "partner_code_condition"
+          ],
+          "rationale": "同为渠道路由规则表(所有合作伙伴的合作匹配规则)，与comm_sandbox同名表功能等价但字段命名独立维护(含拼写差异bussiness_line_comdition)，2026-08-05业务方确认其为真实有效的路由规则表，非断点",
+          "row_count": 67,
+          "schema": "public",
+          "table": "config_partner_routing"
+        },
+        {
+          "confidence": "weak",
+          "evidence_type": "output",
+          "matched_columns": [
+            "partner_code",
+            "total_premium_hkd",
+            "policy_count"
+          ],
+          "rationale": "渠道月度汇总表，弱对应\"应派清单\"（无逐笔应派落地表）",
+          "row_count": 1662,
+          "schema": "public",
+          "table": "fact_channel_partner"
+        },
+        {
+          "confidence": "weak",
+          "evidence_type": "rule",
+          "matched_columns": [
+            "license_code",
+            "carrier_code",
+            "platform_service_fee_rate"
+          ],
+          "rationale": "牌照平台服务费扣除配置，是应派金额拆分前的费用扣减规则；当前0行未populate",
+          "row_count": 0,
+          "schema": "public",
+          "table": "config_license_cost_deduction"
+        },
+        {
+          "confidence": "weak",
+          "evidence_type": "output",
+          "matched_columns": [
+            "payee_sk",
+            "bank_name",
+            "payment_cycle"
+          ],
+          "rationale": "收款人银行账户信息表，与map_partner_payee配套构成\"伙伴-收款人-分成比例\"的应派拆分模型(区别于dim_license单一牌照账户模型)；当前0行未populate",
+          "row_count": 0,
+          "schema": "public",
+          "table": "dim_payee"
+        },
+        {
+          "confidence": "weak",
+          "evidence_type": "rule",
+          "matched_columns": [
+            "partner_code",
+            "payee_sk",
+            "split_ratio"
+          ],
+          "rationale": "伙伴-收款人映射及分成比例表，split_ratio字段直接对应\"应派金额拆分\"到多个收款人的规则；当前0行未populate",
+          "row_count": 0,
+          "schema": "public",
+          "table": "map_partner_payee"
+        }
+      ]
+    },
+    {
       "confidence": "HIGH",
       "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
@@ -4901,90 +5024,6 @@
       "value": "FAIL"
     },
     {
-      "confidence": "LOW",
-      "conflict_note": "人工按业务含义匹配到业务数据仓库表，非外键关联，未经业务方确认",
-      "evidence_class": "CONSENSUS",
-      "evidence_id": "EVD-391023cece7a93df0375",
-      "field_name": "business_evidence",
-      "source": {
-        "observed_at": "",
-        "source_field": "人工匹配",
-        "source_key": "L4-COM-12",
-        "source_object": "public.partner_tier_rules, public.dim_partner, comm_sandbox.config_partner_routing, public.config_partner_routing, public.fact_channel_partner",
-        "source_system": "业务数据仓库",
-        "source_version": "2026-08-04试点"
-      },
-      "status": "UNVERIFIED",
-      "transform_rule": "",
-      "value": [
-        {
-          "confidence": "strong",
-          "evidence_type": "rule",
-          "matched_columns": [
-            "fyc_tier",
-            "ryc_tier",
-            "fyc_adjustment",
-            "ryc_adjustment"
-          ],
-          "rationale": "伙伴档位规则，是\"应派金额拆分\"的计算依据，规则已参数化",
-          "row_count": 179,
-          "schema": "public",
-          "table": "partner_tier_rules"
-        },
-        {
-          "confidence": "strong",
-          "evidence_type": "output",
-          "matched_columns": [
-            "payment_cycle",
-            "min_payout_threshold",
-            "partner_status"
-          ],
-          "rationale": "渠道伙伴主档，含结算周期与起付额，是\"渠道对账\"的伙伴侧依据",
-          "row_count": 727,
-          "schema": "public",
-          "table": "dim_partner"
-        },
-        {
-          "confidence": "strong",
-          "evidence_type": "rule",
-          "matched_columns": [
-            "assigned_license_code",
-            "priority"
-          ],
-          "rationale": "渠道路由规则，决定应派归属到哪个牌照",
-          "row_count": 41,
-          "schema": "comm_sandbox",
-          "table": "config_partner_routing"
-        },
-        {
-          "confidence": "strong",
-          "evidence_type": "rule",
-          "matched_columns": [
-            "assigned_license_code",
-            "priority",
-            "partner_code_condition"
-          ],
-          "rationale": "同为渠道路由规则表(所有合作伙伴的合作匹配规则)，与comm_sandbox同名表功能等价但字段命名独立维护(含拼写差异bussiness_line_comdition)，2026-08-05业务方确认其为真实有效的路由规则表，非断点",
-          "row_count": 67,
-          "schema": "public",
-          "table": "config_partner_routing"
-        },
-        {
-          "confidence": "weak",
-          "evidence_type": "output",
-          "matched_columns": [
-            "partner_code",
-            "total_premium_hkd",
-            "policy_count"
-          ],
-          "rationale": "渠道月度汇总表，弱对应\"应派清单\"（无逐笔应派落地表）",
-          "row_count": 1662,
-          "schema": "public",
-          "table": "fact_channel_partner"
-        }
-      ]
-    },
-    {
       "confidence": "HIGH",
       "conflict_note": "",
       "evidence_class": "SUPPLEMENTAL",
@@ -5122,6 +5161,146 @@
         "informed": "Mark",
         "responsible": "JoJo"
       }
+    },
+    {
+      "confidence": "LOW",
+      "conflict_note": "人工按业务含义匹配到业务数据仓库表，非外键关联，未经业务方确认",
+      "evidence_class": "CONSENSUS",
+      "evidence_id": "EVD-3ccd43554253d53c89bb",
+      "field_name": "business_evidence",
+      "source": {
+        "observed_at": "",
+        "source_field": "人工匹配",
+        "source_key": "L4-COM-02",
+        "source_object": "comm_sandbox.fact_commission_tier_rate, comm_sandbox.config_table_type_product_scope, comm_sandbox.config_table_type_tier_pricing_rules, comm_sandbox.market_row_state, comm_sandbox.commission_tier_adjustment, comm_sandbox.v_commission_tier_effective, comm_sandbox.v_tier_rate_readable, comm_sandbox.config_table_type_coefficient, comm_sandbox.source_diff_confirm",
+        "source_system": "业务数据仓库",
+        "source_version": "2026-08-04试点"
+      },
+      "status": "UNVERIFIED",
+      "transform_rule": "",
+      "value": [
+        {
+          "confidence": "strong",
+          "evidence_type": "output",
+          "matched_columns": [
+            "tier_level",
+            "customer_type",
+            "product_sku",
+            "rate_y1"
+          ],
+          "rationale": "分档/细分市场费率表，对应\"各细分市场配置\"",
+          "row_count": 7639,
+          "schema": "comm_sandbox",
+          "table": "fact_commission_tier_rate"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "rule",
+          "matched_columns": [
+            "scope_mode",
+            "match_dim",
+            "match_value"
+          ],
+          "rationale": "产品范围INCLUDE/EXCLUDE规则，是\"差异化拆解\"的规则依据",
+          "row_count": 251,
+          "schema": "comm_sandbox",
+          "table": "config_table_type_product_scope"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "rule",
+          "matched_columns": [
+            "fyc_tier",
+            "ryc_tier",
+            "fyc_adjustment",
+            "ryc_adjustment"
+          ],
+          "rationale": "分档定价规则，验证环节的判断依据已参数化",
+          "row_count": 109,
+          "schema": "comm_sandbox",
+          "table": "config_table_type_tier_pricing_rules"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "workflow",
+          "matched_columns": [
+            "row_status",
+            "change_type",
+            "confirmed_by"
+          ],
+          "rationale": "逐条费率行的确认状态(待确认/新增等)，是\"验证\"过程的真实工作流留痕",
+          "row_count": 3718,
+          "schema": "comm_sandbox",
+          "table": "market_row_state"
+        },
+        {
+          "confidence": "weak",
+          "evidence_type": "output",
+          "matched_columns": [
+            "adj_y1",
+            "adjust_reason"
+          ],
+          "rationale": "档位调整记录；口径已建但当前0行，未产生数据",
+          "row_count": 0,
+          "schema": "comm_sandbox",
+          "table": "commission_tier_adjustment"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "output",
+          "matched_columns": [
+            "tier_level",
+            "customer_type",
+            "rate_y1",
+            "is_adjusted"
+          ],
+          "rationale": "生效佣金费率视图，视图依赖commission_tier_adjustment，是差异化拆解与验证后的当前生效结果快照",
+          "row_count": 7384,
+          "schema": "comm_sandbox",
+          "table": "v_commission_tier_effective"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "output",
+          "matched_columns": [
+            "tier_level",
+            "客户类型",
+            "有效Y1",
+            "是否微调"
+          ],
+          "rationale": "v_commission_tier_effective的中文可读版本，同一视图依赖链，供业务人员核对差异化拆解结果",
+          "row_count": 7384,
+          "schema": "comm_sandbox",
+          "table": "v_tier_rate_readable"
+        },
+        {
+          "confidence": "weak",
+          "evidence_type": "rule",
+          "matched_columns": [
+            "table_type",
+            "premium_term",
+            "coefficient"
+          ],
+          "rationale": "按table_type/premium_term/费率区间的系数换算规则，与config_table_type_tier_pricing_rules同维度，是差异化拆解的折标计算依据；当前0行未populate",
+          "row_count": 0,
+          "schema": "comm_sandbox",
+          "table": "config_table_type_coefficient"
+        },
+        {
+          "confidence": "weak",
+          "evidence_type": "workflow",
+          "matched_columns": [
+            "carrier_code",
+            "product_id",
+            "confirmed_by",
+            "confirmed_at"
+          ],
+          "rationale": "费率来源差异确认表，字段与market_row_state同类(逐条确认工作流)，是验证环节的确认留痕；当前0行未populate",
+          "row_count": 0,
+          "schema": "comm_sandbox",
+          "table": "source_diff_confirm"
+        }
+      ]
     },
     {
       "confidence": "HIGH",
@@ -7625,120 +7804,6 @@
       "value": "追溯调整与退保倒扣"
     },
     {
-      "confidence": "LOW",
-      "conflict_note": "人工按业务含义匹配到业务数据仓库表，非外键关联，未经业务方确认",
-      "evidence_class": "CONSENSUS",
-      "evidence_id": "EVD-89faf90f7807d9ca6d14",
-      "field_name": "business_evidence",
-      "source": {
-        "observed_at": "",
-        "source_field": "人工匹配",
-        "source_key": "L4-COM-01",
-        "source_object": "public.fact_commission_rate, public.config_product_commission_formula, comm_sandbox.dim_comm_scheme, comm_sandbox.config_table_type_def, public.config_license_carrier_mapping, comm_sandbox.market_table_header_state, public.dim_carrier",
-        "source_system": "业务数据仓库",
-        "source_version": "2026-08-04试点"
-      },
-      "status": "UNVERIFIED",
-      "transform_rule": "",
-      "value": [
-        {
-          "confidence": "strong",
-          "evidence_type": "output",
-          "matched_columns": [
-            "carrier_code",
-            "product_id",
-            "basic_rate",
-            "fyc_rate",
-            "effective_start_date"
-          ],
-          "rationale": "佣金费率主表，字段直接对应\"标准化政策库\"",
-          "row_count": 25111,
-          "schema": "public",
-          "table": "fact_commission_rate"
-        },
-        {
-          "confidence": "strong",
-          "evidence_type": "rule",
-          "matched_columns": [
-            "first_year_formula",
-            "renewal_year_formula"
-          ],
-          "rationale": "费率计算公式已参数化配置",
-          "row_count": 32,
-          "schema": "public",
-          "table": "config_product_commission_formula"
-        },
-        {
-          "confidence": "strong",
-          "evidence_type": "rule",
-          "matched_columns": [
-            "scheme_name",
-            "scheme_type",
-            "valid_from",
-            "valid_to"
-          ],
-          "rationale": "佣金方案定义",
-          "row_count": 173,
-          "schema": "comm_sandbox",
-          "table": "dim_comm_scheme"
-        },
-        {
-          "confidence": "strong",
-          "evidence_type": "rule",
-          "matched_columns": [
-            "table_type_name",
-            "business_category",
-            "partner_category",
-            "ryc_max_year"
-          ],
-          "rationale": "20种制表类型的分类规则，正是\"标准化政策库\"的分类体系本身",
-          "row_count": 20,
-          "schema": "comm_sandbox",
-          "table": "config_table_type_def"
-        },
-        {
-          "confidence": "strong",
-          "evidence_type": "rule",
-          "matched_columns": [
-            "license_code",
-            "carrier_code",
-            "commission_plan_code"
-          ],
-          "rationale": "牌照-保司-方案映射规则，是政策接收后的落地配置",
-          "row_count": 90,
-          "schema": "public",
-          "table": "config_license_carrier_mapping"
-        },
-        {
-          "confidence": "strong",
-          "evidence_type": "workflow",
-          "matched_columns": [
-            "header_status",
-            "submitted_by",
-            "approved_by",
-            "published_by"
-          ],
-          "rationale": "费率表提交/审批/发布工作流状态，直接暴露\"政策接收与校准\"当前的人工关卡在哪一步",
-          "row_count": 20,
-          "schema": "comm_sandbox",
-          "table": "market_table_header_state"
-        },
-        {
-          "confidence": "strong",
-          "evidence_type": "rule",
-          "matched_columns": [
-            "carrier_code",
-            "carrier_cn_name",
-            "rating"
-          ],
-          "rationale": "保司主数据表，外键被fact_commission_rate引用，是佣金政策按保司接收/校准的基础参照维度；同一维度被多个L4复用(COM-02/COM-10/RSJD-04)",
-          "row_count": 26,
-          "schema": "public",
-          "table": "dim_carrier"
-        }
-      ]
-    },
-    {
       "confidence": "HIGH",
       "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
@@ -8258,6 +8323,162 @@
         "informed": "—",
         "responsible": "财务"
       }
+    },
+    {
+      "confidence": "LOW",
+      "conflict_note": "人工按业务含义匹配到业务数据仓库表，非外键关联，未经业务方确认",
+      "evidence_class": "CONSENSUS",
+      "evidence_id": "EVD-9a3ba156c88b0acd6ac0",
+      "field_name": "business_evidence",
+      "source": {
+        "observed_at": "",
+        "source_field": "人工匹配",
+        "source_key": "L4-COM-01",
+        "source_object": "public.fact_commission_rate, public.config_product_commission_formula, comm_sandbox.dim_comm_scheme, comm_sandbox.config_table_type_def, public.config_license_carrier_mapping, comm_sandbox.market_table_header_state, public.dim_carrier, comm_sandbox.competitor_rate, public.dim_comm_scheme, public.mapping_product",
+        "source_system": "业务数据仓库",
+        "source_version": "2026-08-04试点"
+      },
+      "status": "UNVERIFIED",
+      "transform_rule": "",
+      "value": [
+        {
+          "confidence": "strong",
+          "evidence_type": "output",
+          "matched_columns": [
+            "carrier_code",
+            "product_id",
+            "basic_rate",
+            "fyc_rate",
+            "effective_start_date"
+          ],
+          "rationale": "佣金费率主表，字段直接对应\"标准化政策库\"",
+          "row_count": 25111,
+          "schema": "public",
+          "table": "fact_commission_rate"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "rule",
+          "matched_columns": [
+            "first_year_formula",
+            "renewal_year_formula"
+          ],
+          "rationale": "费率计算公式已参数化配置",
+          "row_count": 32,
+          "schema": "public",
+          "table": "config_product_commission_formula"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "rule",
+          "matched_columns": [
+            "scheme_name",
+            "scheme_type",
+            "valid_from",
+            "valid_to"
+          ],
+          "rationale": "佣金方案定义",
+          "row_count": 173,
+          "schema": "comm_sandbox",
+          "table": "dim_comm_scheme"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "rule",
+          "matched_columns": [
+            "table_type_name",
+            "business_category",
+            "partner_category",
+            "ryc_max_year"
+          ],
+          "rationale": "20种制表类型的分类规则，正是\"标准化政策库\"的分类体系本身",
+          "row_count": 20,
+          "schema": "comm_sandbox",
+          "table": "config_table_type_def"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "rule",
+          "matched_columns": [
+            "license_code",
+            "carrier_code",
+            "commission_plan_code"
+          ],
+          "rationale": "牌照-保司-方案映射规则，是政策接收后的落地配置",
+          "row_count": 90,
+          "schema": "public",
+          "table": "config_license_carrier_mapping"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "workflow",
+          "matched_columns": [
+            "header_status",
+            "submitted_by",
+            "approved_by",
+            "published_by"
+          ],
+          "rationale": "费率表提交/审批/发布工作流状态，直接暴露\"政策接收与校准\"当前的人工关卡在哪一步",
+          "row_count": 20,
+          "schema": "comm_sandbox",
+          "table": "market_table_header_state"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "rule",
+          "matched_columns": [
+            "carrier_code",
+            "carrier_cn_name",
+            "rating"
+          ],
+          "rationale": "保司主数据表，外键被fact_commission_rate引用，是佣金政策按保司接收/校准的基础参照维度；同一维度被多个L4复用(COM-02/COM-10/RSJD-04)",
+          "row_count": 26,
+          "schema": "public",
+          "table": "dim_carrier"
+        },
+        {
+          "confidence": "weak",
+          "evidence_type": "rule",
+          "matched_columns": [
+            "product_id",
+            "quarter",
+            "y1",
+            "source_name"
+          ],
+          "rationale": "竞品费率对比表，按产品/季度记录竞品Y1-Y10费率及来源，是政策接收/校准阶段做市场对标的输入依据；当前0行未populate，但业务定义与字段结构明确对口该L4",
+          "row_count": 0,
+          "schema": "comm_sandbox",
+          "table": "competitor_rate"
+        },
+        {
+          "confidence": "weak",
+          "evidence_type": "rule",
+          "matched_columns": [
+            "scheme_name",
+            "scheme_type",
+            "valid_from",
+            "valid_to"
+          ],
+          "rationale": "与comm_sandbox.dim_comm_scheme同名同结构(已确认为该L4强证据)，是同一佣金方案定义表在public schema下的重复副本；当前0行未populate，按业务定义与其schema-twin同等对待",
+          "row_count": 0,
+          "schema": "public",
+          "table": "dim_comm_scheme"
+        },
+        {
+          "confidence": "weak",
+          "evidence_type": "rule",
+          "matched_columns": [
+            "product_id",
+            "product_sku",
+            "carrier_code",
+            "product_category"
+          ],
+          "rationale": "产品ID/SKU/名称跨系统映射表，是佣金政策按产品口径接收/校准时的产品主数据参照，与dim_product_id/dim_product_sku同类；当前0行未populate",
+          "row_count": 0,
+          "schema": "public",
+          "table": "mapping_product"
+        }
+      ]
     },
     {
       "confidence": "HIGH",
@@ -9690,105 +9911,6 @@
       "status": "ACTIVE",
       "transform_rule": "",
       "value": 1
-    },
-    {
-      "confidence": "LOW",
-      "conflict_note": "人工按业务含义匹配到业务数据仓库表，非外键关联，未经业务方确认",
-      "evidence_class": "CONSENSUS",
-      "evidence_id": "EVD-c544226bab4abbc4f43b",
-      "field_name": "business_evidence",
-      "source": {
-        "observed_at": "",
-        "source_field": "人工匹配",
-        "source_key": "L4-COM-02",
-        "source_object": "comm_sandbox.fact_commission_tier_rate, comm_sandbox.config_table_type_product_scope, comm_sandbox.config_table_type_tier_pricing_rules, comm_sandbox.market_row_state, comm_sandbox.commission_tier_adjustment, comm_sandbox.v_commission_tier_effective",
-        "source_system": "业务数据仓库",
-        "source_version": "2026-08-04试点"
-      },
-      "status": "UNVERIFIED",
-      "transform_rule": "",
-      "value": [
-        {
-          "confidence": "strong",
-          "evidence_type": "output",
-          "matched_columns": [
-            "tier_level",
-            "customer_type",
-            "product_sku",
-            "rate_y1"
-          ],
-          "rationale": "分档/细分市场费率表，对应\"各细分市场配置\"",
-          "row_count": 7639,
-          "schema": "comm_sandbox",
-          "table": "fact_commission_tier_rate"
-        },
-        {
-          "confidence": "strong",
-          "evidence_type": "rule",
-          "matched_columns": [
-            "scope_mode",
-            "match_dim",
-            "match_value"
-          ],
-          "rationale": "产品范围INCLUDE/EXCLUDE规则，是\"差异化拆解\"的规则依据",
-          "row_count": 251,
-          "schema": "comm_sandbox",
-          "table": "config_table_type_product_scope"
-        },
-        {
-          "confidence": "strong",
-          "evidence_type": "rule",
-          "matched_columns": [
-            "fyc_tier",
-            "ryc_tier",
-            "fyc_adjustment",
-            "ryc_adjustment"
-          ],
-          "rationale": "分档定价规则，验证环节的判断依据已参数化",
-          "row_count": 109,
-          "schema": "comm_sandbox",
-          "table": "config_table_type_tier_pricing_rules"
-        },
-        {
-          "confidence": "strong",
-          "evidence_type": "workflow",
-          "matched_columns": [
-            "row_status",
-            "change_type",
-            "confirmed_by"
-          ],
-          "rationale": "逐条费率行的确认状态(待确认/新增等)，是\"验证\"过程的真实工作流留痕",
-          "row_count": 3718,
-          "schema": "comm_sandbox",
-          "table": "market_row_state"
-        },
-        {
-          "confidence": "weak",
-          "evidence_type": "output",
-          "matched_columns": [
-            "adj_y1",
-            "adjust_reason"
-          ],
-          "rationale": "档位调整记录；口径已建但当前0行，未产生数据",
-          "row_count": 0,
-          "schema": "comm_sandbox",
-          "table": "commission_tier_adjustment"
-        },
-        {
-          "confidence": "strong",
-          "evidence_type": "output",
-          "matched_columns": [
-            "tier_level",
-            "customer_type",
-            "rate_y1",
-            "is_adjusted"
-          ],
-          "rationale": "生效佣金费率视图，视图依赖commission_tier_adjustment，是差异化拆解与验证后的当前生效结果快照",
-          "row_count": 7384,
-          "schema": "comm_sandbox",
-          "table": "v_commission_tier_effective"
-        }
-      ]
     },
     {
       "confidence": "HIGH",
@@ -11576,6 +11698,48 @@
           "row_count": 26,
           "schema": "public",
           "table": "dim_carrier"
+        },
+        {
+          "confidence": "weak",
+          "evidence_type": "rule",
+          "matched_columns": [
+            "product_id",
+            "quarter",
+            "y1",
+            "source_name"
+          ],
+          "rationale": "竞品费率对比表，按产品/季度记录竞品Y1-Y10费率及来源，是政策接收/校准阶段做市场对标的输入依据；当前0行未populate，但业务定义与字段结构明确对口该L4",
+          "row_count": 0,
+          "schema": "comm_sandbox",
+          "table": "competitor_rate"
+        },
+        {
+          "confidence": "weak",
+          "evidence_type": "rule",
+          "matched_columns": [
+            "scheme_name",
+            "scheme_type",
+            "valid_from",
+            "valid_to"
+          ],
+          "rationale": "与comm_sandbox.dim_comm_scheme同名同结构(已确认为该L4强证据)，是同一佣金方案定义表在public schema下的重复副本；当前0行未populate，按业务定义与其schema-twin同等对待",
+          "row_count": 0,
+          "schema": "public",
+          "table": "dim_comm_scheme"
+        },
+        {
+          "confidence": "weak",
+          "evidence_type": "rule",
+          "matched_columns": [
+            "product_id",
+            "product_sku",
+            "carrier_code",
+            "product_category"
+          ],
+          "rationale": "产品ID/SKU/名称跨系统映射表，是佣金政策按产品口径接收/校准时的产品主数据参照，与dim_product_id/dim_product_sku同类；当前0行未populate",
+          "row_count": 0,
+          "schema": "public",
+          "table": "mapping_product"
         }
       ],
       "d1_d6": {
@@ -11597,7 +11761,7 @@
         "agent_d6_compliance": "EVD-95ead820075a56f696b1",
         "agent_human_touchpoint": "EVD-1f63786e42f0f673bb5d",
         "agentifiability": "EVD-2db466428bd0c9f7a073",
-        "business_evidence": "EVD-89faf90f7807d9ca6d14",
+        "business_evidence": "EVD-9a3ba156c88b0acd6ac0",
         "l4_deliverable": "EVD-7faaaa7ea5605173b3ed",
         "l4_deliverable_type": "EVD-c49d5805d7bbfb12c704",
         "l4_name": "EVD-978b640534fd409082bd",
@@ -11706,6 +11870,47 @@
           "row_count": 7384,
           "schema": "comm_sandbox",
           "table": "v_commission_tier_effective"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "output",
+          "matched_columns": [
+            "tier_level",
+            "客户类型",
+            "有效Y1",
+            "是否微调"
+          ],
+          "rationale": "v_commission_tier_effective的中文可读版本，同一视图依赖链，供业务人员核对差异化拆解结果",
+          "row_count": 7384,
+          "schema": "comm_sandbox",
+          "table": "v_tier_rate_readable"
+        },
+        {
+          "confidence": "weak",
+          "evidence_type": "rule",
+          "matched_columns": [
+            "table_type",
+            "premium_term",
+            "coefficient"
+          ],
+          "rationale": "按table_type/premium_term/费率区间的系数换算规则，与config_table_type_tier_pricing_rules同维度，是差异化拆解的折标计算依据；当前0行未populate",
+          "row_count": 0,
+          "schema": "comm_sandbox",
+          "table": "config_table_type_coefficient"
+        },
+        {
+          "confidence": "weak",
+          "evidence_type": "workflow",
+          "matched_columns": [
+            "carrier_code",
+            "product_id",
+            "confirmed_by",
+            "confirmed_at"
+          ],
+          "rationale": "费率来源差异确认表，字段与market_row_state同类(逐条确认工作流)，是验证环节的确认留痕；当前0行未populate",
+          "row_count": 0,
+          "schema": "comm_sandbox",
+          "table": "source_diff_confirm"
         }
       ],
       "d1_d6": {
@@ -11727,7 +11932,7 @@
         "agent_d6_compliance": "EVD-5b88d5549a8660faac03",
         "agent_human_touchpoint": "EVD-e1d2f431d0f88bfccc67",
         "agentifiability": "EVD-51b9375d56608331b530",
-        "business_evidence": "EVD-c544226bab4abbc4f43b",
+        "business_evidence": "EVD-3ccd43554253d53c89bb",
         "l4_deliverable": "EVD-4348645f997bbc545631",
         "l4_deliverable_type": "EVD-867a6421b5a1b4149c38",
         "l4_name": "EVD-c6c7b3d9f8c8275bd6fb",
@@ -12543,6 +12748,45 @@
           "row_count": 1662,
           "schema": "public",
           "table": "fact_channel_partner"
+        },
+        {
+          "confidence": "weak",
+          "evidence_type": "rule",
+          "matched_columns": [
+            "license_code",
+            "carrier_code",
+            "platform_service_fee_rate"
+          ],
+          "rationale": "牌照平台服务费扣除配置，是应派金额拆分前的费用扣减规则；当前0行未populate",
+          "row_count": 0,
+          "schema": "public",
+          "table": "config_license_cost_deduction"
+        },
+        {
+          "confidence": "weak",
+          "evidence_type": "output",
+          "matched_columns": [
+            "payee_sk",
+            "bank_name",
+            "payment_cycle"
+          ],
+          "rationale": "收款人银行账户信息表，与map_partner_payee配套构成\"伙伴-收款人-分成比例\"的应派拆分模型(区别于dim_license单一牌照账户模型)；当前0行未populate",
+          "row_count": 0,
+          "schema": "public",
+          "table": "dim_payee"
+        },
+        {
+          "confidence": "weak",
+          "evidence_type": "rule",
+          "matched_columns": [
+            "partner_code",
+            "payee_sk",
+            "split_ratio"
+          ],
+          "rationale": "伙伴-收款人映射及分成比例表，split_ratio字段直接对应\"应派金额拆分\"到多个收款人的规则；当前0行未populate",
+          "row_count": 0,
+          "schema": "public",
+          "table": "map_partner_payee"
         }
       ],
       "d1_d6": {
@@ -12564,7 +12808,7 @@
         "agent_d6_compliance": "EVD-b839f8dcd4ea3fd3a570",
         "agent_human_touchpoint": "EVD-3a5dfd4aae70d01ee437",
         "agentifiability": "EVD-e4573dab6044d8374475",
-        "business_evidence": "EVD-391023cece7a93df0375",
+        "business_evidence": "EVD-21baab369affcfdc718f",
         "l4_deliverable": "EVD-1b9206cbf7054edfde19",
         "l4_deliverable_type": "EVD-9fdb424c96a791445a5e",
         "l4_name": "EVD-6d8f25e35f9390785832",

@@ -17717,7 +17717,7 @@
       "schema": "comm_sandbox",
       "table": "competitor_rate",
       "table_type": "其他",
-      "zombie_flag": "never_activated"
+      "zombie_flag": "none"
     },
     {
       "business_label": "渠道路由规则表",
@@ -17753,7 +17753,7 @@
       "schema": "comm_sandbox",
       "table": "config_table_type_coefficient",
       "table_type": "配置表",
-      "zombie_flag": "never_activated"
+      "zombie_flag": "none"
     },
     {
       "business_label": "佣金制表类型定义表",
@@ -17861,7 +17861,7 @@
       "schema": "comm_sandbox",
       "table": "source_diff_confirm",
       "table_type": "其他",
-      "zombie_flag": "never_activated"
+      "zombie_flag": "none"
     },
     {
       "business_label": "生效佣金费率视图",
@@ -18096,7 +18096,7 @@
       "schema": "public",
       "table": "config_license_cost_deduction",
       "table_type": "配置表",
-      "zombie_flag": "never_activated"
+      "zombie_flag": "none"
     },
     {
       "business_label": "渠道路由规则表",
@@ -18186,7 +18186,7 @@
       "schema": "public",
       "table": "dim_comm_scheme",
       "table_type": "维度表",
-      "zombie_flag": "never_activated"
+      "zombie_flag": "none"
     },
     {
       "business_label": "客户主数据表",
@@ -18204,7 +18204,7 @@
       "schema": "public",
       "table": "dim_customer_type",
       "table_type": "维度表",
-      "zombie_flag": "never_activated"
+      "zombie_flag": "none"
     },
     {
       "business_label": "日期维度表",
@@ -18277,7 +18277,7 @@
       "schema": "public",
       "table": "dim_payee",
       "table_type": "维度表",
-      "zombie_flag": "never_activated"
+      "zombie_flag": "none"
     },
     {
       "business_label": "统一人员主数据表",
@@ -18503,7 +18503,7 @@
       "schema": "public",
       "table": "map_partner_payee",
       "table_type": "映射表",
-      "zombie_flag": "never_activated"
+      "zombie_flag": "none"
     },
     {
       "business_label": "产品映射表",
@@ -18512,7 +18512,7 @@
       "schema": "public",
       "table": "mapping_product",
       "table_type": "映射表",
-      "zombie_flag": "never_activated"
+      "zombie_flag": "none"
     },
     {
       "business_label": "伙伴档位规则表",
@@ -18707,26 +18707,6 @@
   },
   "source_policy": "边只来自三类真实证据：视图SQL定义(pg_get_viewdef)/数据库外键约束/ETL流水线同批装载日志(sync_history，仅认可命名的可重复airflow流水线)，不做同名字段或表名相似度的推测性连接；无证据的表如实标注无可查血缘(已核实仓库内外都没有对应ETL脚本，生产者在仓库之外)",
   "suggested_l4_candidates": {
-    "comm_sandbox.v_tier_rate_readable": [
-      {
-        "edge_type": "view_dependency",
-        "evidence": "comm_sandbox.v_tier_rate_readable的真实视图定义中FROM/JOIN引用了comm_sandbox.v_commission_tier_effective",
-        "l3_code": "L3-COM",
-        "l3_name": "佣金全链路管理",
-        "l4_code": "L4-COM-02",
-        "l4_name": "差异化拆解与验证",
-        "via_table": "comm_sandbox.v_commission_tier_effective"
-      },
-      {
-        "edge_type": "view_dependency",
-        "evidence": "comm_sandbox.v_tier_rate_readable的真实视图定义中FROM/JOIN引用了comm_sandbox.v_commission_tier_effective",
-        "l3_code": "L3-COM",
-        "l3_name": "佣金全链路管理",
-        "l4_code": "L4-COM-05",
-        "l4_name": "追溯调整与退保倒扣",
-        "via_table": "comm_sandbox.v_commission_tier_effective"
-      }
-    ],
     "public.bridge_partner_ka": [
       {
         "edge_type": "view_dependency",
@@ -18801,6 +18781,28 @@
         "via_table": "public.fact_policy"
       }
     ],
+    "public.bridge_person_relationship": [
+      {
+        "edge_type": "foreign_key",
+        "evidence": "public.bridge_person_relationship.person_id 外键引用 public.dim_person.person_id",
+        "l3_code": "L3-FBA",
+        "l3_name": "理财师业务分析",
+        "l4_code": "L4-FBA-02",
+        "l4_name": "月度业绩与活动率分析",
+        "via_table": "public.dim_person"
+      }
+    ],
+    "public.bridge_person_role": [
+      {
+        "edge_type": "foreign_key",
+        "evidence": "public.bridge_person_role.person_id 外键引用 public.dim_person.person_id",
+        "l3_code": "L3-FBA",
+        "l3_name": "理财师业务分析",
+        "l4_code": "L4-FBA-02",
+        "l4_name": "月度业绩与活动率分析",
+        "via_table": "public.dim_person"
+      }
+    ],
     "public.dim_lookup_code": [
       {
         "edge_type": "pipeline_sibling",
@@ -18864,17 +18866,6 @@
         "l4_code": "L4-COM-10",
         "l4_name": "保单信息整合与应收核算（待注册）",
         "via_table": "public.fact_policy"
-      }
-    ],
-    "public.dim_person": [
-      {
-        "edge_type": "foreign_key",
-        "evidence": "public.bridge_person_identity.person_id 外键引用 public.dim_person.person_id",
-        "l3_code": "L3-FBA",
-        "l3_name": "理财师业务分析",
-        "l4_code": "L4-FBA-02",
-        "l4_name": "月度业绩与活动率分析",
-        "via_table": "public.bridge_person_identity"
       }
     ],
     "public.dim_product_id": [
@@ -19191,15 +19182,15 @@
         "via_table": "public.fact_policy"
       }
     ],
-    "public.person_match_suspect": [
+    "public.v_dim_person": [
       {
         "edge_type": "view_dependency",
-        "evidence": "public.v_person_coverage的真实视图定义中FROM/JOIN引用了public.person_match_suspect",
+        "evidence": "public.v_dim_person的真实视图定义中FROM/JOIN引用了public.dim_person",
         "l3_code": "L3-FBA",
         "l3_name": "理财师业务分析",
         "l4_code": "L4-FBA-02",
         "l4_name": "月度业绩与活动率分析",
-        "via_table": "public.v_person_coverage"
+        "via_table": "public.dim_person"
       }
     ],
     "public.v_fact_sales_activity": [

@@ -731,8 +731,8 @@
       }
     ]
   },
-  "analysis_freshness": "CURRENT",
-  "analysis_input_hash": "f68b60e1d9813e1a45bfbf53f055acb7a188e94976455d325a672f5d6ef3a1c9",
+  "analysis_freshness": "INPUT_CHANGED",
+  "analysis_input_hash": "de32b99f4a51c0761f6c92df3b78ba6e397bf753057ac01a9389cfd73b098eb9",
   "blueprint": {
     "blueprint_value_nodes": [],
     "coverage": "INDEXED",
@@ -1371,67 +1371,6 @@
       "value": 1
     },
     {
-      "confidence": "LOW",
-      "conflict_note": "人工按业务含义匹配到业务数据仓库表，非外键关联，未经业务方确认",
-      "evidence_class": "CONSENSUS",
-      "evidence_id": "EVD-450a24b80d28daf6334c",
-      "field_name": "business_evidence",
-      "source": {
-        "observed_at": "",
-        "source_field": "人工匹配",
-        "source_key": "L4-RSJD-01",
-        "source_object": "public.fact_sales_activity, public.dim_customer, public.dim_predicate_library",
-        "source_system": "业务数据仓库",
-        "source_version": "2026-08-04试点"
-      },
-      "status": "UNVERIFIED",
-      "transform_rule": "",
-      "value": [
-        {
-          "confidence": "strong",
-          "evidence_type": "output",
-          "matched_columns": [
-            "policy_id",
-            "event_type",
-            "status_after",
-            "event_date",
-            "operator"
-          ],
-          "rationale": "保单生命周期事件流水表，逐条记录销售执行动作",
-          "row_count": 48048,
-          "schema": "public",
-          "table": "fact_sales_activity"
-        },
-        {
-          "confidence": "strong",
-          "evidence_type": "output",
-          "matched_columns": [
-            "customer_id",
-            "customer_type",
-            "occupation",
-            "income"
-          ],
-          "rationale": "客户主数据表，是客户管理的直接依据",
-          "row_count": 4699,
-          "schema": "public",
-          "table": "dim_customer"
-        },
-        {
-          "confidence": "strong",
-          "evidence_type": "rule",
-          "matched_columns": [
-            "event_type",
-            "lifecycle_stage",
-            "name_cn"
-          ],
-          "rationale": "保单生命周期事件类型定义库，外键被fact_sales_activity的event_type引用，是销售执行事件的分类规则依据",
-          "row_count": 75,
-          "schema": "public",
-          "table": "dim_predicate_library"
-        }
-      ]
-    },
-    {
       "confidence": "HIGH",
       "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
@@ -1574,6 +1513,81 @@
       "status": "ACTIVE",
       "transform_rule": "",
       "value": 1
+    },
+    {
+      "confidence": "LOW",
+      "conflict_note": "人工按业务含义匹配到业务数据仓库表，非外键关联，未经业务方确认",
+      "evidence_class": "CONSENSUS",
+      "evidence_id": "EVD-80f5b6947e39d0acb01d",
+      "field_name": "business_evidence",
+      "source": {
+        "observed_at": "",
+        "source_field": "人工匹配",
+        "source_key": "L4-RSJD-01",
+        "source_object": "public.fact_sales_activity, public.dim_customer, public.dim_predicate_library, public.dim_customer_type",
+        "source_system": "业务数据仓库",
+        "source_version": "2026-08-04试点"
+      },
+      "status": "UNVERIFIED",
+      "transform_rule": "",
+      "value": [
+        {
+          "confidence": "strong",
+          "evidence_type": "output",
+          "matched_columns": [
+            "policy_id",
+            "event_type",
+            "status_after",
+            "event_date",
+            "operator"
+          ],
+          "rationale": "保单生命周期事件流水表，逐条记录销售执行动作",
+          "row_count": 48048,
+          "schema": "public",
+          "table": "fact_sales_activity"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "output",
+          "matched_columns": [
+            "customer_id",
+            "customer_type",
+            "occupation",
+            "income"
+          ],
+          "rationale": "客户主数据表，是客户管理的直接依据",
+          "row_count": 4699,
+          "schema": "public",
+          "table": "dim_customer"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "rule",
+          "matched_columns": [
+            "event_type",
+            "lifecycle_stage",
+            "name_cn"
+          ],
+          "rationale": "保单生命周期事件类型定义库，外键被fact_sales_activity的event_type引用，是销售执行事件的分类规则依据",
+          "row_count": 75,
+          "schema": "public",
+          "table": "dim_predicate_library"
+        },
+        {
+          "confidence": "weak",
+          "evidence_type": "rule",
+          "matched_columns": [
+            "customer_type",
+            "is_pi",
+            "residency",
+            "risk_level"
+          ],
+          "rationale": "客户类型字典表，外键被dim_customer的customer_type引用，是客户管理的分类规则依据；当前0行未populate",
+          "row_count": 0,
+          "schema": "public",
+          "table": "dim_customer_type"
+        }
+      ]
     },
     {
       "confidence": "HIGH",
@@ -2701,6 +2715,20 @@
           "row_count": 75,
           "schema": "public",
           "table": "dim_predicate_library"
+        },
+        {
+          "confidence": "weak",
+          "evidence_type": "rule",
+          "matched_columns": [
+            "customer_type",
+            "is_pi",
+            "residency",
+            "risk_level"
+          ],
+          "rationale": "客户类型字典表，外键被dim_customer的customer_type引用，是客户管理的分类规则依据；当前0行未populate",
+          "row_count": 0,
+          "schema": "public",
+          "table": "dim_customer_type"
         }
       ],
       "d1_d6": {
@@ -2722,7 +2750,7 @@
         "agent_d6_compliance": "EVD-048e938d9efdb4d73c94",
         "agent_human_touchpoint": "EVD-92d8ee4d0be4893685fd",
         "agentifiability": "EVD-b66391517adbf2ce7b6b",
-        "business_evidence": "EVD-450a24b80d28daf6334c",
+        "business_evidence": "EVD-80f5b6947e39d0acb01d",
         "l4_deliverable": "EVD-2331f4a929569be63cd6",
         "l4_deliverable_type": "EVD-d96068363ed286500aee",
         "l4_name": "EVD-f1ab65ffdcd32f8fcf86",

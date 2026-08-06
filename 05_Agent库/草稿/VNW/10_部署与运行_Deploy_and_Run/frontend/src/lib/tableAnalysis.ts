@@ -20,7 +20,6 @@ export interface TableAnalysisEntry {
     utility_support: { reason: string } | null
     field_anchored: { anchors: { field: string; linked_tables: string[]; origin_tables: string[] }[] } | null
     non_business: { reason: string } | null
-    never_activated: boolean
   }
   layer3: {
     status: 'BLOCKED' | 'ACTIVE'
