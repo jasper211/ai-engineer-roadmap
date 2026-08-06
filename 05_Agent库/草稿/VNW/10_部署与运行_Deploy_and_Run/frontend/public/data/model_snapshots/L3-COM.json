@@ -2810,7 +2810,7 @@
     ]
   },
   "analysis_freshness": "UNVERSIONED_REVIEWED_BASELINE",
-  "analysis_input_hash": "0953efe7144e1aaa509b7824c3f954eb1c34f7c6d5548a8c365e32eb4ea9f4bc",
+  "analysis_input_hash": "d0ac6f72bb3c0fec2b5501099ba5c2448a41a4dcc20316b3a24975b1bd797765",
   "blueprint": {
     "blueprint_value_nodes": [
       {
@@ -7186,6 +7186,61 @@
       "value": 2
     },
     {
+      "confidence": "LOW",
+      "conflict_note": "人工按业务含义匹配到业务数据仓库表，非外键关联，未经业务方确认",
+      "evidence_class": "CONSENSUS",
+      "evidence_id": "EVD-75ea603aeccd7dfc126b",
+      "field_name": "business_evidence",
+      "source": {
+        "observed_at": "",
+        "source_field": "人工匹配",
+        "source_key": "L4-COM-03",
+        "source_object": "comm_sandbox.market_publish_event, comm_sandbox.v_commission_tier_published, comm_sandbox.market_publish_change",
+        "source_system": "业务数据仓库",
+        "source_version": "2026-08-04试点"
+      },
+      "status": "UNVERIFIED",
+      "transform_rule": "",
+      "value": [
+        {
+          "confidence": "weak",
+          "evidence_type": "workflow",
+          "matched_columns": [
+            "action",
+            "affected_rows",
+            "published_by"
+          ],
+          "rationale": "费率发布事件表，字段含义正对应\"外发\"动作；当前0行，说明外发流程尚未在系统内走过",
+          "row_count": 0,
+          "schema": "comm_sandbox",
+          "table": "market_publish_event"
+        },
+        {
+          "confidence": "weak",
+          "evidence_type": "output",
+          "matched_columns": [
+            "publish_no",
+            "row_bizkey"
+          ],
+          "rationale": "已发布费率视图，结构对应\"佣金外发凭证\"；当前0行",
+          "row_count": 0,
+          "schema": "comm_sandbox",
+          "table": "v_commission_tier_published"
+        },
+        {
+          "confidence": "weak",
+          "evidence_type": "output",
+          "matched_columns": [
+            "publish_event_id"
+          ],
+          "rationale": "费率发布变更明细表，外键指向market_publish_event，是同一条\"外发\"事件的变更明细；当前0行",
+          "row_count": 0,
+          "schema": "comm_sandbox",
+          "table": "market_publish_change"
+        }
+      ]
+    },
+    {
       "confidence": "HIGH",
       "conflict_note": "",
       "evidence_class": "SUPPLEMENTAL",
@@ -8975,50 +9030,6 @@
         "name": "生效期非重叠规则",
         "standard": "所有产品在同一时间段内仅存在一条有效费率记录"
       }
-    },
-    {
-      "confidence": "LOW",
-      "conflict_note": "人工按业务含义匹配到业务数据仓库表，非外键关联，未经业务方确认",
-      "evidence_class": "CONSENSUS",
-      "evidence_id": "EVD-ab4128e96855346981af",
-      "field_name": "business_evidence",
-      "source": {
-        "observed_at": "",
-        "source_field": "人工匹配",
-        "source_key": "L4-COM-03",
-        "source_object": "comm_sandbox.market_publish_event, comm_sandbox.v_commission_tier_published",
-        "source_system": "业务数据仓库",
-        "source_version": "2026-08-04试点"
-      },
-      "status": "UNVERIFIED",
-      "transform_rule": "",
-      "value": [
-        {
-          "confidence": "weak",
-          "evidence_type": "workflow",
-          "matched_columns": [
-            "action",
-            "affected_rows",
-            "published_by"
-          ],
-          "rationale": "费率发布事件表，字段含义正对应\"外发\"动作；当前0行，说明外发流程尚未在系统内走过",
-          "row_count": 0,
-          "schema": "comm_sandbox",
-          "table": "market_publish_event"
-        },
-        {
-          "confidence": "weak",
-          "evidence_type": "output",
-          "matched_columns": [
-            "publish_no",
-            "row_bizkey"
-          ],
-          "rationale": "已发布费率视图，结构对应\"佣金外发凭证\"；当前0行",
-          "row_count": 0,
-          "schema": "comm_sandbox",
-          "table": "v_commission_tier_published"
-        }
-      ]
     },
     {
       "confidence": "HIGH",
@@ -11650,6 +11661,17 @@
           "row_count": 0,
           "schema": "comm_sandbox",
           "table": "v_commission_tier_published"
+        },
+        {
+          "confidence": "weak",
+          "evidence_type": "output",
+          "matched_columns": [
+            "publish_event_id"
+          ],
+          "rationale": "费率发布变更明细表，外键指向market_publish_event，是同一条\"外发\"事件的变更明细；当前0行",
+          "row_count": 0,
+          "schema": "comm_sandbox",
+          "table": "market_publish_change"
         }
       ],
       "d1_d6": {
@@ -11671,7 +11693,7 @@
         "agent_d6_compliance": "EVD-74e926413fddfc3a2085",
         "agent_human_touchpoint": "EVD-22865543421348f364c0",
         "agentifiability": "EVD-778f3534700c8932cdc0",
-        "business_evidence": "EVD-ab4128e96855346981af",
+        "business_evidence": "EVD-75ea603aeccd7dfc126b",
         "l4_deliverable": "EVD-9fe75c4f838f44aa3fe2",
         "l4_deliverable_type": "EVD-d69f814d7f54218e1804",
         "l4_name": "EVD-4ffa0a47eeca2b9236d4",

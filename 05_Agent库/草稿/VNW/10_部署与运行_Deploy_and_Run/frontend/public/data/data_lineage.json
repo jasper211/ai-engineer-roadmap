@@ -18633,19 +18633,80 @@
     }
   ],
   "schema_version": "vnw.data-lineage.v1",
+  "shared_master_data": {
+    "public.bridge_partner_ka": {
+      "l3_codes": [
+        "L3-COM",
+        "L3-FBA",
+        "L3-KAGA",
+        "L3-RSJD"
+      ],
+      "l3_span_count": 4,
+      "reason": "血缘候选覆盖4个L3：L3-COM(经由public.dim_partner、public.fact_policy)；L3-FBA(经由public.agg_sales_base)；L3-KAGA(经由public.dim_ka、public.fact_channel_ka)；L3-RSJD(经由public.agg_sales_base、public.dim_customer)——跨L3共用的主数据/维度表，不建议归入单一L4"
+    },
+    "public.dim_lookup_code": {
+      "l3_codes": [
+        "L3-COM",
+        "L3-FBA",
+        "L3-KAGA",
+        "L3-RSJD"
+      ],
+      "l3_span_count": 4,
+      "reason": "血缘候选覆盖4个L3：L3-COM(经由public.dim_partner、public.fact_policy)；L3-FBA(经由public.agg_sales_base)；L3-KAGA(经由public.dim_ka)；L3-RSJD(经由public.agg_sales_base、public.dim_customer)——跨L3共用的主数据/维度表，不建议归入单一L4"
+    },
+    "public.dim_product_id": {
+      "l3_codes": [
+        "L3-COM",
+        "L3-FBA",
+        "L3-KAGA",
+        "L3-RSJD"
+      ],
+      "l3_span_count": 4,
+      "reason": "血缘候选覆盖4个L3：L3-COM(经由public.agg_market_commission_tier_rate、public.config_license_carrier_mapping、public.dim_partner、public.fact_policy)；L3-FBA(经由public.agg_sales_base)；L3-KAGA(经由public.dim_ka)；L3-RSJD(经由public.agg_sales_base、public.dim_customer、public.fact_insurance_plan_header)——跨L3共用的主数据/维度表，不建议归入单一L4"
+    },
+    "public.dim_product_sku": {
+      "l3_codes": [
+        "L3-COM",
+        "L3-FBA",
+        "L3-KAGA",
+        "L3-RSJD"
+      ],
+      "l3_span_count": 4,
+      "reason": "血缘候选覆盖4个L3：L3-COM(经由public.agg_market_commission_tier_rate、public.dim_partner、public.fact_commission_rate、public.fact_policy)；L3-FBA(经由public.agg_sales_base)；L3-KAGA(经由public.dim_ka)；L3-RSJD(经由public.agg_sales_base、public.dim_customer、public.fact_insurance_plan_header)——跨L3共用的主数据/维度表，不建议归入单一L4"
+    },
+    "public.dim_segmentation": {
+      "l3_codes": [
+        "L3-COM",
+        "L3-FBA",
+        "L3-KAGA",
+        "L3-RSJD"
+      ],
+      "l3_span_count": 4,
+      "reason": "血缘候选覆盖4个L3：L3-COM(经由public.dim_partner、public.fact_policy)；L3-FBA(经由public.agg_sales_base)；L3-KAGA(经由public.dim_ka)；L3-RSJD(经由public.agg_sales_base、public.dim_customer)——跨L3共用的主数据/维度表，不建议归入单一L4"
+    },
+    "public.fact_policy_etl_scope": {
+      "l3_codes": [
+        "L3-COM",
+        "L3-FBA",
+        "L3-KAGA",
+        "L3-RSJD"
+      ],
+      "l3_span_count": 4,
+      "reason": "血缘候选覆盖4个L3：L3-COM(经由public.dim_partner、public.fact_policy)；L3-FBA(经由public.agg_sales_base)；L3-KAGA(经由public.dim_ka)；L3-RSJD(经由public.agg_sales_base、public.dim_customer)——跨L3共用的主数据/维度表，不建议归入单一L4"
+    },
+    "public.v_fact_sales_activity": {
+      "l3_codes": [
+        "L3-COM",
+        "L3-FBA",
+        "L3-KAGA",
+        "L3-RSJD"
+      ],
+      "l3_span_count": 4,
+      "reason": "血缘候选覆盖4个L3：L3-COM(经由public.fact_channel_partner)；L3-FBA(经由public.agg_sales_base)；L3-KAGA(经由public.fact_channel_ka)；L3-RSJD(经由public.agg_sales_base)——跨L3共用的主数据/维度表，不建议归入单一L4"
+    }
+  },
   "source_policy": "边只来自三类真实证据：视图SQL定义(pg_get_viewdef)/数据库外键约束/ETL流水线同批装载日志(sync_history，仅认可命名的可重复airflow流水线)，不做同名字段或表名相似度的推测性连接；无证据的表如实标注无可查血缘(已核实仓库内外都没有对应ETL脚本，生产者在仓库之外)",
   "suggested_l4_candidates": {
-    "comm_sandbox.market_publish_change": [
-      {
-        "edge_type": "foreign_key",
-        "evidence": "comm_sandbox.market_publish_change.publish_event_id 外键引用 comm_sandbox.market_publish_event.publish_event_id",
-        "l3_code": "L3-COM",
-        "l3_name": "佣金全链路管理",
-        "l4_code": "L4-COM-03",
-        "l4_name": "佣金整合与外发",
-        "via_table": "comm_sandbox.market_publish_event"
-      }
-    ],
     "comm_sandbox.v_commission_tier_effective": [
       {
         "edge_type": "view_dependency",

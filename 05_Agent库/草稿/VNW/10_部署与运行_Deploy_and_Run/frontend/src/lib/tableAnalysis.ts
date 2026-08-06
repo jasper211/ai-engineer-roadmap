@@ -16,6 +16,10 @@ export interface TableAnalysisEntry {
     data_health: string
     status: string
     analyzed_l3_coverage: { analyzed: number; total: number }
+    shared_master_data: { l3_span_count: number; l3_codes: string[]; reason: string } | null
+    utility_support: { reason: string } | null
+    field_anchored: { anchors: { field: string; linked_tables: string[]; origin_tables: string[] }[] } | null
+    non_business: { reason: string } | null
   }
   layer3: {
     status: 'BLOCKED' | 'ACTIVE'

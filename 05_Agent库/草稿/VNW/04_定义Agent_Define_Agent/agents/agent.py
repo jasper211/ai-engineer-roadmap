@@ -110,7 +110,27 @@ def _build_and_write_table_analysis(db_catalog: dict) -> dict:
     from skills.table_analysis import build_table_analysis
 
     table_to_l4_index, l3_codes = _load_table_to_l4_index()
-    analysis = build_table_analysis(db_catalog, table_to_l4_index, l3_codes)
+    # shared_master_data/utility_support/field_anchored全部来自data_lineage.json
+    # 里已经算好的信号——读盘复用而不是重算，容忍首次运行时该文件还不存在(此时
+    # 这些字段全部留空，不影响其余五层分析)。
+    lineage_path = AGENT_ROOT / "10_部署与运行_Deploy_and_Run/frontend/public/data/data_lineage.json"
+    shared_master_data: dict = {}
+    utility_support_info: dict = {}
+    field_anchor_info: dict = {}
+    if lineage_path.exists():
+        lineage = json.loads(lineage_path.read_text(encoding="utf-8"))
+        shared_master_data = lineage.get("shared_master_data", {})
+        field_anchor_links = lineage.get("field_anchor_links", {})
+        for node in lineage.get("nodes", []):
+            key = f"{node['schema']}.{node['table']}"
+            if node["zombie_flag"] == "utility_support":
+                utility_support_info[key] = node.get("utility_support_reason", "")
+            elif node["zombie_flag"] == "field_anchored":
+                field_anchor_info[key] = field_anchor_links.get(key, [])
+    analysis = build_table_analysis(
+        db_catalog, table_to_l4_index, l3_codes,
+        shared_master_data, utility_support_info, field_anchor_info,
+    )
     output_path = AGENT_ROOT / "10_部署与运行_Deploy_and_Run/frontend/public/data/table_analysis.json"
     output_path.write_text(json.dumps(analysis, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     return {"table_count": len(analysis["tables"]), "output": str(output_path)}
@@ -124,6 +144,7 @@ def _build_and_write_data_lineage(db_catalog: dict) -> dict:
         build_field_anchor_links,
         build_field_index,
         build_lineage_graph,
+        classify_shared_master_data,
         extract_field_column_lineage,
         extract_foreign_keys,
         extract_pipeline_groups,
@@ -144,6 +165,7 @@ def _build_and_write_data_lineage(db_catalog: dict) -> dict:
 
     table_to_l4_index, _ = _load_table_to_l4_index()
     graph["suggested_l4_candidates"] = suggest_l4_candidates(edges, table_to_l4_index, known_tables)
+    graph["shared_master_data"] = classify_shared_master_data(graph["suggested_l4_candidates"])
     graph["field_lineage"] = extract_field_column_lineage(db_query, known_tables)
     graph["field_index"] = build_field_index(db_catalog, db_query)
     field_anchor_links = build_field_anchor_links(graph["field_index"])
@@ -164,6 +186,7 @@ def _build_and_write_data_lineage(db_catalog: dict) -> dict:
         "suspected_zombie_count": zombie_count,
         "field_anchored_count": field_anchored_count,
         "utility_support_count": utility_support_count,
+        "shared_master_data_count": len(graph["shared_master_data"]),
         "edge_type_counts": graph["edge_type_counts"],
         "suggested_candidate_table_count": len(graph["suggested_l4_candidates"]),
         "field_lineage_resolved_views": len(graph["field_lineage"]["resolved_views"]),
@@ -356,8 +379,8 @@ def main() -> int:
         catalog = build_catalog(db_query)
         catalog_path = AGENT_ROOT / "10_部署与运行_Deploy_and_Run/frontend/public/data/db_catalog.json"
         catalog_path.write_text(json.dumps(catalog, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-        result = _build_and_write_table_analysis(catalog)
         lineage_result = _build_and_write_data_lineage(catalog)
+        result = _build_and_write_table_analysis(catalog)
         print(json.dumps({
             "status": "refreshed",
             "db_catalog_table_count": len(catalog["tables"]),

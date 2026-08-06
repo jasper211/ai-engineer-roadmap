@@ -244,6 +244,32 @@ def suggest_l4_candidates(edges: list[dict], table_to_l4_index: dict[str, list[d
     return suggestions
 
 
+def classify_shared_master_data(suggested_candidates: dict[str, list[dict]], min_l3_span: int = 3) -> dict[str, dict]:
+    """跨L3共用主数据/维度表——不是人工登记，直接从suggest_l4_candidates的
+    证据密度机械判定：一张表的血缘候选如果覆盖>=min_l3_span个不同L3，说明它
+    被多个L3的真实流水线/视图/外键共用，不适合再往单一L4上强行归类，应归为
+    "共用主数据/维度表"。原因文本直接拼自真实候选数据(哪个L3经由哪张表连接)，
+    不是手写模板——数据变了这段文字自动跟着变，不会读起来对但内容过期。
+    """
+    result: dict[str, dict] = {}
+    for key, candidates in suggested_candidates.items():
+        by_l3: dict[str, list[dict]] = {}
+        for c in candidates:
+            by_l3.setdefault(c["l3_code"], []).append(c)
+        if len(by_l3) < min_l3_span:
+            continue
+        parts = []
+        for l3_code in sorted(by_l3):
+            via_tables = sorted({c["via_table"] for c in by_l3[l3_code]})
+            parts.append(f"{l3_code}(经由{'、'.join(via_tables)})")
+        result[key] = {
+            "l3_span_count": len(by_l3),
+            "l3_codes": sorted(by_l3),
+            "reason": f"血缘候选覆盖{len(by_l3)}个L3：{'；'.join(parts)}——跨L3共用的主数据/维度表，不建议归入单一L4",
+        }
+    return result
+
+
 # 第5类信号——人工核实的"工具/服务支撑表"：既没有血缘边/L4关联，也没有字段级
 # 主键锚定，但业务上已核实其存在是为了支撑其他表/流程运转(ETL控制、通用维度、
 # 数据清洗工具)，不是真断点。这是人工登记表，不是自动推断——每条都要有可核查的

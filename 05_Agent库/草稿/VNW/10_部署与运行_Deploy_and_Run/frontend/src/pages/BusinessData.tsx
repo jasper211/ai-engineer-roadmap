@@ -155,6 +155,29 @@ function TableFiveLayerDetail({ entry }: { entry: TableAnalysisEntry }) {
         ) : (
           <p className="mt-1 text-[10px] text-text-muted">{entry.layer2.status}</p>
         )}
+        {entry.layer2.non_business && (
+          <div className="mt-1.5 rounded-md border border-dashed border-slate-300 bg-slate-100/60 p-1.5">
+            <p className="text-[10px] font-semibold text-slate-600">{entry.layer2.non_business.reason}</p>
+          </div>
+        )}
+        {entry.layer2.shared_master_data && (
+          <div className="mt-1.5 rounded-md border border-dashed border-cyan-300 bg-cyan-50/60 p-1.5">
+            <p className="text-[10px] font-semibold text-cyan-800">{entry.layer2.shared_master_data.reason}</p>
+          </div>
+        )}
+        {entry.layer2.utility_support && (
+          <div className="mt-1.5 rounded-md border border-dashed border-violet-300 bg-violet-50/60 p-1.5">
+            <p className="text-[10px] font-semibold text-violet-800">{entry.layer2.utility_support.reason}</p>
+          </div>
+        )}
+        {entry.layer2.field_anchored && (
+          <div className="mt-1.5 space-y-1 rounded-md border border-dashed border-sky-300 bg-sky-50/60 p-1.5">
+            {entry.layer2.field_anchored.anchors.slice(0, 3).map((anchor, i) => (
+              <p key={i} className="text-[10px] font-semibold text-sky-800">无L4关联，但字段"{anchor.field}"是{anchor.origin_tables.join('、')}的真实主键，且被{anchor.linked_tables.length}张表共用——非孤立</p>
+            ))}
+            {entry.layer2.field_anchored.anchors.length > 3 && <p className="text-[10px] text-sky-700">+{entry.layer2.field_anchored.anchors.length - 3} 个锚定字段…</p>}
+          </div>
+        )}
         <span className={`mt-2 inline-block rounded-full px-2 py-0.5 text-[10px] font-medium ${HEALTH_TONE[entry.layer2.data_health] ?? 'bg-slate-100 text-slate-500'}`}>{entry.layer2.data_health}</span>
       </div>
 
@@ -207,6 +230,10 @@ export default function BusinessData() {
 
   const relatedCount = useMemo(() => tableAnalysis?.tables.filter(t => t.layer2.related_l3_l4.length > 0).length ?? 0, [tableAnalysis])
   const hasDataCount = useMemo(() => tableAnalysis?.tables.filter(t => t.layer1.has_data).length ?? 0, [tableAnalysis])
+  const sharedMasterDataCount = useMemo(() => tableAnalysis?.tables.filter(t => t.layer2.shared_master_data).length ?? 0, [tableAnalysis])
+  const utilitySupportCount = useMemo(() => tableAnalysis?.tables.filter(t => t.layer2.utility_support).length ?? 0, [tableAnalysis])
+  const fieldAnchoredCount = useMemo(() => tableAnalysis?.tables.filter(t => t.layer2.field_anchored).length ?? 0, [tableAnalysis])
+  const nonBusinessCount = useMemo(() => tableAnalysis?.tables.filter(t => t.layer2.non_business).length ?? 0, [tableAnalysis])
   const l3Coverage = tableAnalysis?.tables[0]?.layer2.analyzed_l3_coverage ?? { analyzed: 0, total: 0 }
 
   const schemas = useMemo(() => Array.from(new Set(tableAnalysis?.tables.map(t => t.schema) ?? [])).sort(), [tableAnalysis])
@@ -296,6 +323,10 @@ export default function BusinessData() {
         <div className="mt-3 grid gap-3 sm:grid-cols-4">
           <div className="panel p-4"><p className="eyebrow">已纳入匹配分析的L3</p><p className="mt-2 metric-value">{l3Coverage.analyzed}/{l3Coverage.total}</p><p className="mt-1 text-[11px] text-text-muted">其余L3尚未逐张核实，其表暂不计入"已核实无关联"</p></div>
           <div className="panel p-4"><p className="eyebrow">已定位L3/L4关联的表</p><p className="mt-2 metric-value">{relatedCount}/{tableAnalysis.tables.length}</p></div>
+          <div className="panel p-4"><p className="eyebrow">共用主数据/维度表</p><p className="mt-2 metric-value text-cyan-600">{sharedMasterDataCount}</p><p className="mt-1 text-[11px] text-text-muted">血缘候选跨≥3个L3，不建议归入单一L4</p></div>
+          <div className="panel p-4"><p className="eyebrow">工具/服务支撑</p><p className="mt-2 metric-value text-violet-600">{utilitySupportCount}</p><p className="mt-1 text-[11px] text-text-muted">业务方核实非断点，方法论对其天然失效</p></div>
+          <div className="panel p-4"><p className="eyebrow">字段锚定(非孤立)</p><p className="mt-2 metric-value text-sky-600">{fieldAnchoredCount}</p><p className="mt-1 text-[11px] text-text-muted">无L4/血缘边，但有真实主键字段连回主链</p></div>
+          <div className="panel p-4"><p className="eyebrow">系统表/非业务表</p><p className="mt-2 metric-value text-slate-500">{nonBusinessCount}</p><p className="mt-1 text-[11px] text-text-muted">已核实与保险业务无关，非"未分析"</p></div>
           <div className="panel p-4"><p className="eyebrow">有真实数据的表</p><p className="mt-2 metric-value">{hasDataCount}/{tableAnalysis.tables.length}</p></div>
           <div className="panel p-4"><p className="eyebrow">L3归因层/L4预测层</p><p className="mt-2 text-sm font-semibold text-slate-500">全部 BLOCKED</p><p className="mt-1 text-[11px] text-text-muted">fact_card/fact_agent(唯一含耗时/错误率字段的表)当前0行，无薪酬成本字段——分析维度保留，不做降级替代</p></div>
         </div>
@@ -358,12 +389,24 @@ export default function BusinessData() {
                   <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${HEALTH_TONE[entry.layer2.data_health] ?? 'bg-slate-100 text-slate-500'}`}>{entry.layer2.data_health}</span>
                   <span className={`ml-auto rounded-full px-2.5 py-1 text-[11px] font-medium ${
                     entry.layer2.related_l3_l4.length > 0 ? 'bg-emerald-400/10 text-emerald-700'
-                      : entry.layer2.analyzed_l3_coverage.analyzed >= entry.layer2.analyzed_l3_coverage.total ? 'bg-slate-100 text-slate-500'
-                        : 'border border-dashed border-amber-300 bg-amber-400/10 text-amber-700'
+                      : entry.layer2.non_business ? 'bg-slate-200 text-slate-600'
+                        : entry.layer2.shared_master_data ? 'bg-cyan-400/10 text-cyan-700'
+                          : entry.layer2.utility_support ? 'bg-violet-400/10 text-violet-700'
+                            : entry.layer2.field_anchored ? 'bg-sky-400/10 text-sky-700'
+                              : entry.layer2.analyzed_l3_coverage.analyzed >= entry.layer2.analyzed_l3_coverage.total ? 'bg-slate-100 text-slate-500'
+                                : 'border border-dashed border-amber-300 bg-amber-400/10 text-amber-700'
                   }`}>
                     {entry.layer2.related_l3_l4.length > 0
                       ? `关联${entry.layer2.related_l3_l4.length}个L4`
-                      : entry.layer2.analyzed_l3_coverage.analyzed >= entry.layer2.analyzed_l3_coverage.total ? '已核实无关联' : '未纳入分析范围'}
+                      : entry.layer2.non_business
+                        ? '系统表/非业务表'
+                        : entry.layer2.shared_master_data
+                          ? `共用主数据·跨${entry.layer2.shared_master_data.l3_span_count}个L3`
+                          : entry.layer2.utility_support
+                            ? '工具/服务支撑'
+                            : entry.layer2.field_anchored
+                              ? '字段锚定(非孤立)'
+                              : entry.layer2.analyzed_l3_coverage.analyzed >= entry.layer2.analyzed_l3_coverage.total ? '已核实无关联' : '未纳入分析范围'}
                   </span>
                 </summary>
                 {expandedTable === key && (

@@ -15,6 +15,8 @@
           "total": 74
         },
         "data_health": "未开始录入",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [
           "佣金管理与合规岗"
         ],
@@ -32,7 +34,9 @@
             "l4_name": "追溯调整与退保倒扣"
           }
         ],
-        "status": "已定位关联"
+        "shared_master_data": null,
+        "status": "已定位关联",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -97,6 +101,8 @@
           "total": 74
         },
         "data_health": "未开始录入",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [
           "佣金管理与合规岗"
         ],
@@ -108,7 +114,9 @@
             "l4_name": "追溯调整与退保倒扣"
           }
         ],
-        "status": "已定位关联"
+        "shared_master_data": null,
+        "status": "已定位关联",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -163,9 +171,13 @@
           "total": 74
         },
         "data_health": "未开始录入",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": null,
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -209,6 +221,8 @@
           "total": 74
         },
         "data_health": "小规模在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [
           "佣金管理与合规岗"
         ],
@@ -220,7 +234,9 @@
             "l4_name": "应派金额拆分与渠道对账（待注册）"
           }
         ],
-        "status": "已定位关联"
+        "shared_master_data": null,
+        "status": "已定位关联",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -275,9 +291,113 @@
           "total": 74
         },
         "data_health": "小规模在跑",
+        "field_anchored": {
+          "anchors": [
+            {
+              "field": "product_id",
+              "linked_tables": [
+                "comm_sandbox.commission_tier_adjustment",
+                "comm_sandbox.commission_tier_adjustment_history_long",
+                "comm_sandbox.competitor_rate",
+                "comm_sandbox.config_table_type_tier_pricing_rules",
+                "comm_sandbox.fact_commission_tier_rate",
+                "comm_sandbox.fact_commission_tier_rate_history_long",
+                "comm_sandbox.market_row_state",
+                "comm_sandbox.source_diff_confirm",
+                "comm_sandbox.v_commission_tier_effective",
+                "comm_sandbox.v_commission_tier_published",
+                "comm_sandbox.v_payout_ratio_check",
+                "comm_sandbox.v_qoq_rate_compare",
+                "comm_sandbox.v_tier_rate_readable",
+                "fin_sandbox.fact_receipt",
+                "fin_sandbox.fact_receivable",
+                "public.agg_source_commission_wide",
+                "public.dim_product_benefit_profile",
+                "public.dim_product_feature_value",
+                "public.dim_product_id",
+                "public.fact_commission_rate",
+                "public.fact_insurance_plan_header",
+                "public.fact_insurance_plan_header_history",
+                "public.fact_policy",
+                "public.fact_product_id",
+                "public.mapping_product",
+                "public.product_risk_override",
+                "public.v_plan_metrics",
+                "public.v_policy_current_state"
+              ],
+              "origin_tables": [
+                "comm_sandbox.config_product_pricing_group",
+                "public.dim_product_benefit_profile",
+                "public.mapping_product"
+              ]
+            },
+            {
+              "field": "rate_option_code",
+              "linked_tables": [
+                "comm_sandbox.commission_tier_adjustment",
+                "comm_sandbox.commission_tier_adjustment_history_long",
+                "comm_sandbox.config_table_type_product_scope",
+                "comm_sandbox.config_table_type_tier_pricing_rules",
+                "comm_sandbox.fact_commission_tier_rate",
+                "comm_sandbox.fact_commission_tier_rate_history_long",
+                "comm_sandbox.market_row_state",
+                "comm_sandbox.source_diff_confirm",
+                "comm_sandbox.v_commission_tier_effective",
+                "comm_sandbox.v_commission_tier_published",
+                "comm_sandbox.v_payout_ratio_check",
+                "comm_sandbox.v_qoq_rate_compare",
+                "comm_sandbox.v_tier_rate_readable",
+                "fin_sandbox.fact_receivable",
+                "public.agg_market_commission_tier_rate",
+                "public.agg_source_commission_wide",
+                "public.dim_product_id",
+                "public.fact_commission_rate",
+                "public.fact_policy",
+                "public.product_risk_override"
+              ],
+              "origin_tables": [
+                "comm_sandbox.config_product_pricing_group"
+              ]
+            },
+            {
+              "field": "product_sku",
+              "linked_tables": [
+                "comm_sandbox.config_table_type_tier_pricing_rules",
+                "comm_sandbox.fact_commission_tier_rate",
+                "comm_sandbox.fact_commission_tier_rate_history_long",
+                "comm_sandbox.v_commission_tier_effective",
+                "comm_sandbox.v_payout_ratio_check",
+                "comm_sandbox.v_qoq_rate_compare",
+                "comm_sandbox.v_tier_rate_readable",
+                "public.agg_source_commission_wide",
+                "public.bridge_strategy_routing",
+                "public.dim_product_benefit_profile",
+                "public.dim_product_feature_value",
+                "public.dim_product_id",
+                "public.dim_product_sku",
+                "public.fact_commission_rate",
+                "public.fact_insurance_plan_header",
+                "public.fact_insurance_plan_header_history",
+                "public.fact_policy",
+                "public.fact_product_id",
+                "public.fact_product_sku",
+                "public.mapping_product",
+                "public.product_risk_override",
+                "public.v_plan_metrics"
+              ],
+              "origin_tables": [
+                "comm_sandbox.config_product_pricing_group",
+                "public.dim_product_sku"
+              ]
+            }
+          ]
+        },
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": null,
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -321,6 +441,8 @@
           "total": 74
         },
         "data_health": "试点阶段(个位数记录)",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [
           "事业部运营管理岗"
         ],
@@ -332,7 +454,9 @@
             "l4_name": "月度/季度业绩数据汇总"
           }
         ],
-        "status": "已定位关联"
+        "shared_master_data": null,
+        "status": "已定位关联",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -387,9 +511,13 @@
           "total": 74
         },
         "data_health": "未开始录入",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": null,
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -433,6 +561,8 @@
           "total": 74
         },
         "data_health": "小规模在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [
           "佣金管理与合规岗"
         ],
@@ -444,7 +574,9 @@
             "l4_name": "佣金政策接收与校准"
           }
         ],
-        "status": "已定位关联"
+        "shared_master_data": null,
+        "status": "已定位关联",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -499,6 +631,8 @@
           "total": 74
         },
         "data_health": "小规模在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [
           "佣金管理与合规岗"
         ],
@@ -510,7 +644,9 @@
             "l4_name": "差异化拆解与验证"
           }
         ],
-        "status": "已定位关联"
+        "shared_master_data": null,
+        "status": "已定位关联",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -565,6 +701,8 @@
           "total": 74
         },
         "data_health": "小规模在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [
           "佣金管理与合规岗"
         ],
@@ -576,7 +714,9 @@
             "l4_name": "差异化拆解与验证"
           }
         ],
-        "status": "已定位关联"
+        "shared_master_data": null,
+        "status": "已定位关联",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -631,6 +771,8 @@
           "total": 74
         },
         "data_health": "小规模在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [
           "佣金管理与合规岗"
         ],
@@ -642,7 +784,9 @@
             "l4_name": "佣金政策接收与校准"
           }
         ],
-        "status": "已定位关联"
+        "shared_master_data": null,
+        "status": "已定位关联",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -697,6 +841,8 @@
           "total": 74
         },
         "data_health": "规模化在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [
           "佣金管理与合规岗"
         ],
@@ -708,7 +854,9 @@
             "l4_name": "差异化拆解与验证"
           }
         ],
-        "status": "已定位关联"
+        "shared_master_data": null,
+        "status": "已定位关联",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -763,9 +911,270 @@
           "total": 74
         },
         "data_health": "规模化在跑",
+        "field_anchored": {
+          "anchors": [
+            {
+              "field": "table_type",
+              "linked_tables": [
+                "comm_sandbox.commission_tier_adjustment",
+                "comm_sandbox.commission_tier_adjustment_history_long",
+                "comm_sandbox.config_table_type_coefficient",
+                "comm_sandbox.config_table_type_def",
+                "comm_sandbox.config_table_type_product_scope",
+                "comm_sandbox.config_table_type_tier_pricing_rules",
+                "comm_sandbox.dim_comm_scheme",
+                "comm_sandbox.fact_commission_tier_rate",
+                "comm_sandbox.map_commission_plan_scheme",
+                "comm_sandbox.market_publish_event",
+                "comm_sandbox.market_row_state",
+                "comm_sandbox.market_table_header_state",
+                "comm_sandbox.v_commission_tier_effective",
+                "comm_sandbox.v_commission_tier_published",
+                "comm_sandbox.v_payout_ratio_check",
+                "comm_sandbox.v_qoq_rate_compare",
+                "comm_sandbox.v_tier_rate_readable",
+                "public.config_commission_table_type",
+                "public.config_product_exclusion_range"
+              ],
+              "origin_tables": [
+                "comm_sandbox.config_table_type_def"
+              ]
+            },
+            {
+              "field": "product_id",
+              "linked_tables": [
+                "comm_sandbox.commission_tier_adjustment",
+                "comm_sandbox.commission_tier_adjustment_history_long",
+                "comm_sandbox.competitor_rate",
+                "comm_sandbox.config_product_pricing_group",
+                "comm_sandbox.config_table_type_tier_pricing_rules",
+                "comm_sandbox.fact_commission_tier_rate",
+                "comm_sandbox.market_row_state",
+                "comm_sandbox.source_diff_confirm",
+                "comm_sandbox.v_commission_tier_effective",
+                "comm_sandbox.v_commission_tier_published",
+                "comm_sandbox.v_payout_ratio_check",
+                "comm_sandbox.v_qoq_rate_compare",
+                "comm_sandbox.v_tier_rate_readable",
+                "fin_sandbox.fact_receipt",
+                "fin_sandbox.fact_receivable",
+                "public.agg_source_commission_wide",
+                "public.dim_product_benefit_profile",
+                "public.dim_product_feature_value",
+                "public.dim_product_id",
+                "public.fact_commission_rate",
+                "public.fact_insurance_plan_header",
+                "public.fact_insurance_plan_header_history",
+                "public.fact_policy",
+                "public.fact_product_id",
+                "public.mapping_product",
+                "public.product_risk_override",
+                "public.v_plan_metrics",
+                "public.v_policy_current_state"
+              ],
+              "origin_tables": [
+                "comm_sandbox.config_product_pricing_group",
+                "public.dim_product_benefit_profile",
+                "public.mapping_product"
+              ]
+            },
+            {
+              "field": "rate_option_code",
+              "linked_tables": [
+                "comm_sandbox.commission_tier_adjustment",
+                "comm_sandbox.commission_tier_adjustment_history_long",
+                "comm_sandbox.config_product_pricing_group",
+                "comm_sandbox.config_table_type_product_scope",
+                "comm_sandbox.config_table_type_tier_pricing_rules",
+                "comm_sandbox.fact_commission_tier_rate",
+                "comm_sandbox.market_row_state",
+                "comm_sandbox.source_diff_confirm",
+                "comm_sandbox.v_commission_tier_effective",
+                "comm_sandbox.v_commission_tier_published",
+                "comm_sandbox.v_payout_ratio_check",
+                "comm_sandbox.v_qoq_rate_compare",
+                "comm_sandbox.v_tier_rate_readable",
+                "fin_sandbox.fact_receivable",
+                "public.agg_market_commission_tier_rate",
+                "public.agg_source_commission_wide",
+                "public.dim_product_id",
+                "public.fact_commission_rate",
+                "public.fact_policy",
+                "public.product_risk_override"
+              ],
+              "origin_tables": [
+                "comm_sandbox.config_product_pricing_group"
+              ]
+            },
+            {
+              "field": "customer_type",
+              "linked_tables": [
+                "comm_sandbox.commission_tier_adjustment",
+                "comm_sandbox.commission_tier_adjustment_history_long",
+                "comm_sandbox.config_table_type_tier_pricing_rules",
+                "comm_sandbox.fact_commission_tier_rate",
+                "comm_sandbox.market_row_state",
+                "comm_sandbox.source_diff_confirm",
+                "comm_sandbox.v_commission_tier_effective",
+                "comm_sandbox.v_commission_tier_published",
+                "comm_sandbox.v_payout_ratio_check",
+                "comm_sandbox.v_qoq_rate_compare",
+                "fin_sandbox.fact_receivable",
+                "public.agg_source_commission_wide",
+                "public.bridge_strategy_routing",
+                "public.config_commission_table_type",
+                "public.config_product_commission_formula",
+                "public.dim_customer",
+                "public.dim_customer_type",
+                "public.fact_commission_rate",
+                "public.fact_policy",
+                "public.partner_tier_rules"
+              ],
+              "origin_tables": [
+                "public.config_product_commission_formula",
+                "public.dim_customer_type"
+              ]
+            },
+            {
+              "field": "tier_level",
+              "linked_tables": [
+                "comm_sandbox.commission_tier_adjustment",
+                "comm_sandbox.config_table_type_def",
+                "comm_sandbox.fact_commission_tier_rate",
+                "comm_sandbox.market_row_state",
+                "comm_sandbox.v_commission_tier_effective",
+                "comm_sandbox.v_commission_tier_published",
+                "comm_sandbox.v_payout_ratio_check",
+                "comm_sandbox.v_qoq_rate_compare",
+                "comm_sandbox.v_tier_rate_readable",
+                "public.config_strategy_tiers"
+              ],
+              "origin_tables": [
+                "public.config_strategy_tiers"
+              ]
+            },
+            {
+              "field": "premium_term",
+              "linked_tables": [
+                "comm_sandbox.competitor_rate",
+                "comm_sandbox.config_table_type_coefficient",
+                "comm_sandbox.config_table_type_product_scope",
+                "comm_sandbox.fact_commission_tier_rate",
+                "comm_sandbox.source_diff_confirm",
+                "comm_sandbox.v_commission_tier_effective",
+                "fin_sandbox.fact_receipt",
+                "public.agg_source_commission_wide",
+                "public.dim_product_id",
+                "public.fact_commission_rate",
+                "public.fact_insurance_plan_header",
+                "public.fact_insurance_plan_header_history",
+                "public.fact_policy",
+                "public.mapping_product",
+                "public.v_plan_metrics"
+              ],
+              "origin_tables": [
+                "public.mapping_product"
+              ]
+            },
+            {
+              "field": "product_sku",
+              "linked_tables": [
+                "comm_sandbox.config_product_pricing_group",
+                "comm_sandbox.config_table_type_tier_pricing_rules",
+                "comm_sandbox.fact_commission_tier_rate",
+                "comm_sandbox.v_commission_tier_effective",
+                "comm_sandbox.v_payout_ratio_check",
+                "comm_sandbox.v_qoq_rate_compare",
+                "comm_sandbox.v_tier_rate_readable",
+                "public.agg_source_commission_wide",
+                "public.bridge_strategy_routing",
+                "public.dim_product_benefit_profile",
+                "public.dim_product_feature_value",
+                "public.dim_product_id",
+                "public.dim_product_sku",
+                "public.fact_commission_rate",
+                "public.fact_insurance_plan_header",
+                "public.fact_insurance_plan_header_history",
+                "public.fact_policy",
+                "public.fact_product_id",
+                "public.fact_product_sku",
+                "public.mapping_product",
+                "public.product_risk_override",
+                "public.v_plan_metrics"
+              ],
+              "origin_tables": [
+                "comm_sandbox.config_product_pricing_group",
+                "public.dim_product_sku"
+              ]
+            },
+            {
+              "field": "carrier_code",
+              "linked_tables": [
+                "comm_sandbox.dim_comm_scheme",
+                "comm_sandbox.fact_commission_tier_rate",
+                "comm_sandbox.map_commission_plan_scheme",
+                "comm_sandbox.source_diff_confirm",
+                "comm_sandbox.v_commission_tier_effective",
+                "comm_sandbox.v_qoq_rate_compare",
+                "comm_sandbox.v_tier_rate_readable",
+                "fin_sandbox.config_carrier_settlement_schedule_rules",
+                "fin_sandbox.fact_receipt",
+                "fin_sandbox.match_receipt_receivable",
+                "public.agg_source_commission_wide",
+                "public.config_license_carrier_mapping",
+                "public.config_license_cost_deduction",
+                "public.dim_carrier",
+                "public.dim_product_sku",
+                "public.fact_commission_rate",
+                "public.fact_insurance_plan_header",
+                "public.fact_insurance_plan_header_history",
+                "public.fact_policy",
+                "public.fact_product_id",
+                "public.fact_product_sku",
+                "public.fact_target",
+                "public.mapping_product",
+                "public.v_plan_metrics",
+                "public.v_policy_current_state"
+              ],
+              "origin_tables": [
+                "public.config_license_cost_deduction",
+                "public.dim_carrier"
+              ]
+            },
+            {
+              "field": "tier_rate_id",
+              "linked_tables": [
+                "comm_sandbox.fact_commission_tier_rate",
+                "comm_sandbox.v_commission_tier_effective"
+              ],
+              "origin_tables": [
+                "comm_sandbox.fact_commission_tier_rate",
+                "comm_sandbox.fact_commission_tier_rate_history_long"
+              ]
+            },
+            {
+              "field": "commission_plan_code",
+              "linked_tables": [
+                "comm_sandbox.fact_commission_tier_rate",
+                "comm_sandbox.map_commission_plan_scheme",
+                "comm_sandbox.v_commission_tier_effective",
+                "public.agg_source_commission_wide",
+                "public.config_license_carrier_mapping",
+                "public.fact_commission_rate"
+              ],
+              "origin_tables": [
+                "comm_sandbox.map_commission_plan_scheme",
+                "public.config_license_carrier_mapping"
+              ]
+            }
+          ]
+        },
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": null,
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -809,9 +1218,105 @@
           "total": 74
         },
         "data_health": "小规模在跑",
+        "field_anchored": {
+          "anchors": [
+            {
+              "field": "table_type",
+              "linked_tables": [
+                "comm_sandbox.commission_tier_adjustment",
+                "comm_sandbox.commission_tier_adjustment_history_long",
+                "comm_sandbox.config_table_type_coefficient",
+                "comm_sandbox.config_table_type_def",
+                "comm_sandbox.config_table_type_product_scope",
+                "comm_sandbox.config_table_type_tier_pricing_rules",
+                "comm_sandbox.dim_comm_scheme",
+                "comm_sandbox.fact_commission_tier_rate",
+                "comm_sandbox.fact_commission_tier_rate_history_long",
+                "comm_sandbox.market_publish_event",
+                "comm_sandbox.market_row_state",
+                "comm_sandbox.market_table_header_state",
+                "comm_sandbox.v_commission_tier_effective",
+                "comm_sandbox.v_commission_tier_published",
+                "comm_sandbox.v_payout_ratio_check",
+                "comm_sandbox.v_qoq_rate_compare",
+                "comm_sandbox.v_tier_rate_readable",
+                "public.config_commission_table_type",
+                "public.config_product_exclusion_range"
+              ],
+              "origin_tables": [
+                "comm_sandbox.config_table_type_def"
+              ]
+            },
+            {
+              "field": "scheme_id",
+              "linked_tables": [
+                "comm_sandbox.dim_comm_scheme",
+                "public.bridge_strategy_routing",
+                "public.dim_comm_scheme"
+              ],
+              "origin_tables": [
+                "comm_sandbox.dim_comm_scheme",
+                "comm_sandbox.map_commission_plan_scheme",
+                "public.dim_comm_scheme"
+              ]
+            },
+            {
+              "field": "carrier_code",
+              "linked_tables": [
+                "comm_sandbox.dim_comm_scheme",
+                "comm_sandbox.fact_commission_tier_rate",
+                "comm_sandbox.fact_commission_tier_rate_history_long",
+                "comm_sandbox.source_diff_confirm",
+                "comm_sandbox.v_commission_tier_effective",
+                "comm_sandbox.v_qoq_rate_compare",
+                "comm_sandbox.v_tier_rate_readable",
+                "fin_sandbox.config_carrier_settlement_schedule_rules",
+                "fin_sandbox.fact_receipt",
+                "fin_sandbox.match_receipt_receivable",
+                "public.agg_source_commission_wide",
+                "public.config_license_carrier_mapping",
+                "public.config_license_cost_deduction",
+                "public.dim_carrier",
+                "public.dim_product_sku",
+                "public.fact_commission_rate",
+                "public.fact_insurance_plan_header",
+                "public.fact_insurance_plan_header_history",
+                "public.fact_policy",
+                "public.fact_product_id",
+                "public.fact_product_sku",
+                "public.fact_target",
+                "public.mapping_product",
+                "public.v_plan_metrics",
+                "public.v_policy_current_state"
+              ],
+              "origin_tables": [
+                "public.config_license_cost_deduction",
+                "public.dim_carrier"
+              ]
+            },
+            {
+              "field": "commission_plan_code",
+              "linked_tables": [
+                "comm_sandbox.fact_commission_tier_rate",
+                "comm_sandbox.fact_commission_tier_rate_history_long",
+                "comm_sandbox.v_commission_tier_effective",
+                "public.agg_source_commission_wide",
+                "public.config_license_carrier_mapping",
+                "public.fact_commission_rate"
+              ],
+              "origin_tables": [
+                "comm_sandbox.map_commission_plan_scheme",
+                "public.config_license_carrier_mapping"
+              ]
+            }
+          ]
+        },
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": null,
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -855,9 +1360,22 @@
           "total": 74
         },
         "data_health": "未开始录入",
-        "positions": [],
-        "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "field_anchored": null,
+        "non_business": null,
+        "positions": [
+          "佣金管理与合规岗"
+        ],
+        "related_l3_l4": [
+          {
+            "l3_code": "L3-COM",
+            "l3_name": "佣金全链路管理",
+            "l4_code": "L4-COM-03",
+            "l4_name": "佣金整合与外发"
+          }
+        ],
+        "shared_master_data": null,
+        "status": "已定位关联",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -878,9 +1396,20 @@
         "status": "BLOCKED"
       },
       "layer5": {
-        "l4_quadrants": [],
-        "note": "无关联L4，暂无法给出决策建议。",
-        "status": "NO_BASIS"
+        "l4_quadrants": [
+          {
+            "axis_conflict": false,
+            "classification_basis": "DERIVED",
+            "confidence": "confirmed_basis",
+            "l4_code": "L4-COM-03",
+            "l4_name": "佣金整合与外发",
+            "quadrant": "q1",
+            "quadrant_label": "优先验证",
+            "rationale": "D1-D6完整、候选Agent封装=A-高封装(理想条件下Skill候选)、Tier=Auto方向一致，且有业务数据证据支撑，可优先验证"
+          }
+        ],
+        "note": "1个关联L4已按面板D四象限语义(优先验证/治理后推进/补数据规则后推进/暂缓自动化)完成DERIVED归类；该归类只是同一套语义在表维度的推导参考，不等同于面板D工作坊的正式象限坐标，完整决策仍需等L3/L4层激活后补充定量支撑。",
+        "status": "PRELIMINARY"
       },
       "role": "业务数据",
       "row_count": 0,
@@ -901,6 +1430,8 @@
           "total": 74
         },
         "data_health": "未开始录入",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [
           "佣金管理与合规岗"
         ],
@@ -912,7 +1443,9 @@
             "l4_name": "佣金整合与外发"
           }
         ],
-        "status": "已定位关联"
+        "shared_master_data": null,
+        "status": "已定位关联",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -967,6 +1500,8 @@
           "total": 74
         },
         "data_health": "规模化在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [
           "佣金管理与合规岗"
         ],
@@ -978,7 +1513,9 @@
             "l4_name": "差异化拆解与验证"
           }
         ],
-        "status": "已定位关联"
+        "shared_master_data": null,
+        "status": "已定位关联",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -1033,6 +1570,8 @@
           "total": 74
         },
         "data_health": "小规模在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [
           "佣金管理与合规岗"
         ],
@@ -1050,7 +1589,9 @@
             "l4_name": "收款映射版本管理"
           }
         ],
-        "status": "已定位关联"
+        "shared_master_data": null,
+        "status": "已定位关联",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -1115,9 +1656,13 @@
           "total": 74
         },
         "data_health": "未开始录入",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": null,
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -1161,9 +1706,13 @@
           "total": 74
         },
         "data_health": "规模化在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": null,
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -1207,6 +1756,8 @@
           "total": 74
         },
         "data_health": "未开始录入",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [
           "佣金管理与合规岗"
         ],
@@ -1218,7 +1769,9 @@
             "l4_name": "佣金整合与外发"
           }
         ],
-        "status": "已定位关联"
+        "shared_master_data": null,
+        "status": "已定位关联",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -1273,6 +1826,8 @@
           "total": 74
         },
         "data_health": "规模化在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [
           "佣金管理与合规岗"
         ],
@@ -1284,7 +1839,9 @@
             "l4_name": "佣金异常检测反欺诈"
           }
         ],
-        "status": "已定位关联"
+        "shared_master_data": null,
+        "status": "已定位关联",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -1339,6 +1896,8 @@
           "total": 74
         },
         "data_health": "规模化在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [
           "佣金管理与合规岗"
         ],
@@ -1350,7 +1909,9 @@
             "l4_name": "佣金异常检测反欺诈"
           }
         ],
-        "status": "已定位关联"
+        "shared_master_data": null,
+        "status": "已定位关联",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -1405,9 +1966,13 @@
           "total": 74
         },
         "data_health": "规模化在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": null,
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -1451,6 +2016,8 @@
           "total": 74
         },
         "data_health": "小规模在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [
           "佣金管理与合规岗"
         ],
@@ -1462,7 +2029,9 @@
             "l4_name": "收款映射版本管理"
           }
         ],
-        "status": "已定位关联"
+        "shared_master_data": null,
+        "status": "已定位关联",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -1517,6 +2086,8 @@
           "total": 74
         },
         "data_health": "规模化在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [
           "佣金管理与合规岗"
         ],
@@ -1534,7 +2105,9 @@
             "l4_name": "佣金数据导入与格式转换（待注册）"
           }
         ],
-        "status": "已定位关联"
+        "shared_master_data": null,
+        "status": "已定位关联",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -1599,6 +2172,8 @@
           "total": 74
         },
         "data_health": "规模化在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [
           "佣金管理与合规岗"
         ],
@@ -1610,7 +2185,9 @@
             "l4_name": "保单信息整合与应收核算（待注册）"
           }
         ],
-        "status": "已定位关联"
+        "shared_master_data": null,
+        "status": "已定位关联",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -1665,9 +2242,28 @@
           "total": 74
         },
         "data_health": "试点阶段(个位数记录)",
+        "field_anchored": {
+          "anchors": [
+            {
+              "field": "id",
+              "linked_tables": [
+                "public.auth_audit_log",
+                "public.auth_users"
+              ],
+              "origin_tables": [
+                "fin_sandbox.fin_sync_history",
+                "public.auth_audit_log",
+                "public.auth_users"
+              ]
+            }
+          ]
+        },
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": null,
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -1711,6 +2307,8 @@
           "total": 74
         },
         "data_health": "规模化在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [
           "佣金管理与合规岗"
         ],
@@ -1728,7 +2326,9 @@
             "l4_name": "银行到账确认与实收对账（待注册）"
           }
         ],
-        "status": "已定位关联"
+        "shared_master_data": null,
+        "status": "已定位关联",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -1793,6 +2393,8 @@
           "total": 74
         },
         "data_health": "规模化在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [
           "佣金管理与合规岗"
         ],
@@ -1804,7 +2406,9 @@
             "l4_name": "跨保司佣金整合"
           }
         ],
-        "status": "已定位关联"
+        "shared_master_data": null,
+        "status": "已定位关联",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -1859,6 +2463,8 @@
           "total": 74
         },
         "data_health": "规模化在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [
           "事业部运营管理岗",
           "保单服务岗"
@@ -1877,7 +2483,9 @@
             "l4_name": "财务模型测算"
           }
         ],
-        "status": "已定位关联"
+        "shared_master_data": null,
+        "status": "已定位关联",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -1942,9 +2550,15 @@
           "total": 74
         },
         "data_health": "小规模在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": null,
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": {
+          "reason": "agg_sales_base流水线的ETL范围控制表(哪些渠道/期间纳入本轮汇总计算)，服务于流水线运行本身，不是业务实体，字段命名匹配不到血缘也在预期内"
+        }
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -1988,6 +2602,8 @@
           "total": 74
         },
         "data_health": "规模化在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [
           "佣金管理与合规岗"
         ],
@@ -1999,7 +2615,9 @@
             "l4_name": "跨保司佣金整合"
           }
         ],
-        "status": "已定位关联"
+        "shared_master_data": null,
+        "status": "已定位关联",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -2054,9 +2672,15 @@
           "total": 74
         },
         "data_health": "小规模在跑",
+        "field_anchored": null,
+        "non_business": {
+          "reason": "本数据系统(非保险业务)的用户登录/操作审计日志，与保险业务流程无关"
+        },
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": null,
+        "status": "已核实与业务无关(系统表)",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -2100,9 +2724,15 @@
           "total": 74
         },
         "data_health": "小规模在跑",
+        "field_anchored": null,
+        "non_business": {
+          "reason": "本数据系统的登录会话表，与保险业务流程无关"
+        },
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": null,
+        "status": "已核实与业务无关(系统表)",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -2146,9 +2776,15 @@
           "total": 74
         },
         "data_health": "试点阶段(个位数记录)",
+        "field_anchored": null,
+        "non_business": {
+          "reason": "本数据系统的用户账号表，当前仅1个admin账号，与保险业务流程无关"
+        },
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": null,
+        "status": "已核实与业务无关(系统表)",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -2192,9 +2828,22 @@
           "total": 74
         },
         "data_health": "小规模在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": {
+          "l3_codes": [
+            "L3-COM",
+            "L3-FBA",
+            "L3-KAGA",
+            "L3-RSJD"
+          ],
+          "l3_span_count": 4,
+          "reason": "血缘候选覆盖4个L3：L3-COM(经由public.dim_partner、public.fact_policy)；L3-FBA(经由public.agg_sales_base)；L3-KAGA(经由public.dim_ka、public.fact_channel_ka)；L3-RSJD(经由public.agg_sales_base、public.dim_customer)——跨L3共用的主数据/维度表，不建议归入单一L4"
+        },
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -2238,9 +2887,13 @@
           "total": 74
         },
         "data_health": "规模化在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": null,
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -2284,9 +2937,13 @@
           "total": 74
         },
         "data_health": "小规模在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": null,
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -2330,9 +2987,13 @@
           "total": 74
         },
         "data_health": "规模化在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": null,
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -2376,9 +3037,13 @@
           "total": 74
         },
         "data_health": "未开始录入",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": null,
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -2422,9 +3087,93 @@
           "total": 74
         },
         "data_health": "小规模在跑",
+        "field_anchored": {
+          "anchors": [
+            {
+              "field": "table_type",
+              "linked_tables": [
+                "comm_sandbox.commission_tier_adjustment",
+                "comm_sandbox.commission_tier_adjustment_history_long",
+                "comm_sandbox.config_table_type_coefficient",
+                "comm_sandbox.config_table_type_def",
+                "comm_sandbox.config_table_type_product_scope",
+                "comm_sandbox.config_table_type_tier_pricing_rules",
+                "comm_sandbox.dim_comm_scheme",
+                "comm_sandbox.fact_commission_tier_rate",
+                "comm_sandbox.fact_commission_tier_rate_history_long",
+                "comm_sandbox.map_commission_plan_scheme",
+                "comm_sandbox.market_publish_event",
+                "comm_sandbox.market_row_state",
+                "comm_sandbox.market_table_header_state",
+                "comm_sandbox.v_commission_tier_effective",
+                "comm_sandbox.v_commission_tier_published",
+                "comm_sandbox.v_payout_ratio_check",
+                "comm_sandbox.v_qoq_rate_compare",
+                "comm_sandbox.v_tier_rate_readable",
+                "public.config_product_exclusion_range"
+              ],
+              "origin_tables": [
+                "comm_sandbox.config_table_type_def"
+              ]
+            },
+            {
+              "field": "customer_type",
+              "linked_tables": [
+                "comm_sandbox.commission_tier_adjustment",
+                "comm_sandbox.commission_tier_adjustment_history_long",
+                "comm_sandbox.config_table_type_tier_pricing_rules",
+                "comm_sandbox.fact_commission_tier_rate",
+                "comm_sandbox.fact_commission_tier_rate_history_long",
+                "comm_sandbox.market_row_state",
+                "comm_sandbox.source_diff_confirm",
+                "comm_sandbox.v_commission_tier_effective",
+                "comm_sandbox.v_commission_tier_published",
+                "comm_sandbox.v_payout_ratio_check",
+                "comm_sandbox.v_qoq_rate_compare",
+                "fin_sandbox.fact_receivable",
+                "public.agg_source_commission_wide",
+                "public.bridge_strategy_routing",
+                "public.config_product_commission_formula",
+                "public.dim_customer",
+                "public.dim_customer_type",
+                "public.fact_commission_rate",
+                "public.fact_policy",
+                "public.partner_tier_rules"
+              ],
+              "origin_tables": [
+                "public.config_product_commission_formula",
+                "public.dim_customer_type"
+              ]
+            },
+            {
+              "field": "partner_code",
+              "linked_tables": [
+                "public.agg_sales_base",
+                "public.bridge_partner_ka",
+                "public.dim_binder_agreement",
+                "public.dim_partner",
+                "public.dim_partner_equity",
+                "public.fact_channel_partner",
+                "public.fact_policy",
+                "public.map_partner_payee",
+                "public.partner_tier_rules",
+                "public.v_fact_policy_person",
+                "public.v_fact_sales_activity",
+                "public.v_policy_current_state"
+              ],
+              "origin_tables": [
+                "public.dim_partner",
+                "public.map_partner_payee"
+              ]
+            }
+          ]
+        },
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": null,
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -2468,9 +3217,37 @@
           "total": 74
         },
         "data_health": "小规模在跑",
+        "field_anchored": {
+          "anchors": [
+            {
+              "field": "source_table",
+              "linked_tables": [
+                "public.bridge_person_relationship",
+                "public.bridge_person_role"
+              ],
+              "origin_tables": [
+                "public.config_identity_source_map"
+              ]
+            },
+            {
+              "field": "role_code",
+              "linked_tables": [
+                "public.bridge_person_role",
+                "public.dim_role_type",
+                "public.v_person_activity"
+              ],
+              "origin_tables": [
+                "public.dim_role_type"
+              ]
+            }
+          ]
+        },
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": null,
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -2514,6 +3291,8 @@
           "total": 74
         },
         "data_health": "小规模在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [
           "佣金管理与合规岗"
         ],
@@ -2525,7 +3304,9 @@
             "l4_name": "佣金政策接收与校准"
           }
         ],
-        "status": "已定位关联"
+        "shared_master_data": null,
+        "status": "已定位关联",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -2580,9 +3361,13 @@
           "total": 74
         },
         "data_health": "未开始录入",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": null,
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -2626,6 +3411,8 @@
           "total": 74
         },
         "data_health": "小规模在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [
           "佣金管理与合规岗"
         ],
@@ -2637,7 +3424,9 @@
             "l4_name": "应派金额拆分与渠道对账（待注册）"
           }
         ],
-        "status": "已定位关联"
+        "shared_master_data": null,
+        "status": "已定位关联",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -2692,6 +3481,8 @@
           "total": 74
         },
         "data_health": "小规模在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [
           "佣金管理与合规岗"
         ],
@@ -2703,7 +3494,9 @@
             "l4_name": "佣金政策接收与校准"
           }
         ],
-        "status": "已定位关联"
+        "shared_master_data": null,
+        "status": "已定位关联",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -2758,9 +3551,43 @@
           "total": 74
         },
         "data_health": "小规模在跑",
+        "field_anchored": {
+          "anchors": [
+            {
+              "field": "table_type",
+              "linked_tables": [
+                "comm_sandbox.commission_tier_adjustment",
+                "comm_sandbox.commission_tier_adjustment_history_long",
+                "comm_sandbox.config_table_type_coefficient",
+                "comm_sandbox.config_table_type_def",
+                "comm_sandbox.config_table_type_product_scope",
+                "comm_sandbox.config_table_type_tier_pricing_rules",
+                "comm_sandbox.dim_comm_scheme",
+                "comm_sandbox.fact_commission_tier_rate",
+                "comm_sandbox.fact_commission_tier_rate_history_long",
+                "comm_sandbox.map_commission_plan_scheme",
+                "comm_sandbox.market_publish_event",
+                "comm_sandbox.market_row_state",
+                "comm_sandbox.market_table_header_state",
+                "comm_sandbox.v_commission_tier_effective",
+                "comm_sandbox.v_commission_tier_published",
+                "comm_sandbox.v_payout_ratio_check",
+                "comm_sandbox.v_qoq_rate_compare",
+                "comm_sandbox.v_tier_rate_readable",
+                "public.config_commission_table_type"
+              ],
+              "origin_tables": [
+                "comm_sandbox.config_table_type_def"
+              ]
+            }
+          ]
+        },
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": null,
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -2804,9 +3631,25 @@
           "total": 74
         },
         "data_health": "小规模在跑",
+        "field_anchored": {
+          "anchors": [
+            {
+              "field": "feature_code",
+              "linked_tables": [
+                "public.dim_product_feature_value"
+              ],
+              "origin_tables": [
+                "public.config_product_feature_type"
+              ]
+            }
+          ]
+        },
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": null,
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -2850,6 +3693,8 @@
           "total": 74
         },
         "data_health": "试点阶段(个位数记录)",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [
           "事业部运营管理岗"
         ],
@@ -2861,7 +3706,9 @@
             "l4_name": "月度/季度业绩数据汇总"
           }
         ],
-        "status": "已定位关联"
+        "shared_master_data": null,
+        "status": "已定位关联",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -2916,9 +3763,13 @@
           "total": 74
         },
         "data_health": "未开始录入",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": null,
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -2962,9 +3813,13 @@
           "total": 74
         },
         "data_health": "未开始录入",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": null,
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -3008,9 +3863,56 @@
           "total": 74
         },
         "data_health": "小规模在跑",
+        "field_anchored": {
+          "anchors": [
+            {
+              "field": "license_code",
+              "linked_tables": [
+                "comm_sandbox.source_diff_confirm",
+                "fin_sandbox.fact_receipt",
+                "fin_sandbox.fact_receivable",
+                "fin_sandbox.match_receipt_receivable",
+                "public.agg_source_commission_wide",
+                "public.config_license_carrier_mapping",
+                "public.config_license_cost_deduction",
+                "public.dim_license",
+                "public.fact_commission_rate",
+                "public.fact_policy"
+              ],
+              "origin_tables": [
+                "public.config_license_cost_deduction",
+                "public.dim_license"
+              ]
+            },
+            {
+              "field": "partner_code",
+              "linked_tables": [
+                "public.agg_sales_base",
+                "public.bridge_partner_ka",
+                "public.config_commission_table_type",
+                "public.dim_partner",
+                "public.dim_partner_equity",
+                "public.fact_channel_partner",
+                "public.fact_policy",
+                "public.map_partner_payee",
+                "public.partner_tier_rules",
+                "public.v_fact_policy_person",
+                "public.v_fact_sales_activity",
+                "public.v_policy_current_state"
+              ],
+              "origin_tables": [
+                "public.dim_partner",
+                "public.map_partner_payee"
+              ]
+            }
+          ]
+        },
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": null,
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -3054,9 +3956,13 @@
           "total": 74
         },
         "data_health": "小规模在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": null,
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -3100,9 +4006,13 @@
           "total": 74
         },
         "data_health": "未开始录入",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": null,
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -3146,6 +4056,8 @@
           "total": 74
         },
         "data_health": "规模化在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [
           "保单服务岗"
         ],
@@ -3157,7 +4069,9 @@
             "l4_name": "销售执行与客户管理"
           }
         ],
-        "status": "已定位关联"
+        "shared_master_data": null,
+        "status": "已定位关联",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -3212,9 +4126,13 @@
           "total": 74
         },
         "data_health": "未开始录入",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": null,
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -3258,9 +4176,15 @@
           "total": 74
         },
         "data_health": "规模化在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": null,
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": {
+          "reason": "通用日期维度表，供任意表按日期值(而非声明的字段名/主键)关联，血缘/字段索引按字段名匹配的方法论对它天然失效，不代表未被使用"
+        }
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -3304,6 +4228,8 @@
           "total": 74
         },
         "data_health": "小规模在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [
           "人力资源管理岗"
         ],
@@ -3345,7 +4271,9 @@
             "l4_name": "人员退出与档案归档"
           }
         ],
-        "status": "已定位关联"
+        "shared_master_data": null,
+        "status": "已定位关联",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -3450,6 +4378,8 @@
           "total": 74
         },
         "data_health": "小规模在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [
           "KA管理岗"
         ],
@@ -3467,7 +4397,9 @@
             "l4_name": "KA关系维护与长效运营"
           }
         ],
-        "status": "已定位关联"
+        "shared_master_data": null,
+        "status": "已定位关联",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -3532,6 +4464,8 @@
           "total": 74
         },
         "data_health": "小规模在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [
           "佣金管理与合规岗"
         ],
@@ -3549,7 +4483,9 @@
             "l4_name": "财务付款执行（待注册）"
           }
         ],
-        "status": "已定位关联"
+        "shared_master_data": null,
+        "status": "已定位关联",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -3614,9 +4550,22 @@
           "total": 74
         },
         "data_health": "小规模在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": {
+          "l3_codes": [
+            "L3-COM",
+            "L3-FBA",
+            "L3-KAGA",
+            "L3-RSJD"
+          ],
+          "l3_span_count": 4,
+          "reason": "血缘候选覆盖4个L3：L3-COM(经由public.dim_partner、public.fact_policy)；L3-FBA(经由public.agg_sales_base)；L3-KAGA(经由public.dim_ka)；L3-RSJD(经由public.agg_sales_base、public.dim_customer)——跨L3共用的主数据/维度表，不建议归入单一L4"
+        },
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -3660,6 +4609,8 @@
           "total": 74
         },
         "data_health": "小规模在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [
           "佣金管理与合规岗"
         ],
@@ -3671,7 +4622,9 @@
             "l4_name": "应派金额拆分与渠道对账（待注册）"
           }
         ],
-        "status": "已定位关联"
+        "shared_master_data": null,
+        "status": "已定位关联",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -3726,9 +4679,13 @@
           "total": 74
         },
         "data_health": "未开始录入",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": null,
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -3772,9 +4729,13 @@
           "total": 74
         },
         "data_health": "未开始录入",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": null,
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -3818,9 +4779,13 @@
           "total": 74
         },
         "data_health": "规模化在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": null,
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -3864,9 +4829,13 @@
           "total": 74
         },
         "data_health": "小规模在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": null,
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -3910,9 +4879,13 @@
           "total": 74
         },
         "data_health": "小规模在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": null,
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -3956,9 +4929,94 @@
           "total": 74
         },
         "data_health": "规模化在跑",
+        "field_anchored": {
+          "anchors": [
+            {
+              "field": "product_id",
+              "linked_tables": [
+                "comm_sandbox.commission_tier_adjustment",
+                "comm_sandbox.commission_tier_adjustment_history_long",
+                "comm_sandbox.competitor_rate",
+                "comm_sandbox.config_product_pricing_group",
+                "comm_sandbox.config_table_type_tier_pricing_rules",
+                "comm_sandbox.fact_commission_tier_rate",
+                "comm_sandbox.fact_commission_tier_rate_history_long",
+                "comm_sandbox.market_row_state",
+                "comm_sandbox.source_diff_confirm",
+                "comm_sandbox.v_commission_tier_effective",
+                "comm_sandbox.v_commission_tier_published",
+                "comm_sandbox.v_payout_ratio_check",
+                "comm_sandbox.v_qoq_rate_compare",
+                "comm_sandbox.v_tier_rate_readable",
+                "fin_sandbox.fact_receipt",
+                "fin_sandbox.fact_receivable",
+                "public.agg_source_commission_wide",
+                "public.dim_product_benefit_profile",
+                "public.dim_product_id",
+                "public.fact_commission_rate",
+                "public.fact_insurance_plan_header",
+                "public.fact_insurance_plan_header_history",
+                "public.fact_policy",
+                "public.fact_product_id",
+                "public.mapping_product",
+                "public.product_risk_override",
+                "public.v_plan_metrics",
+                "public.v_policy_current_state"
+              ],
+              "origin_tables": [
+                "comm_sandbox.config_product_pricing_group",
+                "public.dim_product_benefit_profile",
+                "public.mapping_product"
+              ]
+            },
+            {
+              "field": "product_sku",
+              "linked_tables": [
+                "comm_sandbox.config_product_pricing_group",
+                "comm_sandbox.config_table_type_tier_pricing_rules",
+                "comm_sandbox.fact_commission_tier_rate",
+                "comm_sandbox.fact_commission_tier_rate_history_long",
+                "comm_sandbox.v_commission_tier_effective",
+                "comm_sandbox.v_payout_ratio_check",
+                "comm_sandbox.v_qoq_rate_compare",
+                "comm_sandbox.v_tier_rate_readable",
+                "public.agg_source_commission_wide",
+                "public.bridge_strategy_routing",
+                "public.dim_product_benefit_profile",
+                "public.dim_product_id",
+                "public.dim_product_sku",
+                "public.fact_commission_rate",
+                "public.fact_insurance_plan_header",
+                "public.fact_insurance_plan_header_history",
+                "public.fact_policy",
+                "public.fact_product_id",
+                "public.fact_product_sku",
+                "public.mapping_product",
+                "public.product_risk_override",
+                "public.v_plan_metrics"
+              ],
+              "origin_tables": [
+                "comm_sandbox.config_product_pricing_group",
+                "public.dim_product_sku"
+              ]
+            },
+            {
+              "field": "feature_code",
+              "linked_tables": [
+                "public.config_product_feature_type"
+              ],
+              "origin_tables": [
+                "public.config_product_feature_type"
+              ]
+            }
+          ]
+        },
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": null,
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -4002,9 +5060,22 @@
           "total": 74
         },
         "data_health": "小规模在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": {
+          "l3_codes": [
+            "L3-COM",
+            "L3-FBA",
+            "L3-KAGA",
+            "L3-RSJD"
+          ],
+          "l3_span_count": 4,
+          "reason": "血缘候选覆盖4个L3：L3-COM(经由public.agg_market_commission_tier_rate、public.config_license_carrier_mapping、public.dim_partner、public.fact_policy)；L3-FBA(经由public.agg_sales_base)；L3-KAGA(经由public.dim_ka)；L3-RSJD(经由public.agg_sales_base、public.dim_customer、public.fact_insurance_plan_header)——跨L3共用的主数据/维度表，不建议归入单一L4"
+        },
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -4048,9 +5119,22 @@
           "total": 74
         },
         "data_health": "小规模在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": {
+          "l3_codes": [
+            "L3-COM",
+            "L3-FBA",
+            "L3-KAGA",
+            "L3-RSJD"
+          ],
+          "l3_span_count": 4,
+          "reason": "血缘候选覆盖4个L3：L3-COM(经由public.agg_market_commission_tier_rate、public.dim_partner、public.fact_commission_rate、public.fact_policy)；L3-FBA(经由public.agg_sales_base)；L3-KAGA(经由public.dim_ka)；L3-RSJD(经由public.agg_sales_base、public.dim_customer、public.fact_insurance_plan_header)——跨L3共用的主数据/维度表，不建议归入单一L4"
+        },
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -4094,9 +5178,13 @@
           "total": 74
         },
         "data_health": "小规模在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": null,
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -4140,9 +5228,22 @@
           "total": 74
         },
         "data_health": "小规模在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": {
+          "l3_codes": [
+            "L3-COM",
+            "L3-FBA",
+            "L3-KAGA",
+            "L3-RSJD"
+          ],
+          "l3_span_count": 4,
+          "reason": "血缘候选覆盖4个L3：L3-COM(经由public.dim_partner、public.fact_policy)；L3-FBA(经由public.agg_sales_base)；L3-KAGA(经由public.dim_ka)；L3-RSJD(经由public.agg_sales_base、public.dim_customer)——跨L3共用的主数据/维度表，不建议归入单一L4"
+        },
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -4186,9 +5287,13 @@
           "total": 74
         },
         "data_health": "未开始录入",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": null,
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -4232,6 +5337,8 @@
           "total": 74
         },
         "data_health": "小规模在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [
           "KA管理岗"
         ],
@@ -4243,7 +5350,9 @@
             "l4_name": "定期业绩数据收集"
           }
         ],
-        "status": "已定位关联"
+        "shared_master_data": null,
+        "status": "已定位关联",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -4298,6 +5407,8 @@
           "total": 74
         },
         "data_health": "规模化在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [
           "佣金管理与合规岗"
         ],
@@ -4309,7 +5420,9 @@
             "l4_name": "应派金额拆分与渠道对账（待注册）"
           }
         ],
-        "status": "已定位关联"
+        "shared_master_data": null,
+        "status": "已定位关联",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -4364,6 +5477,8 @@
           "total": 74
         },
         "data_health": "规模化在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [
           "佣金管理与合规岗"
         ],
@@ -4375,7 +5490,9 @@
             "l4_name": "佣金政策接收与校准"
           }
         ],
-        "status": "已定位关联"
+        "shared_master_data": null,
+        "status": "已定位关联",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -4430,9 +5547,13 @@
           "total": 74
         },
         "data_health": "规模化在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": null,
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -4476,6 +5597,8 @@
           "total": 74
         },
         "data_health": "小规模在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [
           "保单服务岗"
         ],
@@ -4487,7 +5610,9 @@
             "l4_name": "方案交付"
           }
         ],
-        "status": "已定位关联"
+        "shared_master_data": null,
+        "status": "已定位关联",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -4542,9 +5667,156 @@
           "total": 74
         },
         "data_health": "小规模在跑",
+        "field_anchored": {
+          "anchors": [
+            {
+              "field": "product_id",
+              "linked_tables": [
+                "comm_sandbox.commission_tier_adjustment",
+                "comm_sandbox.commission_tier_adjustment_history_long",
+                "comm_sandbox.competitor_rate",
+                "comm_sandbox.config_product_pricing_group",
+                "comm_sandbox.config_table_type_tier_pricing_rules",
+                "comm_sandbox.fact_commission_tier_rate",
+                "comm_sandbox.fact_commission_tier_rate_history_long",
+                "comm_sandbox.market_row_state",
+                "comm_sandbox.source_diff_confirm",
+                "comm_sandbox.v_commission_tier_effective",
+                "comm_sandbox.v_commission_tier_published",
+                "comm_sandbox.v_payout_ratio_check",
+                "comm_sandbox.v_qoq_rate_compare",
+                "comm_sandbox.v_tier_rate_readable",
+                "fin_sandbox.fact_receipt",
+                "fin_sandbox.fact_receivable",
+                "public.agg_source_commission_wide",
+                "public.dim_product_benefit_profile",
+                "public.dim_product_feature_value",
+                "public.dim_product_id",
+                "public.fact_commission_rate",
+                "public.fact_insurance_plan_header",
+                "public.fact_policy",
+                "public.fact_product_id",
+                "public.mapping_product",
+                "public.product_risk_override",
+                "public.v_plan_metrics",
+                "public.v_policy_current_state"
+              ],
+              "origin_tables": [
+                "comm_sandbox.config_product_pricing_group",
+                "public.dim_product_benefit_profile",
+                "public.mapping_product"
+              ]
+            },
+            {
+              "field": "premium_term",
+              "linked_tables": [
+                "comm_sandbox.competitor_rate",
+                "comm_sandbox.config_table_type_coefficient",
+                "comm_sandbox.config_table_type_product_scope",
+                "comm_sandbox.fact_commission_tier_rate",
+                "comm_sandbox.fact_commission_tier_rate_history_long",
+                "comm_sandbox.source_diff_confirm",
+                "comm_sandbox.v_commission_tier_effective",
+                "fin_sandbox.fact_receipt",
+                "public.agg_source_commission_wide",
+                "public.dim_product_id",
+                "public.fact_commission_rate",
+                "public.fact_insurance_plan_header",
+                "public.fact_policy",
+                "public.mapping_product",
+                "public.v_plan_metrics"
+              ],
+              "origin_tables": [
+                "public.mapping_product"
+              ]
+            },
+            {
+              "field": "product_sku",
+              "linked_tables": [
+                "comm_sandbox.config_product_pricing_group",
+                "comm_sandbox.config_table_type_tier_pricing_rules",
+                "comm_sandbox.fact_commission_tier_rate",
+                "comm_sandbox.fact_commission_tier_rate_history_long",
+                "comm_sandbox.v_commission_tier_effective",
+                "comm_sandbox.v_payout_ratio_check",
+                "comm_sandbox.v_qoq_rate_compare",
+                "comm_sandbox.v_tier_rate_readable",
+                "public.agg_source_commission_wide",
+                "public.bridge_strategy_routing",
+                "public.dim_product_benefit_profile",
+                "public.dim_product_feature_value",
+                "public.dim_product_id",
+                "public.dim_product_sku",
+                "public.fact_commission_rate",
+                "public.fact_insurance_plan_header",
+                "public.fact_policy",
+                "public.fact_product_id",
+                "public.fact_product_sku",
+                "public.mapping_product",
+                "public.product_risk_override",
+                "public.v_plan_metrics"
+              ],
+              "origin_tables": [
+                "comm_sandbox.config_product_pricing_group",
+                "public.dim_product_sku"
+              ]
+            },
+            {
+              "field": "carrier_code",
+              "linked_tables": [
+                "comm_sandbox.dim_comm_scheme",
+                "comm_sandbox.fact_commission_tier_rate",
+                "comm_sandbox.fact_commission_tier_rate_history_long",
+                "comm_sandbox.map_commission_plan_scheme",
+                "comm_sandbox.source_diff_confirm",
+                "comm_sandbox.v_commission_tier_effective",
+                "comm_sandbox.v_qoq_rate_compare",
+                "comm_sandbox.v_tier_rate_readable",
+                "fin_sandbox.config_carrier_settlement_schedule_rules",
+                "fin_sandbox.fact_receipt",
+                "fin_sandbox.match_receipt_receivable",
+                "public.agg_source_commission_wide",
+                "public.config_license_carrier_mapping",
+                "public.config_license_cost_deduction",
+                "public.dim_carrier",
+                "public.dim_product_sku",
+                "public.fact_commission_rate",
+                "public.fact_insurance_plan_header",
+                "public.fact_policy",
+                "public.fact_product_id",
+                "public.fact_product_sku",
+                "public.fact_target",
+                "public.mapping_product",
+                "public.v_plan_metrics",
+                "public.v_policy_current_state"
+              ],
+              "origin_tables": [
+                "public.config_license_cost_deduction",
+                "public.dim_carrier"
+              ]
+            },
+            {
+              "field": "plan_header_id",
+              "linked_tables": [
+                "public.fact_insurance_plan_header",
+                "public.fact_insurance_plan_lines",
+                "public.fact_insurance_plan_lines_history",
+                "public.v_plan_metrics",
+                "public.v_plan_year_snapshot"
+              ],
+              "origin_tables": [
+                "public.fact_insurance_plan_header",
+                "public.fact_insurance_plan_header_history"
+              ]
+            }
+          ]
+        },
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": null,
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -4588,6 +5860,8 @@
           "total": 74
         },
         "data_health": "规模化在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [
           "保单服务岗"
         ],
@@ -4599,7 +5873,9 @@
             "l4_name": "方案交付"
           }
         ],
-        "status": "已定位关联"
+        "shared_master_data": null,
+        "status": "已定位关联",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -4654,9 +5930,40 @@
           "total": 74
         },
         "data_health": "规模化在跑",
+        "field_anchored": {
+          "anchors": [
+            {
+              "field": "plan_header_id",
+              "linked_tables": [
+                "public.fact_insurance_plan_header",
+                "public.fact_insurance_plan_header_history",
+                "public.fact_insurance_plan_lines",
+                "public.v_plan_metrics",
+                "public.v_plan_year_snapshot"
+              ],
+              "origin_tables": [
+                "public.fact_insurance_plan_header",
+                "public.fact_insurance_plan_header_history"
+              ]
+            },
+            {
+              "field": "plan_line_id",
+              "linked_tables": [
+                "public.fact_insurance_plan_lines"
+              ],
+              "origin_tables": [
+                "public.fact_insurance_plan_lines",
+                "public.fact_insurance_plan_lines_history"
+              ]
+            }
+          ]
+        },
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": null,
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -4700,6 +6007,8 @@
           "total": 74
         },
         "data_health": "规模化在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [
           "佣金管理与合规岗"
         ],
@@ -4711,7 +6020,9 @@
             "l4_name": "保单信息整合与应收核算（待注册）"
           }
         ],
-        "status": "已定位关联"
+        "shared_master_data": null,
+        "status": "已定位关联",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -4766,9 +6077,22 @@
           "total": 74
         },
         "data_health": "小规模在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": {
+          "l3_codes": [
+            "L3-COM",
+            "L3-FBA",
+            "L3-KAGA",
+            "L3-RSJD"
+          ],
+          "l3_span_count": 4,
+          "reason": "血缘候选覆盖4个L3：L3-COM(经由public.dim_partner、public.fact_policy)；L3-FBA(经由public.agg_sales_base)；L3-KAGA(经由public.dim_ka)；L3-RSJD(经由public.agg_sales_base、public.dim_customer)——跨L3共用的主数据/维度表，不建议归入单一L4"
+        },
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -4812,9 +6136,13 @@
           "total": 74
         },
         "data_health": "规模化在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": null,
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -4858,9 +6186,13 @@
           "total": 74
         },
         "data_health": "小规模在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": null,
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -4904,6 +6236,8 @@
           "total": 74
         },
         "data_health": "规模化在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [
           "保单服务岗"
         ],
@@ -4915,7 +6249,9 @@
             "l4_name": "销售执行与客户管理"
           }
         ],
-        "status": "已定位关联"
+        "shared_master_data": null,
+        "status": "已定位关联",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -4970,6 +6306,8 @@
           "total": 74
         },
         "data_health": "小规模在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [
           "人力资源管理岗",
           "佣金管理与合规岗"
@@ -4994,7 +6332,9 @@
             "l4_name": "定岗定编与岗位设计"
           }
         ],
-        "status": "已定位关联"
+        "shared_master_data": null,
+        "status": "已定位关联",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -5069,9 +6409,15 @@
           "total": 74
         },
         "data_health": "小规模在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": null,
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": {
+          "reason": "名称实体类型判定表：判断原始名称字符串是机构还是自然人，用于数据清洗人工复核记录，服务于姓名/机构识别的清洗环节而非直接挂业务L4——2026-08-05业务方确认其真实用途"
+        }
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -5115,9 +6461,13 @@
           "total": 74
         },
         "data_health": "未开始录入",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": null,
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -5161,9 +6511,13 @@
           "total": 74
         },
         "data_health": "未开始录入",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": null,
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -5207,6 +6561,8 @@
           "total": 74
         },
         "data_health": "小规模在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [
           "佣金管理与合规岗"
         ],
@@ -5218,7 +6574,9 @@
             "l4_name": "应派金额拆分与渠道对账（待注册）"
           }
         ],
-        "status": "已定位关联"
+        "shared_master_data": null,
+        "status": "已定位关联",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -5273,9 +6631,13 @@
           "total": 74
         },
         "data_health": "小规模在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": null,
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -5319,9 +6681,113 @@
           "total": 74
         },
         "data_health": "小规模在跑",
+        "field_anchored": {
+          "anchors": [
+            {
+              "field": "product_id",
+              "linked_tables": [
+                "comm_sandbox.commission_tier_adjustment",
+                "comm_sandbox.commission_tier_adjustment_history_long",
+                "comm_sandbox.competitor_rate",
+                "comm_sandbox.config_product_pricing_group",
+                "comm_sandbox.config_table_type_tier_pricing_rules",
+                "comm_sandbox.fact_commission_tier_rate",
+                "comm_sandbox.fact_commission_tier_rate_history_long",
+                "comm_sandbox.market_row_state",
+                "comm_sandbox.source_diff_confirm",
+                "comm_sandbox.v_commission_tier_effective",
+                "comm_sandbox.v_commission_tier_published",
+                "comm_sandbox.v_payout_ratio_check",
+                "comm_sandbox.v_qoq_rate_compare",
+                "comm_sandbox.v_tier_rate_readable",
+                "fin_sandbox.fact_receipt",
+                "fin_sandbox.fact_receivable",
+                "public.agg_source_commission_wide",
+                "public.dim_product_benefit_profile",
+                "public.dim_product_feature_value",
+                "public.dim_product_id",
+                "public.fact_commission_rate",
+                "public.fact_insurance_plan_header",
+                "public.fact_insurance_plan_header_history",
+                "public.fact_policy",
+                "public.fact_product_id",
+                "public.mapping_product",
+                "public.v_plan_metrics",
+                "public.v_policy_current_state"
+              ],
+              "origin_tables": [
+                "comm_sandbox.config_product_pricing_group",
+                "public.dim_product_benefit_profile",
+                "public.mapping_product"
+              ]
+            },
+            {
+              "field": "rate_option_code",
+              "linked_tables": [
+                "comm_sandbox.commission_tier_adjustment",
+                "comm_sandbox.commission_tier_adjustment_history_long",
+                "comm_sandbox.config_product_pricing_group",
+                "comm_sandbox.config_table_type_product_scope",
+                "comm_sandbox.config_table_type_tier_pricing_rules",
+                "comm_sandbox.fact_commission_tier_rate",
+                "comm_sandbox.fact_commission_tier_rate_history_long",
+                "comm_sandbox.market_row_state",
+                "comm_sandbox.source_diff_confirm",
+                "comm_sandbox.v_commission_tier_effective",
+                "comm_sandbox.v_commission_tier_published",
+                "comm_sandbox.v_payout_ratio_check",
+                "comm_sandbox.v_qoq_rate_compare",
+                "comm_sandbox.v_tier_rate_readable",
+                "fin_sandbox.fact_receivable",
+                "public.agg_market_commission_tier_rate",
+                "public.agg_source_commission_wide",
+                "public.dim_product_id",
+                "public.fact_commission_rate",
+                "public.fact_policy"
+              ],
+              "origin_tables": [
+                "comm_sandbox.config_product_pricing_group"
+              ]
+            },
+            {
+              "field": "product_sku",
+              "linked_tables": [
+                "comm_sandbox.config_product_pricing_group",
+                "comm_sandbox.config_table_type_tier_pricing_rules",
+                "comm_sandbox.fact_commission_tier_rate",
+                "comm_sandbox.fact_commission_tier_rate_history_long",
+                "comm_sandbox.v_commission_tier_effective",
+                "comm_sandbox.v_payout_ratio_check",
+                "comm_sandbox.v_qoq_rate_compare",
+                "comm_sandbox.v_tier_rate_readable",
+                "public.agg_source_commission_wide",
+                "public.bridge_strategy_routing",
+                "public.dim_product_benefit_profile",
+                "public.dim_product_feature_value",
+                "public.dim_product_id",
+                "public.dim_product_sku",
+                "public.fact_commission_rate",
+                "public.fact_insurance_plan_header",
+                "public.fact_insurance_plan_header_history",
+                "public.fact_policy",
+                "public.fact_product_id",
+                "public.fact_product_sku",
+                "public.mapping_product",
+                "public.v_plan_metrics"
+              ],
+              "origin_tables": [
+                "comm_sandbox.config_product_pricing_group",
+                "public.dim_product_sku"
+              ]
+            }
+          ]
+        },
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": null,
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -5365,9 +6831,30 @@
           "total": 74
         },
         "data_health": "规模化在跑",
+        "field_anchored": {
+          "anchors": [
+            {
+              "field": "policy_id",
+              "linked_tables": [
+                "fin_sandbox.fact_receivable",
+                "public.fact_policy",
+                "public.fact_sales_activity",
+                "public.v_fact_policy_person",
+                "public.v_fact_sales_activity",
+                "public.v_policy_current_state"
+              ],
+              "origin_tables": [
+                "public.fact_policy"
+              ]
+            }
+          ]
+        },
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": null,
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -5411,6 +6898,8 @@
           "total": 74
         },
         "data_health": "小规模在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [
           "佣金管理与合规岗"
         ],
@@ -5428,7 +6917,9 @@
             "l4_name": "佣金数据导入与格式转换（待注册）"
           }
         ],
-        "status": "已定位关联"
+        "shared_master_data": null,
+        "status": "已定位关联",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -5493,9 +6984,13 @@
           "total": 74
         },
         "data_health": "规模化在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": null,
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -5539,9 +7034,13 @@
           "total": 74
         },
         "data_health": "规模化在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": null,
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -5585,9 +7084,22 @@
           "total": 74
         },
         "data_health": "规模化在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": {
+          "l3_codes": [
+            "L3-COM",
+            "L3-FBA",
+            "L3-KAGA",
+            "L3-RSJD"
+          ],
+          "l3_span_count": 4,
+          "reason": "血缘候选覆盖4个L3：L3-COM(经由public.fact_channel_partner)；L3-FBA(经由public.agg_sales_base)；L3-KAGA(经由public.fact_channel_ka)；L3-RSJD(经由public.agg_sales_base)——跨L3共用的主数据/维度表，不建议归入单一L4"
+        },
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -5631,6 +7143,8 @@
           "total": 74
         },
         "data_health": "规模化在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [
           "事业部运营管理岗"
         ],
@@ -5642,7 +7156,9 @@
             "l4_name": "月度业绩与活动率分析"
           }
         ],
-        "status": "已定位关联"
+        "shared_master_data": null,
+        "status": "已定位关联",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -5697,9 +7213,13 @@
           "total": 74
         },
         "data_health": "小规模在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": null,
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -5743,9 +7263,13 @@
           "total": 74
         },
         "data_health": "小规模在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": null,
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -5789,9 +7313,13 @@
           "total": 74
         },
         "data_health": "规模化在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [],
         "related_l3_l4": [],
-        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关"
+        "shared_master_data": null,
+        "status": "未定位关联——目前只对6/74个L3做过业务数据匹配，其余L3尚未纳入本轮分析范围，不代表这张表真的无关",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
@@ -5835,6 +7363,8 @@
           "total": 74
         },
         "data_health": "规模化在跑",
+        "field_anchored": null,
+        "non_business": null,
         "positions": [
           "佣金管理与合规岗",
           "保单服务岗"
@@ -5853,7 +7383,9 @@
             "l4_name": "内部审核与校准"
           }
         ],
-        "status": "已定位关联"
+        "shared_master_data": null,
+        "status": "已定位关联",
+        "utility_support": null
       },
       "layer3": {
         "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",

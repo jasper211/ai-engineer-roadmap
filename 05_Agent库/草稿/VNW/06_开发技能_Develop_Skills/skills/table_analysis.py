@@ -34,6 +34,16 @@ L4_REQUIRED_INPUTS = [
     "process_analytics.fact_card真实运行数据：用于测算AI介入前后的耗时/错误率差异，当前0行",
 ]
 
+# 系统运维表——不是业务数据，是本系统自身的登录/审计/会话表，天然不该往任何
+# L3/L4业务分析上靠。人工登记，理由直接来自db_catalog.py里已核实的description
+# ("与保险业务流程无关")，不是新猜测；不落进"未纳入分析范围"，因为那意味着
+# "还没查"，而这三张表是"查过、确认和业务无关"。
+NON_BUSINESS_TABLES: dict[tuple[str, str], str] = {
+    ("public", "auth_audit_log"): "本数据系统(非保险业务)的用户登录/操作审计日志，与保险业务流程无关",
+    ("public", "auth_sessions"): "本数据系统的登录会话表，与保险业务流程无关",
+    ("public", "auth_users"): "本数据系统的用户账号表，当前仅1个admin账号，与保险业务流程无关",
+}
+
 QUADRANT_LABELS = {
     "q1": "优先验证",
     "q2": "治理后推进",
@@ -140,12 +150,22 @@ def build_table_to_l4_index(l3_codes: list[str], load_l3_snapshot) -> dict[str, 
     return index
 
 
-def build_table_analysis(db_catalog: dict, table_to_l4_index: dict[str, list[dict]], l3_codes: list[str]) -> dict:
+def build_table_analysis(
+    db_catalog: dict,
+    table_to_l4_index: dict[str, list[dict]],
+    l3_codes: list[str],
+    shared_master_data: dict[str, dict] | None = None,
+    utility_support_info: dict[str, str] | None = None,
+    field_anchor_info: dict[str, list[dict]] | None = None,
+) -> dict:
     # "未定位关联"必须区分"查过、确认没有" vs "这个L3还没排到分析"——否则73个
     # 从未分析过的L3会被误读成"确认和这张表无关"。ANALYZED_L3_CODES是显式登记
     # 表，只有登记在案的L3才算"查过"。
     analyzed_count = sum(1 for code in l3_codes if code.removeprefix("L3-") in ANALYZED_L3_CODES)
     total_l3_count = len(l3_codes)
+    shared_master_data = shared_master_data or {}
+    utility_support_info = utility_support_info or {}
+    field_anchor_info = field_anchor_info or {}
 
     entries = []
     for table in db_catalog["tables"]:
@@ -165,8 +185,11 @@ def build_table_analysis(db_catalog: dict, table_to_l4_index: dict[str, list[dic
         }
 
         positions = {r["position_family"]["category_name"] for r in related if r.get("position_family")}
+        non_business_reason = NON_BUSINESS_TABLES.get((table["schema"], table["table"]))
         if related:
             status = "已定位关联"
+        elif non_business_reason:
+            status = "已核实与业务无关(系统表)"
         elif analyzed_count >= total_l3_count:
             status = "未定位关联(已核实无关联)"
         else:
@@ -183,6 +206,16 @@ def build_table_analysis(db_catalog: dict, table_to_l4_index: dict[str, list[dic
             "data_health": data_health_bucket(table["row_count"]),
             "status": status,
             "analyzed_l3_coverage": {"analyzed": analyzed_count, "total": total_l3_count},
+            "non_business": {"reason": non_business_reason} if not related and non_business_reason else None,
+            "shared_master_data": shared_master_data.get(key) if not related and not non_business_reason else None,
+            "utility_support": (
+                {"reason": utility_support_info[key]}
+                if not related and not non_business_reason and key in utility_support_info else None
+            ),
+            "field_anchored": (
+                {"anchors": field_anchor_info[key]}
+                if not related and not non_business_reason and key in field_anchor_info else None
+            ),
         }
 
         layer3 = {

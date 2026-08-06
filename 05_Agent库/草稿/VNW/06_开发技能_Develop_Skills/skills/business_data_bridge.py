@@ -70,6 +70,7 @@ L4_BUSINESS_TABLE_MAP: dict[str, list[dict]] = {
     "L4-COM-03": [
         {"schema": "comm_sandbox", "table": "market_publish_event", "evidence_type": "workflow", "matched_columns": ["action", "affected_rows", "published_by"], "rationale": "费率发布事件表，字段含义正对应\"外发\"动作；当前0行，说明外发流程尚未在系统内走过", "confidence": "weak"},
         {"schema": "comm_sandbox", "table": "v_commission_tier_published", "evidence_type": "output", "matched_columns": ["publish_no", "row_bizkey"], "rationale": "已发布费率视图，结构对应\"佣金外发凭证\"；当前0行", "confidence": "weak"},
+        {"schema": "comm_sandbox", "table": "market_publish_change", "evidence_type": "output", "matched_columns": ["publish_event_id"], "rationale": "费率发布变更明细表，外键指向market_publish_event，是同一条\"外发\"事件的变更明细；当前0行", "confidence": "weak"},
     ],
     "L4-COM-04": [
         {"schema": "public", "table": "fact_target", "evidence_type": "output", "matched_columns": ["period_key", "target_ape", "target_revenue", "business_category"], "rationale": "按业务类型/细分市场/KA的年度目标表，直接对应\"年度预算与规划\"", "confidence": "strong"},
