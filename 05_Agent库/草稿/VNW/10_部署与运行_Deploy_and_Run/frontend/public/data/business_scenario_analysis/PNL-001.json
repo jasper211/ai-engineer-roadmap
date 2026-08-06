@@ -1,296 +1,328 @@
 {
   "data_governance": [
     {
-      "component_name": "采购成本",
-      "flag": "DATA_GAP",
-      "reason": "状态C：完全无系统化数据来源，需要先确认核算方式或补齐数据源"
+      "existing_tables": [
+        {
+          "assessment": "需要改造",
+          "schema": "public",
+          "table": "fact_commission_rate"
+        },
+        {
+          "assessment": "需要改造",
+          "schema": "public",
+          "table": "agg_sales_base"
+        },
+        {
+          "assessment": "需要改造",
+          "schema": "public",
+          "table": "agg_source_commission_wide"
+        },
+        {
+          "assessment": "需要改造",
+          "schema": "public",
+          "table": "agg_market_commission_tier_rate"
+        },
+        {
+          "assessment": "需要改造",
+          "schema": "fin_sandbox",
+          "table": "fact_receivable"
+        }
+      ],
+      "gap": "收入4类12条细分的映射关系不明确，需与财务负责人确认后建立业务口径到数据字段的映射规则。",
+      "need": "佣金收入数据",
+      "new_table_proposal": null
     },
     {
-      "component_name": "运营+人力费用",
-      "flag": "DATA_GAP",
-      "reason": "状态C：完全无系统化数据来源，需要先确认核算方式或补齐数据源"
+      "existing_tables": [
+        {
+          "assessment": "可直接支持",
+          "schema": "fin_sandbox",
+          "table": "fact_receivable"
+        },
+        {
+          "assessment": "可直接支持",
+          "schema": "public",
+          "table": "partner_tier_rules"
+        },
+        {
+          "assessment": "可直接支持",
+          "schema": "fin_sandbox",
+          "table": "match_receipt_receivable"
+        }
+      ],
+      "gap": "应收数据与应拨规则已存在，但需确认成本核算是否包含其他调整项（如退款、冲销）。",
+      "need": "佣金成本数据",
+      "new_table_proposal": null
     },
     {
-      "flag": "GATE_A_BLOCKED",
-      "l3_code": "L3-COM",
-      "reason": "Gate A未通过，价值节点映射/熔断判定尚未完整，需先推进该L3的建模"
+      "existing_tables": [],
+      "gap": "完全没有采购成本相关的表，数据源缺失。",
+      "need": "采购成本数据",
+      "new_table_proposal": {
+        "key_fields": [
+          "purchase_id",
+          "supplier",
+          "cost_amount",
+          "cost_category",
+          "period"
+        ],
+        "purpose": "记录采购成本明细，包括供应商、采购项目、金额、期间等，用于P&L采购成本线计算",
+        "suggested_name": "fact_purchase_cost"
+      }
     },
     {
-      "flag": "GATE_A_BLOCKED",
-      "l3_code": "L3-STLM",
-      "reason": "Gate A未通过，价值节点映射/熔断判定尚未完整，需先推进该L3的建模"
+      "existing_tables": [],
+      "gap": "没有运营费用记录表，目前可能通过外部系统或手工Excel维护。",
+      "need": "运营费用数据",
+      "new_table_proposal": {
+        "key_fields": [
+          "expense_id",
+          "department",
+          "expense_category",
+          "amount",
+          "transaction_date"
+        ],
+        "purpose": "记录日常运营费用（如差旅、办公、营销等）的明细，支持费用核算",
+        "suggested_name": "fact_operating_expense"
+      }
     },
     {
-      "flag": "PROCESS_MISSING",
-      "l3_code": "L3-CBD",
-      "reason": "当前数据库process_analytics.dim_process未覆盖此L3，需先确认是否已改名/合并/从未建模"
+      "existing_tables": [
+        {
+          "assessment": "需要改造",
+          "schema": "public",
+          "table": "dim_employee"
+        }
+      ],
+      "gap": "dim_employee仅有员工档案，缺少薪酬、社保、福利等成本字段，无法计算人力费用。",
+      "need": "人力费用数据",
+      "new_table_proposal": {
+        "key_fields": [
+          "employee_id",
+          "salary",
+          "bonus",
+          "social_insurance",
+          "period",
+          "department"
+        ],
+        "purpose": "记录每位员工的薪酬成本明细，包括工资、奖金、社保、期间等，支撑人力费用计算",
+        "suggested_name": "fact_employee_compensation"
+      }
     },
     {
-      "flag": "PROCESS_MISSING",
-      "l3_code": "L3-CMU",
-      "reason": "当前数据库process_analytics.dim_process未覆盖此L3，需先确认是否已改名/合并/从未建模"
+      "existing_tables": [
+        {
+          "assessment": "可直接支持",
+          "schema": "fin_sandbox",
+          "table": "match_receipt_receivable"
+        }
+      ],
+      "gap": "已有应收实收差异对照表，可支持佣金部分的差异审核，但缺乏费用侧差异数据。",
+      "need": "月结差异审核数据",
+      "new_table_proposal": null
     },
     {
-      "flag": "PROCESS_MISSING",
-      "l3_code": "L3-CVI",
-      "reason": "当前数据库process_analytics.dim_process未覆盖此L3，需先确认是否已改名/合并/从未建模"
-    },
-    {
-      "flag": "GATE_A_BLOCKED",
-      "l3_code": "L3-HRA",
-      "reason": "Gate A未通过，价值节点映射/熔断判定尚未完整，需先推进该L3的建模"
-    },
-    {
-      "flag": "GATE_A_BLOCKED",
-      "l3_code": "L3-HRM",
-      "reason": "Gate A未通过，价值节点映射/熔断判定尚未完整，需先推进该L3的建模"
+      "existing_tables": [],
+      "gap": "跨部门对账尚无统一的数据交换表，可能需要建立对账接口表。",
+      "need": "跨部门对账数据",
+      "new_table_proposal": {
+        "key_fields": [
+          "recon_id",
+          "source_system",
+          "amount_source",
+          "amount_target",
+          "difference",
+          "status"
+        ],
+        "purpose": "用于财务部门与业务部门之间的对账数据交换，记录双方金额、差异说明等",
+        "suggested_name": "reconciliation_data"
+      }
     }
   ],
-  "generated_at": "2026-08-06T14:54:12.631269+00:00",
+  "generated_at": "2026-08-06T15:35:04.199465+00:00",
+  "goal": {
+    "definition": "每月5个工作日内产出覆盖收入、成本、费用的可信毛利数字，支持经营决策与绩效评估。",
+    "industry_logic": "此类P&L核算通常遵循“数据归集→勾稽核对→异常处理→复核签字→出具报告”的闭环框架；收入端需对齐多源业务明细并确认净额口径，成本端需区分直接与间接成本并匹配归属期间，费用端需归集按成本中心分摊；整月流程需有明确的月结截止、差异审核、跨部门确认等控制节点。",
+    "our_approach": "基于当前佣金线数据基础扎实而采购/人力费用完全缺失的现状，先聚焦快速产出佣金相关的收入与成本毛利段，同时并行补全采购和人力费用数据源；收入口径先按当前可靠L3计算并标注暂缺细分，待业务确认后迭代；最后搭建月结审核机制将四条线串联成可复核的完整P&L。"
+  },
+  "model_run": {
+    "generated_at": "2026-08-06T15:35:04.199537+00:00",
+    "model_name": "deepseek-v4-pro"
+  },
   "process_optimization": [
     {
-      "conclusion": "上面是该L3已有的AI任务试点建议(基于当前证据产出，前提是任务/Tier已就绪)；如果里面有能直接解决本场景这个缺口的，说明流程模型已覆盖，可直接参考推进；如果没有相关的，说明这是本场景新发现、现有流程模型未覆盖的优化点，需要把这个发现补充进该L3的分析输入材料(相关SOP/规则/证据)后重跑统一分析",
-      "existing_decision_drafts": [
-        {
-          "pilot_scope": "先选1家格式稳定的保司和1个季度样本，影子模式比对",
-          "priority": "P0-1",
-          "title": "保司文件字段抽取、标准格式转换与解析质量检查"
-        },
-        {
-          "pilot_scope": "选择1个结算周期，只生成匹配建议和差异对照",
-          "priority": "P0-2",
-          "title": "银行回单OCR、应收实收匹配与对账评估"
-        },
-        {
-          "pilot_scope": "对新到政策做旁路登记和冲突提示",
-          "priority": "P0-3",
-          "title": "政策原件版本登记与生效期冲突检测"
-        }
-      ],
-      "l3_code": "L3-COM",
-      "l3_name": "佣金全链路管理",
-      "scenario_finding": "Gate A未通过，价值节点映射/熔断判定尚未完整，需先推进该L3的建模"
+      "rationale": "当前KPI_04声明关联6个L3，有3个不存在于库中，L3-MED业务关联弱，导致收入口径不可靠。",
+      "recommendation": "重新评估KPI_04应关联的L3，移除已不存在的L3（CBD/CMU/CVI），重新评估L3-MED的必要性，仅保留实际支撑收入核算的L3。",
+      "target": "KPI_04 (净营收) 的L3关联"
     },
     {
-      "conclusion": "该L3尚未产出统一分析结果，无法比对，需先推进建模后再判断",
-      "existing_decision_drafts": [],
-      "l3_code": "L3-STLM",
-      "l3_name": "结算服务执行（塞尔斯）",
-      "scenario_finding": "Gate A未通过，价值节点映射/熔断判定尚未完整，需先推进该L3的建模"
+      "rationale": "采购成本核算完全没有流程支撑，无法纳入P&L自动化。",
+      "recommendation": "评估是否需新增一个采购成本管理L3，涵盖采购申请、审批、入账等价值节点。",
+      "target": "新增采购管理L3"
     },
     {
-      "conclusion": "上面是该L3已有的AI任务试点建议(基于当前证据产出，前提是任务/Tier已就绪)；如果里面有能直接解决本场景这个缺口的，说明流程模型已覆盖，可直接参考推进；如果没有相关的，说明这是本场景新发现、现有流程模型未覆盖的优化点，需要把这个发现补充进该L3的分析输入材料(相关SOP/规则/证据)后重跑统一分析",
-      "existing_decision_drafts": [
-        {
-          "pilot_scope": "选择1-2个核心业务单元，由其HR管理岗位人员审阅AI生成的人力诊断报告草案，验证建议可行性，试点期1个月。",
-          "priority": "P0",
-          "title": "启动人力诊断报告人工审阅试点"
-        },
-        {
-          "pilot_scope": "在数据采集Skill原型中嵌入隐私字段自动脱敏规则，由数据保护官审核后，选取一个业务单元试运行1个月，验证准确性和合规性。",
-          "priority": "P1",
-          "title": "确认人效数据语义复核规则与合规边界"
-        }
-      ],
-      "l3_code": "L3-HRA",
-      "l3_name": "人力分析与决策支持流程",
-      "scenario_finding": "Gate A未通过，价值节点映射/熔断判定尚未完整，需先推进该L3的建模"
+      "rationale": "人力费用核算依赖这两个L3的核心支撑，但当前Gate A未过，流程建模缺口直接导致数据缺失。",
+      "recommendation": "完成L3-HRA-03 '人员成本分析' 和 L3-HRM-07 '薪酬激励与发放' 的D1-D6及价值节点映射，使其Gate A通过，并产出结构化的成本数据交付物。",
+      "target": "L3-HRA 和 L3-HRM"
     },
     {
-      "conclusion": "上面是该L3已有的AI任务试点建议(基于当前证据产出，前提是任务/Tier已就绪)；如果里面有能直接解决本场景这个缺口的，说明流程模型已覆盖，可直接参考推进；如果没有相关的，说明这是本场景新发现、现有流程模型未覆盖的优化点，需要把这个发现补充进该L3的分析输入材料(相关SOP/规则/证据)后重跑统一分析",
-      "existing_decision_drafts": [
-        {
-          "pilot_scope": "指定部门（如GM主体）新员工入职流程",
-          "priority": "P0",
-          "title": "入职配置自动化试点决策"
-        },
-        {
-          "pilot_scope": "固定薪酬部分（如基础工资、法定补贴）的计算与报告生成",
-          "priority": "P1",
-          "title": "薪酬计算自动化增强决策"
-        }
-      ],
-      "l3_code": "L3-HRM",
-      "l3_name": "人员全生命周期管理流程",
-      "scenario_finding": "Gate A未通过，价值节点映射/熔断判定尚未完整，需先推进该L3的建模"
+      "rationale": "目前缺少专门的月结审核流程，各条线核算后无法形成闭环。",
+      "recommendation": "考虑新增一个月结审核L3，包含数据汇集、差异识别、异常上报、复核签字的L4节点，以规范P&L核算的流程。",
+      "target": "月结审核流程"
+    },
+    {
+      "rationale": "跨部门对账缺乏统一流程，可能导致P&L数据与财务系统不一致。",
+      "recommendation": "建议新增对账流程L3，定义财务与业务部门之间的数据交换、核对、差异处理步骤。",
+      "target": "跨部门对账流程"
     }
   ],
   "process_status": [
     {
-      "has_demo": true,
-      "in_current_db": true,
-      "l3_code": "L3-COM",
-      "l3_name": "佣金全链路管理",
-      "live_gates": {
-        "A": "BLOCKED",
-        "E": "PASS",
-        "M": "PASS"
-      },
-      "manual_gate_a": "BLOCKED",
-      "manual_note": "佣金合规族核心L3，业务数据证据强(见business_evidence)",
-      "model_readiness": "FULL_MODEL"
+      "activity": "佣金收入核算",
+      "assessment": "佣金收入线主要集中在L3-COM，当前有大量真实数据支撑，但KPI_04净营收关联的6个L3仅L3-COM可靠，L3-STLM Gate未过且为委外流程，收入核算的完整口径需业务方核实后明确。",
+      "relevant_l3s": [
+        {
+          "l3_code": "L3-COM",
+          "l3_name": "佣金全链路管理",
+          "relationship": "核心支撑"
+        },
+        {
+          "l3_code": "L3-STLM",
+          "l3_name": "结算服务执行（塞尔斯）",
+          "relationship": "部分支撑"
+        }
+      ]
     },
     {
-      "has_demo": false,
-      "in_current_db": true,
-      "l3_code": "L3-STLM",
-      "l3_name": "结算服务执行（塞尔斯）",
-      "live_gates": {
-        "A": "BLOCKED",
-        "E": "BLOCKED",
-        "M": "BLOCKED"
-      },
-      "manual_gate_a": "BLOCKED",
-      "manual_note": "委外供应商类L3(结算服务执行·塞尔斯)，model_generation_allowed=false，D1-D6未完整，暂不可靠",
-      "model_readiness": "WAITING_INPUT"
+      "activity": "佣金成本核算",
+      "assessment": "佣金拨出成本线同样依靠L3-COM，应收/实收/差异对照数据完备，可直接计算出应拨成本。",
+      "relevant_l3s": [
+        {
+          "l3_code": "L3-COM",
+          "l3_name": "佣金全链路管理",
+          "relationship": "核心支撑"
+        }
+      ]
     },
     {
-      "has_demo": false,
-      "in_current_db": true,
-      "l3_code": "L3-MED",
-      "l3_name": "市场进入模式设计流程",
-      "live_gates": {
-        "A": "PASS",
-        "E": "CONDITIONAL",
-        "M": "PASS"
-      },
-      "manual_gate_a": "PASS",
-      "manual_note": "实际L4是渠道策略设计/定价与收入模式设计/财务模型可行性分析——这是市场进入策略设计流程，不是实际收入入账流程，与\"净营收\"的业务关联较弱，疑似KPI-L3映射口径过时，需业务方核实KPI_04是否还应该关联L3-MED",
-      "model_readiness": "LIMITED_MODEL"
+      "activity": "采购成本核算",
+      "assessment": "当前l3_catalog中不存在采购管理相关的L3，采购成本核算活动完全缺失流程支撑。",
+      "relevant_l3s": []
     },
     {
-      "has_demo": false,
-      "in_current_db": false,
-      "l3_code": "L3-CBD",
-      "l3_name": null,
-      "live_gates": null,
-      "manual_gate_a": null,
-      "manual_note": "当前process_analytics.dim_process里找不到此编码，可能已改名/合并/从未建",
-      "model_readiness": null
+      "activity": "运营费用核算",
+      "assessment": "运营费用（如差旅、办公、营销等）在现有L3中找不到直接对应的核算或费用管理流程，需确认目前是否由外部财务系统处理。",
+      "relevant_l3s": []
     },
     {
-      "has_demo": false,
-      "in_current_db": false,
-      "l3_code": "L3-CMU",
-      "l3_name": null,
-      "live_gates": null,
-      "manual_gate_a": null,
-      "manual_note": "同上，不存在于当前DB",
-      "model_readiness": null
+      "activity": "人力费用核算",
+      "assessment": "人力费用核算依赖L3-HRA（人员成本分析）和L3-HRM（薪酬激励发放），但这两个L3的Gate A均未通过，流程建模未完成，导致无法产出结构化的人力成本数据。",
+      "relevant_l3s": [
+        {
+          "l3_code": "L3-HRA",
+          "l3_name": "人力分析与决策支持流程",
+          "relationship": "核心支撑"
+        },
+        {
+          "l3_code": "L3-HRM",
+          "l3_name": "人员全生命周期管理流程",
+          "relationship": "核心支撑"
+        }
+      ]
     },
     {
-      "has_demo": false,
-      "in_current_db": false,
-      "l3_code": "L3-CVI",
-      "l3_name": null,
-      "live_gates": null,
-      "manual_gate_a": null,
-      "manual_note": "同上，不存在于当前DB",
-      "model_readiness": null
+      "activity": "月结差异审核",
+      "assessment": "月结差异审核需要对照预测与实际的差异，L3-SSVA可支持部分费用结算的核对，L3-CPM的监控能力可辅助异常检测，但目前尚缺专门的月结审核流程。",
+      "relevant_l3s": [
+        {
+          "l3_code": "L3-SSVA",
+          "l3_name": "服务结算与价值核算",
+          "relationship": "部分支撑"
+        },
+        {
+          "l3_code": "L3-CPM",
+          "l3_name": "流程持续监控与优化闭环管理",
+          "relationship": "部分支撑"
+        }
+      ]
     },
     {
-      "has_demo": false,
-      "in_current_db": true,
-      "l3_code": "L3-HRA",
-      "l3_name": "人力分析与决策支持流程",
-      "live_gates": {
-        "A": "BLOCKED",
-        "E": "PASS",
-        "M": "PASS"
-      },
-      "manual_gate_a": "BLOCKED",
-      "manual_note": "人力分析与决策支持流程，L4-HRA-03\"人员成本分析\"交付物是\"各类分析报告\"(非结构化命名)，Gate A未过",
-      "model_readiness": "FULL_MODEL"
-    },
-    {
-      "has_demo": false,
-      "in_current_db": true,
-      "l3_code": "L3-HRM",
-      "l3_name": "人员全生命周期管理流程",
-      "live_gates": {
-        "A": "BLOCKED",
-        "E": "PASS",
-        "M": "PASS"
-      },
-      "manual_gate_a": "BLOCKED",
-      "manual_note": "人员全生命周期管理流程，L4-HRM-07\"薪酬激励与发放\"交付物是\"薪酬记录\"(非结构化命名)，Gate A未过",
-      "model_readiness": "FULL_MODEL"
+      "activity": "跨部门数据对齐",
+      "assessment": "与财务、业务部门的数据对齐可能部分依赖结算类的L3，但缺少专门的内部对账流程，现有L3多为对外结算。",
+      "relevant_l3s": [
+        {
+          "l3_code": "L3-SSVA",
+          "l3_name": "服务结算与价值核算",
+          "relationship": "部分支撑"
+        },
+        {
+          "l3_code": "L3-BSRV",
+          "l3_name": "经代机构结算与日常运营评估",
+          "relationship": "部分支撑"
+        }
+      ]
     }
   ],
   "scenario_id": "PNL-001",
-  "schema_version": "vnw.business-scenario-analysis.v1",
+  "schema_version": "vnw.business-scenario-analysis.v2",
+  "status": "MODEL_DRAFT",
   "task_list": [
     {
-      "description": "找财务负责人确认\"收入4类12条业务细分\"的具体口径定义，并核实KPI_04净营收的6个L3引用是否需要更新",
-      "source": "人工next_steps",
-      "task_id": "PNL-001-T1",
-      "type": "业务确认"
+      "depends_on": [],
+      "description": "与财务负责人确认收入4类12条细分的具体口径并更新KPI_04的L3引用",
+      "priority": "P0",
+      "rationale": "收入口径是P&L的起点，必须先明确。",
+      "task_id": "T1"
     },
     {
-      "description": "确认采购成本目前的核算方式（哪个系统/谁维护），判断要不要纳入VNW数据范围、要纳入的话需要建什么表",
-      "source": "人工next_steps",
-      "task_id": "PNL-001-T2",
-      "type": "业务确认"
+      "depends_on": [],
+      "description": "建立人力成本数据采集表（fact_employee_compensation）",
+      "priority": "P0",
+      "rationale": "人力费用数据完全缺失，应立即从HR系统导入薪酬数据。",
+      "task_id": "T2"
     },
     {
-      "description": "确认人力成本/薪酬数据目前的核算方式，同时推进L3-HRA/HRM本身的Gate A建模（这是流程模型侧的独立缺口，业务数据缺口只是结果之一）",
-      "source": "人工next_steps",
-      "task_id": "PNL-001-T3",
-      "type": "业务确认"
+      "depends_on": [],
+      "description": "建立采购成本数据采集表（fact_purchase_cost）",
+      "priority": "P0",
+      "rationale": "采购成本没有结构化数据，需尽快建立。",
+      "task_id": "T3"
     },
     {
-      "description": "状态C：完全无系统化数据来源，需要先确认核算方式或补齐数据源",
-      "source": "机械规则(data_governance)",
-      "task_id": "PNL-001-G1",
-      "type": "数据治理"
+      "depends_on": [],
+      "description": "建立运营费用数据采集表（fact_operating_expense）",
+      "priority": "P1",
+      "rationale": "运营费用可稍后推进，不影响核心核算。",
+      "task_id": "T4"
     },
     {
-      "description": "状态C：完全无系统化数据来源，需要先确认核算方式或补齐数据源",
-      "source": "机械规则(data_governance)",
-      "task_id": "PNL-001-G2",
-      "type": "数据治理"
+      "depends_on": [
+        "T1"
+      ],
+      "description": "基于确认的收入口径改造佣金收入核算数据模型，映射到业务细分",
+      "priority": "P1",
+      "rationale": "依赖收入口径确认。",
+      "task_id": "T5"
     },
     {
-      "description": "Gate A未通过，价值节点映射/熔断判定尚未完整，需先推进该L3的建模",
-      "source": "机械规则(data_governance)",
-      "task_id": "PNL-001-G3",
-      "type": "流程建模"
+      "depends_on": [
+        "T1",
+        "T2",
+        "T3"
+      ],
+      "description": "设计并实施月结审核流程，包括差异自动化检测和异常提醒",
+      "priority": "P1",
+      "rationale": "月结审核需要各条线佣金收入与人力/采购成本数据就绪，运营费用T4可暂缺。",
+      "task_id": "T6"
     },
     {
-      "description": "Gate A未通过，价值节点映射/熔断判定尚未完整，需先推进该L3的建模",
-      "source": "机械规则(data_governance)",
-      "task_id": "PNL-001-G4",
-      "type": "流程建模"
-    },
-    {
-      "description": "当前数据库process_analytics.dim_process未覆盖此L3，需先确认是否已改名/合并/从未建模",
-      "source": "机械规则(data_governance)",
-      "task_id": "PNL-001-G5",
-      "type": "流程建模"
-    },
-    {
-      "description": "当前数据库process_analytics.dim_process未覆盖此L3，需先确认是否已改名/合并/从未建模",
-      "source": "机械规则(data_governance)",
-      "task_id": "PNL-001-G6",
-      "type": "流程建模"
-    },
-    {
-      "description": "当前数据库process_analytics.dim_process未覆盖此L3，需先确认是否已改名/合并/从未建模",
-      "source": "机械规则(data_governance)",
-      "task_id": "PNL-001-G7",
-      "type": "流程建模"
-    },
-    {
-      "description": "Gate A未通过，价值节点映射/熔断判定尚未完整，需先推进该L3的建模",
-      "source": "机械规则(data_governance)",
-      "task_id": "PNL-001-G8",
-      "type": "流程建模"
-    },
-    {
-      "description": "Gate A未通过，价值节点映射/熔断判定尚未完整，需先推进该L3的建模",
-      "source": "机械规则(data_governance)",
-      "task_id": "PNL-001-G9",
-      "type": "流程建模"
+      "depends_on": [
+        "T6"
+      ],
+      "description": "建立跨部门（如业务-财务）对账数据交换机制",
+      "priority": "P2",
+      "rationale": "对账是月结审核的后续步骤，优先级较低。",
+      "task_id": "T7"
     }
   ]
 }

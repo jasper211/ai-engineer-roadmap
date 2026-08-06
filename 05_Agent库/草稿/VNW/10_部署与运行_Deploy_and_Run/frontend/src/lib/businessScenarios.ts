@@ -61,44 +61,47 @@ export async function loadScenario(file: string): Promise<BusinessScenario> {
   return response.json()
 }
 
-export interface ScenarioProcessStatus {
-  l3_code: string
-  l3_name: string | null
-  manual_note: string | null
-  manual_gate_a: string | null
-  in_current_db: boolean
-  live_gates: { M: string; E: string; A: string } | null
-  model_readiness: string | null
-  has_demo: boolean
+export interface ScenarioGoal {
+  definition: string
+  industry_logic: string
+  our_approach: string
+}
+
+export interface ScenarioProcessStatusItem {
+  activity: string
+  relevant_l3s: { l3_code: string; l3_name: string; relationship: '核心支撑' | '部分支撑' | '存在缺口' }[]
+  assessment: string
 }
 
 export interface ScenarioGovernanceItem {
-  flag: 'DATA_GAP' | 'PROCESS_MISSING' | 'GATE_A_BLOCKED'
-  component_name?: string
-  l3_code?: string
-  reason: string
+  need: string
+  existing_tables: { schema: string; table: string; assessment: string }[]
+  gap: string | null
+  new_table_proposal: { suggested_name: string; purpose: string; key_fields: string[] } | null
 }
 
 export interface ScenarioTask {
   task_id: string
-  type: string
   description: string
-  source: string
+  priority: 'P0' | 'P1' | 'P2'
+  depends_on: string[]
+  rationale: string
 }
 
 export interface ScenarioOptimization {
-  l3_code: string
-  l3_name: string | null
-  scenario_finding: string
-  existing_decision_drafts: { priority: string | null; title: string | null; pilot_scope: string | null }[]
-  conclusion: string
+  target: string
+  recommendation: string
+  rationale: string
 }
 
 export interface ScenarioAnalysis {
   schema_version: string
   scenario_id: string
   generated_at: string
-  process_status: ScenarioProcessStatus[]
+  model_run: { model_name: string; generated_at: string }
+  status: 'MODEL_DRAFT' | 'CONFIRMED'
+  goal: ScenarioGoal
+  process_status: ScenarioProcessStatusItem[]
   data_governance: ScenarioGovernanceItem[]
   task_list: ScenarioTask[]
   process_optimization: ScenarioOptimization[]

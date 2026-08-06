@@ -1,132 +1,179 @@
 """入口①场景分析：给人工authoring的业务场景记录(business_scenarios/*.json)
-派生出后四环——流程现状/数据治理/任务清单/流程优化——不改动人工原始记录，
-也不引入新的AI调用，全部是对已有真实数据(model_snapshots)的机械规则/直接
-复用，和data_lineage.json/table_analysis.json同样的SSOT+DERIVED分层原则。
+用AI辅助推理产出后四环——目标/流程现状/数据治理/任务清单/流程优化。
 
-流程现状(build_process_status)：l3_trace里人工判断的gate_a原样保留展示，
-不用重新查询到的live_gates静默覆盖——两层证据并列。
-数据治理(build_data_governance)：判定语言复用table_analysis.py的
-_governance_track/_process_lever_track同一套说法，不发明新表述。
-任务清单(build_task_list)：人工next_steps和机械算出的治理条目统一转成
-结构化任务，各自标注来源；没有依据的字段(优先级/负责人)不臆造。
-流程优化(build_process_optimization)：只对场景本身发现的建模缺口
-(GATE_A_BLOCKED)生成条目——这类缺口是"价值节点映射/熔断判定未完成"，
-和该L3已有的decision_drafts(AI任务试点建议，前提是任务/Tier已经就绪)
-是两件不同层次的事，机械规则判不出语义上是否覆盖，因此不假装"匹配"，
-如实并列展示两边证据，把"是否已被现有流程模型覆盖"的判断交给人工——
-如果现有AI任务建议里确实没有能解决这个缺口的，就是本场景新发现的优化点，
-需要把这个发现补充进该L3的分析输入材料后重跑统一分析。
+和上一版的区别：上一版是纯机械规则(读l3_trace.gate_a、组成项state B/C)，
+只能回答"场景里已经提到的东西现在什么状态"，回答不了"做成这件事到底需要
+什么"——这需要结合业务场景本身和行业通常做法做推理，是简单数据映射匹配
+解决不了的，因此改为调用大模型，架构上和table_root_cause_analysis.py同源：
+把全部真实存在的L3(l3_catalog)和表(table_catalog)摘要喂给模型，模型只能
+在这个真实目录里挑相关项，不能凭空编造L3编码或表名；建议新增的表要明确
+标注(new_table_proposal)，不能包装成已存在的表；全部标注MODEL_DRAFT。
+
+场景需求(definition/components)和数据现状(business_evidence/state)两块
+保持人工authoring不变，不在这个模块的范围内。
 """
 from __future__ import annotations
 
+import json
+import os
+import re
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import Any
 
-SCHEMA_VERSION = "vnw.business-scenario-analysis.v1"
+from tools.llm_client import DEFAULT_MODEL, call_json_model
+
+SCHEMA_VERSION = "vnw.business-scenario-analysis.v2"
 
 
-def build_process_status(scenario: dict, model_index: dict[str, dict]) -> list[dict]:
-    seen: dict[str, dict] = {}
-    for component in scenario.get("components", []):
-        for trace in component.get("l3_trace", []):
-            code = trace["l3_code"]
-            if code in seen:
-                continue
-            entry = model_index.get(code)
-            seen[code] = {
-                "l3_code": code,
-                "l3_name": entry["l3_name"] if entry else None,
-                "manual_note": trace.get("note"),
-                "manual_gate_a": trace.get("gate_a"),
-                "in_current_db": trace["in_current_db"],
-                "live_gates": entry["gates"] if entry else None,
-                "model_readiness": entry["classification"] if entry else None,
-                "has_demo": bool(entry.get("has_demo")) if entry else False,
-            }
-    return list(seen.values())
+def _json_from_text(text: str) -> dict:
+    cleaned = text.strip()
+    fenced = re.fullmatch(r"```(?:json)?\s*(.*?)\s*```", cleaned, flags=re.S)
+    if fenced:
+        cleaned = fenced.group(1)
+    return json.loads(cleaned)
 
 
-def build_data_governance(scenario: dict, process_status: list[dict]) -> list[dict]:
-    items: list[dict] = []
-    for component in scenario.get("components", []):
-        if component.get("state") in ("B", "C"):
-            reason = (
-                "状态C：完全无系统化数据来源，需要先确认核算方式或补齐数据源"
-                if component["state"] == "C"
-                else "状态B：有表但未标准化/无数据，需要先确认为何未populate"
-            )
-            items.append({"flag": "DATA_GAP", "component_name": component["component_name"], "reason": reason})
-    for ps in process_status:
-        if not ps["in_current_db"]:
-            items.append({
-                "flag": "PROCESS_MISSING", "l3_code": ps["l3_code"],
-                "reason": "当前数据库process_analytics.dim_process未覆盖此L3，需先确认是否已改名/合并/从未建模",
-            })
-        elif ps["live_gates"] and ps["live_gates"].get("A") == "BLOCKED":
-            items.append({
-                "flag": "GATE_A_BLOCKED", "l3_code": ps["l3_code"],
-                "reason": "Gate A未通过，价值节点映射/熔断判定尚未完整，需先推进该L3的建模",
-            })
-    return items
+def load_api_config(agent_root: Path) -> tuple[str, str]:
+    api_key = os.environ.get("DEEPSEEK_API_KEY", "").strip()
+    model = os.environ.get("VNW_ANALYSIS_MODEL", "").strip() or DEFAULT_MODEL
+    config_path = agent_root / "02_配置项目_Configure_Project/deepseek_config.json"
+    if config_path.exists():
+        config = json.loads(config_path.read_text(encoding="utf-8"))
+        api_key = api_key or str(config.get("DEEPSEEK_API_KEY", "")).strip()
+        model = str(config.get("model", "")).strip() or model
+    return api_key, model
 
 
-def build_task_list(scenario: dict, data_governance: list[dict]) -> list[dict]:
-    tasks: list[dict] = []
-    scenario_id = scenario["scenario_id"]
-    for i, step in enumerate(scenario.get("next_steps", []), 1):
-        tasks.append({
-            "task_id": f"{scenario_id}-T{i}", "type": "业务确认",
-            "description": step, "source": "人工next_steps",
+def build_l3_catalog(model_index: dict) -> list[dict]:
+    """74个L3的精简摘要——只给相关性判断需要的信息，不带完整L4明细。"""
+    catalog = []
+    for m in model_index.get("models", []):
+        catalog.append({
+            "l3_code": m["l3_code"],
+            "l3_name": m["l3_name"],
+            "l4_count": m.get("l4_count", 0),
+            "classification": m.get("classification"),
+            "kpis": [k.get("kpi_name") for k in m.get("kpis", [])],
         })
-    type_by_flag = {"DATA_GAP": "数据治理", "PROCESS_MISSING": "流程建模", "GATE_A_BLOCKED": "流程建模"}
-    for i, item in enumerate(data_governance, 1):
-        tasks.append({
-            "task_id": f"{scenario_id}-G{i}", "type": type_by_flag.get(item["flag"], "数据治理"),
-            "description": item["reason"], "source": "机械规则(data_governance)",
-        })
-    return tasks
+    return catalog
 
 
-def build_process_optimization(process_status: list[dict], data_governance: list[dict], load_snapshot) -> list[dict]:
-    gate_blocked = {item["l3_code"]: item for item in data_governance if item["flag"] == "GATE_A_BLOCKED"}
-    items: list[dict] = []
-    for ps in process_status:
-        if ps["l3_code"] not in gate_blocked:
+def build_table_catalog(db_catalog: dict) -> list[dict]:
+    """122张业务数据表的精简摘要——不带columns明细，本层只需要判断
+    "有没有能支撑某个数据需求的表"，不需要判断具体字段。"""
+    catalog = []
+    for t in db_catalog.get("tables", []):
+        if t["schema"] == "process_analytics":
             continue
-        snapshot = load_snapshot(ps["l3_code"]) if ps["model_readiness"] else None
-        drafts = (snapshot.get("analysis", {}).get("decision_drafts") or []) if snapshot else []
-        existing = [
-            {"priority": d.get("priority"), "title": d.get("title"), "pilot_scope": d.get("pilot_scope")}
-            for d in drafts[:3]
-        ]
-        conclusion = (
-            "该L3尚未产出统一分析结果，无法比对，需先推进建模后再判断"
-            if not existing
-            else "上面是该L3已有的AI任务试点建议(基于当前证据产出，前提是任务/Tier已就绪)；"
-                 "如果里面有能直接解决本场景这个缺口的，说明流程模型已覆盖，可直接参考推进；"
-                 "如果没有相关的，说明这是本场景新发现、现有流程模型未覆盖的优化点，"
-                 "需要把这个发现补充进该L3的分析输入材料(相关SOP/规则/证据)后重跑统一分析"
-        )
-        items.append({
-            "l3_code": ps["l3_code"], "l3_name": ps["l3_name"],
-            "scenario_finding": gate_blocked[ps["l3_code"]]["reason"],
-            "existing_decision_drafts": existing,
-            "conclusion": conclusion,
+        catalog.append({
+            "schema": t["schema"],
+            "table": t["table"],
+            "description": t.get("description", ""),
+            "table_type": t.get("table_type", "其他"),
+            "row_count": t.get("row_count", 0),
         })
-    return items
+    return catalog
 
 
-def build_scenario_analysis(scenario: dict, model_index: dict[str, dict], load_snapshot) -> dict:
-    process_status = build_process_status(scenario, model_index)
-    data_governance = build_data_governance(scenario, process_status)
-    task_list = build_task_list(scenario, data_governance)
-    process_optimization = build_process_optimization(process_status, data_governance, load_snapshot)
+def build_prompt_payload(scenario: dict, l3_catalog: list[dict], table_catalog: list[dict]) -> str:
+    return json.dumps(
+        {"scenario": scenario, "l3_catalog": l3_catalog, "table_catalog": table_catalog},
+        ensure_ascii=False, separators=(",", ":"),
+    )
+
+
+def validate_scenario_analysis(package: dict, l3_catalog: list[dict], table_catalog: list[dict]) -> None:
+    known_l3 = {c["l3_code"] for c in l3_catalog}
+    known_tables = {f"{c['schema']}.{c['table']}" for c in table_catalog}
+
+    if package.get("status") != "MODEL_DRAFT":
+        raise ValueError("输出必须标注status=MODEL_DRAFT")
+
+    goal = package.get("goal")
+    if not isinstance(goal, dict) or not all(goal.get(k) for k in ("definition", "industry_logic", "our_approach")):
+        raise ValueError("goal缺少definition/industry_logic/our_approach")
+
+    process_status = package.get("process_status")
+    if not isinstance(process_status, list) or not process_status:
+        raise ValueError("process_status缺失或为空")
+    for item in process_status:
+        for l3 in item.get("relevant_l3s", []):
+            if l3.get("l3_code") not in known_l3:
+                raise ValueError(f"process_status引用了l3_catalog以外的L3：{l3.get('l3_code')}")
+            if l3.get("relationship") not in ("核心支撑", "部分支撑", "存在缺口"):
+                raise ValueError(f"relationship不在固定枚举内：{l3.get('relationship')}")
+
+    data_governance = package.get("data_governance")
+    if not isinstance(data_governance, list):
+        raise ValueError("data_governance缺失")
+    for item in data_governance:
+        for t in item.get("existing_tables", []):
+            key = f"{t.get('schema')}.{t.get('table')}"
+            if key not in known_tables:
+                raise ValueError(f"data_governance引用了table_catalog以外的表：{key}")
+
+    task_list = package.get("task_list")
+    if not isinstance(task_list, list) or not task_list:
+        raise ValueError("task_list缺失或为空")
+    known_task_ids = {t.get("task_id") for t in task_list}
+    for t in task_list:
+        for dep in t.get("depends_on", []):
+            if dep not in known_task_ids:
+                raise ValueError(f"task_list的depends_on引用了不存在的task_id：{dep}")
+        if t.get("priority") not in ("P0", "P1", "P2"):
+            raise ValueError(f"priority不在固定枚举内：{t.get('priority')}")
+
+    process_optimization = package.get("process_optimization")
+    if not isinstance(process_optimization, list):
+        raise ValueError("process_optimization缺失")
+
+
+def run_scenario_analysis(agent_root: Path, scenario: dict, model_index: dict, db_catalog: dict, max_attempts: int = 2) -> dict:
+    agent_root = Path(agent_root)
+    prompt_path = agent_root / "08_设计提示词_Design_Prompts/场景分析模型_v1.0.md"
+    system_prompt = prompt_path.read_text(encoding="utf-8")
+
+    l3_catalog = build_l3_catalog(model_index)
+    table_catalog = build_table_catalog(db_catalog)
+    api_key, model = load_api_config(agent_root)
+    if not api_key:
+        raise RuntimeError("VNW未配置模型凭证(DEEPSEEK_API_KEY或deepseek_config.json)")
+
+    payload = build_prompt_payload(scenario, l3_catalog, table_catalog)
+    last_error: Exception | None = None
+    package = None
+    # 大模型偶发输出不符合grounding约束(如引用了目录以外的编码)，不是
+    # 网络问题，call_json_model自己的重试机制不覆盖这种情况；这里单独
+    # 重试几次，仍失败才真正报错。
+    for _ in range(max_attempts):
+        raw = call_json_model(system_prompt, payload, api_key=api_key, model=model)
+        try:
+            package = _json_from_text(raw)
+            validate_scenario_analysis(package, l3_catalog, table_catalog)
+            last_error = None
+            break
+        except (ValueError, json.JSONDecodeError) as error:
+            last_error = error
+            package = None
+    if last_error is not None or package is None:
+        raise RuntimeError(f"场景分析模型输出连续{max_attempts}次未通过校验：{last_error}")
+
     return {
         "schema_version": SCHEMA_VERSION,
         "scenario_id": scenario["scenario_id"],
         "generated_at": datetime.now(timezone.utc).isoformat(),
-        "process_status": process_status,
-        "data_governance": data_governance,
-        "task_list": task_list,
-        "process_optimization": process_optimization,
+        "model_run": {"model_name": model, "generated_at": datetime.now(timezone.utc).isoformat()},
+        "status": package["status"],
+        "goal": package["goal"],
+        "process_status": package["process_status"],
+        "data_governance": package["data_governance"],
+        "task_list": package["task_list"],
+        "process_optimization": package["process_optimization"],
     }
+
+
+def write_scenario_analysis(result: dict, output_path: Path) -> None:
+    output_path = Path(output_path)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_text(json.dumps(result, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
