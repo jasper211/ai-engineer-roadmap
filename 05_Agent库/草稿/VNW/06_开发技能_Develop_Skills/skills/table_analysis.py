@@ -1,21 +1,27 @@
 """业务数据分析·入口②系统性覆盖扫描：以104张业务表(public/comm_sandbox/fin_sandbox，
 不含process_analytics)为锚点的五层分析结构。
 
-五层定义（完整保留，不因数据缺口而降级替代）：
+五层定义（2026-08-06重构L3/L4/L5，完整保留，不因数据缺口而降级替代）：
 - L1描述层：这张表的事实是什么（有数据/没数据分别是什么事实），建立基线
 - L2诊断层：现状分析——关联哪些L3/L4、谁负责、数据录入健康度，定位现状
-- L3归因层：相关性/跟进/聚类分析——哪些表背后的任务高耗时/高错误/高成本，
-  根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型，哪类任务天然适合AI
-- L4预测层：AI介入后的ROI/质量/产能释放/敏感性测算，把可行性从定性变定量
-- L5决策层：该做什么——复用L3流程模型面板D的四象限语义(优先验证/治理后推进/
-  补数据规则后推进/暂缓自动化)，基于该表关联L4已有的D1-D6+候选Agent封装档位+
-  两轴冲突标记做DERIVED归类（不是面板D正式工作坊象限坐标，只是同一套语义在
-  表维度的推导参考，两者不互相覆盖）
+- L3根因分析层：基于data_lineage.json真实血缘边+表结构，用AI辅助推理(标注
+  MODEL_DRAFT)给出①表级血缘说明(真实上下游表名+中文名)②任务特征聚类(6个
+  固定枚举，见table_root_cause_analysis.py)——用血缘图+业务对象做归因，
+  识别数据加工环节，是"业务能力L2层"在数据侧的自下而上投影。没有root_cause
+  分析覆盖的表(尚未跑批或本轮未覆盖)保持BLOCKED，如实说明原因。
+- L4反向补全层：基于L3识别出的血缘位置+任务聚类+该表已关联的L4，用AI辅助
+  推理反向推断可能存在但未被记录的隐藏产出(交付物或过程产物)——用数据证据
+  倒推流程蓝图没写全的地方。同样标注MODEL_DRAFT，没有关联L4的表留空。
+- L5决策层：该做什么——保留原有面板D四象限DERIVED归类，新增两条机械判定
+  的轨道(不需要AI，基于L1-L4已有信号规则计算)：
+  - 轨道A数据治理优先：哪些表要先立数据标准/理清血缘/定owner
+  - 轨道B流程补全杠杆：哪些表的数据证据可以直接撬动补全缺失的L3/L4流程定义
 
-L3/L4今天全部标注BLOCKED——不是没做，是真实核查后发现底层输入不存在：
-process_analytics.fact_card和fact_agent（唯一设计了耗时/错误率/agent协同字段的
-两张表）当前均为0行，且全库没有任何薪酬/人力成本单价字段。这里如实描述缺什么，
-不做代理指标或假设级替代，等这些输入真实产生后再激活，不是现在就编一个近似值。
+L3/L4改造前的旧设计(相关性/耗时/ROI测算)依赖process_analytics.fact_card和
+fact_agent(唯一设计了耗时/错误率/agent协同字段的两张表)，当前均为0行，且
+全库没有任何薪酬/人力成本单价字段——这条路径真实数据缺口没有变化，但2026-08-06
+判断不必再死等这类数据，改用已经建扎实的血缘证据做归因，是同一套"如实反映
+真实证据"纪律下的另一条可行路径，不是放弃原判断。
 """
 from __future__ import annotations
 
@@ -25,14 +31,8 @@ from pathlib import Path
 from skills.unified_analysis import D_FIELDS, axis_conflict
 from skills.business_data_bridge import ANALYZED_L3_CODES
 
-L3_REQUIRED_INPUTS = [
-    "process_analytics.fact_card：任务级耗时(duration_hours)/SLA达成(sla_hours_actual/sla_breach_flag)/错误(error_flag)/人工干预(agent_assist_hours)——当前0行",
-    "process_analytics.fact_agent：Agent执行统计(sla_breach_rate/error_count/rework_count_total)——当前0行",
-]
-L4_REQUIRED_INPUTS = [
-    "人力成本单价：全库任何schema都没有薪酬/人力成本字段(dim_employee只有档案信息)，需HR/Finance提供",
-    "process_analytics.fact_card真实运行数据：用于测算AI介入前后的耗时/错误率差异，当前0行",
-]
+L3_BLOCKED_REASON = "该表尚未纳入本轮血缘根因分析范围(需运行table_root_cause_analysis)，暂无法给出上下游血缘归因与任务聚类"
+L4_BLOCKED_REASON = "L3根因分析未覆盖，暂无法反向推断隐藏产出"
 
 # 系统运维表——不是业务数据，是本系统自身的登录/审计/会话表，天然不该往任何
 # L3/L4业务分析上靠。人工登记，理由直接来自db_catalog.py里已核实的description
@@ -146,8 +146,37 @@ def build_table_to_l4_index(l3_codes: list[str], load_l3_snapshot) -> dict[str, 
                     "tier": l4.get("tier"),
                     "skill_feasibility": l4.get("skill_feasibility"),
                     "has_business_evidence": has_business_evidence,
+                    "deliverable": l4.get("deliverable"),
+                    "deliverable_type": l4.get("deliverable_type"),
                 })
     return index
+
+
+def _governance_track(table_type: str, positions: list[str], root_cause_layer3: dict | None) -> dict | None:
+    """轨道A·数据治理优先——机械规则，不需要AI。命中条件：AI根因分析把这张表
+    聚类为"枢纽整合型"(血缘位置上被广泛引用，出错会向外扩散)，但L2层暂无明确
+    负责岗位——有影响力但没人管，应该优先理清owner和数据标准。"""
+    cluster = ((root_cause_layer3 or {}).get("task_cluster") or {}).get("label")
+    if cluster == "枢纽整合型" and not positions:
+        return {
+            "flagged": True,
+            "reason": "任务聚类为枢纽整合型(血缘位置上被广泛引用)，但暂无明确负责岗位——建议优先理清owner和数据标准，避免问题向外扩散",
+        }
+    return None
+
+
+def _process_lever_track(root_cause_layer4: dict | None) -> dict | None:
+    """轨道B·流程补全杠杆——机械规则，不需要AI。命中条件：AI根因分析发现了
+    隐藏产出候选，说明数据证据暗示对应L4的流程蓝图记录可能不完整，值得拿这份
+    数据证据去推动业务方补全蓝图/L4定义。"""
+    hidden = (root_cause_layer4 or {}).get("hidden_deliverables") or []
+    if hidden:
+        names = "、".join(item.get("candidate_name", "") for item in hidden[:2])
+        return {
+            "flagged": True,
+            "reason": f"AI根因分析发现{len(hidden)}个隐藏产出候选({names}等)，数据证据显示对应L4的交付物记录可能不完整，建议核实并补全流程蓝图",
+        }
+    return None
 
 
 def build_table_analysis(
@@ -157,6 +186,7 @@ def build_table_analysis(
     shared_master_data: dict[str, dict] | None = None,
     utility_support_info: dict[str, str] | None = None,
     field_anchor_info: dict[str, list[dict]] | None = None,
+    root_cause_analysis: dict[str, dict] | None = None,
 ) -> dict:
     # "未定位关联"必须区分"查过、确认没有" vs "这个L3还没排到分析"——否则73个
     # 从未分析过的L3会被误读成"确认和这张表无关"。ANALYZED_L3_CODES是显式登记
@@ -166,6 +196,7 @@ def build_table_analysis(
     shared_master_data = shared_master_data or {}
     utility_support_info = utility_support_info or {}
     field_anchor_info = field_anchor_info or {}
+    root_cause_analysis = root_cause_analysis or {}
 
     entries = []
     for table in db_catalog["tables"]:
@@ -218,18 +249,23 @@ def build_table_analysis(
             ),
         }
 
-        layer3 = {
+        root_cause_entry = root_cause_analysis.get(key)
+        rc_layer3 = (root_cause_entry or {}).get("layer3")
+        rc_layer4 = (root_cause_entry or {}).get("layer4")
+
+        layer3 = rc_layer3 if rc_layer3 else {
             "status": "BLOCKED",
-            "goal": "相关性分析(哪些任务场景高耗时/高错误/高成本)、跟进分析(根因是流程设计/岗位能力/系统支撑不够/纯劳动密集型)、聚类分析(哪类任务天然适合AI)",
-            "required_inputs": L3_REQUIRED_INPUTS,
-            "reason": "全库唯一设计了耗时/错误率字段的两张表(fact_card/fact_agent)当前均为0行，没有可分析的真实任务级数据。",
+            "upstream": [],
+            "downstream": [],
+            "task_cluster": None,
+            "reason": L3_BLOCKED_REASON,
         }
-        layer4 = {
+        layer4 = rc_layer4 if rc_layer4 else {
             "status": "BLOCKED",
-            "goal": "ROI测算(节省工时×人力成本)、质量预测(AI介入后错误率)、产能释放、敏感性分析",
-            "required_inputs": L4_REQUIRED_INPUTS,
-            "reason": "缺人力成本单价和真实任务执行数据，测算公式需要的输入今天不存在，不做近似替代。",
+            "hidden_deliverables": [],
+            "reason": L4_BLOCKED_REASON,
         }
+
         l4_quadrants = [derive_l4_quadrant(r) for r in related]
         conflict_count = sum(1 for q in l4_quadrants if q["axis_conflict"])
         layer5 = {
@@ -241,6 +277,8 @@ def build_table_analysis(
                 if related else "无关联L4，暂无法给出决策建议。"
             ),
             "l4_quadrants": l4_quadrants,
+            "governance_track": _governance_track(table.get("table_type", "其他"), sorted(positions), rc_layer3),
+            "process_lever_track": _process_lever_track(rc_layer4),
         }
 
         entries.append({
@@ -259,6 +297,6 @@ def build_table_analysis(
         })
     return {
         "schema_version": "vnw.table-analysis.v1",
-        "source_policy": "五层分析结构：描述/诊断层基于真实数据现算；归因/预测层如实标注BLOCKED+缺失输入，不做代理指标或假设替代",
+        "source_policy": "五层分析结构：L1/L2层基于真实数据现算；L3/L4层基于data_lineage.json真实血缘用AI辅助推理(标注MODEL_DRAFT，未覆盖的表如实标注BLOCKED)；L5层四象限归类+两条机械判定轨道均为DERIVED，不做代理指标或假设替代",
         "tables": entries,
     }

@@ -45,6 +45,7 @@ def parse_args():
     parser.add_argument("--build-table-analysis", action="store_true", help="构建业务数据入口②五层分析结构(基于已有db_catalog.json，不重新查库)")
     parser.add_argument("--refresh-business-data", action="store_true", help="实时查库刷新db_catalog+重建入口②五层分析+重建数据血缘图，一条命令覆盖表数量变化(如新增表)")
     parser.add_argument("--build-data-lineage", action="store_true", help="用视图SQL定义/外键约束/命名ETL流水线三类真实证据构建104张表的数据血缘图")
+    parser.add_argument("--build-table-root-cause-analysis", action="store_true", help="调用AI模型基于data_lineage.json真实血缘生成表级根因分析草稿(L3上下游+任务聚类、L4隐藏产出候选)，MODEL_DRAFT标注")
     parser.add_argument("--check-source-updates", action="store_true", help="候选重建并输出L3/面板影响清单，不更新前端")
     parser.add_argument("--apply-source-updates", action="store_true", help="安全发布源头变化后的事实快照与影响报告")
     parser.add_argument("--l3-code", action="append", help="要构建的L3编码；可重复传入")
@@ -127,9 +128,17 @@ def _build_and_write_table_analysis(db_catalog: dict) -> dict:
                 utility_support_info[key] = node.get("utility_support_reason", "")
             elif node["zombie_flag"] == "field_anchored":
                 field_anchor_info[key] = field_anchor_links.get(key, [])
+    # table_root_cause_analysis.json是AI辅助推理产出的L3/L4草稿(MODEL_DRAFT)，
+    # 读盘合并进来；容忍首次运行时该文件还不存在(此时L3/L4全部落BLOCKED兜底)。
+    root_cause_path = AGENT_ROOT / "10_部署与运行_Deploy_and_Run/frontend/public/data/table_root_cause_analysis.json"
+    root_cause_index: dict = {}
+    if root_cause_path.exists():
+        root_cause_data = json.loads(root_cause_path.read_text(encoding="utf-8"))
+        root_cause_index = {item["key"]: item for item in root_cause_data.get("tables", [])}
+
     analysis = build_table_analysis(
         db_catalog, table_to_l4_index, l3_codes,
-        shared_master_data, utility_support_info, field_anchor_info,
+        shared_master_data, utility_support_info, field_anchor_info, root_cause_index,
     )
     output_path = AGENT_ROOT / "10_部署与运行_Deploy_and_Run/frontend/public/data/table_analysis.json"
     output_path.write_text(json.dumps(analysis, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
@@ -362,6 +371,27 @@ def main() -> int:
         db_catalog = json.loads(catalog_path.read_text(encoding="utf-8"))
         result = _build_and_write_data_lineage(db_catalog)
         print(json.dumps({"status": "built", **result}, ensure_ascii=False, indent=2))
+        return 0
+    if args.build_table_root_cause_analysis:
+        from skills.table_root_cause_analysis import (
+            run_table_root_cause_analysis,
+            write_table_root_cause_analysis,
+        )
+
+        catalog_path = AGENT_ROOT / "10_部署与运行_Deploy_and_Run/frontend/public/data/db_catalog.json"
+        lineage_path = AGENT_ROOT / "10_部署与运行_Deploy_and_Run/frontend/public/data/data_lineage.json"
+        db_catalog = json.loads(catalog_path.read_text(encoding="utf-8"))
+        data_lineage = json.loads(lineage_path.read_text(encoding="utf-8"))
+        table_to_l4_index, _ = _load_table_to_l4_index()
+
+        result = run_table_root_cause_analysis(AGENT_ROOT, db_catalog, data_lineage, table_to_l4_index)
+        output_path = AGENT_ROOT / "10_部署与运行_Deploy_and_Run/frontend/public/data/table_root_cause_analysis.json"
+        write_table_root_cause_analysis(result, output_path)
+        print(json.dumps({
+            "status": "published",
+            "table_count": len(result["tables"]),
+            "output": str(output_path),
+        }, ensure_ascii=False, indent=2))
         return 0
     if args.build_db_catalog:
         from skills.db_catalog import build_catalog
