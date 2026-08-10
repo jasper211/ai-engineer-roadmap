@@ -127,8 +127,27 @@ VNW 侧 `business_scenarios/PNL-001.json` + `business_scenario_analysis/PNL-001.
 
 ---
 
-## 7. 遵守边界声明
+## 7. 流程 Owner 汇报的新增依据（2026-08-10 补）
+
+> 结构底座：VNW 三大能力本体的**权威快照**与 PMO 正式汇报包，构成 `流程Owner汇报_P&L场景_PNL-001_v1.0.md` 的直接依据。追加声明如下。
+
+| 新增依据 | 具体文件 | 在流程 Owner 汇报中的用途 |
+|---|---|---|
+| **VNW 流程模型快照**（流程模型能力权威源）| `model_snapshots/L3-COM.json`、`L3-HRA.json`、`L3-HRM.json`、`L3-MED.json`、`L3-STLM.json`（+各 manifest）| §2 我负责：L3 的 `status` / `gate_a_status` / L4 与 `deliverable`（如 L3-COM FULL_MODEL+BLOCKED、L3-HRA/HMR 含人员成本分析、L3-MED PASS、L3-STLM WAITING_INPUT）全部来自快照 |
+| **PMO 正式汇报包** | `03_发布成果-交付物/管理层汇报/[REPORT]_中台财务BP项目共识会汇报包_v1.3.html` | 吸收"我确认/我负责/我需要/我承诺"四象限承诺结构与三道验收门槛（G1/G2/G3）思想；被采纳为流程 Owner 汇报的骨架 |
+| **VNW 场景与数据分析快照**（入口① SSOT）| `business_scenarios/PNL-001.json`、`business_scenario_analysis/PNL-001.json` | §6 数据就绪画像、§7 场景锚点（KPI_04 / task / next_steps / process_optimization）|
+
+**判定要点（延续上文的 SSOT 逻辑）**：
+- 流程 Owner 汇报里**凡 L3 Gate 结论**，以 VNW 快照 `gate_a_status` 为准（COMM/HRA/HRM=BLOCKED、MED=PASS、STLM=WAITING_INPUT），**过门与否仍需人工确证**，非 CONFIRMED；
+- **凡流程 Owner 承诺动作**，对齐执行计划 v1.3 的 12 周 WBS 与 PMO 汇报包门槛，但**以章程 W0 名单为最终任命依据**；
+- 财务口径仍"待口径冻结 / 待财务负责人确认"，流程侧不替代财务结论。
+
+---
+
+## 8. 遵守边界声明
 
 - 本文件为 VNW 延伸任务派生分析，落于 `14_延伸任务_P&L分析/`，**不写回 P&L 专案**、**不改 VNW 权威源**。
-- 只读引用了 P&L 专案的：**启动会转写全文**、《業務維度梳理.xlsx》、《TTL_Direct_Issue_最小颗粒度经营分析.xlsx》、《Baseline说明与工作指引.docx》、《项目章程 v1.0/v1.1》、《执行计划 v1.0/v1.1》。
-- 所有涉及财务口径的判断标注"待财务负责人确认 / 对标 P&L Baseline（待冻结）"；启动会同仁姓名仅作会议线索。
+- 只读引用了 P&L 专案的：**启动会转写全文**、《業務維度梳理.xlsx》、《TTL_Direct_Issue_最小颗粒度经营分析.xlsx》、《Baseline说明与工作指引.docx》、《项目章程 v1.0/v1.1/v1.2》、《执行计划 v1.0-v1.3》、**PMO 汇报包 `[REPORT]...汇报包_v1.3.html`**。
+- 只读引用了 VNW 侧权威快照：`model_snapshots/L3-*.json`（Gate/L4/交付物）、`business_scenarios/PNL-001.json`、`business_scenario_analysis/PNL-001.json`。
+- 所有涉及财务口径的判断标注"待财务负责人确认 / 对标 P&L Baseline（待冻结）"；启动会同仁姓名仅作会议线索，职称任职以章程 W0 名单为准。
+- VNW 派生产出（项目汇报 v1、流程 Owner 汇报 v1.0）不写回 P&L 专案；如需 PMO 采纳，由原负责方在专案内另立发布版本。
