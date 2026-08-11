@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { Link, useSearchParams } from 'react-router'
-import { ArrowRight, Compass, Database, LoaderCircle, Lock, Search, Sparkles, Target } from 'lucide-react'
+import { ArrowRight, Compass, Database, FileText, LoaderCircle, Lock, Search, Sparkles, Target } from 'lucide-react'
 import { loadScenarioIndex, loadScenario, loadScenarioAnalysis, type ScenarioIndex, type BusinessScenario, type ScenarioAnalysis } from '../lib/businessScenarios'
 import { loadTableAnalysis, type TableAnalysis, type TableAnalysisEntry, type TaskClusterLabel } from '../lib/tableAnalysis'
 
@@ -20,6 +20,14 @@ const PRIORITY_TONE: Record<string, string> = {
   P0: 'bg-rose-100 text-rose-800',
   P1: 'bg-amber-100 text-amber-800',
   P2: 'bg-slate-100 text-slate-600',
+}
+
+// 供管理层阅读的场景完整梳理/流程Owner汇报静态页（99_汇报产出/ 同步件，随场景手工登记，非自动发现）
+const SCENARIO_REPORTS: Record<string, { label: string; href: string }[]> = {
+  'PNL-001': [
+    { label: '完整梳理项目汇报', href: '/demos/PNL-001_完整梳理项目汇报.html' },
+    { label: '流程Owner汇报 · master v1.2', href: '/demos/PNL-001_流程Owner汇报_master_v1.2.html' },
+  ],
 }
 
 function AnalysisNote({ children }: { children: ReactNode }) {
@@ -43,8 +51,26 @@ function ScenarioCard({ file }: { file: string }) {
   if (error) return <p className="p-3 text-xs text-accent-danger">{error}</p>
   if (!scenario) return <p className="p-3 text-xs text-text-muted">加载中…</p>
 
+  const reports = SCENARIO_REPORTS[scenario.scenario_id]
+
   return (
     <div className="space-y-4 p-4">
+      {reports && reports.length > 0 && (
+        <div className="flex flex-wrap items-center gap-2 rounded-lg border border-dashed border-indigo-200 bg-indigo-50/40 p-3">
+          <span className="flex items-center gap-1 text-[11px] font-medium text-indigo-700"><FileText className="h-3.5 w-3.5" /> 管理层阅读：</span>
+          {reports.map(report => (
+            <a
+              key={report.href}
+              href={report.href}
+              target="_blank"
+              rel="noreferrer"
+              className="rounded-full border border-indigo-300 bg-white px-2.5 py-1 text-[11px] font-medium text-indigo-700 hover:bg-indigo-100"
+            >
+              {report.label} ↗
+            </a>
+          ))}
+        </div>
+      )}
       <div className="rounded-lg border border-indigo-200 bg-indigo-50/60 p-3">
         <div className="flex items-center justify-between gap-2">
           <p className="text-xs font-semibold text-indigo-800">目标</p>

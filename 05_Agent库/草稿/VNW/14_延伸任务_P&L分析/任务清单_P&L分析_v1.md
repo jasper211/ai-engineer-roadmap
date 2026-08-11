@@ -40,9 +40,9 @@
 | ID | 任务 | 优先级 | 依赖 | 状态 | 证据 / 说明 |
 |---|---|---|---|---|---|
 | P-C-FE-01 | 在 VNW 前端将 PNL-001 场景接入业务数据分析入口①展示（名称、组成项 4、状态 DRAFT、A×2/C×2） | P0 | — | ✅ done | `frontend/public/data/business_scenarios/PNL-001.json` + `index.json` 已就位 |
-| P-C-FE-02 | 制作/同步 P&L 场景完整梳理汇报展示（同 213 汇报口径），供管理层阅读 | P1 | P-C-FE-01 | ⏳ pending | 参考 `99_汇报产出/214_P&L场景分析_项目汇报.html`，在 VNW 内保留 |
-| P-C-FE-03 | 前端「缺口型」组成项（采购/人力 status=C）给出明确"待补数据源 / 待确认"展示，不伪装成可算 | P1 | P-C-FE-01 | ⏳ pending | 遵守「缺口如实标注」原则 |
-| P-C-FE-04 | 前端支持多场景索引（index.json 演进），为后续入口①场景扩充留扩展 | P2 | P-C-FE-01 | ⏳ pending | 当前 index 仅 1 条 |
+| P-C-FE-02 | 制作/同步 P&L 场景完整梳理汇报展示（同 213 汇报口径），供管理层阅读 | P1 | P-C-FE-01 | ✅ done | 2026-08-11：214 报告 + 流程Owner汇报 master v1.2 已同步拷贝到 `frontend/public/demos/`，`BusinessData.tsx` 的 `ScenarioCard` 新增「管理层阅读」链接区（`SCENARIO_REPORTS` 映射），浏览器验证两个链接均可正常打开 |
+| P-C-FE-03 | 前端「缺口型」组成项（采购/人力 status=C）给出明确"待补数据源 / 待确认"展示，不伪装成可算 | P1 | P-C-FE-01 | ✅ done | 2026-08-11 复核：`BusinessData.tsx` `STATE_INFO.C`（虚线玫瑰色徽标「C·应有而无表(数据空白)」）+ `PNL-001.json` 采购成本 `conclusion` 已明文"真实的数据空白，不是匹配遗漏"；人力费用同理走 HRA/HRM Gate BLOCKED 展示。原实现已满足，仅补状态 |
+| P-C-FE-04 | 前端支持多场景索引（index.json 演进），为后续入口①场景扩充留扩展 | P2 | P-C-FE-01 | ✅ done | 2026-08-11 复核：`index.json` schema 本就是 `scenarios: []` 数组，`businessScenarios.ts`/`BusinessData.tsx` 已按数组通用遍历渲染（非硬编码单条），新增第2条场景时无需改代码，只需追加 index 条目 + 场景 json。原实现已满足，仅补状态 |
 
 ### G2 · 数据补齐（本延伸任务跟踪）
 
