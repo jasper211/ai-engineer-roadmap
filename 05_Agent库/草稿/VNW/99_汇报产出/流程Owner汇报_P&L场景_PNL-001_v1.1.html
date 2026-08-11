@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>流程 Owner 汇报 · P&L定期核算 PNL-001 v1.1</title>
+<style>
+:root{
+  --ink:#13233a; --muted:#5d6b7e; --paper:#f5f7fa; --surface:#ffffff;
+  --navy:#0b2d4b; --blue:#1667a8; --cyan:#dff1f7; --teal:#087e73;
+  --amber:#b86a00; --amber-bg:#fff4df; --red:#a23a3a; --red-bg:#fff0ef;
+  --green-bg:#e9f6ef; --line:#dbe2ea;
+  --shadow:0 12px 34px rgba(17,43,70,.09); --radius:18px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Microsoft YaHei","PingFang SC",system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.65;padding:28px 16px 60px}
+.wrap{max-width:1080px;margin:0 auto}
+.masthead{background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;border-radius:var(--radius);padding:30px 34px;margin-bottom:22px;box-shadow:var(--shadow)}
+.masthead h1{font-size:25px;font-weight:700;letter-spacing:.5px}
+.masthead .sub{opacity:.92;margin-top:6px;font-size:14px}
+.masthead .meta{margin-top:14px;font-size:12.5px;opacity:.85;display:flex;flex-wrap:wrap;gap:8px 22px}
+.alert{border-radius:12px;padding:10px 14px;font-size:12.5px;margin-top:16px}
+.alert.navy{background:rgba(255,255,255,.14)}
+.alert.navy .hl{color:#9fd6ff}
+section{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px 26px;margin-bottom:20px}
+h2{font-size:19px;color:var(--navy);border-left:5px solid var(--blue);padding-left:12px;margin-bottom:16px}
+h3{font-size:15px;color:var(--blue);margin:18px 0 10px}
+p,li{font-size:13.5px;color:var(--ink)}
+ul,ol{padding-left:20px;margin:6px 0}
+li{margin:4px 0}
+code{background:#eef3f8;padding:1px 5px;border-radius:5px;font-size:12px;color:var(--blue)}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(2,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:820px){.g2,.g3,.g4{grid-template-columns:1fr}}
+.card{border:1px solid var(--line);border-radius:14px;padding:14px 16px;background:#fcfdff}
+.card .t{font-weight:700;font-size:13.5px;color:var(--navy);margin-bottom:6px}
+.card .d{font-size:12.5px;color:var(--muted);line-height:1.6}
+.pill{display:inline-block;padding:2px 10px;border-radius:20px;font-size:11.5px;font-weight:600;margin-right:6px}
+.p-A{background:var(--green-bg);color:var(--teal)}
+.p-C{background:var(--red-bg);color:var(--red)}
+.p-ok{background:var(--green-bg);color:var(--teal)}
+.p-warn{background:var(--amber-bg);color:var(--amber)}
+.p-bad{background:var(--red-bg);color:var(--red)}
+.p-flag{background:var(--cyan);color:var(--navy)}
+table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:8px}
+th{background:var(--navy);color:#fff;text-align:left;padding:8px 10px;font-weight:600}
+td{padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:nth-child(even) td{background:#f8fafd}
+.foot{font-size:12px;color:var(--muted);background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px 24px}
+.foot ul{padding-left:18px}
+.tag{font-size:11px;color:var(--muted)}
+.note{background:var(--cyan);border-radius:10px;padding:8px 12px;font-size:12.5px;margin-top:8px}
+.dep{border-left:4px solid var(--amber);background:var(--amber-bg);border-radius:8px;padding:10px 14px;margin:10px 0}
+.dep b{color:var(--amber)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="masthead">
+    <h1>流程 Owner 汇报 · P&L 定期核算（PNL-001）</h1>
+    <div class="sub">VNW 三大能力协同推进：流程模型 × 业务数据分析 × 业务场景分析</div>
+    <div class="meta">
+      <span><b>版本</b>：<b style="color:#9fd6ff">v1.1</b>（v1.0 锚定基线）</span>
+      <span><b>对齐</b>：P&L 任务书 / 章程 v1.2 / 执行计划 v1.3 / 启动会</span>
+      <span><b>吸收</b>：PMO 汇报包 v1.6 流程 Owner「我需要」</span>
+    </div>
+    <div class="alert navy">本版 v1.1 增量：<span class="hl">融合 PMO v1.6「流程 Owner」「我需要」四类依赖</span>（① 财务必填字段与枚举 ② 四 Leader 业务发生环节 ③ 产品团队产品字段产生/变更节点 ④ 数据团队实现方式）+ 引入「产品 Owner」协作角色。</div>
+    <div class="alert navy" style="opacity:.9">⚠️ 派生产物不写回 P&L 专案、不改 VNW 权威源；财务口径待冻结；Gate 过门需人工确证。</div>
+  </div>
+
+  <section>
+    <h2>0 · 一页速览</h2>
+    <div class="grid g2">
+      <div class="card"><div class="t">我在推动什么</div><div class="d">让 P&L 四组成项（收入 / 佣金 / 采购 / 费用）在<b>源流程里产生、可检验、可勾稽</b>。</div></div>
+      <div class="card"><div class="t">推进到哪</div><div class="d">L3-COM FULL_MODEL · L3-HRA/HRM FULL_MODEL；<b>4 个关键 L3 Gate A 仍 BLOCKED</b>。</div></div>
+      <div class="card"><div class="t">对外主要依赖</div><div class="d"><b>财务</b>字段枚举 · <b>四 Leader</b>业务环节 · <b>产品团队</b>产品字段节点 · <b>数据团队</b>实现方式。</div></div>
+      <div class="card"><div class="t">我这版承诺</div><div class="d">补齐四类依赖接收闭环；W1 过 L3 网关证据；W3 流程图控制点；W4 数据契约签批。</div></div>
+    </div>
+    <h3>一句话结论</h3>
+    <p>佣金线建模已扎实，人力线已建档但卡 Gate A；<b>数据缺≠流程没建模</b>。我把"流程侧字段与校验"做实，<b>并把四类依赖接收进采集/控制点</b>，12 周内走到可勾稽路径。</p>
+  </section>
+
+  <section>
+    <h2>1 · 我确认（身份与底线）</h2>
+    <ul>
+      <li>不能靠月末人工猜测市场细分 / 业务模型 / 价值流 / 签单公司 —— 必须在<b>源流程生成与校验</b>。</li>
+      <li>计算框架由财务牵头；我负责确认每条流程<b>何时/何处/以何控制点产出字段</b>，不单方面解释业务事实。</li>
+      <li><b>产品/权益字段的产生与变更节点由产品团队（产品 Owner）确认</b>，我在流程中固化采集与审批。</li>
+      <li>三套"真实"（会计/管理/运营）通过桥表关联。<span class="tag">← 章程 P23/P24</span></li>
+      <li>采购、人力的"缺"是数据+流程双重缺口，不把"数据没算出来"当"流程没建模"。</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>2 · 我负责（流程模型侧推进）</h2>
+    <h3>2.1 直接受我管控的 L3</h3>
+    <table>
+      <tr><th>L3</th><th>快照现状</th><th>Gate A</th><th>我对 P&L 承担</th><th>我要推进的动作</th></tr>
+      <tr><td><b>L3-COM</b> 佣金全链路</td><td>FULL_MODEL · 6 L4 VERIFIED</td><td><span class="pill p-warn">BLOCKED</span></td><td>佣金收入 + 拨出成本（主支撑）</td><td>厘清卡点字段，补证据过 Gate A</td></tr>
+      <tr><td><b>L3-HRA</b> 人力分析决策</td><td>FULL_MODEL · 6 L4 VERIFIED（含人员成本分析）</td><td><span class="pill p-warn">BLOCKED</span></td><td>人力费用流程底座</td><td>结构化"人员成本分析"，补证据过门</td></tr>
+      <tr><td><b>L3-HRM</b> 人员生命周期</td><td>FULL_MODEL · 6 L4 VERIFIED</td><td><span class="pill p-warn">BLOCKED</span></td><td>人员/薪酬流程支撑</td><td>聚焦薪酬激励证据，配合过门</td></tr>
+      <tr><td><b>L3-MED</b> 市场进入</td><td>LIMITED_MODEL</td><td><span class="pill p-ok">PASS</span></td><td>收入口径参考（关联弱）</td><td>与财务对平 KPI_04 关联</td></tr>
+    </table>
+    <p style="margin-top:10px"><span class="pill p-bad">委外边界</span><b>L3-STLM（塞尔斯）</b> WAITING_INPUT · model_generation_allowed=False —— <b>升级专案，不入我承诺</b>。</p>
+
+    <h3>2.2 需我评估的新增 L3</h3>
+    <table>
+      <tr><th>新增</th><th>目的</th><th>关键 L4 节点</th></tr>
+      <tr><td><b>采购成本管理</b></td><td>采购核算无流程支撑</td><td>采购申请、审批、入账（fact_purchase_cost）</td></tr>
+      <tr><td><b>月结审核</b></td><td>现无闭环</td><td>汇集、差异识别、异常上报、复核</td></tr>
+      <tr><td><b>跨部门对账</b></td><td>与财务系统对齐</td><td>交换、核对、差异处理</td></tr>
+    </table>
+
+    <h3>2.3 分类治理（WS1 七步法中：采集 + 验证 为我的主场）</h3>
+    <ul>
+      <li><b>采集</b>：现状/目标流程、录入责任、审批、控制点、SLA、责任追溯（步骤4）</li>
+      <li><b>验证</b>：12 细分穿行、总额勾稽、镜像去重、唯一性/完整性（步骤5）</li>
+    </ul>
+
+    <h3>2.4 四个依赖供给方（对齐 PMO v1.6 流程 Owner「我需要」）</h3>
+    <table>
+      <tr><th>协同方</th><th>我承担的对接动作</th><th>落入流程侧的产出</th></tr>
+      <tr><td><b>财务</b></td><td>接收 4类12细分必填字段与枚举，转采集/校验规则</td><td>字段字典、枚举清单</td></tr>
+      <tr><td><b>四 Leader</b>（FEIFEI/MOMO/原媛/MIA）</td><td>接收各细分业务发生环节（签单/结算/服务时点）</td><td>各细分流程时点矩阵</td></tr>
+      <tr><td><b>产品团队｜产品 Owner</b></td><td>接收产品/权益字段产生与变更节点，固化采集与审批</td><td>产品字段变动控制点</td></tr>
+      <tr><td><b>数据 / BI / 系统</b></td><td>接收实现方式（字段结构、受控中间层），先落过渡方案</td><td>受控中间层方案、数据契约输入</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>3 · 我需要（依赖项 —— 对齐 PMO v1.6 四类依赖）</h2>
+    <div class="dep"><b>权威口径</b>：PMO v1.6「流程 Owner · 我需要」= ①财务明确必填字段与枚举 ②四位 Leader 确认业务发生环节 ③产品团队确认产品字段的产生和变更节点 ④数据团队确认实现方式。</div>
+    <table>
+      <tr><th>依赖方</th><th>我需要什么</th><th>为何必须</th><th>截止</th></tr>
+      <tr><td><b>财务</b></td><td>明确必填字段与枚举（4类12细分、应收/实收字段集）</td><td>流程字段无口径无法落校验规则</td><td>W1 前</td></tr>
+      <tr><td><b>四位 Leader</b></td><td>确认各细分业务发生环节（何时产生签单/结算/服务事件）</td><td>采集环节的业务时点</td><td>W1-W2</td></tr>
+      <tr><td><b>产品团队｜产品 Owner</b></td><td>确认产品字段的产生和变更节点（权益/产品字段何时生成/变更）</td><td>固化产品字段采集与审批，不靠月末猜测</td><td>W2-W3</td></tr>
+      <tr><td><b>数据 / BI / 系统</b></td><td>确认实现方式（字段结构、血缘、受控中间层）</td><td>过渡期不静默改源</td><td>W3-W4</td></tr>
+      <tr><td>核算/AP/资金/法务</td><td>2026 至今凭证行与明细、差异解释</td><td>勾稽与异常关闭</td><td>W3（SLA）</td></tr>
+      <tr><td>委外 STLM 协调</td><td>塞尔斯可建模输入</td><td>不在我权限内</td><td>升级专案</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>4 · 我承诺</h2>
+    <h3>4.1 三道验收门槛</h3>
+    <div class="grid g3">
+      <div class="card"><div class="t"><span class="pill p-ok">G1 流程可达</span> W1-W2</div><div class="d">MOMO 试点模型卡签认；分类词典 v0.9；桥表 v0.5；<b>四 Leader 业务发生环节汇总</b>。→ Gate A/M2</div></div>
+      <div class="card"><div class="t"><span class="pill p-ok">G2 字段可控</span> W3-W4</div><div class="d">流程图+控制点；必填字段/枚举（吸收财务+产品字段节点）；<b>与数据团队确认实现方式</b>。→ M3 口径冻结</div></div>
+      <div class="card"><div class="t"><span class="pill p-ok">G3 可勾稽</span> W5-W7</div><div class="d">12 细分 P&L 可复算、与总账/结算桥接；内部交易不重复计量。→ M4/M5</div></div>
+    </div>
+    <h3>4.2 四依赖到齐闭环（把 PMO v1.6「我需要」接回落地）</h3>
+    <table>
+      <tr><th>依赖</th><th>我到齐的判定</th><th>我承接的动作</th><th>验证</th></tr>
+      <tr><td>财务字段枚举</td><td>收到 4类12细分必填字段与枚举 v1</td><td>转采集/校验规则</td><td>字段字典 v1</td></tr>
+      <tr><td>四 Leader 业务环节</td><td>收到 12 细分业务发生环节清单</td><td>落各细分流程时点矩阵</td><td>时点矩阵 v1</td></tr>
+      <tr><td>产品字段节点</td><td>收到产品/权益字段产生与变更节点</td><td>落产品字段控制点</td><td>控制点清单</td></tr>
+      <tr><td>数据实现方式</td><td>收到受控中间层方案</td><td>先落过渡层、不静默改源</td><td>中间层方案 v1</td></tr>
+    </table>
+    <h3>4.3 12 周承诺动作</h3>
+    <table>
+      <tr><th>周</th><th>我承诺交付</th><th>验收证据</th><th>状态</th></tr>
+      <tr><td>W0</td><td>对齐执行计划 v1.3 + PMO v1.6 角色设置（含产品 Owner）</td><td>流程基线声明</td><td><span class="pill p-warn">待唯一化</span></td></tr>
+      <tr><td>W1</td><td>补 L3-COM/MOMO 网关证据；<b>向财务发起字段枚举需求</b></td><td>Gate A、字段字典 v0.9</td><td><span class="pill p-flag">进行中</span></td></tr>
+      <tr><td>W2</td><td>双轨 10 细分盘点；IFA 补全；<b>发起四 Leader 业务环节收集</b></td><td>12 套模型卡 v0.9</td><td><span class="pill p-flag">进行中</span></td></tr>
+      <tr><td>W3</td><td>流程图+控制点；<b>对接产品字段节点</b></td><td>字典/流程图/控制点</td><td><span class="pill p-flag">规划</span></td></tr>
+      <tr><td>W4</td><td>数据契约签批；<b>与数据团队确认实现方式</b></td><td>数据契约 v1</td><td><span class="pill p-flag">规划</span></td></tr>
+      <tr><td>W5</td><td>费用与会计桥接流程证据</td><td>费用事实、桥接报告</td><td><span class="pill p-flag">规划</span></td></tr>
+      <tr><td>W6-W7</td><td>12 细分勾稽流程验证；异常关闭</td><td>勾稽报告、关闭包</td><td><span class="pill p-flag">规划</span></td></tr>
+      <tr><td>W8-W11</td><td>试运行 T+5、动作闭环</td><td>月度经营包、SOP</td><td><span class="pill p-flag">规划</span></td></tr>
+      <tr><td>W12</td><td>验收移交</td><td>上线包、验收书</td><td><span class="pill p-flag">规划</span></td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>5 · 三块 VNW 能力协同</h2>
+    <div class="grid g3">
+      <div class="card"><div class="t">流程模型（主场）</div><div class="d">过 Gate A、评估新增 L3、7步法采集+验证<b>、把四类依赖转采集/控制点</b>。<b>→ §2</b></div></div>
+      <div class="card"><div class="t">业务数据分析（输入/验证）</div><div class="d">佣金线 A / 采购人力 C 硬证据，校验"流程建模≠数据就绪"。<b>→ §6</b></div></div>
+      <div class="card"><div class="t">业务场景分析（锚点）</div><div class="d">KPI_04、next_steps、process_optimization 对齐。<b>→ §7</b></div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>6 · 数据就绪画像</h2>
+    <table>
+      <tr><th>组成项</th><th>状态</th><th>表 / 行数（硬证据）</th><th>我的流程侧责任</th></tr>
+      <tr><td>收入（佣金线）</td><td><span class="pill p-A">A</span></td><td>fact_commission_rate 25,111 · agg_sales_base 6,399 · agg_source_commission_wide 5,734 · agg_market_commission_tier_rate 7,518</td><td>校验字段源流程可产、KPI_04 重核</td></tr>
+      <tr><td>佣金拨出成本</td><td><span class="pill p-A">A</span></td><td>fact_receivable 47,142 · fact_receipt 1,219 · match 1,154 · partner_tier_rules 179</td><td>校验应收/实收差异</td></tr>
+      <tr><td>采购成本</td><td><span class="pill p-C">C</span></td><td>122 表无采购成本表</td><td>评估新增采购 L3</td></tr>
+      <tr><td>运营+人力费用</td><td><span class="pill p-C">C</span></td><td>dim_employee 209（仅档案无薪酬）</td><td>推进 HRA/HRM 过 Gate</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>7 · 场景锚点（PNL-001）</h2>
+    <ul>
+      <li><b>KPI_04 关联 6 个 L3</b>：L3-COM（可靠）/ L3-STLM（委外未过）/ L3-MED（PASS 但存疑）/ CBD·CMU·CVI（不在库）→ 财务重核。</li>
+      <li><b>next_steps</b>：找财务确认口径（依赖）、确认采购/人力核算（配合补流程）、推进 HRA/HRM Gate A（主场）。</li>
+      <li><b>process_optimization</b>：新增采购/月结/对账 L3（我评估）、KPI_04（配合证据）、HRA/HRM 过门（我承诺）。</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>8 · 风险与开放问题（RAID）</h2>
+    <table>
+      <tr><th>类型</th><th>问题</th><th>影响</th><th>我的处置</th></tr>
+      <tr><td>Gate</td><td>3 个关键 L3 Gate A BLOCKED</td><td>流程依据需证据</td><td>W1-W2 过门</td></tr>
+      <tr><td>依赖</td><td>四类依赖口径未到齐</td><td>字段无校验基准</td><td>W1-W4 逐个发起闭环</td></tr>
+      <tr><td>委外</td><td>L3-STLM 无源流程权</td><td>无法由我推动</td><td>升级专案</td></tr>
+      <tr><td>版本</td><td>执行计划未唯一化</td><td>基线错配</td><td>以 v1.3 为准</td></tr>
+      <tr><td>角色</td><td>"产品 Owner"与"业务 Owner"边界需对平</td><td>字段责任重叠</td><td>与 PMO 对平产品字段归属</td></tr>
+      <tr><td>数据</td><td>采购/人力无结构源</td><td>两线无法勾稽</td><td>双轨补齐</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>9 · 结论与下一步</h2>
+    <p><b>结论</b>：佣金线建模扎实、人力线建档但卡 Gate A、采购/费用需双轨补齐。我作为流程 Owner，一方面做实"流程侧字段与校验"，另一方面<b>以 PMO v1.6「我需要」为依据，把四类依赖逐项接收并转入流程采集/控制点</b>，这是走通 P&L 的关键输入。</p>
+    <p><b>下一步（v1.1 现行，v1.0 锚定）</b>：</p>
+    <ol>
+      <li>PMO 唯一化执行计划 v1.3、对平角色（含产品 Owner）、冻结流程基线（W0）；</li>
+      <li>W1 过 L3-COM/MOMO 网关证据，并向财务发起字段枚举需求；</li>
+      <li>W2-W4 按 §4.2 逐个闭环四类依赖（财务枚举→四Leader环节→产品字段节点→数据实现方式/受控中间层）；</li>
+      <li>采购/人力双轨推进（数据+流程）。</li>
+    </ol>
+  </section>
+
+  <div class="foot">
+    <h3 style="margin-top:0;color:var(--navy)">附 · 依据 / 版本 / 边界</h3>
+    <div class="grid g2" style="grid-template-columns:1fr 1fr;gap:14px">
+      <div>
+        <b>输入文件（只读）</b>
+        <ul style="font-size:12px">
+          <li>VNW 流程模型：model_snapshots/L3-COM·HRA·HRM·MED·STLM.json</li>
+          <li>VNW 场景与数据：business_scenarios/PNL-001.json · business_scenario_analysis/PNL-001.json</li>
+          <li>PMO 汇报包：[REPORT]…汇报包 v1.6.html（<b>本版融合其流程 Owner「我需要」</b>）</li>
+          <li>P&L 专案：任务书/章程 v1.2/执行计划 v1.3/Baseline/启动会转写/業務維度梳理</li>
+        </ul>
+      </div>
+      <div>
+        <b>版本记录</b>
+        <ul style="font-size:12px">
+          <li><b>v1.0</b>：固定基线（PMO 承诺结构+三门槛+VNW 三能力+L3 Gate 清单）</li>
+          <li><b>v1.1</b>：融合 PMO v1.6 流程 Owner「我需要」四类依赖 + 引入「产品 Owner」角色</li>
+        </ul>
+        <b>边界</b>
+        <ul style="font-size:12px">
+          <li>VNW 派生产物；不写回 P&L 专案、不改 VNW 权威源</li>
+          <li>财务口径待冻结；L3 Gate 以快照为准、需人工确证</li>
+          <li>四类依赖为"我需要"的接收口径，我负责发起与闭环、不代他人承诺；名单以章程 W0 为准</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
