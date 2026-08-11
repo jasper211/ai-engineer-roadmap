@@ -49,6 +49,72 @@ def split_row(row):
     parts.append(buf.strip())
     return parts
 
+
+# ===== 业务语言化层：流程代码加中文名 + 技术词转业务词 =====
+L3_ZH = {  # 流程科目代码 -> 业务中文名
+    "L3-COM": "佣金全链路",
+    "L3-HRA": "人力分析与成本",
+    "L3-HRM": "人员全生命周期",
+    "L3-MED": "市场进入模式",
+    "L3-STLM": "结算服务执行",
+    "L3-SSVA": "服务结算与对账",
+    "L3-CPM": "运营监控闭环",
+    "L3-BSRV": "经代机构结算",
+    "L3-TRNG": "培训服务",
+    "L3-BRND": "营销服务",
+    "L3-CDS": "客户权益",
+    "L3-RPD": "权益交付",
+    "L3-URD": "权益核销",
+    "L3-JOPD": "联合运营",
+    "L3-FPG": "理财师招募",
+    "L3-FBA": "理财师管理",
+}
+def _expand_slash(t):
+    # L3-A/B/C（斜杠连写，后续不带 L3- 前缀）-> L3-A、L3-B、L3-C
+    def _do(m):
+        head = m.group(1)      # 如 COM
+        rest = m.group(2)      # 如 /HRA/HRM
+        out = ['L3-' + head]
+        for x in rest.split('/'):
+            if x:
+                out.append('L3-' + x)
+        return '、'.join(out)
+    return re.sub(r'L3-([A-Z]{2,4})((?:/[A-Z]{2,4})+)(?![A-Z0-9])', _do, t)
+
+def _name_codes(t):
+    # 每个 L3-XX（后未紧跟全角括号）若在词表则补（中文）
+    def _do(m):
+        code = m.group(0)
+        name = L3_ZH.get(code, '')
+        return code + '（' + name + '）' if name else code
+    return re.sub(r'L3-[A-Z0-9]+(?!（)', _do, t)
+
+TERM = {  # 技术语言 -> 业务交流语言（整词替换）
+    "FULL_MODEL": "已完成流程建模",
+    "LIMITED_MODEL": "部分建模（未完整）",
+    "WAITING_INPUT": "等待接入数据/资料",
+    "1.1 该管 / 该建的 L3 全集（含建议）": "流程科目清单（哪些该管、哪些需新建）",
+    "A-004": "A-004（价值链未接通）",
+    "A-003": "A-003（环节衔接缺失）",
+    "A-001": "A-001（基础信息齐备）",
+    "A-002": "A-002（接口闭环）",
+    "value node": "流程环节衔接",
+    "价值节点-L4 映射": "流程环节与颗粒层级的衔接",
+    "价值节点-L4": "流程环节衔接",
+    "过 Gate A": "通过流程建模验收门",
+    "过 Gate": "通过流程建模验收门",
+    "过门": "通过验收门",
+    "Gate A": "流程建模验收门（Gate A）",
+    "熔断": "价值链断裂",
+    "无价值节点": "无价值的环节",
+}
+def bizify(t):
+    t = _expand_slash(t)
+    t = _name_codes(t)
+    for k, v in TERM.items():
+        t = t.replace(k, v)
+    return t
+
 def md_to_html(txt):
     out = []
     lines = txt.split('\n')
@@ -111,6 +177,7 @@ def md_to_html(txt):
 
 files = [
     (os.path.join(BASE,"流程Owner汇报_主文_master_v1.2.md"), "master"),
+    (os.path.join(BASE,"L3全维度推进工作指引_PNL-001_v1.md"), "l3guide"),
     (os.path.join(BASE,"任务书落地指引_08-10至08-11/指引1_启动与接口对齐_v1.md"), "guide1"),
     (os.path.join(BASE,"任务书落地指引_08-10至08-11/指引2_永明TA流程底稿_v1.md"), "guide2"),
     (os.path.join(BASE,"任务书落地指引_08-10至08-11/指引3_转介流程底稿_v1.md"), "guide3"),
@@ -119,7 +186,8 @@ files = [
 body = []
 for path, aid in files:
     with open(path, encoding='utf-8') as f:
-        h = md_to_html(f.read())
+        src = f.read()
+    h = md_to_html(bizify(src))
     h = re.sub(r'\[指引\d[^\]]*\]\([^)]*\)', '指引全文见下方', h)
     body.append('<section id="%s">\n%s\n</section>' % (aid, h))
 
@@ -133,6 +201,7 @@ page = """<!DOCTYPE html>
 <div class="meta">本周（08/10-08/11）：永明TA / 转介两试点流程底稿 + 三张候选业务模型卡（BM-TRN/BM-MKT/BM-REF）流程侧审核</div></div>
 <div class="toc"><b>目录</b><ul>
 <li><a href="#master">§A 定位（对位执行计划 v1.9）</a></li>
+<li><a href="#l3guide">§B 全维度 L3 总览（完整全文）</a></li>
 <li><a href="#guide1">指引1 启动与接口对齐（08/10 EOD）</a></li>
 <li><a href="#guide2">指引2 永明TA流程底稿（08/11 13:00）</a></li>
 <li><a href="#guide3">指引3 转介流程底稿（08/11 13:00）</a></li>
