@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>L3 全维度逐模块推进指引 · P&L PNL-001</title>
+<style>
+:root{--ink:#13233a;--muted:#5d6b7e;--paper:#f5f7fa;--surface:#fff;--navy:#0b2d4b;--blue:#1667a8;--cyan:#e3f2fb;--teal:#087e73;--amber:#b86a00;--amber-bg:#fff4df;--red:#a23a3a;--red-bg:#fff0ef;--green-bg:#e9f6ef;--line:#dbe2ea;--shadow:0 12px 34px rgba(17,43,70,.09);--radius:18px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Microsoft YaHei","PingFang SC",system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.62;padding:26px 14px 60px}
+.wrap{max-width:1100px;margin:0 auto}
+.masthead{background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;border-radius:var(--radius);padding:26px 32px;margin-bottom:20px;box-shadow:var(--shadow)}
+.masthead h1{font-size:23px;font-weight:700}
+.masthead .sub{opacity:.9;margin-top:6px;font-size:13.5px}
+.masthead .meta{margin-top:12px;font-size:12px;opacity:.85;display:flex;flex-wrap:wrap;gap:6px 18px}
+.alert{border-radius:11px;padding:9px 13px;font-size:12px;margin-top:14px}
+.alert.navy{background:rgba(255,255,255,.15)}
+section{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px 24px;margin-bottom:18px}
+h2{font-size:18px;color:var(--navy);border-left:5px solid var(--blue);padding-left:11px;margin-bottom:14px}
+h3{font-size:14.5px;color:var(--blue);margin:16px 0 9px}
+p,li{font-size:13px}
+ul{padding-left:19px;margin:5px 0}
+li{margin:3px 0}
+table{width:100%;border-collapse:collapse;font-size:12px;margin-top:7px}
+th{background:var(--navy);color:#fff;text-align:left;padding:7px 9px;font-weight:600}
+td{padding:7px 9px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:nth-child(even) td{background:#f8fafd}
+.pill{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600;margin-right:5px}
+.pA{background:var(--teal);color:#fff}
+.pB{background:var(--blue);color:#fff}
+.pC{background:var(--amber);color:#fff}
+.pD{background:var(--muted);color:#fff}
+.pE{background:var(--red);color:#fff}
+.ok{color:var(--teal);font-weight:700}
+.late{color:var(--red);font-weight:700}
+.warn{color:var(--amber);font-weight:700}
+.card{border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px;background:#fcfdff}
+.card h4{color:var(--navy);font-size:13px;margin-bottom:6px}
+.tag{font-size:11px;color:var(--muted)}
+.foot{font-size:12px;color:var(--muted);background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 22px}
+.foot ul{padding-left:17px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="masthead">
+  <h1>L3 全维度逐模块推进指引 · P&L 定期核算（PNL-001）</h1>
+  <div class="sub">流程 Owner 可照着干活：每个 L3 回答「涉及 P&L 什么 / 现状到哪 / 补什么（蓝图 / 新建 / 优化 L4 / 确认交付物）/ 谁何时做什么 / 验收依据」</div>
+  <div class="meta">
+    <span><b>依据</b>：VNW model_snapshots · PNL-001 scenario_analysis · 業務維度梳理</span>
+    <span><b>性质</b>：VNW 派生产物 · 只读引用 · 不改权威源</span>
+    <span><b>日期</b>：2026-08-10</span>
+  </div>
+  <div class="alert navy">⚠️ 财务口径待冻结；Gate 过门需人工确证；「业务主体↔L3」为分析推断，落库前与 PMO/L3 Owner 对平。</div>
+</div>
+
+<section>
+<h2>0 · 一句话总纲</h2>
+<p>P&L 涉及的 L3 分 <b>五类动作</b>，别混为一谈：</p>
+<table>
+<tr><th>类型</th><th>涉及 L3</th><th>判定动作</th></tr>
+<tr><td><span class="pill pA">A 交付齐·卡门禁</span></td><td>L3-COM / L3-HRA / L3-HRM</td><td><b>优化 L4/价值节点映射</b>，消除 Gate A「A-004 熔断/无价值节点」</td></tr>
+<tr><td><span class="pill pB">B 有库·节点缺失</span></td><td>L3-SSVA</td><td><b>补蓝图细节</b>（价值节点-L4 映射=0，先建映射）</td></tr>
+<tr><td><span class="pill pC">C 无库·需新建</span></td><td>采购 L3 / 月结 L3 / 对账 L3</td><td><b>新建 L3</b>（含 L4 节点定义）</td></tr>
+<tr><td><span class="pill pD">D 部分支撑</span></td><td>L3-MED / L3-CPM / L3-BSRV</td><td><b>确认交付物与关联必要性</b>后定留用</td></tr>
+<tr><td><span class="pill pE">E 委外/失效</span></td><td>L3-STLM；L3-CBD/CMU/CVI</td><td><b>升级专案</b>（委外）/ <b>剔除修正</b>（失效引用）</td></tr>
+</table>
+<div class="alert" style="background:var(--amber-bg);color:var(--amber)"><b>核心指令</b>：交付物覆盖已满 ≠ 可过门。<b>Gate A（A-001~A-004）才是门</b>，缺哪条补哪条。</div>
+</section>
+
+<section>
+<h2>1 · P&L 涉及 L3 全集与三维度状态</h2>
+<table>
+<tr><th>L3</th><th>status</th><th>Gate A</th><th>交付覆盖</th><th>价值节点-L4</th><th>判定动作</th></tr>
+<tr><td><b>L3-COM</b> 佣金全链路</td><td>FULL_MODEL</td><td class="late">BLOCKED（仅A-004）</td><td class="ok">18/18</td><td>11 ✅</td><td><span class="pill pA">A 优化节点映射</span></td></tr>
+<tr><td><b>L3-HRA</b> 人力分析</td><td>FULL_MODEL</td><td class="late">BLOCKED（仅A-004）</td><td class="ok">7/7</td><td>7 ✅</td><td><span class="pill pA">A 优化节点映射</span></td></tr>
+<tr><td><b>L3-HRM</b> 人员生命周期</td><td>FULL_MODEL</td><td class="late">BLOCKED（仅A-004）</td><td class="ok">9/9</td><td>11 ✅</td><td><span class="pill pA">A 优化节点映射</span></td></tr>
+<tr><td><b>L3-MED</b> 市场进入</td><td>LIMITED</td><td class="ok">PASS</td><td class="ok">5/5</td><td>关联弱</td><td><span class="pill pD">D 确认必要性</span></td></tr>
+<tr><td><b>L3-STLM</b> 塞尔斯结算</td><td>WAITING_INPUT</td><td class="late">BLOCKED</td><td class="ok">3/3</td><td>—（委外）</td><td><span class="pill pE">E 升级专案</span></td></tr>
+<tr><td><b>L3-SSVA</b> 服务结算与价值核算</td><td>LIMITED</td><td class="late">BLOCKED (A-003=0+A-004)</td><td class="ok">4/4</td><td class="late">0（缺）</td><td><span class="pill pB">B 补蓝图·建节点</span></td></tr>
+<tr><td><b>L3-CPM</b> 流程监控</td><td>LIMITED</td><td class="ok">PASS</td><td class="ok">5/5</td><td>—</td><td><span class="pill pD">D 仅作组件</span></td></tr>
+<tr><td><b>L3-BSRV</b> 经代结算</td><td>LIMITED</td><td class="ok">PASS</td><td class="ok">2/2</td><td>—</td><td><span class="pill pD">D 仅作组件</span></td></tr>
+<tr><td><b>采购 / 月结 / 对账</b>（建议）</td><td>不存在</td><td>—</td><td>—</td><td>—</td><td><span class="pill pC">C 新建 L3</span></td></tr>
+</table>
+</section>
+
+<section>
+<h2>2 · 4类×12细分 ↔ 关联 L3 矩阵</h2>
+<table>
+<tr><th>分类</th><th>细分</th><th>Leader</th><th>主导收入/成本</th><th>关联 L3 旅程</th><th>补什么</th></tr>
+<tr><td>01 MGA（4）</td><td>同行经代 / 永明经代</td><td>FEIFEI</td><td>佣金收入 / 佣金+牌照</td><td>COM、BSRV、SSVA</td><td>COM 优化节点；BSRV/SSVA 确认或补图</td></tr>
+<tr><td>01 MGA（4）</td><td>永明 TA</td><td>MOMO</td><td>培训/营销服务收入、RW活动费</td><td>COM、TRNG、MED</td><td>COM 优化；MED 确认</td></tr>
+<tr><td>01 MGA（4）</td><td>联合运营</td><td>FEIFEI</td><td>专业服务收入 / 中台成本</td><td>COM、JOPD、SSVA</td><td><b>补 SSVA 价值节点</b>（本期重点）</td></tr>
+<tr><td>02 代理人（3）</td><td>天领</td><td>AMANDA</td><td>EAM佣金 / 佣金+权益</td><td>COM、CDS/RPD、STLM</td><td>COM 优化；权益确认；STLM 升级</td></tr>
+<tr><td>02 代理人（3）</td><td>成事家办</td><td>AMANDA</td><td>佣金收入 / 佣金费用</td><td>COM</td><td>COM 优化节点</td></tr>
+<tr><td>02 代理人（3）</td><td>永领致远 NGP</td><td>MIA</td><td>佣金 / 顾问费</td><td>COM、STLM</td><td>COM 优化；跨主体口径财务确认</td></tr>
+<tr><td>03 金融机构（2）</td><td>银行合作 BK / 资管公司</td><td>FEIFEI</td><td>佣金 / 佣金+RW权益费</td><td>COM、MED</td><td>COM 优化；MED 确认</td></tr>
+<tr><td>04 独立合作（3）</td><td>权益供应商</td><td>AMANDA</td><td>服务收入 / 活动·场地·人力</td><td>CDS/RPD/URD、权益交付线、SSVA</td><td>新建采购/费用支撑；补 SSVA 节点</td></tr>
+<tr><td>04 独立合作（3）</td><td>转介</td><td>AMANDA</td><td>佣金 / 转介费</td><td>COM、BSRV</td><td>COM 优化；BSRV 确认</td></tr>
+<tr><td>04 独立合作（3）</td><td>IFA 业务</td><td>待定</td><td>IFA 收入/费用</td><td>COM、理财师线(FPG/FBA)</td><td>IFA 维度补全（WS1）</td></tr>
+</table>
+<div class="alert" style="background:var(--cyan)"><b>试点建议</b>：优先挑「COM 已满但仅差节点映射 + 有现成数据」的细分（MOMO 试点：永明 TA / 转介）。先打通 L3-COM 的 A-004，比从零建采购 L3 更快见效。</div>
+</section>
+
+<section>
+<h2>3 · 逐 L3 执行卡</h2>
+
+<div class="card"><h4><span class="pill pA">A 最高优先级</span>3.1 L3-COM 佣金全链路</h4>
+<p><b>范围</b>：佣金收入 + 拨出成本（全主体主支撑）｜<b>现状</b>：FULL_MODEL，A-001/002/003 全 ✅、<b class="late">仅 A-004 熔断/无价值节点 ❌</b>，交付 18/18</p>
+<p><b>判定</b>：优化 L4/价值节点映射（非补交付物、非新建）</p>
+<p><b>动作</b>：拉价值节点链定位熔断/无价值节点 → 接下游或标补 → 与财务确认应收/实收口径</p>
+<p><b>验收</b>：A-004 → ✅，Gate A BLOCKED→PASS｜<b>依赖</b>：财务口径（W1前）</p>
+</div>
+
+<div class="card"><h4><span class="pill pA">A</span>3.2 L3-HRA 人力分析</h4>
+<p><b>现状</b>：FULL_MODEL，仅 A-004 ❌，交付 7/7（含 L4-03 人员成本分析）</p>
+<p><b>判定/动作</b>：优化节点映射；把「各类分析报告」结构化为可校验人力成本字段（配 `fact_employee_compensation`）</p>
+<p><b>验收</b>：Gate A→PASS；人力成本可结构化产出</p></div>
+
+<div class="card"><h4><span class="pill pA">A</span>3.3 L3-HRM 人员生命周期</h4>
+<p><b>现状</b>：FULL_MODEL，仅 A-004 ❌，交付 9/9</p>
+<p><b>判定/动作</b>：优化节点映射（聚焦薪酬激励与发放 L4），与 HRA 一并过门</p></div>
+
+<div class="card"><h4><span class="pill pB">B 第二优先级</span>3.4 L3-SSVA 服务结算与价值核算</h4>
+<p><b>现状</b>：LIMITED，<b class="late">A-003 价值节点-L4=0 ❌</b> + A-004 ❌，交付 4/4</p>
+<p><b>判定</b>：补蓝图细节——先建价值节点-L4 映射（数据交换/核对/差异处理）</p>
+<p><b>验收</b>：A-003 从 0→全节点映射，Gate A→PASS｜<b>配</b> `reconciliation_data`</p></div>
+
+<div class="card"><h4><span class="pill pD">D 先确认</span>3.5 L3-MED 市场进入</h4>
+<p><b>现状</b>：LIMITED，Gate A PASS，但关联弱</p>
+<p><b>判定</b>：先确认交付物与关联必要性（KPI_04 是否仍需关联 MED）→ 别一上来推</p></div>
+
+<div class="card"><h4><span class="pill pD">D 仅组件</span>3.6 L3-CPM / L3-BSRV</h4>
+<p>PASS / LIMITED。<b>仅确认</b>为月结异常检测（CPM）、经代结算/对账（BSRV）能力，需要时复用 L4，不单独推 Gate。</p></div>
+
+<div class="card"><h4><span class="pill pE">E 清理</span>3.7 L3-STLM 与失效引用</h4>
+<p><b>STLM</b>：WAITING_INPUT、委外 → 升级专案协调。<b>CBD/CMU/CVI</b>：不在库 → 从 KPI_04 引用剔除（T1）。</p></div>
+
+<div class="card"><h4><span class="pill pC">C 新建</span>3.8 采购 / 月结 / 对账 L3</h4>
+<table style="margin-top:4px">
+<tr><th>新建</th><th>目的</th><th>L4 节点</th><th>数据表（优先级）</th></tr>
+<tr><td>采购成本</td><td>采购核算无流程</td><td>申请/审批/入账</td><td>fact_purchase_cost（P0）</td></tr>
+<tr><td>月结审核</td><td>核算无闭环</td><td>汇集/差异/异常/复核</td><td>差异自动检测（P1）</td></tr>
+<tr><td>跨部门对账</td><td>与财务对齐</td><td>交换/核对/差异</td><td>reconciliation_data（P2）</td></tr>
+</table>
+<p class="tag">⚠️ 新建 L3 第一次过 Gate A 就要建全节点映射，避免重蹈 SSVA 的坑。</p></div>
+</section>
+
+<section>
+<h2>4 · 依赖与推进顺序</h2>
+<table>
+<tr><th>顺序</th><th>任务</th><th>类型</th><th>对应动作</th><th>优先级</th></tr>
+<tr><td>T1</td><td>确认收入口径、更新 KPI_04（移除 CBD/CMU/CVI、评 MED）</td><td>依赖财务</td><td>MED 确认 + COM 条件</td><td>P0</td></tr>
+<tr><td>T2</td><td>建 fact_employee_compensation</td><td>数据</td><td>HRA/HRM 过门底座</td><td>P0</td></tr>
+<tr><td>T3</td><td>建 fact_purchase_cost</td><td>数据</td><td>新建采购 L3 底座</td><td>P0</td></tr>
+<tr><td><b>T1.5</b></td><td><b>判定并优化 COM/HRA/HRM 的 A-004 熔断</b></td><td><b>流程</b></td><td><b>A 优化节点映射</b></td><td><b>P0 最快见效</b></td></tr>
+<tr><td>T4</td><td>建 fact_operating_expense</td><td>数据</td><td>运营费用</td><td>P1</td></tr>
+<tr><td>T5</td><td>改造佣金收入核算模型</td><td>数据</td><td>COM 对齐</td><td>P1</td></tr>
+<tr><td>T6</td><td>月结审核流程</td><td>流程+数据</td><td>新建月结 L3</td><td>P1</td></tr>
+<tr><td>T7</td><td>跨部门对账</td><td>流程+数据</td><td>新建对账 L3</td><td>P2</td></tr>
+</table>
+<h3>流程 Owner 三条主攻线</h3>
+<ol>
+<li><b>打通 L3-COM 的 A-004</b>（解除熔断 → Gate A PASS）—— 见效最直接；</li>
+<li><b>补 L3-SSVA 的价值节点-L4 映射</b>（供联合运营/权益供应商结算对账）；</li>
+<li><b>向财务发起 T1</b>（收入口径 + KPI_04 清理），拿 COM 过门和 MED 决策前提。</li>
+</ol>
+</section>
+
+<div class="foot">
+<b>依据（只读引用）</b>
+<ul>
+<li>VNW：model_snapshots/L3-COM·HRA·HRM·MED·STLM·SSVA·CPM·BSRV.json（status / gate A checks / 交付覆盖 / 价值节点）</li>
+<li>VNW：business_scenario_analysis/PNL-001.json（process_status / process_optimization / data_governance / task_list）</li>
+<li>P&L 专案：業務維度梳理.xlsx（4×12 / Leader / 公司 / 收入·成本 / 流水映射）、启动会转写、章程 v1.2</li>
+</ul>
+<b>边界</b>
+<ul>
+<li>VNW 派生产物，不写回 P&L 专案、不改 VNW 权威源；「业务主体↔L3」为分析推断，落库前与 Leader/L3 Owner 对平</li>
+<li>Gate A 过门需人工确证；财务口径待冻结；Leader 以章程 W0 名单为准</li>
+</ul>
+</div>
+
+</div>
+</body>
+</html>
