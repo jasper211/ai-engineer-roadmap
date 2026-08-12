@@ -32,6 +32,11 @@ export interface ModelIndexItem {
   snapshot_file: string
   has_demo: boolean
   demo_file: string
+  has_card: boolean
+  card_version: string | null
+  card_completeness: 'complete' | 'partial' | null
+  card_gaps_count: number | null
+  card_updated_at: string | null
   value_streams: {
     vs_code: string
     vs_name: string
@@ -191,6 +196,11 @@ export interface L3Model {
   analysis_freshness?: 'CURRENT' | 'INPUT_CHANGED' | 'PENDING_MODEL' | 'UNVERSIONED_REVIEWED_BASELINE'
   has_demo: boolean
   demo_file: string
+  has_card: boolean
+  card_version: string | null
+  card_completeness: 'complete' | 'partial' | null
+  card_gaps_count: number | null
+  card_updated_at: string | null
   source_policy: Record<string, unknown>
   source_locations?: Record<string, {
     rows?: number[]

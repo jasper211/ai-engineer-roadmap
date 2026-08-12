@@ -682,6 +682,9 @@ export default function L3ModelDetail({ modelCode }: { modelCode?: string } = {}
           <div className="flex gap-2">
             {(['M', 'E', 'A'] as const).map(gate => <span key={gate} className={`rounded-lg border px-3 py-2 font-mono text-xs ${gateTone(model.gates[gate].status)}`}>Gate {gate} · {model.gates[gate].status}</span>)}
           </div>
+          <span className={`rounded-full border px-3 py-1 text-xs font-medium ${model.has_card ? (model.card_completeness === 'complete' ? 'border-teal-400/25 bg-teal-400/10 text-teal-700' : 'border-orange-400/25 bg-orange-400/10 text-orange-700') : 'border-slate-300 bg-slate-100 text-slate-600'}`}>
+            {model.has_card ? `流程卡片 ${model.card_version} · ${model.card_completeness === 'complete' ? '完整' : `部分缺失（${model.card_gaps_count ?? '?'}处）`} · ${model.card_updated_at ?? ''}` : '流程卡片：未建'}
+          </span>
           <div className="flex gap-2">
             <button
               onClick={() => downloadL3FlowReportMarkdown(model)}

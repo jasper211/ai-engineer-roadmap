@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router'
-import { AlertTriangle, ArrowRight, CheckCircle2, ChevronDown, ChevronUp, Database, GitBranch, LoaderCircle, Search, Star } from 'lucide-react'
+import { AlertTriangle, ArrowRight, CheckCircle2, ChevronDown, ChevronUp, Database, FileText, GitBranch, LoaderCircle, Search, Star } from 'lucide-react'
 import { loadDeliverableAudit, loadModelIndex, loadPendingSourceUpdate, type DeliverableAudit, type ModelIndex, type ModelIndexItem, type SourceUpdateReport } from '../lib/l3Models'
 
 const scopeLabels: Record<string, string> = {
@@ -74,6 +74,12 @@ function ModelCard({ model, quality }: { model: ModelIndexItem; quality?: { mixe
           {model.has_demo && (
             <span className="flex items-center gap-1 rounded-full bg-violet-400/10 px-2.5 py-1 text-[11px] font-medium text-violet-700">
               <Star className="h-3 w-3" /> 完整 Demo
+            </span>
+          )}
+          {model.has_card && (
+            <span className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-medium ${model.card_completeness === 'complete' ? 'bg-teal-400/10 text-teal-700' : 'bg-orange-400/10 text-orange-700'}`}>
+              <FileText className="h-3 w-3" />
+              流程卡片 {model.card_version}{model.card_completeness === 'partial' ? `（部分缺失 ${model.card_gaps_count ?? ''}）` : '（完整）'}
             </span>
           )}
           <span className={`rounded-full px-2.5 py-1 text-[11px] font-medium ${full ? 'bg-emerald-400/10 text-emerald-700' : limited ? 'bg-sky-400/10 text-sky-700' : 'bg-amber-400/10 text-amber-700'}`}>
