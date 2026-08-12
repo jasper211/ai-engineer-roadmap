@@ -203,7 +203,10 @@ def cmd_daily_scan(project_root: str = None, force: bool = False, notify: bool =
     }
     ws.save_state(workspace, state)
 
-    if notify and (briefing.suggested_tasks or briefing.resolved_tasks):
+    # 通知的是“项目发生了什么”，不是只有模型派生出任务才通知。P&L 等以
+    # 权威任务书为 SSOT、刻意不做二次任务分析的项目，也必须在文件变化时推送。
+    has_file_changes = (briefing.files_added + briefing.files_changed + briefing.files_removed) > 0
+    if notify and (has_file_changes or briefing.suggested_tasks or briefing.resolved_tasks):
         config = load_wecom_config()
         if not config:
             print("\nℹ️ 未找到 wecom_config.json，跳过企业微信通知"
