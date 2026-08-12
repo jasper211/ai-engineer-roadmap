@@ -227,8 +227,8 @@ def personal_work() -> dict:
     这条额外判断逻辑不变。"""
     buckets = aggregate_tasks("all")
     tasks = buckets["new"] + buckets["aging"]
-    direct_actions, ea_applications, pending_evaluation = [], [], []
-    excluded = {"EA": 0, "Jasper": 0, "Rw": 0, "other": 0}
+    direct_actions, pnl_actions, ea_applications, pending_evaluation = [], [], [], []
+    excluded = {"EA": 0, "P&L": 0, "Jasper": 0, "Rw": 0, "other": 0}
 
     for task in tasks:
         project = task.get("project_name", "")
@@ -237,7 +237,17 @@ def personal_work() -> dict:
         ea_hits = [term for term in EA_APPLICATION_TERMS if term in text]
         enriched = dict(task)
 
-        if "EA" in project or "Rw" in project:
+        if "P&L_EA" in project:
+            if action_hits:
+                enriched["personal_bucket"] = "pnl_action"
+                enriched["personal_reason"] = (
+                    "命中 P&L EA小组个人职责：" + "、".join(action_hits[:3])
+                    + "；需要判断其对经营分析流程、SOP、人机规则或 Agent 化的影响。"
+                )
+                pnl_actions.append(enriched)
+            else:
+                excluded["P&L"] += 1
+        elif "EA" in project or "Rw" in project:
             excluded_key = "EA" if "EA" in project else "Rw"
             if action_hits:
                 enriched["personal_bucket"] = "direct_action"
@@ -271,10 +281,12 @@ def personal_work() -> dict:
     return {
         "scope": {
             "ea": "人机协同流程与 SOP、信号与人机规则、端到端任务 Agent 化",
+            "pnl": "与 EA 使用同一职责标准，聚焦经营分析流程/SOP、人机规则与任务 Agent 化",
             "jasper": "只有能够应用到 EA 人机协同设计的变化进入行动区",
             "rw": "人机协同流程与 SOP、信号与人机规则、端到端任务 Agent 化——与 EA 使用同一套判断标准",
         },
         "direct_actions": direct_actions,
+        "pnl_actions": pnl_actions,
         "ea_applications": ea_applications,
         "pending_evaluation": pending_evaluation,
         "excluded_counts": excluded,
@@ -510,6 +522,10 @@ PROJECT_ROLES = {
         "role": "case", "label": "真实项目全貌案例",
         "question": "真实项目发生了什么，哪些事实可以验证或修正 EA/Jasper 的方法？",
     },
+    "P&L_EA小组Jasper": {
+        "role": "finance", "label": "EA小组经营分析项目",
+        "question": "P&L项目发生了什么，哪些流程、SOP、人机规则或Agent化事项需要 Jasper 推进？",
+    },
 }
 
 
@@ -573,7 +589,7 @@ def command_center(days: int = 1) -> dict:
     # 与“与我相关”页面共用同一判断结果：只有 EA 直接行动和已确认可应用到
     # EA 的 Jasper 事项，其来源文件才标为重要；待评估不提前升级为重要。
     personal = personal_work()
-    important_tasks = personal["direct_actions"] + personal["ea_applications"]
+    important_tasks = personal["direct_actions"] + personal["pnl_actions"] + personal["ea_applications"]
     importance_by_project = {}
     for task in important_tasks:
         project_map = importance_by_project.setdefault(task.get("project_name", ""), {})
@@ -608,7 +624,7 @@ def command_center(days: int = 1) -> dict:
             "total_changes": entry.get("files_added", 0) + entry.get("files_changed", 0)
                              + entry.get("files_removed", 0),
         })
-    role_order = {"core": 0, "lab": 1, "case": 2, "other": 3}
+    role_order = {"core": 0, "finance": 1, "lab": 2, "case": 3, "other": 4}
     project_entries.sort(key=lambda p: role_order.get(p["role"], 9))
     relations = _build_cross_project_relations(project_entries)
     stored_path = ws.WORKSPACE_ROOT / "_PTA指挥中心" / "cross_project_latest.json"

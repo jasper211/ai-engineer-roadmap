@@ -26,6 +26,21 @@
         "项目工作区"
       ],
       "exclude_note": "OB知识库_vault 由 OB 自己的巡检机制单独管，且当前有独立批量提炼任务在跑，churn极大不适合混进daily_sensing；项目：EG/刘敏然 是无关客户/个人项目，不属于 Jasper 规则文档范畴；eg-frontend 是指向项目：EG内部路径的symlink，同一份内容排除避免重复；项目工作区是PTA/OB等Agent自己的运行时状态/报告输出目录（真实复现过：daily-scan自己写的报告文件被当成'项目变化'反过来分析，属于自我递归噪音，PTA_OWN_ARTIFACTS只排除了pta_tasks.json这一个文件，没覆盖整个工作区目录）"
+    },
+    {
+      "name": "P&L_EA小组Jasper",
+      "project_root": "/Users/a112233/Desktop/P&L_EA小组Jasper",
+      "system_prompt": "daily_sensing_system_ea.md",
+      "system_prompt_note": "与EA流程架构项目使用同一分析标准：识别流程/SOP、人机规则、任务Agent化、责任人信号与裁定归口。",
+      "exclude_dirs": [
+        ".codex_work",
+        ".obsidian",
+        ".claude",
+        ".stfolder",
+        ".tmp",
+        "_archive"
+      ],
+      "exclude_note": "排除AI执行缓存、编辑器配置、同步工具状态、临时文件和历史归档，避免把工具运行产物当作项目业务更新。"
     }
   ]
 }

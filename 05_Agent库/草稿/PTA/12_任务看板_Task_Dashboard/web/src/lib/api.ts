@@ -26,7 +26,7 @@ export interface Task {
   first_suggested?: string
   last_suggested?: string
   execution?: TaskExecution | null
-  personal_bucket?: 'direct_action' | 'ea_application' | 'pending_evaluation'
+  personal_bucket?: 'direct_action' | 'pnl_action' | 'ea_application' | 'pending_evaluation'
   personal_reason?: string
   // 2026-08起：daily_sensing的LLM在发现任务的同一次调用里，基于这条任务
   // 自己的证据生成的针对性分析——跟personal_bucket套模板的旧写法不同。
@@ -60,11 +60,12 @@ export interface TaskBuckets {
 }
 
 export interface PersonalWorkResponse {
-  scope: { ea: string; jasper: string; rw: string }
+  scope: { ea: string; pnl: string; jasper: string; rw: string }
   direct_actions: Task[]
+  pnl_actions: Task[]
   ea_applications: Task[]
   pending_evaluation: Task[]
-  excluded_counts: { EA: number; Jasper: number; Rw: number; other: number }
+  excluded_counts: { EA: number; 'P&L': number; Jasper: number; Rw: number; other: number }
 }
 
 export interface ProjectInfo {
