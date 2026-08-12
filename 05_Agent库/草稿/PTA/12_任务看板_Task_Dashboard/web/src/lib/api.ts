@@ -63,9 +63,20 @@ export interface PersonalWorkResponse {
   scope: { ea: string; pnl: string; jasper: string; rw: string }
   direct_actions: Task[]
   pnl_actions: Task[]
+  pnl_taskbooks: PinnedFile[]
   ea_applications: Task[]
   pending_evaluation: Task[]
   excluded_counts: { EA: number; 'P&L': number; Jasper: number; Rw: number; other: number }
+}
+
+export interface PinnedFile {
+  project_name: string
+  file: string
+  name: string
+  modified_at: string
+  size_bytes: number
+  source_type: 'authoritative_taskbook'
+  reason: string
 }
 
 export interface ProjectInfo {
@@ -151,6 +162,7 @@ export interface CommandProject extends ActivityFeedEntry {
   question: string
   total_changes: number
   related_tasks: Task[]
+  pinned_files: PinnedFile[]
 }
 
 export interface CrossProjectRelation {

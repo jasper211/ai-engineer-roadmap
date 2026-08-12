@@ -3,7 +3,7 @@ import {
   AlertTriangle, ArrowRight, ArrowUpRight, Bot, CircleDot,
   FileText, FlaskConical, Route, ShieldCheck, Sparkles,
 } from 'lucide-react'
-import { fetchPersonalWork, type PersonalWorkResponse, type Task } from '../lib/api'
+import { fetchFileContent, fetchPersonalWork, type FileContentResponse, type PersonalWorkResponse, type PinnedFile, type Task } from '../lib/api'
 import { PriorityBadge } from '../components/StatusBadge'
 import { TaskDecisionDrawer } from '../components/TaskDecisionDrawer'
 
@@ -69,6 +69,16 @@ function WorkSection({ icon: Icon, eyebrow, title, description, items, empty, to
   )
 }
 
+function TaskbookSection({ items }: { items: PinnedFile[] }) {
+  const [selected, setSelected] = useState<PinnedFile | null>(null)
+  const [content, setContent] = useState<FileContentResponse | null>(null)
+  async function open(item: PinnedFile) {
+    setSelected(item); setContent(null)
+    try { setContent(await fetchFileContent(item.project_name, item.file)) } catch { setContent(null) }
+  }
+  return <section className="overflow-hidden rounded-2xl border-2 border-amber-400 bg-amber-50"><header className="border-b border-amber-300 px-5 py-4"><div className="text-[10px] font-semibold tracking-[.14em] text-amber-700">P&L · AUTHORITATIVE TASK SOURCE</div><h2 className="mt-1 font-heading text-base font-semibold text-amber-950">我的 P&L 任务书</h2><p className="mt-1 text-xs leading-5 text-amber-900">任务已经在文件中明确，本区域直接展示任务书，不再根据变化生成另一套建议任务。</p></header><div className="p-4">{items.length ? items.map(item => <button key={item.file} onClick={() => open(item)} className="w-full rounded-xl border border-amber-300 bg-white p-4 text-left"><div className="flex items-center gap-2 text-xs font-semibold text-amber-950"><FileText size={14}/>{item.name}</div><p className="mt-2 break-all font-mono text-[10px] text-amber-700">{item.file}</p></button>) : <p className="text-xs text-amber-800">尚未识别到文件名包含 Jasper 的有效个人任务书。</p>}{selected && <div className="mt-3 rounded-xl border border-amber-300 bg-white p-4"><div className="mb-3 text-xs font-semibold">{selected.name} · 正文</div>{content ? <pre className="max-h-[32rem] overflow-auto whitespace-pre-wrap font-mono text-xs leading-6 text-text-secondary">{content.content}</pre> : <p className="text-xs text-text-muted">正在读取 Word 正文…</p>}</div>}</div></section>
+}
+
 export function ActivityFeed() {
   const [data, setData] = useState<PersonalWorkResponse | null>(null)
   const [selected, setSelected] = useState<Task | null>(null)
@@ -85,7 +95,7 @@ export function ActivityFeed() {
   if (error) return <div className="p-8 text-accent-danger">个人工作视图加载失败：{error}</div>
   if (!data) return <div className="p-8 text-text-muted">正在依据你的工作边界筛选文件变化…</div>
 
-  const actionCount = data.direct_actions.length + data.pnl_actions.length + data.ea_applications.length
+  const actionCount = data.direct_actions.length + data.ea_applications.length
   const informedCount = data.excluded_counts.EA + data.excluded_counts['P&L'] + data.excluded_counts.Jasper + data.excluded_counts.Rw
   return (
     <main className="mx-auto max-w-[1280px] space-y-6 px-5 py-7 lg:px-8">
@@ -93,7 +103,7 @@ export function ActivityFeed() {
         <div>
           <div className="eyebrow"><Sparkles size={12}/>PERSONAL WORK SCOPE</div>
           <h1 className="mt-2 font-heading text-2xl font-semibold tracking-tight lg:text-3xl">与我相关</h1>
-          <p className="mt-2 max-w-3xl text-sm leading-6 text-text-secondary">不是项目任务的简单汇总，而是按你的职责，把 EA、P&L、RW 与 Jasper 的文件事实转换成需要行动、需要应用和需要评估的事项。</p>
+          <p className="mt-2 max-w-3xl text-sm leading-6 text-text-secondary">EA、RW 与 Jasper 按职责判断；P&L 直接以你的个人任务书为任务来源，不做二次任务分析。</p>
         </div>
         <div className="ml-auto flex gap-3">
           <div className="rounded-xl border border-accent-primary/25 bg-accent-primary/5 px-4 py-3"><div className="text-2xl font-semibold">{actionCount}</div><div className="text-[10px] text-text-muted">当前行动事项</div></div>
@@ -114,16 +124,14 @@ export function ActivityFeed() {
       <div className="grid gap-3 rounded-xl border border-border-default bg-bg-elevated p-4 text-xs text-text-secondary md:grid-cols-[auto_1fr_auto_1fr_1.2fr]">
         <span className="font-semibold text-text-primary">判断链路</span>
         <span>文件变化</span><ArrowRight size={13} className="hidden text-text-muted md:block"/>
-        <span>是否影响人机协同（EA / P&L / RW 同一标准）</span>
+        <span>EA/RW/Jasper 做职责判断；P&L 读取任务书</span>
         <span className="text-accent-secondary">行动 / 评估 / 仅知悉</span>
       </div>
 
       <WorkSection icon={Route} eyebrow="EA / RW · DIRECT ACTION" title="核心业务直接行动"
         description="只保留明确影响人机协同流程与 SOP、信号与规则、端到端任务 Agent 化的事项，EA 与 RW 使用同一套判断标准。"
         items={data.direct_actions} empty="当前没有命中个人职责边界的 EA/RW 开放事项" tone="action" onOpen={setSelected}/>
-      <WorkSection icon={Route} eyebrow="P&L · EA GROUP ACTION" title="P&L项目直接行动"
-        description="独立展示 P&L EA小组项目中影响经营分析流程、SOP、人机规则或任务 Agent 化的事项，与 EA 使用同一判断标准。"
-        items={data.pnl_actions} empty="P&L项目已接入；当前刚建立基线，尚无基线之后识别出的开放行动事项" tone="action" onOpen={setSelected}/>
+      <TaskbookSection items={data.pnl_taskbooks}/>
       <WorkSection icon={Bot} eyebrow="JASPER → EA" title="可应用到 EA"
         description="Jasper 的技术或方法变化已经出现明确 EA 应用映射，可以进入行动区。"
         items={data.ea_applications} empty="当前没有已明确映射到 EA 的 Jasper 变化" tone="application" onOpen={setSelected}/>

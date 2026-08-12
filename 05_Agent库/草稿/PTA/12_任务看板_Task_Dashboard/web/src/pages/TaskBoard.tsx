@@ -7,7 +7,7 @@ import {
 import {
   fetchCommandCenter, fetchFileContent, type ChangeItem, type CommandCenterResponse,
   type FileContentResponse,
-  type CommandProject, type CrossProjectRelation, type Task,
+  type CommandProject, type CrossProjectRelation, type PinnedFile, type Task,
 } from '../lib/api'
 import { PriorityBadge } from '../components/StatusBadge'
 
@@ -122,6 +122,20 @@ function TaskSignal({ task }: { task: Task }) {
   return <div className="rounded-lg border border-border-default bg-bg-base/60 p-3"><div className="flex items-center gap-2"><PriorityBadge priority={task.priority}/><span className="font-mono text-[10px] text-text-muted">{task.task_id}</span></div><div className="mt-2 text-xs font-medium leading-5">{task.name}</div><div className="mt-2 text-[10px] leading-4 text-accent-secondary">{advice}</div></div>
 }
 
+function PinnedTaskbook({ item }: { item: PinnedFile }) {
+  const [open, setOpen] = useState(false)
+  const [document, setDocument] = useState<FileContentResponse | null>(null)
+  const [error, setError] = useState('')
+  async function toggle() {
+    const next = !open
+    setOpen(next)
+    if (!next || document || error) return
+    try { setDocument(await fetchFileContent(item.project_name, item.file)) }
+    catch (e) { setError(e instanceof Error ? e.message : String(e)) }
+  }
+  return <div className="m-3 overflow-hidden rounded-xl border-2 border-amber-400 bg-amber-50 shadow-[0_5px_22px_rgba(180,120,0,.12)]"><button onClick={toggle} className="flex w-full items-start gap-3 p-4 text-left hover:bg-amber-100/40"><span className="flex shrink-0 items-center gap-1 rounded-md bg-amber-200 px-2 py-1 text-[10px] font-bold text-amber-900"><Sparkles size={11}/>我的任务书</span><div className="min-w-0 flex-1"><div className="break-all font-mono text-xs font-semibold text-amber-950">{item.file}</div><p className="mt-2 text-xs leading-5 text-amber-900">{item.reason}</p><p className="mt-1 text-[10px] text-amber-700">最近修改 {formatTime(item.modified_at)}</p></div><ChevronDown size={15} className={`shrink-0 text-amber-800 transition ${open ? 'rotate-180' : ''}`}/></button>{open && <div className="border-t border-amber-300 bg-white p-4">{error ? <p className="text-xs text-accent-danger">{error}</p> : document ? <pre className="max-h-[34rem] overflow-auto whitespace-pre-wrap break-words font-mono text-xs leading-6 text-text-secondary">{document.content}</pre> : <p className="text-xs text-text-muted">正在读取 Word 正文…</p>}</div>}</div>
+}
+
 function ProjectPanel({ project, primary = false, filtering = false }: { project: CommandProject; primary?: boolean; filtering?: boolean }) {
   const [showAll, setShowAll] = useState(primary)
   const counts = {
@@ -143,6 +157,7 @@ function ProjectPanel({ project, primary = false, filtering = false }: { project
           <span className="ml-auto flex items-center gap-1 text-[10px] text-text-muted"><Clock3 size={11}/>{formatTime(project.generated_at)}</span>
         </div>
       </header>
+      {project.pinned_files?.map(item => <PinnedTaskbook key={item.file} item={item}/>)}
       {project.changes.length === 0 ? <div className="px-5 py-10 text-center"><Activity className={`mx-auto ${filtering ? 'text-text-muted' : 'text-accent-success'}`} size={20}/><p className="mt-2 text-xs text-text-secondary">{filtering ? '当前筛选条件下没有匹配文件' : '本周期无文件变化'}</p><p className="mt-1 text-[10px] text-text-muted">{filtering ? '可调整变更类型、成员或文件关键词' : '巡检成功，不是数据缺失'}</p></div> : (
         <><div>{visible.map((c, i) => <ChangeRow key={`${c.file}-${i}`} change={c} projectName={project.project_name}/>)}</div>{!showAll && project.changes.length > visible.length && <button onClick={() => setShowAll(true)} className="w-full border-t border-border-default px-4 py-3 text-xs text-accent-primary-light hover:bg-bg-surface">查看全部 {project.changes.length} 个匹配文件</button>}</>
       )}

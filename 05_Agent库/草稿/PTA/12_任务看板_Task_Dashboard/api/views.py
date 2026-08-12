@@ -11,6 +11,8 @@ Task_Dashboard/api/ 下，比 agent.py 深一层，PTA_DIR 的推导多一层 pa
 
 import json
 import sys
+import zipfile
+import xml.etree.ElementTree as ET
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict, List
@@ -137,6 +139,27 @@ def read_project_file(project_name: str, relative_file: str) -> dict:
         return {"success": False, "error": "文件路径超出项目范围"}
     if not candidate.exists() or not candidate.is_file():
         return {"success": False, "error": "当前文件不存在，可能已删除或移动"}
+    if candidate.suffix.lower() == ".docx":
+        try:
+            with zipfile.ZipFile(candidate) as archive:
+                root_xml = ET.fromstring(archive.read("word/document.xml"))
+            paragraphs = []
+            for paragraph in root_xml.iter("{http://schemas.openxmlformats.org/wordprocessingml/2006/main}p"):
+                text = "".join(node.text or "" for node in paragraph.iter("{http://schemas.openxmlformats.org/wordprocessingml/2006/main}t"))
+                if text.strip():
+                    paragraphs.append(text)
+            content = "\n".join(paragraphs)
+            encoded = content.encode("utf-8")
+            truncated = len(encoded) > MAX_FILE_PREVIEW_BYTES
+            content = encoded[:MAX_FILE_PREVIEW_BYTES].decode("utf-8", errors="ignore")
+            return {
+                "success": True, "project_name": project_name, "file": relative_file,
+                "content": content, "size_bytes": candidate.stat().st_size,
+                "truncated": truncated,
+                "modified_at": datetime.fromtimestamp(candidate.stat().st_mtime).isoformat(),
+            }
+        except (KeyError, zipfile.BadZipFile, ET.ParseError) as exc:
+            return {"success": False, "error": f"Word 正文读取失败: {exc}"}
     if candidate.suffix.lower() not in TEXT_PREVIEW_EXTENSIONS:
         return {"success": False, "error": f"暂不支持在线预览 {candidate.suffix or '无扩展名'} 文件"}
     raw = candidate.read_bytes()
@@ -205,6 +228,35 @@ PERSONAL_ACTION_TERMS = (
     "人机协同", "人机规则", "人机分工", "agent化", "agent 化",
     "sop", "信号识别", "响应规则", "流程重构", "任务自动化",
 )
+PNL_PROJECT_NAME = "P&L_EA小组Jasper"
+
+
+def _pnl_jasper_taskbooks() -> List[dict]:
+    """P&L 中 Jasper 的个人任务书是权威任务源，不从巡检建议反向推导。"""
+    project = next((p for p in _load_watched_projects() if p.get("name") == PNL_PROJECT_NAME), None)
+    if not project:
+        return []
+    root = Path(project.get("project_root", ""))
+    if not root.exists():
+        return []
+    candidates = []
+    for path in root.rglob("*"):
+        if not path.is_file():
+            continue
+        relative = path.relative_to(root).as_posix()
+        lower_name = path.name.lower()
+        if ("08_任务与跟进/任务状态/" not in relative or "/_归档/" in f"/{relative}"
+                or "任务书" not in path.name or "jasper" not in lower_name):
+            continue
+        stat = path.stat()
+        candidates.append({
+            "project_name": PNL_PROJECT_NAME, "file": relative, "name": path.name,
+            "modified_at": datetime.fromtimestamp(stat.st_mtime).isoformat(),
+            "size_bytes": stat.st_size, "source_type": "authoritative_taskbook",
+            "reason": "Jasper 的 P&L 任务已在该任务书中明确；直接按任务书推进，不做二次任务分析。",
+        })
+    candidates.sort(key=lambda item: item["modified_at"], reverse=True)
+    return candidates
 EA_APPLICATION_TERMS = (
     "ea流程架构", "ea 项目", "ea项目", "应用到ea", "应用于ea",
     "反哺ea", "用于ea", "映射到ea",
@@ -227,7 +279,7 @@ def personal_work() -> dict:
     这条额外判断逻辑不变。"""
     buckets = aggregate_tasks("all")
     tasks = buckets["new"] + buckets["aging"]
-    direct_actions, pnl_actions, ea_applications, pending_evaluation = [], [], [], []
+    direct_actions, ea_applications, pending_evaluation = [], [], []
     excluded = {"EA": 0, "P&L": 0, "Jasper": 0, "Rw": 0, "other": 0}
 
     for task in tasks:
@@ -238,15 +290,8 @@ def personal_work() -> dict:
         enriched = dict(task)
 
         if "P&L_EA" in project:
-            if action_hits:
-                enriched["personal_bucket"] = "pnl_action"
-                enriched["personal_reason"] = (
-                    "命中 P&L EA小组个人职责：" + "、".join(action_hits[:3])
-                    + "；需要判断其对经营分析流程、SOP、人机规则或 Agent 化的影响。"
-                )
-                pnl_actions.append(enriched)
-            else:
-                excluded["P&L"] += 1
+            # P&L 的任务不再从模型建议二次推导；个人任务书直接作为 SSOT。
+            excluded["P&L"] += 1
         elif "EA" in project or "Rw" in project:
             excluded_key = "EA" if "EA" in project else "Rw"
             if action_hits:
@@ -281,12 +326,13 @@ def personal_work() -> dict:
     return {
         "scope": {
             "ea": "人机协同流程与 SOP、信号与人机规则、端到端任务 Agent 化",
-            "pnl": "与 EA 使用同一职责标准，聚焦经营分析流程/SOP、人机规则与任务 Agent 化",
+            "pnl": "Jasper 个人任务书是权威任务来源；直接展示和跟进任务书，不做二次任务分析",
             "jasper": "只有能够应用到 EA 人机协同设计的变化进入行动区",
             "rw": "人机协同流程与 SOP、信号与人机规则、端到端任务 Agent 化——与 EA 使用同一套判断标准",
         },
         "direct_actions": direct_actions,
-        "pnl_actions": pnl_actions,
+        "pnl_actions": [],
+        "pnl_taskbooks": _pnl_jasper_taskbooks(),
         "ea_applications": ea_applications,
         "pending_evaluation": pending_evaluation,
         "excluded_counts": excluded,
@@ -589,7 +635,7 @@ def command_center(days: int = 1) -> dict:
     # 与“与我相关”页面共用同一判断结果：只有 EA 直接行动和已确认可应用到
     # EA 的 Jasper 事项，其来源文件才标为重要；待评估不提前升级为重要。
     personal = personal_work()
-    important_tasks = personal["direct_actions"] + personal["pnl_actions"] + personal["ea_applications"]
+    important_tasks = personal["direct_actions"] + personal["ea_applications"]
     importance_by_project = {}
     for task in important_tasks:
         project_map = importance_by_project.setdefault(task.get("project_name", ""), {})
@@ -603,6 +649,8 @@ def command_center(days: int = 1) -> dict:
     project_entries = []
     for entry in feed:
         name = entry["project_name"]
+        pinned_files = _pnl_jasper_taskbooks() if name == PNL_PROJECT_NAME else []
+        pinned_paths = {item["file"] for item in pinned_files}
         changes = []
         for raw in entry.get("changes", []):
             change = dict(raw)
@@ -611,15 +659,17 @@ def command_center(days: int = 1) -> dict:
             change.setdefault("after_excerpt", "")
             change.setdefault("diff_text", "")
             importance = importance_by_project.get(name, {}).get(change.get("file", ""))
-            change["important_to_me"] = bool(importance)
-            change["importance_reason"] = "；".join(importance["reasons"][:2]) if importance else ""
+            is_taskbook = change.get("file", "") in pinned_paths
+            change["important_to_me"] = bool(importance) or is_taskbook
+            change["importance_reason"] = ("P&L个人任务权威来源：直接按任务书推进，不做二次任务分析" if is_taskbook
+                                             else ("；".join(importance["reasons"][:2]) if importance else ""))
             change["related_personal_tasks"] = importance["task_ids"] if importance else []
             changes.append(change)
         changes.sort(key=lambda change: (not change.get("important_to_me", False), change.get("file", "")))
         role = PROJECT_ROLES.get(name, {"role": "other", "label": "观察项目", "question": ""})
         project_tasks = [t for t in open_tasks if t.get("project_name") == name]
         project_entries.append({
-            **entry, **role, "changes": changes,
+            **entry, **role, "changes": changes, "pinned_files": pinned_files,
             "related_tasks": project_tasks,
             "total_changes": entry.get("files_added", 0) + entry.get("files_changed", 0)
                              + entry.get("files_removed", 0),
