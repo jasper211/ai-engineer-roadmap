@@ -69,7 +69,7 @@ function WorkSection({ icon: Icon, eyebrow, title, description, items, empty, to
   )
 }
 
-function TaskbookSection({ items }: { items: PinnedFile[] }) {
+function TaskbookSection({ items = [] }: { items?: PinnedFile[] }) {
   const [selected, setSelected] = useState<PinnedFile | null>(null)
   const [content, setContent] = useState<FileContentResponse | null>(null)
   async function open(item: PinnedFile) {

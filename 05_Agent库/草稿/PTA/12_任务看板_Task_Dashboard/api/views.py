@@ -246,6 +246,7 @@ def _pnl_jasper_taskbooks() -> List[dict]:
         relative = path.relative_to(root).as_posix()
         lower_name = path.name.lower()
         if ("08_任务与跟进/任务状态/" not in relative or "/_归档/" in f"/{relative}"
+                or "分角色任务书/" not in relative or path.suffix.lower() != ".docx"
                 or "任务书" not in path.name or "jasper" not in lower_name):
             continue
         stat = path.stat()

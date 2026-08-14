@@ -226,7 +226,15 @@ class DailySensor:
                                                      status=fp["status"], evidence=fp.get("evidence", "")))
                 fp["shown_as_resolved"] = True
 
-        old_hashes = {} if force else previous_state.get("file_hashes", {})
+        # 配置新增排除目录时，旧基线里可能仍有这些路径。若直接拿旧基线与
+        # 新快照比较，会把整批临时文件误报为“删除”。比较前同步过滤旧基线，
+        # 并在本轮状态写回时清掉这些陈旧记录。
+        def is_now_excluded(relative_path: str) -> bool:
+            return any(part in self.exclude_dirs for part in Path(relative_path).parts[:-1])
+
+        raw_old_hashes = {} if force else previous_state.get("file_hashes", {})
+        old_hashes = {path: value for path, value in raw_old_hashes.items()
+                      if not is_now_excluded(path)}
         old_snapshot_shape = {path: {"hash": h} for path, h in old_hashes.items()}
 
         current_snapshot = snapshot_dir(self.project_root, extensions=self.extensions,
@@ -260,10 +268,20 @@ class DailySensor:
                 suggested_tasks=pending_tasks, skipped_llm_call=True, resolved_tasks=resolved_tasks,
             )
             updated_state = dict(previous_state)
+            updated_state["file_hashes"] = {
+                path: info["hash"] for path, info in current_snapshot.items()
+            }
+            updated_state["file_contents"] = {
+                path: content for path, content in previous_state.get("file_contents", {}).items()
+                if not is_now_excluded(path)
+            }
             updated_state["suggested_task_fingerprints"] = base_fp
             return briefing, updated_state, {}
 
-        old_contents = previous_state.get("file_contents", {})
+        old_contents = {
+            path: content for path, content in previous_state.get("file_contents", {}).items()
+            if not is_now_excluded(path)
+        }
         updated_contents = dict(old_contents)
         diff_hunks = []  # [{"file":..., "diff_text":...}]
         # SSOT事实层：不依赖LLM是否遗漏某个文件。这里完整保留本轮所有新增/
