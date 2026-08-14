@@ -7,8 +7,8 @@
     "model_name": "deepseek-v4-pro",
     "model_version": "deepseek-v4-pro",
     "prompt_version": "VNW-L3-COM-GOLD-v1.0",
-    "generated_at": "2026-08-06T07:20:56.083088+00:00",
-    "input_snapshot_hash": "a968594bd05d3020648356143bbf3ebeda561ba6856148a8c819c4d268e0d913"
+    "generated_at": "2026-08-14T02:47:02.735938+00:00",
+    "input_snapshot_hash": "6528ab173ac78de10d08375c1a098019033de57ccce9ad832cd521d2c8e58e65"
   },
   "source_scope": {
     "database": "process_analytics",
@@ -20,642 +20,685 @@
       "l4_code": "L4-CPM-01",
       "analysis_status": "MODEL_DRAFT",
       "evidence_refs": [
+        "EVD-e690300382e62db1b340",
+        "EVD-8d524965ca9053ef1ac8",
         "EVD-7fee2ba2077224052e00",
         "EVD-83b269bc58502074c300",
         "EVD-9cbdcf339cecac143d06",
-        "EVD-ce8fb81bc0c8fb00e7e7",
-        "EVD-8d524965ca9053ef1ac8",
-        "EVD-e690300382e62db1b340"
+        "EVD-02f83b83656a28550a7b",
+        "EVD-bb3f211da5c0557c0dc9",
+        "EVD-6f30b72fcd9151ad1387",
+        "EVD-4f8efac6ce82066fa2eb",
+        "EVD-a029ece01c7ca228af8a",
+        "EVD-2edff90c9662216720aa",
+        "EVD-317bd89f066e3f192fbd",
+        "EVD-ce8fb81bc0c8fb00e7e7"
       ],
       "confidence": "MODEL_DRAFT",
-      "deliverable_role": "保司战略族 - 战略体系及流程管理岗",
+      "deliverable_role": "定义监控维度和指标计算规则，设计看板配置，并推动机构确认。",
       "specific_capabilities": [
-        "监控维度定义与业务对齐",
-        "KPI公式设计及数据源映射",
-        "BI看板配置与权限设置",
-        "机构沟通与数据口径确认"
+        "核心KPI与个性化KPI划分能力",
+        "指标计算逻辑设计能力",
+        "看板配置与权限管理能力",
+        "跨部门沟通与口径对齐能力"
       ],
-      "ai_reshape": "Agent辅助：AI可生成初版指标集、看板蓝图，但最终设计需多方博弈确认；建议拆分为可执行的工具链（指标计算Skill）与人工决策环节。",
-      "quality_anchor": "看板UI一致性审查；KPI计算逻辑符合业务操作规范",
-      "ai_responsibility": "自动生成指标计算规则草稿；看板可视化模板推荐",
-      "human_responsibility": "监控维度的业务判断；机构确认与口径对齐",
+      "ai_reshape": "AI可辅助生成指标草案、计算逻辑草案和看板配置建议，但涉及机构确认与合同边界需人工判断。",
+      "quality_anchor": "机构确认环节（看板内容审核、数据口径对齐）作为交付质量锚点。",
+      "ai_responsibility": "辅助生成指标定义、计算逻辑文档和看板配置草稿。",
+      "human_responsibility": "审核指标合理性、确认数据口径、批准看板上线。",
       "handoff_triggers": [
-        "机构反馈意见无法自动回归",
-        "指标冲突或合同边界模糊"
+        "涉及机构合同边界或个性化指标协商时",
+        "看板权限审批或内容审核时"
       ],
-      "control_gates": [],
+      "control_gates": [
+        "机构确认看板内容和数据口径（来源：蓝步骤活动）"
+      ],
       "data_basis": [
-        "l4_deliverable (EVD-83b269bc58502074c300)",
-        "position_family (EVD-ce8fb81bc0c8fb00e7e7)",
-        "skill_feasibility (EVD-8d524965ca9053ef1ac8)"
+        "EVD-02f83b83656a28550a7b: agent_d1_input_struct=2",
+        "EVD-bb3f211da5c0557c0dc9: agent_d2_rule_clear=2",
+        "EVD-8d524965ca9053ef1ac8: skill_feasibility=C-低封装，复合动作"
       ],
-      "process_context": "L3-CPM流程持续监控第一步，输出监控指标体系与看板设计，是后续数据采集与分析的基础。",
+      "process_context": "VN-CPM-01机构监控指标体系与看板综合FAIL，需通过本步骤设计指标和看板。",
       "risks_limits": [
-        "低封装（C级）：指标设计依赖业务判断，纯Skill可能脱离机构实际需求",
-        "合同边界约束个性化KPI，需人工审核"
+        "自动化程度低，需人工判断",
+        "复合动作尚未拆分，整体封装困难",
+        "看板上线前需人工验证"
       ],
-      "current_recommendation": "将指标计算逻辑封装为确定性Skill，但维度和看板布局保留为Agent辅助设计，最终人工确认。优先在VN-CPM-01价值节点中试点。",
+      "current_recommendation": "采用Agent辅助模式，先拆分为指标设计、看板配置、机构确认子任务，探索指标计算逻辑生成Skill，整体保持Hybrid。",
       "database_tier": "Hybrid",
       "recommended_tier": "Hybrid",
-      "quadrant": "Human-led Strategic (High Judgment)"
+      "quadrant": "unclassified"
     },
     {
       "l4_code": "L4-CPM-02",
       "analysis_status": "MODEL_DRAFT",
       "evidence_refs": [
+        "EVD-f3fa703a46fba36e97a4",
+        "EVD-0e2a9197ed1a54fdab89",
         "EVD-7675563984dd4ee7fd6c",
         "EVD-d5cc65a531fea169d3ce",
         "EVD-d29389de239016eeddcf",
-        "EVD-ce8fb81bc0c8fb00e7e7",
-        "EVD-0e2a9197ed1a54fdab89",
-        "EVD-f3fa703a46fba36e97a4"
+        "EVD-4ec529fd7f8e412db31b",
+        "EVD-d1351b506a43b84bc3d7",
+        "EVD-891a78f37c510189c025",
+        "EVD-75c7a67035167f10b8ac",
+        "EVD-82e611e4ad5a4d049cf8",
+        "EVD-81ee6529d8ec745020f8",
+        "EVD-32b784987d1bffe12d9c",
+        "EVD-ce8fb81bc0c8fb00e7e7"
       ],
       "confidence": "MODEL_DRAFT",
-      "deliverable_role": "保司战略族 - 战略体系及流程管理岗",
+      "deliverable_role": "实现机构运营数据自动采集、清洗、推送看板及异常预警。",
       "specific_capabilities": [
-        "数据管道自动抽取与清洗",
-        "实时数据流推送到看板",
-        "异常检测规则配置与预警"
+        "数据采集与集成能力",
+        "数据清洗标准化能力",
+        "看板数据推送能力",
+        "异常检测与预警能力"
       ],
-      "ai_reshape": "拆分为多个独立Skill：数据采集清洗Skill、数据推送Skill、异常检测Skill；复合动作需先分解为原子操作。",
-      "quality_anchor": "数据一致性校验通过率100%；异常预警延迟<1小时",
-      "ai_responsibility": "完全执行数据采集、清洗、推送和预定义异常检测",
-      "human_responsibility": "异常告警后的决策；数据源变更时的规则调整",
+      "ai_reshape": "skill_feasibility为A-高封装，可封装为数据采集、清洗、预警等多个子Skill，但复合动作需先拆分。",
+      "quality_anchor": "未提供明确质量锚点，异常预警需满足准确率和及时性要求。",
+      "ai_responsibility": "自动执行数据采集、清洗、上传看板和异常预警。",
+      "human_responsibility": "监控数据异常处理、预警规则调整和系统运维。",
       "handoff_triggers": [
-        "数据源异常中断超过阈值",
-        "预警误报率偏高时重置规则"
+        "数据接口异常或清洗规则模糊时",
+        "预警误报或漏报时"
       ],
       "control_gates": [],
       "data_basis": [
-        "l4_deliverable (EVD-d5cc65a531fea169d3ce)",
-        "skill_feasibility (EVD-0e2a9197ed1a54fdab89)"
+        "EVD-4ec529fd7f8e412db31b: agent_d1_input_struct=3",
+        "EVD-0e2a9197ed1a54fdab89: skill_feasibility=A-高封装，复合动作建议先拆分"
       ],
-      "process_context": "实时数据流是监控看板的基础，属于高频自动化环节，但需人工监控异常。",
+      "process_context": "VN-CPM-01机构监控指标体系与看板依赖实时数据流，当前看板未上线。",
       "risks_limits": [
-        "高封装但为复合动作，直接实现有遗漏子步骤风险",
-        "前置条件：看板已设计（L4-CPM-01）"
+        "复合动作尚未拆分，直接整体封装风险高",
+        "agent_d5_fallback和agent_d6_compliance仅2分，需治理"
       ],
-      "current_recommendation": "立即进入Skill原型候选池，按采集、清洗、推送、异常检测拆分子Skill，并建立人工冷启动规则。",
+      "current_recommendation": "优先拆分数据采集、清洗、推送、预警为独立Skill原型，逐步实现Auto，当前建议Hybrid过渡。",
       "database_tier": "Auto",
-      "recommended_tier": "Auto",
-      "quadrant": "Automation-Ready (Low Judgment)"
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
     },
     {
       "l4_code": "L4-CPM-03",
       "analysis_status": "MODEL_DRAFT",
       "evidence_refs": [
+        "EVD-6605458612e277a1bfec",
+        "EVD-2fc9400f48e8e4e3aaf7",
         "EVD-bcf302ecdb8e5e4f6031",
         "EVD-eff040de1bd0eaee2119",
         "EVD-a5923eda985286b2e7ad",
-        "EVD-ce8fb81bc0c8fb00e7e7",
-        "EVD-2fc9400f48e8e4e3aaf7",
-        "EVD-6605458612e277a1bfec"
+        "EVD-f57ca348162a221ac778",
+        "EVD-df85f8db7b88aab4992e",
+        "EVD-d2535c20caaa5c45e4f0",
+        "EVD-bed56241d12cdf16abff",
+        "EVD-7defb4c8c4ce292e6eb7",
+        "EVD-0fbc3916e83194edf328",
+        "EVD-53a90aa80625fcc0e90c",
+        "EVD-ce8fb81bc0c8fb00e7e7"
       ],
       "confidence": "MODEL_DRAFT",
-      "deliverable_role": "保司战略族 - 战略体系及流程管理岗",
+      "deliverable_role": "产出月度健康度报告，支持趋势分析和瓶颈识别。",
       "specific_capabilities": [
-        "时间序列分析与同比/环比计算",
-        "机构横向对标分析",
-        "流程瓶颈定位与合规扫描",
-        "结构化报告撰写",
-        "报告分发与沟通"
+        "数据分析与趋势计算能力",
+        "瓶颈与风险识别能力",
+        "结构化报告撰写能力",
+        "报告分发与确认能力"
       ],
-      "ai_reshape": "Agent辅助：AI可自动生成分析图表与草稿报告，但最终洞察和行动建议需专家判断。",
-      "quality_anchor": "报告数据引用准确率100%；趋势结论与业务情境吻合",
-      "ai_responsibility": "自动化数据分析与图表生成；报告草稿撰写",
-      "human_responsibility": "业务解读、瓶颈原因分析、改进机会排序",
+      "ai_reshape": "AI可自动汇总数据、生成趋势图表和报告初稿，但洞察提炼和建议需人工判断。",
+      "quality_anchor": "报告需经机构对接人确认（来源：蓝步骤活动）。",
+      "ai_responsibility": "自动汇总数据、生成趋势图表、起草报告。",
+      "human_responsibility": "解读分析结果、识别风险和机会、最终确认报告。",
       "handoff_triggers": [
-        "异常模式无法解释",
-        "报告分发需授权审批"
+        "发现异常趋势或合规风险时",
+        "需要业务决策或建议时"
       ],
       "control_gates": [
-        "报告对外分发需合规审批（潜在合规风险）"
+        "报告分发与确认需人工审核"
       ],
       "data_basis": [
-        "l4_deliverable (EVD-eff040de1bd0eaee2119)",
-        "skill_feasibility (EVD-2fc9400f48e8e4e3aaf7)",
-        "KNOWLEDGE: 业务数据表存在（fact_customer等）但未经验证"
+        "EVD-f57ca348162a221ac778: agent_d1_input_struct=2",
+        "EVD-2fc9400f48e8e4e3aaf7: skill_feasibility=C-低封装，单一动作"
       ],
-      "process_context": "月度深度分析是决策依据，依赖历史数据与看板，输出《月度健康度报告》。",
+      "process_context": "VN-CPM-02优化闭环执行包中报告模板未建立，需通过本步骤生成健康度报告。",
       "risks_limits": [
-        "C级封装：分析结论依赖业务经验，AI只能提供数据支持",
-        "数据源虽存在但未确认口径（UNVERIFIED），可能误导分析"
+        "判断/策略类难自动化",
+        "业务洞察需领域知识",
+        "D1-D6均2分，自动化程度有限"
       ],
-      "current_recommendation": "搭建Agent辅助分析原型，先以机构横向对标准确率为目标，人工审核报告分发。数据源待工作坊验证后启用。",
+      "current_recommendation": "采用Agent辅助，优先建立报告模板和自动数据汇总，保留人工分析和最终确认。",
       "database_tier": "Hybrid",
       "recommended_tier": "Hybrid",
-      "quadrant": "Human-led Strategic (High Judgment)"
+      "quadrant": "unclassified"
     },
     {
       "l4_code": "L4-CPM-04",
       "analysis_status": "MODEL_DRAFT",
       "evidence_refs": [
+        "EVD-c837c0597e771ae73ffc",
+        "EVD-bdfbdbf5521175be21f0",
         "EVD-dd88d4e6428b19ce8892",
         "EVD-d5e841ca40816d11ac69",
         "EVD-54a3ed42c8496f137e7e",
-        "EVD-ce8fb81bc0c8fb00e7e7",
-        "EVD-bdfbdbf5521175be21f0",
-        "EVD-c837c0597e771ae73ffc"
+        "EVD-437507e28ba64e8929d1",
+        "EVD-3736daf9700585d09d10",
+        "EVD-98b46c524761a4e5111b",
+        "EVD-23d5a5a00823ec74f895",
+        "EVD-861313d3563ef099228f",
+        "EVD-1bf73d7bfd771573f8e3",
+        "EVD-2029694a617b758eba32",
+        "EVD-ce8fb81bc0c8fb00e7e7"
       ],
       "confidence": "MODEL_DRAFT",
-      "deliverable_role": "保司战略族 - 战略体系及流程管理岗",
+      "deliverable_role": "形成优化决议和执行计划。",
       "specific_capabilities": [
-        "优化建议优先级排序（多维度评估）",
-        "ROI估算能力",
-        "会议协调与分歧仲裁",
-        "决议撰写与执行计划制定"
+        "优化建议优先级排序能力",
+        "ROI评估能力",
+        "组织评审与仲裁能力",
+        "决议编写与计划制定能力"
       ],
-      "ai_reshape": "Agent辅助：AI提供建议排序算法、ROI计算模板，但评审决策完全由人主导。",
-      "quality_anchor": "ROI计算模型透明；决议记录清晰可追溯",
-      "ai_responsibility": "自动生成建议排序、ROI计算、决议草稿",
-      "human_responsibility": "三维评估权重设定、仲裁决策、最终决议确认",
+      "ai_reshape": "AI可辅助收集数据、计算ROI和生成决议草稿，但评审和仲裁需人工。",
+      "quality_anchor": "决议需中台+机构联合评审通过。",
+      "ai_responsibility": "提供排序建议、ROI计算草稿、决议草案。",
+      "human_responsibility": "主持评审会议、仲裁分歧、批准决议。",
       "handoff_triggers": [
-        "多方分歧无法自动协调",
-        "涉及资金或合规风险的建议"
+        "涉及重大成本或资源投入时",
+        "跨部门分歧无法自动仲裁时"
       ],
       "control_gates": [
-        "优化决议涉及资金投入时需额外审批"
+        "中台+机构联合评审会议为必经控制门"
       ],
       "data_basis": [
-        "l4_deliverable (EVD-d5e841ca40816d11ac69)",
-        "skill_feasibility (EVD-bdfbdbf5521175be21f0)"
+        "EVD-437507e28ba64e8929d1: agent_d1_input_struct=2",
+        "EVD-3736daf9700585d09d10: agent_d2_rule_clear=1",
+        "EVD-bdfbdbf5521175be21f0: skill_feasibility=C-低封装，单一动作"
       ],
-      "process_context": "评审环节是闭环关键，将分析结果转化为可执行决议，涉及跨团队协调。",
+      "process_context": "VN-CPM-02优化闭环执行包需通过本步骤形成决议推动执行。",
       "risks_limits": [
-        "C级封装：决策权在人，AI不能替代战略判断",
-        "议题紧急度可能影响排序的客观性"
+        "判断/策略类低封装",
+        "规则清晰度不足（agent_d2=1）",
+        "输出验证困难（agent_d3=1）"
       ],
-      "current_recommendation": "构建优化建议数据看板，自动推送排序结果，会议管理流程数字化，决议模板自动化。",
+      "current_recommendation": "Agent辅助准备材料和计算，人工评审决策，整体保持Hybrid。",
       "database_tier": "Hybrid",
       "recommended_tier": "Hybrid",
-      "quadrant": "Human-led Collaborative"
+      "quadrant": "unclassified"
     },
     {
       "l4_code": "L4-CPM-05",
       "analysis_status": "MODEL_DRAFT",
       "evidence_refs": [
+        "EVD-35351dd336e287febf3b",
+        "EVD-e917b39961a0ab0c3ff4",
         "EVD-ecdf3160d6e31866bc55",
         "EVD-f9b5e961ee4d96134ae0",
         "EVD-f2ac15935240a7054b46",
-        "EVD-ce8fb81bc0c8fb00e7e7",
-        "EVD-e917b39961a0ab0c3ff4",
-        "EVD-35351dd336e287febf3b"
+        "EVD-62ba33d8dc29d00adbf6",
+        "EVD-272576c505d57bac758c",
+        "EVD-ef947bd5f6a8f51b7f70",
+        "EVD-d683090842cc397d793d",
+        "EVD-d8bb6e500a8f50b651fe",
+        "EVD-d3204a231046d39e9149",
+        "EVD-78bb6c6ed72faea7d966",
+        "EVD-ce8fb81bc0c8fb00e7e7"
       ],
       "confidence": "MODEL_DRAFT",
-      "deliverable_role": "保司战略族 - 战略体系及流程管理岗",
+      "deliverable_role": "执行优化决议，收集改善数据，输出报告并复盘。",
       "specific_capabilities": [
-        "任务分解与分配",
-        "跨系统任务下发（L3-EFB接口）",
-        "效果数据采集与分析",
-        "成功案例归档",
-        "战略复盘汇报"
+        "任务分解与分配能力",
+        "跨系统执行下达能力",
+        "改善数据采集与对比能力",
+        "报告撰写与案例归档能力",
+        "季度复盘组织能力"
       ],
-      "ai_reshape": "拆分为多个Skill：任务自动分解Skill、改善对比数据自动采集Skill，但仍需人工确认任务分配和复盘总结。",
-      "quality_anchor": "任务完成及时率；改善效果量化准确度",
-      "ai_responsibility": "任务拆分建议、进度跟踪、改善数据自动汇总",
-      "human_responsibility": "任务分配最终确认、执行中异常处理、案例价值判断",
+      "ai_reshape": "skill_feasibility为A-高封装，可封装任务分发、数据收集、报告生成等子Skill，但复合动作需先拆分。",
+      "quality_anchor": "执行报告需数据完整，季度复盘需高层级汇整。",
+      "ai_responsibility": "自动分解任务、跟踪进度、收集对比数据、生成报告。",
+      "human_responsibility": "确认任务分配、处理执行异常、主持季度复盘。",
       "handoff_triggers": [
-        "任务执行受阻",
-        "效果数据不符合预期"
+        "任务执行受阻或进度异常时",
+        "数据异常或效果未达预期时",
+        "需要管理层决策时"
       ],
       "control_gates": [
-        "涉及对外发布或客户通知的任务需人工审批"
+        "通过L3-EFB下达执行需人工确认",
+        "季度战略复盘需管理层参与"
       ],
       "data_basis": [
-        "l4_deliverable (EVD-f9b5e961ee4d96134ae0)",
-        "skill_feasibility (EVD-e917b39961a0ab0c3ff4)"
+        "EVD-62ba33d8dc29d00adbf6: agent_d1_input_struct=2",
+        "EVD-e917b39961a0ab0c3ff4: skill_feasibility=A-高封装，复合动作建议先拆分"
       ],
-      "process_context": "优化执行是闭环最后一环，依赖下游L3-EFB，需确保任务闭环质量。",
+      "process_context": "VN-CPM-02优化闭环执行包中闭环未跑通，需本步骤执行并复盘。",
       "risks_limits": [
-        "复合动作需先拆分，否则自动化可能遗漏沟通步骤",
-        "跨系统接口依赖稳定性"
+        "复合动作需拆分，整体封装风险",
+        "涉及跨系统执行，依赖L3-EFB",
+        "D1-D6均2分，自动化条件一般"
       ],
-      "current_recommendation": "将任务拆分子Skill与对比数据采集Skill优先原型化，人工保留任务分配和案例筛选权。",
+      "current_recommendation": "优先拆分任务分解、数据收集、报告生成等子Skill，逐步实现Auto，当前建议Hybrid过渡。",
       "database_tier": "Auto",
-      "recommended_tier": "Auto",
-      "quadrant": "Automation-Ready (Low Judgment)"
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
     }
   ],
   "tasks": [
     {
-      "task_id": "TASK-CPM-01-A",
+      "task_id": "TASK-CPM-01-1",
       "l4_code": "L4-CPM-01",
-      "task_name": "确定监控维度与个性化KPI",
-      "source_type": "blueprint_activity",
+      "task_name": "确定监控维度：核心KPI统一与个性化KPI界定",
+      "source_type": "blueprint_step_activity",
       "sequence_no": 1,
       "sequence_status": "SOURCE_STEP_ONLY",
       "source_step_id": "STEP-01",
       "source_line": 100,
       "previous_task_ids": [],
       "next_task_ids": [],
-      "relation_type": null,
+      "relation_type": "",
       "evidence_refs": [
         "EVD-e690300382e62db1b340",
         "EVD-8d524965ca9053ef1ac8"
       ],
       "analysis_status": "MODEL_DRAFT",
-      "suggested_tier": "Human",
-      "tier_rationale": "业务维度定义需战略族专家协商，无确定性规则，属于高判断任务。"
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "涉及合同边界和个性化协商，需人工判断，skill_feasibility=C-低封装。"
     },
     {
-      "task_id": "TASK-CPM-01-B",
+      "task_id": "TASK-CPM-01-2",
       "l4_code": "L4-CPM-01",
-      "task_name": "设计指标计算逻辑与数据源映射",
-      "source_type": "blueprint_activity",
+      "task_name": "设计指标计算逻辑：公式定义、数据源映射、更新频率",
+      "source_type": "blueprint_step_activity",
       "sequence_no": 1,
       "sequence_status": "SOURCE_STEP_ONLY",
       "source_step_id": "STEP-01",
       "source_line": 100,
       "previous_task_ids": [],
       "next_task_ids": [],
-      "relation_type": null,
+      "relation_type": "",
       "evidence_refs": [
         "EVD-e690300382e62db1b340",
-        "EVD-8d524965ca9053ef1ac8"
+        "EVD-bb3f211da5c0557c0dc9"
       ],
       "analysis_status": "MODEL_DRAFT",
-      "suggested_tier": "Aug",
-      "tier_rationale": "公式定义可借助AI生成，但数据源映射需数据库知识，建议Agent辅助验证。"
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "规则清晰度不足（agent_d2=2），需人工定义和确认。"
     },
     {
-      "task_id": "TASK-CPM-01-C",
+      "task_id": "TASK-CPM-01-3",
       "l4_code": "L4-CPM-01",
-      "task_name": "搭建实时看板与权限配置",
-      "source_type": "blueprint_activity",
+      "task_name": "搭建实时看板：Dashboard配置、权限设置、告警规则",
+      "source_type": "blueprint_step_activity",
       "sequence_no": 1,
       "sequence_status": "SOURCE_STEP_ONLY",
       "source_step_id": "STEP-01",
       "source_line": 100,
       "previous_task_ids": [],
       "next_task_ids": [],
-      "relation_type": null,
+      "relation_type": "",
       "evidence_refs": [
         "EVD-e690300382e62db1b340",
-        "EVD-8d524965ca9053ef1ac8"
+        "EVD-4f8efac6ce82066fa2eb"
       ],
       "analysis_status": "MODEL_DRAFT",
-      "suggested_tier": "Aug",
-      "tier_rationale": "看板配置可由模板自动化，但权限需按机构定制，适合人机协作。"
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "涉及权限和告警规则，需人工审批，api_reach=2。"
     },
     {
-      "task_id": "TASK-CPM-01-D",
+      "task_id": "TASK-CPM-01-4",
       "l4_code": "L4-CPM-01",
-      "task_name": "机构确认与数据口径对齐",
-      "source_type": "blueprint_activity",
+      "task_name": "机构确认：看板内容审核、数据口径对齐",
+      "source_type": "blueprint_step_activity",
       "sequence_no": 1,
       "sequence_status": "SOURCE_STEP_ONLY",
       "source_step_id": "STEP-01",
       "source_line": 100,
       "previous_task_ids": [],
       "next_task_ids": [],
-      "relation_type": null,
+      "relation_type": "",
       "evidence_refs": [
         "EVD-e690300382e62db1b340",
-        "EVD-8d524965ca9053ef1ac8"
+        "EVD-9f931c7f4509cb5b26d1"
       ],
       "analysis_status": "MODEL_DRAFT",
       "suggested_tier": "Human",
-      "tier_rationale": "机构沟通与合同边界审核必须人工，不可自动化。"
+      "tier_rationale": "机构确认必须人工审核，不可自动化。"
     },
     {
-      "task_id": "TASK-CPM-02-A",
+      "task_id": "TASK-CPM-02-1",
       "l4_code": "L4-CPM-02",
-      "task_name": "机构运营数据自动采集",
-      "source_type": "blueprint_activity",
+      "task_name": "机构运营数据自动采集：从4张关联表定时拉取数据",
+      "source_type": "blueprint_step_activity",
       "sequence_no": 2,
       "sequence_status": "SOURCE_STEP_ONLY",
       "source_step_id": "STEP-02",
       "source_line": 113,
       "previous_task_ids": [],
       "next_task_ids": [],
-      "relation_type": null,
+      "relation_type": "",
       "evidence_refs": [
         "EVD-f3fa703a46fba36e97a4",
-        "EVD-0e2a9197ed1a54fdab89"
+        "EVD-4ec529fd7f8e412db31b"
       ],
       "analysis_status": "MODEL_DRAFT",
       "suggested_tier": "Auto",
-      "tier_rationale": "定时拉取标准化数据，完全可自动化。"
+      "tier_rationale": "数据采集为确定性任务，agent_d1=3，skill_feasibility=A-高封装。"
     },
     {
-      "task_id": "TASK-CPM-02-B",
+      "task_id": "TASK-CPM-02-2",
       "l4_code": "L4-CPM-02",
-      "task_name": "数据清洗标准化处理",
-      "source_type": "blueprint_activity",
+      "task_name": "数据清洗标准化：去重、格式统一、异常值标记",
+      "source_type": "blueprint_step_activity",
       "sequence_no": 2,
       "sequence_status": "SOURCE_STEP_ONLY",
       "source_step_id": "STEP-02",
       "source_line": 113,
       "previous_task_ids": [],
       "next_task_ids": [],
-      "relation_type": null,
+      "relation_type": "",
       "evidence_refs": [
         "EVD-f3fa703a46fba36e97a4",
-        "EVD-0e2a9197ed1a54fdab89"
+        "EVD-d1351b506a43b84bc3d7"
       ],
       "analysis_status": "MODEL_DRAFT",
       "suggested_tier": "Auto",
-      "tier_rationale": "去重、格式统一规则确定，可封装为Skill。"
+      "tier_rationale": "规则清晰（agent_d2=3），可封装为Skill。"
     },
     {
-      "task_id": "TASK-CPM-02-C",
+      "task_id": "TASK-CPM-02-3",
       "l4_code": "L4-CPM-02",
-      "task_name": "标准化数据推送至BI看板",
-      "source_type": "blueprint_activity",
+      "task_name": "上传看板：标准化数据推送至BI看板",
+      "source_type": "blueprint_step_activity",
       "sequence_no": 2,
       "sequence_status": "SOURCE_STEP_ONLY",
       "source_step_id": "STEP-02",
       "source_line": 113,
       "previous_task_ids": [],
       "next_task_ids": [],
-      "relation_type": null,
+      "relation_type": "",
       "evidence_refs": [
         "EVD-f3fa703a46fba36e97a4",
-        "EVD-0e2a9197ed1a54fdab89"
+        "EVD-75c7a67035167f10b8ac"
       ],
       "analysis_status": "MODEL_DRAFT",
-      "suggested_tier": "Auto",
-      "tier_rationale": "定期推送，API可达，可全自动。"
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "涉及外部看板系统，api_reach=3但fallback=2，需监控和人工介入。"
     },
     {
-      "task_id": "TASK-CPM-02-D",
+      "task_id": "TASK-CPM-02-4",
       "l4_code": "L4-CPM-02",
-      "task_name": "异常自动预警与通知",
-      "source_type": "blueprint_activity",
+      "task_name": "异常自动预警：触发条件 → 通知流程项目组",
+      "source_type": "blueprint_step_activity",
       "sequence_no": 2,
       "sequence_status": "SOURCE_STEP_ONLY",
       "source_step_id": "STEP-02",
       "source_line": 113,
       "previous_task_ids": [],
       "next_task_ids": [],
-      "relation_type": null,
+      "relation_type": "",
       "evidence_refs": [
         "EVD-f3fa703a46fba36e97a4",
-        "EVD-0e2a9197ed1a54fdab89"
+        "EVD-82e611e4ad5a4d049cf8"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "预警规则需维护，d5_fallback=2，需人工处理误报。"
+    },
+    {
+      "task_id": "TASK-CPM-03-1",
+      "l4_code": "L4-CPM-03",
+      "task_name": "月度数据汇总与趋势分析：时间序列分析、同比/环比、机构横向对标",
+      "source_type": "blueprint_step_activity",
+      "sequence_no": 3,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-03",
+      "source_line": 128,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-6605458612e277a1bfec",
+        "EVD-f57ca348162a221ac778"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "数据分析可半自动，但需领域知识判断趋势，skill_feasibility=C。"
+    },
+    {
+      "task_id": "TASK-CPM-03-2",
+      "l4_code": "L4-CPM-03",
+      "task_name": "识别瓶颈/风险/机会：流程瓶颈定位、合规风险扫描、改进机会识别",
+      "source_type": "blueprint_step_activity",
+      "sequence_no": 3,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-03",
+      "source_line": 128,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-6605458612e277a1bfec",
+        "EVD-df85f8db7b88aab4992e"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "识别瓶颈需业务理解和判断，难以自动，但AI可辅助扫描。"
+    },
+    {
+      "task_id": "TASK-CPM-03-3",
+      "l4_code": "L4-CPM-03",
+      "task_name": "输出报告：结构化报告撰写",
+      "source_type": "blueprint_step_activity",
+      "sequence_no": 3,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-03",
+      "source_line": 128,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-6605458612e277a1bfec",
+        "EVD-d2535c20caaa5c45e4f0"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "报告撰写可自动生成初稿，但需人工润色和确认。"
+    },
+    {
+      "task_id": "TASK-CPM-03-4",
+      "l4_code": "L4-CPM-03",
+      "task_name": "报告分发与确认：发送至机构对接人、经代联合运营组",
+      "source_type": "blueprint_step_activity",
+      "sequence_no": 3,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-03",
+      "source_line": 128,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-6605458612e277a1bfec",
+        "EVD-bed56241d12cdf16abff"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "分发与确认需人工沟通和审批。"
+    },
+    {
+      "task_id": "TASK-CPM-04-1",
+      "l4_code": "L4-CPM-04",
+      "task_name": "优化建议优先级排序：紧急度、影响面、实施成本三维评估",
+      "source_type": "blueprint_step_activity",
+      "sequence_no": 4,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-04",
+      "source_line": 141,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-c837c0597e771ae73ffc",
+        "EVD-437507e28ba64e8929d1"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "排序可基于量化指标半自动，但权重需人工确定。"
+    },
+    {
+      "task_id": "TASK-CPM-04-2",
+      "l4_code": "L4-CPM-04",
+      "task_name": "ROI评估：预期收益量化、资源需求估算",
+      "source_type": "blueprint_step_activity",
+      "sequence_no": 4,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-04",
+      "source_line": 141,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-c837c0597e771ae73ffc",
+        "EVD-3736daf9700585d09d10"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "ROI计算可自动，但收益假设需人工判断。"
+    },
+    {
+      "task_id": "TASK-CPM-04-3",
+      "l4_code": "L4-CPM-04",
+      "task_name": "中台+机构联合评审：评审会议、分歧仲裁、形成决议",
+      "source_type": "blueprint_step_activity",
+      "sequence_no": 4,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-04",
+      "source_line": 141,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-c837c0597e771ae73ffc",
+        "EVD-98b46c524761a4e5111b"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "评审和仲裁必须人工。"
+    },
+    {
+      "task_id": "TASK-CPM-04-4",
+      "l4_code": "L4-CPM-04",
+      "task_name": "形成《优化决议》+ 执行计划：决议文本、分阶段执行计划、责任人分配",
+      "source_type": "blueprint_step_activity",
+      "sequence_no": 4,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-04",
+      "source_line": 141,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-c837c0597e771ae73ffc",
+        "EVD-23d5a5a00823ec74f895"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "决议文本可自动生成草稿，但责任人分配需人工确认。"
+    },
+    {
+      "task_id": "TASK-CPM-05-1",
+      "l4_code": "L4-CPM-05",
+      "task_name": "分解决议为任务：拆解为可执行的原子任务、分配执行人、设定期限",
+      "source_type": "blueprint_step_activity",
+      "sequence_no": 5,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-05",
+      "source_line": 154,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-35351dd336e287febf3b",
+        "EVD-62ba33d8dc29d00adbf6"
       ],
       "analysis_status": "MODEL_DRAFT",
       "suggested_tier": "Auto",
-      "tier_rationale": "触发条件明确，可自动发送通知；但规则维护需人工。"
+      "tier_rationale": "任务分解可规则化，agent_d1=2但可封装为Skill。"
     },
     {
-      "task_id": "TASK-CPM-03-A",
-      "l4_code": "L4-CPM-03",
-      "task_name": "月度数据汇总与趋势分析",
-      "source_type": "blueprint_activity",
-      "sequence_no": 3,
-      "sequence_status": "SOURCE_STEP_ONLY",
-      "source_step_id": "STEP-03",
-      "source_line": 128,
-      "previous_task_ids": [],
-      "next_task_ids": [],
-      "relation_type": null,
-      "evidence_refs": [
-        "EVD-6605458612e277a1bfec",
-        "EVD-2fc9400f48e8e4e3aaf7"
-      ],
-      "analysis_status": "MODEL_DRAFT",
-      "suggested_tier": "Aug",
-      "tier_rationale": "统计计算可自动，但趋势解读需专家判断，建议AI辅助。"
-    },
-    {
-      "task_id": "TASK-CPM-03-B",
-      "l4_code": "L4-CPM-03",
-      "task_name": "识别流程瓶颈与合规风险",
-      "source_type": "blueprint_activity",
-      "sequence_no": 3,
-      "sequence_status": "SOURCE_STEP_ONLY",
-      "source_step_id": "STEP-03",
-      "source_line": 128,
-      "previous_task_ids": [],
-      "next_task_ids": [],
-      "relation_type": null,
-      "evidence_refs": [
-        "EVD-6605458612e277a1bfec",
-        "EVD-2fc9400f48e8e4e3aaf7"
-      ],
-      "analysis_status": "MODEL_DRAFT",
-      "suggested_tier": "Human",
-      "tier_rationale": "瓶颈定位和风险扫描依赖业务经验，AI可提示，但结论需人工。"
-    },
-    {
-      "task_id": "TASK-CPM-03-C",
-      "l4_code": "L4-CPM-03",
-      "task_name": "输出结构化健康度报告",
-      "source_type": "blueprint_activity",
-      "sequence_no": 3,
-      "sequence_status": "SOURCE_STEP_ONLY",
-      "source_step_id": "STEP-03",
-      "source_line": 128,
-      "previous_task_ids": [],
-      "next_task_ids": [],
-      "relation_type": null,
-      "evidence_refs": [
-        "EVD-6605458612e277a1bfec",
-        "EVD-2fc9400f48e8e4e3aaf7"
-      ],
-      "analysis_status": "MODEL_DRAFT",
-      "suggested_tier": "Aug",
-      "tier_rationale": "报告模板可自动化，但内容需人工校验，适合Agent辅助生成。"
-    },
-    {
-      "task_id": "TASK-CPM-03-D",
-      "l4_code": "L4-CPM-03",
-      "task_name": "报告分发与机构确认",
-      "source_type": "blueprint_activity",
-      "sequence_no": 3,
-      "sequence_status": "SOURCE_STEP_ONLY",
-      "source_step_id": "STEP-03",
-      "source_line": 128,
-      "previous_task_ids": [],
-      "next_task_ids": [],
-      "relation_type": null,
-      "evidence_refs": [
-        "EVD-6605458612e277a1bfec",
-        "EVD-2fc9400f48e8e4e3aaf7"
-      ],
-      "analysis_status": "MODEL_DRAFT",
-      "suggested_tier": "Human",
-      "tier_rationale": "涉及对外沟通与确认，必须人工执行。"
-    },
-    {
-      "task_id": "TASK-CPM-04-A",
-      "l4_code": "L4-CPM-04",
-      "task_name": "优化建议优先级排序（三维评估）",
-      "source_type": "blueprint_activity",
-      "sequence_no": 4,
-      "sequence_status": "SOURCE_STEP_ONLY",
-      "source_step_id": "STEP-04",
-      "source_line": 141,
-      "previous_task_ids": [],
-      "next_task_ids": [],
-      "relation_type": null,
-      "evidence_refs": [
-        "EVD-c837c0597e771ae73ffc",
-        "EVD-bdfbdbf5521175be21f0"
-      ],
-      "analysis_status": "MODEL_DRAFT",
-      "suggested_tier": "Aug",
-      "tier_rationale": "算法可提供排序参考，但维度权重与业务判断需人确定。"
-    },
-    {
-      "task_id": "TASK-CPM-04-B",
-      "l4_code": "L4-CPM-04",
-      "task_name": "ROI评估与资源估算",
-      "source_type": "blueprint_activity",
-      "sequence_no": 4,
-      "sequence_status": "SOURCE_STEP_ONLY",
-      "source_step_id": "STEP-04",
-      "source_line": 141,
-      "previous_task_ids": [],
-      "next_task_ids": [],
-      "relation_type": null,
-      "evidence_refs": [
-        "EVD-c837c0597e771ae73ffc",
-        "EVD-bdfbdbf5521175be21f0"
-      ],
-      "analysis_status": "MODEL_DRAFT",
-      "suggested_tier": "Aug",
-      "tier_rationale": "AI可基于模板计算ROI，但假设参数需人工输入。"
-    },
-    {
-      "task_id": "TASK-CPM-04-C",
-      "l4_code": "L4-CPM-04",
-      "task_name": "中台+机构联合评审会议",
-      "source_type": "blueprint_activity",
-      "sequence_no": 4,
-      "sequence_status": "SOURCE_STEP_ONLY",
-      "source_step_id": "STEP-04",
-      "source_line": 141,
-      "previous_task_ids": [],
-      "next_task_ids": [],
-      "relation_type": null,
-      "evidence_refs": [
-        "EVD-c837c0597e771ae73ffc",
-        "EVD-bdfbdbf5521175be21f0"
-      ],
-      "analysis_status": "MODEL_DRAFT",
-      "suggested_tier": "Human",
-      "tier_rationale": "仲裁与分歧解决必须人工主导。"
-    },
-    {
-      "task_id": "TASK-CPM-04-D",
-      "l4_code": "L4-CPM-04",
-      "task_name": "形成《优化决议》与分阶段执行计划",
-      "source_type": "blueprint_activity",
-      "sequence_no": 4,
-      "sequence_status": "SOURCE_STEP_ONLY",
-      "source_step_id": "STEP-04",
-      "source_line": 141,
-      "previous_task_ids": [],
-      "next_task_ids": [],
-      "relation_type": null,
-      "evidence_refs": [
-        "EVD-c837c0597e771ae73ffc",
-        "EVD-bdfbdbf5521175be21f0"
-      ],
-      "analysis_status": "MODEL_DRAFT",
-      "suggested_tier": "Aug",
-      "tier_rationale": "决议模板可自动化，但内容需经评审确认，AI辅助起草。"
-    },
-    {
-      "task_id": "TASK-CPM-05-A",
+      "task_id": "TASK-CPM-05-2",
       "l4_code": "L4-CPM-05",
-      "task_name": "分解决议为原子任务并分配执行人",
-      "source_type": "blueprint_activity",
+      "task_name": "通过 L3-EFB 下达执行：任务下发、进度追踪",
+      "source_type": "blueprint_step_activity",
       "sequence_no": 5,
       "sequence_status": "SOURCE_STEP_ONLY",
       "source_step_id": "STEP-05",
       "source_line": 154,
       "previous_task_ids": [],
       "next_task_ids": [],
-      "relation_type": null,
+      "relation_type": "",
       "evidence_refs": [
         "EVD-35351dd336e287febf3b",
-        "EVD-e917b39961a0ab0c3ff4"
+        "EVD-272576c505d57bac758c"
       ],
       "analysis_status": "MODEL_DRAFT",
-      "suggested_tier": "Aug",
-      "tier_rationale": "AI可建议任务拆分，但分配决策涉及人员能力与负荷，需人工。"
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "涉及外部系统L3-EFB，需人工确认下达，自动化程度受限。"
     },
     {
-      "task_id": "TASK-CPM-05-B",
+      "task_id": "TASK-CPM-05-3",
       "l4_code": "L4-CPM-05",
-      "task_name": "通过L3-EFB下达执行任务",
-      "source_type": "blueprint_activity",
+      "task_name": "收集改善对比数据：执行前/后数据采集、效果量化",
+      "source_type": "blueprint_step_activity",
       "sequence_no": 5,
       "sequence_status": "SOURCE_STEP_ONLY",
       "source_step_id": "STEP-05",
       "source_line": 154,
       "previous_task_ids": [],
       "next_task_ids": [],
-      "relation_type": null,
+      "relation_type": "",
       "evidence_refs": [
         "EVD-35351dd336e287febf3b",
-        "EVD-e917b39961a0ab0c3ff4"
+        "EVD-ef947bd5f6a8f51b7f70"
       ],
       "analysis_status": "MODEL_DRAFT",
       "suggested_tier": "Auto",
-      "tier_rationale": "系统间任务下发可自动化，需保证接口稳定。"
+      "tier_rationale": "数据采集和量化可自动化，agent_d3=2但可封装。"
     },
     {
-      "task_id": "TASK-CPM-05-C",
+      "task_id": "TASK-CPM-05-4",
       "l4_code": "L4-CPM-05",
-      "task_name": "收集改善对比数据",
-      "source_type": "blueprint_activity",
+      "task_name": "输出报告+案例入库：报告撰写、成功案例归档",
+      "source_type": "blueprint_step_activity",
       "sequence_no": 5,
       "sequence_status": "SOURCE_STEP_ONLY",
       "source_step_id": "STEP-05",
       "source_line": 154,
       "previous_task_ids": [],
       "next_task_ids": [],
-      "relation_type": null,
+      "relation_type": "",
       "evidence_refs": [
         "EVD-35351dd336e287febf3b",
-        "EVD-e917b39961a0ab0c3ff4"
+        "EVD-d683090842cc397d793d"
       ],
       "analysis_status": "MODEL_DRAFT",
       "suggested_tier": "Auto",
-      "tier_rationale": "前后数据自动采集可比对，适合自动化。"
+      "tier_rationale": "报告生成和归档可自动化，但案例内容需人工确认。"
     },
     {
-      "task_id": "TASK-CPM-05-D",
+      "task_id": "TASK-CPM-05-5",
       "l4_code": "L4-CPM-05",
-      "task_name": "输出优化执行报告与案例归档",
-      "source_type": "blueprint_activity",
+      "task_name": "季度战略复盘：Mark级别汇整季度优化成果",
+      "source_type": "blueprint_step_activity",
       "sequence_no": 5,
       "sequence_status": "SOURCE_STEP_ONLY",
       "source_step_id": "STEP-05",
       "source_line": 154,
       "previous_task_ids": [],
       "next_task_ids": [],
-      "relation_type": null,
+      "relation_type": "",
       "evidence_refs": [
         "EVD-35351dd336e287febf3b",
-        "EVD-e917b39961a0ab0c3ff4"
-      ],
-      "analysis_status": "MODEL_DRAFT",
-      "suggested_tier": "Aug",
-      "tier_rationale": "报告自动生成，但案例价值判断需人工。"
-    },
-    {
-      "task_id": "TASK-CPM-05-E",
-      "l4_code": "L4-CPM-05",
-      "task_name": "季度战略复盘汇报",
-      "source_type": "blueprint_activity",
-      "sequence_no": 5,
-      "sequence_status": "SOURCE_STEP_ONLY",
-      "source_step_id": "STEP-05",
-      "source_line": 154,
-      "previous_task_ids": [],
-      "next_task_ids": [],
-      "relation_type": null,
-      "evidence_refs": [
-        "EVD-35351dd336e287febf3b",
-        "EVD-e917b39961a0ab0c3ff4"
+        "EVD-d8bb6e500a8f50b651fe"
       ],
       "analysis_status": "MODEL_DRAFT",
       "suggested_tier": "Human",
-      "tier_rationale": "Mark级别汇报涉及战略决策，必须人工准备与呈现。"
+      "tier_rationale": "战略复盘需管理层参与和判断。"
     }
   ],
   "priority_drafts": [
@@ -663,23 +706,31 @@
       "l4_code": "L4-CPM-01",
       "quadrant": "unclassified",
       "data_basis": [
-        "l4_deliverable (EVD-83b269bc58502074c300)",
-        "position_family (EVD-ce8fb81bc0c8fb00e7e7)",
-        "skill_feasibility (EVD-8d524965ca9053ef1ac8)"
+        "EVD-02f83b83656a28550a7b: agent_d1_input_struct=2",
+        "EVD-bb3f211da5c0557c0dc9: agent_d2_rule_clear=2",
+        "EVD-8d524965ca9053ef1ac8: skill_feasibility=C-低封装，复合动作"
       ],
-      "process_context": "L3-CPM流程持续监控第一步，输出监控指标体系与看板设计，是后续数据采集与分析的基础。",
+      "process_context": "VN-CPM-01机构监控指标体系与看板综合FAIL，需通过本步骤设计指标和看板。",
       "risks_limits": [
-        "低封装（C级）：指标设计依赖业务判断，纯Skill可能脱离机构实际需求",
-        "合同边界约束个性化KPI，需人工审核"
+        "自动化程度低，需人工判断",
+        "复合动作尚未拆分，整体封装困难",
+        "看板上线前需人工验证"
       ],
-      "current_recommendation": "将指标计算逻辑封装为确定性Skill，但维度和看板布局保留为Agent辅助设计，最终人工确认。优先在VN-CPM-01价值节点中试点。",
+      "current_recommendation": "采用Agent辅助模式，先拆分为指标设计、看板配置、机构确认子任务，探索指标计算逻辑生成Skill，整体保持Hybrid。",
       "evidence_refs": [
+        "EVD-e690300382e62db1b340",
+        "EVD-8d524965ca9053ef1ac8",
         "EVD-7fee2ba2077224052e00",
         "EVD-83b269bc58502074c300",
         "EVD-9cbdcf339cecac143d06",
-        "EVD-ce8fb81bc0c8fb00e7e7",
-        "EVD-8d524965ca9053ef1ac8",
-        "EVD-e690300382e62db1b340"
+        "EVD-02f83b83656a28550a7b",
+        "EVD-bb3f211da5c0557c0dc9",
+        "EVD-6f30b72fcd9151ad1387",
+        "EVD-4f8efac6ce82066fa2eb",
+        "EVD-a029ece01c7ca228af8a",
+        "EVD-2edff90c9662216720aa",
+        "EVD-317bd89f066e3f192fbd",
+        "EVD-ce8fb81bc0c8fb00e7e7"
       ],
       "analysis_status": "MODEL_DRAFT"
     },
@@ -687,22 +738,29 @@
       "l4_code": "L4-CPM-02",
       "quadrant": "unclassified",
       "data_basis": [
-        "l4_deliverable (EVD-d5cc65a531fea169d3ce)",
-        "skill_feasibility (EVD-0e2a9197ed1a54fdab89)"
+        "EVD-4ec529fd7f8e412db31b: agent_d1_input_struct=3",
+        "EVD-0e2a9197ed1a54fdab89: skill_feasibility=A-高封装，复合动作建议先拆分"
       ],
-      "process_context": "实时数据流是监控看板的基础，属于高频自动化环节，但需人工监控异常。",
+      "process_context": "VN-CPM-01机构监控指标体系与看板依赖实时数据流，当前看板未上线。",
       "risks_limits": [
-        "高封装但为复合动作，直接实现有遗漏子步骤风险",
-        "前置条件：看板已设计（L4-CPM-01）"
+        "复合动作尚未拆分，直接整体封装风险高",
+        "agent_d5_fallback和agent_d6_compliance仅2分，需治理"
       ],
-      "current_recommendation": "立即进入Skill原型候选池，按采集、清洗、推送、异常检测拆分子Skill，并建立人工冷启动规则。",
+      "current_recommendation": "优先拆分数据采集、清洗、推送、预警为独立Skill原型，逐步实现Auto，当前建议Hybrid过渡。",
       "evidence_refs": [
+        "EVD-f3fa703a46fba36e97a4",
+        "EVD-0e2a9197ed1a54fdab89",
         "EVD-7675563984dd4ee7fd6c",
         "EVD-d5cc65a531fea169d3ce",
         "EVD-d29389de239016eeddcf",
-        "EVD-ce8fb81bc0c8fb00e7e7",
-        "EVD-0e2a9197ed1a54fdab89",
-        "EVD-f3fa703a46fba36e97a4"
+        "EVD-4ec529fd7f8e412db31b",
+        "EVD-d1351b506a43b84bc3d7",
+        "EVD-891a78f37c510189c025",
+        "EVD-75c7a67035167f10b8ac",
+        "EVD-82e611e4ad5a4d049cf8",
+        "EVD-81ee6529d8ec745020f8",
+        "EVD-32b784987d1bffe12d9c",
+        "EVD-ce8fb81bc0c8fb00e7e7"
       ],
       "analysis_status": "MODEL_DRAFT"
     },
@@ -710,23 +768,30 @@
       "l4_code": "L4-CPM-03",
       "quadrant": "unclassified",
       "data_basis": [
-        "l4_deliverable (EVD-eff040de1bd0eaee2119)",
-        "skill_feasibility (EVD-2fc9400f48e8e4e3aaf7)",
-        "KNOWLEDGE: 业务数据表存在（fact_customer等）但未经验证"
+        "EVD-f57ca348162a221ac778: agent_d1_input_struct=2",
+        "EVD-2fc9400f48e8e4e3aaf7: skill_feasibility=C-低封装，单一动作"
       ],
-      "process_context": "月度深度分析是决策依据，依赖历史数据与看板，输出《月度健康度报告》。",
+      "process_context": "VN-CPM-02优化闭环执行包中报告模板未建立，需通过本步骤生成健康度报告。",
       "risks_limits": [
-        "C级封装：分析结论依赖业务经验，AI只能提供数据支持",
-        "数据源虽存在但未确认口径（UNVERIFIED），可能误导分析"
+        "判断/策略类难自动化",
+        "业务洞察需领域知识",
+        "D1-D6均2分，自动化程度有限"
       ],
-      "current_recommendation": "搭建Agent辅助分析原型，先以机构横向对标准确率为目标，人工审核报告分发。数据源待工作坊验证后启用。",
+      "current_recommendation": "采用Agent辅助，优先建立报告模板和自动数据汇总，保留人工分析和最终确认。",
       "evidence_refs": [
+        "EVD-6605458612e277a1bfec",
+        "EVD-2fc9400f48e8e4e3aaf7",
         "EVD-bcf302ecdb8e5e4f6031",
         "EVD-eff040de1bd0eaee2119",
         "EVD-a5923eda985286b2e7ad",
-        "EVD-ce8fb81bc0c8fb00e7e7",
-        "EVD-2fc9400f48e8e4e3aaf7",
-        "EVD-6605458612e277a1bfec"
+        "EVD-f57ca348162a221ac778",
+        "EVD-df85f8db7b88aab4992e",
+        "EVD-d2535c20caaa5c45e4f0",
+        "EVD-bed56241d12cdf16abff",
+        "EVD-7defb4c8c4ce292e6eb7",
+        "EVD-0fbc3916e83194edf328",
+        "EVD-53a90aa80625fcc0e90c",
+        "EVD-ce8fb81bc0c8fb00e7e7"
       ],
       "analysis_status": "MODEL_DRAFT"
     },
@@ -734,22 +799,31 @@
       "l4_code": "L4-CPM-04",
       "quadrant": "unclassified",
       "data_basis": [
-        "l4_deliverable (EVD-d5e841ca40816d11ac69)",
-        "skill_feasibility (EVD-bdfbdbf5521175be21f0)"
+        "EVD-437507e28ba64e8929d1: agent_d1_input_struct=2",
+        "EVD-3736daf9700585d09d10: agent_d2_rule_clear=1",
+        "EVD-bdfbdbf5521175be21f0: skill_feasibility=C-低封装，单一动作"
       ],
-      "process_context": "评审环节是闭环关键，将分析结果转化为可执行决议，涉及跨团队协调。",
+      "process_context": "VN-CPM-02优化闭环执行包需通过本步骤形成决议推动执行。",
       "risks_limits": [
-        "C级封装：决策权在人，AI不能替代战略判断",
-        "议题紧急度可能影响排序的客观性"
+        "判断/策略类低封装",
+        "规则清晰度不足（agent_d2=1）",
+        "输出验证困难（agent_d3=1）"
       ],
-      "current_recommendation": "构建优化建议数据看板，自动推送排序结果，会议管理流程数字化，决议模板自动化。",
+      "current_recommendation": "Agent辅助准备材料和计算，人工评审决策，整体保持Hybrid。",
       "evidence_refs": [
+        "EVD-c837c0597e771ae73ffc",
+        "EVD-bdfbdbf5521175be21f0",
         "EVD-dd88d4e6428b19ce8892",
         "EVD-d5e841ca40816d11ac69",
         "EVD-54a3ed42c8496f137e7e",
-        "EVD-ce8fb81bc0c8fb00e7e7",
-        "EVD-bdfbdbf5521175be21f0",
-        "EVD-c837c0597e771ae73ffc"
+        "EVD-437507e28ba64e8929d1",
+        "EVD-3736daf9700585d09d10",
+        "EVD-98b46c524761a4e5111b",
+        "EVD-23d5a5a00823ec74f895",
+        "EVD-861313d3563ef099228f",
+        "EVD-1bf73d7bfd771573f8e3",
+        "EVD-2029694a617b758eba32",
+        "EVD-ce8fb81bc0c8fb00e7e7"
       ],
       "analysis_status": "MODEL_DRAFT"
     },
@@ -757,22 +831,30 @@
       "l4_code": "L4-CPM-05",
       "quadrant": "unclassified",
       "data_basis": [
-        "l4_deliverable (EVD-f9b5e961ee4d96134ae0)",
-        "skill_feasibility (EVD-e917b39961a0ab0c3ff4)"
+        "EVD-62ba33d8dc29d00adbf6: agent_d1_input_struct=2",
+        "EVD-e917b39961a0ab0c3ff4: skill_feasibility=A-高封装，复合动作建议先拆分"
       ],
-      "process_context": "优化执行是闭环最后一环，依赖下游L3-EFB，需确保任务闭环质量。",
+      "process_context": "VN-CPM-02优化闭环执行包中闭环未跑通，需本步骤执行并复盘。",
       "risks_limits": [
-        "复合动作需先拆分，否则自动化可能遗漏沟通步骤",
-        "跨系统接口依赖稳定性"
+        "复合动作需拆分，整体封装风险",
+        "涉及跨系统执行，依赖L3-EFB",
+        "D1-D6均2分，自动化条件一般"
       ],
-      "current_recommendation": "将任务拆分子Skill与对比数据采集Skill优先原型化，人工保留任务分配和案例筛选权。",
+      "current_recommendation": "优先拆分任务分解、数据收集、报告生成等子Skill，逐步实现Auto，当前建议Hybrid过渡。",
       "evidence_refs": [
+        "EVD-35351dd336e287febf3b",
+        "EVD-e917b39961a0ab0c3ff4",
         "EVD-ecdf3160d6e31866bc55",
         "EVD-f9b5e961ee4d96134ae0",
         "EVD-f2ac15935240a7054b46",
-        "EVD-ce8fb81bc0c8fb00e7e7",
-        "EVD-e917b39961a0ab0c3ff4",
-        "EVD-35351dd336e287febf3b"
+        "EVD-62ba33d8dc29d00adbf6",
+        "EVD-272576c505d57bac758c",
+        "EVD-ef947bd5f6a8f51b7f70",
+        "EVD-d683090842cc397d793d",
+        "EVD-d8bb6e500a8f50b651fe",
+        "EVD-d3204a231046d39e9149",
+        "EVD-78bb6c6ed72faea7d966",
+        "EVD-ce8fb81bc0c8fb00e7e7"
       ],
       "analysis_status": "MODEL_DRAFT"
     }
@@ -781,33 +863,62 @@
     {
       "priority": "P1",
       "task_ids": [
-        "TASK-CPM-01-A",
-        "TASK-CPM-02-A"
+        "TASK-CPM-01-1",
+        "TASK-CPM-01-2",
+        "TASK-CPM-01-3",
+        "TASK-CPM-01-4",
+        "TASK-CPM-02-1",
+        "TASK-CPM-02-2"
       ],
-      "title": "启动看板设计与数据采集并行试点",
-      "pilot_scope": "选择1-2家合作机构，试点核心KPI看板与自动数据管道，不涉及个性化KPI。",
-      "human_boundary": "机构确认（TASK-CPM-01-D）和数据异常处理（TASK-CPM-02-D）必须由流程项目组负责人审批。",
+      "title": "启动监控指标体系与看板设计试点",
+      "pilot_scope": "选取1个试点机构，设计核心KPI与看板原型，打通数据采集链路。",
+      "human_boundary": "机构确认环节必须由战略体系及流程管理岗人工审批，不得自动通过；看板上线前需人工验证。",
       "evidence_refs": [
-        "EVD-9461c5b22594b95f45ba",
-        "EVD-8d524965ca9053ef1ac8",
-        "EVD-0e2a9197ed1a54fdab89"
+        "EVD-1debdba4b24feb012634",
+        "EVD-aa6a53f584e0a05a468f",
+        "EVD-e690300382e62db1b340",
+        "EVD-f3fa703a46fba36e97a4"
       ],
-      "analysis_status": "MODEL_DRAFT",
-      "pending_approval": [
-        "试点机构名单",
-        "KPI看板设计稿",
-        "数据采集接口方案"
-      ]
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "priority": "P1",
+      "task_ids": [
+        "TASK-CPM-03-1",
+        "TASK-CPM-03-2",
+        "TASK-CPM-03-3",
+        "TASK-CPM-04-3",
+        "TASK-CPM-05-2"
+      ],
+      "title": "试点优化闭环执行包",
+      "pilot_scope": "针对月度健康度报告和优化决议流程跑通MVP，从报告生成到决议执行闭环。",
+      "human_boundary": "优化决议需中台+机构联合评审人工批准；L3-EFB下达执行前需人工确认；报告分发需人工审核。",
+      "evidence_refs": [
+        "EVD-42b89309907c976ffcad",
+        "EVD-3617fbbf63fd54ceab0a",
+        "EVD-6605458612e277a1bfec",
+        "EVD-c837c0597e771ae73ffc",
+        "EVD-35351dd336e287febf3b"
+      ],
+      "analysis_status": "MODEL_DRAFT"
     }
   ],
   "control_chain": [],
-  "rejected_task_sources": [],
+  "rejected_task_sources": [
+    {
+      "source": "business_evidence EVD-8c094be17b705a04a9cf",
+      "reason": "UNVERIFIED/CONSENSUS，不得用于业务结论或证据引用"
+    },
+    {
+      "source": "human_touchpoint EVD-9f931c7f4509cb5b26d1",
+      "reason": "MISSING，不能作为分析依据"
+    }
+  ],
   "missing_analysis": [
-    "L4-CPM-01 agent_human_touchpoint · 证据EVD-9f931c7f4509cb5b26d1为MISSING，无法确定人工触点，默认转人工条件为空。",
-    "L4-CPM-02 agent_human_touchpoint · 证据EVD-f87bd6c43bac5788ef8a为MISSING。",
-    "L4-CPM-03 agent_human_touchpoint · 证据EVD-d52239a101d392846ee2为MISSING；business_evidence为UNVERIFIED，不可引用。",
-    "L4-CPM-04 agent_human_touchpoint · 证据EVD-99f084a5ff0674104ecb为MISSING。",
-    "L4-CPM-05 agent_human_touchpoint · 证据EVD-68dff9bc73a5444654e6为MISSING。",
-    "控制链缺少L4定位，已拒绝2条"
+    "L4-CPM-01/02/03/04/05 的 agent_human_touchpoint 字段缺失，无法明确人机交接点。",
+    "Gate E-007 规则可定位L4=0/5，缺少可关联规则记录。",
+    "Gate E-008 缺少SOP草稿或同等任务执行材料。",
+    "L4-CPM-03 的 business_evidence 为 UNVERIFIED，无法用于数据依据。",
+    "控制链缺少L4定位，已拒绝4条"
   ]
 }
