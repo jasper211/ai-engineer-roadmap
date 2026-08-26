@@ -18,7 +18,7 @@
 ---
 
 [![Status](https://img.shields.io/badge/status-in%20progress-yellow)](./能力整改看板.md)
-[![Phase](https://img.shields.io/badge/phase-Phase%201%20%C2%B7%20Execution-green)](./00_planning/Phase%200%20启动清单.md)
+[![Phase](https://img.shields.io/badge/phase-Phase%202%20%C2%B7%20Agent产品化-green)](./00_planning/Phase%200%20启动清单.md)
 [![Weeks](https://img.shields.io/badge/timeline-16%20weeks-orange)](./05_assets/AI工程能力整改执行路线图.html)
 
 ---
@@ -63,7 +63,7 @@
 | 工程落地效率 | 封装 Agent/Skills 到生产场景 | 部分覆盖 | 公开包 + 量化效率数据 | P2 | 55% |
 | 内容行业经验 | 知道什么是好内容 | 弱项 | 3篇公开技术文章 | P4 | 25% |
 | 企业协作平台集成 | 飞书 CLI / 自动化流程 | 部分覆盖 | 飞书 API/CLI 集成实例 | P3 | 40% |
-| **Computer Use / Browser Use** | 前沿 Agent 实操经验 | 2个 PoC + 前端 + MCP | 真实自动化案例 + Skill | **P1** | 55% |
+| **Computer Use / Browser Use** | 前沿 Agent 实操经验 | 2个 PoC + 前端 + MCP，✅ 已达标 | 真实自动化案例 + Skill | **P1** | **60%** |
 | 大模型成本优化 | 成本优化经验 | 间接覆盖 | token 追踪 + 分级路由 + 报告 | P3 | 30% |
 | CS/AI 专业背景 | 计算机/AI 相关专业 | 弱项 | 个人作品集网站 | P4 | 20% |
 
@@ -115,6 +115,10 @@ AI工程能力整改项目/
 | PAY域信号提取自动化 | 自动化脚本 + 基线 | ✅ 已完成 | [执行记录](./01_execution/P1-02_信号提取自动化/任务执行记录.md) |
 | 价值节点规则分析前端 | Web App | ✅ 已上线 | [流程架构平台 V2](https://appv2-theta.vercel.app) |
 | process-db MCP Server | MCP Service | ✅ 已公开 | [GitHub](https://github.com/jasper211/process-db-mcp) |
+| PTA（项目任务协同 Agent） | Agent | 🔄 迭代中 · v2.26.0 | 13 个技能模块，已在真实 EA/Rw 项目验证「每日主动巡检→建议任务→人工确认执行」闭环 |
+| OB（知识库 Agent） | Agent | 🔄 迭代中 · v0.4.6 | 巡检/检索/概念笔记提炼三条能力线落地，vault 累计 6600+ 知识原子，每日定时提炼已上线（launchd） |
+| VNW（L3 流程模型 Agent） | Agent + Web App | 🔄 迭代中 · v0.5.1 | 74 个 L3 流程全量分析管道 + 单节点逐一验证（当前 L3-COM），React 前端为本地 Demo，尚未公开部署 |
+| AIT（三轨道拆解 Agent） | Agent | 🔄 早期原型 · v0.1.0 | 首个真实模块 `track_router.py`，已为 L3-COM 生成首个 track_assignment 并接入 VNW 前端 |
 | B-RPT 岗位报告 Agent | Agent | 🔄 Phase 2 | 待上线 |
 | 个人作品集网站 | Website | 🔄 Phase 4 | 待上线 |
 
@@ -134,11 +138,12 @@ AI工程能力整改项目/
 ## 📈 最新进展
 
 <!-- 每周更新 -->
-- **当前阶段**：Phase 1 执行中（第1周）
-- **已完成**：P1-01 + P1-02 + P0-02 前端 + P0-03 MCP Server（GitHub 公开）
-- **本周重点**：Phase 1 全部完成——2 个 Python 自动化 PoC + 前端 Vercel + MCP Server 公开
-- **风险点**：信号4（A/B/C三分类）访谈规则需人工继承，自动化覆盖率 70%
-- **下次检查点**：前端应用部署 或 扩展到其他域（CFM/BAM/SSVA）
+- **当前阶段**：Phase 0/1 已全部完成，Phase 2（Agent 产品化）进行中
+- **已完成**：Computer Use PoC + 前端 Vercel + MCP Server 公开（Phase 1）；PTA/OB/VNW/AIT 四个 Agent 均已产出真实代码并在真实项目上验证（Phase 2 进行中）
+- **本期重点**：VNW 从"价值节点信号提取"扩展为 74 个 L3 流程的全量分析管道（Gate M/E/A 治理，59 个分析结果为最新、14 个因输入不足被阻断、1 个已评审确认），并转入按单节点逐一验证的模式，首个节点 L3-COM 已与 AIT 的轨道判定器打通
+- **待处理**：`能力整改看板.md` 维度2 的周记已停留在 08-10，此后近3周（含 PTA 从 v2.3.0 迭代到 v2.26.0、VNW 的管道扩展）尚未写入详细记录，需要下一次复盘时补齐
+- **风险点**：自动同步 launchd 任务此前有过"只提交不推送"的静默失效（已发现并修复），提醒定期抽查其他定时任务（如 daily_sensing 巡检）的真实运行日志，不能只看任务是否已加载
+- **下次检查点**：补齐能力整改看板维度2 近3周记录 · VNW 完成 L3-COM 单节点验证后决定是否推广到更多节点
 
 ---
 
