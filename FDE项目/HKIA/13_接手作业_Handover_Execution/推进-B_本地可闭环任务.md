@@ -39,8 +39,12 @@
 
 ## B4 · 财务季度回溯 2024Q4–2025Q4
 
-- 依据：`ASTSET-IA-FINANCIAL-2024Q4-2026Q1-XLSX`（六期季度财务已下载，2024Q4–2025Q4 待补齐解析）。
-- 待做：解析 backfill 期财务数据，登记与 `AST-IA-FINANCIAL-2026Q1-XLSX` 的一致性。
+> ✅ **已完成 v0.1（2026-08-06）**：`生成_行业财务事实层_FinancialFactLayer/` 交付行业财务事实层（financial_fact_layer.db）。
+> 覆盖 2024Q4/2025Q1/2025Q3/2025Q4/2026Q1 共 5 期 × 4 基金口径 × 17 科目 = 340 事实；恒等式 reconcile QA 全过。
+> ⚠️ **2025Q2 缺口待补**：源为 OLE2 旧格式，本环境缺转换工具，登记 `pending_conversion_tool`（见 QA 报告）。
+
+- 依据：`ASTSET-IA-FINANCIAL-2024Q4-2026Q1-XLSX`（六期季度财务已下载，2025Q2 因格式未解析）。
+- 待做：`2025Q2` 在具备 OLE2→xlsx 转换工具后补排队重跑 `scripts/build_financial_fact_layer.py` + `qa/`。
 - 约束：IS 口径与长期业务口径分离，不混用。
 
 ## B5 · 投诉 / 中介动态资产入库

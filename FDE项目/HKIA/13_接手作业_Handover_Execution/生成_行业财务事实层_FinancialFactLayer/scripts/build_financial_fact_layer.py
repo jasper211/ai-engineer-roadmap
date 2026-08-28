@@ -89,7 +89,11 @@ def parse_period_file(period, path):
         label_zh = (str(raw_label).split("\n")[0] if raw_label else "")
         for col, scope in SCOPE_COLS.items():
             v = ws.cell(row=r, column=col).value
-            v = None if v is None else float(v)
+            v = None if v is None else str(v).strip()
+            if v in ("-", "--", ""):
+                v = 0.0  # 官方占位符"-"代表无该科目/为 0，不视为缺失
+            else:
+                v = float(v.replace(",", ""))
             facts.append({
                 "period": period,
                 "fund_scope": scope,
