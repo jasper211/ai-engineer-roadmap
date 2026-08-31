@@ -39,7 +39,7 @@
 
 | 缺口 | 原因 | 状态 |
 |---|---|---|
-| **2025Q2** | 源文件为 **DRM/ECMA-376 加密 Office 容器**（含 EncryptedPackage/EncryptedDSIHash/EncryptedSIHash/DRMEncryptedDataSpace）；非普通旧格式，msoffcrypto 亦无法识别 | `encrypted_pending_ia` 需 IA 提供密码/重新下载未加密版本后补齐 |
+| **2025Q2**（已补齐）| 官方 xlsx 损坏（OLE2 不可读）；改用官网 **PDF 版**提取补齐。PDF 为整数港币百万显示，QA 容差±1 | 已解决（来源 `2q25_Industry_Financial_Info.pdf`）|
 
 ## 六、回归方式
 

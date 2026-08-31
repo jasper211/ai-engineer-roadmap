@@ -20,6 +20,9 @@ print("periods:", sorted(periods2))
 def get(p, scope, item):
     r = cur.execute("SELECT value_hkd_million, item_label_zh FROM financial_facts WHERE period=? AND fund_scope=? AND item_id=?", (p, scope, item)).fetchone()
     return (r[0], r[1]) if r else (None, None)
+# 2025Q2 源为 PDF（官方只显示整数港币百万），允许 ±1 展示舍入；其余期为 xlsx 精确源（浮点容差）
+def tolerance(p):
+    return 1.05 if p=="2025Q2" else 1e-5
 
 ASSET_ITEMS = ["cash_and_deposits","debt_securities","equities_portfolio","properties",
                "loans_and_advances","unit_linked_or_retirement_policyholder_assets",
@@ -52,11 +55,12 @@ for p in sorted(periods2):
         b = abs(tl - sum_liabs)
         c = abs(na - (ta - tl))
         worst=max(worst, a,b,c)
-        if not (a<FLOAT_EPS and b<FLOAT_EPS and c<FLOAT_EPS):
+        TOL=tolerance(p)
+        if not (a<TOL and b<TOL and c<TOL):
             ok=False
             print(f"  MISMATCH {p} {sc} total_assets={ta} sum_assets={sum_assets} diff={a}")
             print(f"      total_liab={tl} sum_liab={sum_liabs} diff={b} net_assets={na} recompute={ta-tl} diff={c}")
-print(f"  identity reconcile: {'PASS (all diffs < FLOAT_EPS=1e-5 HK$m)' if ok else 'FAIL'}, worst_diff={worst:.3g}")
+print(f"  identity reconcile: {'PASS' if ok else 'FAIL'}; 2025Q2(PDF源,整数显示)容差±1百万, 余期浮点1e-5; worst_diff={worst:.3g}")
 
 print("\n=== 3. 跨期单调 sanity（行業總計總資產） ===")
 seq=[(p, get(p,"industry_total","total_assets")[0]) for p in sorted(periods2)]

@@ -9,7 +9,7 @@
 | 源路径 | `01_sources/raw/SRC-REG-IA-FINANCIAL/{2024,2025,2026}/` |
 | 目标路径 | `生成_行业财务事实层_FinancialFactLayer/data/financial_fact_layer.db` |
 | 表 | financial_facts |
-| 事实数 | 340（5 期 × 4 scope × 17 科目）|
+| 事实数 | 408（6 期 × 4 scope × 17 科目）|
 | 单位 | HKD_million |
 | 标签 | provisional_unaudited |
 
@@ -21,7 +21,7 @@
 | 2025Q3 | 3q25_Industry_Financial_Info.xlsx | 同上 |
 | 2025Q4 | 4q25_IndustryFinancial_Info.xlsx | 同上 |
 | 2026Q1 | 1q26_Industry_Financial_Info.xlsx | 同上 |
-| ⚠️ 2025Q2 | 2q25_Industry_Financial_Info.xlsx | 未解析（DRM/ECMA-376 加密），见 QA 报告 |
+| ✅ 2025Q2 | 2q25_Industry_Financial_Info.pdf | 已补齐（xlsx 官方损坏，改用 PDF）|
 
 ## 纪律
 - 只读原始来源，不覆盖。产出写 13 目录。
