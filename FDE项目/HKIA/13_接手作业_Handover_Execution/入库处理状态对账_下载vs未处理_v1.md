@@ -47,7 +47,7 @@
 | 项 | 源文件位置 | 缺什么 | 承接任务 |
 |---|---|---|---|
 | **行业财务 2024Q4–2025Q4**| `SRC-REG-IA-FINANCIAL/{2024,2025}/` | ✅ 已解析 2024Q4/2025Q1/2025Q3/2025Q4/2026Q1 共 5 期 → `financial_fact_layer.db`；**2025Q2 因 OLE2 待转换工具** | B4（已完成 v0.1，2025Q2 待补）|
-| **2025Q2 财务** | `SRC-REG-IA-FINANCIAL/2025/2q25_...xlsx` | **DRM/ECMA-376 加密**，需 IA 密码/重发（非单纯格式问题）| B4（`encrypted_pending_ia`）|
+| **2025Q2 财务** | `SRC-REG-IA-FINANCIAL/2025/2q25_...pdf` | ✅ **已补齐**（xlsx 官方损坏，改用官网 PDF，68条）| B4 完成 |
 | **Conduct in Focus Issue12 / GL21 / GL16** | 未落盘 | 本地保存 + PwC TCF 回溯 | B3 |
 | **年度包公司级正式事实层** | `SRC-REG-IA-LTA/{2022,2023,2024}` 公司表 | ✅ **已建** `annual_company_fact_layer_2022_2024.db`（L8-L19，7097 事实，QA 全过，2022/2023/2024 三年 certified）| 年度认证基座（已建 2022/2023/2024）|
 | **2025 provisional 公司级** | `SRC-REG-IA-LTQ/2025Q4/4q25long.xlsx` | ✅ **已建** `annual_provisional_company_2025.db`（Table L1/L3 公司级，414 事实，QA 全过）→ certified↔provisional 公司级 reconcile 基座 | 跨年口径差异已标注 |
