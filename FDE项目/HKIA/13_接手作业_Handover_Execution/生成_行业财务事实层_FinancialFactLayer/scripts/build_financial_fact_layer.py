@@ -102,6 +102,7 @@ def parse_period_file(period, path):
                 "value_hkd_million": v,
                 "unit": COUNT_UNIT,
                 "flag": FLAG,
+                "certification": "provisional",
                 "source_file": os.path.basename(path),
                 "checksum_sha256": sha256(path),
             })
@@ -144,12 +145,13 @@ def main():
             unit TEXT,
             flag TEXT,
             source_file TEXT,
+            certification TEXT,
             checksum_sha256 TEXT
         )
     """)
     cur.executemany("""
         INSERT INTO financial_facts VALUES
-        (:period,:fund_scope,:item_id,:item_label_zh,:value_hkd_million,:unit,:flag,:source_file,:checksum_sha256)
+        (:period,:fund_scope,:item_id,:item_label_zh,:value_hkd_million,:unit,:flag,:source_file,:checksum_sha256,:certification)
     """, all_facts)
     conn.commit()
 

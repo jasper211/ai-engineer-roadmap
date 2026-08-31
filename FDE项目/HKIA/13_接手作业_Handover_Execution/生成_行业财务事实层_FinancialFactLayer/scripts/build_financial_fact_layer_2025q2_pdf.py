@@ -44,7 +44,7 @@ def parse_pdf():
             else: val=float(raw.replace(",",""))
             facts.append(dict(period="2025Q2", fund_scope=scope, item_id=item_id,
                 item_label_zh=label, value_hkd_million=val, unit="HKD_million",
-                flag="provisional_unaudited", source_file="2q25_Industry_Financial_Info.pdf",
+                flag="provisional_unaudited", certification="provisional", source_file="2q25_Industry_Financial_Info.pdf",
                 checksum_sha256="pdf"))
     return facts
 
@@ -61,11 +61,11 @@ def main():
     if not cols:
         cur.execute("""CREATE TABLE financial_facts(
             period TEXT, fund_scope TEXT, item_id TEXT, item_label_zh TEXT,
-            value_hkd_million REAL, unit TEXT, flag TEXT, source_file TEXT, checksum_sha256 TEXT)""")
+            value_hkd_million REAL, unit TEXT, flag TEXT, source_file TEXT, checksum_sha256 TEXT, certification TEXT)""")
     # 删除已有 2025Q2（幂等）
     cur.execute("DELETE FROM financial_facts WHERE period='2025Q2'")
     cur.executemany("""INSERT INTO financial_facts VALUES
-      (:period,:fund_scope,:item_id,:item_label_zh,:value_hkd_million,:unit,:flag,:source_file,:checksum_sha256)""", facts)
+      (:period,:fund_scope,:item_id,:item_label_zh,:value_hkd_million,:unit,:flag,:source_file,:checksum_sha256,:certification)""", facts)
     conn.commit()
     n=cur.execute("SELECT COUNT(*) FROM financial_facts").fetchone()[0]
     per=cur.execute("SELECT COUNT(DISTINCT period) FROM financial_facts").fetchone()[0]
