@@ -27,14 +27,14 @@ PERIOD_FILES = {
     "2025Q4": f"{RAW_ROOT}/2025/4q25_IndustryFinancial_Info.xlsx",
     "2026Q1": f"{RAW_ROOT}/2026/1q26_Industry_Financial_Info.xlsx",
 }
-PERIOD_GAP = {
-    "2025Q2": {
-        "reason": "源文件为 OLE2 Composite Document (旧 .xls 伪装 .xlsx)，本环境无 LibreOffice/olefile/msoffcrypto，xlrd 无法定位 Workbook stream 解析失败",
-        "normalized_copy": "12_分析框架验证_Validate_Framework/04_normalized/legacy_excel_converted/2q25_Industry_Financial_Info.xlsx",
-        "normalized_status": "乱码不可用（OLE2 转换产物损坏）",
-        "status": "pending_conversion_tool"
-    }
-}
+# 2025Q2 官方 xlsx 损坏，改用官网 PDF 版（build_financial_fact_layer_2025q2_pdf.py），见 main() 内 PDF 补充
+PDF_2025Q2 = "/Users/a112233/Desktop/Jasper工作文档（不含EA项目）/Jasper AI协同经验引擎/AI工程能力整改项目/FDE项目/HKIA/12_分析框架验证_Validate_Framework/01_sources/raw/SRC-REG-IA-FINANCIAL/2025/2q25_Industry_Financial_Info.pdf"
+# 用 build_financial_fact_layer_2025q2_pdf 的解析函数
+def parse_pdf_2025q2():
+    import importlib.util, os
+    spec=importlib.util.spec_from_file_location("q2pdf", os.path.join(os.path.dirname(__file__),"build_financial_fact_layer_2025q2_pdf.py"))
+    m=importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+    return m.parse_pdf()
 
 # "By Fund" sheet：row4=fund scopes(col2-5), rows5-21=17 科目
 FUND_SHEET = "By Fund"
@@ -131,6 +131,14 @@ def main():
     print("total facts:", len(all_facts))
 
     # write DB
+    # 补充 2025Q2（PDF 版，官方 xlsx 损坏）
+    try:
+        q2=parse_pdf_2025q2()
+        all_facts.extend(q2)
+        print(f"  [PDF] 2025Q2 已并入: {len(q2)} 事实")
+        parsed_periods.append("2025Q2")
+    except Exception as e:
+        print(f"  [warn] 2025Q2 PDF 补充失败: {e}")
     if os.path.exists(db_path):
         os.remove(db_path)
     conn = sqlite3.connect(db_path)
@@ -151,7 +159,7 @@ def main():
     """)
     cur.executemany("""
         INSERT INTO financial_facts VALUES
-        (:period,:fund_scope,:item_id,:item_label_zh,:value_hkd_million,:unit,:flag,:source_file,:checksum_sha256,:certification)
+        (:period,:fund_scope,:item_id,:item_label_zh,:value_hkd_million,:unit,:flag,:source_file,:certification,:checksum_sha256)
     """, all_facts)
     conn.commit()
 
@@ -166,7 +174,7 @@ def main():
     print(f"  distinct fund_scopes: {n_scope}")
     print(f"  distinct item_ids: {n_item}")
     print(f"  distinct labels (zh): {len(set(f['item_label_zh'] for f in all_facts))}")
-    print("\nGAP_PENDING (2025Q2):", PERIOD_GAP)
+    print("\n2025Q2: 官方 xlsx 损坏，已用官网 PDF 版本并入（见上）")
 
 
 if __name__ == "__main__":
