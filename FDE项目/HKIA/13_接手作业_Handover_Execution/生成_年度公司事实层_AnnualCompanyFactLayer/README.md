@@ -2,7 +2,7 @@
 
 > 承接：`12_分析框架验证/03_data_coverage/annual_long_schema_registry_v0.1.yaml` 的 L8-L19 公司级表解析。
 > 目标：从 IA 年度长期业务 L8-L19 公司级 Excel 构建**可查询的公司级事实库**，供 U20 作为公司维度输入源。
-> 覆盖：2024（RBC）+ 2023（pre-RBC）两个 certified 年度。
+> 覆盖：2024（RBC）+ 2023、2022（pre-RBC）三个 certified 年度。
 
 ## 这是什么
 
@@ -18,16 +18,16 @@
 
 | 项 | 内容 |
 |---|---|
-| 年度 | 2024（RBC schema）、2023（pre-RBC schema）|
+| 年度 | 2024（RBC schema）、2023/2022（pre-RBC schema）|
 | 表 | L8-L13（inforce）、L14-L19（new business）|
-| 事实数 | 4,718（公司 4,638 + Market Total 80）|
+| 事实数 | 7,097（公司 6,978 + Market Total 119）|
 | 单位 | count（保单数/生活/计划数）；HKD_thousand（金额）|
 | 标签 | 年度 = certified（官方年度审计统计）|
 
 ## 文件结构
 ```
 生成_年度公司事实层_AnnualCompanyFactLayer/
-├── data/annual_company_fact_layer_2023_2024.db   SQLite（表 company_facts）
+├── data/annual_company_fact_layer_2022_2024.db   SQLite（表 company_facts）
 ├── scripts/build_annual_company_fact_layer.py      构建（幂等）
 ├── qa/reconcile_annual_company_layer.py            QA
 └── (README / manifest / qa_report)

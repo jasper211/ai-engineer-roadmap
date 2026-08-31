@@ -49,7 +49,7 @@
 | **行业财务 2024Q4–2025Q4**| `SRC-REG-IA-FINANCIAL/{2024,2025}/` | ✅ 已解析 2024Q4/2025Q1/2025Q3/2025Q4/2026Q1 共 5 期 → `financial_fact_layer.db`；**2025Q2 因 OLE2 待转换工具** | B4（已完成 v0.1，2025Q2 待补）|
 | **2025Q2 财务副本** | `04_normalized/legacy_excel_converted/2q25_...xlsx` | 已做 OLE2 转换，待并入解析 | B4 |
 | **Conduct in Focus Issue12 / GL21 / GL16** | 未落盘 | 本地保存 + PwC TCF 回溯 | B3 |
-| **年度包公司级正式事实层** | `SRC-REG-IA-LTA/{2022,2023,2024}` 66 份公司表 | 从 L8-L19 构建可查询公司级事实库（现仅在 test/对账中验证）| 年度认证基座 |
+| **年度包公司级正式事实层** | `SRC-REG-IA-LTA/{2022,2023,2024}` 公司表 | ✅ **已建** `annual_company_fact_layer_2022_2024.db`（L8-L19，7097 事实，QA 全过，2022/2023/2024 三年 certified）| 年度认证基座（已建 2022/2023/2024）|
 
 ---
 

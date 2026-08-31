@@ -2,14 +2,14 @@
 
 | 项 | 值 |
 |---|---|
-| asset_id | ANN-CMP-FACT-LAYER-2023-2024 |
+| asset_id | ANN-CMP-FACT-LAYER-2022-2024 |
 | 版本 | v0.1 |
-| 状态 | active_certified（2023 + 2024 两年度）|
-| 源资产 | `ASTSET-IA-LTA-2024-FULL-XLSX` + `ASTSET-IA-LTA-2023-FULL-XLSX` |
-| 源路径 | `01_sources/raw/SRC-REG-IA-LTA/{2023,2024}/full_annual_set/`（L8-L19 各 12 表）|
+| 状态 | active_certified（2022 + 2023 + 2024 三年度）|
+| 源资产 | `ASTSET-IA-LTA-2024-FULL-XLSX` + `ASTSET-IA-LTA-2023-FULL-XLSX` + `ASTSET-IA-LTA-2022-FULL-XLSX` |
+| 源路径 | `01_sources/raw/SRC-REG-IA-LTA/{2022,2023,2024}/full_annual_set/`（L8-L19 各 12 表）|
 | 目标路径 | `生成_年度公司事实层_AnnualCompanyFactLayer/data/annual_company_fact_layer_2023_2024.db` |
 | 表 | company_facts |
-| 事实数 | 4,718（公司 4,638 + Market Total 80）|
+| 事实数 | 7,097（公司 6,978 + Market Total 119）|
 | 单位 | count / HKD_thousand |
 | 标签 | certified |
 

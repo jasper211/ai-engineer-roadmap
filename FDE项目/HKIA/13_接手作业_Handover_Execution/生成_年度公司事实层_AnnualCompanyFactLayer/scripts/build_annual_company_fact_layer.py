@@ -15,7 +15,7 @@ import os, glob, sqlite3, re, hashlib
 
 ANNUAL_ROOT = "/Users/a112233/Desktop/Jasper工作文档（不含EA项目）/Jasper AI协同经验引擎/AI工程能力整改项目/FDE项目/HKIA/12_分析框架验证_Validate_Framework/01_sources/raw/SRC-REG-IA-LTA"
 
-YEARS = {"2024": "rbc", "2023": "pre_rbc"}
+YEARS = {"2024": "rbc", "2023": "pre_rbc", "2022": "pre_rbc"}
 
 # 公司表分类
 INFORCE_TABLES = ["L8","L9","L10","L11","L12","L13"]
@@ -165,7 +165,7 @@ def parse_company_table(file, table_id, schema, year):
 def main():
     out_dir=os.path.join(os.path.dirname(__file__),"..","data"); out_dir=os.path.abspath(out_dir)
     os.makedirs(out_dir, exist_ok=True)
-    db_path=os.path.join(out_dir,"annual_company_fact_layer_2023_2024.db")
+    db_path=os.path.join(out_dir,"annual_company_fact_layer_2022_2024.db")
     all_facts=[]
     stat={}
     for year,schema in YEARS.items():
