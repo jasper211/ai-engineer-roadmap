@@ -31,11 +31,12 @@
 
 ## B3 · PwC TCF 监管回溯链
 
-> ⏸ **暂缓（2026-08-06）**：属外部非业务信息输入，依赖 IA 官网监管文件（GL21/GL16/Conduct in Focus Issue 8）下载，非当前业务主线，后续处理。
+> ⏸ **部分推进（2026-08-06）**：LEAD-PWC-004（MAS FAA-N20）已下载并提取全文（见 CH-EXT-016）；**IA 方源**（GL21/GL16/Conduct in Focus Issue 8）仍受 403 未可获取。
 
-- 依据：`HKIA-PWC-TCF-PILOT-01`（已下载 3 页 PDF，抽取机制 Finding，识别 8 条引用）。
-- 待做：为 8 条引用建立到 IA 监管原文（GL21/GL16）的回溯任务，逐条核证或登记未回溯。
-- 预期产出：引用–监管条款回溯登记表。
+- 依据：`HKIA-PWC-TCF-PILOT-01`（已下载 3 页 PDF，抽取 4 条 Finding，识别 4 条 primary source lead）。
+- 已做：LEAD-PWC-004 检索（MAS Balanced Scorecard 报酬框架，支持 RF-PWC-TCF-003，非 IA 监管原文）。
+- 待做：IA 源（Conduct in Focus Issue 8 / GL21 / GL16）在可获取后建立回溯登记。
+- 预期产出：引用–监管条款回溯登记表（部分）。
 
 ## B4 · 财务季度回溯 2024Q4–2025Q4
 

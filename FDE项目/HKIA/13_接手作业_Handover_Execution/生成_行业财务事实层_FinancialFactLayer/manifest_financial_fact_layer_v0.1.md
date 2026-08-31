@@ -21,7 +21,7 @@
 | 2025Q3 | 3q25_Industry_Financial_Info.xlsx | 同上 |
 | 2025Q4 | 4q25_IndustryFinancial_Info.xlsx | 同上 |
 | 2026Q1 | 1q26_Industry_Financial_Info.xlsx | 同上 |
-| ⚠️ 2025Q2 | 2q25_Industry_Financial_Info.xlsx | 未解析（OLE2），见 QA 报告 |
+| ⚠️ 2025Q2 | 2q25_Industry_Financial_Info.xlsx | 未解析（DRM/ECMA-376 加密），见 QA 报告 |
 
 ## 纪律
 - 只读原始来源，不覆盖。产出写 13 目录。
