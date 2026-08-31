@@ -79,11 +79,15 @@ for unit in ('', None, 'count', 'unsupported'):
 # Query with metadata retained: top-N guide SQL alone drops critical labels.
 annual = query('annual', "SELECT report_year,table_id,subject,metric_sem,unit,value_raw FROM company_facts WHERE report_year=2024 AND table_id='L16' AND metric_sem='premium_single' AND entity_scope='insurer' ORDER BY value_raw DESC LIMIT 10")
 provisional = query('provisional', "SELECT year,certification,table_id,subject,metric_sem,unit,value FROM provisional_company_facts WHERE year=2025 AND metric_sem='nb_total_single_premium' AND entity_scope='insurer' ORDER BY value DESC LIMIT 10")
+financial_labels = query('financial', 'SELECT certification, COUNT(*) AS n FROM financial_facts GROUP BY certification')
+financial_sample = query('financial', "SELECT period,fund_scope,item_id,value_hkd_million,unit,certification FROM financial_facts WHERE period='2026Q1' AND fund_scope='long_term' AND item_id IN ('debt_securities','equities_portfolio','cash_and_deposits') ORDER BY value_hkd_million DESC")
+result['financial_certification_inventory'] = financial_labels
+result['checks']['financial_certification_populated'] = sum(r['n'] for r in financial_labels) == 408 and all(r['certification'] == 'provisional' for r in financial_labels)
 result['consumer_samples'] = {
     'Q1': [dict(r, value_hkd_million=to_hkd_million(r['value'], r['unit']), certification=certification('standard_quarterly', r['period']), label_basis='quarterly source layer; not a DB certification column') for r in result['queries']['Q1']['rows']],
     'Q2': [dict(r, value_hkd_million=to_hkd_million(r['value_raw'], r['unit']), certification=certification('annual', r['report_year']), label_basis='annual source layer; not a DB certification column') for r in annual],
     'Q3': [dict(r, value_hkd_million=to_hkd_million(r['value'], r['unit'])) for r in provisional],
-    'Q4_label': 'industry financial source; certification unclassified_requires_source',
+    'Q4': financial_sample,
 }
 result['checks']['actual_annual_unit_conversion'] = result['consumer_samples']['Q2'][0]['value_hkd_million'] == annual[0]['value_raw'] / 1000
 result['checks']['actual_provisional_label'] = all(r['certification'] == 'provisional' for r in provisional)
