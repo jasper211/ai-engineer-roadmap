@@ -1,0 +1,26 @@
+{
+  "version": "1.0",
+  "policies": {
+    "internal_review_only": {
+      "description": "季度 provisional 市场级指标，仅限内部审阅，不对外发布为年度结论",
+      "level": "internal_analysis",
+      "quantus": "reference_only"
+    },
+    "annual_certified_internal": {
+      "description": "年度 certified 公司级指标，可分开展示两年，但跨 schema 同口径增长未验收",
+      "level": "internal_analysis",
+      "cross_year_same_scope": "not_validated",
+      "quantus": "show_side_by_side_without_growth_rate"
+    },
+    "blocked_scope_mismatch": {
+      "description": "2024 L16(个人寿险) vs 2025 L1(个人长期含年金) 不可比",
+      "level": "blocked",
+      "reason": "NOT_COMPARABLE_SCOPE"
+    },
+    "blocked_unvalidated_scope": {
+      "description": "+65.4% 未通过范围等价验收，不得发布",
+      "level": "blocked",
+      "reason": "RELEASE_BLOCKED_UNVALIDATED_SCOPE"
+    }
+  }
+}
