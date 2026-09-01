@@ -86,6 +86,7 @@ class MetricMeta:
     aggregation: Optional[str] = None
     source_definition: Optional[str] = None
     release_policy_id: Optional[str] = None
+    source_filter: Dict[str, Any] = field(default_factory=dict)
     raw: Dict[str, Any] = field(default_factory=dict)
 
 
