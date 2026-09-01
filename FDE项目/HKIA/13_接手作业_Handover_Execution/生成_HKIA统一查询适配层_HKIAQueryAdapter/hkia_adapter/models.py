@@ -96,12 +96,18 @@ class ComparabilityResult:
     reasons: List[str] = field(default_factory=list)
     required_bridge: Optional[str] = None
 
+    def to_dict(self):
+        return {"status": self.status, "reasons": self.reasons, "required_bridge": self.required_bridge}
+
 
 @dataclass
 class ReleaseResult:
     status: str
     level: Optional[str] = None
     warnings: List[str] = field(default_factory=list)
+
+    def to_dict(self):
+        return {"status": self.status, "level": self.level, "warnings": self.warnings}
 
 
 @dataclass

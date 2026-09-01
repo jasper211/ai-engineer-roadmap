@@ -79,7 +79,7 @@ class QueryBuilder:
         if "market_trend" not in (meta.supported_query_types or []):
             raise ValidationError(f"指标 {req.metric_id} 不支持 market_trend。")
         conn = self.conns.get("standard")
-        periods = req.periods or [req.period] if req.period else None
+        periods = req.periods if req.periods else ([req.period] if req.period else None)
         if not periods:
             raise ValidationError("market_trend 需要 periods。")
         out_unit = req.output_unit or meta.unit
@@ -136,19 +136,20 @@ class QueryBuilder:
             WHERE period=? AND fund_scope=? AND item_id=? 
         """, [period, fund, item_id]).fetchone()
         data = []
-        if r:
-            data.append({"period": r[0], "fund_scope": r[1], "item_id": r[2], "value": float(r[3]),
-                         "unit": "HKD_million", "certification": "provisional"})
-        # 也返回该 fund 同类科目集（Q4 返回3项）
+        # 返回指定 item 及该 fund 的同类资产科目集（Q4 返回3项）
         rows = conn.execute("""
             SELECT item_id, value_hkd_million FROM financial_facts
             WHERE period=? AND fund_scope=? AND item_id IN ('debt_securities','equities_portfolio','cash_and_deposits')
             ORDER BY value_hkd_million DESC
         """, [period, fund]).fetchall()
-        for r in rows:
-            data.append({"period": period, "item_id": r[0], "value": float(r[1]), "unit": "HKD_million"})
+        seen=set()
+        for row in rows:
+            iid=row[0]
+            if iid in seen: continue
+            seen.add(iid)
+            data.append({"period": period, "item_id": iid, "value": float(row[1]), "unit": "HKD_million"})
         return {"query_type": "financial_snapshot", "data": data, "metric": req.metric_id,
-                "source_unit": "HKD_million"}
+                "source_unit": "HKD_million", "source_layer": "financial"}
 
     def _company_period_values(self, req: QueryRequest):
         meta = self.catalog.get(req.metric_id)

@@ -13,19 +13,20 @@ class PolicyEngine:
         self.policies = json.loads(self.path.read_text(encoding="utf-8")).get("policies", {})
 
     def evaluate(self, req: QueryRequest, metric_id=None, output_unit=None,
-                 cross_scope_l16_vs_l1=False, release_scope_claim=None) -> ReleaseResult:
+                 cross_scope_l16_vs_l1=False, release_scope_claim=None,
+                 require_release_intent=False) -> ReleaseResult:
         # 硬阻断 1: 请求发布 +65.4% 同口径增长（未验收）
         if release_scope_claim is not None and release_scope_claim is True:
             raise ReleaseBlockedError()
         # 硬阻断 2: 2024 L16 vs 2025 L1 比较
         if cross_scope_l16_vs_l1:
             raise NotComparableError()
-        # release_intent 必须提供
-        if req.release_intent is None:
+        # release_intent：仅比较/发布类请求必须携带
+        if require_release_intent and req.release_intent is None:
             raise ValidationError("比较/发布请求必须携带 release_intent。")
-        # release_intent 白名单
+        # release_intent 白名单（若提供了才校验；比较类已在前面要求必需）
         allowed_intent = {"internal_analysis", "research", "draft", "reporting", "client_review"}
-        if req.release_intent not in allowed_intent:
+        if req.release_intent is not None and req.release_intent not in allowed_intent:
             raise ValidationError(f"release_intent 不合法: {req.release_intent!r}")
         level = "internal_analysis"
         warnings = []

@@ -92,7 +92,8 @@ class HKIAClient:
         if qt in ("compare_periods",):
             release = self.policy.evaluate(req, metric_id=req.metric_id,
                                            cross_scope_l16_vs_l1=(req.filters or {}).get("l16_vs_l1", False) or
-                                           self._is_l16_vs_l1(req), release_scope_claim=release_claim)
+                                           self._is_l16_vs_l1(req), release_scope_claim=release_claim,
+                                           require_release_intent=True)
         else:
             release = self.policy.evaluate(req, metric_id=req.metric_id)
         # identity
