@@ -1,0 +1,42 @@
+{
+  "title": "HKIA 统一查询适配层响应契约 Schema",
+  "version": "1.0",
+  "description": "所有 query 响应（成功与失败）必须符合的本 Schema。",
+  "type": "object",
+  "required": ["ok", "request_id", "query_type", "data", "metadata", "comparability", "release", "lineage"],
+  "properties": {
+    "ok": {"type": "boolean"},
+    "request_id": {"type": "string"},
+    "query_type": {"type": "string"},
+    "error_code": {"type": ["string", "null"]},
+    "message": {"type": ["string", "null"]},
+    "blocked_by": {"type": ["string", "null"]},
+    "data": {"type": "array"},
+    "metadata": {
+      "type": "object",
+      "required": ["metric_id","metric_label","period_basis","entity_scope","source_unit","output_unit","certification","schema","source_layer","source_db_id","source_tables","data_version","bridge_version"],
+      "properties": {
+        "metric_id": {"type": ["string","null"]},
+        "source_unit": {"type": ["string","null"]},
+        "output_unit": {"type": ["string","null"]},
+        "certification": {"type": "string"},
+        "schema": {"type": "string"},
+        "source_db_id": {"type": ["string","null"]},
+        "data_version": {"type": "string"},
+        "bridge_version": {"type": ["string","null"]}
+      }
+    },
+    "comparability": {
+      "type": "object",
+      "required": ["status","reasons","required_bridge"]
+    },
+    "release": {
+      "type": "object",
+      "required": ["status","warnings"]
+    },
+    "lineage": {
+      "type": "object",
+      "required": ["query_template_id","source_files","checksums"]
+    }
+  }
+}

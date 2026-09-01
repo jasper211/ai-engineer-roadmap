@@ -50,7 +50,7 @@ class QueryRequest:
     metric_id: Optional[str] = None
     period: Optional[str] = None
     periods: Optional[List[str]] = None
-    entity_scope: str = "market_total"
+    entity_scope: Optional[str] = None
     limit: Optional[int] = None
     offset: Optional[int] = None
     output_unit: Optional[str] = None

@@ -1,0 +1,328 @@
+{
+  "overall": "PARTIAL",
+  "passed": 15,
+  "total": 20,
+  "results": {
+    "list_metrics_returns_catalog": true,
+    "describe_metric_returns_definition": true,
+    "count_rejects_unknown_unit": true,
+    "money_rejects_count_unit": true,
+    "negative_limit_rejected": true,
+    "huge_limit_rejected": true,
+    "annual_layer_rejects_unsupported_year": true,
+    "scope_override_rejected": true,
+    "query_metric_compatibility_enforced": true,
+    "company_value_returns_identity_and_status": false,
+    "advertised_provisional_company_value_works": false,
+    "every_value_row_has_required_labels": false,
+    "lineage_is_populated_and_specific": false,
+    "metadata_uses_contract_source_db_id": false,
+    "request_types_strictly_validated": true,
+    "source_db_hashes_unchanged": true,
+    "response_json_schema_delivered": true,
+    "cli_invalid_json_returns_json_error": true,
+    "existing_baseline_gate_passes": true,
+    "existing_bridge_gate_passes": true
+  },
+  "evidence": {
+    "list_metrics": {
+      "ok": true,
+      "request_id": "d5cd91dc89d7",
+      "query_type": "list_metrics",
+      "data": [
+        {
+          "metric_id": "ANNUAL_L16_PREMIUM_ANNUAL",
+          "label": "年度个人寿险新造年度化保费",
+          "unit": "HKD_thousand",
+          "entity_scope": "insurer",
+          "period_basis": "annual_certified",
+          "supported_query_types": [
+            "company_ranking",
+            "company_period_values",
+            "compare_periods"
+          ]
+        },
+        {
+          "metric_id": "ANNUAL_L16_PREMIUM_SINGLE",
+          "label": "年度个人寿险新造整付保费",
+          "unit": "HKD_thousand",
+          "entity_scope": "insurer",
+          "period_basis": "annual_certified",
+          "supported_query_types": [
+            "company_ranking",
+            "company_period_values",
+            "compare_periods"
+          ]
+        },
+        {
+          "metric_id": "FIN_DEBT_SECURITIES",
+          "label": "债务证券(行业财务)",
+          "unit": "HKD_million",
+          "entity_scope": "fund",
+          "period_basis": "quarterly_snapshot",
+          "supported_query_types": [
+            "financial_snapshot",
+            "describe_metric"
+          ]
+        },
+        {
+          "metric_id": "IF_IND_TOTAL_POLICIES",
+          "label": "个人有效保单数",
+          "unit": "count",
+          "entity_scope": "market_total",
+          "period_basis": "quarterly_ytd",
+          "supported_query_types": [
+            "market_trend",
+            "describe_metric"
+          ]
+        },
+        {
+          "metric_id": "NB_GROUP_POLICIES",
+          "label": "团体新造保单数",
+          "unit": "count",
+          "entity_scope": "market_total",
+          "period_basis": "quarterly_ytd",
+          "supported_query_types": [
+            "market_trend",
+            "describe_metric"
+          ]
+        },
+        {
+          "metric_id": "NB_IND_TOTAL_ANNUALIZED_PREMIUM",
+          "label": "个人新造年度化保费",
+          "unit": "HKD_thousand",
+          "entity_scope": "market_total",
+          "period_basis": "quarterly_ytd",
+          "supported_query_types": [
+            "market_trend",
+            "describe_metric"
+          ]
+        },
+        {
+          "metric_id": "NB_IND_TOTAL_SINGLE_PREMIUM",
+          "label": "个人新造整付保费",
+          "unit": "HKD_thousand",
+          "entity_scope": "market_total",
+          "period_basis": "quarterly_ytd",
+          "supported_query_types": [
+            "market_trend",
+            "describe_metric"
+          ]
+        },
+        {
+          "metric_id": "PROV2025_NB_TOTAL_ANNUAL",
+          "label": "2025 个人长期新造年度化保费",
+          "unit": "HKD_thousand",
+          "entity_scope": "insurer",
+          "period_basis": "annual_provisional",
+          "supported_query_types": [
+            "company_ranking",
+            "company_period_values"
+          ]
+        },
+        {
+          "metric_id": "PROV2025_NB_TOTAL_SINGLE",
+          "label": "2025 个人长期新造整付保费(含年金混入, 不可比L16)",
+          "unit": "HKD_thousand",
+          "entity_scope": "insurer",
+          "period_basis": "annual_provisional",
+          "supported_query_types": [
+            "company_ranking",
+            "company_period_values"
+          ]
+        }
+      ],
+      "metadata": {
+        "metric_id": null,
+        "metric_label": null,
+        "period_basis": null,
+        "entity_scope": null,
+        "source_unit": null,
+        "output_unit": null,
+        "certification": "provisional",
+        "schema": "unknown",
+        "source_layer": null,
+        "source_db_id": null,
+        "source_tables": [],
+        "data_version": "v1",
+        "bridge_version": "2.1"
+      },
+      "comparability": {
+        "status": "comparable",
+        "reasons": [],
+        "required_bridge": null
+      },
+      "release": {
+        "status": "allowed",
+        "level": null,
+        "warnings": []
+      },
+      "lineage": {
+        "query_template_id": "M1_LIST_METRICS_V1",
+        "source_files": [],
+        "checksums": []
+      }
+    },
+    "describe_metric": {
+      "ok": true,
+      "request_id": "6a28f515cde9",
+      "query_type": "describe_metric",
+      "data": [
+        {
+          "metric_id": "NB_IND_TOTAL_SINGLE_PREMIUM",
+          "label": "个人新造整付保费",
+          "unit": "HKD_thousand",
+          "entity_scope": "market_total",
+          "period_basis": "quarterly_ytd",
+          "certification_rule": "provisional (季度/年度临时)",
+          "schema": "lt_qr_quarterly",
+          "source_layer": "standard",
+          "source_table": "market_facts",
+          "comparable_with": [
+            "2023Q1,2024Q1,2025Q1,2026Q1 季度序列"
+          ],
+          "prohibited_comparisons": [
+            "跨schema分类明细",
+            "count"
+          ],
+          "aggregation": "flow",
+          "source_definition": "IA 长期业务季度临时统计 Table L1 市场总额 个人新造整付保费"
+        }
+      ],
+      "metadata": {
+        "metric_id": "NB_IND_TOTAL_SINGLE_PREMIUM",
+        "metric_label": "个人新造整付保费",
+        "period_basis": "quarterly_ytd",
+        "entity_scope": "market_total",
+        "source_unit": "HKD_thousand",
+        "output_unit": "HKD_thousand",
+        "certification": "provisional",
+        "schema": "lt_qr_quarterly",
+        "source_layer": "standard",
+        "source_db_id": "standard",
+        "source_tables": [
+          "market_facts"
+        ],
+        "data_version": "v1",
+        "bridge_version": "2.1"
+      },
+      "comparability": {
+        "status": "comparable",
+        "reasons": [],
+        "required_bridge": null
+      },
+      "release": {
+        "status": "allowed",
+        "level": null,
+        "warnings": []
+      },
+      "lineage": {
+        "query_template_id": "M2_DESCRIBE_METRIC_V1",
+        "source_files": [
+          "standard_fact_layer_2023_2026Q1.db"
+        ],
+        "checksums": [
+          "f80c13b9e63b48ce"
+        ]
+      }
+    },
+    "count_unknown_unit": {
+      "ok": false,
+      "error_code": "VALIDATION_ERROR",
+      "message": "entity_scope 不合法: None",
+      "blocked_by": null,
+      "suggestion": null,
+      "query_type": "market_trend"
+    },
+    "money_count_unit": {
+      "ok": false,
+      "error_code": "VALIDATION_ERROR",
+      "message": "entity_scope 不合法: None",
+      "blocked_by": null,
+      "suggestion": null,
+      "query_type": "market_trend"
+    },
+    "negative_limit": {
+      "ok": false,
+      "row_count": 0
+    },
+    "huge_limit": {
+      "ok": false,
+      "row_count": 0
+    },
+    "unsupported_annual_year": {
+      "ok": false,
+      "error_code": "VALIDATION_ERROR",
+      "message": "entity_scope 不合法: None",
+      "blocked_by": null,
+      "suggestion": null,
+      "query_type": "company_ranking"
+    },
+    "scope_override": {
+      "ok": false,
+      "metadata": null
+    },
+    "wrong_query_metric": {
+      "ok": false,
+      "error_code": "VALIDATION_ERROR",
+      "message": "期间 '2026Q1' 不符合指标 period_basis=annual_certified。",
+      "blocked_by": null,
+      "suggestion": null,
+      "query_type": "financial_snapshot"
+    },
+    "annual_company_value": {
+      "ok": false,
+      "error_code": "VALIDATION_ERROR",
+      "message": "entity_scope 不合法: None",
+      "blocked_by": null,
+      "suggestion": null,
+      "query_type": "company_period_values"
+    },
+    "provisional_company_value": {
+      "ok": false,
+      "error_code": "VALIDATION_ERROR",
+      "message": "entity_scope 不合法: None",
+      "blocked_by": null,
+      "suggestion": null,
+      "query_type": "company_period_values"
+    },
+    "trend_row_fields": [],
+    "lineage": {},
+    "metadata_keys": [],
+    "malformed_periods": {
+      "ok": false,
+      "error_code": "VALIDATION_ERROR",
+      "message": "periods 必须为字符串数组。",
+      "blocked_by": null,
+      "suggestion": null,
+      "query_type": "market_trend"
+    },
+    "source_hashes_before": {
+      "master": "8fefa61d24b64206f9cadfe23f6b760e9232b57331ba0073470171121b11f9b3",
+      "standard": "f80c13b9e63b48ce35b8413170f4547b84887dddffc396110b1c4e83d3455352",
+      "annual": "f263f489471214a8ad2ec6a045fdca903e60e40deca28f7c1c382003c38e8e18",
+      "provisional2025": "b9c41cd370d6abe86c50f3db0a12e06c9ffd5f1ddbf7a9ac12d55c34178ad796",
+      "financial": "e801f7bb03edf48a26025e6e2763dfbcf685fe4684d1e5aa4bf555e134c15f90"
+    },
+    "source_hashes_after": {
+      "master": "8fefa61d24b64206f9cadfe23f6b760e9232b57331ba0073470171121b11f9b3",
+      "standard": "f80c13b9e63b48ce35b8413170f4547b84887dddffc396110b1c4e83d3455352",
+      "annual": "f263f489471214a8ad2ec6a045fdca903e60e40deca28f7c1c382003c38e8e18",
+      "provisional2025": "b9c41cd370d6abe86c50f3db0a12e06c9ffd5f1ddbf7a9ac12d55c34178ad796",
+      "financial": "e801f7bb03edf48a26025e6e2763dfbcf685fe4684d1e5aa4bf555e134c15f90"
+    },
+    "schema_files": [
+      "schema/response_schema.json"
+    ],
+    "cli_invalid_json": {
+      "returncode": 2,
+      "stdout": "{\"ok\": false, \"error_code\": \"CLI_INVALID_JSON\", \"message\": \"请求 JSON 解析失败: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)\", \"blocked_by\": \"cli_input\", \"query_type\": \"\"}\n",
+      "stderr_tail": ""
+    },
+    "existing_gate_returncodes": {
+      "baseline": 0,
+      "bridge": 0
+    }
+  },
+  "note": "Independent black-box checks add contract cases not present in the implementation-owned acceptance script."
+}
