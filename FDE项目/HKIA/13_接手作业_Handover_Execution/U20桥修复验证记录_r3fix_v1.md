@@ -16,7 +16,7 @@
 
 ---
 
-## 二、机器可读产物（v2，请 U20 复核）
+## 二、机器可读产物（v2.1，请 U20 复核）
 
 路径：`生成_跨年度同口径桥_CrossYearBridge/bridge/`
 - `可比公司映射_2024L16_2025L1_v2.csv`（22 家可比，含双方真实源名 + entity_key + bridge_type + 双边 record_status + 金额）
@@ -64,6 +64,14 @@
 - ❌ **分红+相连分项独立复算**（1492.0亿需回原始工作簿复算）。
 - **→ 跨年度同口径增长（含 +65.4%）仍未验收、不得发布。** 本桥仅作机器可读的公司映射/覆盖/对账参考，非同口径增长结论。
 
+## 六·补充（v2.1）：entity_key 全量对齐标准层
+
+依 `U20桥修复独立复核_r3fix.md`，修正 **12 处 entity_key 与标准层不一致**：
+- 修正方法：不再用自建标点规则生成 entity_key，**直接从标准层 `company_facts` 提取 `source_abbrev→entity_key` 正映射回填**。
+- 已对齐的 12 家：Manulife (Int'l)→ENTITY_MANULIFE_INT_L、SJPI(HK)L→ENTITY_SJPI_HK_L、AIA (HK)→ENTITY_AIA_HK、CPIC Life (HK)→ENTITY_CPIC_LIFE_HK、Friends Provident Int'l→ENTITY_FRIENDS_PROVIDENT_INT_L、FWD Life (HK)→ENTITY_FWD_LIFE_HK、Generali Life (HK)→ENTITY_GENERALI_LIFE_HK、Liberty Int'l→ENTITY_LIBERTY_INT_L、Prudential (America)→ENTITY_PRUDENTIAL_AMERICA、RL360°→ENTITY_RL360、Transamerica Life (Bermuda)→ENTITY_TRANSAMERICA_LIFE_BERMUDA、Swiss Re (Asia)→ENTITY_SWISS_RE_ASIA。
+- **终验：68 行（映射22+排除46）entity_key 全部与标准层一致，0 不一致。**
+- 金额闭合/覆盖率/record_status 不变（v2.1 未改数值）。
+
 ## 六、U20 复核建议
 1. 用 `bridge/*_v2.*` 三文件复跑第三方对账（CSV 汇总 vs 两库市场总额）。
 2. 核对安盛两组映射是否可用（标准层 ENTITY_AXA_CRI_HK/ENTITY_AXA_CRI 为证据）。
@@ -76,3 +84,4 @@
 | 日期 | 作者 | 内容 |
 |---|---|---|
 | 2026-08-06 | Jasper/接手方 | 桥 r3 修复验证记录（A/B/C/D + 复算核对）|
+| 2026-08-06 | Jasper/接手方 | v2.1：12处 entity_key 对齐标准层（68行全一致，据独立复核 r3fix）|

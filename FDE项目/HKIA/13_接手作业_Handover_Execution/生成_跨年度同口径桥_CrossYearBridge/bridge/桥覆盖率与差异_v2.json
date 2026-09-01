@@ -1,5 +1,5 @@
 {
-  "version": "v2(修复r3: 安盛名称+record_status+闭合)",
+  "version": "v2.1(修复r3fix: 全部entity_key回填标准层,12处对齐)",
   "matched_count": 22,
   "excluded_count": 46,
   "coverage_2024_pct": 99.592,
@@ -11,5 +11,7 @@
     "entity": "ENTITY_AXA_CRI_HK"
   },
   "note": "2024/2025 均已精确闭合(差=0)；record_status 区分 reported_zero/missing；安盛改名经标准层 ENTITY_AXA_CRI_HK 桥",
-  "caveat": "覆盖率=清单数值/市场总额,非同口径可比覆盖率;异口径未过范围等价验收,不得发布同口径增长"
+  "caveat": "覆盖率=清单数值/市场总额,非同口径可比覆盖率;异口径未过范围等价验收,不得发布同口径增长",
+  "entity_key_alignment": "68行全部与标准层 company_facts 的 source_abbrev->entity_key 一致; 含12处复核指出的差异(Manulife_INT_L/SJPI_HK_L/AIA_HK/CPIC_LIFE_HK等)全部回填",
+  "fix_method": "不再用自建标点规则生成键,直接从标准层抽 source_abbrev->entity_key 正映射回填"
 }

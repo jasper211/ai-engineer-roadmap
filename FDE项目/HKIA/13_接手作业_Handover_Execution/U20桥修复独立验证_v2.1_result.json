@@ -1,0 +1,814 @@
+{
+  "baseline": {
+    "connections": {
+      "raw": {
+        "path": "/Users/a112233/Desktop/Jasper工作文档（不含EA项目）/Jasper AI协同经验引擎/AI工程能力整改项目/FDE项目/HKIA/07_接入记忆_Integrate_Memory/data/hkia.db",
+        "counts": {
+          "long_term_business": 59516
+        },
+        "counts_match": true,
+        "quick_check": "ok"
+      },
+      "standard": {
+        "path": "/Users/a112233/Desktop/Jasper工作文档（不含EA项目）/Jasper AI协同经验引擎/AI工程能力整改项目/FDE项目/HKIA/13_接手作业_Handover_Execution/生成_标准事实层_StandardFactLayer/data/standard_fact_layer_2023_2026Q1.db",
+        "counts": {
+          "market_facts": 72,
+          "company_facts": 4914,
+          "schema_metrics": 18,
+          "annual_facts": 18
+        },
+        "counts_match": true,
+        "quick_check": "ok"
+      },
+      "annual": {
+        "path": "/Users/a112233/Desktop/Jasper工作文档（不含EA项目）/Jasper AI协同经验引擎/AI工程能力整改项目/FDE项目/HKIA/13_接手作业_Handover_Execution/生成_年度公司事实层_AnnualCompanyFactLayer/data/annual_company_fact_layer_2022_2024.db",
+        "counts": {
+          "company_facts": 7097
+        },
+        "counts_match": true,
+        "quick_check": "ok"
+      },
+      "provisional": {
+        "path": "/Users/a112233/Desktop/Jasper工作文档（不含EA项目）/Jasper AI协同经验引擎/AI工程能力整改项目/FDE项目/HKIA/13_接手作业_Handover_Execution/生成_2025provisional公司事实层_AnnualProvisionalCompanyLayer/data/annual_provisional_company_2025.db",
+        "counts": {
+          "provisional_company_facts": 414
+        },
+        "counts_match": true,
+        "quick_check": "ok"
+      },
+      "financial": {
+        "path": "/Users/a112233/Desktop/Jasper工作文档（不含EA项目）/Jasper AI协同经验引擎/AI工程能力整改项目/FDE项目/HKIA/13_接手作业_Handover_Execution/生成_行业财务事实层_FinancialFactLayer/data/financial_fact_layer.db",
+        "counts": {
+          "financial_facts": 408
+        },
+        "counts_match": true,
+        "quick_check": "ok"
+      }
+    },
+    "queries": {
+      "Q1": {
+        "sql": "SELECT period,metric_id,value,unit FROM market_facts WHERE metric_id='NB_IND_TOTAL_ANNUALIZED_PREMIUM' ORDER BY period",
+        "rows": [
+          {
+            "period": "2023Q1",
+            "metric_id": "NB_IND_TOTAL_ANNUALIZED_PREMIUM",
+            "value": 23775374.0,
+            "unit": "HKD_thousand"
+          },
+          {
+            "period": "2024Q1",
+            "metric_id": "NB_IND_TOTAL_ANNUALIZED_PREMIUM",
+            "value": 38179074.0,
+            "unit": "HKD_thousand"
+          },
+          {
+            "period": "2025Q1",
+            "metric_id": "NB_IND_TOTAL_ANNUALIZED_PREMIUM",
+            "value": 46460183.419127,
+            "unit": "HKD_thousand"
+          },
+          {
+            "period": "2026Q1",
+            "metric_id": "NB_IND_TOTAL_ANNUALIZED_PREMIUM",
+            "value": 50576625.9556103,
+            "unit": "HKD_thousand"
+          }
+        ]
+      },
+      "Q2": {
+        "sql": "SELECT insurer_name_source,value_raw FROM company_facts WHERE report_year=2024 AND table_id='L16' AND metric_sem='premium_single' AND entity_scope='insurer' ORDER BY value_raw DESC LIMIT 10",
+        "rows": [
+          {
+            "insurer_name_source": "Hang Seng Insurance",
+            "value_raw": 22147387.0
+          },
+          {
+            "insurer_name_source": "HSBC Life",
+            "value_raw": 15050539.0
+          },
+          {
+            "insurer_name_source": "FWD Life (Bermuda)",
+            "value_raw": 12518638.0
+          },
+          {
+            "insurer_name_source": "Manulife (Int'l)",
+            "value_raw": 11314905.0
+          },
+          {
+            "insurer_name_source": "AIA International",
+            "value_raw": 10677251.0
+          },
+          {
+            "insurer_name_source": "Well Link Life",
+            "value_raw": 3863877.0
+          },
+          {
+            "insurer_name_source": "China Life",
+            "value_raw": 3271777.0
+          },
+          {
+            "insurer_name_source": "Sun Life Hong Kong",
+            "value_raw": 3175249.0
+          },
+          {
+            "insurer_name_source": "Prudential (HK) Life",
+            "value_raw": 3089790.053196999
+          },
+          {
+            "insurer_name_source": "CTF Life",
+            "value_raw": 1332314.0
+          }
+        ]
+      },
+      "Q3": {
+        "sql": "SELECT insurer_name_en,value FROM provisional_company_facts WHERE metric_sem='nb_total_single_premium' AND entity_scope='insurer' ORDER BY value DESC LIMIT 10",
+        "rows": [
+          {
+            "insurer_name_en": "Hang Seng Insurance",
+            "value": 28731149.0
+          },
+          {
+            "insurer_name_en": "AIA International",
+            "value": 24285901.0
+          },
+          {
+            "insurer_name_en": "FWD Life (Bermuda)",
+            "value": 21013450.0
+          },
+          {
+            "insurer_name_en": "HSBC Life",
+            "value": 20925747.0
+          },
+          {
+            "insurer_name_en": "Manulife (Int'l)",
+            "value": 18427205.0
+          },
+          {
+            "insurer_name_en": "Sun Life Hong Kong",
+            "value": 10165038.0
+          },
+          {
+            "insurer_name_en": "Well Link Life",
+            "value": 9688893.0
+          },
+          {
+            "insurer_name_en": "HKMC Annuity",
+            "value": 8892490.0
+          },
+          {
+            "insurer_name_en": "Prudential (HK) Life",
+            "value": 6250618.76323749
+          },
+          {
+            "insurer_name_en": "AXA CRI (HK)",
+            "value": 3210505.0
+          }
+        ]
+      },
+      "Q4": {
+        "sql": "SELECT item_label_zh,value_hkd_million FROM financial_facts WHERE period='2026Q1' AND fund_scope='long_term' AND item_id IN ('debt_securities','equities_portfolio','cash_and_deposits') ORDER BY value_hkd_million DESC",
+        "rows": [
+          {
+            "item_label_zh": "債務證券",
+            "value_hkd_million": 2702553.83891497
+          },
+          {
+            "item_label_zh": "股權 (包括組合投資)",
+            "value_hkd_million": 1544375.504384882
+          },
+          {
+            "item_label_zh": "現金和存款",
+            "value_hkd_million": 182103.888171993
+          }
+        ]
+      }
+    },
+    "checks": {
+      "unit_conversion": true,
+      "count_rejected": true,
+      "null_preserved": true,
+      "quarterly_2023_not_certified": true,
+      "annual_2024_certified": true,
+      "five_db_counts_match": true,
+      "query_row_counts": true,
+      "all_quick_checks_ok": true,
+      "unit_alias_HKD_thousand": true,
+      "unit_alias_hkd_thousand": true,
+      "unit_alias_千港元": true,
+      "unit_alias_HKD_million": true,
+      "reject_": true,
+      "reject_None": true,
+      "reject_count": true,
+      "reject_unsupported": true,
+      "financial_certification_populated": true,
+      "actual_annual_unit_conversion": true,
+      "actual_provisional_label": true,
+      "scope_mismatch_rejected": true,
+      "unreviewed_schema_bridge_rejected": true,
+      "L11_policy_vs_scheme_rejected": true,
+      "missing_metadata_rejected": true,
+      "ctf_rename_same_entity": true,
+      "transfer_distinct_entity_same_lineage": true
+    },
+    "unit_inventory": {
+      "raw": [
+        {
+          "unit": "",
+          "n": 10636
+        },
+        {
+          "unit": "千港元",
+          "n": 48880
+        }
+      ],
+      "standard": [
+        {
+          "unit": "HKD_thousand",
+          "n": 48
+        },
+        {
+          "unit": "count",
+          "n": 24
+        }
+      ],
+      "annual": [
+        {
+          "unit": "count",
+          "n": 2448
+        },
+        {
+          "unit": "hkd_thousand",
+          "n": 4649
+        }
+      ],
+      "provisional": [
+        {
+          "unit": "count",
+          "n": 69
+        },
+        {
+          "unit": "hkd_thousand",
+          "n": 345
+        }
+      ],
+      "financial": [
+        {
+          "unit": "HKD_million",
+          "n": 408
+        }
+      ]
+    },
+    "certification_inventory": [
+      {
+        "year": 2025,
+        "certification": "provisional"
+      },
+      {
+        "period": "2025",
+        "certification": "provisional"
+      }
+    ],
+    "L11_routes": [
+      {
+        "report_year": 2022,
+        "metric_sem": "contribution_annual",
+        "unit": "hkd_thousand",
+        "n": 61
+      },
+      {
+        "report_year": 2022,
+        "metric_sem": "lives",
+        "unit": "count",
+        "n": 61
+      },
+      {
+        "report_year": 2022,
+        "metric_sem": "net_liabilities",
+        "unit": "hkd_thousand",
+        "n": 61
+      },
+      {
+        "report_year": 2022,
+        "metric_sem": "policy_count",
+        "unit": "count",
+        "n": 61
+      },
+      {
+        "report_year": 2023,
+        "metric_sem": "contribution_annual",
+        "unit": "hkd_thousand",
+        "n": 60
+      },
+      {
+        "report_year": 2023,
+        "metric_sem": "lives",
+        "unit": "count",
+        "n": 60
+      },
+      {
+        "report_year": 2023,
+        "metric_sem": "net_liabilities",
+        "unit": "hkd_thousand",
+        "n": 60
+      },
+      {
+        "report_year": 2023,
+        "metric_sem": "policy_count",
+        "unit": "count",
+        "n": 60
+      },
+      {
+        "report_year": 2024,
+        "metric_sem": "contribution_annual",
+        "unit": "hkd_thousand",
+        "n": 58
+      },
+      {
+        "report_year": 2024,
+        "metric_sem": "contribution_single",
+        "unit": "hkd_thousand",
+        "n": 58
+      },
+      {
+        "report_year": 2024,
+        "metric_sem": "current_estimate",
+        "unit": "hkd_thousand",
+        "n": 58
+      },
+      {
+        "report_year": 2024,
+        "metric_sem": "scheme_count",
+        "unit": "count",
+        "n": 58
+      }
+    ],
+    "bridge_inventory": [
+      {
+        "source_abbrev": "AXA China (Bermuda)",
+        "entity_key": "ENTITY_AXA_CRI_HK",
+        "business_lineage": "ENTITY_AXA_CRI_HK",
+        "bridge_class": "same_entity_redomiciliation"
+      },
+      {
+        "source_abbrev": "AXA China (HK)",
+        "entity_key": "ENTITY_AXA_CRI",
+        "business_lineage": "ENTITY_AXA_CRI",
+        "bridge_class": "abbreviation_change"
+      },
+      {
+        "source_abbrev": "AXA Life",
+        "entity_key": "ENTITY_AXA_LIFE",
+        "business_lineage": "ENTITY_AXA_LIFE",
+        "bridge_class": "direct_name_continuity"
+      },
+      {
+        "source_abbrev": "AXA Wealth Mgt (HK)",
+        "entity_key": "ENTITY_AXA_WEALTH_MGT_HK",
+        "business_lineage": "ENTITY_AXA_WEALTH_MGT_HK",
+        "bridge_class": "direct_name_continuity"
+      },
+      {
+        "source_abbrev": "Canada Life Assurance",
+        "entity_key": "ENTITY_CANADA_LIFE_ASSURANCE",
+        "business_lineage": "LINEAGE_CANADA_TO_MYPACE",
+        "bridge_class": "business_transfer"
+      },
+      {
+        "source_abbrev": "Chubb Life",
+        "entity_key": "ENTITY_CHUBB_LIFE_TRANSFEROR",
+        "business_lineage": "LINEAGE_CHUBB_LIFE_HK",
+        "bridge_class": "business_transfer"
+      },
+      {
+        "source_abbrev": "Chubb Life HK",
+        "entity_key": "ENTITY_CHUBB_LIFE_HK",
+        "business_lineage": "LINEAGE_CHUBB_LIFE_HK",
+        "bridge_class": "business_transfer"
+      },
+      {
+        "source_abbrev": "FTLife",
+        "entity_key": "ENTITY_CTF_LIFE",
+        "business_lineage": "ENTITY_CTF_LIFE",
+        "bridge_class": "same_entity_name_change"
+      },
+      {
+        "source_abbrev": "CTF Life",
+        "entity_key": "ENTITY_CTF_LIFE",
+        "business_lineage": "ENTITY_CTF_LIFE",
+        "bridge_class": "same_entity_name_change"
+      },
+      {
+        "source_abbrev": "AXA CRI (HK)",
+        "entity_key": "ENTITY_AXA_CRI_HK",
+        "business_lineage": "ENTITY_AXA_CRI_HK",
+        "bridge_class": "same_entity_redomiciliation"
+      },
+      {
+        "source_abbrev": "AXA CRI",
+        "entity_key": "ENTITY_AXA_CRI",
+        "business_lineage": "ENTITY_AXA_CRI",
+        "bridge_class": "abbreviation_change"
+      },
+      {
+        "source_abbrev": "MyPace Life",
+        "entity_key": "ENTITY_MYPACE_LIFE",
+        "business_lineage": "LINEAGE_CANADA_TO_MYPACE",
+        "bridge_class": "business_transfer"
+      }
+    ],
+    "financial_certification_inventory": [
+      {
+        "certification": "provisional",
+        "n": 408
+      }
+    ],
+    "consumer_samples": {
+      "Q1": [
+        {
+          "period": "2023Q1",
+          "metric_id": "NB_IND_TOTAL_ANNUALIZED_PREMIUM",
+          "value": 23775374.0,
+          "unit": "HKD_thousand",
+          "value_hkd_million": 23775.374,
+          "certification": "provisional",
+          "label_basis": "quarterly source layer; not a DB certification column"
+        },
+        {
+          "period": "2024Q1",
+          "metric_id": "NB_IND_TOTAL_ANNUALIZED_PREMIUM",
+          "value": 38179074.0,
+          "unit": "HKD_thousand",
+          "value_hkd_million": 38179.074,
+          "certification": "provisional",
+          "label_basis": "quarterly source layer; not a DB certification column"
+        },
+        {
+          "period": "2025Q1",
+          "metric_id": "NB_IND_TOTAL_ANNUALIZED_PREMIUM",
+          "value": 46460183.419127,
+          "unit": "HKD_thousand",
+          "value_hkd_million": 46460.183419127,
+          "certification": "provisional",
+          "label_basis": "quarterly source layer; not a DB certification column"
+        },
+        {
+          "period": "2026Q1",
+          "metric_id": "NB_IND_TOTAL_ANNUALIZED_PREMIUM",
+          "value": 50576625.9556103,
+          "unit": "HKD_thousand",
+          "value_hkd_million": 50576.625955610296,
+          "certification": "provisional",
+          "label_basis": "quarterly source layer; not a DB certification column"
+        }
+      ],
+      "Q2": [
+        {
+          "report_year": 2024,
+          "table_id": "L16",
+          "subject": "total_individual_life_nb",
+          "metric_sem": "premium_single",
+          "unit": "hkd_thousand",
+          "value_raw": 22147387.0,
+          "value_hkd_million": 22147.387,
+          "certification": "certified",
+          "label_basis": "annual source layer; not a DB certification column"
+        },
+        {
+          "report_year": 2024,
+          "table_id": "L16",
+          "subject": "total_individual_life_nb",
+          "metric_sem": "premium_single",
+          "unit": "hkd_thousand",
+          "value_raw": 15050539.0,
+          "value_hkd_million": 15050.539,
+          "certification": "certified",
+          "label_basis": "annual source layer; not a DB certification column"
+        },
+        {
+          "report_year": 2024,
+          "table_id": "L16",
+          "subject": "total_individual_life_nb",
+          "metric_sem": "premium_single",
+          "unit": "hkd_thousand",
+          "value_raw": 12518638.0,
+          "value_hkd_million": 12518.638,
+          "certification": "certified",
+          "label_basis": "annual source layer; not a DB certification column"
+        },
+        {
+          "report_year": 2024,
+          "table_id": "L16",
+          "subject": "total_individual_life_nb",
+          "metric_sem": "premium_single",
+          "unit": "hkd_thousand",
+          "value_raw": 11314905.0,
+          "value_hkd_million": 11314.905,
+          "certification": "certified",
+          "label_basis": "annual source layer; not a DB certification column"
+        },
+        {
+          "report_year": 2024,
+          "table_id": "L16",
+          "subject": "total_individual_life_nb",
+          "metric_sem": "premium_single",
+          "unit": "hkd_thousand",
+          "value_raw": 10677251.0,
+          "value_hkd_million": 10677.251,
+          "certification": "certified",
+          "label_basis": "annual source layer; not a DB certification column"
+        },
+        {
+          "report_year": 2024,
+          "table_id": "L16",
+          "subject": "total_individual_life_nb",
+          "metric_sem": "premium_single",
+          "unit": "hkd_thousand",
+          "value_raw": 3863877.0,
+          "value_hkd_million": 3863.877,
+          "certification": "certified",
+          "label_basis": "annual source layer; not a DB certification column"
+        },
+        {
+          "report_year": 2024,
+          "table_id": "L16",
+          "subject": "total_individual_life_nb",
+          "metric_sem": "premium_single",
+          "unit": "hkd_thousand",
+          "value_raw": 3271777.0,
+          "value_hkd_million": 3271.777,
+          "certification": "certified",
+          "label_basis": "annual source layer; not a DB certification column"
+        },
+        {
+          "report_year": 2024,
+          "table_id": "L16",
+          "subject": "total_individual_life_nb",
+          "metric_sem": "premium_single",
+          "unit": "hkd_thousand",
+          "value_raw": 3175249.0,
+          "value_hkd_million": 3175.2490000000003,
+          "certification": "certified",
+          "label_basis": "annual source layer; not a DB certification column"
+        },
+        {
+          "report_year": 2024,
+          "table_id": "L16",
+          "subject": "total_individual_life_nb",
+          "metric_sem": "premium_single",
+          "unit": "hkd_thousand",
+          "value_raw": 3089790.053196999,
+          "value_hkd_million": 3089.790053196999,
+          "certification": "certified",
+          "label_basis": "annual source layer; not a DB certification column"
+        },
+        {
+          "report_year": 2024,
+          "table_id": "L16",
+          "subject": "total_individual_life_nb",
+          "metric_sem": "premium_single",
+          "unit": "hkd_thousand",
+          "value_raw": 1332314.0,
+          "value_hkd_million": 1332.314,
+          "certification": "certified",
+          "label_basis": "annual source layer; not a DB certification column"
+        }
+      ],
+      "Q3": [
+        {
+          "year": 2025,
+          "certification": "provisional",
+          "table_id": "L1",
+          "subject": "individual_long_term_new_business",
+          "metric_sem": "nb_total_single_premium",
+          "unit": "hkd_thousand",
+          "value": 28731149.0,
+          "value_hkd_million": 28731.149
+        },
+        {
+          "year": 2025,
+          "certification": "provisional",
+          "table_id": "L1",
+          "subject": "individual_long_term_new_business",
+          "metric_sem": "nb_total_single_premium",
+          "unit": "hkd_thousand",
+          "value": 24285901.0,
+          "value_hkd_million": 24285.901
+        },
+        {
+          "year": 2025,
+          "certification": "provisional",
+          "table_id": "L1",
+          "subject": "individual_long_term_new_business",
+          "metric_sem": "nb_total_single_premium",
+          "unit": "hkd_thousand",
+          "value": 21013450.0,
+          "value_hkd_million": 21013.45
+        },
+        {
+          "year": 2025,
+          "certification": "provisional",
+          "table_id": "L1",
+          "subject": "individual_long_term_new_business",
+          "metric_sem": "nb_total_single_premium",
+          "unit": "hkd_thousand",
+          "value": 20925747.0,
+          "value_hkd_million": 20925.747
+        },
+        {
+          "year": 2025,
+          "certification": "provisional",
+          "table_id": "L1",
+          "subject": "individual_long_term_new_business",
+          "metric_sem": "nb_total_single_premium",
+          "unit": "hkd_thousand",
+          "value": 18427205.0,
+          "value_hkd_million": 18427.205
+        },
+        {
+          "year": 2025,
+          "certification": "provisional",
+          "table_id": "L1",
+          "subject": "individual_long_term_new_business",
+          "metric_sem": "nb_total_single_premium",
+          "unit": "hkd_thousand",
+          "value": 10165038.0,
+          "value_hkd_million": 10165.038
+        },
+        {
+          "year": 2025,
+          "certification": "provisional",
+          "table_id": "L1",
+          "subject": "individual_long_term_new_business",
+          "metric_sem": "nb_total_single_premium",
+          "unit": "hkd_thousand",
+          "value": 9688893.0,
+          "value_hkd_million": 9688.893
+        },
+        {
+          "year": 2025,
+          "certification": "provisional",
+          "table_id": "L1",
+          "subject": "individual_long_term_new_business",
+          "metric_sem": "nb_total_single_premium",
+          "unit": "hkd_thousand",
+          "value": 8892490.0,
+          "value_hkd_million": 8892.49
+        },
+        {
+          "year": 2025,
+          "certification": "provisional",
+          "table_id": "L1",
+          "subject": "individual_long_term_new_business",
+          "metric_sem": "nb_total_single_premium",
+          "unit": "hkd_thousand",
+          "value": 6250618.76323749,
+          "value_hkd_million": 6250.61876323749
+        },
+        {
+          "year": 2025,
+          "certification": "provisional",
+          "table_id": "L1",
+          "subject": "individual_long_term_new_business",
+          "metric_sem": "nb_total_single_premium",
+          "unit": "hkd_thousand",
+          "value": 3210505.0,
+          "value_hkd_million": 3210.505
+        }
+      ],
+      "Q4": [
+        {
+          "period": "2026Q1",
+          "fund_scope": "long_term",
+          "item_id": "debt_securities",
+          "value_hkd_million": 2702553.83891497,
+          "unit": "HKD_million",
+          "certification": "provisional"
+        },
+        {
+          "period": "2026Q1",
+          "fund_scope": "long_term",
+          "item_id": "equities_portfolio",
+          "value_hkd_million": 1544375.504384882,
+          "unit": "HKD_million",
+          "certification": "provisional"
+        },
+        {
+          "period": "2026Q1",
+          "fund_scope": "long_term",
+          "item_id": "cash_and_deposits",
+          "value_hkd_million": 182103.888171993,
+          "unit": "HKD_million",
+          "certification": "provisional"
+        }
+      ]
+    },
+    "limitations": [
+      "Proxy probe only: U20 production application has not been inspected or modified.",
+      "Cross-layer annual/provisional identity mapping and schema bridge are not validated; comparison is blocked by default.",
+      "Guide counts are snapshot expectations, not automatic future-refresh targets.",
+      "Query execution and metadata checks do not re-audit source spreadsheet extraction."
+    ],
+    "checked_at_utc": "2026-08-31T12:49:15.796550+00:00"
+  },
+  "checks": {
+    "counts_match_manifest": true,
+    "all_values_and_record_status_match": true,
+    "matched_entity_keys_match_standard": true,
+    "excluded_entity_keys_match_standard": true,
+    "axa_two_bridges_verified": true,
+    "unique_complete_source_names_2024": true,
+    "amount_reconciles_2024": true,
+    "coverage_matches_claim_2024": true,
+    "gap_matches_claim_2024": true,
+    "unique_complete_source_names_2025": true,
+    "amount_reconciles_2025": true,
+    "coverage_matches_claim_2025": true,
+    "gap_matches_claim_2025": true,
+    "guide_four_selects_execute_correctly": true,
+    "guide_uses_readonly_uri": true,
+    "subset_conflict_removed": true,
+    "same_scope_release_remains_blocked": true
+  },
+  "evidence": {
+    "row_errors": [],
+    "identity_errors": [],
+    "totals": {
+      "2024": {
+        "market": 90226978.423197,
+        "matched": 89858894.053197,
+        "excluded": 368084.37,
+        "gap": 4.773028194904327e-09,
+        "coverage_pct": 99.59204621895509
+      },
+      "2025": {
+        "market": 162006264.85723746,
+        "matched": 153082664.76323748,
+        "excluded": 8923600.094,
+        "gap": -1.862645149230957e-08,
+        "coverage_pct": 94.49181789243546
+      }
+    },
+    "status_counts": {
+      "2024": {
+        "matched": {
+          "reported_value": 22
+        },
+        "excluded": {
+          "reported_zero": 33,
+          "reported_value": 2,
+          "missing": 11
+        }
+      },
+      "2025": {
+        "matched": {
+          "reported_value": 22
+        },
+        "excluded": {
+          "reported_zero": 43,
+          "reported_value": 3
+        }
+      }
+    },
+    "guide_sql_results": [
+      {
+        "block": 1,
+        "owner": "ann",
+        "sql": "\n    SELECT insurer_name_source, value_raw\n    FROM company_facts\n    WHERE report_year=2024 AND table_id='L16'\n      AND metric_sem='premium_single' AND entity_scope='insurer'\n",
+        "count": 57,
+        "correct": true
+      },
+      {
+        "block": 1,
+        "owner": "prov",
+        "sql": "\n    SELECT insurer_name_en, value\n    FROM provisional_company_facts\n    WHERE metric_sem='nb_total_single_premium'\n      AND entity_scope='insurer' AND year=2025\n",
+        "count": 68,
+        "correct": true
+      },
+      {
+        "block": 2,
+        "owner": "conn",
+        "sql": "\n    SELECT insurer_name_source, value_raw FROM ann.company_facts\n    WHERE report_year=2024 AND table_id='L16'\n      AND metric_sem='premium_single' AND entity_scope='insurer'\n",
+        "count": 57,
+        "correct": true
+      },
+      {
+        "block": 2,
+        "owner": "conn",
+        "sql": "\n    SELECT insurer_name_en, value FROM prov25.provisional_company_facts\n    WHERE metric_sem='nb_total_single_premium'\n      AND entity_scope='insurer' AND year=2025\n",
+        "count": 68,
+        "correct": true
+      }
+    ],
+    "guide_configuration_note": "ROOT still uses /Users/... placeholder; SQL was executed against actual read-only paths, no arbitrary document Python executed.",
+    "boundary": "Source name/value/status validation is not a product scope bridge or certification of natural growth. Missing names cannot independently prove the real-world identity of absent entities."
+  },
+  "input_sha256": {
+    "U20桥修复验证记录_r3fix_v1.md": "f69eb68acfec733dc85211bc99ea045c796fe0681ac70b536d4f969afd353ea7",
+    "U20调用指引_v1.md": "706052bb9701ec5f3d97633a196853fa97cec1d0cf1e4149550fa48beea93855",
+    "生成_跨年度同口径桥_CrossYearBridge/方案2子集_分红相连口径_v1.md": "4db50bf32edec1419f4d7d7a40c7cd30308f85b8cbc8bf05550f7f7f16f12dab",
+    "生成_跨年度同口径桥_CrossYearBridge/bridge/可比公司映射_2024L16_2025L1_v2.csv": "186161f955e33bfac86d009f77c612467130c42434609f7d637da1333fb90d72",
+    "生成_跨年度同口径桥_CrossYearBridge/bridge/排除清单_2024_2025_v2.csv": "b93202c44bc4084eedd8f803782e935c664e04c514a8f2ced9cd279113ecc988",
+    "生成_跨年度同口径桥_CrossYearBridge/bridge/桥覆盖率与差异_v2.json": "f72cb917383b627118255b0cffa6a0cf04e5aae09e857d69c009010db5a2a39a"
+  },
+  "status": "PASS"
+}
