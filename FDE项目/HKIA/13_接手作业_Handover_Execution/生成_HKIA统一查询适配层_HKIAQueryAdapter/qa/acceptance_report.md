@@ -128,3 +128,19 @@ python3 examples/query_examples.py # 语义查询示例
 | 安装包 | config/schema/bridge 打包进 _assets；安装后从非源码目录 healthcheck+Q1 通过 |
 
 **最终：单元 19/19 + 轮1独立审计 20/20 + 轮3独立审计 19/19 + 适配层验收 17/17 + 基础/桥gate + 安装探测，全部 PASS。**
+
+---
+## 十·第四轮独立终审整改（真实 Schema 契约穿透）
+
+独立终审（`independent_final_contract_audit.md`）判定 PARTIAL，指出唯一集中缺口：
+- **失败响应违反公开 JSON Schema**：`metadata.certification` 与 `metadata.schema` 为 `null`，而 Schema 规定必须 `string`。
+
+**整改**（采用审计推荐方案1）：
+- `_error_response()` 将失败响应的 `certification`、`schema` 设为**字符串 `"not_applicable"`**，满足 Schema string 约束。
+- 保持根目录 `schema/response_schema.json` 与包内 `_assets/schema/response_schema.json` 一致。
+- 新增 `qa/schema_validator.py`（等价递归类型校验）与 `qa/final_contract_recheck.py`，**用真实 Schema 递归校验六类响应**（成功/healthcheck/请求校验失败/单位门禁/L11/RBC/发布门禁）。
+
+**复验**：六类响应全部通过 Schema 递归校验；根目录与包内 schema 一致。
+
+最终：单元 19/19 + 轮1 20/20 + 轮3 19/19 + 适配层 17/17 + 六类响应 Schema 复验 PASS + 安装态探测 PASS。
+**技术适配层可判定 PASS，可供其他模型标准接入。+65.4% 与 2024 L16 vs 2025 L1 仍禁止发布。**
