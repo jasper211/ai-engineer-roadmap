@@ -1,6 +1,6 @@
 {
-  "overall": "PARTIAL",
-  "passed": 15,
+  "overall": "PASS",
+  "passed": 20,
   "total": 20,
   "results": {
     "list_metrics_returns_catalog": true,
@@ -12,11 +12,11 @@
     "annual_layer_rejects_unsupported_year": true,
     "scope_override_rejected": true,
     "query_metric_compatibility_enforced": true,
-    "company_value_returns_identity_and_status": false,
-    "advertised_provisional_company_value_works": false,
-    "every_value_row_has_required_labels": false,
-    "lineage_is_populated_and_specific": false,
-    "metadata_uses_contract_source_db_id": false,
+    "company_value_returns_identity_and_status": true,
+    "advertised_provisional_company_value_works": true,
+    "every_value_row_has_required_labels": true,
+    "lineage_is_populated_and_specific": true,
+    "metadata_uses_contract_source_db_id": true,
     "request_types_strictly_validated": true,
     "source_db_hashes_unchanged": true,
     "response_json_schema_delivered": true,
@@ -27,9 +27,19 @@
   "evidence": {
     "list_metrics": {
       "ok": true,
-      "request_id": "d5cd91dc89d7",
+      "request_id": "bf0736c4a2ea",
       "query_type": "list_metrics",
       "data": [
+        {
+          "metric_id": "ANNUAL_L11_RETIREMENT",
+          "label": "年度退休计划类多个数量(演示L11跨指标禁止)",
+          "unit": "count",
+          "entity_scope": "insurer",
+          "period_basis": "annual_certified",
+          "supported_query_types": [
+            "describe_metric"
+          ]
+        },
         {
           "metric_id": "ANNUAL_L16_PREMIUM_ANNUAL",
           "label": "年度个人寿险新造年度化保费",
@@ -165,7 +175,7 @@
     },
     "describe_metric": {
       "ok": true,
-      "request_id": "6a28f515cde9",
+      "request_id": "c82d1697e8a7",
       "query_type": "describe_metric",
       "data": [
         {
@@ -229,7 +239,7 @@
     "count_unknown_unit": {
       "ok": false,
       "error_code": "VALIDATION_ERROR",
-      "message": "entity_scope 不合法: None",
+      "message": "count 指标不接受金额或未知输出单位。",
       "blocked_by": null,
       "suggestion": null,
       "query_type": "market_trend"
@@ -237,7 +247,7 @@
     "money_count_unit": {
       "ok": false,
       "error_code": "VALIDATION_ERROR",
-      "message": "entity_scope 不合法: None",
+      "message": "金额指标不接受 count 输出单位。",
       "blocked_by": null,
       "suggestion": null,
       "query_type": "market_trend"
@@ -253,7 +263,7 @@
     "unsupported_annual_year": {
       "ok": false,
       "error_code": "VALIDATION_ERROR",
-      "message": "entity_scope 不合法: None",
+      "message": "当前源层不支持年度 2025（支持: [2022, 2023, 2024]）。",
       "blocked_by": null,
       "suggestion": null,
       "query_type": "company_ranking"
@@ -271,24 +281,147 @@
       "query_type": "financial_snapshot"
     },
     "annual_company_value": {
-      "ok": false,
-      "error_code": "VALIDATION_ERROR",
-      "message": "entity_scope 不合法: None",
-      "blocked_by": null,
-      "suggestion": null,
-      "query_type": "company_period_values"
+      "ok": true,
+      "request_id": "1e5819901de8",
+      "query_type": "company_period_values",
+      "data": [
+        {
+          "entity": "AXA China (Bermuda)",
+          "value": 1046595.0,
+          "report_year": 2024,
+          "entity_key": "ENTITY_AXA_CRI_HK",
+          "business_lineage": null,
+          "entity_scope": "insurer",
+          "certification": "certified",
+          "schema": "annual_lt",
+          "record_status": "reported_value"
+        }
+      ],
+      "metadata": {
+        "metric_id": "ANNUAL_L16_PREMIUM_SINGLE",
+        "metric_label": "年度个人寿险新造整付保费",
+        "period_basis": "annual_certified",
+        "entity_scope": "insurer",
+        "source_unit": "HKD_thousand",
+        "output_unit": "HKD_thousand",
+        "certification": "certified",
+        "schema": "annual_lt",
+        "source_layer": "annual",
+        "source_db_id": "annual",
+        "source_tables": [
+          "company_facts"
+        ],
+        "data_version": "v1",
+        "bridge_version": "2.1"
+      },
+      "comparability": {
+        "status": "comparable",
+        "reasons": [],
+        "required_bridge": null
+      },
+      "release": {
+        "status": "allowed",
+        "level": "internal_analysis",
+        "warnings": [
+          "年度 L16 certified 可分开展示两年，跨 schema 同口径增长未验收，不得发布增长率。"
+        ]
+      },
+      "lineage": {
+        "query_template_id": "Q5_COMPANY_PERIOD_VALUES_V1",
+        "source_files": [
+          "annual_company_fact_layer_2022_2024.db"
+        ],
+        "checksums": [
+          "f263f489471214a8"
+        ]
+      }
     },
     "provisional_company_value": {
-      "ok": false,
-      "error_code": "VALIDATION_ERROR",
-      "message": "entity_scope 不合法: None",
-      "blocked_by": null,
-      "suggestion": null,
-      "query_type": "company_period_values"
+      "ok": true,
+      "request_id": "fe5d7d6c1521",
+      "query_type": "company_period_values",
+      "data": [
+        {
+          "entity": "AXA CRI (HK)",
+          "value": 3210505.0,
+          "year": 2025,
+          "entity_key": "ENTITY_AXA_CRI_HK",
+          "business_lineage": null,
+          "entity_scope": "insurer",
+          "certification": "provisional",
+          "schema": "lt_qr_2025",
+          "record_status": "reported_value"
+        }
+      ],
+      "metadata": {
+        "metric_id": "PROV2025_NB_TOTAL_SINGLE",
+        "metric_label": "2025 个人长期新造整付保费(含年金混入, 不可比L16)",
+        "period_basis": "annual_provisional",
+        "entity_scope": "insurer",
+        "source_unit": "HKD_thousand",
+        "output_unit": "HKD_thousand",
+        "certification": "provisional",
+        "schema": "lt_qr_2025",
+        "source_layer": "provisional2025",
+        "source_db_id": "provisional2025",
+        "source_tables": [
+          "provisional_company_facts"
+        ],
+        "data_version": "v1",
+        "bridge_version": "2.1"
+      },
+      "comparability": {
+        "status": "comparable",
+        "reasons": [],
+        "required_bridge": null
+      },
+      "release": {
+        "status": "allowed",
+        "level": "internal_analysis",
+        "warnings": []
+      },
+      "lineage": {
+        "query_template_id": "Q5_COMPANY_PERIOD_VALUES_V1",
+        "source_files": [
+          "annual_provisional_company_2025.db"
+        ],
+        "checksums": [
+          "b9c41cd370d6abe8"
+        ]
+      }
     },
-    "trend_row_fields": [],
-    "lineage": {},
-    "metadata_keys": [],
+    "trend_row_fields": [
+      "certification",
+      "entity_scope",
+      "period",
+      "schema",
+      "unit",
+      "value"
+    ],
+    "lineage": {
+      "query_template_id": "Q1_MARKET_TREND_V1",
+      "source_files": [
+        "standard_fact_layer_2023_2026Q1.db"
+      ],
+      "checksums": [
+        "f80c13b9e63b48ce"
+      ]
+    },
+    "metadata_keys": [
+      "bridge_version",
+      "certification",
+      "data_version",
+      "entity_scope",
+      "metric_id",
+      "metric_label",
+      "output_unit",
+      "period_basis",
+      "schema",
+      "source_db_id",
+      "source_layer",
+      "source_tables",
+      "source_unit"
+    ],
     "malformed_periods": {
       "ok": false,
       "error_code": "VALIDATION_ERROR",

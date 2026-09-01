@@ -1,0 +1,93 @@
+Metadata-Version: 2.4
+Name: hkia-query-adapter
+Version: 1.0.0
+Summary: HKIA 香港保险数据统一查询适配层（只读、白名单语义查询、口径门禁）
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+
+# HKIA 统一查询适配层 v1 (HKIAQueryAdapter)
+
+> 本地、只读、可测试的语义查询适配层。把 5 个 SQLite 数据源 + 公司桥 v2.1 + 口径规则收口成标准接口。
+> **核心价值**：模型只能调用经过口径约束的语义接口，不能直接拼 SQL、猜单位、猜认证状态或越发布门禁。
+
+---
+
+## 一、能做什么
+
+提供 8 种白名单语义查询：
+`market_trend` / `company_ranking` / `financial_snapshot` / `company_period_values` / `compare_periods` / `describe_metric` / `list_metrics` / `healthcheck`
+
+覆盖 5 库：主库 / 标准事实层 / 年度公司层 / 2025 provisional 公司层 / 行业财务层。
+
+## 二、能力边界
+
+**允许**：白名单语义查询、金额单位换算（HKD_thousand↔HKD_million）、certified/provisional 标签、公司 entity_key 解析、可比性判定、发布门禁。
+**禁止（代码级强制，非仅文档）**：
+- 任意 SQL / 任意表名 / 任意排序 / 透传 WHERE
+- count 转金额聚合
+- 2024 L16 vs 2025 L1 计算增长率
+- 发布 +65.4%（未验收同口径增长）
+- 裸公司名跨年度拼接（必须 identity_mode）
+- 客户端覆盖单位/认证/scope/schema/identity/release 判定
+
+## 三、接入示例
+
+```python
+from hkia_adapter import HKIAClient
+client = HKIAClient.open_readonly()
+result = client.query({
+    "query_type": "market_trend",
+    "metric_id": "NB_IND_TOTAL_ANNUALIZED_PREMIUM",
+    "periods": ["2023Q1","2024Q1","2025Q1","2026Q1"],
+    "output_unit": "HKD_million",
+})
+client.close()
+```
+
+CLI：
+```bash
+python -m hkia_adapter.cli query --request request.json
+```
+CLI 标准输出仅 JSON；成功退出码 0，被阻断非零。
+
+完整示例见 `examples/query_examples.py`。
+
+## 四、防误用行为示例
+
+| 请求 | 结果 |
+|---|---|
+| `{query_type: "execute_sql"}` | 拒绝 |
+| count 指标 + `output_unit=HKD_million` | 拒绝 |
+| `compare_periods` 2024 L16 vs 2025 L1 | `NOT_COMPARABLE_SCOPE` |
+| `company_period_values` 不带 identity_mode | 拒绝 |
+| 请求发布 +65.4% | `RELEASE_BLOCKED_UNVALIDATED_SCOPE` |
+
+## 五、测试
+
+```bash
+python3 tests/test_all.py
+```
+覆盖：5 库行数 / Q1-Q4 / 防误用硬阻断（count→金额、L16vsL1、裸公司名、+65.4%、SQL注入字段）/ 契约结构 / 季度 non-certified。
+
+## 六、版本升级方式
+
+- 数据刷新：更新 `config/data_sources.json` 的行数基线；适配层连接只读，源库数据变化后重新 `open_readonly()` 即可读取新值。
+- 新增指标：在 `config/metric_catalog.json` 添加项（含 unit/layer/scope/period_basis/certification/schema/comparability/release），并确认 `queries.py` 对应模板。
+- 发布策略调整：修改 `config/release_policies.json`；关闭/收紧某一门槛在 `policy.py`。
+
+## 七、禁止事项（对使用者）
+
+- 不得直接 `import sqlite3` 读取 5 个源库原始表（应使用适配层语义接口）。
+- 不得将返回的 `source_unit`/`output_unit` 之外的单位当作已认证数值直接聚合。
+- 不得无视 `comparability.status` 或 `release.status` 仍发布增长率。
+- 不得把季度数据当作 certified（2023Q1 等永远是 provisional）。
+
+## 八、目录结构
+
+```
+hkia_adapter/      包（config/connections/models/units/labels/catalog/identity/comparability/policy/queries/client/cli）
+config/            数据源/指标目录/发布策略 配置
+examples/          语义查询示例
+tests/             unittest 测试
+qa/                验收报告
+```

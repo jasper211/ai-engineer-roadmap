@@ -137,5 +137,49 @@ class TestContract(_ClientBase):
         self.assertEqual(r["metadata"]["certification"], "provisional")
 
 
+class TestDeepGates(_ClientBase):
+    def test_l11_count_mix_blocked(self):
+        from hkia_adapter.comparability import Comparability
+        from hkia_adapter.catalog import MetricCatalog
+        comp = Comparability(); cat = MetricCatalog()
+        meta = cat.get("ANNUAL_L11_RETIREMENT")
+        with self.assertRaises(Exception) as ctx:
+            comp.check(meta)
+        self.assertIn("policy_count", str(ctx.exception))
+
+    def test_pre_rbc_rbc_bridge_required(self):
+        from hkia_adapter.comparability import Comparability
+        comp = Comparability()
+        res = comp.check(None, "2023", "2024")
+        self.assertEqual(res.status, "schema_bridge_required")
+
+    def test_lineage_mode_distinct_from_entity(self):
+        from hkia_adapter.identity import IdentityBridge
+        idb = IdentityBridge()
+        ent = idb.resolve("Canada Life Assurance", "entity")
+        lin = idb.resolve("Canada Life Assurance", "lineage")
+        self.assertNotEqual(ent.get("identity_mode"), lin.get("identity_mode"))
+        self.assertEqual(lin.get("identity_mode"), "lineage")
+        self.assertTrue(lin.get("business_lineage") or lin.get("note"))
+
+
+
+class TestConfigInstall(_ClientBase):
+    def test_custom_config_dir_loads(self):
+        import tempfile, shutil, os
+        from hkia_adapter import HKIAClient
+        tmp = tempfile.mkdtemp()
+        try:
+            dst = os.path.join(tmp, "config")
+            shutil.copytree(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "config"), dst)
+            c = HKIAClient.open_readonly(cfg_dir=dst)
+            r = c.query({"query_type": "healthcheck"})
+            self.assertTrue(r["ok"])
+            self.assertEqual(r["data"]["rows"]["master"], 59516)
+            c.close()
+        finally:
+            shutil.rmtree(tmp)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

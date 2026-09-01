@@ -41,12 +41,27 @@ class HKIAClient:
         try:
             req = QueryRequest.from_dict(request)
             return self._execute(req)
-        except HkiaBlockedError as e:
-            return e.to_dict(req_type=request.get("query_type", ""))
-        except HkiaError as e:
-            return e.to_dict(req_type=request.get("query_type", ""))
+        except (HkiaBlockedError, HkiaError) as e:
+            return self._error_response(e, request)
         except Exception as e:
-            return HkiaError(f"内部错误: {e}").to_dict(req_type=request.get("query_type", ""))
+            return self._error_response(HkiaError(f"内部错误: {e}"), request)
+
+    def _error_response(self, e, request):
+        """统一错误响应：含完整契约键（required: ok/request_id/query_type/data/metadata/comparability/release/lineage）。"""
+        base = e.to_dict(req_type=request.get("query_type", ""))
+        md = {"metric_id": None, "metric_label": None, "period_basis": None, "entity_scope": None,
+              "source_unit": None, "output_unit": None, "certification": None, "schema": None,
+              "source_layer": None, "source_db_id": None, "source_tables": [], "data_version": "v1",
+              "bridge_version": (self.identity.version if self.identity else None)}
+        base["request_id"] = uuid.uuid4().hex[:12]
+        base["data"] = []
+        base["metadata"] = md
+        base["comparability"] = {"status": "not_comparable" if getattr(e, "error_code", "")=="NOT_COMPARABLE_SCOPE" else "unknown",
+                                 "reasons": [], "required_bridge": None}
+        base["release"] = {"status": "blocked" if getattr(e, "error_code", "")=="RELEASE_BLOCKED_UNVALIDATED_SCOPE" else "not_allowed",
+                           "level": None, "warnings": []}
+        base["lineage"] = {"query_template_id": TEMPLATE_ID.get(request.get("query_type", ""), "ERROR"), "source_files": [], "checksums": []}
+        return base
 
     def _execute(self, req: QueryRequest) -> dict:
         request_id = uuid.uuid4().hex[:12]
@@ -75,9 +90,7 @@ class HKIAClient:
             validate_supported_year(req.period, [2022, 2023, 2024])
         # 单位（硬失败）
         out_unit = units_mod.resolve_output_unit(meta.unit, req.output_unit)
-        # scope：公司类指标仅允许 insurer/market_total，由查询模板内部固定 entity_scope='insurer'
-        if meta.entity_scope == "insurer" and req.entity_scope not in ("insurer", "market_total"):
-            raise ValidationError(f"entity_scope={req.entity_scope!r} 与此指标(entity)不兼容。")
+        # scope 校验已由 request_validation 统一处理
         # 可比性（比较类）
         comp = None
         if qt == "compare_periods":

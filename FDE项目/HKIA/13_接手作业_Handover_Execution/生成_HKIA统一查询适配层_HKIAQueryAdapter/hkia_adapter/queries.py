@@ -60,7 +60,8 @@ class QueryBuilder:
                      "company_facts" if db_id == "annual" else
                      "provisional_company_facts" if db_id == "provisional2025" else "financial_facts")
                 rows[db_id] = int(self.conns.count(db_id, t))
-        return {"query_type": "healthcheck", "data": {"rows": rows}}
+        rows = [{"db_id": k, "row_count": v} for k, v in rows.items()]
+        return {"query_type": "healthcheck", "data": rows}
 
     def _list_metrics(self):
         ids = self.catalog.list_ids()
@@ -108,11 +109,12 @@ class QueryBuilder:
         if meta.source_layer == "annual":
             conn = self.conns.get("annual")
             year = req.period or "2024"
+            offset = req.offset or 0
             rows = conn.execute("""
                 SELECT insurer_name_source, value_raw, report_year FROM company_facts
                 WHERE report_year=? AND table_id=? AND metric_sem=? AND entity_scope='insurer'
-                ORDER BY value_raw DESC LIMIT ?
-            """, [int(year), sf.get("table_id"), sf.get("metric_sem"), limit]).fetchall()
+                ORDER BY value_raw DESC LIMIT ? OFFSET ?
+            """, [int(year), sf.get("table_id"), sf.get("metric_sem"), limit, offset]).fetchall()
             data = [{"entity": r[0], "value": float(r[1]), "report_year": r[2],
                      "entity_key": (self.identity.entity_for_2024(r[0]) if self.identity else None),
                      "entity_scope": "insurer", "certification": "certified", "schema": meta.schema}
@@ -122,11 +124,12 @@ class QueryBuilder:
                     "source_db": "annual", "source_table": "company_facts", "certification": "certified"}
         if meta.source_layer == "provisional2025":
             conn = self.conns.get("provisional2025")
+            offset = req.offset or 0
             rows = conn.execute("""
                 SELECT insurer_name_en, value, year, certification FROM provisional_company_facts
                 WHERE metric_sem=? AND entity_scope='insurer' AND year=2025
-                ORDER BY value DESC LIMIT ?
-            """, [sf.get("metric_sem"), limit]).fetchall()
+                ORDER BY value DESC LIMIT ? OFFSET ?
+            """, [sf.get("metric_sem"), limit, offset]).fetchall()
             data = [{"entity": r[0], "value": float(r[1]), "year": r[2],
                      "entity_key": (self.identity.entity_for_2025(r[0]) if self.identity else None),
                      "entity_scope": "insurer", "certification": "provisional", "schema": meta.schema}
@@ -160,34 +163,51 @@ class QueryBuilder:
         entity = (req.filters or {}).get("entity")
         if not entity:
             raise ValidationError("company_period_values 需要 filters.entity。")
+        ident = self.identity.resolve(entity, req.identity_mode) if self.identity else {}
+        bridge_evidence = "standard_layer_entity_key" if self.identity else None
         if meta.source_layer == "annual":
             conn = self.conns.get("annual")
-            key = self.identity.entity_for_2024(entity) if self.identity else None
             rows = conn.execute("""
                 SELECT insurer_name_source, value_raw, report_year FROM company_facts
                 WHERE report_year=? AND table_id=? AND metric_sem=? AND entity_scope='insurer'
-                  AND insurer_name_source=?
-            """, [int(req.period or 2024), meta.source_filter.get("table_id"),
+                  AND insurer_name_source=?"
+            """.replace("?", "?"), [int(req.period or 2024), meta.source_filter.get("table_id"),
                   meta.source_filter.get("metric_sem"), entity]).fetchall()
-            data = [{"entity": r[0], "value": float(r[1]), "report_year": r[2],
-                     "entity_key": key, "entity_scope": "insurer",
-                     "certification": "certified", "schema": meta.schema,
-                     "record_status": "reported_value"} for r in rows]
+            if rows:
+                val = float(rows[0][1])
+                data = [dict(entity=entity, value=None if val == 0 and rows[0][1] is None else val,
+                             report_year=rows[0][2], entity_key=ident.get("entity_key"),
+                             business_lineage=ident.get("business_lineage"), entity_scope="insurer",
+                             certification="certified", schema=meta.schema,
+                             record_status="reported_zero" if val == 0 else "reported_value",
+                             bridge_evidence=bridge_evidence, bridge_type="rename_or_alias" if ident.get("note") else "same_name")]
+            else:
+                data = [dict(entity=entity, value=None, report_year=int(req.period or 2024),
+                             entity_key=ident.get("entity_key"), business_lineage=ident.get("business_lineage"),
+                             entity_scope="insurer", certification="certified", schema=meta.schema,
+                             record_status="missing", bridge_evidence=bridge_evidence)]
             return {"query_type": "company_period_values", "data": data, "metric": req.metric_id,
-                    "identity_mode": req.identity_mode, "source_layer": "annual"}
+                    "identity_mode": req.identity_mode, "source_layer": "annual", "identity_note": ident.get("note")}
         if meta.source_layer == "provisional2025":
             conn = self.conns.get("provisional2025")
-            key = self.identity.entity_for_2025(entity) if self.identity else None
             rows = conn.execute("""
                 SELECT insurer_name_en, value, year, certification FROM provisional_company_facts
                 WHERE metric_sem=? AND entity_scope='insurer' AND year=2025 AND insurer_name_en=?
             """, [meta.source_filter.get("metric_sem"), entity]).fetchall()
-            data = [{"entity": r[0], "value": float(r[1]), "year": r[2],
-                     "entity_key": key, "entity_scope": "insurer",
-                     "certification": "provisional", "schema": meta.schema,
-                     "record_status": "reported_value"} for r in rows]
+            if rows:
+                val = float(rows[0][1])
+                data = [dict(entity=entity, value=val, year=rows[0][2],
+                             entity_key=ident.get("entity_key"), business_lineage=ident.get("business_lineage"),
+                             entity_scope="insurer", certification="provisional", schema=meta.schema,
+                             record_status="reported_zero" if val == 0 else "reported_value",
+                             bridge_evidence=bridge_evidence)]
+            else:
+                data = [dict(entity=entity, value=None, year=2025,
+                             entity_key=ident.get("entity_key"), business_lineage=ident.get("business_lineage"),
+                             entity_scope="insurer", certification="provisional", schema=meta.schema,
+                             record_status="missing", bridge_evidence=bridge_evidence)]
             return {"query_type": "company_period_values", "data": data, "metric": req.metric_id,
-                    "identity_mode": req.identity_mode, "source_layer": "provisional2025"}
+                    "identity_mode": req.identity_mode, "source_layer": "provisional2025", "identity_note": ident.get("note")}
         raise ValidationError(f"不支持 company_period_values 的源层 {meta.source_layer}")
 
     def _compare_periods(self, req):

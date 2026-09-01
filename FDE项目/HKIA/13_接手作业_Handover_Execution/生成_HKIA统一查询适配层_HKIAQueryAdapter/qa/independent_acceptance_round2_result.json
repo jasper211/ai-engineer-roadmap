@@ -1,0 +1,405 @@
+{
+  "overall": "PARTIAL",
+  "passed": 5,
+  "total": 19,
+  "results": {
+    "error_response_meets_required_contract": false,
+    "health_data_matches_schema_array": false,
+    "unknown_nested_filter_rejected": false,
+    "every_period_item_validated": false,
+    "offset_is_honored_or_rejected": false,
+    "include_zero_type_validated": false,
+    "filters_type_returns_validation_error": true,
+    "entity_and_lineage_modes_are_distinct": true,
+    "zero_value_status_is_reported_zero": false,
+    "missing_status_is_preserved": false,
+    "bridge_evidence_returned_for_company_value": false,
+    "financial_filter_value_whitelisted": false,
+    "metric_catalog_all_required_fields": true,
+    "q4_all_returned_items_catalogued": false,
+    "l11_gate_has_executable_test": true,
+    "rbc_schema_gate_has_executable_test": true,
+    "l11_gate_reachable_through_public_contract": false,
+    "rbc_gate_reachable_through_public_contract": false,
+    "installed_package_can_open": false
+  },
+  "evidence": {
+    "error_response_keys": [
+      "blocked_by",
+      "error_code",
+      "message",
+      "ok",
+      "query_type",
+      "suggestion"
+    ],
+    "health_data_type": "dict",
+    "unknown_nested_filter": {
+      "ok": true,
+      "request_id": "f012ba62bcdb",
+      "query_type": "company_ranking",
+      "data": [
+        {
+          "entity": "Hang Seng Insurance",
+          "value": 22147387.0,
+          "report_year": 2024,
+          "entity_key": "ENTITY_HANG_SENG_INSURANCE",
+          "entity_scope": "insurer",
+          "certification": "certified",
+          "schema": "annual_lt"
+        },
+        {
+          "entity": "HSBC Life",
+          "value": 15050539.0,
+          "report_year": 2024,
+          "entity_key": "ENTITY_HSBC_LIFE",
+          "entity_scope": "insurer",
+          "certification": "certified",
+          "schema": "annual_lt"
+        },
+        {
+          "entity": "FWD Life (Bermuda)",
+          "value": 12518638.0,
+          "report_year": 2024,
+          "entity_key": "ENTITY_FWD_LIFE_BERMUDA",
+          "entity_scope": "insurer",
+          "certification": "certified",
+          "schema": "annual_lt"
+        },
+        {
+          "entity": "Manulife (Int'l)",
+          "value": 11314905.0,
+          "report_year": 2024,
+          "entity_key": "ENTITY_MANULIFE_INT_L",
+          "entity_scope": "insurer",
+          "certification": "certified",
+          "schema": "annual_lt"
+        },
+        {
+          "entity": "AIA International",
+          "value": 10677251.0,
+          "report_year": 2024,
+          "entity_key": "ENTITY_AIA_INTERNATIONAL",
+          "entity_scope": "insurer",
+          "certification": "certified",
+          "schema": "annual_lt"
+        },
+        {
+          "entity": "Well Link Life",
+          "value": 3863877.0,
+          "report_year": 2024,
+          "entity_key": "ENTITY_WELL_LINK_LIFE",
+          "entity_scope": "insurer",
+          "certification": "certified",
+          "schema": "annual_lt"
+        },
+        {
+          "entity": "China Life",
+          "value": 3271777.0,
+          "report_year": 2024,
+          "entity_key": "ENTITY_CHINA_LIFE",
+          "entity_scope": "insurer",
+          "certification": "certified",
+          "schema": "annual_lt"
+        },
+        {
+          "entity": "Sun Life Hong Kong",
+          "value": 3175249.0,
+          "report_year": 2024,
+          "entity_key": "ENTITY_SUN_LIFE_HONG_KONG",
+          "entity_scope": "insurer",
+          "certification": "certified",
+          "schema": "annual_lt"
+        },
+        {
+          "entity": "Prudential (HK) Life",
+          "value": 3089790.053196999,
+          "report_year": 2024,
+          "entity_key": "ENTITY_PRUDENTIAL_HK_LIFE",
+          "entity_scope": "insurer",
+          "certification": "certified",
+          "schema": "annual_lt"
+        },
+        {
+          "entity": "CTF Life",
+          "value": 1332314.0,
+          "report_year": 2024,
+          "entity_key": "ENTITY_CTF_LIFE",
+          "entity_scope": "insurer",
+          "certification": "certified",
+          "schema": "annual_lt"
+        }
+      ],
+      "metadata": {
+        "metric_id": "ANNUAL_L16_PREMIUM_SINGLE",
+        "metric_label": "年度个人寿险新造整付保费",
+        "period_basis": "annual_certified",
+        "entity_scope": "insurer",
+        "source_unit": "HKD_thousand",
+        "output_unit": "HKD_thousand",
+        "certification": "certified",
+        "schema": "annual_lt",
+        "source_layer": "annual",
+        "source_db_id": "annual",
+        "source_tables": [
+          "company_facts"
+        ],
+        "data_version": "v1",
+        "bridge_version": "2.1"
+      },
+      "comparability": {
+        "status": "comparable",
+        "reasons": [],
+        "required_bridge": null
+      },
+      "release": {
+        "status": "allowed",
+        "level": "internal_analysis",
+        "warnings": [
+          "年度 L16 certified 可分开展示两年，跨 schema 同口径增长未验收，不得发布增长率。"
+        ]
+      },
+      "lineage": {
+        "query_template_id": "Q2_COMPANY_RANKING_V1",
+        "source_files": [
+          "annual_company_fact_layer_2022_2024.db"
+        ],
+        "checksums": [
+          "f263f489471214a8"
+        ]
+      }
+    },
+    "invalid_periods": {
+      "ok": true,
+      "request_id": "bfc3e4bd176d",
+      "query_type": "market_trend",
+      "data": [
+        {
+          "period": "2023Q1",
+          "value": 23132416.0,
+          "unit": "HKD_thousand",
+          "entity_scope": "market_total",
+          "certification": "provisional",
+          "schema": "lt_qr_quarterly"
+        }
+      ],
+      "metadata": {
+        "metric_id": "NB_IND_TOTAL_SINGLE_PREMIUM",
+        "metric_label": "个人新造整付保费",
+        "period_basis": "quarterly_ytd",
+        "entity_scope": "market_total",
+        "source_unit": "HKD_thousand",
+        "output_unit": "HKD_thousand",
+        "certification": "provisional",
+        "schema": "lt_qr_quarterly",
+        "source_layer": "standard",
+        "source_db_id": "standard",
+        "source_tables": [
+          "market_facts"
+        ],
+        "data_version": "v1",
+        "bridge_version": "2.1"
+      },
+      "comparability": {
+        "status": "comparable",
+        "reasons": [],
+        "required_bridge": null
+      },
+      "release": {
+        "status": "allowed",
+        "level": "internal_analysis",
+        "warnings": []
+      },
+      "lineage": {
+        "query_template_id": "Q1_MARKET_TREND_V1",
+        "source_files": [
+          "standard_fact_layer_2023_2026Q1.db"
+        ],
+        "checksums": [
+          "f80c13b9e63b48ce"
+        ]
+      }
+    },
+    "offset_entities": {
+      "base": [
+        "Hang Seng Insurance",
+        "HSBC Life",
+        "FWD Life (Bermuda)"
+      ],
+      "offset_1": [
+        "Hang Seng Insurance",
+        "HSBC Life",
+        "FWD Life (Bermuda)"
+      ]
+    },
+    "bad_include_zero": {
+      "ok": true,
+      "error_code": null
+    },
+    "filters_list": {
+      "ok": false,
+      "error_code": "VALIDATION_ERROR",
+      "message": "company_period_values 需要 filters.entity。",
+      "blocked_by": null,
+      "suggestion": null,
+      "query_type": "company_period_values"
+    },
+    "identity_modes": {
+      "entity": {
+        "entity": "AIA International",
+        "value": 10677251.0,
+        "report_year": 2024,
+        "entity_key": "ENTITY_AIA_INTERNATIONAL",
+        "business_lineage": null,
+        "entity_scope": "insurer",
+        "certification": "certified",
+        "schema": "annual_lt",
+        "record_status": "reported_value"
+      },
+      "lineage": {
+        "entity": "AIA International",
+        "value": 10677251.0,
+        "report_year": 2024,
+        "entity_key": "ENTITY_AIA_INTERNATIONAL",
+        "business_lineage": "ENTITY_AIA_INTERNATIONAL",
+        "entity_scope": "insurer",
+        "certification": "certified",
+        "schema": "annual_lt",
+        "record_status": "reported_value"
+      }
+    },
+    "zero_value_row": {
+      "entity": "AXA China (HK)",
+      "value": 0.0,
+      "report_year": 2024,
+      "entity_key": "ENTITY_AXA_CRI",
+      "business_lineage": null,
+      "entity_scope": "insurer",
+      "certification": "certified",
+      "schema": "annual_lt",
+      "record_status": "reported_value"
+    },
+    "missing_company": {
+      "ok": true,
+      "request_id": "f856a8a7fe21",
+      "query_type": "company_period_values",
+      "data": [],
+      "metadata": {
+        "metric_id": "ANNUAL_L16_PREMIUM_SINGLE",
+        "metric_label": "年度个人寿险新造整付保费",
+        "period_basis": "annual_certified",
+        "entity_scope": "insurer",
+        "source_unit": "HKD_thousand",
+        "output_unit": "HKD_thousand",
+        "certification": "certified",
+        "schema": "annual_lt",
+        "source_layer": "annual",
+        "source_db_id": "annual",
+        "source_tables": [
+          "company_facts"
+        ],
+        "data_version": "v1",
+        "bridge_version": "2.1"
+      },
+      "comparability": {
+        "status": "comparable",
+        "reasons": [],
+        "required_bridge": null
+      },
+      "release": {
+        "status": "allowed",
+        "level": "internal_analysis",
+        "warnings": [
+          "年度 L16 certified 可分开展示两年，跨 schema 同口径增长未验收，不得发布增长率。"
+        ]
+      },
+      "lineage": {
+        "query_template_id": "Q5_COMPANY_PERIOD_VALUES_V1",
+        "source_files": [
+          "annual_company_fact_layer_2022_2024.db"
+        ],
+        "checksums": [
+          "f263f489471214a8"
+        ]
+      }
+    },
+    "company_value_keys": [
+      "business_lineage",
+      "certification",
+      "entity",
+      "entity_key",
+      "entity_scope",
+      "record_status",
+      "report_year",
+      "schema",
+      "value"
+    ],
+    "invalid_fund_scope": {
+      "ok": true,
+      "request_id": "b0538e516f02",
+      "query_type": "financial_snapshot",
+      "data": [],
+      "metadata": {
+        "metric_id": "FIN_DEBT_SECURITIES",
+        "metric_label": "债务证券(行业财务)",
+        "period_basis": "quarterly_snapshot",
+        "entity_scope": "fund",
+        "source_unit": "HKD_million",
+        "output_unit": "HKD_million",
+        "certification": "provisional",
+        "schema": "financial",
+        "source_layer": "financial",
+        "source_db_id": "financial",
+        "source_tables": [
+          "financial_facts"
+        ],
+        "data_version": "v1",
+        "bridge_version": "2.1"
+      },
+      "comparability": {
+        "status": "comparable",
+        "reasons": [],
+        "required_bridge": null
+      },
+      "release": {
+        "status": "allowed",
+        "level": "internal_analysis",
+        "warnings": []
+      },
+      "lineage": {
+        "query_template_id": "Q4_FINANCIAL_SNAPSHOT_V1",
+        "source_files": [
+          "financial_fact_layer.db"
+        ],
+        "checksums": [
+          "e801f7bb03edf48a"
+        ]
+      }
+    },
+    "metric_catalog_missing_fields": {},
+    "financial_metric_ids": [
+      "FIN_DEBT_SECURITIES"
+    ],
+    "l11_public": {
+      "ok": false,
+      "error_code": "VALIDATION_ERROR",
+      "message": "指标 ANNUAL_L11_RETIREMENT 不支持 query_type=compare_periods（支持: ['describe_metric']）。",
+      "blocked_by": null,
+      "suggestion": null,
+      "query_type": "compare_periods"
+    },
+    "rbc_public": {
+      "ok": false,
+      "error_code": "VALIDATION_ERROR",
+      "message": "compare_periods 仅支持已验收同口径期对；当前无可发布同口径对。",
+      "blocked_by": null,
+      "suggestion": null,
+      "query_type": "compare_periods"
+    },
+    "install_probe": {
+      "install_returncode": 0,
+      "probe_returncode": 1,
+      "probe_stdout": "",
+      "probe_stderr_tail": "_type':'healthcheck'})['ok']); c.close()\n                                           ~~~~~~~~~~~~~~~~~~~~~~~~^^\n  File \"/var/folders/8t/7t6j8kfj081bfqtfnkl2t2c40000gn/T/tmpia8bmvs5/hkia_adapter/client.py\", line 27, in open_readonly\n    cfg = load_config(hkia_root, cfg_dir)\n  File \"/var/folders/8t/7t6j8kfj081bfqtfnkl2t2c40000gn/T/tmpia8bmvs5/hkia_adapter/config.py\", line 56, in load_config\n    raise ConfigError(f\"data_sources.json 不存在: {ds_file}\")\nhkia_adapter.config.ConfigError: data_sources.json 不存在: /private/var/folders/8t/7t6j8kfj081bfqtfnkl2t2c40000gn/T/tmpia8bmvs5/config/data_sources.json\n"
+    }
+  }
+}

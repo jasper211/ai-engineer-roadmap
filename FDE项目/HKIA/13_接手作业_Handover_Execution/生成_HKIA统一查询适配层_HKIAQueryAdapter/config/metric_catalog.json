@@ -12,9 +12,17 @@
       "period_basis": "quarterly_ytd",
       "certification_rule": "provisional (季度/年度临时)",
       "schema": "lt_qr_quarterly",
-      "supported_query_types": ["market_trend", "describe_metric"],
-      "comparable_with": ["2023Q1,2024Q1,2025Q1,2026Q1 季度序列"],
-      "prohibited_comparisons": ["跨schema分类明细", "count"],
+      "supported_query_types": [
+        "market_trend",
+        "describe_metric"
+      ],
+      "comparable_with": [
+        "2023Q1,2024Q1,2025Q1,2026Q1 季度序列"
+      ],
+      "prohibited_comparisons": [
+        "跨schema分类明细",
+        "count"
+      ],
       "aggregation": "flow",
       "source_definition": "IA 长期业务季度临时统计 Table L1 市场总额 个人新造整付保费",
       "release_policy_id": "internal_review_only"
@@ -29,9 +37,17 @@
       "period_basis": "quarterly_ytd",
       "certification_rule": "provisional",
       "schema": "lt_qr_quarterly",
-      "supported_query_types": ["market_trend", "describe_metric"],
-      "comparable_with": ["季度序列"],
-      "prohibited_comparisons": ["count", "含年金L1 vs 不含年金L16"],
+      "supported_query_types": [
+        "market_trend",
+        "describe_metric"
+      ],
+      "comparable_with": [
+        "季度序列"
+      ],
+      "prohibited_comparisons": [
+        "count",
+        "含年金L1 vs 不含年金L16"
+      ],
       "aggregation": "flow",
       "source_definition": "IA 长期业务季度临时统计 Table L1 个人新造年度化保费 市场总额",
       "release_policy_id": "internal_review_only"
@@ -45,9 +61,19 @@
       "period_basis": "quarterly_ytd",
       "certification_rule": "provisional",
       "schema": "lt_qr_quarterly",
-      "supported_query_types": ["market_trend", "describe_metric"],
-      "prohibited_comparisons": ["金额转换"],
-      "aggregation": "flow"
+      "supported_query_types": [
+        "market_trend",
+        "describe_metric"
+      ],
+      "prohibited_comparisons": [
+        "金额转换"
+      ],
+      "aggregation": "flow",
+      "comparable_with": [
+        "2023Q1-2026Q1 季度序列 (count)"
+      ],
+      "source_definition": "IA 长期业务季度临时统计 Table L2 团体新造保单数",
+      "release_policy_id": "internal_review_only"
     },
     "IF_IND_TOTAL_POLICIES": {
       "label": "个人有效保单数",
@@ -58,23 +84,45 @@
       "period_basis": "quarterly_ytd",
       "certification_rule": "provisional",
       "schema": "lt_qr_quarterly",
-      "supported_query_types": ["market_trend", "describe_metric"],
-      "prohibited_comparisons": ["金额转换"],
-      "aggregation": "stock"
+      "supported_query_types": [
+        "market_trend",
+        "describe_metric"
+      ],
+      "prohibited_comparisons": [
+        "金额转换"
+      ],
+      "aggregation": "stock",
+      "comparable_with": [
+        "2023Q1-2026Q1 季度序列 (count)"
+      ],
+      "source_definition": "IA 长期业务季度临时统计 Table L3 个人有效保单数",
+      "release_policy_id": "internal_review_only"
     },
     "ANNUAL_L16_PREMIUM_SINGLE": {
       "label": "年度个人寿险新造整付保费",
       "source_layer": "annual",
       "source_table": "company_facts",
-      "source_filter": {"table_id": "L16", "metric_sem": "premium_single", "entity_scope": "insurer"},
+      "source_filter": {
+        "table_id": "L16",
+        "metric_sem": "premium_single",
+        "entity_scope": "insurer"
+      },
       "unit": "HKD_thousand",
       "entity_scope": "insurer",
       "period_basis": "annual_certified",
       "certification_rule": "certified (年度层, 2022-2024)",
       "schema": "annual_lt",
-      "supported_query_types": ["company_ranking", "company_period_values", "compare_periods"],
-      "comparable_with": ["同 schema 年度 certified 公司比较"],
-      "prohibited_comparisons": ["与2025 L1(个人长期含年金)直接比"],
+      "supported_query_types": [
+        "company_ranking",
+        "company_period_values",
+        "compare_periods"
+      ],
+      "comparable_with": [
+        "同 schema 年度 certified 公司比较"
+      ],
+      "prohibited_comparisons": [
+        "与2025 L1(个人长期含年金)直接比"
+      ],
       "aggregation": "flow",
       "source_definition": "IA 年度长期业务 Table L16 个人寿险新造整付保费(不含年金) 公司级",
       "release_policy_id": "annual_certified_internal"
@@ -83,43 +131,84 @@
       "label": "年度个人寿险新造年度化保费",
       "source_layer": "annual",
       "source_table": "company_facts",
-      "source_filter": {"table_id": "L16", "metric_sem": "premium_annual", "entity_scope": "insurer"},
+      "source_filter": {
+        "table_id": "L16",
+        "metric_sem": "premium_annual",
+        "entity_scope": "insurer"
+      },
       "unit": "HKD_thousand",
       "entity_scope": "insurer",
       "period_basis": "annual_certified",
       "certification_rule": "certified",
       "schema": "annual_lt",
-      "supported_query_types": ["company_ranking", "company_period_values", "compare_periods"],
-      "prohibited_comparisons": ["与2025 L1直接比"],
-      "aggregation": "flow"
+      "supported_query_types": [
+        "company_ranking",
+        "company_period_values",
+        "compare_periods"
+      ],
+      "prohibited_comparisons": [
+        "与2025 L1直接比"
+      ],
+      "aggregation": "flow",
+      "comparable_with": [
+        "2022-2024 年度 certified 公司同口径"
+      ],
+      "source_definition": "IA 年度长期业务 Table L16 个人寿险新造年度化保费(不含年金) 公司级",
+      "release_policy_id": "annual_certified_internal"
     },
     "PROV2025_NB_TOTAL_SINGLE": {
       "label": "2025 个人长期新造整付保费(含年金混入, 不可比L16)",
       "source_layer": "provisional2025",
       "source_table": "provisional_company_facts",
-      "source_filter": {"metric_sem": "nb_total_single_premium", "entity_scope": "insurer"},
+      "source_filter": {
+        "metric_sem": "nb_total_single_premium",
+        "entity_scope": "insurer"
+      },
       "unit": "HKD_thousand",
       "entity_scope": "insurer",
       "period_basis": "annual_provisional",
       "certification_rule": "provisional",
       "schema": "lt_qr_2025",
-      "supported_query_types": ["company_ranking", "company_period_values"],
-      "prohibited_comparisons": ["与2024 L16直接算增长"],
-      "aggregation": "flow"
+      "supported_query_types": [
+        "company_ranking",
+        "company_period_values"
+      ],
+      "prohibited_comparisons": [
+        "与2024 L16直接算增长"
+      ],
+      "aggregation": "flow",
+      "comparable_with": [
+        "2025 provisional 公司内部(含年金混入,不可比L16)"
+      ],
+      "source_definition": "IA 2025 长期业务临时统计 Table L1 个人长期新造整付(含年金) 公司级",
+      "release_policy_id": "internal_review_only"
     },
     "PROV2025_NB_TOTAL_ANNUAL": {
       "label": "2025 个人长期新造年度化保费",
       "source_layer": "provisional2025",
       "source_table": "provisional_company_facts",
-      "source_filter": {"metric_sem": "nb_total_annualized_premium", "entity_scope": "insurer"},
+      "source_filter": {
+        "metric_sem": "nb_total_annualized_premium",
+        "entity_scope": "insurer"
+      },
       "unit": "HKD_thousand",
       "entity_scope": "insurer",
       "period_basis": "annual_provisional",
       "certification_rule": "provisional",
       "schema": "lt_qr_2025",
-      "supported_query_types": ["company_ranking", "company_period_values"],
-      "prohibited_comparisons": ["与2024直接比"],
-      "aggregation": "flow"
+      "supported_query_types": [
+        "company_ranking",
+        "company_period_values"
+      ],
+      "prohibited_comparisons": [
+        "与2024直接比"
+      ],
+      "aggregation": "flow",
+      "comparable_with": [
+        "2025 provisional 公司内部"
+      ],
+      "source_definition": "IA 2025 长期业务临时统计 Table L1 个人长期新造年度化(含年金) 公司级",
+      "release_policy_id": "internal_review_only"
     },
     "FIN_DEBT_SECURITIES": {
       "label": "债务证券(行业财务)",
@@ -130,9 +219,41 @@
       "period_basis": "quarterly_snapshot",
       "certification_rule": "provisional",
       "schema": "financial",
-      "supported_query_types": ["financial_snapshot", "describe_metric"],
-      "prohibited_comparisons": ["count"],
-      "aggregation": "stock"
+      "supported_query_types": [
+        "financial_snapshot",
+        "describe_metric"
+      ],
+      "prohibited_comparisons": [
+        "count"
+      ],
+      "aggregation": "stock",
+      "comparable_with": [
+        "2024Q4-2026Q1 财务快照 (HKD_million) 同 fund_scope"
+      ],
+      "source_definition": "IA 季度临时财务资料 By Fund 债务证券 长期业务",
+      "release_policy_id": "internal_review_only"
+    },
+    "ANNUAL_L11_RETIREMENT": {
+      "label": "年度退休计划类多个数量(演示L11跨指标禁止)",
+      "source_layer": "annual",
+      "source_table": "company_facts",
+      "unit": "count",
+      "entity_scope": "insurer",
+      "period_basis": "annual_certified",
+      "certification_rule": "certified",
+      "schema": "annual_lt",
+      "supported_query_types": [
+        "describe_metric"
+      ],
+      "comparable_with": [
+        "无（退休计划数量类不可与其他类别跨指标比较）"
+      ],
+      "prohibited_comparisons": [
+        "policy_count 与 scheme_count 不可跨指标比较"
+      ],
+      "aggregation": "stock",
+      "source_definition": "IA 年度 Table L11 退休计划(保单数/受保人数/计划数不可混加)",
+      "release_policy_id": "annual_certified_internal"
     }
   }
 }

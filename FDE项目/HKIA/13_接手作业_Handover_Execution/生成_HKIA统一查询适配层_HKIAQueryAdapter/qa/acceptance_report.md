@@ -66,3 +66,40 @@ python3 examples/query_examples.py # 语义查询示例
 
 适配层**技术接入 PASS**，可交付 U20 作为受口径约束的查询输入层。
 **跨年度同口径增长结论仍 NOT-PASS**，+65.4% 不得通过本适配层发布为已验收结论。
+
+---
+## 七·补充：独立审计整改后最终状态（2026-09-01）
+
+原独立审计（`independent_acceptance_report.md`）判定 PARTIAL（20项仅3过），指出 P0 缺陷。已按审计整改：
+
+**整改内容**：
+1. units.py 重写为单位硬失败（count+euro→拒、金额+count→拒）。
+2. 新增 request_validation.py：limit/offset/periods 类型值域、scope 覆盖防护、query_type×metric 兼容、年度支持校验。
+3. company_period_values 支持 annual + provisional2025，返回 entity_key / record_status；identity 进结果。
+4. list_metrics / describe_metric 返回真实 data；数值行补 entity_scope/certification/schema。
+5. lineage 真实填充（source_files/checksums/query_template_id 分模板）。
+6. metadata 用 source_db_id；新增 schema/response_schema.json。
+7. cli.py 坏 JSON 返回 JSON 错误 + 非零退出码。
+
+**整改后独立审计：20/20 PASS（overall=PASS）**
+- scope 覆盖拒绝 ✓、单位门禁 ✓、list/describe ✓、identity进结果 ✓、provisional company_value ✓、行标签 ✓、lineage ✓、source_db_id ✓、JSON Schema ✓、CLI错误 ✓、基础gate ✓、桥gate ✓、源DB哈希不变 ✓。
+
+**最终验收判定**：
+- 技术适配层：**PASS**（独立审计20/20 + 单元15/15 + 适配层17/17）。
+- 分析结论发布：**NOT PASS**（+65.4% 禁止放行；2024 L16 vs 2025 L1 禁止发布增长率）。
+- 供其他模型标准化接入：**READY**（README + 请求Schema + 只读语义接口）。
+
+---
+## 八·深度优化（审计报告第3/5节补充项）
+
+依独立审计 `U20桥修复独立复核_r3fix` 及 `independent_acceptance_report.md` 点名的"未覆盖深层项"，已补充：
+
+| 项 | 实现 | 测试 |
+|---|---|---|
+| **L11 gate** | comparability 拦截 policy_count/lives/scheme_count 跨指标比较 | test_l11_count_mix_blocked |
+| **pre-RBC ↔ RBC** | 跨 RBC 断点比较无审定桥 → SCHEMA_BRIDGE_REQUIRED | test_pre_rbc_rbc_bridge_required |
+| **identity_mode=lineage** | 与 entity 区分；从标准层加载 business_lineage（Canada→MyPace/Chubb），返回 identity_note | test_lineage_mode_distinct_from_entity |
+| **指标目录完整性** | 从 9→10 项，全部补 comparable_with/source_definition/release_policy_id | catalog 检查 |
+| **自定义配置目录** | open_readonly(cfg_dir=...) 支持外部配置 | test_custom_config_dir_loads |
+
+**最终测试**：单元 19/19 + 独立审计 20/20 + 适配层验收 17/17 + 基础/桥 gate + 源DB哈希不变，全部 PASS。
