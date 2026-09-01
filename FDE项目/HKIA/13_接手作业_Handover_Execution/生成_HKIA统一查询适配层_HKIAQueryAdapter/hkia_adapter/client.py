@@ -50,7 +50,8 @@ class HKIAClient:
         """统一错误响应：含完整契约键（required: ok/request_id/query_type/data/metadata/comparability/release/lineage）。"""
         base = e.to_dict(req_type=request.get("query_type", ""))
         md = {"metric_id": None, "metric_label": None, "period_basis": None, "entity_scope": None,
-              "source_unit": None, "output_unit": None, "certification": None, "schema": None,
+              "source_unit": None, "output_unit": None,
+              "certification": "not_applicable", "schema": "not_applicable",
               "source_layer": None, "source_db_id": None, "source_tables": [], "data_version": "v1",
               "bridge_version": (self.identity.version if self.identity else None)}
         base["request_id"] = uuid.uuid4().hex[:12]

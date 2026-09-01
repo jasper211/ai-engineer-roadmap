@@ -44,14 +44,23 @@ def _resolve(root: str, rel: str) -> str:
     return os.path.abspath(p)
 
 
+def _pkg_assets_dir():
+    return Path(__file__).resolve().parent / "_assets" / "config"
+
+
 def load_config(hkia_root: str = None, cfg_dir: str = None) -> Config:
     base_dir = Path(__file__).resolve().parents[1]  # HKIAQueryAdapter/
     if cfg_dir is None:
-        cfg_dir = base_dir / "config"
+        # 优先源码树 config；缺省时回退到包内 _assets/config（安装态）
+        src_dir = base_dir / "config"
+        cfg_dir = src_dir if (src_dir / "data_sources.json").exists() else _pkg_assets_dir()
     else:
         cfg_dir = Path(cfg_dir)
 
     ds_file = cfg_dir / "data_sources.json"
+    if not ds_file.exists():
+        # 最后兜底到包内资产
+        ds_file = _pkg_assets_dir() / "data_sources.json"
     if not ds_file.exists():
         raise ConfigError(f"data_sources.json 不存在: {ds_file}")
 

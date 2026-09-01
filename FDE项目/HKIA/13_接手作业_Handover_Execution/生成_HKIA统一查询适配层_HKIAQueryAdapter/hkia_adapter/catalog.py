@@ -9,7 +9,9 @@ from .models import MetricMeta, ValidationError
 class MetricCatalog:
     def __init__(self, path: Optional[Path] = None):
         base = Path(__file__).resolve().parents[1] / "config"
-        self.path = path or (base / "metric_catalog.json")
+        pkg = Path(__file__).resolve().parent / "_assets" / "config" / "metric_catalog.json"
+        cand = base / "metric_catalog.json"
+        self.path = path or (cand if cand.exists() else pkg)
         self._raw = json.loads(self.path.read_text(encoding="utf-8"))
         self._metrics: Dict[str, MetricMeta] = {}
         for mid, m in self._raw.get("metrics", {}).items():

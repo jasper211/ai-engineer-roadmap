@@ -167,12 +167,12 @@ class QueryBuilder:
         bridge_evidence = "standard_layer_entity_key" if self.identity else None
         if meta.source_layer == "annual":
             conn = self.conns.get("annual")
-            rows = conn.execute("""
-                SELECT insurer_name_source, value_raw, report_year FROM company_facts
-                WHERE report_year=? AND table_id=? AND metric_sem=? AND entity_scope='insurer'
-                  AND insurer_name_source=?"
-            """.replace("?", "?"), [int(req.period or 2024), meta.source_filter.get("table_id"),
-                  meta.source_filter.get("metric_sem"), entity]).fetchall()
+            rows = conn.execute(
+                "SELECT insurer_name_source, value_raw, report_year FROM company_facts "
+                "WHERE report_year=? AND table_id=? AND metric_sem=? AND entity_scope='insurer' "
+                "AND insurer_name_source=?",
+                [int(req.period or 2024), meta.source_filter.get("table_id"),
+                 meta.source_filter.get("metric_sem"), entity]).fetchall()
             if rows:
                 val = float(rows[0][1])
                 data = [dict(entity=entity, value=None if val == 0 and rows[0][1] is None else val,
@@ -211,9 +211,31 @@ class QueryBuilder:
         raise ValidationError(f"不支持 company_period_values 的源层 {meta.source_layer}")
 
     def _compare_periods(self, req):
+        from .models import (NotComparableError, ValidationError, SchemaBridgeRequiredError, L11CountMixError)
         pa = (req.filters or {}).get("period_a"); pb = (req.filters or {}).get("period_b")
+        metric_b = (req.filters or {}).get("metric_b")
+        # L11 数量类跨指标比较禁止（policy_count vs scheme_count）
+        if (req.metric_id and "L11" in req.metric_id) or (metric_b and "L11" in str(metric_b)):
+            raise L11CountMixError()
+        # pre-RBC ↔ RBC 无审定桥 → SCHEMA_BRIDGE_REQUIRED
+        if (pa and pb and _cross_rbc(pa, pb)):
+            raise SchemaBridgeRequiredError()
         l16 = req.metric_id and ("ANNUAL_L16" in req.metric_id or "L16" in req.metric_id)
-        l1 = req.metric_id and "PROV2025" in req.metric_id
-        if (l16 and l1) or (pa == "2024" and pb == "2025") or (pa == "2025" and pb == "2024"):
+        l1 = req.metric_id and "PROV2025" in req.metric_id or (pa == "2025" and pb == "2024") or (pa == "2024" and pb == "2025")
+        if (l16 and l1):
             raise NotComparableError()
         raise ValidationError("compare_periods 仅支持已验收同口径期对；当前无可发布同口径对。")
+
+
+def _cross_rbc(pa, pb):
+    yr = []
+    for p in (pa, pb):
+        if p:
+            dig = "".join(ch for ch in str(p) if ch.isdigit())
+            if len(dig) >= 4:
+                try: yr.append(int(dig[:4]))
+                except ValueError: pass
+    if len(yr) == 2 and yr[0] != yr[1]:
+        pre = {2022, 2023}; rbc = {2024}
+        return (yr[0] in pre and yr[1] in rbc) or (yr[0] in rbc and yr[1] in pre)
+    return False

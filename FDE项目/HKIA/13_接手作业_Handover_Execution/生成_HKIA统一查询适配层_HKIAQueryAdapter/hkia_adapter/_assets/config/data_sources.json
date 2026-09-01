@@ -1,0 +1,57 @@
+{
+  "version": "1.0",
+  "note": "HKIA 5 个 SQLite 数据源配置。路径由 config 模块解析，业务函数不得硬编码。",
+  "hkia_root": "/Users/a112233/Desktop/Jasper工作文档（不含EA项目）/Jasper AI协同经验引擎/AI工程能力整改项目/FDE项目/HKIA",
+  "sources": {
+    "master": {
+      "db_id": "master",
+      "path_rel": "07_接入记忆_Integrate_Memory/data/hkia.db",
+      "table": "long_term_business",
+      "layer": "master_quarterly",
+      "certification": "provisional",
+      "expected_rows": 59516,
+      "note": "季度长期业务主库(2015Q1-2026Q1)"
+    },
+    "standard": {
+      "db_id": "standard",
+      "path_rel": "13_接手作业_Handover_Execution/生成_标准事实层_StandardFactLayer/data/standard_fact_layer_2023_2026Q1.db",
+      "tables": {
+        "market_facts": {"rows": 72},
+        "company_facts": {"rows": 4914},
+        "schema_metrics": {"rows": 18},
+        "annual_facts": {"rows": 18}
+      },
+      "layer": "standard_fact_layer",
+      "period_basis": "quarterly_ytd",
+      "certification": "provisional"
+    },
+    "annual": {
+      "db_id": "annual",
+      "path_rel": "13_接手作业_Handover_Execution/生成_年度公司事实层_AnnualCompanyFactLayer/data/annual_company_fact_layer_2022_2024.db",
+      "table": "company_facts",
+      "layer": "annual_company",
+      "report_years": [2022, 2023, 2024],
+      "certification": "certified",
+      "note": "年度公司级 certified 层"
+    },
+    "provisional2025": {
+      "db_id": "provisional2025",
+      "path_rel": "13_接手作业_Handover_Execution/生成_2025provisional公司事实层_AnnualProvisionalCompanyLayer/data/annual_provisional_company_2025.db",
+      "table": "provisional_company_facts",
+      "layer": "annual_provisional",
+      "certification": "provisional",
+      "year": 2025,
+      "note": "2025 provisional 公司级层"
+    },
+    "financial": {
+      "db_id": "financial",
+      "path_rel": "13_接手作业_Handover_Execution/生成_行业财务事实层_FinancialFactLayer/data/financial_fact_layer.db",
+      "table": "financial_facts",
+      "layer": "financial",
+      "unit": "HKD_million",
+      "certification": "provisional",
+      "periods": ["2024Q4","2025Q1","2025Q2","2025Q3","2025Q4","2026Q1"],
+      "note": "行业财务资产负债层"
+    }
+  }
+}

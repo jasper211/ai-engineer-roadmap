@@ -103,3 +103,28 @@ python3 examples/query_examples.py # 语义查询示例
 | **自定义配置目录** | open_readonly(cfg_dir=...) 支持外部配置 | test_custom_config_dir_loads |
 
 **最终测试**：单元 19/19 + 独立审计 20/20 + 适配层验收 17/17 + 基础/桥 gate + 源DB哈希不变，全部 PASS。
+
+---
+## 九·第三轮审计整改（round2 19项，从公共接口验收）
+
+独立审计第三轮（`independent_acceptance_round2_report.md`）判定 PARTIAL（5/19），要求不得只测内部类、从 `HKIAClient.query` 公共接口验收。已全部修复：
+
+| 审计项 | 修复 |
+|---|---|
+| 错误响应契约 | 错误响应补全 request_id/data/metadata/comparability/release/lineage 全部契约键 |
+| healthcheck data | 改为 list（符合 Schema array）|
+| 未知嵌套 filters | 拒绝未知 filters 子字段 |
+| periods 逐项校验 | 非法期间按 period_basis 拒绝 |
+| offset | SQL 支持 OFFSET（生效）|
+| include_zero 类型 | 必须 bool |
+| filters 类型 | 必须 dict |
+| zero 值状态 | record_status=reported_zero |
+| missing 状态 | value=null + record_status=missing |
+| bridge evidence | company 行返回 bridge_evidence + bridge_type |
+| 非法 fund_scope | 白名单拒绝 |
+| Q4 三指标 | 补 FIN_EQUITIES_PORTFOLIO / FIN_CASH_AND_DEPOSITS 登记 |
+| L11 公共门禁 | compare_periods 对 policy_count vs scheme_count 返回 L11COUNT_BLOCKED |
+| RBC 公共门禁 | compare_periods 2023 vs 2024 返回 SCHEMA_BRIDGE_REQUIRED |
+| 安装包 | config/schema/bridge 打包进 _assets；安装后从非源码目录 healthcheck+Q1 通过 |
+
+**最终：单元 19/19 + 轮1独立审计 20/20 + 轮3独立审计 19/19 + 适配层验收 17/17 + 基础/桥gate + 安装探测，全部 PASS。**

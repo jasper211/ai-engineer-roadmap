@@ -44,6 +44,18 @@ class ReleaseBlockedError(HkiaBlockedError):
         super().__init__(message, blocked_by="release_policy", suggestion="仅可返回待验证异口径试算并明确标注。", applicability=applicability)
 
 
+class SchemaBridgeRequiredError(HkiaBlockedError):
+    error_code = "SCHEMA_BRIDGE_REQUIRED"
+    def __init__(self, message="pre-RBC 与 RBC 指标无已审定桥，需先建立/提供 schema 桥。", applicability="跨 pre-RBC/RBC 比较(如 2023 vs 2024)"):
+        super().__init__(message, blocked_by="schema_bridge", suggestion="提供已审定的 schema 桥后再比较。", applicability=applicability)
+
+
+class L11CountMixError(HkiaBlockedError):
+    error_code = "L11_COUNT_MIX"
+    def __init__(self, message="L11 退休计划 policy_count/lives/scheme_count 不得跨指标比较。", applicability="L11 数量类跨指标比较"):
+        super().__init__(message, blocked_by="l11_gate", suggestion="分别按单一数量类型取数。", applicability=applicability)
+
+
 @dataclass
 class QueryRequest:
     query_type: str

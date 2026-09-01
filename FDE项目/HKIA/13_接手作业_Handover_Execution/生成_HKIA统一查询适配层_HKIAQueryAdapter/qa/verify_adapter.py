@@ -12,7 +12,8 @@ def run():
     results = {}
     # 1. 5库健康
     h = client.query({"query_type": "healthcheck"})
-    rows = h["data"]["rows"]
+    hdata = h["data"]
+    rows = {x["db_id"]: x["row_count"] for x in hdata} if isinstance(hdata, list) else hdata
     results["5db_connect_and_rows"] = bool(h["ok"] and rows["master"]==59516 and
         rows["standard"]==5022 and rows["annual"]==7097 and
         rows["provisional2025"]==414 and rows["financial"]==408)

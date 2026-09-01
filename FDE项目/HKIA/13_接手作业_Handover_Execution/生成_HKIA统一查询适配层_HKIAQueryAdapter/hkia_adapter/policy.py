@@ -8,8 +8,13 @@ from .models import ReleaseResult, QueryRequest, ReleaseBlockedError, NotCompara
 
 class PolicyEngine:
     def __init__(self, path: Optional[Path] = None):
-        base = Path(__file__).resolve().parents[1] / "config"
-        self.path = path or (base / "release_policies.json")
+        if path:
+            self.path = Path(path)
+        else:
+            base = Path(__file__).resolve().parents[1] / "config"
+            pkg = Path(__file__).resolve().parent / "_assets" / "config" / "release_policies.json"
+            cand = base / "release_policies.json"
+            self.path = cand if cand.exists() else pkg
         self.policies = json.loads(self.path.read_text(encoding="utf-8")).get("policies", {})
 
     def evaluate(self, req: QueryRequest, metric_id=None, output_unit=None,

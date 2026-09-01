@@ -14,11 +14,16 @@ class _ClientBase(unittest.TestCase):
         cls.client.close()
 
 
+
+def _health_rows(r):
+    """healthcheck data 现在是 [{db_id,row_count},...] 列表"""
+    return {x["db_id"]: x["row_count"] for x in r["data"]}
+
 class TestConnections(_ClientBase):
     def test_5_db_rowcounts(self):
         r = self.client.query({"query_type": "healthcheck"})
         self.assertTrue(r["ok"])
-        rows = r["data"]["rows"]
+        rows = _health_rows(r)
         self.assertEqual(rows["master"], 59516)
         self.assertEqual(rows["standard"], 72+4914+18+18)
         self.assertEqual(rows["annual"], 7097)
@@ -175,7 +180,8 @@ class TestConfigInstall(_ClientBase):
             c = HKIAClient.open_readonly(cfg_dir=dst)
             r = c.query({"query_type": "healthcheck"})
             self.assertTrue(r["ok"])
-            self.assertEqual(r["data"]["rows"]["master"], 59516)
+            rows = {x["db_id"]: x["row_count"] for x in r["data"]}
+            self.assertEqual(rows["master"], 59516)
             c.close()
         finally:
             shutil.rmtree(tmp)

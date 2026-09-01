@@ -6,15 +6,26 @@ from pathlib import Path
 from typing import Dict, List, Optional
 from .models import ValidationError
 
-BRIDGE_DIR = Path(__file__).resolve().parents[1] / ".." / "生成_跨年度同口径桥_CrossYearBridge" / "bridge"
+BRIDGE_DIR_CANDIDATES = [
+    Path(__file__).resolve().parents[1] / ".." / "生成_跨年度同口径桥_CrossYearBridge" / "bridge",
+    Path(__file__).resolve().parent / "_assets" / "bridge",
+]
 MAP_FILE = "可比公司映射_2024L16_2025L1_v2.csv"
 EXCL_FILE = "排除清单_2024_2025_v2.csv"
 
 
+def _resolve_bridge_dir():
+    for d in BRIDGE_DIR_CANDIDATES:
+        if (d / MAP_FILE).exists():
+            return d
+    return BRIDGE_DIR_CANDIDATES[0]
+
+
 class IdentityBridge:
     def __init__(self, map_path=None, excl_path=None, version="2.1"):
-        self.map_path = Path(map_path) if map_path else (BRIDGE_DIR / MAP_FILE)
-        self.excl_path = Path(excl_path) if excl_path else (BRIDGE_DIR / EXCL_FILE)
+        bdir = _resolve_bridge_dir()
+        self.map_path = Path(map_path) if map_path else (bdir / MAP_FILE)
+        self.excl_path = Path(excl_path) if excl_path else (bdir / EXCL_FILE)
         self.version = version
         self._entity_of_2024: Dict[str, str] = {}
         self._entity_of_2025: Dict[str, str] = {}
@@ -45,6 +56,7 @@ class IdentityBridge:
         try:
             import sqlite3
             std = Path(__file__).resolve().parents[1] / ".." / "生成_标准事实层_StandardFactLayer" / "data" / "standard_fact_layer_2023_2026Q1.db"
+            # 标准层为只读外部 DB，安装态仍引用机器上的真实路径（data_sources 提供）
             if std.exists():
                 c = sqlite3.connect(std)
                 for ab, lg in c.execute("SELECT DISTINCT source_abbrev, business_lineage FROM company_facts WHERE business_lineage IS NOT NULL"):

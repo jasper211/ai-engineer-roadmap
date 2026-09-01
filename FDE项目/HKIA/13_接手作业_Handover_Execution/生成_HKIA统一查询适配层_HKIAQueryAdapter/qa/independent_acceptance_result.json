@@ -27,7 +27,7 @@
   "evidence": {
     "list_metrics": {
       "ok": true,
-      "request_id": "bf0736c4a2ea",
+      "request_id": "7af0d1bba9b6",
       "query_type": "list_metrics",
       "data": [
         {
@@ -37,7 +37,8 @@
           "entity_scope": "insurer",
           "period_basis": "annual_certified",
           "supported_query_types": [
-            "describe_metric"
+            "describe_metric",
+            "compare_periods"
           ]
         },
         {
@@ -65,8 +66,30 @@
           ]
         },
         {
+          "metric_id": "FIN_CASH_AND_DEPOSITS",
+          "label": "现金和存款(行业财务)",
+          "unit": "HKD_million",
+          "entity_scope": "fund",
+          "period_basis": "quarterly_snapshot",
+          "supported_query_types": [
+            "financial_snapshot",
+            "describe_metric"
+          ]
+        },
+        {
           "metric_id": "FIN_DEBT_SECURITIES",
           "label": "债务证券(行业财务)",
+          "unit": "HKD_million",
+          "entity_scope": "fund",
+          "period_basis": "quarterly_snapshot",
+          "supported_query_types": [
+            "financial_snapshot",
+            "describe_metric"
+          ]
+        },
+        {
+          "metric_id": "FIN_EQUITIES_PORTFOLIO",
+          "label": "股权(包括组合投资)(行业财务)",
           "unit": "HKD_million",
           "entity_scope": "fund",
           "period_basis": "quarterly_snapshot",
@@ -175,7 +198,7 @@
     },
     "describe_metric": {
       "ok": true,
-      "request_id": "c82d1697e8a7",
+      "request_id": "8299a16768f5",
       "query_type": "describe_metric",
       "data": [
         {
@@ -242,7 +265,39 @@
       "message": "count 指标不接受金额或未知输出单位。",
       "blocked_by": null,
       "suggestion": null,
-      "query_type": "market_trend"
+      "query_type": "market_trend",
+      "request_id": "64c7d8f700c1",
+      "data": [],
+      "metadata": {
+        "metric_id": null,
+        "metric_label": null,
+        "period_basis": null,
+        "entity_scope": null,
+        "source_unit": null,
+        "output_unit": null,
+        "certification": null,
+        "schema": null,
+        "source_layer": null,
+        "source_db_id": null,
+        "source_tables": [],
+        "data_version": "v1",
+        "bridge_version": "2.1"
+      },
+      "comparability": {
+        "status": "unknown",
+        "reasons": [],
+        "required_bridge": null
+      },
+      "release": {
+        "status": "not_allowed",
+        "level": null,
+        "warnings": []
+      },
+      "lineage": {
+        "query_template_id": "Q1_MARKET_TREND_V1",
+        "source_files": [],
+        "checksums": []
+      }
     },
     "money_count_unit": {
       "ok": false,
@@ -250,7 +305,39 @@
       "message": "金额指标不接受 count 输出单位。",
       "blocked_by": null,
       "suggestion": null,
-      "query_type": "market_trend"
+      "query_type": "market_trend",
+      "request_id": "df52d4c00735",
+      "data": [],
+      "metadata": {
+        "metric_id": null,
+        "metric_label": null,
+        "period_basis": null,
+        "entity_scope": null,
+        "source_unit": null,
+        "output_unit": null,
+        "certification": null,
+        "schema": null,
+        "source_layer": null,
+        "source_db_id": null,
+        "source_tables": [],
+        "data_version": "v1",
+        "bridge_version": "2.1"
+      },
+      "comparability": {
+        "status": "unknown",
+        "reasons": [],
+        "required_bridge": null
+      },
+      "release": {
+        "status": "not_allowed",
+        "level": null,
+        "warnings": []
+      },
+      "lineage": {
+        "query_template_id": "Q1_MARKET_TREND_V1",
+        "source_files": [],
+        "checksums": []
+      }
     },
     "negative_limit": {
       "ok": false,
@@ -266,11 +353,57 @@
       "message": "当前源层不支持年度 2025（支持: [2022, 2023, 2024]）。",
       "blocked_by": null,
       "suggestion": null,
-      "query_type": "company_ranking"
+      "query_type": "company_ranking",
+      "request_id": "19121bef7731",
+      "data": [],
+      "metadata": {
+        "metric_id": null,
+        "metric_label": null,
+        "period_basis": null,
+        "entity_scope": null,
+        "source_unit": null,
+        "output_unit": null,
+        "certification": null,
+        "schema": null,
+        "source_layer": null,
+        "source_db_id": null,
+        "source_tables": [],
+        "data_version": "v1",
+        "bridge_version": "2.1"
+      },
+      "comparability": {
+        "status": "unknown",
+        "reasons": [],
+        "required_bridge": null
+      },
+      "release": {
+        "status": "not_allowed",
+        "level": null,
+        "warnings": []
+      },
+      "lineage": {
+        "query_template_id": "Q2_COMPANY_RANKING_V1",
+        "source_files": [],
+        "checksums": []
+      }
     },
     "scope_override": {
       "ok": false,
-      "metadata": null
+      "metadata": {
+        "metric_id": null,
+        "metric_label": null,
+        "period_basis": null,
+        "entity_scope": null,
+        "source_unit": null,
+        "output_unit": null,
+        "certification": null,
+        "schema": null,
+        "source_layer": null,
+        "source_db_id": null,
+        "source_tables": [],
+        "data_version": "v1",
+        "bridge_version": "2.1"
+      }
     },
     "wrong_query_metric": {
       "ok": false,
@@ -278,11 +411,43 @@
       "message": "期间 '2026Q1' 不符合指标 period_basis=annual_certified。",
       "blocked_by": null,
       "suggestion": null,
-      "query_type": "financial_snapshot"
+      "query_type": "financial_snapshot",
+      "request_id": "9d1ef8867952",
+      "data": [],
+      "metadata": {
+        "metric_id": null,
+        "metric_label": null,
+        "period_basis": null,
+        "entity_scope": null,
+        "source_unit": null,
+        "output_unit": null,
+        "certification": null,
+        "schema": null,
+        "source_layer": null,
+        "source_db_id": null,
+        "source_tables": [],
+        "data_version": "v1",
+        "bridge_version": "2.1"
+      },
+      "comparability": {
+        "status": "unknown",
+        "reasons": [],
+        "required_bridge": null
+      },
+      "release": {
+        "status": "not_allowed",
+        "level": null,
+        "warnings": []
+      },
+      "lineage": {
+        "query_template_id": "Q4_FINANCIAL_SNAPSHOT_V1",
+        "source_files": [],
+        "checksums": []
+      }
     },
     "annual_company_value": {
       "ok": true,
-      "request_id": "1e5819901de8",
+      "request_id": "51f9d7ea6f47",
       "query_type": "company_period_values",
       "data": [
         {
@@ -294,7 +459,9 @@
           "entity_scope": "insurer",
           "certification": "certified",
           "schema": "annual_lt",
-          "record_status": "reported_value"
+          "record_status": "reported_value",
+          "bridge_evidence": "standard_layer_entity_key",
+          "bridge_type": "rename_or_alias"
         }
       ],
       "metadata": {
@@ -338,7 +505,7 @@
     },
     "provisional_company_value": {
       "ok": true,
-      "request_id": "fe5d7d6c1521",
+      "request_id": "c6bfe694a881",
       "query_type": "company_period_values",
       "data": [
         {
@@ -350,7 +517,8 @@
           "entity_scope": "insurer",
           "certification": "provisional",
           "schema": "lt_qr_2025",
-          "record_status": "reported_value"
+          "record_status": "reported_value",
+          "bridge_evidence": "standard_layer_entity_key"
         }
       ],
       "metadata": {
@@ -428,7 +596,39 @@
       "message": "periods 必须为字符串数组。",
       "blocked_by": null,
       "suggestion": null,
-      "query_type": "market_trend"
+      "query_type": "market_trend",
+      "request_id": "3ff3a58093de",
+      "data": [],
+      "metadata": {
+        "metric_id": null,
+        "metric_label": null,
+        "period_basis": null,
+        "entity_scope": null,
+        "source_unit": null,
+        "output_unit": null,
+        "certification": null,
+        "schema": null,
+        "source_layer": null,
+        "source_db_id": null,
+        "source_tables": [],
+        "data_version": "v1",
+        "bridge_version": "2.1"
+      },
+      "comparability": {
+        "status": "unknown",
+        "reasons": [],
+        "required_bridge": null
+      },
+      "release": {
+        "status": "not_allowed",
+        "level": null,
+        "warnings": []
+      },
+      "lineage": {
+        "query_template_id": "Q1_MARKET_TREND_V1",
+        "source_files": [],
+        "checksums": []
+      }
     },
     "source_hashes_before": {
       "master": "8fefa61d24b64206f9cadfe23f6b760e9232b57331ba0073470171121b11f9b3",
@@ -445,7 +645,9 @@
       "financial": "e801f7bb03edf48a26025e6e2763dfbcf685fe4684d1e5aa4bf555e134c15f90"
     },
     "schema_files": [
-      "schema/response_schema.json"
+      "schema/response_schema.json",
+      "build/lib/hkia_adapter/_assets/schema/response_schema.json",
+      "hkia_adapter/_assets/schema/response_schema.json"
     ],
     "cli_invalid_json": {
       "returncode": 2,
