@@ -1,0 +1,849 @@
+{
+  "schema_version": "vnw.l3-analysis.v1",
+  "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
+  "generation_mode": "UNIFIED_MODEL",
+  "analysis_status": "MODEL_DRAFT",
+  "model_run": {
+    "model_name": "deepseek-v4-pro",
+    "model_version": "deepseek-v4-pro",
+    "prompt_version": "VNW-L3-COM-GOLD-v1.0",
+    "generated_at": "2026-08-14T03:00:49.821982+00:00",
+    "input_snapshot_hash": "4fcc501602b54f9db313ced28b94eeaadbe2b7f96c17082f82e6b0bfc16b9844"
+  },
+  "source_scope": {
+    "database": "process_analytics",
+    "knowledge": "ACTIVE supplemental evidence only",
+    "evidence_count": 78
+  },
+  "l4_analysis": [
+    {
+      "l4_code": "L4-RSJD-01",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-f1ab65ffdcd32f8fcf86",
+        "EVD-2331f4a929569be63cd6",
+        "EVD-d96068363ed286500aee",
+        "EVD-06cdad632f41365d89fc",
+        "EVD-b66391517adbf2ce7b6b",
+        "EVD-bf8511577c3cc2817668",
+        "EVD-92ec7bbca170c5aee225",
+        "EVD-70e02f6db1d680162872",
+        "EVD-9f972dec130bc5bd2116",
+        "EVD-11b9ae147acb4d9032cf",
+        "EVD-71fd27fe556d05e0daf7",
+        "EVD-97be8dcae17a7e535473",
+        "EVD-048e938d9efdb4d73c94"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "销售合规审计报告（方案）",
+      "specific_capabilities": [
+        "转介方资质核验",
+        "客户知情同意签署管理",
+        "客户财务需求与风险承受能力收集",
+        "保险产品与客户需求匹配",
+        "产品风险披露与确认",
+        "销售飞轮周报数据录入",
+        "复合动作需拆分为子Skill（依据skill_feasibility A档）"
+      ],
+      "ai_reshape": "确定性Skill执行候选，但需先按蓝图活动拆分为子Skill；客户知情同意与风险披露保留人工确认环节，销售飞轮周报更新可全自动。",
+      "quality_anchor": "输入结构化(D1=2)与输出校验(D3=2)可作为质量锚点；规则清晰度(D2=1)与API可达性(D4=1)需补强。",
+      "ai_responsibility": "执行转介DD信息核验、需求收集、产品匹配推荐、周报录入等结构化信息处理。",
+      "human_responsibility": "客户知情同意签署、风险披露确认、资质核验最终判断。",
+      "handoff_triggers": [
+        "转介方资质核验失败",
+        "客户拒绝签署告知书",
+        "风险披露确认缺失"
+      ],
+      "control_gates": [
+        "客户知情同意签署控制门",
+        "风险披露确认控制门",
+        "合规审计报告审核控制门"
+      ],
+      "data_basis": [
+        "EVD-70e02f6db1d680162872",
+        "EVD-11b9ae147acb4d9032cf",
+        "EVD-92ec7bbca170c5aee225"
+      ],
+      "process_context": "蓝图STEP-01（line 50）销售执行与客户管理，属于机构业务族保单服务岗目标态核心。",
+      "risks_limits": [
+        "复合动作未拆分，不可直接封装单一Skill",
+        "D2规则清晰度低，需补充规则",
+        "D4 API可达性低，外部系统集成风险",
+        "业务数据证据为UNVERIFIED，不能作为数据依据"
+      ],
+      "current_recommendation": "按skill_feasibility A档进入Skill原型候选池，但需先拆分为子Skill；保留客户知情同意、风险披露人工控制门；补强规则与API证据。",
+      "database_tier": "Auto",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-RSJD-02",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-58cdbff8771f58fb9c9b",
+        "EVD-9f5182d5d663d99cc11b",
+        "EVD-210de91f176a40b7964a",
+        "EVD-06cdad632f41365d89fc",
+        "EVD-b1ab65ecc53c1950d77a",
+        "EVD-bed2e61be292b2cb6305",
+        "EVD-fd86c6af58aa4783c2a1",
+        "EVD-87aa95f504b8d19a709b",
+        "EVD-f89839d9cd7d2c90697a",
+        "EVD-0146dcb96c558f32e233",
+        "EVD-8476aca5e8b489216b72",
+        "EVD-bd8ffdab47c21f0ca2f1",
+        "EVD-3031a262ca00e4bedc0a"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "销售合规审计报告（数据表）",
+      "specific_capabilities": [
+        "客户财务需求录入",
+        "产品方案测算",
+        "多情景对比",
+        "测算结果语义复核",
+        "资金安全硬门控制"
+      ],
+      "ai_reshape": "Agent辅助语义复核；测算与对比可自动化但最终确认由人负责；资金安全硬门必须人工。",
+      "quality_anchor": "D1-D4均2分，输入/规则/输出/API基础好；D5回落1分需增强。",
+      "ai_responsibility": "执行财务需求录入、方案测算、多情景对比。",
+      "human_responsibility": "测算结果语义复核与最终确认，资金安全硬门把关。",
+      "handoff_triggers": [
+        "测算结果异常",
+        "资金安全硬门触发",
+        "语义复核不通过"
+      ],
+      "control_gates": [
+        "资金安全硬门（funds_safety_hard_gate=true）"
+      ],
+      "data_basis": [
+        "EVD-87aa95f504b8d19a709b",
+        "EVD-f89839d9cd7d2c90697a",
+        "EVD-0146dcb96c558f32e233",
+        "EVD-8476aca5e8b489216b72"
+      ],
+      "process_context": "蓝图STEP-02（line 69）财务模型测算，数据库tier Hybrid。",
+      "risks_limits": [
+        "C-低封装，判断/策略类，语义复核后确认",
+        "资金安全硬门不可绕过",
+        "业务数据证据UNVERIFIED"
+      ],
+      "current_recommendation": "优先考虑Agent辅助或决策支持，不直接封装确定性Skill；测算计算部分可自动化，但语义复核与资金门必须人工。",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-RSJD-03",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-8837a3323a5d64a583cb",
+        "EVD-dd6c32a85f763e729cb3",
+        "EVD-b24581fcf57be877ec1e",
+        "EVD-06cdad632f41365d89fc",
+        "EVD-9607b19e13e431b47298",
+        "EVD-b3513d907822d89965b6",
+        "EVD-019fe26a7a5adf9a3800",
+        "EVD-d14d7e0fb41e928f8d0d",
+        "EVD-380c55e9f47f34ddd923",
+        "EVD-ed03498811ad63bd4423",
+        "EVD-44c3370ee9ad22961e86",
+        "EVD-3e6d5e8ce7207128ebf6",
+        "EVD-1a4c38ed030570577f9f"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "销售合规审计报告（数据表）",
+      "specific_capabilities": [
+        "转介协议合规审核",
+        "产品DD合规审核",
+        "保司DD合规审核",
+        "客户适当性评估审核",
+        "校准意见汇总",
+        "复合动作需拆分为可执行与讨论子动作"
+      ],
+      "ai_reshape": "Agent辅助决策支持，合规审核与校准意见汇总保留人工判断与权威；不直接封装确定性Skill。",
+      "quality_anchor": "输入结构化(D1=2)与输出校验(D3=2)较好；规则清晰度(D2=1)与API可达性(D4=1)不足，依赖人工补足。",
+      "ai_responsibility": "执行合规审核信息整理、对比、初步筛查。",
+      "human_responsibility": "合规审核最终判断、校准意见确认与权威签字。",
+      "handoff_triggers": [
+        "合规审核发现异常",
+        "客户适当性评估不通过",
+        "校准意见冲突"
+      ],
+      "control_gates": [
+        "合规审核人工控制门",
+        "校准意见汇总审批控制门"
+      ],
+      "data_basis": [
+        "EVD-d14d7e0fb41e928f8d0d",
+        "EVD-ed03498811ad63bd4423",
+        "EVD-019fe26a7a5adf9a3800"
+      ],
+      "process_context": "蓝图STEP-03（line 88）内部审核与校准，数据库tier Hybrid。",
+      "risks_limits": [
+        "C-低封装，判断/策略/认知类，需判断与权威",
+        "复合动作未拆分，不可直接封装Skill",
+        "规则与SOP缺失，流程定位不稳定"
+      ],
+      "current_recommendation": "优先考虑Agent辅助或决策支持，不直接封装确定性Skill；先拆分复合动作，明确人工审核边界。",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-RSJD-04",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-0dfd911e41bb2f4a8f84",
+        "EVD-267f4b747af709fe0dc8",
+        "EVD-b438542f9d16654833aa",
+        "EVD-06cdad632f41365d89fc",
+        "EVD-9f7abdbf7cd02a035868",
+        "EVD-9f009a8af71d7f11fbde",
+        "EVD-c93a46fb00b3a8b714e7",
+        "EVD-b802504fc6127e75daff",
+        "EVD-431f8de0cec16f17d865",
+        "EVD-0dcc46a847afa91269c0",
+        "EVD-a65f093c3f3a31f9c837",
+        "EVD-5296feeb6057a2dfd9d8",
+        "EVD-07c28d73b1a41b4e854b"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "销售合规审计报告（方案）",
+      "specific_capabilities": [
+        "保单交付",
+        "客户资料归档",
+        "合规回访",
+        "销售结果录入",
+        "单一信息处理动作，高封装"
+      ],
+      "ai_reshape": "确定性Skill执行候选，方案交付与归档、录入可全自动；合规回访需人工沟通但可Agent辅助。",
+      "quality_anchor": "输入结构化(D1=2)与输出校验(D3=2)好；规则清晰度(D2=1)与API可达性(D4=1)需补充，但单一动作可封装。",
+      "ai_responsibility": "执行保单交付、资料归档、结果录入。",
+      "human_responsibility": "合规回访中的人际沟通与异常处理。",
+      "handoff_triggers": [
+        "交付失败",
+        "归档异常",
+        "合规回访客户投诉"
+      ],
+      "control_gates": [
+        "合规回访人工确认控制门"
+      ],
+      "data_basis": [
+        "EVD-b802504fc6127e75daff",
+        "EVD-0dcc46a847afa91269c0",
+        "EVD-c93a46fb00b3a8b714e7"
+      ],
+      "process_context": "蓝图STEP-04（line 106）方案交付，数据库tier Auto。",
+      "risks_limits": [
+        "A-高封装Single action，可进入Skill原型候选池",
+        "D2/D4分数较低，需补充规则和API接口",
+        "合规回访仍需人工介入"
+      ],
+      "current_recommendation": "优先进入Skill原型候选池，封装交付、归档、录入子Skill；合规回访保留人工。",
+      "database_tier": "Auto",
+      "recommended_tier": "Auto",
+      "quadrant": "unclassified"
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "T-RSJD-01-01",
+      "l4_code": "L4-RSJD-01",
+      "task_name": "执行转介DD资质核验",
+      "source_type": "blueprint_step",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-01",
+      "source_line": 50,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-92ec7bbca170c5aee225",
+        "EVD-bf8511577c3cc2817668",
+        "EVD-70e02f6db1d680162872"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "需核验资质和框架有效性，涉及判断与外部信息，建议Hybrid。"
+    },
+    {
+      "task_id": "T-RSJD-01-02",
+      "l4_code": "L4-RSJD-01",
+      "task_name": "完成客户知情同意签署",
+      "source_type": "blueprint_step",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-01",
+      "source_line": 50,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-92ec7bbca170c5aee225",
+        "EVD-bf8511577c3cc2817668",
+        "EVD-70e02f6db1d680162872"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "签署动作需客户确认，可线上但需人工介入或系统确认，建议Hybrid。"
+    },
+    {
+      "task_id": "T-RSJD-01-03",
+      "l4_code": "L4-RSJD-01",
+      "task_name": "收集客户需求信息",
+      "source_type": "blueprint_step",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-01",
+      "source_line": 50,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-92ec7bbca170c5aee225",
+        "EVD-bf8511577c3cc2817668",
+        "EVD-70e02f6db1d680162872"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "需收集财务状况与风险承受能力，涉及交互判断，建议Hybrid。"
+    },
+    {
+      "task_id": "T-RSJD-01-04",
+      "l4_code": "L4-RSJD-01",
+      "task_name": "执行产品适配并生成推荐方案",
+      "source_type": "blueprint_step",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-01",
+      "source_line": 50,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-92ec7bbca170c5aee225",
+        "EVD-bf8511577c3cc2817668",
+        "EVD-70e02f6db1d680162872"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "基于规则匹配，信息处理事务类，可自动化。"
+    },
+    {
+      "task_id": "T-RSJD-01-05",
+      "l4_code": "L4-RSJD-01",
+      "task_name": "执行风险披露并获取确认",
+      "source_type": "blueprint_step",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-01",
+      "source_line": 50,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-92ec7bbca170c5aee225",
+        "EVD-bf8511577c3cc2817668",
+        "EVD-70e02f6db1d680162872"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "风险披露与确认需人工控制，建议Hybrid。"
+    },
+    {
+      "task_id": "T-RSJD-01-06",
+      "l4_code": "L4-RSJD-01",
+      "task_name": "更新销售飞轮周报",
+      "source_type": "blueprint_step",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-01",
+      "source_line": 50,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-92ec7bbca170c5aee225",
+        "EVD-bf8511577c3cc2817668",
+        "EVD-70e02f6db1d680162872"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "录入类事务，可自动执行。"
+    },
+    {
+      "task_id": "T-RSJD-01-07",
+      "l4_code": "L4-RSJD-01",
+      "task_name": "拆解销售执行与客户管理为子Skill",
+      "source_type": "skill_feasibility",
+      "sequence_no": null,
+      "sequence_status": "UNCONFIRMED",
+      "source_step_id": "",
+      "source_line": null,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-bf8511577c3cc2817668"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "复合动作需人工规划拆分边界，属于讨论任务。"
+    },
+    {
+      "task_id": "T-RSJD-02-01",
+      "l4_code": "L4-RSJD-02",
+      "task_name": "录入客户财务需求",
+      "source_type": "blueprint_step",
+      "sequence_no": 2,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-02",
+      "source_line": 69,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-fd86c6af58aa4783c2a1",
+        "EVD-bed2e61be292b2cb6305",
+        "EVD-87aa95f504b8d19a709b"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "输入结构化D1=2，事务类录入。"
+    },
+    {
+      "task_id": "T-RSJD-02-02",
+      "l4_code": "L4-RSJD-02",
+      "task_name": "执行产品方案测算",
+      "source_type": "blueprint_step",
+      "sequence_no": 2,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-02",
+      "source_line": 69,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-fd86c6af58aa4783c2a1",
+        "EVD-bed2e61be292b2cb6305",
+        "EVD-f89839d9cd7d2c90697a"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "计算类，规则清晰D2=2，可自动化。"
+    },
+    {
+      "task_id": "T-RSJD-02-03",
+      "l4_code": "L4-RSJD-02",
+      "task_name": "执行多情景对比",
+      "source_type": "blueprint_step",
+      "sequence_no": 2,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-02",
+      "source_line": 69,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-fd86c6af58aa4783c2a1",
+        "EVD-bed2e61be292b2cb6305",
+        "EVD-0146dcb96c558f32e233"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "对比类事务，可自动化。"
+    },
+    {
+      "task_id": "T-RSJD-02-04",
+      "l4_code": "L4-RSJD-02",
+      "task_name": "校验测算结果",
+      "source_type": "blueprint_step",
+      "sequence_no": 2,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-02",
+      "source_line": 69,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-fd86c6af58aa4783c2a1",
+        "EVD-bed2e61be292b2cb6305",
+        "EVD-0146dcb96c558f32e233"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "语义复核判定，需人工确认，资金安全硬门。"
+    },
+    {
+      "task_id": "T-RSJD-03-01",
+      "l4_code": "L4-RSJD-03",
+      "task_name": "执行转介协议合规审核",
+      "source_type": "blueprint_step",
+      "sequence_no": 3,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-03",
+      "source_line": 88,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-019fe26a7a5adf9a3800",
+        "EVD-b3513d907822d89965b6",
+        "EVD-d14d7e0fb41e928f8d0d"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "合规审核需人工判断，建议Hybrid。"
+    },
+    {
+      "task_id": "T-RSJD-03-02",
+      "l4_code": "L4-RSJD-03",
+      "task_name": "执行产品DD合规审核",
+      "source_type": "blueprint_step",
+      "sequence_no": 3,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-03",
+      "source_line": 88,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-019fe26a7a5adf9a3800",
+        "EVD-b3513d907822d89965b6",
+        "EVD-d14d7e0fb41e928f8d0d"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "合规审核需人工判断，建议Hybrid。"
+    },
+    {
+      "task_id": "T-RSJD-03-03",
+      "l4_code": "L4-RSJD-03",
+      "task_name": "执行保司DD合规审核",
+      "source_type": "blueprint_step",
+      "sequence_no": 3,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-03",
+      "source_line": 88,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-019fe26a7a5adf9a3800",
+        "EVD-b3513d907822d89965b6",
+        "EVD-d14d7e0fb41e928f8d0d"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "合规审核需人工判断，建议Hybrid。"
+    },
+    {
+      "task_id": "T-RSJD-03-04",
+      "l4_code": "L4-RSJD-03",
+      "task_name": "执行客户适当性评估审核",
+      "source_type": "blueprint_step",
+      "sequence_no": 3,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-03",
+      "source_line": 88,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-019fe26a7a5adf9a3800",
+        "EVD-b3513d907822d89965b6",
+        "EVD-d14d7e0fb41e928f8d0d"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "适当性评估需人工判断，建议Hybrid。"
+    },
+    {
+      "task_id": "T-RSJD-03-05",
+      "l4_code": "L4-RSJD-03",
+      "task_name": "汇总校准意见",
+      "source_type": "blueprint_step",
+      "sequence_no": 3,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-03",
+      "source_line": 88,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-019fe26a7a5adf9a3800",
+        "EVD-b3513d907822d89965b6",
+        "EVD-ed03498811ad63bd4423"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "汇总意见并确认，需人类判断，建议Hybrid。"
+    },
+    {
+      "task_id": "T-RSJD-03-06",
+      "l4_code": "L4-RSJD-03",
+      "task_name": "拆解内部审核与校准子动作并划定人工边界",
+      "source_type": "skill_feasibility",
+      "sequence_no": null,
+      "sequence_status": "UNCONFIRMED",
+      "source_step_id": "",
+      "source_line": null,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-b3513d907822d89965b6"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "复合动作需人工规划与讨论，划定人工边界。"
+    },
+    {
+      "task_id": "T-RSJD-04-01",
+      "l4_code": "L4-RSJD-04",
+      "task_name": "完成保单交付",
+      "source_type": "blueprint_step",
+      "sequence_no": 4,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-04",
+      "source_line": 106,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-c93a46fb00b3a8b714e7",
+        "EVD-9f009a8af71d7f11fbde",
+        "EVD-b802504fc6127e75daff"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "交付动作可由系统自动完成，单一信息处理。"
+    },
+    {
+      "task_id": "T-RSJD-04-02",
+      "l4_code": "L4-RSJD-04",
+      "task_name": "归档客户资料",
+      "source_type": "blueprint_step",
+      "sequence_no": 4,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-04",
+      "source_line": 106,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-c93a46fb00b3a8b714e7",
+        "EVD-9f009a8af71d7f11fbde",
+        "EVD-b802504fc6127e75daff"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "资料归档为事务类，可自动化。"
+    },
+    {
+      "task_id": "T-RSJD-04-03",
+      "l4_code": "L4-RSJD-04",
+      "task_name": "执行合规回访",
+      "source_type": "blueprint_step",
+      "sequence_no": 4,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-04",
+      "source_line": 106,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-c93a46fb00b3a8b714e7",
+        "EVD-9f009a8af71d7f11fbde",
+        "EVD-07c28d73b1a41b4e854b"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "需与客户沟通，保留人工介入，建议Hybrid。"
+    },
+    {
+      "task_id": "T-RSJD-04-04",
+      "l4_code": "L4-RSJD-04",
+      "task_name": "录入销售结果",
+      "source_type": "blueprint_step",
+      "sequence_no": 4,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-04",
+      "source_line": 106,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-c93a46fb00b3a8b714e7",
+        "EVD-9f009a8af71d7f11fbde",
+        "EVD-b802504fc6127e75daff"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "录入类事务，可自动执行。"
+    }
+  ],
+  "priority_drafts": [
+    {
+      "l4_code": "L4-RSJD-01",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "EVD-70e02f6db1d680162872",
+        "EVD-11b9ae147acb4d9032cf",
+        "EVD-92ec7bbca170c5aee225"
+      ],
+      "process_context": "蓝图STEP-01（line 50）销售执行与客户管理，属于机构业务族保单服务岗目标态核心。",
+      "risks_limits": [
+        "复合动作未拆分，不可直接封装单一Skill",
+        "D2规则清晰度低，需补充规则",
+        "D4 API可达性低，外部系统集成风险",
+        "业务数据证据为UNVERIFIED，不能作为数据依据"
+      ],
+      "current_recommendation": "按skill_feasibility A档进入Skill原型候选池，但需先拆分为子Skill；保留客户知情同意、风险披露人工控制门；补强规则与API证据。",
+      "evidence_refs": [
+        "EVD-f1ab65ffdcd32f8fcf86",
+        "EVD-2331f4a929569be63cd6",
+        "EVD-d96068363ed286500aee",
+        "EVD-06cdad632f41365d89fc",
+        "EVD-b66391517adbf2ce7b6b",
+        "EVD-bf8511577c3cc2817668",
+        "EVD-92ec7bbca170c5aee225",
+        "EVD-70e02f6db1d680162872",
+        "EVD-9f972dec130bc5bd2116",
+        "EVD-11b9ae147acb4d9032cf",
+        "EVD-71fd27fe556d05e0daf7",
+        "EVD-97be8dcae17a7e535473",
+        "EVD-048e938d9efdb4d73c94"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-RSJD-02",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "EVD-87aa95f504b8d19a709b",
+        "EVD-f89839d9cd7d2c90697a",
+        "EVD-0146dcb96c558f32e233",
+        "EVD-8476aca5e8b489216b72"
+      ],
+      "process_context": "蓝图STEP-02（line 69）财务模型测算，数据库tier Hybrid。",
+      "risks_limits": [
+        "C-低封装，判断/策略类，语义复核后确认",
+        "资金安全硬门不可绕过",
+        "业务数据证据UNVERIFIED"
+      ],
+      "current_recommendation": "优先考虑Agent辅助或决策支持，不直接封装确定性Skill；测算计算部分可自动化，但语义复核与资金门必须人工。",
+      "evidence_refs": [
+        "EVD-58cdbff8771f58fb9c9b",
+        "EVD-9f5182d5d663d99cc11b",
+        "EVD-210de91f176a40b7964a",
+        "EVD-06cdad632f41365d89fc",
+        "EVD-b1ab65ecc53c1950d77a",
+        "EVD-bed2e61be292b2cb6305",
+        "EVD-fd86c6af58aa4783c2a1",
+        "EVD-87aa95f504b8d19a709b",
+        "EVD-f89839d9cd7d2c90697a",
+        "EVD-0146dcb96c558f32e233",
+        "EVD-8476aca5e8b489216b72",
+        "EVD-bd8ffdab47c21f0ca2f1",
+        "EVD-3031a262ca00e4bedc0a"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-RSJD-03",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "EVD-d14d7e0fb41e928f8d0d",
+        "EVD-ed03498811ad63bd4423",
+        "EVD-019fe26a7a5adf9a3800"
+      ],
+      "process_context": "蓝图STEP-03（line 88）内部审核与校准，数据库tier Hybrid。",
+      "risks_limits": [
+        "C-低封装，判断/策略/认知类，需判断与权威",
+        "复合动作未拆分，不可直接封装Skill",
+        "规则与SOP缺失，流程定位不稳定"
+      ],
+      "current_recommendation": "优先考虑Agent辅助或决策支持，不直接封装确定性Skill；先拆分复合动作，明确人工审核边界。",
+      "evidence_refs": [
+        "EVD-8837a3323a5d64a583cb",
+        "EVD-dd6c32a85f763e729cb3",
+        "EVD-b24581fcf57be877ec1e",
+        "EVD-06cdad632f41365d89fc",
+        "EVD-9607b19e13e431b47298",
+        "EVD-b3513d907822d89965b6",
+        "EVD-019fe26a7a5adf9a3800",
+        "EVD-d14d7e0fb41e928f8d0d",
+        "EVD-380c55e9f47f34ddd923",
+        "EVD-ed03498811ad63bd4423",
+        "EVD-44c3370ee9ad22961e86",
+        "EVD-3e6d5e8ce7207128ebf6",
+        "EVD-1a4c38ed030570577f9f"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "l4_code": "L4-RSJD-04",
+      "quadrant": "unclassified",
+      "data_basis": [
+        "EVD-b802504fc6127e75daff",
+        "EVD-0dcc46a847afa91269c0",
+        "EVD-c93a46fb00b3a8b714e7"
+      ],
+      "process_context": "蓝图STEP-04（line 106）方案交付，数据库tier Auto。",
+      "risks_limits": [
+        "A-高封装Single action，可进入Skill原型候选池",
+        "D2/D4分数较低，需补充规则和API接口",
+        "合规回访仍需人工介入"
+      ],
+      "current_recommendation": "优先进入Skill原型候选池，封装交付、归档、录入子Skill；合规回访保留人工。",
+      "evidence_refs": [
+        "EVD-0dfd911e41bb2f4a8f84",
+        "EVD-267f4b747af709fe0dc8",
+        "EVD-b438542f9d16654833aa",
+        "EVD-06cdad632f41365d89fc",
+        "EVD-9f7abdbf7cd02a035868",
+        "EVD-9f009a8af71d7f11fbde",
+        "EVD-c93a46fb00b3a8b714e7",
+        "EVD-b802504fc6127e75daff",
+        "EVD-431f8de0cec16f17d865",
+        "EVD-0dcc46a847afa91269c0",
+        "EVD-a65f093c3f3a31f9c837",
+        "EVD-5296feeb6057a2dfd9d8",
+        "EVD-07c28d73b1a41b4e854b"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "decision_drafts": [
+    {
+      "priority": "P1",
+      "task_ids": [
+        "T-RSJD-01-06",
+        "T-RSJD-01-07"
+      ],
+      "title": "负责人决策：启动销售执行与客户管理子Skill拆分并试点周报更新",
+      "pilot_scope": "选择销售飞轮周报更新为最小Auto试点；同时启动L4-RSJD-01复合动作拆分，限定在保单服务岗内部",
+      "human_boundary": "拆分方案需负责人审批；客户知情同意、风险披露保留人工确认；资金安全硬门不可自动化",
+      "evidence_refs": [
+        "EVD-bf8511577c3cc2817668",
+        "EVD-70e02f6db1d680162872",
+        "EVD-92ec7bbca170c5aee225"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "control_chain": [],
+  "rejected_task_sources": [],
+  "missing_analysis": [
+    "L4-RSJD-01 · agent_human_touchpoint",
+    "L4-RSJD-02 · agent_human_touchpoint",
+    "L4-RSJD-03 · agent_human_touchpoint",
+    "L4-RSJD-04 · agent_human_touchpoint",
+    "L3-RSJD · rule_locatable_l4",
+    "L3-RSJD · sop_draft",
+    "L3-RSJD · business_evidence",
+    "控制链缺少L4定位，已拒绝4条"
+  ]
+}

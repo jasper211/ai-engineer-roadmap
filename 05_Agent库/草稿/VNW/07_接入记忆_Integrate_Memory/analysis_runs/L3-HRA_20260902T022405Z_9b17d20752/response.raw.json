@@ -1,0 +1,652 @@
+{
+  "schema_version": "vnw.l3-analysis.v1",
+  "analysis_standard_id": "VNW-L3-COM-GOLD-v1.0",
+  "generation_mode": "UNIFIED_MODEL",
+  "analysis_status": "MODEL_DRAFT",
+  "model_run": {
+    "model_name": "OpenAI GPT-4",
+    "model_version": "unknown",
+    "prompt_version": "vnw.l3-analysis.v1",
+    "generated_at": "2026-08-04T00:00:00Z",
+    "input_snapshot_hash": "9b17d207528da9f73a3639bcfad91adaafba0e215214badb531f6884ede4ad47"
+  },
+  "source_scope": {
+    "database": "process_analytics",
+    "knowledge": "ACTIVE supplemental evidence only",
+    "evidence_count": 112
+  },
+  "l4_analysis": [
+    {
+      "l4_code": "L4-HRA-01",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-3380ef21d0fc063826f7",
+        "EVD-f94bb260636e8bdf76a6",
+        "EVD-522ce61a5ffed2af0b65",
+        "EVD-ca4b9f5930b420962084",
+        "EVD-a2f700d0f2f357b90d20",
+        "EVD-c5f2e43b11a640017ab7",
+        "EVD-743de64796b8720e8efc"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "人效数据底表，作为后续人效分析的输入数据源",
+      "specific_capabilities": [
+        "自动采集员工数据",
+        "清洗并标准化格式",
+        "语义复核判定"
+      ],
+      "ai_reshape": "确定性Skill自动执行数据采集与清洗，人工保留语义复核节点的控制权",
+      "quality_anchor": "数据表关键字段无缺失，格式符合分析需求",
+      "ai_responsibility": "自动执行采集规则和清洗逻辑",
+      "human_responsibility": "复核清洗结果语义准确性，处理异常数据",
+      "handoff_triggers": [
+        "清洗结果出现语义冲突",
+        "关键字段缺失率超阈值"
+      ],
+      "control_gates": [],
+      "data_basis": [
+        "EVD-3c0909d62089f87b3d08",
+        "EVD-a6dfe51fac223cae5c54",
+        "EVD-04c12a2dbe0e14a839e8",
+        "EVD-671d3f905483575bd85e"
+      ],
+      "process_context": "流程第一步，为后续分析与对标提供干净数据",
+      "risks_limits": [
+        "复合动作需拆分执行",
+        "语义复核依赖人工判断",
+        "当前业务证据未验证"
+      ],
+      "current_recommendation": "优先拆分技能为自动采集清洗和语义复核两个子技能，先原型化自动采集部分",
+      "database_tier": "Auto",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-HRA-02",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-b71140f10ba0f0188d1f",
+        "EVD-0d2ce78ee0f23a3238c6",
+        "EVD-a5f558ac2c273e83a8bd",
+        "EVD-ca4b9f5930b420962084",
+        "EVD-23876a616306673f8907",
+        "EVD-9a082e2c3723ba8fa5f2",
+        "EVD-1101ee32516723c4efe0"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "人效分析报告，为管理决策提供人效对标结果",
+      "specific_capabilities": [
+        "人效指标计算",
+        "对标基准比较",
+        "业务含义判断"
+      ],
+      "ai_reshape": "Agent辅助生成分析初稿，人工确认对标结论和业务含义",
+      "quality_anchor": "对标基准明确，计算逻辑可追溯",
+      "ai_responsibility": "计算人效指标并生成对标初稿",
+      "human_responsibility": "判断对标结果合理性，确认业务含义",
+      "handoff_triggers": [
+        "对标结果异常",
+        "业务背景变化导致基准不适用"
+      ],
+      "control_gates": [],
+      "data_basis": [
+        "EVD-44241221b2d808b0190e",
+        "EVD-189063532ba8ae8d2172",
+        "EVD-2b36213ccfec5e990a0f",
+        "EVD-26a0f13f9a71c1376ffd"
+      ],
+      "process_context": "依赖 L4-HRA-01 数据底表，是价值节点 VN-HR-04 的核心步骤之一",
+      "risks_limits": [
+        "复合动作需拆分",
+        "低封装度，需大量判断",
+        "业务证据弱"
+      ],
+      "current_recommendation": "优先采用 Agent 辅助，将计算与判断分离，不直接封装确定性 Skill",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-HRA-03",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-8b0a8b3b8fb1d267decf",
+        "EVD-425d6668c93762fd0815",
+        "EVD-66692728cf2798d417c2",
+        "EVD-ca4b9f5930b420962084",
+        "EVD-deceb648757d93ccb4e4",
+        "EVD-f328f1d025055de99ddf",
+        "EVD-3d7cfb16632ffb7153a4"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "人员成本分析报告，支撑成本控制决策",
+      "specific_capabilities": [
+        "成本数据汇总",
+        "成本结构分析",
+        "解释与建议"
+      ],
+      "ai_reshape": "Agent辅助生成成本分析初稿，人工确认结论",
+      "quality_anchor": "成本数据准确，分析维度完整",
+      "ai_responsibility": "汇总成本数据并生成分析草案",
+      "human_responsibility": "确认成本分析结论，给出管理建议",
+      "handoff_triggers": [
+        "成本异常波动",
+        "数据源不完整"
+      ],
+      "control_gates": [],
+      "data_basis": [
+        "EVD-75629f731e09ea4f1892",
+        "EVD-ef9f801977e57d6e0000",
+        "EVD-f38208d4429a7fb611c1",
+        "EVD-52b47350f0274823cfc3"
+      ],
+      "process_context": "作为人效分析的一部分，属于 VN-HR-04 映射",
+      "risks_limits": [
+        "低封装度，判断/策略类",
+        "无业务证据支持"
+      ],
+      "current_recommendation": "作为 Agent 辅助场景，人工把控结论",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-HRA-04",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-598ad35ef75b276f8aba",
+        "EVD-b99301d850f493915964",
+        "EVD-ed2c748987fef27953f2",
+        "EVD-ca4b9f5930b420962084",
+        "EVD-79b56f6f5b0adbb1eb8b",
+        "EVD-75e751ab5154bd8e1039",
+        "EVD-cfcac004d2ba6ffb9d1b"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "薪酬市场对标报告，用于薪酬策略调整",
+      "specific_capabilities": [
+        "市场薪酬数据获取",
+        "对标分析",
+        "策略建议"
+      ],
+      "ai_reshape": "Agent辅助收集市场数据并生成对标初稿，人工判断策略",
+      "quality_anchor": "市场数据来源可靠，对标方法科学",
+      "ai_responsibility": "自动采集市场数据和计算对标结果",
+      "human_responsibility": "判断薪酬策略建议可行性",
+      "handoff_triggers": [
+        "市场数据缺失",
+        "对标结果显著偏离"
+      ],
+      "control_gates": [],
+      "data_basis": [
+        "EVD-0ea0ad8f24e6ca6ea31f",
+        "EVD-b0b1d3dd270fb38c03f6",
+        "EVD-4e0ce89088fccc4f181b",
+        "EVD-a607309435414ca05517"
+      ],
+      "process_context": "属于 VN-HR-04 映射，支撑人效分析",
+      "risks_limits": [
+        "低封装度，判断/策略类",
+        "无业务证据"
+      ],
+      "current_recommendation": "Agent辅助，人工批准薪酬建议",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-HRA-05",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-9020d1f77d377843246c",
+        "EVD-bbc9fb93cda57fa0d077",
+        "EVD-28b2911ab943d14f283a",
+        "EVD-ca4b9f5930b420962084",
+        "EVD-e5e340f500ac63681c12",
+        "EVD-3bc87c36a2e0946416ef",
+        "EVD-c3a7075e79df98f2014d"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "人员素质盘点报告，提供人员结构洞察",
+      "specific_capabilities": [
+        "数据聚合统计",
+        "生成盘点报告"
+      ],
+      "ai_reshape": "确定性Skill自动生成盘点报告，人工仅做结果复核",
+      "quality_anchor": "统计口径一致，报告格式标准化",
+      "ai_responsibility": "自动统计人员素质结构并生成报告",
+      "human_responsibility": "复核报告结果，确认无误后发布",
+      "handoff_triggers": [
+        "数据异常",
+        "统计口径变化"
+      ],
+      "control_gates": [
+        "报告发布前人工审批"
+      ],
+      "data_basis": [
+        "EVD-826a396a8ddef75f71f3",
+        "EVD-970e6a1ed9e2f8451d73",
+        "EVD-995c452d0e34c8e58a1b",
+        "EVD-eb704dc6c37c2a3b6638"
+      ],
+      "process_context": "单一信息处理动作，A级高封装，适合Skill原型",
+      "risks_limits": [
+        "业务证据未验证，但数据字段强相关"
+      ],
+      "current_recommendation": "优先进入Skill原型候选池，可试点自动生成盘点报告",
+      "database_tier": "Auto",
+      "recommended_tier": "Auto",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-HRA-06",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-2e840541d01d4a1acda0",
+        "EVD-bef88ea056623444f112",
+        "EVD-d6fefb0aeb315132e9f9",
+        "EVD-ca4b9f5930b420962084",
+        "EVD-ba50d73047981cceeaf5",
+        "EVD-277f4814a18bc524f8af",
+        "EVD-efe49fe93dc58e734ce1"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "流失率分析与预警报告，支持员工保留策略",
+      "specific_capabilities": [
+        "流失率计算",
+        "预警信号识别",
+        "干预措施建议"
+      ],
+      "ai_reshape": "Agent辅助计算并标记预警，人工评估严重性和制定干预",
+      "quality_anchor": "流失率计算准确，预警阈值合理",
+      "ai_responsibility": "自动计算流失率并触发预警",
+      "human_responsibility": "评估预警优先级，制定干预措施",
+      "handoff_triggers": [
+        "预警触发",
+        "流失率异常波动"
+      ],
+      "control_gates": [],
+      "data_basis": [
+        "EVD-8c0f1626892fdda15e38",
+        "EVD-d05d269d70beb99895c5",
+        "EVD-1e261053f56a3ea57723",
+        "EVD-c0ca87830b9ecca27bb5"
+      ],
+      "process_context": "复合动作，含判断/策略，依赖分析结果",
+      "risks_limits": [
+        "低封装度",
+        "复合动作需拆分",
+        "业务证据未验证"
+      ],
+      "current_recommendation": "拆分计算与干预建议，计算部分可自动化，干预建议保留人工",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    },
+    {
+      "l4_code": "L4-HRA-07",
+      "analysis_status": "MODEL_DRAFT",
+      "evidence_refs": [
+        "EVD-f96d7ac6a54dc2197dab",
+        "EVD-1cc832d965b5c5eca6b2",
+        "EVD-8933cb193faca63ddc2c",
+        "EVD-ca4b9f5930b420962084",
+        "EVD-81523023062455ab727b",
+        "EVD-7027f0fcedff87591886",
+        "EVD-af13c5eecaf202f111ee"
+      ],
+      "confidence": "MODEL_DRAFT",
+      "deliverable_role": "人力资源诊断与改善建议报告，为高层提供决策支持",
+      "specific_capabilities": [
+        "汇总分析结果",
+        "诊断问题",
+        "提出改善建议"
+      ],
+      "ai_reshape": "Agent辅助汇总各报告生成诊断初稿，人工确认改善建议并批准",
+      "quality_anchor": "诊断结论有据可依，改善建议具体可行",
+      "ai_responsibility": "自动汇总分析结果并生成诊断初稿",
+      "human_responsibility": "确认诊断结论，批准改善建议",
+      "handoff_triggers": [
+        "诊断结论矛盾",
+        "建议需要高层决策"
+      ],
+      "control_gates": [
+        "对外发布前人工审批"
+      ],
+      "data_basis": [
+        "EVD-6567ebaae695382ed2d2",
+        "EVD-8909e44ce6130d7a01a4",
+        "EVD-4b5a2987beaf74531d51",
+        "EVD-3d34cb4181d8fae7f173"
+      ],
+      "process_context": "最后一步，整合所有分析，对应价值节点 VN-HR-05 P0",
+      "risks_limits": [
+        "复合动作，需拆分",
+        "低封装度，判断/策略",
+        "对外发布有控制门"
+      ],
+      "current_recommendation": "采用 Agent 辅助生成初稿，人工负责最终建议和发布审批",
+      "database_tier": "Hybrid",
+      "recommended_tier": "Hybrid",
+      "quadrant": "unclassified"
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "TASK-HRA-01-A",
+      "l4_code": "L4-HRA-01",
+      "task_name": "执行人效数据自动采集与清洗",
+      "source_type": "blueprint_step",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-01",
+      "source_line": 51,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-743de64796b8720e8efc",
+        "EVD-a2f700d0f2f357b90d20"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "单一信息处理动作，按skill feasibility A档，可封装为确定性Skill自动执行"
+    },
+    {
+      "task_id": "TASK-HRA-01-B",
+      "l4_code": "L4-HRA-01",
+      "task_name": "人工复核清洗结果语义准确性",
+      "source_type": "blueprint_step",
+      "sequence_no": 1,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-01",
+      "source_line": 51,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-743de64796b8720e8efc",
+        "EVD-a2f700d0f2f357b90d20"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "语义复核需认知判断，必须人工执行"
+    },
+    {
+      "task_id": "TASK-HRA-02-A",
+      "l4_code": "L4-HRA-02",
+      "task_name": "生成人效分析与对标初稿",
+      "source_type": "blueprint_step",
+      "sequence_no": 2,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-02",
+      "source_line": 55,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-1101ee32516723c4efe0",
+        "EVD-23876a616306673f8907"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "计算和汇总可由Agent辅助完成"
+    },
+    {
+      "task_id": "TASK-HRA-02-B",
+      "l4_code": "L4-HRA-02",
+      "task_name": "人工判断并确认对标结论",
+      "source_type": "blueprint_step",
+      "sequence_no": 2,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-02",
+      "source_line": 55,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-1101ee32516723c4efe0",
+        "EVD-23876a616306673f8907"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "判断/策略类，需要人工权威确认"
+    },
+    {
+      "task_id": "TASK-HRA-03-A",
+      "l4_code": "L4-HRA-03",
+      "task_name": "执行人员成本分析并生成报告",
+      "source_type": "blueprint_step",
+      "sequence_no": 3,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-03",
+      "source_line": 60,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-3d7cfb16632ffb7153a4",
+        "EVD-deceb648757d93ccb4e4"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "分析含判断，但计算部分可辅助，整体需人工干预"
+    },
+    {
+      "task_id": "TASK-HRA-04-A",
+      "l4_code": "L4-HRA-04",
+      "task_name": "执行薪酬市场对标分析并生成报告",
+      "source_type": "blueprint_step",
+      "sequence_no": 4,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-04",
+      "source_line": 65,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-cfcac004d2ba6ffb9d1b",
+        "EVD-79b56f6f5b0adbb1eb8b"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "判断/策略类，需人工确认薪酬建议"
+    },
+    {
+      "task_id": "TASK-HRA-05-A",
+      "l4_code": "L4-HRA-05",
+      "task_name": "自动盘点人员素质结构并生成报告",
+      "source_type": "blueprint_step",
+      "sequence_no": 5,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-05",
+      "source_line": 70,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-c3a7075e79df98f2014d",
+        "EVD-e5e340f500ac63681c12"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "单一信息处理动作，A封装，可自动执行"
+    },
+    {
+      "task_id": "TASK-HRA-06-A",
+      "l4_code": "L4-HRA-06",
+      "task_name": "计算流失率并生成预警信号",
+      "source_type": "blueprint_step",
+      "sequence_no": 6,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-06",
+      "source_line": 75,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-efe49fe93dc58e734ce1",
+        "EVD-ba50d73047981cceeaf5"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "流失率计算可自动"
+    },
+    {
+      "task_id": "TASK-HRA-06-B",
+      "l4_code": "L4-HRA-06",
+      "task_name": "人工评估预警严重性并制定干预措施",
+      "source_type": "blueprint_step",
+      "sequence_no": 6,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-06",
+      "source_line": 75,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-efe49fe93dc58e734ce1",
+        "EVD-ba50d73047981cceeaf5"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "干预措施评估需要判断"
+    },
+    {
+      "task_id": "TASK-HRA-07-A",
+      "l4_code": "L4-HRA-07",
+      "task_name": "汇总各分析报告并生成人力诊断初稿",
+      "source_type": "blueprint_step",
+      "sequence_no": 7,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-07",
+      "source_line": 80,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-af13c5eecaf202f111ee",
+        "EVD-81523023062455ab727b"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "汇总和初稿生成可辅助"
+    },
+    {
+      "task_id": "TASK-HRA-07-B",
+      "l4_code": "L4-HRA-07",
+      "task_name": "人工确认改善建议并批准对外发布",
+      "source_type": "blueprint_step",
+      "sequence_no": 7,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-07",
+      "source_line": 80,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": "",
+      "evidence_refs": [
+        "EVD-af13c5eecaf202f111ee",
+        "EVD-81523023062455ab727b"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "改善建议批准必须人工"
+    }
+  ],
+  "priority_drafts": [
+    {
+      "priority": "P1",
+      "task_ids": [
+        "TASK-HRA-01-A",
+        "TASK-HRA-01-B",
+        "TASK-HRA-02-A",
+        "TASK-HRA-02-B",
+        "TASK-HRA-03-A",
+        "TASK-HRA-04-A",
+        "TASK-HRA-05-A",
+        "TASK-HRA-06-A",
+        "TASK-HRA-06-B"
+      ],
+      "title": "人效分析报告（P1）",
+      "pilot_scope": "在数据采集、分析与对标、成本分析、薪酬对标、素质盘点、流失率分析中试点，首推素质盘点自动化",
+      "human_boundary": "所有报告结论由人力资源管理岗复核，对外发布前需流程负责人批准",
+      "evidence_refs": [
+        "EVD-b6f520f6e330ebc31112",
+        "EVD-af609449b98cf2fcacf2"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "priority": "P0",
+      "task_ids": [
+        "TASK-HRA-07-A",
+        "TASK-HRA-07-B"
+      ],
+      "title": "人力资源诊断与改善建议报告（P0）",
+      "pilot_scope": "汇总各分析报告，生成诊断初稿，人工确认改善建议",
+      "human_boundary": "改善建议必须由人力资源管理岗确认，发布前由高层领导审批",
+      "evidence_refs": [
+        "EVD-b45332adb39a6c84b8b0",
+        "EVD-62e3fc5e2e1d6f6093ed"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "decision_drafts": [
+    {
+      "priority": "P0",
+      "task_ids": [
+        "TASK-HRA-05-A"
+      ],
+      "title": "优先启动人员素质结构盘点自动化试点",
+      "pilot_scope": "以 dim_employee 表为输入，自动生成人员素质结构盘点报告，限人力资源部内部试用",
+      "human_boundary": "由人力资源管理岗对盘点结果进行复核，确认后由流程负责人批准发布；不直接对外公开",
+      "evidence_refs": [
+        "EVD-e5e340f500ac63681c12",
+        "EVD-c3a7075e79df98f2014d"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    }
+  ],
+  "control_chain": [
+    {
+      "control_id": "CTRL-HRA-01",
+      "control_type": "对外发布审批",
+      "description": "所有分析报告对外发布前必须经人力资源管理岗审批",
+      "task_ids": [
+        "TASK-HRA-07-B"
+      ],
+      "evidence_refs": [
+        "EVD-af13c5eecaf202f111ee"
+      ]
+    }
+  ],
+  "rejected_task_sources": [],
+  "missing_analysis": [
+    {
+      "l4_code": "L4-HRA-01",
+      "field": "human_touchpoint",
+      "reason": "Evidence EVD-c69457ea65586fac7690 status MISSING, no human touchpoint defined"
+    },
+    {
+      "l4_code": "L4-HRA-02",
+      "field": "business_evidence",
+      "reason": "Evidence EVD-668a49dc558940e4e9e3 status UNVERIFIED, cannot be used for conclusions"
+    },
+    {
+      "l4_code": "L4-HRA-03",
+      "field": "business_evidence",
+      "reason": "No business evidence provided"
+    },
+    {
+      "l4_code": "L4-HRA-04",
+      "field": "business_evidence",
+      "reason": "No business evidence provided"
+    },
+    {
+      "l4_code": "L4-HRA-07",
+      "field": "business_evidence",
+      "reason": "No business evidence provided"
+    }
+  ]
+}

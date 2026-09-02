@@ -8,239 +8,221 @@
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
           "EVD-40eef74d4a4ecff5cd32",
-          "EVD-0122b63aac94d035a161",
           "EVD-6167635186093c7f334a",
-          "EVD-b03f01c0471cb68248ee",
-          "EVD-6b1aae1d8dd5dd31fc94"
+          "EVD-3b3e5e80df91953ce6a7"
         ],
-        "human_boundary": "负责人必须审核数据汇总规则与异常数据回退机制；人工触发点在数据质量异常或季度边界规则变更时介入。",
-        "pilot_scope": "试点范围限定为L4-FBA-01月度/季度业绩数据汇总，输出数据表作为后续分析输入；不涉及资金与对外发布。",
+        "human_boundary": "数据源确认与结果抽样由事业部运营管理岗负责",
+        "pilot_scope": "仅限数据库表汇总与季度日历规则应用，试点范围不超过L4-FBA-01",
         "priority": "P1",
         "task_ids": [
-          "T-FBA-01"
+          "TASK-001"
         ],
-        "title": "L3-FBA 负责人决策草稿：从L4-FBA-01数据汇总开始Skill化试点"
+        "title": "启动TASK-001的Skill原型开发"
       }
     ],
     "generation_mode": "UNIFIED_MODEL",
     "l4_analysis": [
       {
-        "ai_reshape": "确定性Skill自动执行汇总与校验，优先进入Skill原型候选池",
-        "ai_responsibility": "自动执行数据汇总、应用季度规则、生成数据表",
+        "ai_reshape": "确定性Skill执行：基于单一信息处理动作，可封装为自动化数据汇总Skill",
+        "ai_responsibility": "AI负责数据抽取、按季度规则汇总、生成数据包",
         "analysis_status": "MODEL_DRAFT",
         "confidence": "MODEL_DRAFT",
         "control_gates": [],
-        "current_recommendation": "优先进入Skill原型候选池，但需补充输出质量锚点和人工复核机制。",
+        "current_recommendation": "优先进入Skill原型候选池，但需先验证数据源匹配的准确性",
         "data_basis": [
-          "L4名称与交付物定义 (EVD-6b1aae1d8dd5dd31fc94, EVD-b03f01c0471cb68248ee, EVD-3b8520df1fa07fd18d8d)",
-          "Skill可行性评估A档 (EVD-40eef74d4a4ecff5cd32)",
-          "数据库可Agent性Auto (EVD-0122b63aac94d035a161)",
-          "蓝图STEP-01 (EVD-6167635186093c7f334a)"
+          "输入结构清晰度证据：EVD-48c894e0dc69af5e8ee6",
+          "规则清晰度证据：EVD-12a09d75b3f745603463"
         ],
         "database_tier": "Auto",
-        "deliverable_role": "交付物为数据表，作为后续月度/季度业绩分析的基础输入",
+        "deliverable_role": "数据表交付物，用于月度/季度业绩数据汇总，作为后续分析的数据基础",
         "evidence_refs": [
-          "EVD-6b1aae1d8dd5dd31fc94",
-          "EVD-b03f01c0471cb68248ee",
-          "EVD-3b8520df1fa07fd18d8d",
-          "EVD-5641a33d0834ca17085c",
-          "EVD-40eef74d4a4ecff5cd32",
-          "EVD-0122b63aac94d035a161",
           "EVD-48c894e0dc69af5e8ee6",
           "EVD-12a09d75b3f745603463",
           "EVD-f293a472a3c33143ca34",
           "EVD-f3ebf7f0ec3dfd55c584",
           "EVD-588a621fe9768e90d159",
           "EVD-e9aab6f3d54a490658df",
-          "EVD-6167635186093c7f334a"
+          "EVD-0122b63aac94d035a161",
+          "EVD-40eef74d4a4ecff5cd32",
+          "EVD-b03f01c0471cb68248ee",
+          "EVD-3b8520df1fa07fd18d8d",
+          "EVD-6b1aae1d8dd5dd31fc94",
+          "EVD-5641a33d0834ca17085c",
+          "EVD-6167635186093c7f334a",
+          "EVD-431c634fb72d0c698353"
         ],
         "handoff_triggers": [],
         "human_responsibility": "",
         "l4_code": "L4-FBA-01",
-        "process_context": "蓝图步骤STEP-01（第57行），为流程起点，后续连接STEP-02月度经营分析。",
+        "process_context": "蓝图STEP-01，流程第一步，为月度经营分析准备数据",
         "quadrant": "unclassified",
-        "quality_anchor": "输出需通过输出核对（agent_d3_output_verify=2）与合规检查（agent_d6_compliance=2）",
+        "quality_anchor": "",
         "recommended_tier": "Auto",
         "risks_limits": [
-          "business_evidence为UNVERIFIED，无法确认实际数据源",
-          "人工接触点证据缺失，异常处理路径不明确"
+          "业务数据表匹配为人工共识未验证（EVD-a1dfe1eb6450aedb532c状态UNVERIFIED），数据源存在不确定性",
+          "无人工触点记录，异常处理机制缺失"
         ],
         "specific_capabilities": [
-          "结构化数据汇总",
-          "季度日历规则应用",
-          "多源数据整合与输出核对"
+          "从销售汇总表抽取订单数据",
+          "按季度日历配置聚合业绩数据",
+          "生成数据表交付物"
         ]
       },
       {
-        "ai_reshape": "Agent辅助：自动生成数据表，人工判断异常；不直接封装确定性Skill",
-        "ai_responsibility": "自动生成月度业绩报表、活动率分析表、转化追踪表",
+        "ai_reshape": "Agent辅助或决策支持：AI负责数据计算与报表生成，人工负责分析与判断",
+        "ai_responsibility": "AI辅助数据计算、报表生成、异常标记",
         "analysis_status": "MODEL_DRAFT",
         "confidence": "MODEL_DRAFT",
-        "control_gates": [
-          "异常偏差判断 Q1（EVD-d88d57d77ac715cfefab）"
-        ],
-        "current_recommendation": "采用Agent辅助，先拆分数据生成与分析判断两个子任务；异常判断保留人工。",
+        "control_gates": [],
+        "current_recommendation": "拆分任务：确定性的数据计算部分自动化，需业务判断的部分采用Agent辅助",
         "data_basis": [
-          "L4名称与交付物定义 (EVD-4fc28556d1fdd733a28c, EVD-faf31c10b4823959583f, EVD-b131e156d611cbe844be)",
-          "Skill可行性评估C档复合动作 (EVD-82ee6ada2b9b9b3570ef)",
-          "数据库可Agent性Hybrid (EVD-8aa21323db1abd5283f5)",
-          "蓝图STEP-02 (EVD-e22c0ecedfacfd47f522)",
-          "蓝图决策Q1 (EVD-d88d57d77ac715cfefab)"
+          "输入结构清晰度证据：EVD-966a033fd0906dff0355",
+          "输出验证证据：EVD-9217b71b52bc0bced7b8"
         ],
         "database_tier": "Hybrid",
-        "deliverable_role": "交付物为数据表与分析结论，用于月度经营监控与异常识别",
+        "deliverable_role": "数据表交付物，按月分析业绩、活动率、转化率，为管理层提供月度经营视图",
         "evidence_refs": [
-          "EVD-4fc28556d1fdd733a28c",
-          "EVD-faf31c10b4823959583f",
-          "EVD-b131e156d611cbe844be",
-          "EVD-5641a33d0834ca17085c",
-          "EVD-82ee6ada2b9b9b3570ef",
-          "EVD-8aa21323db1abd5283f5",
-          "EVD-89816f3238b0ab9475b8",
           "EVD-966a033fd0906dff0355",
           "EVD-3dc75d31575d955ab6c7",
           "EVD-9217b71b52bc0bced7b8",
           "EVD-2b257febf312b471f2f1",
           "EVD-5354363f3b3d54fb6e2c",
           "EVD-bc769b5f7badec8cce04",
-          "EVD-e22c0ecedfacfd47f522",
-          "EVD-d88d57d77ac715cfefab"
+          "EVD-89816f3238b0ab9475b8",
+          "EVD-8aa21323db1abd5283f5",
+          "EVD-82ee6ada2b9b9b3570ef",
+          "EVD-faf31c10b4823959583f",
+          "EVD-b131e156d611cbe844be",
+          "EVD-4fc28556d1fdd733a28c",
+          "EVD-5641a33d0834ca17085c",
+          "EVD-e22c0ecedfacfd47f522"
         ],
         "handoff_triggers": [
-          "发现低活跃/业绩下滑等异常偏差（EVD-d88d57d77ac715cfefab）"
+          "发现异常偏差（低活跃/业绩下滑）时，转人工处理并触发L3-FOR/L3-FPG（EVD-d88d57d77ac715cfefab）"
         ],
-        "human_responsibility": "人工执行月度业绩与活动率分析（EVD-89816f3238b0ab9475b8）",
+        "human_responsibility": "人工执行月度业绩与活动率分析（EVD-89816f3238b0ab9475b8），负责业务判断与结论",
         "l4_code": "L4-FBA-02",
-        "process_context": "蓝图步骤STEP-02（第63行），承接STEP-01，输出月度分析；若发现异常触发外部L3，否则进入STEP-03。",
+        "process_context": "蓝图STEP-02，在业绩数据汇总之后，需产出月度业绩报表、活动率分析表、转化追踪表",
         "quadrant": "unclassified",
-        "quality_anchor": "输出核对评分2，规则清晰度评分1，需人工确认分析结论",
+        "quality_anchor": "",
         "recommended_tier": "Hybrid",
         "risks_limits": [
-          "business_evidence为UNVERIFIED，活动率数据源未确认",
-          "skill_feasibility为C档复合动作，需先拆分",
-          "异常判定规则阈值未明确"
+          "技能可行性C档，复合动作需拆分，直接封装Skill风险高",
+          "业务数据表匹配为CONSENSUS未验证（EVD-ea00f380f293be5330e0），数据源不确定性",
+          "D2规则清晰度低（1分），聚合规则需人工确认"
         ],
         "specific_capabilities": [
-          "数据表生成与统计",
-          "活动率与转化率分析",
-          "异常偏差判断"
+          "月度业绩数据计算",
+          "活动率与转化率计算",
+          "业务异常判断与解释"
         ]
       },
       {
-        "ai_reshape": "Agent辅助：AI可准备数据与报告草稿，人工完成分析与结论",
-        "ai_responsibility": "辅助生成分公司经营分析报告初稿",
+        "ai_reshape": "Agent辅助或决策支持：AI辅助数据准备与模板生成，人工负责分析判断",
+        "ai_responsibility": "AI辅助数据准备、图表生成、初步分析",
         "analysis_status": "MODEL_DRAFT",
         "confidence": "MODEL_DRAFT",
-        "control_gates": [
-          "人工执行季度分析（EVD-d470da07b5bd25178bec）"
-        ],
-        "current_recommendation": "采用Agent辅助报告草稿，人工完成分析与签核。",
+        "control_gates": [],
+        "current_recommendation": "采用Agent辅助数据准备与模板生成，人工负责分析判断",
         "data_basis": [
-          "L4名称与交付物定义 (EVD-e3ea5dcc6e6539efba94, EVD-e16ba89a6150cc1a801b, EVD-b20591697811d7129f66)",
-          "Skill可行性评估C档单一动作 (EVD-b7ea38bafa0e0faaa1d5)",
-          "数据库可Agent性Hybrid (EVD-560eac5e8dc3b25f4193)",
-          "蓝图STEP-03 (EVD-e9f53bea99ce15433632)"
+          "无业务数据证据，数据获取能力低（D4 API可达1）"
         ],
         "database_tier": "Hybrid",
-        "deliverable_role": "交付物为报告，用于季度分公司经营情况分析",
+        "deliverable_role": "报告交付物，季度分公司经营分析，为管理层提供分公司经营状况评估",
         "evidence_refs": [
-          "EVD-e3ea5dcc6e6539efba94",
-          "EVD-e16ba89a6150cc1a801b",
-          "EVD-b20591697811d7129f66",
-          "EVD-5641a33d0834ca17085c",
-          "EVD-b7ea38bafa0e0faaa1d5",
-          "EVD-560eac5e8dc3b25f4193",
-          "EVD-d470da07b5bd25178bec",
           "EVD-b437be2a58559664197e",
           "EVD-9b5f9f26431e95051c01",
           "EVD-f2e5341f5b9c640d1eb6",
           "EVD-34f1b77eb2cfee455fbd",
           "EVD-3d97020c03b04a2e2960",
           "EVD-14897967825e1c1b2fd4",
+          "EVD-d470da07b5bd25178bec",
+          "EVD-560eac5e8dc3b25f4193",
+          "EVD-b7ea38bafa0e0faaa1d5",
+          "EVD-e16ba89a6150cc1a801b",
+          "EVD-b20591697811d7129f66",
+          "EVD-e3ea5dcc6e6539efba94",
+          "EVD-5641a33d0834ca17085c",
           "EVD-e9f53bea99ce15433632"
         ],
         "handoff_triggers": [],
-        "human_responsibility": "人工执行季度分公司经营分析（EVD-d470da07b5bd25178bec）",
+        "human_responsibility": "人工执行季度分公司经营分析（EVD-d470da07b5bd25178bec），负责判断和报告编写",
         "l4_code": "L4-FBA-03",
-        "process_context": "蓝图步骤STEP-03（第71行），承接STEP-02正常路径，输出季度分析报告。",
+        "process_context": "蓝图STEP-03，在月度分析后，每季度执行，产出分公司经营分析报告",
         "quadrant": "unclassified",
-        "quality_anchor": "输出核对评分2，需人工审核报告",
+        "quality_anchor": "",
         "recommended_tier": "Hybrid",
         "risks_limits": [
-          "business_evidence缺失，无法引用分公司数据",
-          "单一动作但C档，仍需人工权威判断"
+          "技能可行性C档，需判断/权威",
+          "无业务数据证据，数据源缺失",
+          "D4 API可达1分，数据接入可能存在困难"
         ],
         "specific_capabilities": [
-          "季度经营分析",
-          "分公司维度比较",
-          "报告编制"
+          "分公司经营数据分析",
+          "编写分析报告"
         ]
       },
       {
-        "ai_reshape": "Agent辅助：AI整合数据生成报告草稿，人工定稿与上报；复合动作需拆分",
-        "ai_responsibility": "整合前期分析，生成报告草稿与归档建议",
+        "ai_reshape": "Agent辅助：AI辅助报告格式检查、数据一致性检查，人工审批后上报",
+        "ai_responsibility": "AI辅助报告格式检查、数据一致性检查、准备上报材料",
         "analysis_status": "MODEL_DRAFT",
         "confidence": "MODEL_DRAFT",
         "control_gates": [
-          "报告定稿与总部上报人工签核（EVD-089039df868466b49541）"
+          "对外发布/上报控制门：必须人工审批后上报（EVD-089039df868466b49541）"
         ],
-        "current_recommendation": "拆分定稿与上报两个子任务；定稿可由Agent辅助，上报与签核必须人工。",
+        "current_recommendation": "拆分任务：定稿辅助可Agent辅助，上报必须人工审批",
         "data_basis": [
-          "L4名称与交付物定义 (EVD-6eb8fe2383cefc7b836b, EVD-d5c13fe924c87d80f141, EVD-815222d060cf0add7411)",
-          "Skill可行性评估C档复合动作 (EVD-5f1ba9fb6c91196a7543)",
-          "数据库可Agent性Hybrid (EVD-1eefd49cd12cf873ec82)",
-          "蓝图STEP-04 (EVD-0977af2849cc46dbe5bd)"
+          "输入结构清晰度证据：EVD-447e9c034b7554ab0952",
+          "输出验证证据：EVD-116dd3de4ec8092944b3"
         ],
         "database_tier": "Hybrid",
-        "deliverable_role": "交付物为最终报告，用于总部上报与决策",
+        "deliverable_role": "报告交付物，分析报告定稿与总部上报，作为最终经营分析成果对外发布",
         "evidence_refs": [
-          "EVD-6eb8fe2383cefc7b836b",
-          "EVD-d5c13fe924c87d80f141",
-          "EVD-815222d060cf0add7411",
-          "EVD-5641a33d0834ca17085c",
-          "EVD-5f1ba9fb6c91196a7543",
-          "EVD-1eefd49cd12cf873ec82",
-          "EVD-089039df868466b49541",
           "EVD-447e9c034b7554ab0952",
           "EVD-eefdfcb797ff4cc88dfa",
           "EVD-116dd3de4ec8092944b3",
           "EVD-51236b211426d3f94a7c",
           "EVD-9d303bc3b2de20772a2e",
           "EVD-cb1762e57e214b188c80",
+          "EVD-089039df868466b49541",
+          "EVD-1eefd49cd12cf873ec82",
+          "EVD-5f1ba9fb6c91196a7543",
+          "EVD-d5c13fe924c87d80f141",
+          "EVD-815222d060cf0add7411",
+          "EVD-6eb8fe2383cefc7b836b",
+          "EVD-5641a33d0834ca17085c",
           "EVD-0977af2849cc46dbe5bd"
         ],
-        "handoff_triggers": [],
-        "human_responsibility": "人工执行分析报告定稿与总部上报（EVD-089039df868466b49541）",
+        "handoff_triggers": [
+          "对外上报必须人工审批"
+        ],
+        "human_responsibility": "人工执行分析报告定稿与总部上报（EVD-089039df868466b49541），负责最终审批和对外发布",
         "l4_code": "L4-FBA-04",
-        "process_context": "蓝图步骤STEP-04（第78行），为流程终点，输出P1价值节点VN-FBA-01。",
+        "process_context": "蓝图STEP-04，流程最后一步，产出最终报告并上报总部",
         "quadrant": "unclassified",
-        "quality_anchor": "输出核对评分3，合规评分2，需人工终审",
+        "quality_anchor": "",
         "recommended_tier": "Hybrid",
         "risks_limits": [
-          "business_evidence缺失",
-          "复合动作需拆分定稿与上报",
-          "最终报告为P1价值节点，需人工确认"
+          "复合动作需拆分，定稿与上报应分离",
+          "对外发布存在合规风险，必须人工控制",
+          "D5 fallback 2，D6合规2，有一定基础但需人工把关"
         ],
         "specific_capabilities": [
-          "报告定稿",
-          "总部上报",
-          "签核审批"
+          "报告定稿审核",
+          "总部上报"
         ]
       }
     ],
     "missing_analysis": [
-      "L4-FBA-01：缺少人工接触点证据（agent_human_touchpoint为MISSING），无法确定人工责任与转人工条件。",
-      "L4-FBA-01：business_evidence为UNVERIFIED，无法引用数据表作为数据依据。",
-      "L4-FBA-02：business_evidence为UNVERIFIED，无法引用活动率相关数据表。",
-      "L4-FBA-03：business_evidence缺失，无法引用分公司经营数据。",
-      "L4-FBA-04：business_evidence缺失，无法引用上报与定稿数据。",
-      "L4-FBA-02/L4-FBA-04：转人工触发条件仅有人工执行说明，无具体阈值或事件。",
-      "控制链缺少资金/合规/不可逆操作硬门，当前未发现资金安全类硬门。",
-      "控制链缺少L4定位，已拒绝3条"
+      "L4-FBA-01 · 无明确质量锚点；无人工触点记录（EVD-8f81780d994e76326212状态MISSING）；无转人工条件证据",
+      "L4-FBA-02 · 无明确质量锚点；业务数据表匹配为CONSENSUS未验证（EVD-ea00f380f293be5330e0），不能作为ACTIVE证据；D2规则清晰度低",
+      "L4-FBA-03 · 无明确质量锚点；无业务数据证据，数据接入能力低（D4=1）",
+      "L4-FBA-04 · 无明确质量锚点；复合动作拆分的具体子步骤无蓝图证据支撑，为模型推导",
+      "控制链缺少L4定位，已拒绝1条"
     ],
     "model_run": {
-      "generated_at": "2026-08-14T02:51:01.063871+00:00",
-      "input_snapshot_hash": "c6e9a4eeb7261834f6ddca6e2e9b85248496dae568f5a6900623d43da7f34391",
+      "generated_at": "2026-09-02T02:38:21.021219+00:00",
+      "input_snapshot_hash": "22ced34cb05b5f4d61874ddfb701eafb5f191e77d690e0a048a5f9ad505df0ea",
       "model_name": "deepseek-v4-pro",
       "model_version": "deepseek-v4-pro",
       "prompt_version": "VNW-L3-COM-GOLD-v1.0"
@@ -248,150 +230,132 @@
     "priority_drafts": [
       {
         "analysis_status": "MODEL_DRAFT",
-        "current_recommendation": "优先进入Skill原型候选池，但需补充输出质量锚点和人工复核机制。",
+        "current_recommendation": "优先进入Skill原型候选池，但需先验证数据源匹配的准确性",
         "data_basis": [
-          "L4名称与交付物定义 (EVD-6b1aae1d8dd5dd31fc94, EVD-b03f01c0471cb68248ee, EVD-3b8520df1fa07fd18d8d)",
-          "Skill可行性评估A档 (EVD-40eef74d4a4ecff5cd32)",
-          "数据库可Agent性Auto (EVD-0122b63aac94d035a161)",
-          "蓝图STEP-01 (EVD-6167635186093c7f334a)"
+          "输入结构清晰度证据：EVD-48c894e0dc69af5e8ee6",
+          "规则清晰度证据：EVD-12a09d75b3f745603463"
         ],
         "evidence_refs": [
-          "EVD-6b1aae1d8dd5dd31fc94",
-          "EVD-b03f01c0471cb68248ee",
-          "EVD-3b8520df1fa07fd18d8d",
-          "EVD-5641a33d0834ca17085c",
-          "EVD-40eef74d4a4ecff5cd32",
-          "EVD-0122b63aac94d035a161",
           "EVD-48c894e0dc69af5e8ee6",
           "EVD-12a09d75b3f745603463",
           "EVD-f293a472a3c33143ca34",
           "EVD-f3ebf7f0ec3dfd55c584",
           "EVD-588a621fe9768e90d159",
           "EVD-e9aab6f3d54a490658df",
-          "EVD-6167635186093c7f334a"
+          "EVD-0122b63aac94d035a161",
+          "EVD-40eef74d4a4ecff5cd32",
+          "EVD-b03f01c0471cb68248ee",
+          "EVD-3b8520df1fa07fd18d8d",
+          "EVD-6b1aae1d8dd5dd31fc94",
+          "EVD-5641a33d0834ca17085c",
+          "EVD-6167635186093c7f334a",
+          "EVD-431c634fb72d0c698353"
         ],
         "l4_code": "L4-FBA-01",
-        "process_context": "蓝图步骤STEP-01（第57行），为流程起点，后续连接STEP-02月度经营分析。",
+        "process_context": "蓝图STEP-01，流程第一步，为月度经营分析准备数据",
         "quadrant": "unclassified",
         "risks_limits": [
-          "business_evidence为UNVERIFIED，无法确认实际数据源",
-          "人工接触点证据缺失，异常处理路径不明确"
+          "业务数据表匹配为人工共识未验证（EVD-a1dfe1eb6450aedb532c状态UNVERIFIED），数据源存在不确定性",
+          "无人工触点记录，异常处理机制缺失"
         ]
       },
       {
         "analysis_status": "MODEL_DRAFT",
-        "current_recommendation": "采用Agent辅助，先拆分数据生成与分析判断两个子任务；异常判断保留人工。",
+        "current_recommendation": "拆分任务：确定性的数据计算部分自动化，需业务判断的部分采用Agent辅助",
         "data_basis": [
-          "L4名称与交付物定义 (EVD-4fc28556d1fdd733a28c, EVD-faf31c10b4823959583f, EVD-b131e156d611cbe844be)",
-          "Skill可行性评估C档复合动作 (EVD-82ee6ada2b9b9b3570ef)",
-          "数据库可Agent性Hybrid (EVD-8aa21323db1abd5283f5)",
-          "蓝图STEP-02 (EVD-e22c0ecedfacfd47f522)",
-          "蓝图决策Q1 (EVD-d88d57d77ac715cfefab)"
+          "输入结构清晰度证据：EVD-966a033fd0906dff0355",
+          "输出验证证据：EVD-9217b71b52bc0bced7b8"
         ],
         "evidence_refs": [
-          "EVD-4fc28556d1fdd733a28c",
-          "EVD-faf31c10b4823959583f",
-          "EVD-b131e156d611cbe844be",
-          "EVD-5641a33d0834ca17085c",
-          "EVD-82ee6ada2b9b9b3570ef",
-          "EVD-8aa21323db1abd5283f5",
-          "EVD-89816f3238b0ab9475b8",
           "EVD-966a033fd0906dff0355",
           "EVD-3dc75d31575d955ab6c7",
           "EVD-9217b71b52bc0bced7b8",
           "EVD-2b257febf312b471f2f1",
           "EVD-5354363f3b3d54fb6e2c",
           "EVD-bc769b5f7badec8cce04",
-          "EVD-e22c0ecedfacfd47f522",
-          "EVD-d88d57d77ac715cfefab"
+          "EVD-89816f3238b0ab9475b8",
+          "EVD-8aa21323db1abd5283f5",
+          "EVD-82ee6ada2b9b9b3570ef",
+          "EVD-faf31c10b4823959583f",
+          "EVD-b131e156d611cbe844be",
+          "EVD-4fc28556d1fdd733a28c",
+          "EVD-5641a33d0834ca17085c",
+          "EVD-e22c0ecedfacfd47f522"
         ],
         "l4_code": "L4-FBA-02",
-        "process_context": "蓝图步骤STEP-02（第63行），承接STEP-01，输出月度分析；若发现异常触发外部L3，否则进入STEP-03。",
+        "process_context": "蓝图STEP-02，在业绩数据汇总之后，需产出月度业绩报表、活动率分析表、转化追踪表",
         "quadrant": "unclassified",
         "risks_limits": [
-          "business_evidence为UNVERIFIED，活动率数据源未确认",
-          "skill_feasibility为C档复合动作，需先拆分",
-          "异常判定规则阈值未明确"
+          "技能可行性C档，复合动作需拆分，直接封装Skill风险高",
+          "业务数据表匹配为CONSENSUS未验证（EVD-ea00f380f293be5330e0），数据源不确定性",
+          "D2规则清晰度低（1分），聚合规则需人工确认"
         ]
       },
       {
         "analysis_status": "MODEL_DRAFT",
-        "current_recommendation": "采用Agent辅助报告草稿，人工完成分析与签核。",
+        "current_recommendation": "采用Agent辅助数据准备与模板生成，人工负责分析判断",
         "data_basis": [
-          "L4名称与交付物定义 (EVD-e3ea5dcc6e6539efba94, EVD-e16ba89a6150cc1a801b, EVD-b20591697811d7129f66)",
-          "Skill可行性评估C档单一动作 (EVD-b7ea38bafa0e0faaa1d5)",
-          "数据库可Agent性Hybrid (EVD-560eac5e8dc3b25f4193)",
-          "蓝图STEP-03 (EVD-e9f53bea99ce15433632)"
+          "无业务数据证据，数据获取能力低（D4 API可达1）"
         ],
         "evidence_refs": [
-          "EVD-e3ea5dcc6e6539efba94",
-          "EVD-e16ba89a6150cc1a801b",
-          "EVD-b20591697811d7129f66",
-          "EVD-5641a33d0834ca17085c",
-          "EVD-b7ea38bafa0e0faaa1d5",
-          "EVD-560eac5e8dc3b25f4193",
-          "EVD-d470da07b5bd25178bec",
           "EVD-b437be2a58559664197e",
           "EVD-9b5f9f26431e95051c01",
           "EVD-f2e5341f5b9c640d1eb6",
           "EVD-34f1b77eb2cfee455fbd",
           "EVD-3d97020c03b04a2e2960",
           "EVD-14897967825e1c1b2fd4",
+          "EVD-d470da07b5bd25178bec",
+          "EVD-560eac5e8dc3b25f4193",
+          "EVD-b7ea38bafa0e0faaa1d5",
+          "EVD-e16ba89a6150cc1a801b",
+          "EVD-b20591697811d7129f66",
+          "EVD-e3ea5dcc6e6539efba94",
+          "EVD-5641a33d0834ca17085c",
           "EVD-e9f53bea99ce15433632"
         ],
         "l4_code": "L4-FBA-03",
-        "process_context": "蓝图步骤STEP-03（第71行），承接STEP-02正常路径，输出季度分析报告。",
+        "process_context": "蓝图STEP-03，在月度分析后，每季度执行，产出分公司经营分析报告",
         "quadrant": "unclassified",
         "risks_limits": [
-          "business_evidence缺失，无法引用分公司数据",
-          "单一动作但C档，仍需人工权威判断"
+          "技能可行性C档，需判断/权威",
+          "无业务数据证据，数据源缺失",
+          "D4 API可达1分，数据接入可能存在困难"
         ]
       },
       {
         "analysis_status": "MODEL_DRAFT",
-        "current_recommendation": "拆分定稿与上报两个子任务；定稿可由Agent辅助，上报与签核必须人工。",
+        "current_recommendation": "拆分任务：定稿辅助可Agent辅助，上报必须人工审批",
         "data_basis": [
-          "L4名称与交付物定义 (EVD-6eb8fe2383cefc7b836b, EVD-d5c13fe924c87d80f141, EVD-815222d060cf0add7411)",
-          "Skill可行性评估C档复合动作 (EVD-5f1ba9fb6c91196a7543)",
-          "数据库可Agent性Hybrid (EVD-1eefd49cd12cf873ec82)",
-          "蓝图STEP-04 (EVD-0977af2849cc46dbe5bd)"
+          "输入结构清晰度证据：EVD-447e9c034b7554ab0952",
+          "输出验证证据：EVD-116dd3de4ec8092944b3"
         ],
         "evidence_refs": [
-          "EVD-6eb8fe2383cefc7b836b",
-          "EVD-d5c13fe924c87d80f141",
-          "EVD-815222d060cf0add7411",
-          "EVD-5641a33d0834ca17085c",
-          "EVD-5f1ba9fb6c91196a7543",
-          "EVD-1eefd49cd12cf873ec82",
-          "EVD-089039df868466b49541",
           "EVD-447e9c034b7554ab0952",
           "EVD-eefdfcb797ff4cc88dfa",
           "EVD-116dd3de4ec8092944b3",
           "EVD-51236b211426d3f94a7c",
           "EVD-9d303bc3b2de20772a2e",
           "EVD-cb1762e57e214b188c80",
+          "EVD-089039df868466b49541",
+          "EVD-1eefd49cd12cf873ec82",
+          "EVD-5f1ba9fb6c91196a7543",
+          "EVD-d5c13fe924c87d80f141",
+          "EVD-815222d060cf0add7411",
+          "EVD-6eb8fe2383cefc7b836b",
+          "EVD-5641a33d0834ca17085c",
           "EVD-0977af2849cc46dbe5bd"
         ],
         "l4_code": "L4-FBA-04",
-        "process_context": "蓝图步骤STEP-04（第78行），为流程终点，输出P1价值节点VN-FBA-01。",
+        "process_context": "蓝图STEP-04，流程最后一步，产出最终报告并上报总部",
         "quadrant": "unclassified",
         "risks_limits": [
-          "business_evidence缺失",
-          "复合动作需拆分定稿与上报",
-          "最终报告为P1价值节点，需人工确认"
+          "复合动作需拆分，定稿与上报应分离",
+          "对外发布存在合规风险，必须人工控制",
+          "D5 fallback 2，D6合规2，有一定基础但需人工把关"
         ]
       }
     ],
-    "rejected_task_sources": [
-      {
-        "evidence_id": "EVD-554133abf297d808c838",
-        "reason": "business_evidence状态为UNVERIFIED且evidence_class为CONSENSUS，不可用于业务结论"
-      },
-      {
-        "evidence_id": "EVD-0dc31c359677bae3b317",
-        "reason": "business_evidence状态为UNVERIFIED且evidence_class为CONSENSUS，不可用于业务结论"
-      }
-    ],
+    "rejected_task_sources": [],
     "schema_version": "vnw.l3-analysis.v1",
     "source_scope": {
       "database": "process_analytics",
@@ -403,15 +367,13 @@
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
           "EVD-6167635186093c7f334a",
-          "EVD-b03f01c0471cb68248ee",
-          "EVD-3b8520df1fa07fd18d8d",
-          "EVD-6b1aae1d8dd5dd31fc94",
-          "EVD-40eef74d4a4ecff5cd32"
+          "EVD-40eef74d4a4ecff5cd32",
+          "EVD-b03f01c0471cb68248ee"
         ],
         "l4_code": "L4-FBA-01",
         "next_task_ids": [
-          "T-FBA-02a",
-          "T-FBA-02b"
+          "TASK-002",
+          "TASK-003"
         ],
         "previous_task_ids": [],
         "relation_type": "SEQUENCE",
@@ -421,26 +383,23 @@
         "source_step_id": "STEP-01",
         "source_type": "blueprint_step",
         "suggested_tier": "Auto",
-        "task_id": "T-FBA-01",
-        "task_name": "汇总月度/季度业绩数据",
-        "tier_rationale": "数据库Tier Auto且Skill可行性A高封装单一动作，适合确定性Skill执行；但需补充输出核对。"
+        "task_id": "TASK-001",
+        "task_name": "汇总月度/季度业绩数据并生成数据包",
+        "tier_rationale": "L4-FBA-01为Auto且Skill可行性A档单一动作，适合确定性Skill执行；无人工判断需求。"
       },
       {
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
           "EVD-e22c0ecedfacfd47f522",
-          "EVD-4fc28556d1fdd733a28c",
-          "EVD-faf31c10b4823959583f",
-          "EVD-b131e156d611cbe844be",
           "EVD-82ee6ada2b9b9b3570ef",
-          "EVD-8aa21323db1abd5283f5"
+          "EVD-966a033fd0906dff0355"
         ],
         "l4_code": "L4-FBA-02",
         "next_task_ids": [
-          "T-FBA-03"
+          "TASK-004"
         ],
         "previous_task_ids": [
-          "T-FBA-01"
+          "TASK-001"
         ],
         "relation_type": "SEQUENCE",
         "sequence_no": 2,
@@ -449,25 +408,23 @@
         "source_step_id": "STEP-02",
         "source_type": "blueprint_step",
         "suggested_tier": "Hybrid",
-        "task_id": "T-FBA-02a",
-        "task_name": "生成月度业绩报表、活动率分析表和转化追踪表",
-        "tier_rationale": "数据库Tier Hybrid；虽然数据表生成可自动化，但skill_feasibility C复合动作，需人工验证数据与规则。"
+        "task_id": "TASK-002",
+        "task_name": "生成月度业绩报表与活动率转化追踪表数据",
+        "tier_rationale": "数据计算可自动化，但D2规则清晰度低（1分），需人工确认聚合规则，故建议Hybrid。"
       },
       {
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
           "EVD-e22c0ecedfacfd47f522",
-          "EVD-4fc28556d1fdd733a28c",
-          "EVD-82ee6ada2b9b9b3570ef",
           "EVD-89816f3238b0ab9475b8",
           "EVD-d88d57d77ac715cfefab"
         ],
         "l4_code": "L4-FBA-02",
         "next_task_ids": [
-          "T-FBA-03"
+          "TASK-004"
         ],
         "previous_task_ids": [
-          "T-FBA-01"
+          "TASK-001"
         ],
         "relation_type": "SEQUENCE",
         "sequence_no": 2,
@@ -476,28 +433,25 @@
         "source_step_id": "STEP-02",
         "source_type": "blueprint_step",
         "suggested_tier": "Hybrid",
-        "task_id": "T-FBA-02b",
-        "task_name": "分析业绩与活动率异常并形成月度结论",
-        "tier_rationale": "数据库Tier Hybrid；异常判断需人工权威，但AI可辅助分析。"
+        "task_id": "TASK-003",
+        "task_name": "分析活动率与转化率并识别异常偏差",
+        "tier_rationale": "需要业务判断识别异常，但AI可辅助计算与标记，最终决策需人工，建议Hybrid。"
       },
       {
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
           "EVD-e9f53bea99ce15433632",
-          "EVD-e3ea5dcc6e6539efba94",
-          "EVD-e16ba89a6150cc1a801b",
-          "EVD-b20591697811d7129f66",
           "EVD-b7ea38bafa0e0faaa1d5",
           "EVD-d470da07b5bd25178bec"
         ],
         "l4_code": "L4-FBA-03",
         "next_task_ids": [
-          "T-FBA-04a",
-          "T-FBA-04b"
+          "TASK-005",
+          "TASK-006"
         ],
         "previous_task_ids": [
-          "T-FBA-02a",
-          "T-FBA-02b"
+          "TASK-002",
+          "TASK-003"
         ],
         "relation_type": "SEQUENCE",
         "sequence_no": 3,
@@ -506,23 +460,21 @@
         "source_step_id": "STEP-03",
         "source_type": "blueprint_step",
         "suggested_tier": "Hybrid",
-        "task_id": "T-FBA-03",
-        "task_name": "编制季度分公司经营分析报告",
-        "tier_rationale": "数据库Tier Hybrid；人工执行季度分公司经营分析，但可Agent辅助数据准备与初稿。"
+        "task_id": "TASK-004",
+        "task_name": "执行季度分公司经营分析并生成报告",
+        "tier_rationale": "需要人工判断分公司经营情况，AI辅助数据准备与报告模板，建议Hybrid。"
       },
       {
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
           "EVD-0977af2849cc46dbe5bd",
-          "EVD-6eb8fe2383cefc7b836b",
-          "EVD-d5c13fe924c87d80f141",
-          "EVD-815222d060cf0add7411",
-          "EVD-5f1ba9fb6c91196a7543"
+          "EVD-5f1ba9fb6c91196a7543",
+          "EVD-447e9c034b7554ab0952"
         ],
         "l4_code": "L4-FBA-04",
         "next_task_ids": [],
         "previous_task_ids": [
-          "T-FBA-03"
+          "TASK-004"
         ],
         "relation_type": "SEQUENCE",
         "sequence_no": 4,
@@ -531,22 +483,21 @@
         "source_step_id": "STEP-04",
         "source_type": "blueprint_step",
         "suggested_tier": "Hybrid",
-        "task_id": "T-FBA-04a",
-        "task_name": "整合定稿月度/季度经营分析报告",
-        "tier_rationale": "数据库Tier Hybrid；报告定稿需人工判断与调整，AI辅助整合。"
+        "task_id": "TASK-005",
+        "task_name": "完成分析报告定稿（质量检查与格式整理）",
+        "tier_rationale": "定稿涉及质量检查，AI可辅助，但最终需人工确认，建议Hybrid。"
       },
       {
         "analysis_status": "MODEL_DRAFT",
         "evidence_refs": [
           "EVD-0977af2849cc46dbe5bd",
           "EVD-089039df868466b49541",
-          "EVD-3b3e5e80df91953ce6a7",
-          "EVD-431c634fb72d0c698353"
+          "EVD-1eefd49cd12cf873ec82"
         ],
         "l4_code": "L4-FBA-04",
         "next_task_ids": [],
         "previous_task_ids": [
-          "T-FBA-03"
+          "TASK-004"
         ],
         "relation_type": "SEQUENCE",
         "sequence_no": 4,
@@ -555,13 +506,13 @@
         "source_step_id": "STEP-04",
         "source_type": "blueprint_step",
         "suggested_tier": "Human",
-        "task_id": "T-FBA-04b",
-        "task_name": "履行总部上报与人工签核",
-        "tier_rationale": "最终上报与签核为人工控制门，不可自动化，对应数据库Hybrid但需Human执行。"
+        "task_id": "TASK-006",
+        "task_name": "执行总部上报流程（含人工审批）",
+        "tier_rationale": "对外上报属不可逆操作，必须人工审批后执行，建议Human。"
       }
     ]
   },
-  "analysis_freshness": "INPUT_CHANGED",
+  "analysis_freshness": "CURRENT",
   "analysis_input_hash": "22ced34cb05b5f4d61874ddfb701eafb5f191e77d690e0a048a5f9ad505df0ea",
   "blueprint": {
     "blueprint_value_nodes": [],

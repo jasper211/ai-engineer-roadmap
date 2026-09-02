@@ -7,8 +7,8 @@
     "model_name": "deepseek-v4-pro",
     "model_version": "deepseek-v4-pro",
     "prompt_version": "VNW-L3-COM-GOLD-v1.0",
-    "generated_at": "2026-08-05T16:57:12.433304+00:00",
-    "input_snapshot_hash": "aaeaa94d609241b43ceb185975732434f046a9ab6cd55764a8d5842216c06b1a"
+    "generated_at": "2026-09-02T02:48:06.946137+00:00",
+    "input_snapshot_hash": "bef8ed2bd91e213e0b6a52d8d5cec25488e9559a7442f064160b979e14c58ed7"
   },
   "source_scope": {
     "database": "process_analytics",
@@ -20,794 +20,1127 @@
       "l4_code": "L4-HRM-01",
       "analysis_status": "MODEL_DRAFT",
       "evidence_refs": [
-        "EVD-95a7ffbaebe29b960523",
         "EVD-3093e80687f504b54172",
         "EVD-6f3c0a7f906014630d53",
+        "EVD-9a4bb807beccc1be7ead",
         "EVD-e53397adbec2556e53ab",
-        "EVD-60ac259b85a96d2f0196"
+        "EVD-16d93d5240f7bd6679e4",
+        "EVD-60ac259b85a96d2f0196",
+        "EVD-95a7ffbaebe29b960523",
+        "EVD-5766cac6f8c8233b69ff",
+        "EVD-5428ab40af73dba8b3a5",
+        "EVD-122f5ca4516689e29139"
       ],
       "confidence": "MODEL_DRAFT",
-      "deliverable_role": "制定岗位编制方案与岗位JD，奠定人员结构基础",
-      "specific_capabilities": [],
-      "ai_reshape": "决策支持：提供编制数据建模，辅助人工判断",
-      "quality_anchor": "",
-      "ai_responsibility": "",
-      "human_responsibility": "定岗定编的最终决策与岗位设计",
+      "deliverable_role": "岗位编制方案+岗位JD",
+      "specific_capabilities": [
+        "编制目标数据聚合与校验",
+        "岗位JD模板填充与结构化生成",
+        "定岗定编规则应用与冲突检测（需人工决策）"
+      ],
+      "ai_reshape": "确定性Skill执行与Agent辅助结合：编制数据可自动聚合，岗位JD模板生成初稿，最终定编决策由人工完成",
+      "quality_anchor": "岗位编制方案与岗位JD符合岗位族归属和业务目标，且经过人力资源负责人确认",
+      "ai_responsibility": "数据汇总、模板填充、版本记录",
+      "human_responsibility": "定岗定编决策、岗位JD审核与发布",
       "handoff_triggers": [
-        "AI数据分析完成后通知人工审核"
+        "编制冲突或超预算",
+        "岗位JD需业务负责人确认后发布"
       ],
-      "control_gates": [],
-      "data_basis": [],
-      "process_context": "人员全生命周期起点，影响招聘与预算",
+      "control_gates": [
+        "定岗定编人工审批",
+        "岗位JD发布前确认"
+      ],
+      "data_basis": [
+        "D1输入结构化=1, D2规则清晰=1, D3输出可验证=1（证据：EVD-5766cac6f8c8233b69ff, EVD-5428ab40af73dba8b3a5, EVD-122f5ca4516689e29139）"
+      ],
+      "process_context": "L3-HRM流程起点，为后续招聘提供编制依据",
       "risks_limits": [
-        "人工判断依赖，AI仅辅助"
+        "C级封装：判断/策略/认知类，复合动作，需先拆分",
+        "无资金安全硬门禁，但存在业务决策风险"
       ],
-      "current_recommendation": "先固化编制分析模型，岗位设计保留人工权威",
+      "current_recommendation": "优先Agent辅助或决策支持，不直接封装确定性Skill；将编制数据聚合与JD模板拆分，先验证子Skill",
       "database_tier": "Hybrid",
-      "recommended_tier": "",
+      "recommended_tier": "Hybrid",
       "quadrant": "unclassified"
     },
     {
       "l4_code": "L4-HRM-02",
       "analysis_status": "MODEL_DRAFT",
       "evidence_refs": [
-        "EVD-844ae6a99a5775fa9161",
         "EVD-bec00af2af93d13f3f55",
         "EVD-215b3cae2cadd0d63c03",
+        "EVD-d103c5b3d6b435cdb34b",
         "EVD-c9bb59d336a9b7dc5742",
-        "EVD-87f5215522c3500b84e7"
+        "EVD-893bae3197668ec77368",
+        "EVD-87f5215522c3500b84e7",
+        "EVD-844ae6a99a5775fa9161",
+        "EVD-e6eb09f27eb722883f8c",
+        "EVD-fcfaba1418f843dd52a2",
+        "EVD-29acdd8bc9f5bdd20daf"
       ],
       "confidence": "MODEL_DRAFT",
-      "deliverable_role": "产出招聘面试记录与竞争性分析",
-      "specific_capabilities": [],
-      "ai_reshape": "Agent辅助：简历筛选、面试安排",
-      "quality_anchor": "",
-      "ai_responsibility": "",
-      "human_responsibility": "最终面试评估与录用决策",
+      "deliverable_role": "招聘面试记录+竞争性分析",
+      "specific_capabilities": [
+        "候选人信息自动采集与结构化记录",
+        "面试评估模板填充与初筛辅助",
+        "竞争性分析报告生成（需人工判断）"
+      ],
+      "ai_reshape": "确定性Skill执行与Agent辅助：面试记录可自动生成，评估标准需人工确认，最终录用决策由人工完成",
+      "quality_anchor": "面试记录完整、评估标准符合用人部门要求，录用建议经业务负责人审核",
+      "ai_responsibility": "面试记录整理、模板维护、初步筛选辅助",
+      "human_responsibility": "面试评估、录用决策、竞争性分析审核",
       "handoff_triggers": [
-        "AI筛选后进入人工面试环节"
+        "候选人进入复试/终面环节",
+        "评估标准变更或需求调整"
       ],
-      "control_gates": [],
-      "data_basis": [],
-      "process_context": "承接岗位编制，为入职配置提供合格人选",
+      "control_gates": [
+        "面试评估人工确认",
+        "录用决策审批"
+      ],
+      "data_basis": [
+        "D1输入结构化=2, D2规则清晰=1, D3输出可验证=1（证据：EVD-e6eb09f27eb722883f8c, EVD-fcfaba1418f843dd52a2, EVD-29acdd8bc9f5bdd20daf）"
+      ],
+      "process_context": "承接岗位编制，为入职配置提供候选人来源",
       "risks_limits": [
-        "主观判断核心环节不可自动化"
+        "C级封装：判断/策略/认知类，复合动作",
+        "无业务数据证据（ACTIVE），需补充"
       ],
-      "current_recommendation": "AI可用于初筛与信息整合，面试决策需保留人工",
+      "current_recommendation": "优先Agent辅助或决策支持，不直接封装确定性Skill；将面试记录与初筛辅助拆分，评估标准讨论任务保持人工主导",
       "database_tier": "Hybrid",
-      "recommended_tier": "",
+      "recommended_tier": "Hybrid",
       "quadrant": "unclassified"
     },
     {
       "l4_code": "L4-HRM-03",
       "analysis_status": "MODEL_DRAFT",
       "evidence_refs": [
-        "EVD-586e5391dad582148e84",
         "EVD-c6af9bcfe13bf359649f",
         "EVD-6e371f6caff789daf355",
+        "EVD-73081d2f7a1700a36504",
         "EVD-413671147372f161ae17",
-        "EVD-f2bf6e9f9ebbcdd6cbf8"
+        "EVD-a8165adb293beb1de43e",
+        "EVD-f2bf6e9f9ebbcdd6cbf8",
+        "EVD-586e5391dad582148e84",
+        "EVD-5a887539e3608375b7d9",
+        "EVD-4d1f4f02c0d4acb5debf",
+        "EVD-d7fb5c87d9e787a93e88"
       ],
       "confidence": "MODEL_DRAFT",
-      "deliverable_role": "生成劳动合同/offer，配置系统权限",
-      "specific_capabilities": [],
-      "ai_reshape": "可拆分为多个Skill：信息核验、合同生成、权限开通",
-      "quality_anchor": "",
-      "ai_responsibility": "执行信息比对与文档生成",
-      "human_responsibility": "合同签署与合规确认",
+      "deliverable_role": "劳动合同/offer+系统权限",
+      "specific_capabilities": [
+        "根据入职信息自动生成劳动合同/offer",
+        "系统权限预配置规则执行",
+        "合同条款合规性检查（可自动化）"
+      ],
+      "ai_reshape": "确定性Skill执行：合同模板填充和权限配置可自动化，但合同签署和最终权限开通需人工确认",
+      "quality_anchor": "合同信息与入职信息一致，权限配置符合岗位要求",
+      "ai_responsibility": "合同/offer生成、权限预配置、数据校验",
+      "human_responsibility": "合同条款确认、签署、系统权限实际开通",
       "handoff_triggers": [
-        "合同生成后推送人工签署"
+        "合同条款异常或需特殊审批",
+        "权限开通失败或需额外审批"
       ],
       "control_gates": [
-        "合同签署需人力审批"
+        "合同签署人工确认",
+        "系统权限开通前复核"
       ],
-      "data_basis": [],
-      "process_context": "确保新员工合规入职并开通必要系统",
+      "data_basis": [
+        "D1输入结构化=2, D2规则清晰=2, D3输出可验证=2（证据：EVD-5a887539e3608375b7d9, EVD-4d1f4f02c0d4acb5debf, EVD-d7fb5c87d9e787a93e88）"
+      ],
+      "process_context": "承接招聘结果，为员工建立系统身份与合同关系",
       "risks_limits": [
-        "合同条款准确性需人工复核"
+        "A级封装：信息处理/事务类，复合动作，需先拆分",
+        "合同签署与权限开通具有不可逆性，须人工控制门"
       ],
-      "current_recommendation": "优先尝试Skill原型：信息核验与合同模板自动填充",
+      "current_recommendation": "优先进入Skill原型候选池，将合同生成与权限预配置拆分为子Skill，保留人工复核关卡",
       "database_tier": "Auto",
-      "recommended_tier": "",
+      "recommended_tier": "Hybrid",
       "quadrant": "unclassified"
     },
     {
       "l4_code": "L4-HRM-04",
       "analysis_status": "MODEL_DRAFT",
       "evidence_refs": [
-        "EVD-424bc63ad1655dcbeb22",
         "EVD-c8e94d00e1d012220f77",
         "EVD-9e0130d81d192b3bc701",
+        "EVD-5d119798e96e9b0695a3",
         "EVD-7ceb6a822d4b0568b918",
-        "EVD-d1bb08008668bfd72814"
+        "EVD-a63f31ceaf292c4eb36a",
+        "EVD-d1bb08008668bfd72814",
+        "EVD-424bc63ad1655dcbeb22",
+        "EVD-bef76aebb68edcf2a3d3",
+        "EVD-f9a85a61eccf68d84fee",
+        "EVD-e0313feb11fdb6f20ccb"
       ],
       "confidence": "MODEL_DRAFT",
-      "deliverable_role": "记录试用期考核结果与转正评估",
-      "specific_capabilities": [],
-      "ai_reshape": "语义复核辅助：生成考核总结，人工确认",
-      "quality_anchor": "",
-      "ai_responsibility": "",
-      "human_responsibility": "给出考核结论与转正决策",
+      "deliverable_role": "试用期考核+成长路径方案",
+      "specific_capabilities": [
+        "试用期考核数据汇总与初评",
+        "转正资格规则判断辅助",
+        "成长路径方案模板填充（需人工确认）"
+      ],
+      "ai_reshape": "确定性Skill执行与Agent辅助：考核数据可自动汇总，转正建议需语义复核，最终决策由人工完成",
+      "quality_anchor": "试用期考核结果客观、转正评估符合公司标准",
+      "ai_responsibility": "考核数据汇总、转正资格初筛、文档生成",
+      "human_responsibility": "试用期考核确认、转正决策、成长路径方案定稿",
       "handoff_triggers": [
-        "待转正人员名单提醒"
+        "考核结果存在争议",
+        "延长试用或不通过分支触发"
       ],
       "control_gates": [
-        "转正需业务部门负责人审批"
+        "试用期考核结果人工确认",
+        "转正决策审批"
       ],
-      "data_basis": [],
-      "process_context": "决定员工去留，衔接转正或退出",
+      "data_basis": [
+        "D1输入结构化=2, D2规则清晰=1, D3输出可验证=2（证据：EVD-bef76aebb68edcf2a3d3, EVD-f9a85a61eccf68d84fee, EVD-e0313feb11fdb6f20ccb）"
+      ],
+      "process_context": "试用期结束后的关键决策节点，存在分支到退出流程",
       "risks_limits": [
-        "评估标准主观性，AI难以完全替代"
+        "C级封装：语义复核判定，复合动作",
+        "分支决策需人工确认，避免错误退出或转正"
       ],
-      "current_recommendation": "用AI提示转正时间窗口，总结考核数据，人工做最终判断",
+      "current_recommendation": "优先Agent辅助或决策支持，不直接封装确定性Skill；将考核数据汇总与转正建议拆分，保留人工分支确认",
       "database_tier": "Hybrid",
-      "recommended_tier": "",
+      "recommended_tier": "Hybrid",
       "quadrant": "unclassified"
     },
     {
       "l4_code": "L4-HRM-05",
       "analysis_status": "MODEL_DRAFT",
       "evidence_refs": [
-        "EVD-3abf89993a6170cb8faf",
         "EVD-a419dbcdccfc4dc003d5",
         "EVD-8572e7f9b9dee42b6b3f",
+        "EVD-0c5d24be0559ecc050d4",
         "EVD-631d9a7ff796c2c9a9fe",
-        "EVD-ca1843eb4d9175693711"
+        "EVD-447ee1176b9dca2f734f",
+        "EVD-ca1843eb4d9175693711",
+        "EVD-3abf89993a6170cb8faf",
+        "EVD-c198ea51c16752e508f1",
+        "EVD-afd64bab78254cdef790",
+        "EVD-469b555aaf108bcd01e1"
       ],
       "confidence": "MODEL_DRAFT",
-      "deliverable_role": "产出培训记录与成长路径方案",
-      "specific_capabilities": [],
-      "ai_reshape": "Agent辅助：培训方案推荐与学习进度追踪",
-      "quality_anchor": "",
-      "ai_responsibility": "",
-      "human_responsibility": "制定个性化成长路径与培训资源协调",
+      "deliverable_role": "培训记录+成长路径方案",
+      "specific_capabilities": [
+        "培训记录自动生成与归档",
+        "成长路径方案模板填充",
+        "培训计划与业务需求匹配（需人工讨论）"
+      ],
+      "ai_reshape": "确定性Skill执行与Agent辅助：培训记录可自动生成，成长路径方案需结合业务判断，物理执行环节保留人工",
+      "quality_anchor": "培训记录完整，成长路径方案符合员工发展与业务需求",
+      "ai_responsibility": "培训数据记录、模板生成、进度跟踪",
+      "human_responsibility": "培训计划制定、成长路径方案审核、现场培训执行",
       "handoff_triggers": [
-        "培训需求分析结果推送"
+        "培训计划调整",
+        "成长路径方案需业务负责人确认"
       ],
-      "control_gates": [],
-      "data_basis": [],
-      "process_context": "提升员工能力，支持职业发展",
+      "control_gates": [
+        "培训计划审批",
+        "成长路径方案发布前确认"
+      ],
+      "data_basis": [
+        "D1输入结构化=2, D2规则清晰=1, D3输出可验证=2（证据：EVD-c198ea51c16752e508f1, EVD-afd64bab78254cdef790, EVD-469b555aaf108bcd01e1）"
+      ],
+      "process_context": "在职管理阶段，提升员工能力与保留率",
       "risks_limits": [
-        "物理执行环节（培训实施）无法AI替代"
+        "C级封装：语义复核判定，复合动作",
+        "物理执行=true，培训现场环节无法自动化"
       ],
-      "current_recommendation": "AI可处理数据驱动的培训建议，实施与调整需人工",
+      "current_recommendation": "优先Agent辅助或决策支持，不直接封装确定性Skill；将培训记录与方案模板拆分，讨论任务保持人工主导",
       "database_tier": "Hybrid",
-      "recommended_tier": "",
+      "recommended_tier": "Hybrid",
       "quadrant": "unclassified"
     },
     {
       "l4_code": "L4-HRM-06",
       "analysis_status": "MODEL_DRAFT",
       "evidence_refs": [
-        "EVD-fff78bcde6f132a443e7",
         "EVD-196e8b3aa781789433a4",
         "EVD-900f74f320afc8929fba",
+        "EVD-48e50590a1af0fe105b3",
         "EVD-b6439595918987ee6e2f",
-        "EVD-13526a456950a3a46780"
+        "EVD-18bead87d808d432afe7",
+        "EVD-13526a456950a3a46780",
+        "EVD-fff78bcde6f132a443e7",
+        "EVD-3e5fd5626d5c894344c9",
+        "EVD-5a0b27048017472b9b75",
+        "EVD-7b93b6ddbc46c315ecb2"
       ],
       "confidence": "MODEL_DRAFT",
-      "deliverable_role": "生成绩效考核结果并记录应用情况",
-      "specific_capabilities": [],
-      "ai_reshape": "数据聚合与异常检测，辅助绩效校准",
-      "quality_anchor": "",
-      "ai_responsibility": "",
-      "human_responsibility": "绩效评估确权与结果应用决策",
+      "deliverable_role": "绩效考核结果+结果应用记录",
+      "specific_capabilities": [
+        "绩效数据自动汇总与计算",
+        "考核结果应用记录生成",
+        "绩效校准与沟通需人工主导"
+      ],
+      "ai_reshape": "确定性Skill执行与Agent辅助：绩效数据计算可自动化，结果应用需语义复核，校准与沟通由人工完成",
+      "quality_anchor": "绩效考核数据准确，结果应用记录符合公司制度",
+      "ai_responsibility": "绩效数据计算、结果应用记录生成、统计报告",
+      "human_responsibility": "绩效评估、校准会议、结果沟通与应用审批",
       "handoff_triggers": [
-        "考核周期结束自动汇总，人工复核后发布"
+        "绩效结果存在争议",
+        "结果应用涉及薪酬/晋升需额外审批"
       ],
       "control_gates": [
-        "绩效结果调整需管理层审批"
+        "绩效结果校准会议",
+        "结果应用审批"
       ],
-      "data_basis": [],
-      "process_context": "驱动薪酬与晋升，影响员工留存",
+      "data_basis": [
+        "D1输入结构化=2, D2规则清晰=1, D3输出可验证=2（证据：EVD-3e5fd5626d5c894344c9, EVD-5a0b27048017472b9b75, EVD-7b93b6ddbc46c315ecb2）"
+      ],
+      "process_context": "连接培训与薪酬晋升，影响员工激励",
       "risks_limits": [
-        "评估公平性依赖人工校准"
+        "C级封装：语义复核判定，复合动作",
+        "绩效结果应用涉及敏感决策，需人工控制"
       ],
-      "current_recommendation": "AI可完成数据收集与初步分析，最终评分需人工确认",
+      "current_recommendation": "优先Agent辅助或决策支持，不直接封装确定性Skill；将绩效数据计算与结果应用记录拆分，保留人工校准与审批",
       "database_tier": "Hybrid",
-      "recommended_tier": "",
+      "recommended_tier": "Hybrid",
       "quadrant": "unclassified"
     },
     {
       "l4_code": "L4-HRM-07",
       "analysis_status": "MODEL_DRAFT",
       "evidence_refs": [
-        "EVD-4762f34aaf56ff1af502",
         "EVD-fbcd87654ff8e8e7b7e8",
         "EVD-6c54027d2c2b7cc7ea02",
+        "EVD-a13fdcb4431e5c6d140c",
         "EVD-b5664757512cb2025967",
-        "EVD-7d8d592d122d9b5011b7"
+        "EVD-95b43e1fbf9f9c931720",
+        "EVD-7d8d592d122d9b5011b7",
+        "EVD-4762f34aaf56ff1af502",
+        "EVD-6c7b1375800624293b92",
+        "EVD-51b7eb229bf0b19660d0",
+        "EVD-bfd731ea3cd3063566af"
       ],
       "confidence": "MODEL_DRAFT",
-      "deliverable_role": "生成薪酬记录与激励方案",
-      "specific_capabilities": [],
-      "ai_reshape": "规则驱动计算+报告生成，人工最终核实",
-      "quality_anchor": "",
-      "ai_responsibility": "根据规则计算薪酬数值",
-      "human_responsibility": "核实计算结果并处理特殊调整",
+      "deliverable_role": "薪酬记录+晋升记录+员工档案",
+      "specific_capabilities": [
+        "薪酬计算规则执行与记录生成",
+        "激励方案模板填充",
+        "资金安全硬门禁校验（需人工确认）"
+      ],
+      "ai_reshape": "确定性Skill执行与Agent辅助：固定规则薪酬计算可自动化，实际发放与最终核实需人工，资金关卡必须保留",
+      "quality_anchor": "薪酬记录准确、激励方案符合预算，发放凭证完整",
+      "ai_responsibility": "薪酬数据计算、记录生成、报告模板填充",
+      "human_responsibility": "薪酬最终核实、发放审批、例外处理",
       "handoff_triggers": [
-        "薪酬计算结果异常警报",
-        "周期性报告生成后推送审核"
+        "薪酬计算异常",
+        "发放金额超预算或需特殊审批"
       ],
       "control_gates": [
-        "资金支付前需财务/HR双重审批"
+        "资金安全硬门禁：实际发放前人工最终核实确认",
+        "薪酬发放审批"
       ],
-      "data_basis": [],
-      "process_context": "直接涉及资金安全，强合规要求",
+      "data_basis": [
+        "D1输入结构化=2, D2规则清晰=2, D3输出可验证=2（证据：EVD-6c7b1375800624293b92, EVD-51b7eb229bf0b19660d0, EVD-bfd731ea3cd3063566af）"
+      ],
+      "process_context": "薪酬激励核心环节，资金安全与合规要求高",
       "risks_limits": [
-        "资金安全硬门控，AI计算结果需重复验证"
+        "B级封装：中封装，funds_safety_hard_gate=true",
+        "需先补报告模板、规则固化或系统接口，再验证Skill",
+        "实际资金操作不可自动化"
       ],
-      "current_recommendation": "先行固化计算规则与报告模板，提升自动化程度，保留人工最终审核",
+      "current_recommendation": "先补报告模板、规则固化或系统接口，再验证Skill；薪酬计算可Skill化，发放前人工关卡不可绕过",
       "database_tier": "Aug",
-      "recommended_tier": "",
+      "recommended_tier": "Aug",
       "quadrant": "unclassified"
     },
     {
       "l4_code": "L4-HRM-08",
       "analysis_status": "MODEL_DRAFT",
       "evidence_refs": [
-        "EVD-ee32c352200ddbe00151",
         "EVD-8653b4b7e981f3ea0569",
         "EVD-ad8cbf3b1d0532cbca52",
+        "EVD-eaede5b34c447495ed7a",
         "EVD-6f8d9f904f3400ace92e",
-        "EVD-fec99fd98371437c90a8"
+        "EVD-5f05e7c011e2ab0d2919",
+        "EVD-fec99fd98371437c90a8",
+        "EVD-ee32c352200ddbe00151",
+        "EVD-e036cde72a89da6eaaa7",
+        "EVD-4a5d23dc9e450569f043",
+        "EVD-35429951ac6d66a78c1c"
       ],
       "confidence": "MODEL_DRAFT",
-      "deliverable_role": "记录晋升/调岗决策与档案更新",
-      "specific_capabilities": [],
-      "ai_reshape": "评估建议：基于绩效数据推荐候选人",
-      "quality_anchor": "",
-      "ai_responsibility": "",
-      "human_responsibility": "晋升任命与调岗沟通",
+      "deliverable_role": "晋升记录+调岗审批",
+      "specific_capabilities": [
+        "晋升/调岗审批记录生成",
+        "员工档案更新模板填充",
+        "晋升决策与调岗方案讨论（需人工判断）"
+      ],
+      "ai_reshape": "确定性Skill执行与Agent辅助：审批记录可自动生成，晋升决策与调岗安排需业务负责人讨论确认",
+      "quality_anchor": "晋升/调岗审批流程完整，档案更新准确",
+      "ai_responsibility": "审批记录生成、档案更新、数据校验",
+      "human_responsibility": "晋升决策、调岗安排、审批签字",
       "handoff_triggers": [
-        "晋升周期启动，AI生成候选名单"
+        "晋升/调岗需高层审批",
+        "档案更新涉及敏感信息"
       ],
       "control_gates": [
-        "晋升需多级审批"
+        "晋升/调岗决策审批",
+        "档案更新前复核"
       ],
-      "data_basis": [],
-      "process_context": "影响员工发展与组织架构",
+      "data_basis": [
+        "D1输入结构化=2, D2规则清晰=1, D3输出可验证=2（证据：EVD-e036cde72a89da6eaaa7, EVD-4a5d23dc9e450569f043, EVD-35429951ac6d66a78c1c）"
+      ],
+      "process_context": "职业发展关键环节，影响组织人才结构",
       "risks_limits": [
-        "组织政治因素，AI建议仅供参考"
+        "C级封装：语义复核判定，复合动作",
+        "晋升涉及敏感决策，需人工控制"
       ],
-      "current_recommendation": "AI提供数据支持，决策链完全人工",
+      "current_recommendation": "优先Agent辅助或决策支持，不直接封装确定性Skill；将审批记录与档案更新拆分，决策讨论保持人工主导",
       "database_tier": "Hybrid",
-      "recommended_tier": "",
+      "recommended_tier": "Hybrid",
       "quadrant": "unclassified"
     },
     {
       "l4_code": "L4-HRM-09",
       "analysis_status": "MODEL_DRAFT",
       "evidence_refs": [
-        "EVD-9a43d172fe942d6e866f",
         "EVD-84ef6dbab3c449c158bc",
         "EVD-c2f2ffc65519992a67ce",
+        "EVD-359e1c444812ae6b5440",
         "EVD-542f6b473d6d1494c47d",
-        "EVD-795d0ca996d0850cf065"
+        "EVD-d39803bdbde58d30f306",
+        "EVD-795d0ca996d0850cf065",
+        "EVD-9a43d172fe942d6e866f",
+        "EVD-eb395881716e33d7e74f",
+        "EVD-f171dc204e093ff701f8",
+        "EVD-940d44c4c534857c9ab1"
       ],
       "confidence": "MODEL_DRAFT",
-      "deliverable_role": "完成离职交接记录，归档员工档案",
-      "specific_capabilities": [],
-      "ai_reshape": "可拆分为关闭权限、生成离职文件、归档等子Skill",
-      "quality_anchor": "",
-      "ai_responsibility": "执行系统权限回收与档案自动归档",
-      "human_responsibility": "离职交接确认与终审",
+      "deliverable_role": "离职交接记录+员工档案（最终沉淀）",
+      "specific_capabilities": [
+        "离职信息触发权限回收与档案归档任务",
+        "离职交接记录自动生成",
+        "档案完整性与合规性检查（可自动化）"
+      ],
+      "ai_reshape": "确定性Skill执行：离职触发系统权限回收、档案归档可自动化，但需人工确认交接完成和档案完整性",
+      "quality_anchor": "离职交接无遗漏，员工档案归档完整合规",
+      "ai_responsibility": "权限回收触发、档案归档、检查清单生成",
+      "human_responsibility": "离职交接确认、档案最终审核、不可逆操作执行",
       "handoff_triggers": [
-        "离职流程启动后，AI执行自动化步骤"
+        "离职交接存在纠纷",
+        "权限回收失败"
       ],
       "control_gates": [
-        "档案最终归档前需HR确认"
+        "离职交接完成确认",
+        "档案归档前审核"
       ],
-      "data_basis": [],
-      "process_context": "保障数据合规性，避免权限残留",
+      "data_basis": [
+        "D1输入结构化=2, D2规则清晰=2, D3输出可验证=2（证据：EVD-eb395881716e33d7e74f, EVD-f171dc204e093ff701f8, EVD-940d44c4c534857c9ab1）"
+      ],
+      "process_context": "员工生命周期终点，确保合规退出与档案留存",
       "risks_limits": [
-        "系统权限变更的API依赖"
+        "A级封装：信息处理/事务类，复合动作，需先拆分",
+        "权限回收与档案归档具有不可逆性，须人工控制"
       ],
-      "current_recommendation": "优先开发离职闭环Skill（权限回收+文档生成），人工审核检查点",
+      "current_recommendation": "优先进入Skill原型候选池，将离职触发与档案归档拆分为子Skill，保留人工复核",
       "database_tier": "Auto",
-      "recommended_tier": "",
+      "recommended_tier": "Hybrid",
       "quadrant": "unclassified"
     }
   ],
   "tasks": [
     {
-      "task_id": "TASK-HRM-01",
+      "task_id": "TASK-HRM-01-A",
       "l4_code": "L4-HRM-01",
-      "task_name": "执行定岗定编与岗位设计",
-      "source_type": "BLUEPRINT",
+      "task_name": "编制目标数据聚合并生成岗位编制初稿",
+      "source_type": "blueprint_step",
       "sequence_no": 1,
-      "sequence_status": "SOURCE_CONFIRMED",
+      "sequence_status": "SOURCE_STEP_ONLY",
       "source_step_id": "STEP-01",
       "source_line": 54,
       "previous_task_ids": [],
       "next_task_ids": [
-        "TASK-HRM-02"
+        "TASK-HRM-02-A",
+        "TASK-HRM-02-B"
       ],
-      "relation_type": "SEQUENCE",
+      "relation_type": "",
       "evidence_refs": [
-        "EVD-95a7ffbaebe29b960523"
+        "EVD-95a7ffbaebe29b960523",
+        "EVD-60ac259b85a96d2f0196",
+        "EVD-6f3c0a7f906014630d53"
       ],
       "analysis_status": "MODEL_DRAFT",
       "suggested_tier": "Hybrid",
-      "tier_rationale": "蓝图步骤定义为主人工执行，需判断与策略"
+      "tier_rationale": "L4数据库tier为Hybrid，skill feasibility C，需人工确认定编规则和最终方案"
     },
     {
-      "task_id": "TASK-HRM-02",
+      "task_id": "TASK-HRM-01-B",
       "l4_code": "L4-HRM-01",
-      "task_name": "分析编制目标与历史数据，生成编制建议",
-      "source_type": "SKILL_FEASIBILITY_DERIVED",
+      "task_name": "与业务负责人讨论岗位JD模板与定编规则",
+      "source_type": "skill_feasibility",
       "sequence_no": null,
       "sequence_status": "SOURCE_STEP_ONLY",
       "source_step_id": "STEP-01",
-      "source_line": null,
+      "source_line": 54,
       "previous_task_ids": [],
-      "next_task_ids": [],
+      "next_task_ids": [
+        "TASK-HRM-02-A",
+        "TASK-HRM-02-B"
+      ],
       "relation_type": "",
       "evidence_refs": [
-        "EVD-60ac259b85a96d2f0196"
+        "EVD-60ac259b85a96d2f0196",
+        "EVD-e53397adbec2556e53ab"
       ],
       "analysis_status": "MODEL_DRAFT",
-      "suggested_tier": "Auto",
-      "tier_rationale": "复合动作拆分建议：数据分析部分可尝试自动化，但最终设计需人工"
+      "suggested_tier": "Human",
+      "tier_rationale": "skill feasibility C，需判断/权威，讨论任务须人工主导"
     },
     {
-      "task_id": "TASK-HRM-03",
+      "task_id": "TASK-HRM-02-A",
       "l4_code": "L4-HRM-02",
-      "task_name": "执行招聘选拔与面试评估",
-      "source_type": "BLUEPRINT",
-      "sequence_no": 3,
-      "sequence_status": "SOURCE_CONFIRMED",
+      "task_name": "生成招聘面试记录模板并自动填充候选人信息",
+      "source_type": "blueprint_step",
+      "sequence_no": 2,
+      "sequence_status": "SOURCE_STEP_ONLY",
       "source_step_id": "STEP-02",
       "source_line": 59,
       "previous_task_ids": [
-        "TASK-HRM-01"
+        "TASK-HRM-01-A",
+        "TASK-HRM-01-B"
       ],
       "next_task_ids": [
-        "TASK-HRM-04"
+        "TASK-HRM-03-A",
+        "TASK-HRM-03-B"
       ],
       "relation_type": "SEQUENCE",
       "evidence_refs": [
-        "EVD-844ae6a99a5775fa9161"
+        "EVD-844ae6a99a5775fa9161",
+        "EVD-87f5215522c3500b84e7",
+        "EVD-215b3cae2cadd0d63c03"
       ],
       "analysis_status": "MODEL_DRAFT",
       "suggested_tier": "Hybrid",
-      "tier_rationale": "面试评估需人工，仅部分筛选可自动化"
+      "tier_rationale": "面试记录可结构化生成，但评估标准需人工确认，整体Hybrid"
     },
     {
-      "task_id": "TASK-HRM-04",
+      "task_id": "TASK-HRM-02-B",
       "l4_code": "L4-HRM-02",
-      "task_name": "接收招聘需求并评估编制（HRBP）",
-      "source_type": "RULE",
+      "task_name": "与用人部门讨论面试评估标准与录用建议",
+      "source_type": "skill_feasibility",
       "sequence_no": null,
       "sequence_status": "SOURCE_STEP_ONLY",
       "source_step_id": "STEP-02",
-      "source_line": null,
-      "previous_task_ids": [],
-      "next_task_ids": [],
-      "relation_type": "",
-      "evidence_refs": [
-        "EVD-af82e625cfd121e7c3bf"
+      "source_line": 59,
+      "previous_task_ids": [
+        "TASK-HRM-01-A",
+        "TASK-HRM-01-B"
       ],
-      "analysis_status": "MODEL_DRAFT",
-      "suggested_tier": "Hybrid",
-      "tier_rationale": "来自规则HR-R005步骤1，需人工判断编制与资源协调"
-    },
-    {
-      "task_id": "TASK-HRM-05",
-      "l4_code": "L4-HRM-02",
-      "task_name": "通过GBA或内推渠道招聘人选",
-      "source_type": "RULE",
-      "sequence_no": null,
-      "sequence_status": "SOURCE_STEP_ONLY",
-      "source_step_id": "STEP-02",
-      "source_line": null,
-      "previous_task_ids": [],
-      "next_task_ids": [],
-      "relation_type": "",
+      "next_task_ids": [
+        "TASK-HRM-03-A",
+        "TASK-HRM-03-B"
+      ],
+      "relation_type": "SEQUENCE",
       "evidence_refs": [
-        "EVD-af82e625cfd121e7c3bf"
+        "EVD-87f5215522c3500b84e7",
+        "EVD-c9bb59d336a9b7dc5742"
       ],
       "analysis_status": "MODEL_DRAFT",
       "suggested_tier": "Human",
-      "tier_rationale": "渠道选择与关系维护依赖人脉，AI辅助发布与收集"
+      "tier_rationale": "录用决策与评估标准涉及判断，需人工主导"
     },
     {
-      "task_id": "TASK-HRM-06",
+      "task_id": "TASK-HRM-03-A",
       "l4_code": "L4-HRM-03",
-      "task_name": "办理入职手续并签订劳动合同",
-      "source_type": "BLUEPRINT",
-      "sequence_no": 6,
-      "sequence_status": "SOURCE_CONFIRMED",
+      "task_name": "根据入职信息生成劳动合同/offer并配置系统权限",
+      "source_type": "blueprint_step",
+      "sequence_no": 3,
+      "sequence_status": "SOURCE_STEP_ONLY",
       "source_step_id": "STEP-03",
       "source_line": 64,
       "previous_task_ids": [
-        "TASK-HRM-03"
+        "TASK-HRM-02-A",
+        "TASK-HRM-02-B"
       ],
       "next_task_ids": [
-        "TASK-HRM-07",
-        "TASK-HRM-09"
+        "TASK-HRM-04-A",
+        "TASK-HRM-04-B"
       ],
-      "relation_type": "DECISION",
+      "relation_type": "SEQUENCE",
       "evidence_refs": [
-        "EVD-586e5391dad582148e84"
+        "EVD-586e5391dad582148e84",
+        "EVD-f2bf6e9f9ebbcdd6cbf8",
+        "EVD-6e371f6caff789daf355"
       ],
       "analysis_status": "MODEL_DRAFT",
       "suggested_tier": "Auto",
-      "tier_rationale": "合同签署等环节自动化潜力高，但需人工合规审查"
+      "tier_rationale": "A级封装高，合同生成和权限预配置规则明确，可自动化"
     },
     {
-      "task_id": "TASK-HRM-07",
+      "task_id": "TASK-HRM-03-B",
       "l4_code": "L4-HRM-03",
-      "task_name": "生成入职文件并配置系统权限",
-      "source_type": "SKILL_FEASIBILITY_DERIVED",
+      "task_name": "人工复核合同条款与系统权限边界",
+      "source_type": "skill_feasibility",
       "sequence_no": null,
       "sequence_status": "SOURCE_STEP_ONLY",
       "source_step_id": "STEP-03",
-      "source_line": null,
-      "previous_task_ids": [],
-      "next_task_ids": [],
-      "relation_type": "",
+      "source_line": 64,
+      "previous_task_ids": [
+        "TASK-HRM-02-A",
+        "TASK-HRM-02-B"
+      ],
+      "next_task_ids": [
+        "TASK-HRM-04-A",
+        "TASK-HRM-04-B"
+      ],
+      "relation_type": "SEQUENCE",
       "evidence_refs": [
-        "EVD-f2bf6e9f9ebbcdd6cbf8"
+        "EVD-f2bf6e9f9ebbcdd6cbf8",
+        "EVD-413671147372f161ae17"
       ],
       "analysis_status": "MODEL_DRAFT",
-      "suggested_tier": "Auto",
-      "tier_rationale": "基于规则的文件生成及权限开通可封装为Skill"
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "合同签署和权限开通不可逆，需人工确认"
     },
     {
-      "task_id": "TASK-HRM-08",
+      "task_id": "TASK-HRM-04-A",
       "l4_code": "L4-HRM-04",
-      "task_name": "执行试用期考核与转正评估",
-      "source_type": "BLUEPRINT",
-      "sequence_no": 8,
-      "sequence_status": "SOURCE_CONFIRMED",
+      "task_name": "汇总试用期考核数据并生成转正评估初稿",
+      "source_type": "blueprint_step",
+      "sequence_no": 4,
+      "sequence_status": "SOURCE_STEP_ONLY",
       "source_step_id": "STEP-04",
       "source_line": 71,
       "previous_task_ids": [
-        "TASK-HRM-06"
+        "TASK-HRM-03-A",
+        "TASK-HRM-03-B"
       ],
       "next_task_ids": [
-        "TASK-HRM-10"
+        "TASK-HRM-05-A",
+        "TASK-HRM-05-B"
       ],
       "relation_type": "SEQUENCE",
       "evidence_refs": [
-        "EVD-424bc63ad1655dcbeb22"
+        "EVD-424bc63ad1655dcbeb22",
+        "EVD-d1bb08008668bfd72814",
+        "EVD-9e0130d81d192b3bc701"
       ],
       "analysis_status": "MODEL_DRAFT",
       "suggested_tier": "Hybrid",
-      "tier_rationale": "考核评估需业务部门经理判断，AI仅辅助提醒与记录"
+      "tier_rationale": "考核数据可自动汇总，但转正评估需语义复核，Hybrid"
     },
     {
-      "task_id": "TASK-HRM-09",
+      "task_id": "TASK-HRM-04-B",
       "l4_code": "L4-HRM-04",
-      "task_name": "转正后合同转换手续（如调牌照公司）",
-      "source_type": "RULE",
+      "task_name": "与业务负责人讨论试用期考核结果与转正决策",
+      "source_type": "skill_feasibility",
       "sequence_no": null,
       "sequence_status": "SOURCE_STEP_ONLY",
       "source_step_id": "STEP-04",
-      "source_line": null,
-      "previous_task_ids": [],
-      "next_task_ids": [],
-      "relation_type": "",
+      "source_line": 71,
+      "previous_task_ids": [
+        "TASK-HRM-03-A",
+        "TASK-HRM-03-B"
+      ],
+      "next_task_ids": [
+        "TASK-HRM-05-A",
+        "TASK-HRM-05-B"
+      ],
+      "relation_type": "SEQUENCE",
       "evidence_refs": [
-        "EVD-af82e625cfd121e7c3bf"
+        "EVD-d1bb08008668bfd72814",
+        "EVD-7ceb6a822d4b0568b918"
       ],
       "analysis_status": "MODEL_DRAFT",
       "suggested_tier": "Human",
-      "tier_rationale": "规则HR-R005步骤5，涉及法律实体变更，需人工合规审核"
+      "tier_rationale": "转正决策和考核结果确认需人工判断"
     },
     {
-      "task_id": "TASK-HRM-10",
+      "task_id": "TASK-HRM-05-A",
       "l4_code": "L4-HRM-05",
-      "task_name": "组织在职培训与发展",
-      "source_type": "BLUEPRINT",
-      "sequence_no": 10,
-      "sequence_status": "SOURCE_CONFIRMED",
+      "task_name": "生成培训记录与成长路径方案初稿",
+      "source_type": "blueprint_step",
+      "sequence_no": 5,
+      "sequence_status": "SOURCE_STEP_ONLY",
       "source_step_id": "STEP-05",
       "source_line": 76,
       "previous_task_ids": [
-        "TASK-HRM-08"
+        "TASK-HRM-04-A",
+        "TASK-HRM-04-B"
       ],
       "next_task_ids": [
-        "TASK-HRM-11"
+        "TASK-HRM-06-A",
+        "TASK-HRM-06-B"
       ],
       "relation_type": "SEQUENCE",
       "evidence_refs": [
-        "EVD-3abf89993a6170cb8faf"
+        "EVD-3abf89993a6170cb8faf",
+        "EVD-ca1843eb4d9175693711",
+        "EVD-8572e7f9b9dee42b6b3f"
       ],
       "analysis_status": "MODEL_DRAFT",
       "suggested_tier": "Hybrid",
-      "tier_rationale": "培训实施需人与AI协作，课程推荐可自动化"
+      "tier_rationale": "培训记录可自动生成，成长路径方案需人工讨论，Hybrid"
     },
     {
-      "task_id": "TASK-HRM-11",
+      "task_id": "TASK-HRM-05-B",
       "l4_code": "L4-HRM-05",
-      "task_name": "配合业务部门组织新员工入职培训",
-      "source_type": "RULE",
+      "task_name": "与业务负责人讨论培训计划与成长路径方案",
+      "source_type": "skill_feasibility",
       "sequence_no": null,
       "sequence_status": "SOURCE_STEP_ONLY",
       "source_step_id": "STEP-05",
-      "source_line": null,
-      "previous_task_ids": [],
-      "next_task_ids": [],
-      "relation_type": "",
+      "source_line": 76,
+      "previous_task_ids": [
+        "TASK-HRM-04-A",
+        "TASK-HRM-04-B"
+      ],
+      "next_task_ids": [
+        "TASK-HRM-06-A",
+        "TASK-HRM-06-B"
+      ],
+      "relation_type": "SEQUENCE",
       "evidence_refs": [
-        "EVD-af82e625cfd121e7c3bf"
+        "EVD-ca1843eb4d9175693711",
+        "EVD-631d9a7ff796c2c9a9fe"
       ],
       "analysis_status": "MODEL_DRAFT",
       "suggested_tier": "Human",
-      "tier_rationale": "现场培训协调涉及多方，人力主导"
+      "tier_rationale": "培训计划制定与物理执行需人工主导"
     },
     {
-      "task_id": "TASK-HRM-12",
+      "task_id": "TASK-HRM-06-A",
       "l4_code": "L4-HRM-06",
-      "task_name": "执行绩效考核与结果应用",
-      "source_type": "BLUEPRINT",
-      "sequence_no": 12,
-      "sequence_status": "SOURCE_CONFIRMED",
+      "task_name": "汇总绩效考核数据并生成结果应用记录初稿",
+      "source_type": "blueprint_step",
+      "sequence_no": 6,
+      "sequence_status": "SOURCE_STEP_ONLY",
       "source_step_id": "STEP-06",
       "source_line": 81,
       "previous_task_ids": [
-        "TASK-HRM-10"
+        "TASK-HRM-05-A",
+        "TASK-HRM-05-B"
       ],
       "next_task_ids": [
-        "TASK-HRM-13"
+        "TASK-HRM-07-A",
+        "TASK-HRM-07-B"
       ],
       "relation_type": "SEQUENCE",
       "evidence_refs": [
-        "EVD-fff78bcde6f132a443e7"
+        "EVD-fff78bcde6f132a443e7",
+        "EVD-13526a456950a3a46780",
+        "EVD-900f74f320afc8929fba"
       ],
       "analysis_status": "MODEL_DRAFT",
       "suggested_tier": "Hybrid",
-      "tier_rationale": "公平性要求高，最终评分确权仍需人工"
+      "tier_rationale": "绩效数据计算可自动化，但结果应用需语义复核"
     },
     {
-      "task_id": "TASK-HRM-13",
-      "l4_code": "L4-HRM-07",
-      "task_name": "执行薪酬计算与发放",
-      "source_type": "BLUEPRINT",
-      "sequence_no": 13,
-      "sequence_status": "SOURCE_CONFIRMED",
-      "source_step_id": "STEP-07",
-      "source_line": 86,
+      "task_id": "TASK-HRM-06-B",
+      "l4_code": "L4-HRM-06",
+      "task_name": "与业务负责人讨论考核结果与应用方案",
+      "source_type": "skill_feasibility",
+      "sequence_no": null,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-06",
+      "source_line": 81,
       "previous_task_ids": [
-        "TASK-HRM-12"
+        "TASK-HRM-05-A",
+        "TASK-HRM-05-B"
       ],
       "next_task_ids": [
-        "TASK-HRM-14"
+        "TASK-HRM-07-A",
+        "TASK-HRM-07-B"
       ],
       "relation_type": "SEQUENCE",
       "evidence_refs": [
-        "EVD-4762f34aaf56ff1af502"
-      ],
-      "analysis_status": "MODEL_DRAFT",
-      "suggested_tier": "Aug",
-      "tier_rationale": "资金安全硬门控，AI增强但必须人工审批"
-    },
-    {
-      "task_id": "TASK-HRM-14",
-      "l4_code": "L4-HRM-08",
-      "task_name": "处理晋升与调岗",
-      "source_type": "BLUEPRINT",
-      "sequence_no": 14,
-      "sequence_status": "SOURCE_CONFIRMED",
-      "source_step_id": "STEP-08",
-      "source_line": 92,
-      "previous_task_ids": [
-        "TASK-HRM-13"
-      ],
-      "next_task_ids": [
-        "TASK-HRM-15"
-      ],
-      "relation_type": "SEQUENCE",
-      "evidence_refs": [
-        "EVD-ee32c352200ddbe00151"
+        "EVD-13526a456950a3a46780",
+        "EVD-b6439595918987ee6e2f"
       ],
       "analysis_status": "MODEL_DRAFT",
       "suggested_tier": "Human",
-      "tier_rationale": "涉及重大人事变动，需多层审批"
+      "tier_rationale": "绩效校准与沟通需人工主导"
     },
     {
-      "task_id": "TASK-HRM-15",
+      "task_id": "TASK-HRM-07-A",
+      "l4_code": "L4-HRM-07",
+      "task_name": "根据固定规则生成薪酬发放记录与激励方案初稿",
+      "source_type": "blueprint_step",
+      "sequence_no": 7,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-07",
+      "source_line": 86,
+      "previous_task_ids": [
+        "TASK-HRM-06-A",
+        "TASK-HRM-06-B"
+      ],
+      "next_task_ids": [
+        "TASK-HRM-08-A",
+        "TASK-HRM-08-B"
+      ],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-4762f34aaf56ff1af502",
+        "EVD-7d8d592d122d9b5011b7",
+        "EVD-6c54027d2c2b7cc7ea02"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "B级中封装，有固定规则，但需人工最终核实确认（资金硬门禁）"
+    },
+    {
+      "task_id": "TASK-HRM-07-B",
+      "l4_code": "L4-HRM-07",
+      "task_name": "薪酬岗人工最终核实发放金额与审批",
+      "source_type": "skill_feasibility",
+      "sequence_no": null,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-07",
+      "source_line": 86,
+      "previous_task_ids": [
+        "TASK-HRM-06-A",
+        "TASK-HRM-06-B"
+      ],
+      "next_task_ids": [
+        "TASK-HRM-08-A",
+        "TASK-HRM-08-B"
+      ],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-7d8d592d122d9b5011b7",
+        "EVD-b5664757512cb2025967"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "资金安全硬门禁，实际发放与审批必须人工执行"
+    },
+    {
+      "task_id": "TASK-HRM-08-A",
+      "l4_code": "L4-HRM-08",
+      "task_name": "生成晋升/调岗审批记录与档案更新初稿",
+      "source_type": "blueprint_step",
+      "sequence_no": 8,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-08",
+      "source_line": 92,
+      "previous_task_ids": [
+        "TASK-HRM-07-A",
+        "TASK-HRM-07-B"
+      ],
+      "next_task_ids": [
+        "TASK-HRM-09-A",
+        "TASK-HRM-09-B"
+      ],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-ee32c352200ddbe00151",
+        "EVD-fec99fd98371437c90a8",
+        "EVD-ad8cbf3b1d0532cbca52"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "审批记录可自动生成，晋升决策需人工讨论"
+    },
+    {
+      "task_id": "TASK-HRM-08-B",
+      "l4_code": "L4-HRM-08",
+      "task_name": "与人力资源负责人讨论晋升决策与调岗安排",
+      "source_type": "skill_feasibility",
+      "sequence_no": null,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-08",
+      "source_line": 92,
+      "previous_task_ids": [
+        "TASK-HRM-07-A",
+        "TASK-HRM-07-B"
+      ],
+      "next_task_ids": [
+        "TASK-HRM-09-A",
+        "TASK-HRM-09-B"
+      ],
+      "relation_type": "SEQUENCE",
+      "evidence_refs": [
+        "EVD-fec99fd98371437c90a8",
+        "EVD-6f8d9f904f3400ace92e"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Human",
+      "tier_rationale": "晋升/调岗涉及敏感决策，需人工主导"
+    },
+    {
+      "task_id": "TASK-HRM-09-A",
       "l4_code": "L4-HRM-09",
-      "task_name": "办理离职交接与档案归档",
-      "source_type": "BLUEPRINT",
-      "sequence_no": 15,
-      "sequence_status": "SOURCE_CONFIRMED",
+      "task_name": "根据离职信息触发系统权限回收与档案归档任务",
+      "source_type": "blueprint_step",
+      "sequence_no": 9,
+      "sequence_status": "SOURCE_STEP_ONLY",
       "source_step_id": "STEP-09",
       "source_line": 96,
       "previous_task_ids": [
-        "TASK-HRM-14"
+        "TASK-HRM-08-A",
+        "TASK-HRM-08-B"
       ],
       "next_task_ids": [],
       "relation_type": "SEQUENCE",
       "evidence_refs": [
-        "EVD-9a43d172fe942d6e866f"
+        "EVD-9a43d172fe942d6e866f",
+        "EVD-795d0ca996d0850cf065",
+        "EVD-c2f2ffc65519992a67ce"
       ],
       "analysis_status": "MODEL_DRAFT",
       "suggested_tier": "Auto",
-      "tier_rationale": "权限回收与文档归档可自动化，需人工确认"
+      "tier_rationale": "A级封装高，离职触发权限回收和归档规则明确，可自动化"
     },
     {
-      "task_id": "TASK-HRM-16",
+      "task_id": "TASK-HRM-09-B",
       "l4_code": "L4-HRM-09",
-      "task_name": "回收系统权限并生成离职文档",
-      "source_type": "SKILL_FEASIBILITY_DERIVED",
+      "task_name": "人工审核离职交接完成状态与档案完整性",
+      "source_type": "skill_feasibility",
       "sequence_no": null,
       "sequence_status": "SOURCE_STEP_ONLY",
       "source_step_id": "STEP-09",
-      "source_line": null,
-      "previous_task_ids": [],
+      "source_line": 96,
+      "previous_task_ids": [
+        "TASK-HRM-08-A",
+        "TASK-HRM-08-B"
+      ],
       "next_task_ids": [],
-      "relation_type": "",
+      "relation_type": "SEQUENCE",
       "evidence_refs": [
-        "EVD-795d0ca996d0850cf065"
+        "EVD-795d0ca996d0850cf065",
+        "EVD-542f6b473d6d1494c47d"
       ],
       "analysis_status": "MODEL_DRAFT",
-      "suggested_tier": "Auto",
-      "tier_rationale": "事务性操作，适合封装为Skill"
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "权限回收和档案归档不可逆，需人工复核"
     }
   ],
   "priority_drafts": [
     {
       "l4_code": "L4-HRM-01",
       "quadrant": "unclassified",
-      "data_basis": [],
-      "process_context": "人员全生命周期起点，影响招聘与预算",
-      "risks_limits": [
-        "人工判断依赖，AI仅辅助"
+      "data_basis": [
+        "D1输入结构化=1, D2规则清晰=1, D3输出可验证=1（证据：EVD-5766cac6f8c8233b69ff, EVD-5428ab40af73dba8b3a5, EVD-122f5ca4516689e29139）"
       ],
-      "current_recommendation": "先固化编制分析模型，岗位设计保留人工权威",
+      "process_context": "L3-HRM流程起点，为后续招聘提供编制依据",
+      "risks_limits": [
+        "C级封装：判断/策略/认知类，复合动作，需先拆分",
+        "无资金安全硬门禁，但存在业务决策风险"
+      ],
+      "current_recommendation": "优先Agent辅助或决策支持，不直接封装确定性Skill；将编制数据聚合与JD模板拆分，先验证子Skill",
       "evidence_refs": [
-        "EVD-95a7ffbaebe29b960523",
         "EVD-3093e80687f504b54172",
         "EVD-6f3c0a7f906014630d53",
+        "EVD-9a4bb807beccc1be7ead",
         "EVD-e53397adbec2556e53ab",
-        "EVD-60ac259b85a96d2f0196"
+        "EVD-16d93d5240f7bd6679e4",
+        "EVD-60ac259b85a96d2f0196",
+        "EVD-95a7ffbaebe29b960523",
+        "EVD-5766cac6f8c8233b69ff",
+        "EVD-5428ab40af73dba8b3a5",
+        "EVD-122f5ca4516689e29139"
       ],
       "analysis_status": "MODEL_DRAFT"
     },
     {
       "l4_code": "L4-HRM-02",
       "quadrant": "unclassified",
-      "data_basis": [],
-      "process_context": "承接岗位编制，为入职配置提供合格人选",
-      "risks_limits": [
-        "主观判断核心环节不可自动化"
+      "data_basis": [
+        "D1输入结构化=2, D2规则清晰=1, D3输出可验证=1（证据：EVD-e6eb09f27eb722883f8c, EVD-fcfaba1418f843dd52a2, EVD-29acdd8bc9f5bdd20daf）"
       ],
-      "current_recommendation": "AI可用于初筛与信息整合，面试决策需保留人工",
+      "process_context": "承接岗位编制，为入职配置提供候选人来源",
+      "risks_limits": [
+        "C级封装：判断/策略/认知类，复合动作",
+        "无业务数据证据（ACTIVE），需补充"
+      ],
+      "current_recommendation": "优先Agent辅助或决策支持，不直接封装确定性Skill；将面试记录与初筛辅助拆分，评估标准讨论任务保持人工主导",
       "evidence_refs": [
-        "EVD-844ae6a99a5775fa9161",
         "EVD-bec00af2af93d13f3f55",
         "EVD-215b3cae2cadd0d63c03",
+        "EVD-d103c5b3d6b435cdb34b",
         "EVD-c9bb59d336a9b7dc5742",
-        "EVD-87f5215522c3500b84e7"
+        "EVD-893bae3197668ec77368",
+        "EVD-87f5215522c3500b84e7",
+        "EVD-844ae6a99a5775fa9161",
+        "EVD-e6eb09f27eb722883f8c",
+        "EVD-fcfaba1418f843dd52a2",
+        "EVD-29acdd8bc9f5bdd20daf"
       ],
       "analysis_status": "MODEL_DRAFT"
     },
     {
       "l4_code": "L4-HRM-03",
       "quadrant": "unclassified",
-      "data_basis": [],
-      "process_context": "确保新员工合规入职并开通必要系统",
-      "risks_limits": [
-        "合同条款准确性需人工复核"
+      "data_basis": [
+        "D1输入结构化=2, D2规则清晰=2, D3输出可验证=2（证据：EVD-5a887539e3608375b7d9, EVD-4d1f4f02c0d4acb5debf, EVD-d7fb5c87d9e787a93e88）"
       ],
-      "current_recommendation": "优先尝试Skill原型：信息核验与合同模板自动填充",
+      "process_context": "承接招聘结果，为员工建立系统身份与合同关系",
+      "risks_limits": [
+        "A级封装：信息处理/事务类，复合动作，需先拆分",
+        "合同签署与权限开通具有不可逆性，须人工控制门"
+      ],
+      "current_recommendation": "优先进入Skill原型候选池，将合同生成与权限预配置拆分为子Skill，保留人工复核关卡",
       "evidence_refs": [
-        "EVD-586e5391dad582148e84",
         "EVD-c6af9bcfe13bf359649f",
         "EVD-6e371f6caff789daf355",
+        "EVD-73081d2f7a1700a36504",
         "EVD-413671147372f161ae17",
-        "EVD-f2bf6e9f9ebbcdd6cbf8"
+        "EVD-a8165adb293beb1de43e",
+        "EVD-f2bf6e9f9ebbcdd6cbf8",
+        "EVD-586e5391dad582148e84",
+        "EVD-5a887539e3608375b7d9",
+        "EVD-4d1f4f02c0d4acb5debf",
+        "EVD-d7fb5c87d9e787a93e88"
       ],
       "analysis_status": "MODEL_DRAFT"
     },
     {
       "l4_code": "L4-HRM-04",
       "quadrant": "unclassified",
-      "data_basis": [],
-      "process_context": "决定员工去留，衔接转正或退出",
-      "risks_limits": [
-        "评估标准主观性，AI难以完全替代"
+      "data_basis": [
+        "D1输入结构化=2, D2规则清晰=1, D3输出可验证=2（证据：EVD-bef76aebb68edcf2a3d3, EVD-f9a85a61eccf68d84fee, EVD-e0313feb11fdb6f20ccb）"
       ],
-      "current_recommendation": "用AI提示转正时间窗口，总结考核数据，人工做最终判断",
+      "process_context": "试用期结束后的关键决策节点，存在分支到退出流程",
+      "risks_limits": [
+        "C级封装：语义复核判定，复合动作",
+        "分支决策需人工确认，避免错误退出或转正"
+      ],
+      "current_recommendation": "优先Agent辅助或决策支持，不直接封装确定性Skill；将考核数据汇总与转正建议拆分，保留人工分支确认",
       "evidence_refs": [
-        "EVD-424bc63ad1655dcbeb22",
         "EVD-c8e94d00e1d012220f77",
         "EVD-9e0130d81d192b3bc701",
+        "EVD-5d119798e96e9b0695a3",
         "EVD-7ceb6a822d4b0568b918",
-        "EVD-d1bb08008668bfd72814"
+        "EVD-a63f31ceaf292c4eb36a",
+        "EVD-d1bb08008668bfd72814",
+        "EVD-424bc63ad1655dcbeb22",
+        "EVD-bef76aebb68edcf2a3d3",
+        "EVD-f9a85a61eccf68d84fee",
+        "EVD-e0313feb11fdb6f20ccb"
       ],
       "analysis_status": "MODEL_DRAFT"
     },
     {
       "l4_code": "L4-HRM-05",
       "quadrant": "unclassified",
-      "data_basis": [],
-      "process_context": "提升员工能力，支持职业发展",
-      "risks_limits": [
-        "物理执行环节（培训实施）无法AI替代"
+      "data_basis": [
+        "D1输入结构化=2, D2规则清晰=1, D3输出可验证=2（证据：EVD-c198ea51c16752e508f1, EVD-afd64bab78254cdef790, EVD-469b555aaf108bcd01e1）"
       ],
-      "current_recommendation": "AI可处理数据驱动的培训建议，实施与调整需人工",
+      "process_context": "在职管理阶段，提升员工能力与保留率",
+      "risks_limits": [
+        "C级封装：语义复核判定，复合动作",
+        "物理执行=true，培训现场环节无法自动化"
+      ],
+      "current_recommendation": "优先Agent辅助或决策支持，不直接封装确定性Skill；将培训记录与方案模板拆分，讨论任务保持人工主导",
       "evidence_refs": [
-        "EVD-3abf89993a6170cb8faf",
         "EVD-a419dbcdccfc4dc003d5",
         "EVD-8572e7f9b9dee42b6b3f",
+        "EVD-0c5d24be0559ecc050d4",
         "EVD-631d9a7ff796c2c9a9fe",
-        "EVD-ca1843eb4d9175693711"
+        "EVD-447ee1176b9dca2f734f",
+        "EVD-ca1843eb4d9175693711",
+        "EVD-3abf89993a6170cb8faf",
+        "EVD-c198ea51c16752e508f1",
+        "EVD-afd64bab78254cdef790",
+        "EVD-469b555aaf108bcd01e1"
       ],
       "analysis_status": "MODEL_DRAFT"
     },
     {
       "l4_code": "L4-HRM-06",
       "quadrant": "unclassified",
-      "data_basis": [],
-      "process_context": "驱动薪酬与晋升，影响员工留存",
-      "risks_limits": [
-        "评估公平性依赖人工校准"
+      "data_basis": [
+        "D1输入结构化=2, D2规则清晰=1, D3输出可验证=2（证据：EVD-3e5fd5626d5c894344c9, EVD-5a0b27048017472b9b75, EVD-7b93b6ddbc46c315ecb2）"
       ],
-      "current_recommendation": "AI可完成数据收集与初步分析，最终评分需人工确认",
+      "process_context": "连接培训与薪酬晋升，影响员工激励",
+      "risks_limits": [
+        "C级封装：语义复核判定，复合动作",
+        "绩效结果应用涉及敏感决策，需人工控制"
+      ],
+      "current_recommendation": "优先Agent辅助或决策支持，不直接封装确定性Skill；将绩效数据计算与结果应用记录拆分，保留人工校准与审批",
       "evidence_refs": [
-        "EVD-fff78bcde6f132a443e7",
         "EVD-196e8b3aa781789433a4",
         "EVD-900f74f320afc8929fba",
+        "EVD-48e50590a1af0fe105b3",
         "EVD-b6439595918987ee6e2f",
-        "EVD-13526a456950a3a46780"
+        "EVD-18bead87d808d432afe7",
+        "EVD-13526a456950a3a46780",
+        "EVD-fff78bcde6f132a443e7",
+        "EVD-3e5fd5626d5c894344c9",
+        "EVD-5a0b27048017472b9b75",
+        "EVD-7b93b6ddbc46c315ecb2"
       ],
       "analysis_status": "MODEL_DRAFT"
     },
     {
       "l4_code": "L4-HRM-07",
       "quadrant": "unclassified",
-      "data_basis": [],
-      "process_context": "直接涉及资金安全，强合规要求",
-      "risks_limits": [
-        "资金安全硬门控，AI计算结果需重复验证"
+      "data_basis": [
+        "D1输入结构化=2, D2规则清晰=2, D3输出可验证=2（证据：EVD-6c7b1375800624293b92, EVD-51b7eb229bf0b19660d0, EVD-bfd731ea3cd3063566af）"
       ],
-      "current_recommendation": "先行固化计算规则与报告模板，提升自动化程度，保留人工最终审核",
+      "process_context": "薪酬激励核心环节，资金安全与合规要求高",
+      "risks_limits": [
+        "B级封装：中封装，funds_safety_hard_gate=true",
+        "需先补报告模板、规则固化或系统接口，再验证Skill",
+        "实际资金操作不可自动化"
+      ],
+      "current_recommendation": "先补报告模板、规则固化或系统接口，再验证Skill；薪酬计算可Skill化，发放前人工关卡不可绕过",
       "evidence_refs": [
-        "EVD-4762f34aaf56ff1af502",
         "EVD-fbcd87654ff8e8e7b7e8",
         "EVD-6c54027d2c2b7cc7ea02",
+        "EVD-a13fdcb4431e5c6d140c",
         "EVD-b5664757512cb2025967",
-        "EVD-7d8d592d122d9b5011b7"
+        "EVD-95b43e1fbf9f9c931720",
+        "EVD-7d8d592d122d9b5011b7",
+        "EVD-4762f34aaf56ff1af502",
+        "EVD-6c7b1375800624293b92",
+        "EVD-51b7eb229bf0b19660d0",
+        "EVD-bfd731ea3cd3063566af"
       ],
       "analysis_status": "MODEL_DRAFT"
     },
     {
       "l4_code": "L4-HRM-08",
       "quadrant": "unclassified",
-      "data_basis": [],
-      "process_context": "影响员工发展与组织架构",
-      "risks_limits": [
-        "组织政治因素，AI建议仅供参考"
+      "data_basis": [
+        "D1输入结构化=2, D2规则清晰=1, D3输出可验证=2（证据：EVD-e036cde72a89da6eaaa7, EVD-4a5d23dc9e450569f043, EVD-35429951ac6d66a78c1c）"
       ],
-      "current_recommendation": "AI提供数据支持，决策链完全人工",
+      "process_context": "职业发展关键环节，影响组织人才结构",
+      "risks_limits": [
+        "C级封装：语义复核判定，复合动作",
+        "晋升涉及敏感决策，需人工控制"
+      ],
+      "current_recommendation": "优先Agent辅助或决策支持，不直接封装确定性Skill；将审批记录与档案更新拆分，决策讨论保持人工主导",
       "evidence_refs": [
-        "EVD-ee32c352200ddbe00151",
         "EVD-8653b4b7e981f3ea0569",
         "EVD-ad8cbf3b1d0532cbca52",
+        "EVD-eaede5b34c447495ed7a",
         "EVD-6f8d9f904f3400ace92e",
-        "EVD-fec99fd98371437c90a8"
+        "EVD-5f05e7c011e2ab0d2919",
+        "EVD-fec99fd98371437c90a8",
+        "EVD-ee32c352200ddbe00151",
+        "EVD-e036cde72a89da6eaaa7",
+        "EVD-4a5d23dc9e450569f043",
+        "EVD-35429951ac6d66a78c1c"
       ],
       "analysis_status": "MODEL_DRAFT"
     },
     {
       "l4_code": "L4-HRM-09",
       "quadrant": "unclassified",
-      "data_basis": [],
-      "process_context": "保障数据合规性，避免权限残留",
-      "risks_limits": [
-        "系统权限变更的API依赖"
+      "data_basis": [
+        "D1输入结构化=2, D2规则清晰=2, D3输出可验证=2（证据：EVD-eb395881716e33d7e74f, EVD-f171dc204e093ff701f8, EVD-940d44c4c534857c9ab1）"
       ],
-      "current_recommendation": "优先开发离职闭环Skill（权限回收+文档生成），人工审核检查点",
+      "process_context": "员工生命周期终点，确保合规退出与档案留存",
+      "risks_limits": [
+        "A级封装：信息处理/事务类，复合动作，需先拆分",
+        "权限回收与档案归档具有不可逆性，须人工控制"
+      ],
+      "current_recommendation": "优先进入Skill原型候选池，将离职触发与档案归档拆分为子Skill，保留人工复核",
       "evidence_refs": [
-        "EVD-9a43d172fe942d6e866f",
         "EVD-84ef6dbab3c449c158bc",
         "EVD-c2f2ffc65519992a67ce",
+        "EVD-359e1c444812ae6b5440",
         "EVD-542f6b473d6d1494c47d",
-        "EVD-795d0ca996d0850cf065"
+        "EVD-d39803bdbde58d30f306",
+        "EVD-795d0ca996d0850cf065",
+        "EVD-9a43d172fe942d6e866f",
+        "EVD-eb395881716e33d7e74f",
+        "EVD-f171dc204e093ff701f8",
+        "EVD-940d44c4c534857c9ab1"
       ],
       "analysis_status": "MODEL_DRAFT"
     }
@@ -816,27 +1149,48 @@
     {
       "priority": "P0",
       "task_ids": [
-        "TASK-HRM-06",
-        "TASK-HRM-07"
+        "TASK-HRM-07-A",
+        "TASK-HRM-07-B"
       ],
-      "title": "入职配置自动化试点决策",
-      "pilot_scope": "指定部门（如GM主体）新员工入职流程",
-      "human_boundary": "合同签署前的人力审批与合规确认；系统权限开通的审计抽查",
+      "title": "薪酬发放Skill原型试点（先拆分后验证）",
+      "pilot_scope": "仅限L4-HRM-07薪酬记录生成与核对子任务，使用固定规则和报告模板，不触发实际资金划拨",
+      "human_boundary": "资金安全硬门禁：实际发放、金额审批、例外处理必须由授权薪酬岗人工承担",
       "evidence_refs": [
-        "EVD-f2bf6e9f9ebbcdd6cbf8"
+        "EVD-7d8d592d122d9b5011b7",
+        "EVD-4762f34aaf56ff1af502",
+        "EVD-6c7b1375800624293b92"
       ],
       "analysis_status": "MODEL_DRAFT"
     },
     {
       "priority": "P1",
       "task_ids": [
-        "TASK-HRM-13"
+        "TASK-HRM-03-A",
+        "TASK-HRM-03-B"
       ],
-      "title": "薪酬计算自动化增强决策",
-      "pilot_scope": "固定薪酬部分（如基础工资、法定补贴）的计算与报告生成",
-      "human_boundary": "薪酬调整、奖金分配等人为决策；资金支付前的多层审批",
+      "title": "入职配置与合同签署自动化试点",
+      "pilot_scope": "仅限合同/offer生成和权限预配置，合同条款最终由HRBP确认，权限开通人工执行",
+      "human_boundary": "合同签署、权限开通不可逆操作必须人工确认，不得自动化执行",
       "evidence_refs": [
-        "EVD-7d8d592d122d9b5011b7"
+        "EVD-f2bf6e9f9ebbcdd6cbf8",
+        "EVD-586e5391dad582148e84",
+        "EVD-5a887539e3608375b7d9"
+      ],
+      "analysis_status": "MODEL_DRAFT"
+    },
+    {
+      "priority": "P1",
+      "task_ids": [
+        "TASK-HRM-01-A",
+        "TASK-HRM-01-B"
+      ],
+      "title": "岗位编制方案Agent辅助试点",
+      "pilot_scope": "仅限岗位编制数据聚合与JD模板生成，定编决策由人力资源负责人确认",
+      "human_boundary": "定岗定编决策、岗位JD最终发布必须人工审批",
+      "evidence_refs": [
+        "EVD-60ac259b85a96d2f0196",
+        "EVD-95a7ffbaebe29b960523",
+        "EVD-6f3c0a7f906014630d53"
       ],
       "analysis_status": "MODEL_DRAFT"
     }
@@ -844,12 +1198,18 @@
   "control_chain": [],
   "rejected_task_sources": [],
   "missing_analysis": [
-    "L4-HRM-01: specific_capabilities未提供，缺少岗位分析工具证据",
-    "L4-HRM-02: specific_capabilities未定义，需补充招聘评估标准",
-    "L4-HRM-04: quality_anchor未定义，无转正考核标准文档",
-    "L4-HRM-05: risks_limits未具体化，缺少培训效果评估机制",
-    "大部分L4缺少SOP/规则细节，任务拆分依赖skill_feasibility建议，需业务确认",
-    "data_basis大多为空，因业务证据多为UNVERIFIED状态，需工作坊核准后使用",
-    "控制链缺少L4定位，已拒绝1条"
+    "L4-HRM-01 business_evidence 为 UNVERIFIED/CONSENSUS，未用作数据依据",
+    "L4-HRM-02 无 ACTIVE 业务数据证据，数据依据缺失",
+    "L4-HRM-03 business_evidence 为 UNVERIFIED/CONSENSUS，未用作数据依据",
+    "L4-HRM-04 business_evidence 为 UNVERIFIED/CONSENSUS，未用作数据依据",
+    "L4-HRM-05 无 ACTIVE 业务数据证据，数据依据缺失",
+    "L4-HRM-06 无 ACTIVE 业务数据证据，数据依据缺失",
+    "L4-HRM-07 无 ACTIVE 业务数据证据，数据依据缺失",
+    "L4-HRM-08 无 ACTIVE 业务数据证据，数据依据缺失",
+    "L4-HRM-09 business_evidence 为 UNVERIFIED/CONSENSUS，未用作数据依据",
+    "蓝图 raci 字段为空，无法输出责任矩阵",
+    "Gate A 被 BLOCKED，存在熔断或无价值节点，需工作坊补充",
+    "员工档案(VN-HR-10)整体判断FAIL，数据融合问题待解决",
+    "控制链缺少L4定位，已拒绝4条"
   ]
 }
