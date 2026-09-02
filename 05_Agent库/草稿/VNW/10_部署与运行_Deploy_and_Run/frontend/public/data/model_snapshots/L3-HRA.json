@@ -860,8 +860,8 @@
       }
     ]
   },
-  "analysis_freshness": "CURRENT",
-  "analysis_input_hash": "8df5b5f1c7b1dd91512db1e9ab1e16428e4210f6b29e49f2e8098c340b416d43",
+  "analysis_freshness": "INPUT_CHANGED",
+  "analysis_input_hash": "9b17d207528da9f73a3639bcfad91adaafba0e215214badb531f6884ede4ad47",
   "blueprint": {
     "blueprint_value_nodes": [],
     "coverage": "INDEXED",
@@ -1063,39 +1063,6 @@
       "status": "ACTIVE",
       "transform_rule": "",
       "value": 2
-    },
-    {
-      "confidence": "LOW",
-      "conflict_note": "人工按业务含义匹配到业务数据仓库表，非外键关联，未经业务方确认",
-      "evidence_class": "CONSENSUS",
-      "evidence_id": "EVD-0a118be277553769e335",
-      "field_name": "business_evidence",
-      "source": {
-        "observed_at": "",
-        "source_field": "人工匹配",
-        "source_key": "L4-HRA-05",
-        "source_object": "public.dim_employee",
-        "source_system": "业务数据仓库",
-        "source_version": "2026-08-04试点"
-      },
-      "status": "UNVERIFIED",
-      "transform_rule": "",
-      "value": [
-        {
-          "confidence": "strong",
-          "evidence_type": "output",
-          "matched_columns": [
-            "highest_education",
-            "employment_type",
-            "contract_region",
-            "nationality"
-          ],
-          "rationale": "学历/雇佣类型/合同地区字段直接支持人员素质结构盘点",
-          "row_count": 209,
-          "schema": "public",
-          "table": "dim_employee"
-        }
-      ]
     },
     {
       "confidence": "HIGH",
@@ -1589,6 +1556,38 @@
       "value": "FAIL"
     },
     {
+      "confidence": "LOW",
+      "conflict_note": "人工按业务含义匹配到业务数据仓库表，非外键关联，未经业务方确认",
+      "evidence_class": "CONSENSUS",
+      "evidence_id": "EVD-47a22c00c330712d3bb1",
+      "field_name": "business_evidence",
+      "source": {
+        "observed_at": "",
+        "source_field": "人工匹配",
+        "source_key": "L4-HRA-06",
+        "source_object": "public.dim_employee",
+        "source_system": "业务数据仓库",
+        "source_version": "2026-08-04试点"
+      },
+      "status": "UNVERIFIED",
+      "transform_rule": "",
+      "value": [
+        {
+          "confidence": "strong",
+          "evidence_type": "output",
+          "matched_columns": [
+            "recorded_term_date",
+            "work_status",
+            "first_hire_date"
+          ],
+          "rationale": "离职登记日期与在职状态字段直接支持流失率计算",
+          "row_count": 215,
+          "schema": "public",
+          "table": "dim_employee"
+        }
+      ]
+    },
+    {
       "confidence": "HIGH",
       "conflict_note": "",
       "evidence_class": "SUPPLEMENTAL",
@@ -1680,41 +1679,6 @@
         "file": "SOP_VN-HR-04_绩效考核结果存档与晋调薪_v0.1.md",
         "title": "VN-HR-04 · 绩效考核结果存档与晋调薪应用 v0.1"
       }
-    },
-    {
-      "confidence": "LOW",
-      "conflict_note": "人工按业务含义匹配到业务数据仓库表，非外键关联，未经业务方确认",
-      "evidence_class": "CONSENSUS",
-      "evidence_id": "EVD-51f4dd23cb07bb49a6b8",
-      "field_name": "business_evidence",
-      "source": {
-        "observed_at": "",
-        "source_field": "人工匹配",
-        "source_key": "L4-HRA-01",
-        "source_object": "public.dim_employee",
-        "source_system": "业务数据仓库",
-        "source_version": "2026-08-04试点"
-      },
-      "status": "UNVERIFIED",
-      "transform_rule": "",
-      "value": [
-        {
-          "confidence": "strong",
-          "evidence_type": "output",
-          "matched_columns": [
-            "employee_id",
-            "first_hire_date",
-            "regularization_date",
-            "work_status",
-            "contract_region",
-            "employment_type"
-          ],
-          "rationale": "HR员工档案表，是人效数据采集与清洗的原始输入",
-          "row_count": 209,
-          "schema": "public",
-          "table": "dim_employee"
-        }
-      ]
     },
     {
       "confidence": "HIGH",
@@ -2049,6 +2013,39 @@
         "recommended_path": "优先考虑Agent辅助或决策支持，不直接封装确定性Skill",
         "verification_status": "VERIFIED"
       }
+    },
+    {
+      "confidence": "LOW",
+      "conflict_note": "人工按业务含义匹配到业务数据仓库表，非外键关联，未经业务方确认",
+      "evidence_class": "CONSENSUS",
+      "evidence_id": "EVD-7b74f761b8e414f37ba1",
+      "field_name": "business_evidence",
+      "source": {
+        "observed_at": "",
+        "source_field": "人工匹配",
+        "source_key": "L4-HRA-05",
+        "source_object": "public.dim_employee",
+        "source_system": "业务数据仓库",
+        "source_version": "2026-08-04试点"
+      },
+      "status": "UNVERIFIED",
+      "transform_rule": "",
+      "value": [
+        {
+          "confidence": "strong",
+          "evidence_type": "output",
+          "matched_columns": [
+            "highest_education",
+            "employment_type",
+            "contract_region",
+            "nationality"
+          ],
+          "rationale": "学历/雇佣类型/合同地区字段直接支持人员素质结构盘点",
+          "row_count": 215,
+          "schema": "public",
+          "table": "dim_employee"
+        }
+      ]
     },
     {
       "confidence": "HIGH",
@@ -2782,6 +2779,41 @@
       "value": 2
     },
     {
+      "confidence": "LOW",
+      "conflict_note": "人工按业务含义匹配到业务数据仓库表，非外键关联，未经业务方确认",
+      "evidence_class": "CONSENSUS",
+      "evidence_id": "EVD-d0c495452219a1b59455",
+      "field_name": "business_evidence",
+      "source": {
+        "observed_at": "",
+        "source_field": "人工匹配",
+        "source_key": "L4-HRA-01",
+        "source_object": "public.dim_employee",
+        "source_system": "业务数据仓库",
+        "source_version": "2026-08-04试点"
+      },
+      "status": "UNVERIFIED",
+      "transform_rule": "",
+      "value": [
+        {
+          "confidence": "strong",
+          "evidence_type": "output",
+          "matched_columns": [
+            "employee_id",
+            "first_hire_date",
+            "regularization_date",
+            "work_status",
+            "contract_region",
+            "employment_type"
+          ],
+          "rationale": "HR员工档案表，是人效数据采集与清洗的原始输入",
+          "row_count": 215,
+          "schema": "public",
+          "table": "dim_employee"
+        }
+      ]
+    },
+    {
       "confidence": "HIGH",
       "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
@@ -2798,38 +2830,6 @@
       "status": "ACTIVE",
       "transform_rule": "",
       "value": "FAIL"
-    },
-    {
-      "confidence": "LOW",
-      "conflict_note": "人工按业务含义匹配到业务数据仓库表，非外键关联，未经业务方确认",
-      "evidence_class": "CONSENSUS",
-      "evidence_id": "EVD-d114f9d641e47ca0fa26",
-      "field_name": "business_evidence",
-      "source": {
-        "observed_at": "",
-        "source_field": "人工匹配",
-        "source_key": "L4-HRA-06",
-        "source_object": "public.dim_employee",
-        "source_system": "业务数据仓库",
-        "source_version": "2026-08-04试点"
-      },
-      "status": "UNVERIFIED",
-      "transform_rule": "",
-      "value": [
-        {
-          "confidence": "strong",
-          "evidence_type": "output",
-          "matched_columns": [
-            "recorded_term_date",
-            "work_status",
-            "first_hire_date"
-          ],
-          "rationale": "离职登记日期与在职状态字段直接支持流失率计算",
-          "row_count": 209,
-          "schema": "public",
-          "table": "dim_employee"
-        }
-      ]
     },
     {
       "confidence": "HIGH",
@@ -3348,7 +3348,7 @@
             "employment_type"
           ],
           "rationale": "HR员工档案表，是人效数据采集与清洗的原始输入",
-          "row_count": 209,
+          "row_count": 215,
           "schema": "public",
           "table": "dim_employee"
         }
@@ -3372,7 +3372,7 @@
         "agent_d6_compliance": "EVD-49785ae73fe703397188",
         "agent_human_touchpoint": "EVD-c69457ea65586fac7690",
         "agentifiability": "EVD-c5f2e43b11a640017ab7",
-        "business_evidence": "EVD-51f4dd23cb07bb49a6b8",
+        "business_evidence": "EVD-d0c495452219a1b59455",
         "l4_deliverable": "EVD-f94bb260636e8bdf76a6",
         "l4_deliverable_type": "EVD-522ce61a5ffed2af0b65",
         "l4_name": "EVD-3380ef21d0fc063826f7",
@@ -3571,7 +3571,7 @@
             "nationality"
           ],
           "rationale": "学历/雇佣类型/合同地区字段直接支持人员素质结构盘点",
-          "row_count": 209,
+          "row_count": 215,
           "schema": "public",
           "table": "dim_employee"
         }
@@ -3595,7 +3595,7 @@
         "agent_d6_compliance": "EVD-eb529c05718e415f1849",
         "agent_human_touchpoint": "EVD-abede5888f566d632c0a",
         "agentifiability": "EVD-3bc87c36a2e0946416ef",
-        "business_evidence": "EVD-0a118be277553769e335",
+        "business_evidence": "EVD-7b74f761b8e414f37ba1",
         "l4_deliverable": "EVD-bbc9fb93cda57fa0d077",
         "l4_deliverable_type": "EVD-28b2911ab943d14f283a",
         "l4_name": "EVD-9020d1f77d377843246c",
@@ -3634,7 +3634,7 @@
             "first_hire_date"
           ],
           "rationale": "离职登记日期与在职状态字段直接支持流失率计算",
-          "row_count": 209,
+          "row_count": 215,
           "schema": "public",
           "table": "dim_employee"
         }
@@ -3658,7 +3658,7 @@
         "agent_d6_compliance": "EVD-c98f0d1a6db236a44b90",
         "agent_human_touchpoint": "EVD-4b6f840c1870338f3a22",
         "agentifiability": "EVD-277f4814a18bc524f8af",
-        "business_evidence": "EVD-d114f9d641e47ca0fa26",
+        "business_evidence": "EVD-47a22c00c330712d3bb1",
         "l4_deliverable": "EVD-bef88ea056623444f112",
         "l4_deliverable_type": "EVD-d6fefb0aeb315132e9f9",
         "l4_name": "EVD-2e840541d01d4a1acda0",

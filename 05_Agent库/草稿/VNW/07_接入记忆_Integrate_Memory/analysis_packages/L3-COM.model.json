@@ -7,8 +7,8 @@
     "model_name": "deepseek-v4-pro",
     "model_version": "deepseek-v4-pro",
     "prompt_version": "VNW-L3-COM-GOLD-v1.0",
-    "generated_at": "2026-08-14T02:43:14.864008+00:00",
-    "input_snapshot_hash": "4af5690b338aba4f65c7412989e6bbbdbecdf78d3535832fc72cf5588f375196"
+    "generated_at": "2026-09-02T02:30:08.482710+00:00",
+    "input_snapshot_hash": "1a89407831270d21c37c77fb01ea810dd595bb961bb1ed23bfb800a8246cefbe"
   },
   "source_scope": {
     "database": "process_analytics",
@@ -23,45 +23,48 @@
         "EVD-978b640534fd409082bd",
         "EVD-7faaaa7ea5605173b3ed",
         "EVD-c49d5805d7bbfb12c704",
-        "EVD-807ab75acbdab39974ba",
         "EVD-c343c6d3cd547689f533",
         "EVD-2db466428bd0c9f7a073",
-        "EVD-0fd5978f33cca2d7873c",
-        "EVD-516613c2c07e7e5f0bdb",
-        "EVD-f53356cfe45b437227b3",
-        "EVD-6f7b950c445b03221796",
-        "EVD-8b6a9e7334d1b341d708",
-        "EVD-95ead820075a56f696b1",
-        "EVD-538949b874820e0d275a",
-        "EVD-32c52fbab5cfced0fa62",
-        "EVD-9f608e139355cf106963"
+        "EVD-f53356cfe45b437227b3"
       ],
       "confidence": "MODEL_DRAFT",
-      "deliverable_role": "输出《标准化政策库》，作为佣金费率标准化源头",
+      "deliverable_role": "负责产出《标准化政策库》，归口佣金合规族（JF-07）佣金管理与合规岗",
       "specific_capabilities": [
-        "信息处理/事务类能力：政策接收、标准化、配置",
-        "复合动作需拆分为单一子Skill（A档）"
+        "接收保司书面变更通知并录入费率（输入结构化程度D1=2）",
+        "按规则校准佣金政策（规则清晰度D2=2）",
+        "验证费率计算公式与标准化政策库一致性（输出可验证D3=2）",
+        "可访问佣金费率主表与公式配置接口（API可达D4=2）",
+        "将复合动作拆分为“费率录入/公式配置”子Skill与“政策解读/差异确认”人工判断动作"
       ],
-      "ai_reshape": "A档封装但需先拆分；建议将政策接收、校准拆分为子Skill，识别确定性部分",
-      "quality_anchor": "交付物《标准化政策库》完整、字段标准化、与政策原文一致",
-      "ai_responsibility": "AI负责数据抽取、标准化映射、费率表生成建议，但需人工确认",
-      "human_responsibility": "佣金管理与合规岗负责政策接收与校准的最终确认，特别是语义复核和异常处理",
+      "ai_reshape": "确定性Skill执行费率条目录入、公式配置与一致性校验；人工仅处理政策语义校准与例外确认",
+      "quality_anchor": "按skill_feasibility A级（理想条件下Skill候选），交付物为方案类，输出需通过公式参数化验证与工作流状态确认",
+      "ai_responsibility": "可执行标准化政策库的结构化数据录入、公式参数配置、生效期查重与校验",
+      "human_responsibility": "未提供人工触点（EVD-1f63786e42f0f673bb5d为MISSING），需工作坊确认政策解读与审批责任人",
       "handoff_triggers": [
-        "出现政策歧义、公式异常、保司变更未书面通知时转人工"
+        "保司书面通知缺失或不明确",
+        "佣金方案与标准库冲突",
+        "费率录入影响资金安全或需合规审批"
       ],
       "control_gates": [
-        "资金、合规、对外发布等控制门：政策发布需审批；不可逆发布需三方签署"
+        "佣金政策接收与校准需人工审批后方可发布（市场表头状态工作流）"
       ],
       "data_basis": [
-        "无可用ACTIVE业务数据证据（business_evidence为UNVERIFIED），仅基于流程定义和评分"
+        "agent_d1_input_struct=2",
+        "agent_d2_rule_clear=2",
+        "agent_d3_output_verify=2",
+        "agent_d4_api_reach=2",
+        "skill_feasibility: grade A, action_nature=信息处理/事务类, action_singularity=复合动作(建议先拆分)",
+        "deliverable=《标准化政策库》, type=方案"
       ],
-      "process_context": "蓝图步骤STEP-02，前序STEP-01数据导入，后续STEP-03差异化拆解",
+      "process_context": "蓝图STEP-02佣金政策接收与校准；属于价值节点VN-PAY-01市场佣金制作产出包，当前状态PARTIAL",
       "risks_limits": [
-        "复合动作未拆分；人机边界未明确；业务数据证据缺失"
+        "复合动作需先拆分子Skill，否则无法直接封装",
+        "业务证据表多为UNVERIFIED，不可用于业务结论",
+        "人工触点缺失，审批链未明确"
       ],
-      "current_recommendation": "优先拆分Skill子任务；补充人工确认节点；先原型验证",
+      "current_recommendation": "优先拆分为“费率录入Skill”和“政策校准人工复核”，先进入Skill原型候选池，同时补全人工审批触点证据",
       "database_tier": "Auto",
-      "recommended_tier": "Aug",
+      "recommended_tier": "Auto",
       "quadrant": "unclassified"
     },
     {
@@ -71,44 +74,47 @@
         "EVD-c6c7b3d9f8c8275bd6fb",
         "EVD-4348645f997bbc545631",
         "EVD-867a6421b5a1b4149c38",
-        "EVD-807ab75acbdab39974ba",
         "EVD-8f39d05eed73571639e8",
         "EVD-51b9375d56608331b530",
-        "EVD-b7662c64ba812b8dd326",
-        "EVD-8c7011a8d0bd24ef450a",
-        "EVD-73c78aac3ee351f1d240",
-        "EVD-949f96f53bf843877f5a",
-        "EVD-ca3143c95277bc3494e4",
-        "EVD-5b88d5549a8660faac03",
-        "EVD-3c5b75fa1b8e8b981915",
-        "EVD-2936ef248ec9414d8f55"
+        "EVD-73c78aac3ee351f1d240"
       ],
       "confidence": "MODEL_DRAFT",
-      "deliverable_role": "输出《各细分市场配置》，作为差异化拆解与验证的结果",
+      "deliverable_role": "负责产出《各细分市场配置》，归口佣金合规族（JF-07）佣金管理与合规岗",
       "specific_capabilities": [
-        "信息处理/事务类能力：差异化拆解、验证、配置",
-        "复合动作需拆分为子Skill"
+        "按产品范围规则进行差异化拆解（规则清晰度D2=2）",
+        "应用档位定价规则验证费率（输出可验证D3=2）",
+        "调用分档费率表与产品范围配置接口（API可达D4=2）",
+        "将复合动作拆分为“档位配置/差异化计算”子Skill与“拆解结果人工确认”判断动作"
       ],
-      "ai_reshape": "A档封装但需先拆分；拆解与验证可分离为不同子Skill",
-      "quality_anchor": "配置表覆盖全部细分市场，验证规则一致",
-      "ai_responsibility": "AI负责分档计算、规则校验、生成配置建议",
-      "human_responsibility": "佣金管理与合规岗负责验证结果确认，特别是差异处理",
+      "ai_reshape": "确定性Skill执行产品范围INCLUDE/EXCLUDE规则应用、档位计算与验证；人工负责例外产品范围与市场策略审批",
+      "quality_anchor": "按skill_feasibility A级，交付物为数据表，质量锚点为档位规则参数覆盖与人工确认状态",
+      "ai_responsibility": "可执行差异化拆解计算、档位规则应用、有效期与重叠检查",
+      "human_responsibility": "未提供人工触点（EVD-e1d2f431d0f88bfccc67为MISSING），需工作坊确认拆解确认责任人",
       "handoff_triggers": [
-        "规则不明确、差异冲突、需要人工判断的场景"
+        "产品范围规则缺失或冲突",
+        "档位调整需人工决策",
+        "数据源差异需确认"
       ],
       "control_gates": [
-        "对外发布前需审批"
+        "差异化拆解结果需人工确认后方可生效（market_row_state确认状态）"
       ],
       "data_basis": [
-        "无ACTIVE业务数据证据，仅基于流程定义和评分"
+        "agent_d1_input_struct=2",
+        "agent_d2_rule_clear=2",
+        "agent_d3_output_verify=2",
+        "agent_d4_api_reach=2",
+        "skill_feasibility: grade A, action_nature=信息处理/事务类, action_singularity=复合动作(建议先拆分)",
+        "deliverable=《各细分市场配置》, type=数据表"
       ],
-      "process_context": "蓝图步骤STEP-03，前序STEP-02，后续STEP-04",
+      "process_context": "蓝图STEP-03差异化拆解与验证；属于价值节点VN-PAY-01市场佣金制作产出包，当前状态PARTIAL",
       "risks_limits": [
-        "复合动作未拆分；验证环节人机边界不清"
+        "复合动作需拆分子Skill",
+        "业务证据UNVERIFIED",
+        "人工触点缺失"
       ],
-      "current_recommendation": "拆分拆解与验证子Skill；建立人工复核节点",
+      "current_recommendation": "优先建立档位拆分Skill与人工确认流程，先进入Skill原型候选池，补全人工确认责任证据",
       "database_tier": "Auto",
-      "recommended_tier": "Aug",
+      "recommended_tier": "Auto",
       "quadrant": "unclassified"
     },
     {
@@ -118,44 +124,47 @@
         "EVD-4ffa0a47eeca2b9236d4",
         "EVD-9fe75c4f838f44aa3fe2",
         "EVD-d69f814d7f54218e1804",
-        "EVD-807ab75acbdab39974ba",
         "EVD-35c713752826d9f583bd",
         "EVD-778f3534700c8932cdc0",
-        "EVD-692e5420c0a1c073e1ac",
-        "EVD-a2f379ae03473e137461",
-        "EVD-f7826c7d3a79c39b2c04",
-        "EVD-a4cd35c423ab72f84327",
-        "EVD-062d9cbf4146d7c3da1b",
-        "EVD-74e926413fddfc3a2085",
-        "EVD-8e71296ea4edb7d1507d",
-        "EVD-be106597fd414993e80f"
+        "EVD-f7826c7d3a79c39b2c04"
       ],
       "confidence": "MODEL_DRAFT",
-      "deliverable_role": "输出《佣金外发凭证》，作为对外佣金数据发布凭证",
+      "deliverable_role": "负责产出《佣金外发凭证》，归口佣金合规族（JF-07）佣金管理与合规岗",
       "specific_capabilities": [
-        "语义复核判定类能力：整合与外发",
-        "复合动作需拆分（整合与外发）"
+        "整合跨保司佣金数据并生成外发凭证（输入结构化D1=3）",
+        "规则清晰度D2=3，输出可验证D3=3",
+        "API可达D4=3",
+        "复合动作包含“数据整合/凭证生成”与“外发前人工语义复核”"
       ],
-      "ai_reshape": "A档封装但需先拆分；整合子Skill与外发子Skill分开，外发前人工复核",
-      "quality_anchor": "外发凭证与内部配置一致，差异说明完整",
-      "ai_responsibility": "AI负责整合计算、生成外发凭证草稿",
-      "human_responsibility": "佣金管理与合规岗负责最终审核与确认外发",
+      "ai_reshape": "Skill自动执行数据整合与凭证生成，人工在发布前进行语义复核与最终确认",
+      "quality_anchor": "凭证类交付物，需确保外发凭证与已发布费率一致，通过market_publish_event留痕",
+      "ai_responsibility": "可执行佣金数据聚合、凭证生成与发布准备",
+      "human_responsibility": "未提供人工触点（EVD-22865543421348f364c0为MISSING），需工作坊确认外发审批责任人",
       "handoff_triggers": [
-        "外发内容异常、差异超标、审批未通过"
+        "外发凭证与源数据不一致",
+        "对外发布需合规审批",
+        "发布事件异常"
       ],
       "control_gates": [
-        "对外发布前需三方签署审批（PAY-R049）"
+        "佣金外发属于对外发布，需人工审批并留痕"
       ],
       "data_basis": [
-        "无ACTIVE业务数据证据，仅基于流程定义和评分"
+        "agent_d1_input_struct=3",
+        "agent_d2_rule_clear=3",
+        "agent_d3_output_verify=3",
+        "agent_d4_api_reach=3",
+        "skill_feasibility: grade A, action_nature=语义复核判定, action_singularity=复合动作(建议先拆分)",
+        "deliverable=《佣金外发凭证》, type=凭证"
       ],
-      "process_context": "蓝图步骤STEP-07，前序STEP-06，后续STEP-08",
+      "process_context": "蓝图STEP-07佣金整合与外发；涉及价值节点VN-PAY-03应派清单三件套、VN-PAY-04转介费派发确认台账",
       "risks_limits": [
-        "外发为不可逆操作，需严格审批；复合动作未拆分"
+        "对外发布需人工控制门",
+        "发布事件表当前0行，流程未走过",
+        "人工触点缺失"
       ],
-      "current_recommendation": "先拆分整合与外发；建立强制外发审批门",
+      "current_recommendation": "优先拆分自动整合Skill与人工外发审批，先进入Skill原型候选池，明确外发审批链",
       "database_tier": "Auto",
-      "recommended_tier": "Hybrid",
+      "recommended_tier": "Auto",
       "quadrant": "unclassified"
     },
     {
@@ -165,43 +174,44 @@
         "EVD-4b298e49cf6bb6f4a2ea",
         "EVD-a037447b91f458e2a21a",
         "EVD-3bf2db587071e6c28664",
-        "EVD-807ab75acbdab39974ba",
         "EVD-166f2b3631edd11dde71",
         "EVD-eb6de534b20d241a80ea",
-        "EVD-e70ac0e42ff3b8dcd0f7",
-        "EVD-e039d743a2d2ffdb1258",
-        "EVD-1e959f9079b2f9e90b6d",
-        "EVD-2b74f6872f6a54576fa0",
-        "EVD-792e588c2d00b3429fcb",
-        "EVD-85305ee146879d402fa9",
-        "EVD-2284307840bd92f8e35d"
+        "EVD-1e959f9079b2f9e90b6d"
       ],
       "confidence": "MODEL_DRAFT",
-      "deliverable_role": "输出《年度预算与规划》，作为年度目标设定与资源分配依据",
+      "deliverable_role": "负责产出《年度预算与规划》，归口佣金合规族（JF-07）佣金管理与合规岗",
       "specific_capabilities": [
-        "判断/策略/认知类能力：预算编制与规划",
-        "复合动作需拆分，且低封装度"
+        "输入结构化D1=2，规则清晰度D2=1，输出验证D3=1",
+        "API可达D4=1，fallback D5=1，合规D6=1",
+        "属于判断/策略/认知类，需人工进行预算规划与策略制定"
       ],
-      "ai_reshape": "C档，低封装；建议Agent辅助，不直接封装确定性Skill",
-      "quality_anchor": "预算与规划需符合公司目标，经管理层审批",
-      "ai_responsibility": "AI可提供数据汇总、趋势分析、情景模拟等辅助",
-      "human_responsibility": "财务部门主导预算编制与最终决策",
+      "ai_reshape": "Agent辅助决策支持：提供历史数据、趋势分析，人工进行预算制定与审批",
+      "quality_anchor": "方案类交付物，质量取决于预算数据的完整性（fact_target仅62行）与判断权威",
+      "ai_responsibility": "可协助整理预算数据、生成初步测算与对比分析",
+      "human_responsibility": "人工执行：年度预算与规划（EVD-637b9b199c2a06301a02）",
       "handoff_triggers": [
-        "预算缺口、策略调整、管理层决策点"
+        "预算目标不一致",
+        "需管理层审批",
+        "数据缺口或异常"
       ],
       "control_gates": [
-        "资金相关决策需管理层审批"
+        "年度预算涉及资金规划，需管理层审批"
       ],
       "data_basis": [
-        "无ACTIVE业务数据证据，仅基于流程定义和评分"
+        "agent_d1_input_struct=2, D2=1, D3=1, D4=1, D5=1, D6=1",
+        "skill_feasibility: grade C, action_nature=判断/策略/认知类, action_singularity=复合动作",
+        "human_touchpoint=人工执行：年度预算与规划",
+        "deliverable=《年度预算与规划》, type=方案"
       ],
-      "process_context": "蓝图未列入顺序步骤，属于年度规划环节",
+      "process_context": "未在蓝图步骤中显式出现，但属于L3流程关键环节；KPI映射包含净营收、管理利润等",
       "risks_limits": [
-        "判断依赖高，人工决策不可替代"
+        "C级低封装，不适合确定性Skill",
+        "数据基础薄弱（fact_target仅62行）",
+        "复合动作需拆分为数据准备与决策判断"
       ],
-      "current_recommendation": "使用Agent辅助决策支持，保持人工主导",
+      "current_recommendation": "优先考虑Agent辅助或决策支持，不直接封装确定性Skill；先补充预算模板与数据接口",
       "database_tier": "Hybrid",
-      "recommended_tier": "Human",
+      "recommended_tier": "Hybrid",
       "quadrant": "unclassified"
     },
     {
@@ -211,41 +221,42 @@
         "EVD-89edcab0671596dd6a81",
         "EVD-a0497d8fcf768369af5c",
         "EVD-0babd05ddaaf0140b8b1",
-        "EVD-807ab75acbdab39974ba",
         "EVD-3287d741bc8db87f418b",
         "EVD-53517d6e7309d0c608c7",
-        "EVD-134e12cedd643f35389b",
-        "EVD-7eeb331271d6f6cd236b",
-        "EVD-dbecf6136964647ad282",
-        "EVD-80a76dba2b0859d641e0",
-        "EVD-2ef4b994588f78e3adc9",
-        "EVD-6a41802aef939068983f",
-        "EVD-9b59651d58675ce04a99"
+        "EVD-dbecf6136964647ad282"
       ],
       "confidence": "MODEL_DRAFT",
-      "deliverable_role": "输出《追溯调整与退保倒扣记录》，用于处理历史佣金调整",
+      "deliverable_role": "负责产出《追溯调整与退保倒扣记录》，归口佣金合规族（JF-07）佣金管理与合规岗",
       "specific_capabilities": [
-        "语义复核判定类能力：计算有固定公式，但需人工判断",
-        "复合动作需拆分（计算与人工复核）"
+        "输入结构化D1=3，规则清晰度D2=3，输出验证D3=3",
+        "API可达D4=3，fallback D5=2，合规D6=2",
+        "计算有固定公式，但需人工判断复核（skill_feasibility B级）"
       ],
-      "ai_reshape": "B档，中封装；Skill执行公式计算，人工做最终判断复核",
-      "quality_anchor": "调整记录可追溯，计算准确，审批完整",
-      "ai_responsibility": "AI负责公式计算、生成调整建议",
-      "human_responsibility": "中台支持部负责最终判断与确认",
+      "ai_reshape": "Skill执行公式计算（追溯调整/退保倒扣），人工进行最终判断与复核",
+      "quality_anchor": "数据表类交付物，质量锚点为调整记录与生效视图一致，人工复核留痕",
+      "ai_responsibility": "可执行追溯金额计算、调整记录归档与差异比对",
+      "human_responsibility": "人工执行：追溯调整与退保倒扣（EVD-62dfdbbdcbd21cc384f6）",
       "handoff_triggers": [
-        "异常调整、大额倒扣、需要人工判断的场景"
+        "调整金额异常",
+        "退保数据缺失",
+        "需人工判断是否追溯"
       ],
       "control_gates": [
-        "资金相关调整需审批"
+        "追溯调整涉及资金，需人工复核确认"
       ],
       "data_basis": [
-        "无ACTIVE业务数据证据，仅基于流程定义和评分"
+        "agent_d1_input_struct=3, D2=3, D3=3, D4=3, D5=2, D6=2",
+        "skill_feasibility: grade B, action_nature=语义复核判定, action_singularity=复合动作",
+        "human_touchpoint=人工执行：追溯调整与退保倒扣",
+        "deliverable=《追溯调整与退保倒扣记录》, type=数据表"
       ],
-      "process_context": "蓝图未列入顺序步骤，属于追溯处理环节",
+      "process_context": "蓝图未列步骤，但涉及价值节点VN-PAY-02佣金实收确认表等；规则PAY-R051基本法变更触发回溯补发",
       "risks_limits": [
-        "人工判断无法完全自动化"
+        "B级中封装需报告模板/系统集成配合",
+        "调整历史表0行，数据未populate",
+        "复合动作需先拆分为计算Skill与人工判断"
       ],
-      "current_recommendation": "采用Aug模式：Skill计算+人工复核，先补报告模板和规则固化",
+      "current_recommendation": "先补报告模板、规则固化或系统接口，再验证Skill；人工负责最终判断",
       "database_tier": "Aug",
       "recommended_tier": "Aug",
       "quadrant": "unclassified"
@@ -257,41 +268,40 @@
         "EVD-e41cd2ac12c2eee4c7a2",
         "EVD-8f412c5cea311e6823c2",
         "EVD-05dbb71ab55ac2d4d7a0",
-        "EVD-807ab75acbdab39974ba",
         "EVD-df876bda0147ec1d27d7",
         "EVD-0b405e172852aa77b700",
-        "EVD-57b92e28acc6a0a05524",
-        "EVD-2ed9aeff9e36f9700130",
-        "EVD-4c1afaa2820a8a881c27",
-        "EVD-a467c3a2d94b55f526a5",
-        "EVD-e97e48f78d3111490b30",
-        "EVD-8dcc039dbdaac45dcacd",
-        "EVD-a9405c880607a7a511d1"
+        "EVD-4c1afaa2820a8a881c27"
       ],
       "confidence": "MODEL_DRAFT",
-      "deliverable_role": "输出《佣金税务处理记录》，用于税务计算与申报",
+      "deliverable_role": "负责产出《佣金税务处理记录》，归口佣金合规族（JF-07）佣金管理与合规岗",
       "specific_capabilities": [
-        "信息处理/事务类能力：单一动作",
-        "高封装度，理想Skill候选"
+        "输入结构化D1=3，规则清晰度D2=3，输出验证D3=3",
+        "API可达D4=3，fallback D5=2，合规D6=2",
+        "单一信息处理动作，无资金安全硬门禁"
       ],
-      "ai_reshape": "A档，高封装；可作为确定性Skill执行税务计算",
-      "quality_anchor": "税务处理记录准确，符合税法规定",
-      "ai_responsibility": "AI负责计算税务金额、生成处理记录",
-      "human_responsibility": "中台支持部负责最终审核与合规检查",
+      "ai_reshape": "确定性Skill执行税务计算与记录生成，无需人工判断",
+      "quality_anchor": "数据表类交付物，质量锚点为税务规则参数化与输出验证",
+      "ai_responsibility": "可执行佣金税务计算、税务记录生成与归档",
+      "human_responsibility": "人工执行：佣金税务处理（EVD-525aaf7968883322c3d2）",
       "handoff_triggers": [
-        "税务规则变化、异常情况"
+        "税务规则变更",
+        "计算异常"
       ],
       "control_gates": [
-        "税务申报需合规审核"
+        "无资金安全硬门禁，但需合规记录"
       ],
       "data_basis": [
-        "无ACTIVE业务数据证据，仅基于流程定义和评分"
+        "agent_d1=3, D2=3, D3=3, D4=3, D5=2, D6=2",
+        "skill_feasibility: grade A, action_nature=信息处理/事务类, action_singularity=单一动作",
+        "human_touchpoint=人工执行：佣金税务处理",
+        "deliverable=《佣金税务处理记录》, type=数据表"
       ],
-      "process_context": "蓝图未列入顺序步骤，属于税务处理环节",
+      "process_context": "蓝图未列步骤，规则PAY-R087额外费用/收入分类规则涉及税务处理",
       "risks_limits": [
-        "税务合规风险，需要人复核"
+        "无重大风险，但需确保税务规则更新及时",
+        "当前business_evidence为空，数据支撑不足"
       ],
-      "current_recommendation": "优先进入Skill原型候选池，补充合规检查",
+      "current_recommendation": "优先进入Skill原型候选池，封装税务计算Skill",
       "database_tier": "Auto",
       "recommended_tier": "Auto",
       "quadrant": "unclassified"
@@ -303,43 +313,42 @@
         "EVD-695b219bf1d792e24224",
         "EVD-efedee1f2b93f8d7416c",
         "EVD-df9b2ec7a2b14b98616d",
-        "EVD-807ab75acbdab39974ba",
         "EVD-bae4acdb80c52047fb1b",
         "EVD-5fbb5b83848024c94e46",
-        "EVD-effcded9d8f28d105a2d",
-        "EVD-4f56b1006f9184d68ad8",
-        "EVD-3df97af198f7e74f488c",
-        "EVD-40c59feacc33cb6427f6",
-        "EVD-77486ed2077b93e81e0f",
-        "EVD-5fe54f11175d89ceebe4",
-        "EVD-bfae89c20a2cc41e2aa0"
+        "EVD-3df97af198f7e74f488c"
       ],
       "confidence": "MODEL_DRAFT",
-      "deliverable_role": "输出《佣金争议处理记录》，用于记录和解决争议",
+      "deliverable_role": "负责产出《佣金争议处理记录》，归口佣金合规族（JF-07）佣金管理与合规岗",
       "specific_capabilities": [
-        "判断/策略/认知类能力：单一动作",
-        "低封装度，需人工判断与权威"
+        "输入结构化D1=2，规则清晰度D2=0，输出验证D3=1",
+        "API可达D4=1，fallback D5=1，合规D6=1",
+        "判断/策略/认知类，单一动作，需人工协调与决策"
       ],
-      "ai_reshape": "C档，低封装；仅可Agent辅助，不封装Skill",
-      "quality_anchor": "争议处理记录完整，结论有依据",
-      "ai_responsibility": "AI可提供信息检索、历史案例参考等辅助",
-      "human_responsibility": "中台支持部负责调查、判断与最终决策",
+      "ai_reshape": "Agent辅助争议信息收集与整理，人工进行争议判定与沟通",
+      "quality_anchor": "数据表类交付物，质量取决于争议处理流程的完整性与人工判断",
+      "ai_responsibility": "可协助记录争议案件、检索历史案例、提出参考建议",
+      "human_responsibility": "人工执行：佣金争议处理（EVD-29c339c1a0dd9c423cc5）",
       "handoff_triggers": [
-        "争议无法自动判断，需人工介入"
+        "争议升级",
+        "需法务/管理层介入"
       ],
       "control_gates": [
-        "争议处理可能涉及法律合规"
+        "争议处理涉及对外沟通与资金调整，需人工审批"
       ],
       "data_basis": [
-        "无ACTIVE业务数据证据，仅基于流程定义和评分"
+        "agent_d1=2, D2=0, D3=1, D4=1, D5=1, D6=1",
+        "skill_feasibility: grade C, action_nature=判断/策略/认知类, action_singularity=单一动作",
+        "human_touchpoint=人工执行：佣金争议处理",
+        "deliverable=《佣金争议处理记录》, type=数据表"
       ],
-      "process_context": "蓝图未列入顺序步骤，属于争议处理环节",
+      "process_context": "蓝图未列步骤，规则PAY-R089归属不明款项询问与升级流程相关",
       "risks_limits": [
-        "判断依赖高，不能自动化"
+        "规则清晰度D2=0，无法自动化判定",
+        "C级低封装，不直接封装Skill"
       ],
-      "current_recommendation": "仅提供Agent辅助，保持人工主导",
+      "current_recommendation": "优先考虑Agent辅助或决策支持，不直接封装确定性Skill",
       "database_tier": "Hybrid",
-      "recommended_tier": "Human",
+      "recommended_tier": "Hybrid",
       "quadrant": "unclassified"
     },
     {
@@ -349,41 +358,40 @@
         "EVD-5c3e5e997e7a09864957",
         "EVD-8783f0465208f9cff033",
         "EVD-4716c83e831b0dd49463",
-        "EVD-807ab75acbdab39974ba",
         "EVD-110b5ae5526e47c122d3",
         "EVD-f9c4c96b3d547e7cb56c",
-        "EVD-c9891efc841d12f1244a",
-        "EVD-57f4a62ec54ae63244d4",
-        "EVD-e769e15719494fb5900d",
-        "EVD-96ac726827b2f513156f",
-        "EVD-56c22eb88d5332d532af",
-        "EVD-2ca779490c3cefc9c65b",
-        "EVD-4fb0223f9ba24ee3b593"
+        "EVD-e769e15719494fb5900d"
       ],
       "confidence": "MODEL_DRAFT",
-      "deliverable_role": "输出《跨保司佣金整合记录》，用于整合多保司佣金数据",
+      "deliverable_role": "负责产出《跨保司佣金整合记录》，归口佣金合规族（JF-07）佣金管理与合规岗",
       "specific_capabilities": [
-        "语义复核判定类能力：单一动作",
-        "高封装度，但需语义复核后确认"
+        "输入结构化D1=2，规则清晰度D2=2，输出验证D3=2",
+        "API可达D4=2，fallback D5=2，合规D6=2",
+        "语义复核判定，单一动作，整合后需人工确认"
       ],
-      "ai_reshape": "A档，高封装；可Skill化，但需人工语义复核",
-      "quality_anchor": "整合数据准确，字段映射一致",
-      "ai_responsibility": "AI负责数据整合、映射、生成整合记录",
-      "human_responsibility": "佣金管理与合规岗负责语义复核与最终确认",
+      "ai_reshape": "确定性Skill执行跨保司数据整合与汇总，人工进行语义复核确认",
+      "quality_anchor": "数据表类交付物，质量锚点为聚合宽表数据一致性",
+      "ai_responsibility": "可执行跨保司佣金数据抽取、整合与汇总",
+      "human_responsibility": "人工执行：跨保司佣金整合（EVD-078dc285950e2c103d98）",
       "handoff_triggers": [
-        "映射冲突、异常数据"
+        "保司数据缺失或不一致",
+        "整合结果异常"
       ],
       "control_gates": [
-        "对外发布前需审批"
+        "整合结果需人工复核确认后方可用于下游"
       ],
       "data_basis": [
-        "无ACTIVE业务数据证据，仅基于流程定义和评分"
+        "agent_d1=2, D2=2, D3=2, D4=2, D5=2, D6=2",
+        "skill_feasibility: grade A, action_nature=语义复核判定, action_singularity=单一动作",
+        "human_touchpoint=人工执行：跨保司佣金整合",
+        "deliverable=《跨保司佣金整合记录》, type=数据表"
       ],
-      "process_context": "蓝图未列入顺序步骤，属于整合环节",
+      "process_context": "蓝图未列步骤，但涉及多保司数据整合，为后续外发做准备",
       "risks_limits": [
-        "复合动作未拆分；语义复核依赖人"
+        "单一动作但需语义复核",
+        "business_evidence有UNVERIFIED数据"
       ],
-      "current_recommendation": "进入Skill候选池，补充语义复核节点",
+      "current_recommendation": "优先进入Skill原型候选池，封装整合Skill，保留人工复核点",
       "database_tier": "Auto",
       "recommended_tier": "Auto",
       "quadrant": "unclassified"
@@ -395,41 +403,41 @@
         "EVD-5a9eaeb50db982d6dadf",
         "EVD-ad628ed729c76cc1ad97",
         "EVD-e7f085fe7b16c300cf2f",
-        "EVD-807ab75acbdab39974ba",
         "EVD-8440e68d409dafc9eac3",
         "EVD-a75edf54c6dc7961fdd8",
-        "EVD-06af6881f372bb005ecb",
-        "EVD-c9e5dbc937aa3a7466b9",
-        "EVD-123c1b07a259bb34aae6",
-        "EVD-8e87079eb14ce4f052d8",
-        "EVD-d9de8ac1f0092ad1b3dc",
-        "EVD-fde1d6a88ff00ba8b344",
-        "EVD-5d4cd49c877a41b672c6"
+        "EVD-123c1b07a259bb34aae6"
       ],
       "confidence": "MODEL_DRAFT",
-      "deliverable_role": "输出《佣金异常检测反欺诈记录》，用于识别异常与欺诈",
+      "deliverable_role": "负责产出《佣金异常检测反欺诈记录》，归口佣金合规族（JF-07）佣金管理与合规岗",
       "specific_capabilities": [
-        "合规监管类能力：单一动作",
-        "B档，需报告模板/系统集成配合"
+        "输入结构化D1=3，规则清晰度D2=3，输出验证D3=3",
+        "API可达D4=3，fallback D5=2，合规D6=2",
+        "合规监管类，单一动作，需人工复核异常",
+        "B级中封装（需报告模板/系统集成配合）"
       ],
-      "ai_reshape": "B档，可封装但仍需人工复核（合规类）",
-      "quality_anchor": "异常检测准确，反欺诈规则合规",
-      "ai_responsibility": "AI负责异常检测、规则匹配、生成告警",
-      "human_responsibility": "中台支持部负责复核告警、调查欺诈",
+      "ai_reshape": "Skill自动执行异常检测算法与报告生成，人工复核异常并采取行动",
+      "quality_anchor": "数据表类交付物，质量锚点为异常检测准确率与报告完整性",
+      "ai_responsibility": "可执行异常检测、分类与报告生成",
+      "human_responsibility": "人工执行：佣金异常检测反欺诈（EVD-440d672e3afafdbde106）",
       "handoff_triggers": [
-        "告警触发、疑似欺诈案件"
+        "检测到重大异常",
+        "需进一步调查或处置"
       ],
       "control_gates": [
-        "合规监管要求"
+        "合规监管类需人工复核并可能上报"
       ],
       "data_basis": [
-        "无ACTIVE业务数据证据，仅基于流程定义和评分"
+        "agent_d1=3, D2=3, D3=3, D4=3, D5=2, D6=2",
+        "skill_feasibility: grade B, action_nature=合规监管类, action_singularity=单一动作",
+        "human_touchpoint=人工执行：佣金异常检测反欺诈",
+        "deliverable=《佣金异常检测反欺诈记录》, type=数据表"
       ],
-      "process_context": "蓝图未列入顺序步骤，属于监测环节",
+      "process_context": "蓝图未列步骤，但规则PAY-R056应派表实时校验触发条件相关",
       "risks_limits": [
-        "合规风险，需人工复核"
+        "B级需先补报告模板、规则固化或系统接口",
+        "异常检测依赖数据质量"
       ],
-      "current_recommendation": "先补报告模板和系统接口，再验证Skill",
+      "current_recommendation": "先补报告模板、规则固化或系统接口，再验证Skill；人工负责最终处置",
       "database_tier": "Aug",
       "recommended_tier": "Aug",
       "quadrant": "unclassified"
@@ -441,44 +449,44 @@
         "EVD-0f33bf6a01d612dfe164",
         "EVD-d438ad66fc634c61f8b2",
         "EVD-a82615e90ab961a3a109",
-        "EVD-807ab75acbdab39974ba",
         "EVD-53ed5a0156c91fda8988",
         "EVD-a03ac71d1111eab0d66d",
-        "EVD-03a699069f8262dd19bf",
-        "EVD-002f1b451f2fff284c21",
-        "EVD-7378d51ba99d1b30e9c9",
-        "EVD-7c8dda65cb074c32095c",
-        "EVD-2bc31b7138251a29ed76",
-        "EVD-01345904f1065138f842",
-        "EVD-ef2b3c2dbac3b37f5e1d",
-        "EVD-e6e5738ab334d18238bf"
+        "EVD-7378d51ba99d1b30e9c9"
       ],
       "confidence": "MODEL_DRAFT",
-      "deliverable_role": "输出《应收明细清单》，用于后续实收对账",
+      "deliverable_role": "负责产出《应收明细清单》，归口佣金合规族（JF-07）佣金管理与合规岗",
       "specific_capabilities": [
-        "信息处理/事务类能力：保单信息整合与应收核算",
-        "复合动作需拆分为子Skill"
+        "输入结构化D1=2，规则清晰度D2=3，输出验证D3=2",
+        "API可达D4=2，fallback D5=1，合规D6=1",
+        "复合动作：保单信息整合与应收核算需拆分为整合Skill与核算复核"
       ],
-      "ai_reshape": "A档，高封装但需先拆分（整合与核算）",
-      "quality_anchor": "应收明细准确，与保单信息一致",
-      "ai_responsibility": "AI负责保单数据整合、应收计算",
-      "human_responsibility": "佣金管理与合规岗负责核算结果确认",
+      "ai_reshape": "确定性Skill执行保单数据整合与应收计算，人工进行核算结果复核与确认",
+      "quality_anchor": "数据表类交付物，质量锚点为应收明细与保单数据一致",
+      "ai_responsibility": "可执行保单信息抽取、整合与应收核算",
+      "human_responsibility": "人工执行：保单信息整合与应收核算（EVD-8c0204d58939225375a1）",
       "handoff_triggers": [
-        "数据缺失、保单状态异常"
+        "保单数据缺失",
+        "应收金额异常",
+        "待注册流程需人工处理"
       ],
       "control_gates": [
-        "资金相关数据需准确"
+        "应收核算涉及财务，需人工复核确认"
       ],
       "data_basis": [
-        "无ACTIVE业务数据证据，仅基于流程定义和评分"
+        "agent_d1=2, D2=3, D3=2, D4=2, D5=1, D6=1",
+        "skill_feasibility: grade A, action_nature=信息处理/事务类, action_singularity=复合动作",
+        "human_touchpoint=人工执行：保单信息整合与应收核算（待注册）",
+        "deliverable=《应收明细清单》, type=数据表"
       ],
-      "process_context": "蓝图步骤STEP-04，前序STEP-03，后续STEP-05",
+      "process_context": "蓝图STEP-04保单信息整合与应收核算；属于价值节点VN-PAY-02佣金实收确认表，状态PARTIAL",
       "risks_limits": [
-        "复合动作未拆分；核算准确性要求高"
+        "复合动作需拆分为子Skill",
+        "待注册状态，流程未固化",
+        "D5 fallback=1, D6=1较低"
       ],
-      "current_recommendation": "拆分整合与核算子Skill，建立对账校验",
+      "current_recommendation": "优先拆分为保单整合Skill与核算复核子流程，先进入Skill原型候选池，同时推进注册确认",
       "database_tier": "Auto",
-      "recommended_tier": "Aug",
+      "recommended_tier": "Auto",
       "quadrant": "unclassified"
     },
     {
@@ -488,44 +496,44 @@
         "EVD-0c082792c1babee9daab",
         "EVD-2b5d641a68e1944f3675",
         "EVD-b8572f0e5e34fa49e96a",
-        "EVD-807ab75acbdab39974ba",
         "EVD-ec616da2ec2c5db89bb8",
         "EVD-0e38a79e83aeada84c22",
-        "EVD-0e4ed9b8d9783fb026f2",
-        "EVD-fa1835f16ba87f353b3d",
-        "EVD-ee93d8fc4b4f44f1b943",
-        "EVD-8eda65bd2cf2217110b9",
-        "EVD-6ecee95348b8eef3a70d",
-        "EVD-0f5ad3713e2428416f27",
-        "EVD-a439d55fed017277240d",
-        "EVD-541ba265fc3abbb7fec0"
+        "EVD-ee93d8fc4b4f44f1b943"
       ],
       "confidence": "MODEL_DRAFT",
-      "deliverable_role": "输出《实收清单》+《差异对照表》，用于银行到账确认与对账",
+      "deliverable_role": "负责产出《实收清单》与《差异对照表》，归口佣金合规族（JF-07）佣金管理与合规岗",
       "specific_capabilities": [
-        "信息处理/事务类能力：到账确认与对账",
-        "复合动作需拆分为子Skill"
+        "输入结构化D1=2，规则清晰度D2=2，输出验证D3=2",
+        "API可达D4=2，fallback D5=1，合规D6=1",
+        "复合动作：实收对账需拆分为对账Skill与差异人工确认"
       ],
-      "ai_reshape": "A档，高封装但需拆分（确认与对账）",
-      "quality_anchor": "实收与银行流水一致，差异可解释",
-      "ai_responsibility": "AI负责数据匹配、差异计算",
-      "human_responsibility": "财务部门负责最终确认与差异处理",
+      "ai_reshape": "确定性Skill执行银行到账数据匹配与差异计算，人工进行差异核对与调整",
+      "quality_anchor": "数据表类交付物，质量锚点为实收与应收匹配一致，差异表完整",
+      "ai_responsibility": "可执行银行流水导入、匹配与差异计算",
+      "human_responsibility": "人工执行：银行到账确认与实收对账（EVD-b2b61df7b18b3c16743c）",
       "handoff_triggers": [
-        "差异超标、银行数据缺失"
+        "银行流水缺失",
+        "差异金额需人工处理",
+        "待注册流程需人工"
       ],
       "control_gates": [
-        "资金数据需准确"
+        "资金到账确认需人工核对银行流水"
       ],
       "data_basis": [
-        "无ACTIVE业务数据证据，仅基于流程定义和评分"
+        "agent_d1=2, D2=2, D3=2, D4=2, D5=1, D6=1",
+        "skill_feasibility: grade A, action_nature=信息处理/事务类, action_singularity=复合动作",
+        "human_touchpoint=人工执行：银行到账确认与实收对账（待注册）",
+        "deliverable=《实收清单》 + 《差异对照表》, type=数据表"
       ],
-      "process_context": "蓝图步骤STEP-05，前序STEP-04，后续STEP-06",
+      "process_context": "蓝图STEP-05银行到账确认与实收对账；属于价值节点VN-PAY-02佣金实收确认表，状态PARTIAL",
       "risks_limits": [
-        "复合动作未拆分；对账错误影响后续"
+        "复合动作需拆分",
+        "待注册",
+        "fallback D5=1"
       ],
-      "current_recommendation": "拆分子Skill，建立自动对账与人工复核",
+      "current_recommendation": "优先拆分对账Skill与人工差异处理，先进入Skill原型候选池，推进注册",
       "database_tier": "Auto",
-      "recommended_tier": "Aug",
+      "recommended_tier": "Auto",
       "quadrant": "unclassified"
     },
     {
@@ -535,44 +543,45 @@
         "EVD-6d8f25e35f9390785832",
         "EVD-1b9206cbf7054edfde19",
         "EVD-9fdb424c96a791445a5e",
-        "EVD-807ab75acbdab39974ba",
         "EVD-f1968ea26fdb8212802e",
         "EVD-e4573dab6044d8374475",
-        "EVD-e2ff815caf3340600032",
-        "EVD-81591b835d4cef439562",
-        "EVD-26078473098258db3bb0",
-        "EVD-3c0f2ca5629dc9f5ce49",
-        "EVD-2788a605c12978e09c58",
-        "EVD-b839f8dcd4ea3fd3a570",
-        "EVD-e167a1a79d81736a31df",
-        "EVD-acc13810ec34c27931b4"
+        "EVD-26078473098258db3bb0"
       ],
       "confidence": "MODEL_DRAFT",
-      "deliverable_role": "输出《应派清单》+《理财师对账单》，用于拆分与对账",
+      "deliverable_role": "负责产出《应派清单》与《理财师对账单》，归口佣金合规族（JF-07）佣金管理与合规岗",
       "specific_capabilities": [
-        "信息处理/事务类能力：金额拆分与对账",
-        "复合动作需拆分为子Skill"
+        "输入结构化D1=2，规则清晰度D2=3，输出验证D3=2",
+        "API可达D4=2，fallback D5=1，合规D6=1",
+        "复合动作：应派金额拆分与渠道对账需拆分为计算Skill与对账复核"
       ],
-      "ai_reshape": "A档，高封装但需拆分（拆分与对账）",
-      "quality_anchor": "应派金额正确，对账单与拆分一致",
-      "ai_responsibility": "AI负责拆分计算、对账生成",
-      "human_responsibility": "佣金管理与合规岗负责核对与确认",
+      "ai_reshape": "确定性Skill执行应派金额拆分计算与渠道对账，人工复核拆分结果",
+      "quality_anchor": "数据表类交付物，质量锚点为应派清单与路由规则一致",
+      "ai_responsibility": "可执行应派金额计算、拆分与对账单生成",
+      "human_responsibility": "未提供人工触点（EVD-3a5dfd4aae70d01ee437为MISSING），需工作坊确认",
       "handoff_triggers": [
-        "拆分比例异常、对账不符"
+        "路由规则缺失",
+        "拆分金额异常",
+        "对账差异"
       ],
       "control_gates": [
-        "资金拆分需审批"
+        "应派金额拆分涉及资金，需人工复核"
       ],
       "data_basis": [
-        "无ACTIVE业务数据证据，仅基于流程定义和评分"
+        "agent_d1=2, D2=3, D3=2, D4=2, D5=1, D6=1",
+        "skill_feasibility: grade A, action_nature=信息处理/事务类, action_singularity=复合动作",
+        "human_touchpoint=MISSING",
+        "deliverable=《应派清单》 + 《理财师对账单》, type=数据表"
       ],
-      "process_context": "蓝图步骤STEP-06，前序STEP-05，后续STEP-07",
+      "process_context": "蓝图STEP-06应派金额拆分与渠道对账；属于价值节点VN-PAY-03应派清单三件套、VN-PAY-06理财师综合应派计算清单",
       "risks_limits": [
-        "复合动作未拆分；资金安全风险"
+        "复合动作需拆分",
+        "待注册",
+        "人工触点缺失",
+        "fallback D5=1"
       ],
-      "current_recommendation": "拆分子Skill，建立对账校验与审批",
+      "current_recommendation": "优先拆分计算Skill与人工对账复核，先进入Skill原型候选池，补全人工确认责任",
       "database_tier": "Auto",
-      "recommended_tier": "Aug",
+      "recommended_tier": "Auto",
       "quadrant": "unclassified"
     },
     {
@@ -582,44 +591,46 @@
         "EVD-0e96f1628f3e8709028b",
         "EVD-317c89464705bc50f14c",
         "EVD-03c56812c3c8bb8da317",
-        "EVD-807ab75acbdab39974ba",
         "EVD-daac64dc6d0589a282d6",
         "EVD-a919472a15a154172eb5",
-        "EVD-f56e3e5e4460944b57c3",
-        "EVD-63e85adbaed8cf1cb73f",
-        "EVD-b2378f17e900298cd11b",
-        "EVD-f36aac0188905f484a25",
-        "EVD-7d44496d6b115bd28ae2",
-        "EVD-60f79b59800e9eec496c",
-        "EVD-99cf009a0da4b7c839eb",
-        "EVD-72a15b233148bb2b723b"
+        "EVD-b2378f17e900298cd11b"
       ],
       "confidence": "MODEL_DRAFT",
-      "deliverable_role": "输出《实派执行表》，用于实派清单确认与财务制单",
+      "deliverable_role": "负责产出《实派执行表》，归口佣金合规族（JF-07）佣金管理与合规岗",
       "specific_capabilities": [
-        "信息处理/事务类能力：复合动作（确认与制单）",
-        "存在资金安全硬门"
+        "输入结构化D1=2，规则清晰度D2=2，输出验证D3=2",
+        "API可达D4=1，fallback D5=1，合规D6=2",
+        "复合动作且资金安全硬门禁（funds_safety_hard_gate=true）",
+        "需拆分为“实派清单生成/财务制单”子Skill与“人工确认付款”控制门"
       ],
-      "ai_reshape": "A档，高封装但需拆分，且资金安全门不可绕过",
-      "quality_anchor": "实派清单正确，制单无误",
-      "ai_responsibility": "AI负责生成清单、制单草稿",
-      "human_responsibility": "财务部门负责清单确认与制单审批",
+      "ai_reshape": "Skill自动生成实派执行表与财务制单草稿，人工进行付款前审批确认",
+      "quality_anchor": "数据表类交付物，质量锚点为实派清单与账户信息一致，制单正确",
+      "ai_responsibility": "可执行实派清单生成、财务制单数据准备",
+      "human_responsibility": "人工执行：实派清单确认与财务制单（EVD-3a6911dfa7ea38795bed）",
       "handoff_triggers": [
-        "资金安全门触发、审批未通过"
+        "付款账户信息缺失",
+        "金额超阈值",
+        "制单数据异常"
       ],
       "control_gates": [
-        "资金安全硬门：实派前必须人工审批"
+        "资金安全硬门禁：财务制单与付款执行必须人工审批",
+        "不可逆操作需人工控制"
       ],
       "data_basis": [
-        "无ACTIVE业务数据证据，仅基于流程定义和评分"
+        "agent_d1=2, D2=2, D3=2, D4=1, D5=1, D6=2",
+        "skill_feasibility: grade A, action_nature=信息处理/事务类, action_singularity=复合动作, funds_safety_hard_gate=true",
+        "human_touchpoint=人工执行：实派清单确认与财务制单（待注册）",
+        "deliverable=《实派执行表》, type=数据表"
       ],
-      "process_context": "蓝图步骤STEP-08，前序STEP-07，后续STEP-09",
+      "process_context": "蓝图STEP-08实派清单确认与财务制单；涉及价值节点VN-PAY-06理财师综合应派计算清单",
       "risks_limits": [
-        "资金安全不可逆，必须人工控制"
+        "资金安全硬门禁，不可完全自动化",
+        "待注册",
+        "API可达D4=1，需系统集成"
       ],
-      "current_recommendation": "严格拆分，保留人工审批门，不自动化资金操作",
+      "current_recommendation": "优先拆分制单Skill，但必须保留人工付款审批控制门；先进入Skill原型候选池并推进注册",
       "database_tier": "Auto",
-      "recommended_tier": "Hybrid",
+      "recommended_tier": "Auto",
       "quadrant": "unclassified"
     },
     {
@@ -629,44 +640,46 @@
         "EVD-08ea8bfb3fd19609a4e8",
         "EVD-23c3c12fa3296c207c07",
         "EVD-a5c8ef47be835b5d0e78",
-        "EVD-807ab75acbdab39974ba",
         "EVD-5eeb02716a617ab995d8",
         "EVD-d3a0a474acddb209c272",
-        "EVD-59abf8b56d53f621ac64",
-        "EVD-e9a38d46d3ccfefcd527",
-        "EVD-e1e1ab9aebf3b917b688",
-        "EVD-df0798bf507041e2be75",
-        "EVD-aec414916abcccc6f23f",
-        "EVD-7f8d74fa57ebec11ba9c",
-        "EVD-a299261969729f690144",
-        "EVD-29a29003b8173e8456da"
+        "EVD-e1e1ab9aebf3b917b688"
       ],
       "confidence": "MODEL_DRAFT",
-      "deliverable_role": "输出银行转账回执/支票存根，作为付款凭证",
+      "deliverable_role": "负责产出银行转账回执/支票存根，归口佣金合规族（JF-07）佣金管理与合规岗",
       "specific_capabilities": [
-        "信息处理/事务类能力：单一动作",
-        "资金安全硬门"
+        "输入结构化D1=2，规则清晰度D2=2，输出验证D3=3",
+        "API可达D4=2，fallback D5=1，合规D6=2",
+        "单一动作但资金安全硬门禁（funds_safety_hard_gate=true）"
       ],
-      "ai_reshape": "A档，高封装但资金安全硬门不可自动化",
-      "quality_anchor": "付款执行无误，回执真实",
-      "ai_responsibility": "AI生成付款指令建议",
-      "human_responsibility": "财务部门负责实际付款执行",
+      "ai_reshape": "Skill可辅助生成付款指令与回执归档，但实际付款动作必须人工触发并审批",
+      "quality_anchor": "凭证类交付物，质量锚点为银行回执与付款指令一致",
+      "ai_responsibility": "可执行付款数据准备、回执归档",
+      "human_responsibility": "人工执行：财务付款执行（EVD-01a0aa37b5efe6e15039）",
       "handoff_triggers": [
-        "资金安全门触发、付款失败"
+        "付款账户异常",
+        "金额不一致",
+        "银行返回错误",
+        "需人工确认付款结果"
       ],
       "control_gates": [
-        "资金安全硬门：付款必须人工执行"
+        "资金安全硬门禁：实际付款动作必须人工审批确认，AI不可直接触发",
+        "不可逆操作需人工控制"
       ],
       "data_basis": [
-        "无ACTIVE业务数据证据，仅基于流程定义和评分"
+        "agent_d1=2, D2=2, D3=3, D4=2, D5=1, D6=2",
+        "skill_feasibility: grade A, action_nature=信息处理/事务类, action_singularity=单一动作, funds_safety_hard_gate=true",
+        "human_touchpoint=人工执行：财务付款执行（待注册）",
+        "deliverable=银行转账回执 / 支票存根, type=凭证"
       ],
-      "process_context": "蓝图步骤STEP-09，前序STEP-08，后续STEP-10",
+      "process_context": "蓝图STEP-09财务付款执行；属于价值节点VN-PAY-04转介费派发确认台账，当前FAIL",
       "risks_limits": [
-        "资金不可逆操作，必须人工"
+        "资金安全硬门禁，不可全自动",
+        "待注册",
+        "fallback D5=1"
       ],
-      "current_recommendation": "禁止自动化付款，仅生成指令供人工审核执行",
+      "current_recommendation": "封装付款指令准备与回执归档Skill，但实际支付必须人工审批，确保硬门禁",
       "database_tier": "Auto",
-      "recommended_tier": "Human",
+      "recommended_tier": "Auto",
       "quadrant": "unclassified"
     },
     {
@@ -676,42 +689,42 @@
         "EVD-430504958c7c05297502",
         "EVD-ad5bf8306d1597e0af89",
         "EVD-215eb6ce03d378e797d5",
-        "EVD-807ab75acbdab39974ba",
         "EVD-5ec40c24900f3656e553",
         "EVD-4b4adba2a6dddd8b740d",
-        "EVD-43b4880d5bab22bad99f",
-        "EVD-e255cf62493f682ab1ed",
-        "EVD-b91c1f880c952fb22cc5",
-        "EVD-e8db7fb325dd2f9a28bd",
-        "EVD-a354625fc527f7724658",
-        "EVD-f021af257717f4c79472",
-        "EVD-6a5973bc9a9fa4d0f5b1",
-        "EVD-c7d0fcc506d19b48985b"
+        "EVD-b91c1f880c952fb22cc5"
       ],
       "confidence": "MODEL_DRAFT",
-      "deliverable_role": "输出《转介费派发确认台账》，用于回执归档与台账更新",
+      "deliverable_role": "负责产出《转介费派发确认台账》，归口佣金合规族（JF-07）佣金管理与合规岗",
       "specific_capabilities": [
-        "信息处理/事务类能力：复合动作（归档与更新）",
-        "需拆分为子Skill"
+        "输入结构化D1=2，规则清晰度D2=2，输出验证D3=2",
+        "API可达D4=1，fallback D5=1，合规D6=1",
+        "复合动作：回执归档与台账更新需拆分为归档Skill与台账核对"
       ],
-      "ai_reshape": "A档，高封装但需拆分（归档与更新）",
-      "quality_anchor": "台账完整、回执可追溯",
-      "ai_responsibility": "AI负责回执信息提取、台账更新",
-      "human_responsibility": "各牌照财务负责核对回执与台账",
+      "ai_reshape": "Skill自动归档付款回执并更新台账，人工核对台账与回执一致性",
+      "quality_anchor": "数据表类交付物，质量锚点为台账与付款回执一一对应",
+      "ai_responsibility": "可执行回执文件归档、台账自动更新",
+      "human_responsibility": "人工执行：付款回执归档与台账更新（EVD-b6ff41404204ee483cef）",
       "handoff_triggers": [
-        "回执缺失、台账不一致"
+        "回执缺失",
+        "台账差异",
+        "需人工补录"
       ],
       "control_gates": [
-        "资金相关文件需准确"
+        "无资金硬门禁，但台账更新需人确认"
       ],
       "data_basis": [
-        "无ACTIVE业务数据证据，仅基于流程定义和评分"
+        "agent_d1=2, D2=2, D3=2, D4=1, D5=1, D6=1",
+        "skill_feasibility: grade A, action_nature=信息处理/事务类, action_singularity=复合动作",
+        "human_touchpoint=人工执行：付款回执归档与台账更新（待注册）",
+        "deliverable=《转介费派发确认台账》, type=数据表"
       ],
-      "process_context": "蓝图步骤STEP-10，前序STEP-09",
+      "process_context": "蓝图STEP-10付款回执归档与台账更新；属于价值节点VN-PAY-04转介费派发确认台账，当前FAIL",
       "risks_limits": [
-        "复合动作未拆分"
+        "复合动作需拆分",
+        "待注册",
+        "API可达D4=1"
       ],
-      "current_recommendation": "拆分子Skill，建立归档与更新分开",
+      "current_recommendation": "优先拆分归档Skill与人工台账核对，先进入Skill原型候选池",
       "database_tier": "Auto",
       "recommended_tier": "Auto",
       "quadrant": "unclassified"
@@ -723,44 +736,44 @@
         "EVD-0987c3b342d7db96945a",
         "EVD-ac2e625d0fbe9fe7b68b",
         "EVD-220778ebeb1268db81ca",
-        "EVD-807ab75acbdab39974ba",
         "EVD-423a91a9ba3b12e49919",
         "EVD-0f4b8785b3d94e797142",
-        "EVD-8cb4c8123e1b9917ba9b",
-        "EVD-1cfb1a8e906e2492a9af",
-        "EVD-cafecc0a73dabf0f4df0",
-        "EVD-2293cf368ee67a95718a",
-        "EVD-c5000f561af18b420f47",
-        "EVD-954be25187c2222208e0",
-        "EVD-bcf5aa7bffc2fb290c57",
-        "EVD-880fb0e1c4b31d75c077"
+        "EVD-cafecc0a73dabf0f4df0"
       ],
       "confidence": "MODEL_DRAFT",
-      "deliverable_role": "输出结构化佣金数据表（供COM-01使用），完成PDF到Excel导入转换",
+      "deliverable_role": "负责产出结构化佣金数据表（供COM-01使用），归口佣金合规族（JF-07）佣金管理与合规岗",
       "specific_capabilities": [
-        "信息处理/事务类能力：数据导入与格式转换",
-        "复合动作需拆分为子Skill"
+        "输入结构化D1=2，规则清晰度D2=2，输出验证D3=2",
+        "API可达D4=2，fallback D5=1，合规D6=1",
+        "复合动作：数据导入与格式转换需拆分为导入Skill与格式校验"
       ],
-      "ai_reshape": "A档，高封装但需拆分（识别与转换）",
-      "quality_anchor": "转换后数据与原PDF一致，无丢失",
-      "ai_responsibility": "AI负责PDF识别、数据提取、格式转换",
-      "human_responsibility": "佣金管理与合规岗负责校验转换结果",
+      "ai_reshape": "Skill自动执行PDF/Excel数据导入与格式转换，人工校验转换结果",
+      "quality_anchor": "数据表类交付物，质量锚点为结构化数据与源文件一致",
+      "ai_responsibility": "可执行文件解析、字段映射与格式转换",
+      "human_responsibility": "人工执行：佣金数据导入与格式转换（EVD-a293c64ecc525cfbd44b）",
       "handoff_triggers": [
-        "OCR识别失败、格式异常"
+        "源文件格式异常",
+        "OCR识别失败",
+        "数据校验不通过"
       ],
       "control_gates": [
-        "数据源头准确性"
+        "导入数据需人工确认后方可进入后续流程"
       ],
       "data_basis": [
-        "无ACTIVE业务数据证据，仅基于流程定义和评分"
+        "agent_d1=2, D2=2, D3=2, D4=2, D5=1, D6=1",
+        "skill_feasibility: grade A, action_nature=信息处理/事务类, action_singularity=复合动作",
+        "human_touchpoint=人工执行：佣金数据导入与格式转换（待注册）",
+        "deliverable=结构化佣金数据表, type=数据表"
       ],
-      "process_context": "蓝图步骤STEP-01，无前序，后续STEP-02",
+      "process_context": "蓝图STEP-01佣金数据导入与格式转换（PDF→Excel，待注册）",
       "risks_limits": [
-        "复合动作未拆分；OCR技术风险"
+        "复合动作需拆分",
+        "待注册",
+        "源头PDF无OCR/双轨道SPOF（见VN-PAY-01）"
       ],
-      "current_recommendation": "拆分子Skill，评估OCR可行性",
+      "current_recommendation": "优先拆分导入Skill与格式校验，先进入Skill原型候选池，解决OCR问题",
       "database_tier": "Auto",
-      "recommended_tier": "Aug",
+      "recommended_tier": "Auto",
       "quadrant": "unclassified"
     },
     {
@@ -770,41 +783,42 @@
         "EVD-ec66c41eae8d633e691e",
         "EVD-489bf09af150e8695eea",
         "EVD-ba68da992058dcd7ed03",
-        "EVD-807ab75acbdab39974ba",
         "EVD-3ee89cf0f3df6f8960c5",
         "EVD-ef4717e50362b6009d74",
-        "EVD-7c22c7e4aa517e34e81a",
-        "EVD-257c8632e61e7357fd01",
-        "EVD-e739885d54e56dbf953c",
-        "EVD-2e3dcedd25661e003d13",
-        "EVD-117937c62f104a75e763",
-        "EVD-4a26392ef18a4b2a8d55",
-        "EVD-8733c6ceae0b3e6151b9"
+        "EVD-e739885d54e56dbf953c"
       ],
       "confidence": "MODEL_DRAFT",
-      "deliverable_role": "输出Excel+回执PDF+IA规则校验日志，作为合规拦截引擎产出",
+      "deliverable_role": "负责产出Excel + 回执PDF（批量）+ IA规则校验日志，归口佣金合规族（JF-07）佣金管理与合规岗",
       "specific_capabilities": [
-        "合规监管类能力：单一动作",
-        "B档，需报告模板/系统集成配合"
+        "输入结构化D1=3，规则清晰度D2=2，输出验证D3=2",
+        "API可达D4=2，fallback D5=2，合规D6=3",
+        "合规监管类，单一动作，需人工复核",
+        "B级中封装（需报告模板/系统集成配合）"
       ],
-      "ai_reshape": "B档，可封装但需人工复核",
-      "quality_anchor": "合规规则校验准确，拦截有效",
-      "ai_responsibility": "AI负责规则校验、生成日志",
-      "human_responsibility": "合规部门负责复核拦截结果",
+      "ai_reshape": "Skill执行IA合规规则校验并生成日志，人工复核校验结果并处理拦截",
+      "quality_anchor": "凭证类交付物，质量锚点为规则校验日志完整且合规",
+      "ai_responsibility": "可执行合规规则校验、拦截标记与日志生成",
+      "human_responsibility": "人工执行：IA合规拦截引擎（EVD-8733c6ceae0b3e6151b9）",
       "handoff_triggers": [
-        "规则触发拦截、异常情况"
+        "触发合规拦截",
+        "规则冲突",
+        "需人工决策"
       ],
       "control_gates": [
-        "合规监管要求"
+        "合规拦截需人工复核并决定是否放行"
       ],
       "data_basis": [
-        "无ACTIVE业务数据证据，仅基于流程定义和评分"
+        "agent_d1=3, D2=2, D3=2, D4=2, D5=2, D6=3",
+        "skill_feasibility: grade B, action_nature=合规监管类, action_singularity=单一动作",
+        "human_touchpoint=人工执行：IA合规拦截引擎",
+        "deliverable=Excel + 回执PDF（批量）+ IA规则校验日志, type=凭证"
       ],
-      "process_context": "辅助环节，用于转介费派发前合规检查",
+      "process_context": "蓝图未列步骤，但涉及价值节点VN-PAY-04转介费派发确认台账，当前FAIL",
       "risks_limits": [
-        "合规风险，需人工复核"
+        "B级需先补报告模板、规则固化或系统接口",
+        "合规拦截需人工决策"
       ],
-      "current_recommendation": "先补报告模板和系统接口，再验证Skill",
+      "current_recommendation": "先补报告模板、规则固化或系统接口，再验证Skill；人工负责合规拦截处置",
       "database_tier": "Aug",
       "recommended_tier": "Aug",
       "quadrant": "unclassified"
@@ -816,41 +830,41 @@
         "EVD-289e80743e5aeb623ac5",
         "EVD-8a669b19730217a592c4",
         "EVD-4cb683d60ed5a1b280a0",
-        "EVD-807ab75acbdab39974ba",
         "EVD-2136ee5f7dfbc737a297",
         "EVD-9831fa72d19c7c828a6b",
-        "EVD-5f39424d4f20a7719d11",
-        "EVD-681466f715b8e4b8dab8",
-        "EVD-f7619b7c46d2b58d245c",
-        "EVD-5538ec73df1f69987cc2",
-        "EVD-ad37a18edfd1f0b91c90",
-        "EVD-8f34564993de44c826a4",
-        "EVD-5405f73487a8c9c27b30"
+        "EVD-f7619b7c46d2b58d245c"
       ],
       "confidence": "MODEL_DRAFT",
-      "deliverable_role": "输出《收款映射版本管理记录》，用于管理收款主体映射版本",
+      "deliverable_role": "负责产出《收款映射版本管理记录》，归口佣金合规族（JF-07）佣金管理与合规岗",
       "specific_capabilities": [
-        "语义复核判定类能力：单一动作",
-        "高封装度，但需语义复核后确认"
+        "输入结构化D1=2，规则清晰度D2=1，输出验证D3=2",
+        "API可达D4=1，fallback D5=1，合规D6=1",
+        "语义复核判定，单一动作，需人工确认版本变更"
       ],
-      "ai_reshape": "A档，高封装；可Skill化，但需人工语义复核",
-      "quality_anchor": "版本记录完整，映射准确",
-      "ai_responsibility": "AI负责版本管理、映射更新建议",
-      "human_responsibility": "佣金管理与合规岗负责语义复核与审批",
+      "ai_reshape": "Skill自动记录版本变更并生成映射快照，人工进行语义复核",
+      "quality_anchor": "数据表类交付物，质量锚点为版本记录完整可追溯",
+      "ai_responsibility": "可执行收款映射版本变更检测与记录",
+      "human_responsibility": "人工执行：收款映射版本管理（EVD-5405f73487a8c9c27b30）",
       "handoff_triggers": [
-        "映射变更、版本冲突"
+        "版本冲突",
+        "变更需审批",
+        "映射信息异常"
       ],
       "control_gates": [
-        "收款主体变更需审批"
+        "版本变更需人工确认"
       ],
       "data_basis": [
-        "无ACTIVE业务数据证据，仅基于流程定义和评分"
+        "agent_d1=2, D2=1, D3=2, D4=1, D5=1, D6=1",
+        "skill_feasibility: grade A, action_nature=语义复核判定, action_singularity=单一动作",
+        "human_touchpoint=人工执行：收款映射版本管理",
+        "deliverable=《收款映射版本管理记录》, type=数据表"
       ],
-      "process_context": "主数据治理环节，非顺序步骤",
+      "process_context": "蓝图未列步骤，规则PAY-R058收款主体映射变更审批链相关",
       "risks_limits": [
-        "语义复核依赖人；主数据错误影响支付"
+        "规则清晰度D2=1，自动化程度受限",
+        "API可达D4=1"
       ],
-      "current_recommendation": "进入Skill候选池，补充审批流",
+      "current_recommendation": "优先进入Skill原型候选池，封装版本管理Skill，保留人工复核点",
       "database_tier": "Auto",
       "recommended_tier": "Auto",
       "quadrant": "unclassified"
@@ -858,480 +872,538 @@
   ],
   "tasks": [
     {
-      "task_id": "T-COM-16-1",
+      "task_id": "T1",
       "l4_code": "L4-COM-16",
-      "task_name": "PDF识别与佣金数据提取",
+      "task_name": "执行佣金数据导入与格式转换（PDF→Excel）",
       "source_type": "blueprint_step",
       "sequence_no": 1,
       "sequence_status": "SOURCE_STEP_ONLY",
       "source_step_id": "STEP-01",
       "source_line": 49,
       "previous_task_ids": [],
-      "next_task_ids": [],
-      "relation_type": "SEQUENCE",
+      "next_task_ids": [
+        "T3"
+      ],
+      "relation_type": "parallel",
       "evidence_refs": [
         "EVD-880fb0e1c4b31d75c077",
         "EVD-423a91a9ba3b12e49919",
-        "EVD-ffe2cb79dc887b54e6ff"
+        "EVD-ac2e625d0fbe9fe7b68b"
       ],
       "analysis_status": "MODEL_DRAFT",
-      "suggested_tier": "Aug",
-      "tier_rationale": "OCR识别为信息处理，但需人工校验异常"
+      "suggested_tier": "Auto",
+      "tier_rationale": "技能可行性A级，信息处理类，但需拆分导入子Skill与人工校验"
     },
     {
-      "task_id": "T-COM-16-2",
+      "task_id": "T2",
       "l4_code": "L4-COM-16",
-      "task_name": "格式转换与导入结构化数据库",
+      "task_name": "复核导入数据的格式与完整性",
       "source_type": "blueprint_step",
       "sequence_no": 1,
       "sequence_status": "SOURCE_STEP_ONLY",
       "source_step_id": "STEP-01",
       "source_line": 49,
       "previous_task_ids": [],
-      "next_task_ids": [],
-      "relation_type": "SEQUENCE",
+      "next_task_ids": [
+        "T3"
+      ],
+      "relation_type": "parallel",
       "evidence_refs": [
         "EVD-880fb0e1c4b31d75c077",
-        "EVD-423a91a9ba3b12e49919"
+        "EVD-423a91a9ba3b12e49919",
+        "EVD-a293c64ecc525cfbd44b"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "人工触点明确，需人工确认导入结果"
+    },
+    {
+      "task_id": "T3",
+      "l4_code": "L4-COM-01",
+      "task_name": "执行佣金政策接收与费率录入",
+      "source_type": "blueprint_step",
+      "sequence_no": 2,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-02",
+      "source_line": 52,
+      "previous_task_ids": [
+        "T1",
+        "T2"
+      ],
+      "next_task_ids": [
+        "T5"
+      ],
+      "relation_type": "parallel",
+      "evidence_refs": [
+        "EVD-32c52fbab5cfced0fa62",
+        "EVD-c343c6d3cd547689f533",
+        "EVD-7faaaa7ea5605173b3ed"
       ],
       "analysis_status": "MODEL_DRAFT",
       "suggested_tier": "Auto",
-      "tier_rationale": "格式转换为确定性操作，可自动执行"
+      "tier_rationale": "A级封装，但需拆分为录入Skill与人工校准"
     },
     {
-      "task_id": "T-COM-01-1",
+      "task_id": "T4",
       "l4_code": "L4-COM-01",
-      "task_name": "接收保司佣金政策并标准化",
+      "task_name": "人工校准与确认佣金政策",
       "source_type": "blueprint_step",
       "sequence_no": 2,
-      "sequence_status": "SOURCE_CONFIRMED",
+      "sequence_status": "SOURCE_STEP_ONLY",
       "source_step_id": "STEP-02",
       "source_line": 52,
       "previous_task_ids": [
-        "T-COM-16-1",
-        "T-COM-16-2"
+        "T1",
+        "T2"
       ],
-      "next_task_ids": [],
-      "relation_type": "SEQUENCE",
+      "next_task_ids": [
+        "T5"
+      ],
+      "relation_type": "parallel",
       "evidence_refs": [
         "EVD-32c52fbab5cfced0fa62",
         "EVD-c343c6d3cd547689f533",
-        "EVD-9f608e139355cf106963"
+        "EVD-1f63786e42f0f673bb5d"
       ],
       "analysis_status": "MODEL_DRAFT",
       "suggested_tier": "Aug",
-      "tier_rationale": "政策接收需语义理解，人工确认"
+      "tier_rationale": "人工触点缺失但需人工校准，建议Aug"
     },
     {
-      "task_id": "T-COM-01-2",
-      "l4_code": "L4-COM-01",
-      "task_name": "校准政策数据与配置费率表",
-      "source_type": "blueprint_step",
-      "sequence_no": 2,
-      "sequence_status": "SOURCE_CONFIRMED",
-      "source_step_id": "STEP-02",
-      "source_line": 52,
-      "previous_task_ids": [
-        "T-COM-01-1"
-      ],
-      "next_task_ids": [],
-      "relation_type": "SEQUENCE",
-      "evidence_refs": [
-        "EVD-32c52fbab5cfced0fa62",
-        "EVD-c343c6d3cd547689f533",
-        "EVD-538949b874820e0d275a"
-      ],
-      "analysis_status": "MODEL_DRAFT",
-      "suggested_tier": "Aug",
-      "tier_rationale": "校准需人工判断，AI辅助"
-    },
-    {
-      "task_id": "T-COM-02-1",
+      "task_id": "T5",
       "l4_code": "L4-COM-02",
-      "task_name": "执行差异化拆解与配置生成",
+      "task_name": "执行差异化拆解与档位计算",
       "source_type": "blueprint_step",
       "sequence_no": 3,
-      "sequence_status": "SOURCE_CONFIRMED",
+      "sequence_status": "SOURCE_STEP_ONLY",
       "source_step_id": "STEP-03",
       "source_line": 55,
       "previous_task_ids": [
-        "T-COM-01-1",
-        "T-COM-01-2"
+        "T3",
+        "T4"
       ],
-      "next_task_ids": [],
-      "relation_type": "SEQUENCE",
-      "evidence_refs": [
-        "EVD-2936ef248ec9414d8f55",
-        "EVD-8f39d05eed73571639e8"
+      "next_task_ids": [
+        "T7"
       ],
-      "analysis_status": "MODEL_DRAFT",
-      "suggested_tier": "Aug",
-      "tier_rationale": "拆解可规则化，但需人工验证"
-    },
-    {
-      "task_id": "T-COM-02-2",
-      "l4_code": "L4-COM-02",
-      "task_name": "验证配置结果并处理差异",
-      "source_type": "blueprint_step",
-      "sequence_no": 3,
-      "sequence_status": "SOURCE_CONFIRMED",
-      "source_step_id": "STEP-03",
-      "source_line": 55,
-      "previous_task_ids": [
-        "T-COM-02-1"
-      ],
-      "next_task_ids": [],
-      "relation_type": "SEQUENCE",
+      "relation_type": "parallel",
       "evidence_refs": [
         "EVD-2936ef248ec9414d8f55",
         "EVD-8f39d05eed73571639e8",
-        "EVD-3c5b75fa1b8e8b981915"
-      ],
-      "analysis_status": "MODEL_DRAFT",
-      "suggested_tier": "Aug",
-      "tier_rationale": "验证需人工判断差异"
-    },
-    {
-      "task_id": "T-COM-10-1",
-      "l4_code": "L4-COM-10",
-      "task_name": "整合保单信息与数据清洗",
-      "source_type": "blueprint_step",
-      "sequence_no": 4,
-      "sequence_status": "SOURCE_CONFIRMED",
-      "source_step_id": "STEP-04",
-      "source_line": 58,
-      "previous_task_ids": [
-        "T-COM-02-1",
-        "T-COM-02-2"
-      ],
-      "next_task_ids": [],
-      "relation_type": "SEQUENCE",
-      "evidence_refs": [
-        "EVD-e6e5738ab334d18238bf",
-        "EVD-53ed5a0156c91fda8988"
-      ],
-      "analysis_status": "MODEL_DRAFT",
-      "suggested_tier": "Aug",
-      "tier_rationale": "整合可自动，但需人工校验"
-    },
-    {
-      "task_id": "T-COM-10-2",
-      "l4_code": "L4-COM-10",
-      "task_name": "计算应收明细并生成清单",
-      "source_type": "blueprint_step",
-      "sequence_no": 4,
-      "sequence_status": "SOURCE_CONFIRMED",
-      "source_step_id": "STEP-04",
-      "source_line": 58,
-      "previous_task_ids": [
-        "T-COM-10-1"
-      ],
-      "next_task_ids": [],
-      "relation_type": "SEQUENCE",
-      "evidence_refs": [
-        "EVD-e6e5738ab334d18238bf",
-        "EVD-53ed5a0156c91fda8988"
+        "EVD-4348645f997bbc545631"
       ],
       "analysis_status": "MODEL_DRAFT",
       "suggested_tier": "Auto",
-      "tier_rationale": "计算确定，可自动"
+      "tier_rationale": "A级，可封装计算Skill"
     },
     {
-      "task_id": "T-COM-11-1",
-      "l4_code": "L4-COM-11",
-      "task_name": "确认银行到账数据",
+      "task_id": "T6",
+      "l4_code": "L4-COM-02",
+      "task_name": "人工确认差异化拆解结果",
       "source_type": "blueprint_step",
-      "sequence_no": 5,
-      "sequence_status": "SOURCE_CONFIRMED",
-      "source_step_id": "STEP-05",
-      "source_line": 62,
+      "sequence_no": 3,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-03",
+      "source_line": 55,
       "previous_task_ids": [
-        "T-COM-10-2"
+        "T3",
+        "T4"
       ],
-      "next_task_ids": [],
-      "relation_type": "SEQUENCE",
+      "next_task_ids": [
+        "T7"
+      ],
+      "relation_type": "parallel",
       "evidence_refs": [
-        "EVD-541ba265fc3abbb7fec0",
-        "EVD-ec616da2ec2c5db89bb8"
+        "EVD-2936ef248ec9414d8f55",
+        "EVD-8f39d05eed73571639e8",
+        "EVD-e1d2f431d0f88bfccc67"
       ],
       "analysis_status": "MODEL_DRAFT",
       "suggested_tier": "Aug",
-      "tier_rationale": "银行数据需人工确认"
+      "tier_rationale": "人工触点缺失，但需人工确认"
     },
     {
-      "task_id": "T-COM-11-2",
+      "task_id": "T7",
+      "l4_code": "L4-COM-10",
+      "task_name": "执行保单信息整合与应收核算",
+      "source_type": "blueprint_step",
+      "sequence_no": 4,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-04",
+      "source_line": 58,
+      "previous_task_ids": [
+        "T5",
+        "T6"
+      ],
+      "next_task_ids": [
+        "T9"
+      ],
+      "relation_type": "parallel",
+      "evidence_refs": [
+        "EVD-e6e5738ab334d18238bf",
+        "EVD-53ed5a0156c91fda8988",
+        "EVD-d438ad66fc634c61f8b2"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Auto",
+      "tier_rationale": "A级，可封装整合Skill"
+    },
+    {
+      "task_id": "T8",
+      "l4_code": "L4-COM-10",
+      "task_name": "复核应收核算结果",
+      "source_type": "blueprint_step",
+      "sequence_no": 4,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-04",
+      "source_line": 58,
+      "previous_task_ids": [
+        "T5",
+        "T6"
+      ],
+      "next_task_ids": [
+        "T9"
+      ],
+      "relation_type": "parallel",
+      "evidence_refs": [
+        "EVD-e6e5738ab334d18238bf",
+        "EVD-53ed5a0156c91fda8988",
+        "EVD-8c0204d58939225375a1"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "人工触点明确，核算需人工复核"
+    },
+    {
+      "task_id": "T9",
       "l4_code": "L4-COM-11",
-      "task_name": "执行实收对账并生成差异表",
+      "task_name": "执行银行到账确认与实收对账",
       "source_type": "blueprint_step",
       "sequence_no": 5,
-      "sequence_status": "SOURCE_CONFIRMED",
+      "sequence_status": "SOURCE_STEP_ONLY",
       "source_step_id": "STEP-05",
       "source_line": 62,
       "previous_task_ids": [
-        "T-COM-11-1"
+        "T7",
+        "T8"
       ],
-      "next_task_ids": [],
-      "relation_type": "SEQUENCE",
+      "next_task_ids": [
+        "T11"
+      ],
+      "relation_type": "parallel",
       "evidence_refs": [
         "EVD-541ba265fc3abbb7fec0",
         "EVD-ec616da2ec2c5db89bb8",
-        "EVD-a439d55fed017277240d"
+        "EVD-2b5d641a68e1944f3675"
       ],
       "analysis_status": "MODEL_DRAFT",
       "suggested_tier": "Auto",
-      "tier_rationale": "对账计算可自动，差异处理人工"
+      "tier_rationale": "A级，可封装对账Skill"
     },
     {
-      "task_id": "T-COM-12-1",
-      "l4_code": "L4-COM-12",
-      "task_name": "拆分应派金额并生成清单",
+      "task_id": "T10",
+      "l4_code": "L4-COM-11",
+      "task_name": "人工确认实收差异",
       "source_type": "blueprint_step",
-      "sequence_no": 6,
-      "sequence_status": "SOURCE_CONFIRMED",
-      "source_step_id": "STEP-06",
-      "source_line": 66,
+      "sequence_no": 5,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-05",
+      "source_line": 62,
       "previous_task_ids": [
-        "T-COM-11-2"
+        "T7",
+        "T8"
       ],
-      "next_task_ids": [],
-      "relation_type": "SEQUENCE",
+      "next_task_ids": [
+        "T11"
+      ],
+      "relation_type": "parallel",
       "evidence_refs": [
-        "EVD-acc13810ec34c27931b4",
-        "EVD-f1968ea26fdb8212802e"
+        "EVD-541ba265fc3abbb7fec0",
+        "EVD-ec616da2ec2c5db89bb8",
+        "EVD-b2b61df7b18b3c16743c"
       ],
       "analysis_status": "MODEL_DRAFT",
       "suggested_tier": "Aug",
-      "tier_rationale": "拆分规则可自动，但需人工审核"
+      "tier_rationale": "人工触点明确，差异需人工处理"
     },
     {
-      "task_id": "T-COM-12-2",
+      "task_id": "T11",
       "l4_code": "L4-COM-12",
-      "task_name": "执行渠道对账并输出对账单",
+      "task_name": "执行应派金额拆分与渠道对账",
       "source_type": "blueprint_step",
       "sequence_no": 6,
-      "sequence_status": "SOURCE_CONFIRMED",
+      "sequence_status": "SOURCE_STEP_ONLY",
       "source_step_id": "STEP-06",
       "source_line": 66,
       "previous_task_ids": [
-        "T-COM-12-1"
+        "T9",
+        "T10"
       ],
-      "next_task_ids": [],
-      "relation_type": "SEQUENCE",
+      "next_task_ids": [
+        "T13"
+      ],
+      "relation_type": "parallel",
       "evidence_refs": [
         "EVD-acc13810ec34c27931b4",
         "EVD-f1968ea26fdb8212802e",
-        "EVD-e167a1a79d81736a31df"
-      ],
-      "analysis_status": "MODEL_DRAFT",
-      "suggested_tier": "Aug",
-      "tier_rationale": "对账需人工确认"
-    },
-    {
-      "task_id": "T-COM-03-1",
-      "l4_code": "L4-COM-03",
-      "task_name": "整合佣金数据并生成外发凭证草稿",
-      "source_type": "blueprint_step",
-      "sequence_no": 7,
-      "sequence_status": "SOURCE_CONFIRMED",
-      "source_step_id": "STEP-07",
-      "source_line": 69,
-      "previous_task_ids": [
-        "T-COM-12-2"
-      ],
-      "next_task_ids": [],
-      "relation_type": "SEQUENCE",
-      "evidence_refs": [
-        "EVD-be106597fd414993e80f",
-        "EVD-35c713752826d9f583bd"
+        "EVD-1b9206cbf7054edfde19"
       ],
       "analysis_status": "MODEL_DRAFT",
       "suggested_tier": "Auto",
-      "tier_rationale": "整合可自动，外发需审批"
+      "tier_rationale": "A级，可封装拆分Skill"
     },
     {
-      "task_id": "T-COM-03-2",
+      "task_id": "T12",
+      "l4_code": "L4-COM-12",
+      "task_name": "人工复核应派金额与对账单",
+      "source_type": "blueprint_step",
+      "sequence_no": 6,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-06",
+      "source_line": 66,
+      "previous_task_ids": [
+        "T9",
+        "T10"
+      ],
+      "next_task_ids": [
+        "T13"
+      ],
+      "relation_type": "parallel",
+      "evidence_refs": [
+        "EVD-acc13810ec34c27931b4",
+        "EVD-f1968ea26fdb8212802e",
+        "EVD-3a5dfd4aae70d01ee437"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "人工触点缺失，但金额拆分需人工复核"
+    },
+    {
+      "task_id": "T13",
       "l4_code": "L4-COM-03",
-      "task_name": "外发审批与发布",
+      "task_name": "执行佣金整合与外发凭证生成",
       "source_type": "blueprint_step",
       "sequence_no": 7,
-      "sequence_status": "SOURCE_CONFIRMED",
+      "sequence_status": "SOURCE_STEP_ONLY",
       "source_step_id": "STEP-07",
       "source_line": 69,
       "previous_task_ids": [
-        "T-COM-03-1"
+        "T11",
+        "T12"
       ],
-      "next_task_ids": [],
-      "relation_type": "SEQUENCE",
+      "next_task_ids": [
+        "T15"
+      ],
+      "relation_type": "parallel",
       "evidence_refs": [
         "EVD-be106597fd414993e80f",
         "EVD-35c713752826d9f583bd",
-        "EVD-26e81a0ab655de7c321f"
+        "EVD-9fe75c4f838f44aa3fe2"
       ],
       "analysis_status": "MODEL_DRAFT",
-      "suggested_tier": "Human",
-      "tier_rationale": "对外发布需人工审批不可逆"
+      "suggested_tier": "Auto",
+      "tier_rationale": "A级，可封装凭证生成Skill"
     },
     {
-      "task_id": "T-COM-13-1",
+      "task_id": "T14",
+      "l4_code": "L4-COM-03",
+      "task_name": "人工语义复核并审批外发",
+      "source_type": "blueprint_step",
+      "sequence_no": 7,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-07",
+      "source_line": 69,
+      "previous_task_ids": [
+        "T11",
+        "T12"
+      ],
+      "next_task_ids": [
+        "T15"
+      ],
+      "relation_type": "parallel",
+      "evidence_refs": [
+        "EVD-be106597fd414993e80f",
+        "EVD-35c713752826d9f583bd",
+        "EVD-22865543421348f364c0"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Aug",
+      "tier_rationale": "外发需人工审批，人工触点缺失需补充"
+    },
+    {
+      "task_id": "T15",
       "l4_code": "L4-COM-13",
-      "task_name": "确认实派清单并生成财务制单草稿",
+      "task_name": "执行实派清单生成与财务制单准备",
       "source_type": "blueprint_step",
       "sequence_no": 8,
-      "sequence_status": "SOURCE_CONFIRMED",
+      "sequence_status": "SOURCE_STEP_ONLY",
       "source_step_id": "STEP-08",
       "source_line": 72,
       "previous_task_ids": [
-        "T-COM-03-2"
+        "T13",
+        "T14"
       ],
-      "next_task_ids": [],
-      "relation_type": "SEQUENCE",
+      "next_task_ids": [
+        "T17"
+      ],
+      "relation_type": "parallel",
       "evidence_refs": [
         "EVD-72a15b233148bb2b723b",
         "EVD-daac64dc6d0589a282d6",
-        "EVD-99cf009a0da4b7c839eb"
+        "EVD-317c89464705bc50f14c"
       ],
       "analysis_status": "MODEL_DRAFT",
-      "suggested_tier": "Hybrid",
-      "tier_rationale": "涉及资金安全，需人工确认"
+      "suggested_tier": "Auto",
+      "tier_rationale": "A级，可封装制单Skill，但资金门禁需人工"
     },
     {
-      "task_id": "T-COM-13-2",
+      "task_id": "T16",
       "l4_code": "L4-COM-13",
-      "task_name": "财务制单审批",
+      "task_name": "人工审批实派清单与财务制单",
       "source_type": "blueprint_step",
       "sequence_no": 8,
-      "sequence_status": "SOURCE_CONFIRMED",
+      "sequence_status": "SOURCE_STEP_ONLY",
       "source_step_id": "STEP-08",
       "source_line": 72,
       "previous_task_ids": [
-        "T-COM-13-1"
+        "T13",
+        "T14"
       ],
-      "next_task_ids": [],
-      "relation_type": "SEQUENCE",
+      "next_task_ids": [
+        "T17"
+      ],
+      "relation_type": "parallel",
       "evidence_refs": [
         "EVD-72a15b233148bb2b723b",
-        "EVD-daac64dc6d0589a282d6"
+        "EVD-daac64dc6d0589a282d6",
+        "EVD-3a6911dfa7ea38795bed"
       ],
       "analysis_status": "MODEL_DRAFT",
-      "suggested_tier": "Human",
-      "tier_rationale": "制单审批需人工"
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "资金安全硬门禁，必须人工审批"
     },
     {
-      "task_id": "T-COM-14-1",
+      "task_id": "T17",
       "l4_code": "L4-COM-14",
-      "task_name": "生成付款指令并提交人工执行",
+      "task_name": "执行财务付款指令准备",
       "source_type": "blueprint_step",
       "sequence_no": 9,
       "sequence_status": "SOURCE_CONFIRMED",
       "source_step_id": "STEP-09",
       "source_line": 75,
       "previous_task_ids": [
-        "T-COM-13-2"
+        "T15",
+        "T16"
       ],
-      "next_task_ids": [],
-      "relation_type": "SEQUENCE",
+      "next_task_ids": [
+        "T18"
+      ],
+      "relation_type": "sequence",
       "evidence_refs": [
         "EVD-29a29003b8173e8456da",
         "EVD-5eeb02716a617ab995d8",
-        "EVD-a299261969729f690144"
-      ],
-      "analysis_status": "MODEL_DRAFT",
-      "suggested_tier": "Human",
-      "tier_rationale": "资金操作必须人工"
-    },
-    {
-      "task_id": "T-COM-15-1",
-      "l4_code": "L4-COM-15",
-      "task_name": "归档付款回执",
-      "source_type": "blueprint_step",
-      "sequence_no": 10,
-      "sequence_status": "SOURCE_CONFIRMED",
-      "source_step_id": "STEP-10",
-      "source_line": 78,
-      "previous_task_ids": [
-        "T-COM-14-1"
-      ],
-      "next_task_ids": [],
-      "relation_type": "SEQUENCE",
-      "evidence_refs": [
-        "EVD-c7d0fcc506d19b48985b",
-        "EVD-5ec40c24900f3656e553"
+        "EVD-23c3c12fa3296c207c07"
       ],
       "analysis_status": "MODEL_DRAFT",
       "suggested_tier": "Auto",
-      "tier_rationale": "归档可自动"
+      "tier_rationale": "A级，但实际付款动作需人工"
     },
     {
-      "task_id": "T-COM-15-2",
+      "task_id": "T18",
+      "l4_code": "L4-COM-14",
+      "task_name": "人工执行财务付款并确认回执",
+      "source_type": "blueprint_step",
+      "sequence_no": 9,
+      "sequence_status": "SOURCE_CONFIRMED",
+      "source_step_id": "STEP-09",
+      "source_line": 75,
+      "previous_task_ids": [
+        "T15",
+        "T16"
+      ],
+      "next_task_ids": [
+        "T20"
+      ],
+      "relation_type": "sequence",
+      "evidence_refs": [
+        "EVD-29a29003b8173e8456da",
+        "EVD-5eeb02716a617ab995d8",
+        "EVD-01a0aa37b5efe6e15039"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "资金安全硬门禁，实际付款必须人工"
+    },
+    {
+      "task_id": "T19",
       "l4_code": "L4-COM-15",
-      "task_name": "更新转介费派发确认台账",
+      "task_name": "执行付款回执归档与台账更新",
       "source_type": "blueprint_step",
       "sequence_no": 10,
-      "sequence_status": "SOURCE_CONFIRMED",
+      "sequence_status": "SOURCE_STEP_ONLY",
       "source_step_id": "STEP-10",
       "source_line": 78,
       "previous_task_ids": [
-        "T-COM-15-1"
+        "T18"
       ],
       "next_task_ids": [],
-      "relation_type": "SEQUENCE",
+      "relation_type": "parallel",
       "evidence_refs": [
         "EVD-c7d0fcc506d19b48985b",
         "EVD-5ec40c24900f3656e553",
-        "EVD-6a5973bc9a9fa4d0f5b1"
+        "EVD-ad5bf8306d1597e0af89"
       ],
       "analysis_status": "MODEL_DRAFT",
       "suggested_tier": "Auto",
-      "tier_rationale": "台账更新可自动"
+      "tier_rationale": "A级，可封装归档Skill"
     },
     {
-      "task_id": "T-COM-04-1",
-      "l4_code": "L4-COM-04",
-      "task_name": "编制年度预算数据汇总",
-      "source_type": "deliverable",
-      "sequence_no": null,
-      "sequence_status": "UNCONFIRMED",
-      "source_step_id": "",
-      "source_line": null,
-      "previous_task_ids": [],
+      "task_id": "T20",
+      "l4_code": "L4-COM-15",
+      "task_name": "人工核对台账与回执一致性",
+      "source_type": "blueprint_step",
+      "sequence_no": 10,
+      "sequence_status": "SOURCE_STEP_ONLY",
+      "source_step_id": "STEP-10",
+      "source_line": 78,
+      "previous_task_ids": [
+        "T18"
+      ],
       "next_task_ids": [],
-      "relation_type": "NONE",
+      "relation_type": "parallel",
       "evidence_refs": [
-        "EVD-a037447b91f458e2a21a",
-        "EVD-166f2b3631edd11dde71",
-        "EVD-2284307840bd92f8e35d"
+        "EVD-c7d0fcc506d19b48985b",
+        "EVD-5ec40c24900f3656e553",
+        "EVD-b6ff41404204ee483cef"
       ],
       "analysis_status": "MODEL_DRAFT",
       "suggested_tier": "Aug",
-      "tier_rationale": "数据汇总可辅助，但预算决策需人工"
+      "tier_rationale": "人工触点明确，需人工核对"
     },
     {
-      "task_id": "T-COM-04-2",
+      "task_id": "T21",
       "l4_code": "L4-COM-04",
-      "task_name": "年度预算规划审批",
+      "task_name": "编制年度预算与规划数据",
       "source_type": "deliverable",
       "sequence_no": null,
       "sequence_status": "UNCONFIRMED",
       "source_step_id": "",
       "source_line": null,
-      "previous_task_ids": [
-        "T-COM-04-1"
-      ],
+      "previous_task_ids": [],
       "next_task_ids": [],
-      "relation_type": "SEQUENCE",
+      "relation_type": null,
       "evidence_refs": [
         "EVD-a037447b91f458e2a21a",
         "EVD-166f2b3631edd11dde71",
-        "EVD-2284307840bd92f8e35d"
+        "EVD-637b9b199c2a06301a02"
       ],
       "analysis_status": "MODEL_DRAFT",
-      "suggested_tier": "Human",
-      "tier_rationale": "规划审批需管理层决策"
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "C级低封装，判断/策略类，仅Agent辅助"
     },
     {
-      "task_id": "T-COM-05-1",
-      "l4_code": "L4-COM-05",
-      "task_name": "计算追溯调整与退保倒扣金额",
+      "task_id": "T22",
+      "l4_code": "L4-COM-04",
+      "task_name": "人工审批年度预算方案",
       "source_type": "deliverable",
       "sequence_no": null,
       "sequence_status": "UNCONFIRMED",
@@ -1339,42 +1411,40 @@
       "source_line": null,
       "previous_task_ids": [],
       "next_task_ids": [],
-      "relation_type": "NONE",
+      "relation_type": null,
       "evidence_refs": [
-        "EVD-a0497d8fcf768369af5c",
-        "EVD-3287d741bc8db87f418b"
+        "EVD-a037447b91f458e2a21a",
+        "EVD-166f2b3631edd11dde71"
       ],
       "analysis_status": "MODEL_DRAFT",
-      "suggested_tier": "Auto",
-      "tier_rationale": "公式计算可自动"
+      "suggested_tier": "Human",
+      "tier_rationale": "预算审批需管理层人工决策"
     },
     {
-      "task_id": "T-COM-05-2",
+      "task_id": "T23",
       "l4_code": "L4-COM-05",
-      "task_name": "人工复核调整结果",
+      "task_name": "执行追溯调整与退保倒扣计算",
       "source_type": "deliverable",
       "sequence_no": null,
       "sequence_status": "UNCONFIRMED",
       "source_step_id": "",
       "source_line": null,
-      "previous_task_ids": [
-        "T-COM-05-1"
-      ],
+      "previous_task_ids": [],
       "next_task_ids": [],
-      "relation_type": "SEQUENCE",
+      "relation_type": null,
       "evidence_refs": [
         "EVD-a0497d8fcf768369af5c",
         "EVD-3287d741bc8db87f418b",
-        "EVD-9b59651d58675ce04a99"
+        "EVD-dbecf6136964647ad282"
       ],
       "analysis_status": "MODEL_DRAFT",
-      "suggested_tier": "Human",
-      "tier_rationale": "人工判断必须"
+      "suggested_tier": "Aug",
+      "tier_rationale": "B级中封装，Skill计算+人工复核"
     },
     {
-      "task_id": "T-COM-06-1",
-      "l4_code": "L4-COM-06",
-      "task_name": "计算佣金税务并生成处理记录",
+      "task_id": "T24",
+      "l4_code": "L4-COM-05",
+      "task_name": "人工复核追溯调整与退保倒扣结果",
       "source_type": "deliverable",
       "sequence_no": null,
       "sequence_status": "UNCONFIRMED",
@@ -1382,19 +1452,40 @@
       "source_line": null,
       "previous_task_ids": [],
       "next_task_ids": [],
-      "relation_type": "NONE",
+      "relation_type": null,
+      "evidence_refs": [
+        "EVD-a0497d8fcf768369af5c",
+        "EVD-3287d741bc8db87f418b",
+        "EVD-62dfdbbdcbd21cc384f6"
+      ],
+      "analysis_status": "MODEL_DRAFT",
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "人工判断最终结果"
+    },
+    {
+      "task_id": "T25",
+      "l4_code": "L4-COM-06",
+      "task_name": "执行佣金税务计算与记录生成",
+      "source_type": "deliverable",
+      "sequence_no": null,
+      "sequence_status": "UNCONFIRMED",
+      "source_step_id": "",
+      "source_line": null,
+      "previous_task_ids": [],
+      "next_task_ids": [],
+      "relation_type": null,
       "evidence_refs": [
         "EVD-8f412c5cea311e6823c2",
         "EVD-df876bda0147ec1d27d7"
       ],
       "analysis_status": "MODEL_DRAFT",
       "suggested_tier": "Auto",
-      "tier_rationale": "税务计算可自动"
+      "tier_rationale": "A级单一动作，可完全自动化"
     },
     {
-      "task_id": "T-COM-07-1",
+      "task_id": "T26",
       "l4_code": "L4-COM-07",
-      "task_name": "佣金争议信息收集与初步分类",
+      "task_name": "协助处理佣金争议信息",
       "source_type": "deliverable",
       "sequence_no": null,
       "sequence_status": "UNCONFIRMED",
@@ -1402,42 +1493,19 @@
       "source_line": null,
       "previous_task_ids": [],
       "next_task_ids": [],
-      "relation_type": "NONE",
+      "relation_type": null,
       "evidence_refs": [
         "EVD-efedee1f2b93f8d7416c",
         "EVD-bae4acdb80c52047fb1b"
       ],
       "analysis_status": "MODEL_DRAFT",
-      "suggested_tier": "Aug",
-      "tier_rationale": "信息收集可辅助"
+      "suggested_tier": "Hybrid",
+      "tier_rationale": "C级低封装，Agent辅助人工决策"
     },
     {
-      "task_id": "T-COM-07-2",
-      "l4_code": "L4-COM-07",
-      "task_name": "人工调查与争议裁决",
-      "source_type": "deliverable",
-      "sequence_no": null,
-      "sequence_status": "UNCONFIRMED",
-      "source_step_id": "",
-      "source_line": null,
-      "previous_task_ids": [
-        "T-COM-07-1"
-      ],
-      "next_task_ids": [],
-      "relation_type": "SEQUENCE",
-      "evidence_refs": [
-        "EVD-efedee1f2b93f8d7416c",
-        "EVD-bae4acdb80c52047fb1b",
-        "EVD-bfae89c20a2cc41e2aa0"
-      ],
-      "analysis_status": "MODEL_DRAFT",
-      "suggested_tier": "Human",
-      "tier_rationale": "裁决需人工权威"
-    },
-    {
-      "task_id": "T-COM-08-1",
+      "task_id": "T27",
       "l4_code": "L4-COM-08",
-      "task_name": "跨保司数据整合与映射",
+      "task_name": "执行跨保司佣金数据整合",
       "source_type": "deliverable",
       "sequence_no": null,
       "sequence_status": "UNCONFIRMED",
@@ -1445,42 +1513,19 @@
       "source_line": null,
       "previous_task_ids": [],
       "next_task_ids": [],
-      "relation_type": "NONE",
+      "relation_type": null,
       "evidence_refs": [
         "EVD-8783f0465208f9cff033",
         "EVD-110b5ae5526e47c122d3"
       ],
       "analysis_status": "MODEL_DRAFT",
       "suggested_tier": "Auto",
-      "tier_rationale": "整合可自动，语义复核后确认"
+      "tier_rationale": "A级单一动作，可封装Skill"
     },
     {
-      "task_id": "T-COM-08-2",
-      "l4_code": "L4-COM-08",
-      "task_name": "语义复核整合结果",
-      "source_type": "deliverable",
-      "sequence_no": null,
-      "sequence_status": "UNCONFIRMED",
-      "source_step_id": "",
-      "source_line": null,
-      "previous_task_ids": [
-        "T-COM-08-1"
-      ],
-      "next_task_ids": [],
-      "relation_type": "SEQUENCE",
-      "evidence_refs": [
-        "EVD-8783f0465208f9cff033",
-        "EVD-110b5ae5526e47c122d3",
-        "EVD-4fb0223f9ba24ee3b593"
-      ],
-      "analysis_status": "MODEL_DRAFT",
-      "suggested_tier": "Human",
-      "tier_rationale": "语义复核需人工"
-    },
-    {
-      "task_id": "T-COM-09-1",
+      "task_id": "T28",
       "l4_code": "L4-COM-09",
-      "task_name": "执行异常检测与反欺诈规则",
+      "task_name": "执行佣金异常检测与报告生成",
       "source_type": "deliverable",
       "sequence_no": null,
       "sequence_status": "UNCONFIRMED",
@@ -1488,42 +1533,19 @@
       "source_line": null,
       "previous_task_ids": [],
       "next_task_ids": [],
-      "relation_type": "NONE",
+      "relation_type": null,
       "evidence_refs": [
         "EVD-ad628ed729c76cc1ad97",
         "EVD-8440e68d409dafc9eac3"
       ],
       "analysis_status": "MODEL_DRAFT",
-      "suggested_tier": "Auto",
-      "tier_rationale": "规则检测可自动"
+      "suggested_tier": "Aug",
+      "tier_rationale": "B级中封装，Skill检测+人工复核"
     },
     {
-      "task_id": "T-COM-09-2",
-      "l4_code": "L4-COM-09",
-      "task_name": "人工复核告警并调查",
-      "source_type": "deliverable",
-      "sequence_no": null,
-      "sequence_status": "UNCONFIRMED",
-      "source_step_id": "",
-      "source_line": null,
-      "previous_task_ids": [
-        "T-COM-09-1"
-      ],
-      "next_task_ids": [],
-      "relation_type": "SEQUENCE",
-      "evidence_refs": [
-        "EVD-ad628ed729c76cc1ad97",
-        "EVD-8440e68d409dafc9eac3",
-        "EVD-5d4cd49c877a41b672c6"
-      ],
-      "analysis_status": "MODEL_DRAFT",
-      "suggested_tier": "Human",
-      "tier_rationale": "调查需人工"
-    },
-    {
-      "task_id": "T-COM-17-1",
+      "task_id": "T29",
       "l4_code": "L4-COM-17",
-      "task_name": "执行IA合规规则校验并生成日志",
+      "task_name": "执行IA合规规则校验与日志生成",
       "source_type": "deliverable",
       "sequence_no": null,
       "sequence_status": "UNCONFIRMED",
@@ -1531,41 +1553,19 @@
       "source_line": null,
       "previous_task_ids": [],
       "next_task_ids": [],
-      "relation_type": "NONE",
+      "relation_type": null,
       "evidence_refs": [
         "EVD-489bf09af150e8695eea",
         "EVD-3ee89cf0f3df6f8960c5"
       ],
       "analysis_status": "MODEL_DRAFT",
-      "suggested_tier": "Auto",
-      "tier_rationale": "规则校验可自动"
+      "suggested_tier": "Aug",
+      "tier_rationale": "B级中封装，合规类需人工复核"
     },
     {
-      "task_id": "T-COM-17-2",
-      "l4_code": "L4-COM-17",
-      "task_name": "人工复核合规拦截结果",
-      "source_type": "deliverable",
-      "sequence_no": null,
-      "sequence_status": "UNCONFIRMED",
-      "source_step_id": "",
-      "source_line": null,
-      "previous_task_ids": [
-        "T-COM-17-1"
-      ],
-      "next_task_ids": [],
-      "relation_type": "SEQUENCE",
-      "evidence_refs": [
-        "EVD-489bf09af150e8695eea",
-        "EVD-3ee89cf0f3df6f8960c5"
-      ],
-      "analysis_status": "MODEL_DRAFT",
-      "suggested_tier": "Human",
-      "tier_rationale": "合规复核需人工"
-    },
-    {
-      "task_id": "T-COM-18-1",
+      "task_id": "T30",
       "l4_code": "L4-COM-18",
-      "task_name": "更新收款映射版本记录",
+      "task_name": "执行收款映射版本记录与快照生成",
       "source_type": "deliverable",
       "sequence_no": null,
       "sequence_status": "UNCONFIRMED",
@@ -1573,14 +1573,14 @@
       "source_line": null,
       "previous_task_ids": [],
       "next_task_ids": [],
-      "relation_type": "NONE",
+      "relation_type": null,
       "evidence_refs": [
         "EVD-8a669b19730217a592c4",
         "EVD-2136ee5f7dfbc737a297"
       ],
       "analysis_status": "MODEL_DRAFT",
       "suggested_tier": "Auto",
-      "tier_rationale": "版本管理可自动，但需语义复核"
+      "tier_rationale": "A级单一动作，可封装Skill"
     }
   ],
   "priority_drafts": [
@@ -1588,29 +1588,27 @@
       "l4_code": "L4-COM-01",
       "quadrant": "unclassified",
       "data_basis": [
-        "无可用ACTIVE业务数据证据（business_evidence为UNVERIFIED），仅基于流程定义和评分"
+        "agent_d1_input_struct=2",
+        "agent_d2_rule_clear=2",
+        "agent_d3_output_verify=2",
+        "agent_d4_api_reach=2",
+        "skill_feasibility: grade A, action_nature=信息处理/事务类, action_singularity=复合动作(建议先拆分)",
+        "deliverable=《标准化政策库》, type=方案"
       ],
-      "process_context": "蓝图步骤STEP-02，前序STEP-01数据导入，后续STEP-03差异化拆解",
+      "process_context": "蓝图STEP-02佣金政策接收与校准；属于价值节点VN-PAY-01市场佣金制作产出包，当前状态PARTIAL",
       "risks_limits": [
-        "复合动作未拆分；人机边界未明确；业务数据证据缺失"
+        "复合动作需先拆分子Skill，否则无法直接封装",
+        "业务证据表多为UNVERIFIED，不可用于业务结论",
+        "人工触点缺失，审批链未明确"
       ],
-      "current_recommendation": "优先拆分Skill子任务；补充人工确认节点；先原型验证",
+      "current_recommendation": "优先拆分为“费率录入Skill”和“政策校准人工复核”，先进入Skill原型候选池，同时补全人工审批触点证据",
       "evidence_refs": [
         "EVD-978b640534fd409082bd",
         "EVD-7faaaa7ea5605173b3ed",
         "EVD-c49d5805d7bbfb12c704",
-        "EVD-807ab75acbdab39974ba",
         "EVD-c343c6d3cd547689f533",
         "EVD-2db466428bd0c9f7a073",
-        "EVD-0fd5978f33cca2d7873c",
-        "EVD-516613c2c07e7e5f0bdb",
-        "EVD-f53356cfe45b437227b3",
-        "EVD-6f7b950c445b03221796",
-        "EVD-8b6a9e7334d1b341d708",
-        "EVD-95ead820075a56f696b1",
-        "EVD-538949b874820e0d275a",
-        "EVD-32c52fbab5cfced0fa62",
-        "EVD-9f608e139355cf106963"
+        "EVD-f53356cfe45b437227b3"
       ],
       "analysis_status": "MODEL_DRAFT"
     },
@@ -1618,28 +1616,27 @@
       "l4_code": "L4-COM-02",
       "quadrant": "unclassified",
       "data_basis": [
-        "无ACTIVE业务数据证据，仅基于流程定义和评分"
+        "agent_d1_input_struct=2",
+        "agent_d2_rule_clear=2",
+        "agent_d3_output_verify=2",
+        "agent_d4_api_reach=2",
+        "skill_feasibility: grade A, action_nature=信息处理/事务类, action_singularity=复合动作(建议先拆分)",
+        "deliverable=《各细分市场配置》, type=数据表"
       ],
-      "process_context": "蓝图步骤STEP-03，前序STEP-02，后续STEP-04",
+      "process_context": "蓝图STEP-03差异化拆解与验证；属于价值节点VN-PAY-01市场佣金制作产出包，当前状态PARTIAL",
       "risks_limits": [
-        "复合动作未拆分；验证环节人机边界不清"
+        "复合动作需拆分子Skill",
+        "业务证据UNVERIFIED",
+        "人工触点缺失"
       ],
-      "current_recommendation": "拆分拆解与验证子Skill；建立人工复核节点",
+      "current_recommendation": "优先建立档位拆分Skill与人工确认流程，先进入Skill原型候选池，补全人工确认责任证据",
       "evidence_refs": [
         "EVD-c6c7b3d9f8c8275bd6fb",
         "EVD-4348645f997bbc545631",
         "EVD-867a6421b5a1b4149c38",
-        "EVD-807ab75acbdab39974ba",
         "EVD-8f39d05eed73571639e8",
         "EVD-51b9375d56608331b530",
-        "EVD-b7662c64ba812b8dd326",
-        "EVD-8c7011a8d0bd24ef450a",
-        "EVD-73c78aac3ee351f1d240",
-        "EVD-949f96f53bf843877f5a",
-        "EVD-ca3143c95277bc3494e4",
-        "EVD-5b88d5549a8660faac03",
-        "EVD-3c5b75fa1b8e8b981915",
-        "EVD-2936ef248ec9414d8f55"
+        "EVD-73c78aac3ee351f1d240"
       ],
       "analysis_status": "MODEL_DRAFT"
     },
@@ -1647,28 +1644,27 @@
       "l4_code": "L4-COM-03",
       "quadrant": "unclassified",
       "data_basis": [
-        "无ACTIVE业务数据证据，仅基于流程定义和评分"
+        "agent_d1_input_struct=3",
+        "agent_d2_rule_clear=3",
+        "agent_d3_output_verify=3",
+        "agent_d4_api_reach=3",
+        "skill_feasibility: grade A, action_nature=语义复核判定, action_singularity=复合动作(建议先拆分)",
+        "deliverable=《佣金外发凭证》, type=凭证"
       ],
-      "process_context": "蓝图步骤STEP-07，前序STEP-06，后续STEP-08",
+      "process_context": "蓝图STEP-07佣金整合与外发；涉及价值节点VN-PAY-03应派清单三件套、VN-PAY-04转介费派发确认台账",
       "risks_limits": [
-        "外发为不可逆操作，需严格审批；复合动作未拆分"
+        "对外发布需人工控制门",
+        "发布事件表当前0行，流程未走过",
+        "人工触点缺失"
       ],
-      "current_recommendation": "先拆分整合与外发；建立强制外发审批门",
+      "current_recommendation": "优先拆分自动整合Skill与人工外发审批，先进入Skill原型候选池，明确外发审批链",
       "evidence_refs": [
         "EVD-4ffa0a47eeca2b9236d4",
         "EVD-9fe75c4f838f44aa3fe2",
         "EVD-d69f814d7f54218e1804",
-        "EVD-807ab75acbdab39974ba",
         "EVD-35c713752826d9f583bd",
         "EVD-778f3534700c8932cdc0",
-        "EVD-692e5420c0a1c073e1ac",
-        "EVD-a2f379ae03473e137461",
-        "EVD-f7826c7d3a79c39b2c04",
-        "EVD-a4cd35c423ab72f84327",
-        "EVD-062d9cbf4146d7c3da1b",
-        "EVD-74e926413fddfc3a2085",
-        "EVD-8e71296ea4edb7d1507d",
-        "EVD-be106597fd414993e80f"
+        "EVD-f7826c7d3a79c39b2c04"
       ],
       "analysis_status": "MODEL_DRAFT"
     },
@@ -1676,27 +1672,25 @@
       "l4_code": "L4-COM-04",
       "quadrant": "unclassified",
       "data_basis": [
-        "无ACTIVE业务数据证据，仅基于流程定义和评分"
+        "agent_d1_input_struct=2, D2=1, D3=1, D4=1, D5=1, D6=1",
+        "skill_feasibility: grade C, action_nature=判断/策略/认知类, action_singularity=复合动作",
+        "human_touchpoint=人工执行：年度预算与规划",
+        "deliverable=《年度预算与规划》, type=方案"
       ],
-      "process_context": "蓝图未列入顺序步骤，属于年度规划环节",
+      "process_context": "未在蓝图步骤中显式出现，但属于L3流程关键环节；KPI映射包含净营收、管理利润等",
       "risks_limits": [
-        "判断依赖高，人工决策不可替代"
+        "C级低封装，不适合确定性Skill",
+        "数据基础薄弱（fact_target仅62行）",
+        "复合动作需拆分为数据准备与决策判断"
       ],
-      "current_recommendation": "使用Agent辅助决策支持，保持人工主导",
+      "current_recommendation": "优先考虑Agent辅助或决策支持，不直接封装确定性Skill；先补充预算模板与数据接口",
       "evidence_refs": [
         "EVD-4b298e49cf6bb6f4a2ea",
         "EVD-a037447b91f458e2a21a",
         "EVD-3bf2db587071e6c28664",
-        "EVD-807ab75acbdab39974ba",
         "EVD-166f2b3631edd11dde71",
         "EVD-eb6de534b20d241a80ea",
-        "EVD-e70ac0e42ff3b8dcd0f7",
-        "EVD-e039d743a2d2ffdb1258",
-        "EVD-1e959f9079b2f9e90b6d",
-        "EVD-2b74f6872f6a54576fa0",
-        "EVD-792e588c2d00b3429fcb",
-        "EVD-85305ee146879d402fa9",
-        "EVD-2284307840bd92f8e35d"
+        "EVD-1e959f9079b2f9e90b6d"
       ],
       "analysis_status": "MODEL_DRAFT"
     },
@@ -1704,27 +1698,25 @@
       "l4_code": "L4-COM-05",
       "quadrant": "unclassified",
       "data_basis": [
-        "无ACTIVE业务数据证据，仅基于流程定义和评分"
+        "agent_d1_input_struct=3, D2=3, D3=3, D4=3, D5=2, D6=2",
+        "skill_feasibility: grade B, action_nature=语义复核判定, action_singularity=复合动作",
+        "human_touchpoint=人工执行：追溯调整与退保倒扣",
+        "deliverable=《追溯调整与退保倒扣记录》, type=数据表"
       ],
-      "process_context": "蓝图未列入顺序步骤，属于追溯处理环节",
+      "process_context": "蓝图未列步骤，但涉及价值节点VN-PAY-02佣金实收确认表等；规则PAY-R051基本法变更触发回溯补发",
       "risks_limits": [
-        "人工判断无法完全自动化"
+        "B级中封装需报告模板/系统集成配合",
+        "调整历史表0行，数据未populate",
+        "复合动作需先拆分为计算Skill与人工判断"
       ],
-      "current_recommendation": "采用Aug模式：Skill计算+人工复核，先补报告模板和规则固化",
+      "current_recommendation": "先补报告模板、规则固化或系统接口，再验证Skill；人工负责最终判断",
       "evidence_refs": [
         "EVD-89edcab0671596dd6a81",
         "EVD-a0497d8fcf768369af5c",
         "EVD-0babd05ddaaf0140b8b1",
-        "EVD-807ab75acbdab39974ba",
         "EVD-3287d741bc8db87f418b",
         "EVD-53517d6e7309d0c608c7",
-        "EVD-134e12cedd643f35389b",
-        "EVD-7eeb331271d6f6cd236b",
-        "EVD-dbecf6136964647ad282",
-        "EVD-80a76dba2b0859d641e0",
-        "EVD-2ef4b994588f78e3adc9",
-        "EVD-6a41802aef939068983f",
-        "EVD-9b59651d58675ce04a99"
+        "EVD-dbecf6136964647ad282"
       ],
       "analysis_status": "MODEL_DRAFT"
     },
@@ -1732,27 +1724,24 @@
       "l4_code": "L4-COM-06",
       "quadrant": "unclassified",
       "data_basis": [
-        "无ACTIVE业务数据证据，仅基于流程定义和评分"
+        "agent_d1=3, D2=3, D3=3, D4=3, D5=2, D6=2",
+        "skill_feasibility: grade A, action_nature=信息处理/事务类, action_singularity=单一动作",
+        "human_touchpoint=人工执行：佣金税务处理",
+        "deliverable=《佣金税务处理记录》, type=数据表"
       ],
-      "process_context": "蓝图未列入顺序步骤，属于税务处理环节",
+      "process_context": "蓝图未列步骤，规则PAY-R087额外费用/收入分类规则涉及税务处理",
       "risks_limits": [
-        "税务合规风险，需要人复核"
+        "无重大风险，但需确保税务规则更新及时",
+        "当前business_evidence为空，数据支撑不足"
       ],
-      "current_recommendation": "优先进入Skill原型候选池，补充合规检查",
+      "current_recommendation": "优先进入Skill原型候选池，封装税务计算Skill",
       "evidence_refs": [
         "EVD-e41cd2ac12c2eee4c7a2",
         "EVD-8f412c5cea311e6823c2",
         "EVD-05dbb71ab55ac2d4d7a0",
-        "EVD-807ab75acbdab39974ba",
         "EVD-df876bda0147ec1d27d7",
         "EVD-0b405e172852aa77b700",
-        "EVD-57b92e28acc6a0a05524",
-        "EVD-2ed9aeff9e36f9700130",
-        "EVD-4c1afaa2820a8a881c27",
-        "EVD-a467c3a2d94b55f526a5",
-        "EVD-e97e48f78d3111490b30",
-        "EVD-8dcc039dbdaac45dcacd",
-        "EVD-a9405c880607a7a511d1"
+        "EVD-4c1afaa2820a8a881c27"
       ],
       "analysis_status": "MODEL_DRAFT"
     },
@@ -1760,27 +1749,24 @@
       "l4_code": "L4-COM-07",
       "quadrant": "unclassified",
       "data_basis": [
-        "无ACTIVE业务数据证据，仅基于流程定义和评分"
+        "agent_d1=2, D2=0, D3=1, D4=1, D5=1, D6=1",
+        "skill_feasibility: grade C, action_nature=判断/策略/认知类, action_singularity=单一动作",
+        "human_touchpoint=人工执行：佣金争议处理",
+        "deliverable=《佣金争议处理记录》, type=数据表"
       ],
-      "process_context": "蓝图未列入顺序步骤，属于争议处理环节",
+      "process_context": "蓝图未列步骤，规则PAY-R089归属不明款项询问与升级流程相关",
       "risks_limits": [
-        "判断依赖高，不能自动化"
+        "规则清晰度D2=0，无法自动化判定",
+        "C级低封装，不直接封装Skill"
       ],
-      "current_recommendation": "仅提供Agent辅助，保持人工主导",
+      "current_recommendation": "优先考虑Agent辅助或决策支持，不直接封装确定性Skill",
       "evidence_refs": [
         "EVD-695b219bf1d792e24224",
         "EVD-efedee1f2b93f8d7416c",
         "EVD-df9b2ec7a2b14b98616d",
-        "EVD-807ab75acbdab39974ba",
         "EVD-bae4acdb80c52047fb1b",
         "EVD-5fbb5b83848024c94e46",
-        "EVD-effcded9d8f28d105a2d",
-        "EVD-4f56b1006f9184d68ad8",
-        "EVD-3df97af198f7e74f488c",
-        "EVD-40c59feacc33cb6427f6",
-        "EVD-77486ed2077b93e81e0f",
-        "EVD-5fe54f11175d89ceebe4",
-        "EVD-bfae89c20a2cc41e2aa0"
+        "EVD-3df97af198f7e74f488c"
       ],
       "analysis_status": "MODEL_DRAFT"
     },
@@ -1788,27 +1774,24 @@
       "l4_code": "L4-COM-08",
       "quadrant": "unclassified",
       "data_basis": [
-        "无ACTIVE业务数据证据，仅基于流程定义和评分"
+        "agent_d1=2, D2=2, D3=2, D4=2, D5=2, D6=2",
+        "skill_feasibility: grade A, action_nature=语义复核判定, action_singularity=单一动作",
+        "human_touchpoint=人工执行：跨保司佣金整合",
+        "deliverable=《跨保司佣金整合记录》, type=数据表"
       ],
-      "process_context": "蓝图未列入顺序步骤，属于整合环节",
+      "process_context": "蓝图未列步骤，但涉及多保司数据整合，为后续外发做准备",
       "risks_limits": [
-        "复合动作未拆分；语义复核依赖人"
+        "单一动作但需语义复核",
+        "business_evidence有UNVERIFIED数据"
       ],
-      "current_recommendation": "进入Skill候选池，补充语义复核节点",
+      "current_recommendation": "优先进入Skill原型候选池，封装整合Skill，保留人工复核点",
       "evidence_refs": [
         "EVD-5c3e5e997e7a09864957",
         "EVD-8783f0465208f9cff033",
         "EVD-4716c83e831b0dd49463",
-        "EVD-807ab75acbdab39974ba",
         "EVD-110b5ae5526e47c122d3",
         "EVD-f9c4c96b3d547e7cb56c",
-        "EVD-c9891efc841d12f1244a",
-        "EVD-57f4a62ec54ae63244d4",
-        "EVD-e769e15719494fb5900d",
-        "EVD-96ac726827b2f513156f",
-        "EVD-56c22eb88d5332d532af",
-        "EVD-2ca779490c3cefc9c65b",
-        "EVD-4fb0223f9ba24ee3b593"
+        "EVD-e769e15719494fb5900d"
       ],
       "analysis_status": "MODEL_DRAFT"
     },
@@ -1816,27 +1799,24 @@
       "l4_code": "L4-COM-09",
       "quadrant": "unclassified",
       "data_basis": [
-        "无ACTIVE业务数据证据，仅基于流程定义和评分"
+        "agent_d1=3, D2=3, D3=3, D4=3, D5=2, D6=2",
+        "skill_feasibility: grade B, action_nature=合规监管类, action_singularity=单一动作",
+        "human_touchpoint=人工执行：佣金异常检测反欺诈",
+        "deliverable=《佣金异常检测反欺诈记录》, type=数据表"
       ],
-      "process_context": "蓝图未列入顺序步骤，属于监测环节",
+      "process_context": "蓝图未列步骤，但规则PAY-R056应派表实时校验触发条件相关",
       "risks_limits": [
-        "合规风险，需人工复核"
+        "B级需先补报告模板、规则固化或系统接口",
+        "异常检测依赖数据质量"
       ],
-      "current_recommendation": "先补报告模板和系统接口，再验证Skill",
+      "current_recommendation": "先补报告模板、规则固化或系统接口，再验证Skill；人工负责最终处置",
       "evidence_refs": [
         "EVD-5a9eaeb50db982d6dadf",
         "EVD-ad628ed729c76cc1ad97",
         "EVD-e7f085fe7b16c300cf2f",
-        "EVD-807ab75acbdab39974ba",
         "EVD-8440e68d409dafc9eac3",
         "EVD-a75edf54c6dc7961fdd8",
-        "EVD-06af6881f372bb005ecb",
-        "EVD-c9e5dbc937aa3a7466b9",
-        "EVD-123c1b07a259bb34aae6",
-        "EVD-8e87079eb14ce4f052d8",
-        "EVD-d9de8ac1f0092ad1b3dc",
-        "EVD-fde1d6a88ff00ba8b344",
-        "EVD-5d4cd49c877a41b672c6"
+        "EVD-123c1b07a259bb34aae6"
       ],
       "analysis_status": "MODEL_DRAFT"
     },
@@ -1844,28 +1824,25 @@
       "l4_code": "L4-COM-10",
       "quadrant": "unclassified",
       "data_basis": [
-        "无ACTIVE业务数据证据，仅基于流程定义和评分"
+        "agent_d1=2, D2=3, D3=2, D4=2, D5=1, D6=1",
+        "skill_feasibility: grade A, action_nature=信息处理/事务类, action_singularity=复合动作",
+        "human_touchpoint=人工执行：保单信息整合与应收核算（待注册）",
+        "deliverable=《应收明细清单》, type=数据表"
       ],
-      "process_context": "蓝图步骤STEP-04，前序STEP-03，后续STEP-05",
+      "process_context": "蓝图STEP-04保单信息整合与应收核算；属于价值节点VN-PAY-02佣金实收确认表，状态PARTIAL",
       "risks_limits": [
-        "复合动作未拆分；核算准确性要求高"
+        "复合动作需拆分为子Skill",
+        "待注册状态，流程未固化",
+        "D5 fallback=1, D6=1较低"
       ],
-      "current_recommendation": "拆分整合与核算子Skill，建立对账校验",
+      "current_recommendation": "优先拆分为保单整合Skill与核算复核子流程，先进入Skill原型候选池，同时推进注册确认",
       "evidence_refs": [
         "EVD-0f33bf6a01d612dfe164",
         "EVD-d438ad66fc634c61f8b2",
         "EVD-a82615e90ab961a3a109",
-        "EVD-807ab75acbdab39974ba",
         "EVD-53ed5a0156c91fda8988",
         "EVD-a03ac71d1111eab0d66d",
-        "EVD-03a699069f8262dd19bf",
-        "EVD-002f1b451f2fff284c21",
-        "EVD-7378d51ba99d1b30e9c9",
-        "EVD-7c8dda65cb074c32095c",
-        "EVD-2bc31b7138251a29ed76",
-        "EVD-01345904f1065138f842",
-        "EVD-ef2b3c2dbac3b37f5e1d",
-        "EVD-e6e5738ab334d18238bf"
+        "EVD-7378d51ba99d1b30e9c9"
       ],
       "analysis_status": "MODEL_DRAFT"
     },
@@ -1873,28 +1850,25 @@
       "l4_code": "L4-COM-11",
       "quadrant": "unclassified",
       "data_basis": [
-        "无ACTIVE业务数据证据，仅基于流程定义和评分"
+        "agent_d1=2, D2=2, D3=2, D4=2, D5=1, D6=1",
+        "skill_feasibility: grade A, action_nature=信息处理/事务类, action_singularity=复合动作",
+        "human_touchpoint=人工执行：银行到账确认与实收对账（待注册）",
+        "deliverable=《实收清单》 + 《差异对照表》, type=数据表"
       ],
-      "process_context": "蓝图步骤STEP-05，前序STEP-04，后续STEP-06",
+      "process_context": "蓝图STEP-05银行到账确认与实收对账；属于价值节点VN-PAY-02佣金实收确认表，状态PARTIAL",
       "risks_limits": [
-        "复合动作未拆分；对账错误影响后续"
+        "复合动作需拆分",
+        "待注册",
+        "fallback D5=1"
       ],
-      "current_recommendation": "拆分子Skill，建立自动对账与人工复核",
+      "current_recommendation": "优先拆分对账Skill与人工差异处理，先进入Skill原型候选池，推进注册",
       "evidence_refs": [
         "EVD-0c082792c1babee9daab",
         "EVD-2b5d641a68e1944f3675",
         "EVD-b8572f0e5e34fa49e96a",
-        "EVD-807ab75acbdab39974ba",
         "EVD-ec616da2ec2c5db89bb8",
         "EVD-0e38a79e83aeada84c22",
-        "EVD-0e4ed9b8d9783fb026f2",
-        "EVD-fa1835f16ba87f353b3d",
-        "EVD-ee93d8fc4b4f44f1b943",
-        "EVD-8eda65bd2cf2217110b9",
-        "EVD-6ecee95348b8eef3a70d",
-        "EVD-0f5ad3713e2428416f27",
-        "EVD-a439d55fed017277240d",
-        "EVD-541ba265fc3abbb7fec0"
+        "EVD-ee93d8fc4b4f44f1b943"
       ],
       "analysis_status": "MODEL_DRAFT"
     },
@@ -1902,28 +1876,26 @@
       "l4_code": "L4-COM-12",
       "quadrant": "unclassified",
       "data_basis": [
-        "无ACTIVE业务数据证据，仅基于流程定义和评分"
+        "agent_d1=2, D2=3, D3=2, D4=2, D5=1, D6=1",
+        "skill_feasibility: grade A, action_nature=信息处理/事务类, action_singularity=复合动作",
+        "human_touchpoint=MISSING",
+        "deliverable=《应派清单》 + 《理财师对账单》, type=数据表"
       ],
-      "process_context": "蓝图步骤STEP-06，前序STEP-05，后续STEP-07",
+      "process_context": "蓝图STEP-06应派金额拆分与渠道对账；属于价值节点VN-PAY-03应派清单三件套、VN-PAY-06理财师综合应派计算清单",
       "risks_limits": [
-        "复合动作未拆分；资金安全风险"
+        "复合动作需拆分",
+        "待注册",
+        "人工触点缺失",
+        "fallback D5=1"
       ],
-      "current_recommendation": "拆分子Skill，建立对账校验与审批",
+      "current_recommendation": "优先拆分计算Skill与人工对账复核，先进入Skill原型候选池，补全人工确认责任",
       "evidence_refs": [
         "EVD-6d8f25e35f9390785832",
         "EVD-1b9206cbf7054edfde19",
         "EVD-9fdb424c96a791445a5e",
-        "EVD-807ab75acbdab39974ba",
         "EVD-f1968ea26fdb8212802e",
         "EVD-e4573dab6044d8374475",
-        "EVD-e2ff815caf3340600032",
-        "EVD-81591b835d4cef439562",
-        "EVD-26078473098258db3bb0",
-        "EVD-3c0f2ca5629dc9f5ce49",
-        "EVD-2788a605c12978e09c58",
-        "EVD-b839f8dcd4ea3fd3a570",
-        "EVD-e167a1a79d81736a31df",
-        "EVD-acc13810ec34c27931b4"
+        "EVD-26078473098258db3bb0"
       ],
       "analysis_status": "MODEL_DRAFT"
     },
@@ -1931,28 +1903,25 @@
       "l4_code": "L4-COM-13",
       "quadrant": "unclassified",
       "data_basis": [
-        "无ACTIVE业务数据证据，仅基于流程定义和评分"
+        "agent_d1=2, D2=2, D3=2, D4=1, D5=1, D6=2",
+        "skill_feasibility: grade A, action_nature=信息处理/事务类, action_singularity=复合动作, funds_safety_hard_gate=true",
+        "human_touchpoint=人工执行：实派清单确认与财务制单（待注册）",
+        "deliverable=《实派执行表》, type=数据表"
       ],
-      "process_context": "蓝图步骤STEP-08，前序STEP-07，后续STEP-09",
+      "process_context": "蓝图STEP-08实派清单确认与财务制单；涉及价值节点VN-PAY-06理财师综合应派计算清单",
       "risks_limits": [
-        "资金安全不可逆，必须人工控制"
+        "资金安全硬门禁，不可完全自动化",
+        "待注册",
+        "API可达D4=1，需系统集成"
       ],
-      "current_recommendation": "严格拆分，保留人工审批门，不自动化资金操作",
+      "current_recommendation": "优先拆分制单Skill，但必须保留人工付款审批控制门；先进入Skill原型候选池并推进注册",
       "evidence_refs": [
         "EVD-0e96f1628f3e8709028b",
         "EVD-317c89464705bc50f14c",
         "EVD-03c56812c3c8bb8da317",
-        "EVD-807ab75acbdab39974ba",
         "EVD-daac64dc6d0589a282d6",
         "EVD-a919472a15a154172eb5",
-        "EVD-f56e3e5e4460944b57c3",
-        "EVD-63e85adbaed8cf1cb73f",
-        "EVD-b2378f17e900298cd11b",
-        "EVD-f36aac0188905f484a25",
-        "EVD-7d44496d6b115bd28ae2",
-        "EVD-60f79b59800e9eec496c",
-        "EVD-99cf009a0da4b7c839eb",
-        "EVD-72a15b233148bb2b723b"
+        "EVD-b2378f17e900298cd11b"
       ],
       "analysis_status": "MODEL_DRAFT"
     },
@@ -1960,28 +1929,25 @@
       "l4_code": "L4-COM-14",
       "quadrant": "unclassified",
       "data_basis": [
-        "无ACTIVE业务数据证据，仅基于流程定义和评分"
+        "agent_d1=2, D2=2, D3=3, D4=2, D5=1, D6=2",
+        "skill_feasibility: grade A, action_nature=信息处理/事务类, action_singularity=单一动作, funds_safety_hard_gate=true",
+        "human_touchpoint=人工执行：财务付款执行（待注册）",
+        "deliverable=银行转账回执 / 支票存根, type=凭证"
       ],
-      "process_context": "蓝图步骤STEP-09，前序STEP-08，后续STEP-10",
+      "process_context": "蓝图STEP-09财务付款执行；属于价值节点VN-PAY-04转介费派发确认台账，当前FAIL",
       "risks_limits": [
-        "资金不可逆操作，必须人工"
+        "资金安全硬门禁，不可全自动",
+        "待注册",
+        "fallback D5=1"
       ],
-      "current_recommendation": "禁止自动化付款，仅生成指令供人工审核执行",
+      "current_recommendation": "封装付款指令准备与回执归档Skill，但实际支付必须人工审批，确保硬门禁",
       "evidence_refs": [
         "EVD-08ea8bfb3fd19609a4e8",
         "EVD-23c3c12fa3296c207c07",
         "EVD-a5c8ef47be835b5d0e78",
-        "EVD-807ab75acbdab39974ba",
         "EVD-5eeb02716a617ab995d8",
         "EVD-d3a0a474acddb209c272",
-        "EVD-59abf8b56d53f621ac64",
-        "EVD-e9a38d46d3ccfefcd527",
-        "EVD-e1e1ab9aebf3b917b688",
-        "EVD-df0798bf507041e2be75",
-        "EVD-aec414916abcccc6f23f",
-        "EVD-7f8d74fa57ebec11ba9c",
-        "EVD-a299261969729f690144",
-        "EVD-29a29003b8173e8456da"
+        "EVD-e1e1ab9aebf3b917b688"
       ],
       "analysis_status": "MODEL_DRAFT"
     },
@@ -1989,28 +1955,25 @@
       "l4_code": "L4-COM-15",
       "quadrant": "unclassified",
       "data_basis": [
-        "无ACTIVE业务数据证据，仅基于流程定义和评分"
+        "agent_d1=2, D2=2, D3=2, D4=1, D5=1, D6=1",
+        "skill_feasibility: grade A, action_nature=信息处理/事务类, action_singularity=复合动作",
+        "human_touchpoint=人工执行：付款回执归档与台账更新（待注册）",
+        "deliverable=《转介费派发确认台账》, type=数据表"
       ],
-      "process_context": "蓝图步骤STEP-10，前序STEP-09",
+      "process_context": "蓝图STEP-10付款回执归档与台账更新；属于价值节点VN-PAY-04转介费派发确认台账，当前FAIL",
       "risks_limits": [
-        "复合动作未拆分"
+        "复合动作需拆分",
+        "待注册",
+        "API可达D4=1"
       ],
-      "current_recommendation": "拆分子Skill，建立归档与更新分开",
+      "current_recommendation": "优先拆分归档Skill与人工台账核对，先进入Skill原型候选池",
       "evidence_refs": [
         "EVD-430504958c7c05297502",
         "EVD-ad5bf8306d1597e0af89",
         "EVD-215eb6ce03d378e797d5",
-        "EVD-807ab75acbdab39974ba",
         "EVD-5ec40c24900f3656e553",
         "EVD-4b4adba2a6dddd8b740d",
-        "EVD-43b4880d5bab22bad99f",
-        "EVD-e255cf62493f682ab1ed",
-        "EVD-b91c1f880c952fb22cc5",
-        "EVD-e8db7fb325dd2f9a28bd",
-        "EVD-a354625fc527f7724658",
-        "EVD-f021af257717f4c79472",
-        "EVD-6a5973bc9a9fa4d0f5b1",
-        "EVD-c7d0fcc506d19b48985b"
+        "EVD-b91c1f880c952fb22cc5"
       ],
       "analysis_status": "MODEL_DRAFT"
     },
@@ -2018,28 +1981,25 @@
       "l4_code": "L4-COM-16",
       "quadrant": "unclassified",
       "data_basis": [
-        "无ACTIVE业务数据证据，仅基于流程定义和评分"
+        "agent_d1=2, D2=2, D3=2, D4=2, D5=1, D6=1",
+        "skill_feasibility: grade A, action_nature=信息处理/事务类, action_singularity=复合动作",
+        "human_touchpoint=人工执行：佣金数据导入与格式转换（待注册）",
+        "deliverable=结构化佣金数据表, type=数据表"
       ],
-      "process_context": "蓝图步骤STEP-01，无前序，后续STEP-02",
+      "process_context": "蓝图STEP-01佣金数据导入与格式转换（PDF→Excel，待注册）",
       "risks_limits": [
-        "复合动作未拆分；OCR技术风险"
+        "复合动作需拆分",
+        "待注册",
+        "源头PDF无OCR/双轨道SPOF（见VN-PAY-01）"
       ],
-      "current_recommendation": "拆分子Skill，评估OCR可行性",
+      "current_recommendation": "优先拆分导入Skill与格式校验，先进入Skill原型候选池，解决OCR问题",
       "evidence_refs": [
         "EVD-0987c3b342d7db96945a",
         "EVD-ac2e625d0fbe9fe7b68b",
         "EVD-220778ebeb1268db81ca",
-        "EVD-807ab75acbdab39974ba",
         "EVD-423a91a9ba3b12e49919",
         "EVD-0f4b8785b3d94e797142",
-        "EVD-8cb4c8123e1b9917ba9b",
-        "EVD-1cfb1a8e906e2492a9af",
-        "EVD-cafecc0a73dabf0f4df0",
-        "EVD-2293cf368ee67a95718a",
-        "EVD-c5000f561af18b420f47",
-        "EVD-954be25187c2222208e0",
-        "EVD-bcf5aa7bffc2fb290c57",
-        "EVD-880fb0e1c4b31d75c077"
+        "EVD-cafecc0a73dabf0f4df0"
       ],
       "analysis_status": "MODEL_DRAFT"
     },
@@ -2047,27 +2007,24 @@
       "l4_code": "L4-COM-17",
       "quadrant": "unclassified",
       "data_basis": [
-        "无ACTIVE业务数据证据，仅基于流程定义和评分"
+        "agent_d1=3, D2=2, D3=2, D4=2, D5=2, D6=3",
+        "skill_feasibility: grade B, action_nature=合规监管类, action_singularity=单一动作",
+        "human_touchpoint=人工执行：IA合规拦截引擎",
+        "deliverable=Excel + 回执PDF（批量）+ IA规则校验日志, type=凭证"
       ],
-      "process_context": "辅助环节，用于转介费派发前合规检查",
+      "process_context": "蓝图未列步骤，但涉及价值节点VN-PAY-04转介费派发确认台账，当前FAIL",
       "risks_limits": [
-        "合规风险，需人工复核"
+        "B级需先补报告模板、规则固化或系统接口",
+        "合规拦截需人工决策"
       ],
-      "current_recommendation": "先补报告模板和系统接口，再验证Skill",
+      "current_recommendation": "先补报告模板、规则固化或系统接口，再验证Skill；人工负责合规拦截处置",
       "evidence_refs": [
         "EVD-ec66c41eae8d633e691e",
         "EVD-489bf09af150e8695eea",
         "EVD-ba68da992058dcd7ed03",
-        "EVD-807ab75acbdab39974ba",
         "EVD-3ee89cf0f3df6f8960c5",
         "EVD-ef4717e50362b6009d74",
-        "EVD-7c22c7e4aa517e34e81a",
-        "EVD-257c8632e61e7357fd01",
-        "EVD-e739885d54e56dbf953c",
-        "EVD-2e3dcedd25661e003d13",
-        "EVD-117937c62f104a75e763",
-        "EVD-4a26392ef18a4b2a8d55",
-        "EVD-8733c6ceae0b3e6151b9"
+        "EVD-e739885d54e56dbf953c"
       ],
       "analysis_status": "MODEL_DRAFT"
     },
@@ -2075,27 +2032,24 @@
       "l4_code": "L4-COM-18",
       "quadrant": "unclassified",
       "data_basis": [
-        "无ACTIVE业务数据证据，仅基于流程定义和评分"
+        "agent_d1=2, D2=1, D3=2, D4=1, D5=1, D6=1",
+        "skill_feasibility: grade A, action_nature=语义复核判定, action_singularity=单一动作",
+        "human_touchpoint=人工执行：收款映射版本管理",
+        "deliverable=《收款映射版本管理记录》, type=数据表"
       ],
-      "process_context": "主数据治理环节，非顺序步骤",
+      "process_context": "蓝图未列步骤，规则PAY-R058收款主体映射变更审批链相关",
       "risks_limits": [
-        "语义复核依赖人；主数据错误影响支付"
+        "规则清晰度D2=1，自动化程度受限",
+        "API可达D4=1"
       ],
-      "current_recommendation": "进入Skill候选池，补充审批流",
+      "current_recommendation": "优先进入Skill原型候选池，封装版本管理Skill，保留人工复核点",
       "evidence_refs": [
         "EVD-289e80743e5aeb623ac5",
         "EVD-8a669b19730217a592c4",
         "EVD-4cb683d60ed5a1b280a0",
-        "EVD-807ab75acbdab39974ba",
         "EVD-2136ee5f7dfbc737a297",
         "EVD-9831fa72d19c7c828a6b",
-        "EVD-5f39424d4f20a7719d11",
-        "EVD-681466f715b8e4b8dab8",
-        "EVD-f7619b7c46d2b58d245c",
-        "EVD-5538ec73df1f69987cc2",
-        "EVD-ad37a18edfd1f0b91c90",
-        "EVD-8f34564993de44c826a4",
-        "EVD-5405f73487a8c9c27b30"
+        "EVD-f7619b7c46d2b58d245c"
       ],
       "analysis_status": "MODEL_DRAFT"
     }
@@ -2104,40 +2058,106 @@
     {
       "priority": "P0",
       "task_ids": [
-        "T-COM-01-1",
-        "T-COM-01-2",
-        "T-COM-02-1",
-        "T-COM-02-2"
+        "T17",
+        "T18",
+        "T19",
+        "T20"
       ],
-      "title": "先试点佣金政策接收与差异化拆解Skill化",
-      "pilot_scope": "选择2-3家保司，从PDF导入到标准化政策库输出",
-      "human_boundary": "政策校准与差异验证必须人工确认，禁止自动覆盖",
+      "title": "启动转介费派发确认台账熔断处置",
+      "pilot_scope": "试点L4-COM-14财务付款执行的人工控制门，因为资金不可逆且待注册",
+      "human_boundary": "财务付款执行必须人工审批确认，不可由AI直接触发；付款回执归档与台账更新需人工核对",
       "evidence_refs": [
-        "EVD-c343c6d3cd547689f533",
-        "EVD-8f39d05eed73571639e8"
-      ],
-      "analysis_status": "MODEL_DRAFT"
-    },
-    {
-      "priority": "P0熔断",
-      "task_ids": [
-        "T-COM-14-1"
-      ],
-      "title": "明确付款执行人工控制，立即冻结自动化尝试",
-      "pilot_scope": "仅生成付款指令草稿，不执行任何自动转账",
-      "human_boundary": "财务部门双人复核，审批后手工执行付款",
-      "evidence_refs": [
-        "EVD-5eeb02716a617ab995d8",
-        "EVD-a299261969729f690144"
+        "EVD-363619e11a94faabddb7",
+        "EVD-85fa835def31b12ea2b8",
+        "EVD-1651c33d31d4c1b510cb",
+        "EVD-e3b494d90380bbaf241b",
+        "EVD-4fbda4ab87fadb1e3d7d",
+        "EVD-63ed0773dc6cc3f877e9"
       ],
       "analysis_status": "MODEL_DRAFT"
     }
   ],
   "control_chain": [],
-  "rejected_task_sources": [],
+  "rejected_task_sources": [
+    {
+      "evidence_id": "EVD-5ec8050205c3bb81d7af",
+      "l4_code": "L4-COM-01",
+      "reason": "business_evidence字段为CONSENSUS/UNVERIFIED，不能用于业务结论或证据引用"
+    },
+    {
+      "evidence_id": "EVD-44d28a67c20dd60f8f9e",
+      "l4_code": "L4-COM-02",
+      "reason": "business_evidence字段为CONSENSUS/UNVERIFIED"
+    },
+    {
+      "evidence_id": "EVD-a3c4e7a1575c679b6221",
+      "l4_code": "L4-COM-03",
+      "reason": "business_evidence字段为CONSENSUS/UNVERIFIED"
+    },
+    {
+      "evidence_id": "EVD-8e2da490481363206ebd",
+      "l4_code": "L4-COM-04",
+      "reason": "business_evidence字段为CONSENSUS/UNVERIFIED"
+    },
+    {
+      "evidence_id": "EVD-925c2123d5322c2e43e5",
+      "l4_code": "L4-COM-05",
+      "reason": "business_evidence字段为CONSENSUS/UNVERIFIED"
+    },
+    {
+      "evidence_id": "EVD-0fb14a7a021297f175d3",
+      "l4_code": "L4-COM-11",
+      "reason": "business_evidence字段为CONSENSUS/UNVERIFIED"
+    },
+    {
+      "evidence_id": "EVD-3241954f56fec84a6b59",
+      "l4_code": "L4-COM-12",
+      "reason": "business_evidence字段为CONSENSUS/UNVERIFIED"
+    },
+    {
+      "evidence_id": "EVD-77f79a8387343980b4a0",
+      "l4_code": "L4-COM-13",
+      "reason": "business_evidence字段为CONSENSUS/UNVERIFIED"
+    },
+    {
+      "evidence_id": "EVD-ba384a120f1f149c09eb",
+      "l4_code": "L4-COM-14",
+      "reason": "business_evidence字段为CONSENSUS/UNVERIFIED"
+    },
+    {
+      "evidence_id": "EVD-c18b8d52333ef672243e",
+      "l4_code": "L4-COM-15",
+      "reason": "business_evidence字段为CONSENSUS/UNVERIFIED"
+    },
+    {
+      "evidence_id": "EVD-dde98a9424171dca42e7",
+      "l4_code": "L4-COM-16",
+      "reason": "business_evidence字段为CONSENSUS/UNVERIFIED"
+    },
+    {
+      "evidence_id": "EVD-43821afadf2bde131404",
+      "l4_code": "L4-COM-09",
+      "reason": "business_evidence字段为CONSENSUS/UNVERIFIED"
+    },
+    {
+      "evidence_id": "EVD-b152a83bbe4695be0048",
+      "l4_code": "L4-COM-08",
+      "reason": "business_evidence字段为CONSENSUS/UNVERIFIED"
+    },
+    {
+      "evidence_id": "EVD-cc264a32481d9b58c70b",
+      "l4_code": "L4-COM-18",
+      "reason": "business_evidence字段为CONSENSUS/UNVERIFIED"
+    }
+  ],
   "missing_analysis": [
-    "business_evidence",
-    "human_touchpoint",
+    "L4-COM-01 · agent_human_touchpoint",
+    "L4-COM-02 · agent_human_touchpoint",
+    "L4-COM-03 · agent_human_touchpoint",
+    "L4-COM-12 · agent_human_touchpoint",
+    "L4-COM-06 · business_evidence",
+    "L4-COM-07 · business_evidence",
+    "L4-COM-17 · business_evidence",
     "控制链缺少L4定位，已拒绝4条"
   ]
 }

@@ -854,8 +854,8 @@
       }
     ]
   },
-  "analysis_freshness": "CURRENT",
-  "analysis_input_hash": "aaeaa94d609241b43ceb185975732434f046a9ab6cd55764a8d5842216c06b1a",
+  "analysis_freshness": "INPUT_CHANGED",
+  "analysis_input_hash": "bef8ed2bd91e213e0b6a52d8d5cec25488e9559a7442f064160b979e14c58ed7",
   "blueprint": {
     "blueprint_value_nodes": [],
     "coverage": "INDEXED",
@@ -1133,37 +1133,6 @@
       "value": 1
     },
     {
-      "confidence": "LOW",
-      "conflict_note": "人工按业务含义匹配到业务数据仓库表，非外键关联，未经业务方确认",
-      "evidence_class": "CONSENSUS",
-      "evidence_id": "EVD-0af26138b79a0b74ec5f",
-      "field_name": "business_evidence",
-      "source": {
-        "observed_at": "",
-        "source_field": "人工匹配",
-        "source_key": "L4-HRM-04",
-        "source_object": "public.dim_employee",
-        "source_system": "业务数据仓库",
-        "source_version": "2026-08-04试点"
-      },
-      "status": "UNVERIFIED",
-      "transform_rule": "",
-      "value": [
-        {
-          "confidence": "strong",
-          "evidence_type": "output",
-          "matched_columns": [
-            "regularization_date",
-            "work_status"
-          ],
-          "rationale": "转正日期字段直接对应试用期考核结果",
-          "row_count": 209,
-          "schema": "public",
-          "table": "dim_employee"
-        }
-      ]
-    },
-    {
       "confidence": "HIGH",
       "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
@@ -1387,6 +1356,39 @@
       "status": "ACTIVE",
       "transform_rule": "",
       "value": "PARTIAL"
+    },
+    {
+      "confidence": "LOW",
+      "conflict_note": "人工按业务含义匹配到业务数据仓库表，非外键关联，未经业务方确认",
+      "evidence_class": "CONSENSUS",
+      "evidence_id": "EVD-1aa3fc653cea099ea90c",
+      "field_name": "business_evidence",
+      "source": {
+        "observed_at": "",
+        "source_field": "人工匹配",
+        "source_key": "L4-HRM-03",
+        "source_object": "public.dim_employee",
+        "source_system": "业务数据仓库",
+        "source_version": "2026-08-04试点"
+      },
+      "status": "UNVERIFIED",
+      "transform_rule": "",
+      "value": [
+        {
+          "confidence": "strong",
+          "evidence_type": "output",
+          "matched_columns": [
+            "first_hire_date",
+            "employment_type",
+            "contract_region",
+            "id_card_masked"
+          ],
+          "rationale": "入职日期/雇佣类型/合同地区字段直接对应入职配置",
+          "row_count": 215,
+          "schema": "public",
+          "table": "dim_employee"
+        }
+      ]
     },
     {
       "confidence": "HIGH",
@@ -1891,6 +1893,37 @@
       "status": "ACTIVE",
       "transform_rule": "",
       "value": 2
+    },
+    {
+      "confidence": "LOW",
+      "conflict_note": "人工按业务含义匹配到业务数据仓库表，非外键关联，未经业务方确认",
+      "evidence_class": "CONSENSUS",
+      "evidence_id": "EVD-4f240e4b650a9a5cbb13",
+      "field_name": "business_evidence",
+      "source": {
+        "observed_at": "",
+        "source_field": "人工匹配",
+        "source_key": "L4-HRM-09",
+        "source_object": "public.dim_employee",
+        "source_system": "业务数据仓库",
+        "source_version": "2026-08-04试点"
+      },
+      "status": "UNVERIFIED",
+      "transform_rule": "",
+      "value": [
+        {
+          "confidence": "strong",
+          "evidence_type": "output",
+          "matched_columns": [
+            "recorded_term_date",
+            "work_status"
+          ],
+          "rationale": "离职登记日期与在职状态字段直接对应人员退出归档",
+          "row_count": 215,
+          "schema": "public",
+          "table": "dim_employee"
+        }
+      ]
     },
     {
       "confidence": "HIGH",
@@ -2804,6 +2837,37 @@
       "value": "试用期考核+成长路径方案"
     },
     {
+      "confidence": "LOW",
+      "conflict_note": "人工按业务含义匹配到业务数据仓库表，非外键关联，未经业务方确认",
+      "evidence_class": "CONSENSUS",
+      "evidence_id": "EVD-85dc6eb7c796e01dbf65",
+      "field_name": "business_evidence",
+      "source": {
+        "observed_at": "",
+        "source_field": "人工匹配",
+        "source_key": "L4-HRM-04",
+        "source_object": "public.dim_employee",
+        "source_system": "业务数据仓库",
+        "source_version": "2026-08-04试点"
+      },
+      "status": "UNVERIFIED",
+      "transform_rule": "",
+      "value": [
+        {
+          "confidence": "strong",
+          "evidence_type": "output",
+          "matched_columns": [
+            "regularization_date",
+            "work_status"
+          ],
+          "rationale": "转正日期字段直接对应试用期考核结果",
+          "row_count": 215,
+          "schema": "public",
+          "table": "dim_employee"
+        }
+      ]
+    },
+    {
       "confidence": "HIGH",
       "conflict_note": "",
       "evidence_class": "AUTHORITATIVE",
@@ -3094,37 +3158,6 @@
       "status": "ACTIVE",
       "transform_rule": "",
       "value": "Aug"
-    },
-    {
-      "confidence": "LOW",
-      "conflict_note": "人工按业务含义匹配到业务数据仓库表，非外键关联，未经业务方确认",
-      "evidence_class": "CONSENSUS",
-      "evidence_id": "EVD-978dd40393804a760a4a",
-      "field_name": "business_evidence",
-      "source": {
-        "observed_at": "",
-        "source_field": "人工匹配",
-        "source_key": "L4-HRM-09",
-        "source_object": "public.dim_employee",
-        "source_system": "业务数据仓库",
-        "source_version": "2026-08-04试点"
-      },
-      "status": "UNVERIFIED",
-      "transform_rule": "",
-      "value": [
-        {
-          "confidence": "strong",
-          "evidence_type": "output",
-          "matched_columns": [
-            "recorded_term_date",
-            "work_status"
-          ],
-          "rationale": "离职登记日期与在职状态字段直接对应人员退出归档",
-          "row_count": 209,
-          "schema": "public",
-          "table": "dim_employee"
-        }
-      ]
     },
     {
       "confidence": "HIGH",
@@ -3458,39 +3491,6 @@
       "status": "ACTIVE",
       "transform_rule": "",
       "value": 1
-    },
-    {
-      "confidence": "LOW",
-      "conflict_note": "人工按业务含义匹配到业务数据仓库表，非外键关联，未经业务方确认",
-      "evidence_class": "CONSENSUS",
-      "evidence_id": "EVD-b0c7376b0afce7c17a8c",
-      "field_name": "business_evidence",
-      "source": {
-        "observed_at": "",
-        "source_field": "人工匹配",
-        "source_key": "L4-HRM-03",
-        "source_object": "public.dim_employee",
-        "source_system": "业务数据仓库",
-        "source_version": "2026-08-04试点"
-      },
-      "status": "UNVERIFIED",
-      "transform_rule": "",
-      "value": [
-        {
-          "confidence": "strong",
-          "evidence_type": "output",
-          "matched_columns": [
-            "first_hire_date",
-            "employment_type",
-            "contract_region",
-            "id_card_masked"
-          ],
-          "rationale": "入职日期/雇佣类型/合同地区字段直接对应入职配置",
-          "row_count": 209,
-          "schema": "public",
-          "table": "dim_employee"
-        }
-      ]
     },
     {
       "confidence": "HIGH",
@@ -4773,7 +4773,7 @@
             "id_card_masked"
           ],
           "rationale": "入职日期/雇佣类型/合同地区字段直接对应入职配置",
-          "row_count": 209,
+          "row_count": 215,
           "schema": "public",
           "table": "dim_employee"
         }
@@ -4797,7 +4797,7 @@
         "agent_d6_compliance": "EVD-794bbbdefb6cac788169",
         "agent_human_touchpoint": "EVD-413671147372f161ae17",
         "agentifiability": "EVD-a8165adb293beb1de43e",
-        "business_evidence": "EVD-b0c7376b0afce7c17a8c",
+        "business_evidence": "EVD-1aa3fc653cea099ea90c",
         "l4_deliverable": "EVD-6e371f6caff789daf355",
         "l4_deliverable_type": "EVD-73081d2f7a1700a36504",
         "l4_name": "EVD-c6af9bcfe13bf359649f",
@@ -4835,7 +4835,7 @@
             "work_status"
           ],
           "rationale": "转正日期字段直接对应试用期考核结果",
-          "row_count": 209,
+          "row_count": 215,
           "schema": "public",
           "table": "dim_employee"
         }
@@ -4859,7 +4859,7 @@
         "agent_d6_compliance": "EVD-2fb5f1fb68182bc6f85f",
         "agent_human_touchpoint": "EVD-7ceb6a822d4b0568b918",
         "agentifiability": "EVD-a63f31ceaf292c4eb36a",
-        "business_evidence": "EVD-0af26138b79a0b74ec5f",
+        "business_evidence": "EVD-85dc6eb7c796e01dbf65",
         "l4_deliverable": "EVD-9e0130d81d192b3bc701",
         "l4_deliverable_type": "EVD-5d119798e96e9b0695a3",
         "l4_name": "EVD-c8e94d00e1d012220f77",
@@ -5089,7 +5089,7 @@
             "work_status"
           ],
           "rationale": "离职登记日期与在职状态字段直接对应人员退出归档",
-          "row_count": 209,
+          "row_count": 215,
           "schema": "public",
           "table": "dim_employee"
         }
@@ -5113,7 +5113,7 @@
         "agent_d6_compliance": "EVD-5a2198098b527904e455",
         "agent_human_touchpoint": "EVD-542f6b473d6d1494c47d",
         "agentifiability": "EVD-d39803bdbde58d30f306",
-        "business_evidence": "EVD-978dd40393804a760a4a",
+        "business_evidence": "EVD-4f240e4b650a9a5cbb13",
         "l4_deliverable": "EVD-c2f2ffc65519992a67ce",
         "l4_deliverable_type": "EVD-359e1c444812ae6b5440",
         "l4_name": "EVD-84ef6dbab3c449c158bc",

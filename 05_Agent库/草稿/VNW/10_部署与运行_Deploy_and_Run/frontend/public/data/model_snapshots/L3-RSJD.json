@@ -848,8 +848,8 @@
       }
     ]
   },
-  "analysis_freshness": "CURRENT",
-  "analysis_input_hash": "4fcc501602b54f9db313ced28b94eeaadbe2b7f96c17082f82e6b0bfc16b9844",
+  "analysis_freshness": "INPUT_CHANGED",
+  "analysis_input_hash": "14d1191da9855dadbb91f76a16a5b50d08c2470ffd413499ba89dc29a9c7dc7a",
   "blueprint": {
     "blueprint_value_nodes": [],
     "coverage": "INDEXED",
@@ -1069,81 +1069,6 @@
       "value": 1
     },
     {
-      "confidence": "LOW",
-      "conflict_note": "人工按业务含义匹配到业务数据仓库表，非外键关联，未经业务方确认",
-      "evidence_class": "CONSENSUS",
-      "evidence_id": "EVD-09ba710cdb421c745644",
-      "field_name": "business_evidence",
-      "source": {
-        "observed_at": "",
-        "source_field": "人工匹配",
-        "source_key": "L4-RSJD-01",
-        "source_object": "public.fact_sales_activity, public.dim_customer, public.dim_predicate_library, public.dim_customer_type",
-        "source_system": "业务数据仓库",
-        "source_version": "2026-08-04试点"
-      },
-      "status": "UNVERIFIED",
-      "transform_rule": "",
-      "value": [
-        {
-          "confidence": "strong",
-          "evidence_type": "output",
-          "matched_columns": [
-            "policy_id",
-            "event_type",
-            "status_after",
-            "event_date",
-            "operator"
-          ],
-          "rationale": "保单生命周期事件流水表，逐条记录销售执行动作",
-          "row_count": 49915,
-          "schema": "public",
-          "table": "fact_sales_activity"
-        },
-        {
-          "confidence": "strong",
-          "evidence_type": "output",
-          "matched_columns": [
-            "customer_id",
-            "customer_type",
-            "occupation",
-            "income"
-          ],
-          "rationale": "客户主数据表，是客户管理的直接依据",
-          "row_count": 4747,
-          "schema": "public",
-          "table": "dim_customer"
-        },
-        {
-          "confidence": "strong",
-          "evidence_type": "rule",
-          "matched_columns": [
-            "event_type",
-            "lifecycle_stage",
-            "name_cn"
-          ],
-          "rationale": "保单生命周期事件类型定义库，外键被fact_sales_activity的event_type引用，是销售执行事件的分类规则依据",
-          "row_count": 75,
-          "schema": "public",
-          "table": "dim_predicate_library"
-        },
-        {
-          "confidence": "weak",
-          "evidence_type": "rule",
-          "matched_columns": [
-            "customer_type",
-            "is_pi",
-            "residency",
-            "risk_level"
-          ],
-          "rationale": "客户类型字典表，外键被dim_customer的customer_type引用，是客户管理的分类规则依据；当前0行未populate",
-          "row_count": 0,
-          "schema": "public",
-          "table": "dim_customer_type"
-        }
-      ]
-    },
-    {
       "confidence": "HIGH",
       "conflict_note": "",
       "evidence_class": "SUPPLEMENTAL",
@@ -1340,6 +1265,119 @@
       "status": "ACTIVE",
       "transform_rule": "",
       "value": false
+    },
+    {
+      "confidence": "LOW",
+      "conflict_note": "人工按业务含义匹配到业务数据仓库表，非外键关联，未经业务方确认",
+      "evidence_class": "CONSENSUS",
+      "evidence_id": "EVD-2fbad9252e396e1003da",
+      "field_name": "business_evidence",
+      "source": {
+        "observed_at": "",
+        "source_field": "人工匹配",
+        "source_key": "L4-RSJD-04",
+        "source_object": "public.fact_insurance_plan_header, public.fact_insurance_plan_lines, public.dim_carrier, public.dim_product_benefit_profile, public.fact_product_id, public.v_plan_metrics, public.v_plan_year_snapshot",
+        "source_system": "业务数据仓库",
+        "source_version": "2026-08-04试点"
+      },
+      "status": "UNVERIFIED",
+      "transform_rule": "",
+      "value": [
+        {
+          "confidence": "strong",
+          "evidence_type": "output",
+          "matched_columns": [
+            "plan_header_id",
+            "sum_assured",
+            "premium",
+            "product_name"
+          ],
+          "rationale": "保险计划书主表，本身就是\"方案\"这一交付物的数据化版本",
+          "row_count": 75,
+          "schema": "public",
+          "table": "fact_insurance_plan_header"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "output",
+          "matched_columns": [
+            "plan_line_id",
+            "policy_year",
+            "gcv",
+            "tcv_irr"
+          ],
+          "rationale": "计划书逐年现金价值明细，是方案交付内容的精算细节",
+          "row_count": 7393,
+          "schema": "public",
+          "table": "fact_insurance_plan_lines"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "rule",
+          "matched_columns": [
+            "carrier_code",
+            "carrier_cn_name",
+            "rating"
+          ],
+          "rationale": "保司主数据表，外键被fact_insurance_plan_header引用，是方案交付的保司侧参照维度",
+          "row_count": 26,
+          "schema": "public",
+          "table": "dim_carrier"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "output",
+          "matched_columns": [
+            "product_id",
+            "consistency_status",
+            "plan_count"
+          ],
+          "rationale": "产品权益特征一致性检查表，与fact_insurance_plan_header同属流水线批次产出，核验方案交付内容的权益一致性",
+          "row_count": 69,
+          "schema": "public",
+          "table": "dim_product_benefit_profile"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "output",
+          "matched_columns": [
+            "product_id",
+            "benefit_consistency_status",
+            "policy_count"
+          ],
+          "rationale": "产品月度业绩汇总视图，视图依赖fact_insurance_plan_header，是方案交付按产品维度的业绩汇总",
+          "row_count": 1034,
+          "schema": "public",
+          "table": "fact_product_id"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "output",
+          "matched_columns": [
+            "plan_header_id",
+            "sum_assured",
+            "max_exp_irr"
+          ],
+          "rationale": "计划书精算指标视图，视图依赖fact_insurance_plan_header，是方案交付的精算指标输出",
+          "row_count": 103,
+          "schema": "public",
+          "table": "v_plan_metrics"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "output",
+          "matched_columns": [
+            "plan_header_id",
+            "policy_year",
+            "gcv",
+            "tcv"
+          ],
+          "rationale": "fact_insurance_plan_lines的精简视图，是方案交付逐年现金价值的展示口径",
+          "row_count": 7393,
+          "schema": "public",
+          "table": "v_plan_year_snapshot"
+        }
+      ]
     },
     {
       "confidence": "HIGH",
@@ -1558,38 +1596,6 @@
       "value": null
     },
     {
-      "confidence": "LOW",
-      "conflict_note": "人工按业务含义匹配到业务数据仓库表，非外键关联，未经业务方确认",
-      "evidence_class": "CONSENSUS",
-      "evidence_id": "EVD-6e2c96b515768ee4feb8",
-      "field_name": "business_evidence",
-      "source": {
-        "observed_at": "",
-        "source_field": "人工匹配",
-        "source_key": "L4-RSJD-03",
-        "source_object": "public.v_policy_current_state",
-        "source_system": "业务数据仓库",
-        "source_version": "2026-08-04试点"
-      },
-      "status": "UNVERIFIED",
-      "transform_rule": "",
-      "value": [
-        {
-          "confidence": "strong",
-          "evidence_type": "workflow",
-          "matched_columns": [
-            "status_master",
-            "last_status_event_type",
-            "status_match"
-          ],
-          "rationale": "保单当前状态视图，status_match字段直接暴露状态是否校准一致，对应内部审核与校准",
-          "row_count": 6538,
-          "schema": "public",
-          "table": "v_policy_current_state"
-        }
-      ]
-    },
-    {
       "confidence": "HIGH",
       "conflict_note": "",
       "evidence_class": "SUPPLEMENTAL",
@@ -1629,13 +1635,13 @@
       "confidence": "LOW",
       "conflict_note": "人工按业务含义匹配到业务数据仓库表，非外键关联，未经业务方确认",
       "evidence_class": "CONSENSUS",
-      "evidence_id": "EVD-7d96573482e699150466",
+      "evidence_id": "EVD-822533be28fc5bb9c738",
       "field_name": "business_evidence",
       "source": {
         "observed_at": "",
         "source_field": "人工匹配",
-        "source_key": "L4-RSJD-04",
-        "source_object": "public.fact_insurance_plan_header, public.fact_insurance_plan_lines, public.dim_carrier, public.dim_product_benefit_profile, public.fact_product_id, public.v_plan_metrics, public.v_plan_year_snapshot",
+        "source_key": "L4-RSJD-03",
+        "source_object": "public.v_policy_current_state",
         "source_system": "业务数据仓库",
         "source_version": "2026-08-04试点"
       },
@@ -1644,97 +1650,16 @@
       "value": [
         {
           "confidence": "strong",
-          "evidence_type": "output",
+          "evidence_type": "workflow",
           "matched_columns": [
-            "plan_header_id",
-            "sum_assured",
-            "premium",
-            "product_name"
+            "status_master",
+            "last_status_event_type",
+            "status_match"
           ],
-          "rationale": "保险计划书主表，本身就是\"方案\"这一交付物的数据化版本",
-          "row_count": 75,
+          "rationale": "保单当前状态视图，status_match字段直接暴露状态是否校准一致，对应内部审核与校准",
+          "row_count": 6751,
           "schema": "public",
-          "table": "fact_insurance_plan_header"
-        },
-        {
-          "confidence": "strong",
-          "evidence_type": "output",
-          "matched_columns": [
-            "plan_line_id",
-            "policy_year",
-            "gcv",
-            "tcv_irr"
-          ],
-          "rationale": "计划书逐年现金价值明细，是方案交付内容的精算细节",
-          "row_count": 7393,
-          "schema": "public",
-          "table": "fact_insurance_plan_lines"
-        },
-        {
-          "confidence": "strong",
-          "evidence_type": "rule",
-          "matched_columns": [
-            "carrier_code",
-            "carrier_cn_name",
-            "rating"
-          ],
-          "rationale": "保司主数据表，外键被fact_insurance_plan_header引用，是方案交付的保司侧参照维度",
-          "row_count": 26,
-          "schema": "public",
-          "table": "dim_carrier"
-        },
-        {
-          "confidence": "strong",
-          "evidence_type": "output",
-          "matched_columns": [
-            "product_id",
-            "consistency_status",
-            "plan_count"
-          ],
-          "rationale": "产品权益特征一致性检查表，与fact_insurance_plan_header同属流水线批次产出，核验方案交付内容的权益一致性",
-          "row_count": 69,
-          "schema": "public",
-          "table": "dim_product_benefit_profile"
-        },
-        {
-          "confidence": "strong",
-          "evidence_type": "output",
-          "matched_columns": [
-            "product_id",
-            "benefit_consistency_status",
-            "policy_count"
-          ],
-          "rationale": "产品月度业绩汇总视图，视图依赖fact_insurance_plan_header，是方案交付按产品维度的业绩汇总",
-          "row_count": 1027,
-          "schema": "public",
-          "table": "fact_product_id"
-        },
-        {
-          "confidence": "strong",
-          "evidence_type": "output",
-          "matched_columns": [
-            "plan_header_id",
-            "sum_assured",
-            "max_exp_irr"
-          ],
-          "rationale": "计划书精算指标视图，视图依赖fact_insurance_plan_header，是方案交付的精算指标输出",
-          "row_count": 103,
-          "schema": "public",
-          "table": "v_plan_metrics"
-        },
-        {
-          "confidence": "strong",
-          "evidence_type": "output",
-          "matched_columns": [
-            "plan_header_id",
-            "policy_year",
-            "gcv",
-            "tcv"
-          ],
-          "rationale": "fact_insurance_plan_lines的精简视图，是方案交付逐年现金价值的展示口径",
-          "row_count": 7393,
-          "schema": "public",
-          "table": "v_plan_year_snapshot"
+          "table": "v_policy_current_state"
         }
       ]
     },
@@ -2057,6 +1982,81 @@
       "status": "ACTIVE",
       "transform_rule": "",
       "value": 1
+    },
+    {
+      "confidence": "LOW",
+      "conflict_note": "人工按业务含义匹配到业务数据仓库表，非外键关联，未经业务方确认",
+      "evidence_class": "CONSENSUS",
+      "evidence_id": "EVD-a76761469f3c1c49edc0",
+      "field_name": "business_evidence",
+      "source": {
+        "observed_at": "",
+        "source_field": "人工匹配",
+        "source_key": "L4-RSJD-01",
+        "source_object": "public.fact_sales_activity, public.dim_customer, public.dim_predicate_library, public.dim_customer_type",
+        "source_system": "业务数据仓库",
+        "source_version": "2026-08-04试点"
+      },
+      "status": "UNVERIFIED",
+      "transform_rule": "",
+      "value": [
+        {
+          "confidence": "strong",
+          "evidence_type": "output",
+          "matched_columns": [
+            "policy_id",
+            "event_type",
+            "status_after",
+            "event_date",
+            "operator"
+          ],
+          "rationale": "保单生命周期事件流水表，逐条记录销售执行动作",
+          "row_count": 55487,
+          "schema": "public",
+          "table": "fact_sales_activity"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "output",
+          "matched_columns": [
+            "customer_id",
+            "customer_type",
+            "occupation",
+            "income"
+          ],
+          "rationale": "客户主数据表，是客户管理的直接依据",
+          "row_count": 4885,
+          "schema": "public",
+          "table": "dim_customer"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "rule",
+          "matched_columns": [
+            "event_type",
+            "lifecycle_stage",
+            "name_cn"
+          ],
+          "rationale": "保单生命周期事件类型定义库，外键被fact_sales_activity的event_type引用，是销售执行事件的分类规则依据",
+          "row_count": 75,
+          "schema": "public",
+          "table": "dim_predicate_library"
+        },
+        {
+          "confidence": "weak",
+          "evidence_type": "rule",
+          "matched_columns": [
+            "customer_type",
+            "is_pi",
+            "residency",
+            "risk_level"
+          ],
+          "rationale": "客户类型字典表，外键被dim_customer的customer_type引用，是客户管理的分类规则依据；当前0行未populate",
+          "row_count": 0,
+          "schema": "public",
+          "table": "dim_customer_type"
+        }
+      ]
     },
     {
       "confidence": "HIGH",
@@ -2562,7 +2562,7 @@
       "confidence": "LOW",
       "conflict_note": "人工按业务含义匹配到业务数据仓库表，非外键关联，未经业务方确认",
       "evidence_class": "CONSENSUS",
-      "evidence_id": "EVD-f8c4e047984185fc1628",
+      "evidence_id": "EVD-f99ff750560ff1103508",
       "field_name": "business_evidence",
       "source": {
         "observed_at": "",
@@ -2585,7 +2585,7 @@
             "签批时效(天)"
           ],
           "rationale": "订单粒度的保费/APE/签批时效汇总表，是财务模型测算的直接输入",
-          "row_count": 6464,
+          "row_count": 6527,
           "schema": "public",
           "table": "agg_sales_base"
         }
@@ -2802,7 +2802,7 @@
             "operator"
           ],
           "rationale": "保单生命周期事件流水表，逐条记录销售执行动作",
-          "row_count": 49915,
+          "row_count": 55487,
           "schema": "public",
           "table": "fact_sales_activity"
         },
@@ -2816,7 +2816,7 @@
             "income"
           ],
           "rationale": "客户主数据表，是客户管理的直接依据",
-          "row_count": 4747,
+          "row_count": 4885,
           "schema": "public",
           "table": "dim_customer"
         },
@@ -2867,7 +2867,7 @@
         "agent_d6_compliance": "EVD-048e938d9efdb4d73c94",
         "agent_human_touchpoint": "EVD-92d8ee4d0be4893685fd",
         "agentifiability": "EVD-b66391517adbf2ce7b6b",
-        "business_evidence": "EVD-09ba710cdb421c745644",
+        "business_evidence": "EVD-a76761469f3c1c49edc0",
         "l4_deliverable": "EVD-2331f4a929569be63cd6",
         "l4_deliverable_type": "EVD-d96068363ed286500aee",
         "l4_name": "EVD-f1ab65ffdcd32f8fcf86",
@@ -2907,7 +2907,7 @@
             "签批时效(天)"
           ],
           "rationale": "订单粒度的保费/APE/签批时效汇总表，是财务模型测算的直接输入",
-          "row_count": 6464,
+          "row_count": 6527,
           "schema": "public",
           "table": "agg_sales_base"
         }
@@ -2931,7 +2931,7 @@
         "agent_d6_compliance": "EVD-3031a262ca00e4bedc0a",
         "agent_human_touchpoint": "EVD-8a5d1e22985afa2cd996",
         "agentifiability": "EVD-b1ab65ecc53c1950d77a",
-        "business_evidence": "EVD-f8c4e047984185fc1628",
+        "business_evidence": "EVD-f99ff750560ff1103508",
         "l4_deliverable": "EVD-9f5182d5d663d99cc11b",
         "l4_deliverable_type": "EVD-210de91f176a40b7964a",
         "l4_name": "EVD-58cdbff8771f58fb9c9b",
@@ -2970,7 +2970,7 @@
             "status_match"
           ],
           "rationale": "保单当前状态视图，status_match字段直接暴露状态是否校准一致，对应内部审核与校准",
-          "row_count": 6538,
+          "row_count": 6751,
           "schema": "public",
           "table": "v_policy_current_state"
         }
@@ -2994,7 +2994,7 @@
         "agent_d6_compliance": "EVD-1a4c38ed030570577f9f",
         "agent_human_touchpoint": "EVD-6cbe4876ab818902a4ca",
         "agentifiability": "EVD-9607b19e13e431b47298",
-        "business_evidence": "EVD-6e2c96b515768ee4feb8",
+        "business_evidence": "EVD-822533be28fc5bb9c738",
         "l4_deliverable": "EVD-dd6c32a85f763e729cb3",
         "l4_deliverable_type": "EVD-b24581fcf57be877ec1e",
         "l4_name": "EVD-8837a3323a5d64a583cb",
@@ -3087,7 +3087,7 @@
             "policy_count"
           ],
           "rationale": "产品月度业绩汇总视图，视图依赖fact_insurance_plan_header，是方案交付按产品维度的业绩汇总",
-          "row_count": 1027,
+          "row_count": 1034,
           "schema": "public",
           "table": "fact_product_id"
         },
@@ -3138,7 +3138,7 @@
         "agent_d6_compliance": "EVD-07c28d73b1a41b4e854b",
         "agent_human_touchpoint": "EVD-25bafe10e6814adab387",
         "agentifiability": "EVD-9f7abdbf7cd02a035868",
-        "business_evidence": "EVD-7d96573482e699150466",
+        "business_evidence": "EVD-2fbad9252e396e1003da",
         "l4_deliverable": "EVD-267f4b747af709fe0dc8",
         "l4_deliverable_type": "EVD-b438542f9d16654833aa",
         "l4_name": "EVD-0dfd911e41bb2f4a8f84",

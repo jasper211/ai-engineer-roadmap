@@ -923,8 +923,8 @@
       }
     ]
   },
-  "analysis_freshness": "CURRENT",
-  "analysis_input_hash": "6528ab173ac78de10d08375c1a098019033de57ccce9ad832cd521d2c8e58e65",
+  "analysis_freshness": "INPUT_CHANGED",
+  "analysis_input_hash": "98343e5cb1e7fe71d80c0e722e93ea0350e28e18a3647ef383d78fe5455fda5d",
   "blueprint": {
     "blueprint_value_nodes": [
       {
@@ -1238,6 +1238,95 @@
       "status": "ACTIVE",
       "transform_rule": "",
       "value": 1
+    },
+    {
+      "confidence": "LOW",
+      "conflict_note": "人工按业务含义匹配到业务数据仓库表，非外键关联，未经业务方确认",
+      "evidence_class": "CONSENSUS",
+      "evidence_id": "EVD-26f98894e5b35fdf0f01",
+      "field_name": "business_evidence",
+      "source": {
+        "observed_at": "",
+        "source_field": "人工匹配",
+        "source_key": "L4-CPM-03",
+        "source_object": "public.fact_customer, public.fact_product_id, public.fact_product_sku, public.fact_channel_partner, public.fact_channel_ka",
+        "source_system": "业务数据仓库",
+        "source_version": "2026-08-04试点"
+      },
+      "status": "UNVERIFIED",
+      "transform_rule": "",
+      "value": [
+        {
+          "confidence": "strong",
+          "evidence_type": "output",
+          "matched_columns": [
+            "customer_id",
+            "month",
+            "policy_count",
+            "total_premium_hkd"
+          ],
+          "rationale": "客户月度业绩汇总表，与fact_product_id/fact_channel_partner/fact_channel_ka同构，是月度深度分析/趋势对标的客户维度数据源",
+          "row_count": 5476,
+          "schema": "public",
+          "table": "fact_customer"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "output",
+          "matched_columns": [
+            "product_id",
+            "month",
+            "policy_count",
+            "total_premium_hkd"
+          ],
+          "rationale": "产品月度业绩汇总表，是月度深度分析/趋势对标的产品维度数据源",
+          "row_count": 1034,
+          "schema": "public",
+          "table": "fact_product_id"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "output",
+          "matched_columns": [
+            "product_sku",
+            "month",
+            "policy_count",
+            "total_premium_hkd"
+          ],
+          "rationale": "产品SKU月度业绩汇总表，是月度深度分析/趋势对标的SKU维度数据源",
+          "row_count": 776,
+          "schema": "public",
+          "table": "fact_product_sku"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "output",
+          "matched_columns": [
+            "partner_code",
+            "month",
+            "policy_count",
+            "avg_approval_cycle_days"
+          ],
+          "rationale": "渠道伙伴月度汇总表，avg_approval_cycle_days等字段直接支持机构横向对标",
+          "row_count": 1787,
+          "schema": "public",
+          "table": "fact_channel_partner"
+        },
+        {
+          "confidence": "strong",
+          "evidence_type": "output",
+          "matched_columns": [
+            "ka_id",
+            "month",
+            "policy_count",
+            "effective_rate"
+          ],
+          "rationale": "KA渠道月度业绩汇总表，是月度深度分析/趋势对标的KA维度数据源",
+          "row_count": 901,
+          "schema": "public",
+          "table": "fact_channel_ka"
+        }
+      ]
     },
     {
       "confidence": "HIGH",
@@ -1833,95 +1922,6 @@
       "status": "ACTIVE",
       "transform_rule": "",
       "value": "PARTIAL"
-    },
-    {
-      "confidence": "LOW",
-      "conflict_note": "人工按业务含义匹配到业务数据仓库表，非外键关联，未经业务方确认",
-      "evidence_class": "CONSENSUS",
-      "evidence_id": "EVD-8c094be17b705a04a9cf",
-      "field_name": "business_evidence",
-      "source": {
-        "observed_at": "",
-        "source_field": "人工匹配",
-        "source_key": "L4-CPM-03",
-        "source_object": "public.fact_customer, public.fact_product_id, public.fact_product_sku, public.fact_channel_partner, public.fact_channel_ka",
-        "source_system": "业务数据仓库",
-        "source_version": "2026-08-04试点"
-      },
-      "status": "UNVERIFIED",
-      "transform_rule": "",
-      "value": [
-        {
-          "confidence": "strong",
-          "evidence_type": "output",
-          "matched_columns": [
-            "customer_id",
-            "month",
-            "policy_count",
-            "total_premium_hkd"
-          ],
-          "rationale": "客户月度业绩汇总表，与fact_product_id/fact_channel_partner/fact_channel_ka同构，是月度深度分析/趋势对标的客户维度数据源",
-          "row_count": 5327,
-          "schema": "public",
-          "table": "fact_customer"
-        },
-        {
-          "confidence": "strong",
-          "evidence_type": "output",
-          "matched_columns": [
-            "product_id",
-            "month",
-            "policy_count",
-            "total_premium_hkd"
-          ],
-          "rationale": "产品月度业绩汇总表，是月度深度分析/趋势对标的产品维度数据源",
-          "row_count": 1027,
-          "schema": "public",
-          "table": "fact_product_id"
-        },
-        {
-          "confidence": "strong",
-          "evidence_type": "output",
-          "matched_columns": [
-            "product_sku",
-            "month",
-            "policy_count",
-            "total_premium_hkd"
-          ],
-          "rationale": "产品SKU月度业绩汇总表，是月度深度分析/趋势对标的SKU维度数据源",
-          "row_count": 773,
-          "schema": "public",
-          "table": "fact_product_sku"
-        },
-        {
-          "confidence": "strong",
-          "evidence_type": "output",
-          "matched_columns": [
-            "partner_code",
-            "month",
-            "policy_count",
-            "avg_approval_cycle_days"
-          ],
-          "rationale": "渠道伙伴月度汇总表，avg_approval_cycle_days等字段直接支持机构横向对标",
-          "row_count": 1750,
-          "schema": "public",
-          "table": "fact_channel_partner"
-        },
-        {
-          "confidence": "strong",
-          "evidence_type": "output",
-          "matched_columns": [
-            "ka_id",
-            "month",
-            "policy_count",
-            "effective_rate"
-          ],
-          "rationale": "KA渠道月度业绩汇总表，是月度深度分析/趋势对标的KA维度数据源",
-          "row_count": 884,
-          "schema": "public",
-          "table": "fact_channel_ka"
-        }
-      ]
     },
     {
       "confidence": "HIGH",
@@ -2981,7 +2981,7 @@
             "total_premium_hkd"
           ],
           "rationale": "客户月度业绩汇总表，与fact_product_id/fact_channel_partner/fact_channel_ka同构，是月度深度分析/趋势对标的客户维度数据源",
-          "row_count": 5327,
+          "row_count": 5476,
           "schema": "public",
           "table": "fact_customer"
         },
@@ -2995,7 +2995,7 @@
             "total_premium_hkd"
           ],
           "rationale": "产品月度业绩汇总表，是月度深度分析/趋势对标的产品维度数据源",
-          "row_count": 1027,
+          "row_count": 1034,
           "schema": "public",
           "table": "fact_product_id"
         },
@@ -3009,7 +3009,7 @@
             "total_premium_hkd"
           ],
           "rationale": "产品SKU月度业绩汇总表，是月度深度分析/趋势对标的SKU维度数据源",
-          "row_count": 773,
+          "row_count": 776,
           "schema": "public",
           "table": "fact_product_sku"
         },
@@ -3023,7 +3023,7 @@
             "avg_approval_cycle_days"
           ],
           "rationale": "渠道伙伴月度汇总表，avg_approval_cycle_days等字段直接支持机构横向对标",
-          "row_count": 1750,
+          "row_count": 1787,
           "schema": "public",
           "table": "fact_channel_partner"
         },
@@ -3037,7 +3037,7 @@
             "effective_rate"
           ],
           "rationale": "KA渠道月度业绩汇总表，是月度深度分析/趋势对标的KA维度数据源",
-          "row_count": 884,
+          "row_count": 901,
           "schema": "public",
           "table": "fact_channel_ka"
         }
@@ -3061,7 +3061,7 @@
         "agent_d6_compliance": "EVD-0fbc3916e83194edf328",
         "agent_human_touchpoint": "EVD-d52239a101d392846ee2",
         "agentifiability": "EVD-53a90aa80625fcc0e90c",
-        "business_evidence": "EVD-8c094be17b705a04a9cf",
+        "business_evidence": "EVD-26f98894e5b35fdf0f01",
         "l4_deliverable": "EVD-eff040de1bd0eaee2119",
         "l4_deliverable_type": "EVD-a5923eda985286b2e7ad",
         "l4_name": "EVD-bcf302ecdb8e5e4f6031",
