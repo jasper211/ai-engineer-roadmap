@@ -2,14 +2,16 @@
   "agent_id": "ICD",
   "name": "保司自主披露数据采集 Agent（Insurer Compliance Disclosures）",
   "version": "0.1.0",
-  "status": "需求定义已确认，待Codex执行第2步起",
+  "status": "HTTP抓取与原始证据固化已实现（T003）：--status / --validate-config / --init-db / --fetch（--dry-run）可用，尚未接入披露文件解析（T004 起）",
+  "stage": "05_集成工具_Integrate_Tools（HTTP抓取与原始证据固化）",
 
   "description": "采集香港持牌保险公司自己官网公开披露的分红实现率(Fulfillment Ratio)+RBC风险为本资本披露声明(Disclosure Statement，含偿付能力充足率)，标准化后供下游项目只读查询",
 
-  "migration_note": "v0.1.0（2026-09-03）：需求定义完成，来自U020项目模块3数据缺口排查过程中的真实curl实测（非猜测），10家险企逐一验证过分红实现率入口，2家验证过RBC披露声明入口，详见01_初始化项目_Initialize_Project/需求定义.md第七节。",
+  "migration_note": "v0.1.0（2026-09-03）：需求定义完成，来自U020项目模块3数据缺口排查过程中的真实curl实测（非猜测），10家险企逐一验证过分红实现率入口，2家验证过RBC披露声明入口，详见01_初始化项目_Initialize_Project/需求定义.md第七节。v0.1.0+（2026-09-03，T002）：落地最小可运行骨架——agents/agent.py 三个CLI、tools/config_loader（严格校验）、tools/sqlite_store（12表迁移+幂等种子）、memory/workspace（DB路径推导）。本任务不联网、不解析真实披露文件。v0.1.0+（2026-09-03，T003）：落地 HTTP 抓取与原始证据固化——tools/http_fetcher（标准库GET：固定UA/连接读取超时/有限重定向/体量上限）、tools/snapshot（SHA-256+原子落盘）、tools/fetch_recorder（fetch_run 三态写入/去重）、skills/fetch_disclosure（L3-ICD-02 编排）、memory/workspace（raw_data 路径+防穿越）；agents/agent.py 增 --fetch/--dry-run/--raw-data-root。本任务不解析披露文件内容。",
 
-  "skills": [],
-  "tools": [],
+  "skills": ["fetch_disclosure"],
+  "tools": ["config_loader", "sqlite_store", "http_fetcher", "snapshot", "fetch_recorder"],
+  "memory": ["workspace"],
 
   "dependencies": {
     "upstream": [],

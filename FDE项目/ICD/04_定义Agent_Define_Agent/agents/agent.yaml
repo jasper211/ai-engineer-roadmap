@@ -1,0 +1,26 @@
+# ICD · 保司自主披露数据采集 Agent 定义
+
+name: ICD
+full_name: 保司自主披露数据采集 Agent（Insurer Compliance Disclosures）
+version: 0.1.0
+entrypoint: 04_定义Agent_Define_Agent/agents/agent.py
+
+description: >
+  采集香港持牌保险公司官网公开披露的分红实现率（Fulfillment Ratio，GN16/GL16）
+  与 RBC 风险为本资本披露声明（Disclosure Statement，含偿付能力充足率），标准化后
+  供下游项目只读查询。本阶段（T002）提供最小可运行骨架：--status / --validate-config
+  / --init-db 三个 CLI，尚未接入 HTTP 抓取与披露文件解析（T003 起）。
+
+loop: cli
+skills: []
+tools:
+  - config_loader   # 加载并严格校验 settings.json 与 source_registry.json
+  - sqlite_store    # SQLite schema 迁移、种子数据与幂等初始化
+memory:
+  - workspace       # ICD 专属数据目录（data/icd.db）路径推导
+
+safety:
+  - "本任务不访问网络、不解析真实披露文件"
+  - "--init-db 幂等：重复执行不删除 fetch_run 或业务表已有行，不产生重复种子数据"
+  - "所有路径从 Path(__file__) 推导，不依赖当前工作目录（cwd）"
+  - "仅使用 Python 标准库；异常输出不含凭证或完整请求头"

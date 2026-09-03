@@ -13,10 +13,26 @@
 ## 快速开始
 
 ```bash
+# 结构化项目状态（agent_id/version/stage/险企数/源数/access_status分布/数据库路径）
 python3 04_定义Agent_Define_Agent/agents/agent.py --status
+
+# 严格校验配置（非法JSON/重复险企/未知险企引用/UNVERIFIED带URL 等一律非零退出）
+python3 04_定义Agent_Define_Agent/agents/agent.py --validate-config
+
+# 初始化 SQLite（幂等：建12张表 + 导入10家险企/21条数据源/11条错误代码）
+python3 04_定义Agent_Define_Agent/agents/agent.py --init-db
+
+# 抓取单个数据源（写快照 raw_data/{insurer}/{source}/{hash}.{ext} + fetch_run 运行记录；需先 --init-db）
+python3 04_定义Agent_Define_Agent/agents/agent.py --fetch 1
+
+# 抓取演练（只抓取并计算 SHA-256，不写快照、不写数据库）
+python3 04_定义Agent_Define_Agent/agents/agent.py --fetch 1 --dry-run
 ```
 
-（Codex接手后按SOP第2步起补齐，当前仓库只有需求定义完成）
+- 数据库默认写入 `07_接入记忆_Integrate_Memory/data/icd.db`（ICD 专属，与 `raw_data/` 快照隔离）。
+- 原始快照默认写入 `07_接入记忆_Integrate_Memory/raw_data/{insurer}/{source}/{hash}.{ext}`。
+- 测试请用 `--db-path`、`--raw-data-root` 指向临时目录，不污染默认数据库与快照目录。
+- 当前状态：T003 已交付 HTTP 抓取与原始证据固化（--status/--validate-config/--init-db/--fetch/--dry-run）；尚未接入披露文件解析（T004 起）。
 
 ## 架构
 

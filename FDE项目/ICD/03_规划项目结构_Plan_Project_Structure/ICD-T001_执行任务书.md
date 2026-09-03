@@ -2,7 +2,7 @@
 
 > 执行方：vscode-deepseek  
 > 推动与审计：Codex  
-> 状态：CHANGES_REQUESTED  
+> 状态：ACCEPTED  
 > 派发日期：2026-09-03
 
 ## 一、任务目标
@@ -182,3 +182,52 @@ ALL CHECKS PASSED
 3. 增加并执行六类插入测试：成功合法、成功缺哈希非法、成功缺快照非法、HTTP失败无证据合法、网络失败无HTTP状态合法、同源同内容成功重复非法。
 4. 澄清临时快照落盘、哈希计算、原子重命名为最终哈希路径的真实顺序。
 5. 将修正摘要和原始测试结果追加到本节，不得覆盖首轮回执。
+
+### Round 2 · 2026-09-03 · ACCEPTED
+
+Codex独立重建SQLite Schema并重跑六类成功/失败插入测试，全部通过。T001验收完成。
+
+### Round 1 返工回执 · vscode-deepseek · 2026-09-03
+
+#### 修正摘要
+
+1. **`fetch_run.content_hash` 由 `NOT NULL` 改为可空**，并新增表级 `CHECK` 约束，把"成功/失败"与证据字段的关联固化进 DDL：
+   - `fetch_status='OK'` → `content_hash` 与 `snapshot_path` 均非空；
+   - `fetch_status='HTTP_ERROR'` → 二者为空、`http_status` 非空；
+   - `fetch_status='NETWORK_ERROR'` → 二者为空、`http_status` 为空。
+2. **幂等语义澄清**：`UNIQUE(source_id, content_hash)` 中 SQLite 对 NULL 视为互不相等，故失败行（`content_hash=NULL`）不去重、每次失败单独成行；同源同内容「成功」抓取仍被唯一约束拦截。契约 3.2/3.3 与 DDL 注释同步更新。
+3. **流程澄清**：`流程设计.md` L3-ICD-02 关键次序改写为「读入字节 → 算哈希 → 写临时文件 → 原子重命名（`os.replace`）为哈希命名最终路径 → 写 `fetch_run`」，消除"按哈希命名却先落盘后算哈希"的矛盾。
+
+#### 修改文件清单
+
+1. `FDE项目/ICD/03_规划项目结构_Plan_Project_Structure/data_contract.md`（3 处：3.2 空值语义、3.3 幂等、`fetch_run` DDL + CHECK）
+2. `FDE项目/ICD/03_规划项目结构_Plan_Project_Structure/流程设计.md`（L3-ICD-02 关键次序与幂等）
+3. 本任务书第七节（本回执，仅追加）
+4. `FDE项目/ICD/任务日志.md` 执行方回执区（仅追加）
+
+未新增 `.py`，未触碰 HKIA/U020，未修改 Codex 审计结论。
+
+#### 自测命令与原始结果
+
+命令：`python3` 内联脚本，读取 `data_contract.md` 的 3 个 SQL 块（DDL / error_code 种子 / 索引）在 `sqlite3 :memory:` 中建库，随后执行六类插入测试并断言预期通过/被拒（T2/T3 的完整 CHECK 表达式从异常信息中省略，仅保留异常类型）。
+
+```
+SQL块总数: 4  (DDL/种子/索引/示例查询)
+[PASS] T1 成功合法（hash+快照均非空）  ->  插入成功
+[PASS] T2 成功缺哈希（应非法）  ->  被拒(IntegrityError: CHECK constraint failed)
+[PASS] T3 成功缺快照（应非法）  ->  被拒(IntegrityError: CHECK constraint failed)
+[PASS] T4 HTTP失败无证据（合法）  ->  插入成功
+[PASS] T5 网络失败无HTTP状态（合法）  ->  插入成功
+[PASS] T6 同源同内容成功重复（应非法）  ->  被拒(IntegrityError: UNIQUE constraint failed: fetch_run.source_id, fetch_run.content_hash)
+额外断言: source_id=1 且 content_hash=NULL 的失败行数 = 2 (预期 2 -> 证明失败尝试未被空哈希去重)
+==== 汇总: 6/6 通过 ====
+```
+
+#### 已知限制/未决问题
+
+1. 本轮仍为纯设计任务，未做真实网络复验；真实数据验证属 SOP 第 5 步，留待实现后执行（与首轮回执一致）。
+2. `CHECK` 仅覆盖 `fetch_status` 三类取值与证据字段的关联；`error_code` 对失败行是否必填未加硬约束（保留实现灵活性，仍由外键保证其若填必在 `error_code` 注册表内）。
+
+#### 建议任务状态
+
+`SUBMITTED`（待 Codex Round 2 审计）
