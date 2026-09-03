@@ -21,7 +21,7 @@ ICD · skills/parse_disclosure.py · 单源披露文件解析编排（L3-ICD-03 
 from pathlib import Path
 from typing import Optional
 
-from skills import aia_json_parser
+from skills import aia_json_parser, ctf_html_parser
 from tools import ratio_writer
 
 # 快照入库用的逻辑前缀（对齐 memory/workspace.snapshot_relpath）
@@ -108,15 +108,20 @@ def parse_one_source(conn, src: dict, raw_data_root) -> dict:
         base["message"] = f"快照读取失败: {type(e).__name__}: {e}"
         return base
 
-    # 3) 按格式解析（T004 只实现 AIA JSON）
-    if fmt != "json":
-        base["result"] = "UNSUPPORTED_FORMAT"
-        base["message"] = f"T004 仅支持 JSON 解析，format={fmt!r}"
-        return base
-
+    # 3) 按格式 + 险企分流解析（T004 接入 AIA JSON；T005 接入 CTF Life HTML）
     try:
-        parsed = aia_json_parser.parse_aia_json(body)
-    except aia_json_parser.AiaParseError as e:
+        if fmt == "json":
+            parsed = aia_json_parser.parse_aia_json(body)
+        elif fmt == "html" and insurer == "CTF":
+            parsed = ctf_html_parser.parse_ctf_html(body)
+        else:
+            base["result"] = "UNSUPPORTED_FORMAT"
+            base["message"] = (
+                f"暂未接入 format={fmt!r} insurer={insurer!r} 的解析"
+                f"（已接入：AIA JSON、CTF HTML；其余 HTML/PDF 待后续任务）"
+            )
+            return base
+    except (aia_json_parser.AiaParseError, ctf_html_parser.CtfParseError) as e:
         base["result"] = "STRUCTURE_MISMATCH"
         base["parse_status"] = "STRUCTURE_MISMATCH"
         base["error_code"] = "STRUCTURE_MISMATCH"

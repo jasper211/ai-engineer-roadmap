@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Fulfillment Ratios (sanitized fixture, no real product data)</title>
+</head>
+<body>
+
+<!-- 导航与快速跳转（解析器必须忽略） -->
+<nav><a href="/">Home</a> · <a href="/support">Support</a></nav>
+<select>
+  <option value="fund_0">Alpha Test Plan</option>
+  <option value="fund_1">Beta Test Plan</option>
+</select>
+
+<!-- 无关段落（解析器必须忽略） -->
+<h3>Policyholder Dividend and Crediting Interest Philosophy</h3>
+<p>Some unrelated prose.</p>
+<table class="other"><tr><td>not a product table</td></tr></table>
+
+<h3>Fulfillment Ratios of Dividends/Bonuses</h3>
+<p>
+  The following are Fulfillment Ratios of non-guaranteed Annual Dividends,
+  Reversionary Bonuses, Terminal Dividends, Terminal Bonuses and policy value.
+</p>
+
+<!-- 产品 1：两个指标（AD/TD）、单币种、跨年份、非数值脚注值 -->
+<div class="tableStyleRatio__container fund fund_0">
+  <p class="text-center fzBold">Alpha Test Plan - Life insurance (participating)</p>
+  <div class="tableStyleRatio__wrapper">
+    <table class="tableStyleRatio">
+      <thead>
+        <tr>
+          <th class="text-center" rowspan="3">Type</th>
+          <th class="text-center" rowspan="3">Policy Currency</th>
+          <td class="text-center" colspan="4">Fulfillment Ratios for Reporting Year 2025</td>
+        </tr>
+        <tr>
+          <td class="text-center" colspan="4">Policy Year <br />(Policy Effective in)</td>
+        </tr>
+        <tr>
+          <td class="text-center">1<br />(2024)</td>
+          <td class="text-center">2<br />(2023)</td>
+          <td class="text-center">3<br />(2022)</td>
+          <td class="text-center">4+<br />(Before 2021)</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="text-center">Annual Dividends</td>
+          <td class="text-center">USD</td>
+          <td class="text-center">100%</td>
+          <td class="text-center">94%</td>
+          <td class="text-center">112%</td>
+          <td class="text-center">80%</td>
+        </tr>
+        <tr>
+          <td class="text-center">Terminal Dividends</td>
+          <td class="text-center">USD</td>
+          <td class="text-center">Closed to Sales</td>
+          <td class="text-center">Not yet launched</td>
+          <td class="text-center">No Termination</td>
+          <td class="text-center">Zero Bonus</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 产品 2：指标 rowspan（RB 跨两个币种）+ 值 colspan（Policy Value 跨全部观察期） -->
+<div class="tableStyleRatio__container fund fund_1">
+  <p class="text-center fzBold">Beta Test Plan - Life insurance with cash coupons (participating)</p>
+  <div class="tableStyleRatio__wrapper">
+    <table class="tableStyleRatio">
+      <thead>
+        <tr>
+          <th class="text-center" rowspan="3">Type</th>
+          <th class="text-center" rowspan="3">Policy Currency</th>
+          <td class="text-center" colspan="4">Fulfillment Ratios for Reporting Year 2025</td>
+        </tr>
+        <tr>
+          <td class="text-center" colspan="4">Policy Year <br />(Policy Effective in)</td>
+        </tr>
+        <tr>
+          <td class="text-center">1<br />(2024)</td>
+          <td class="text-center">2<br />(2023)</td>
+          <td class="text-center">3<br />(2022)</td>
+          <td class="text-center">4+<br />(Before 2021)</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="text-center" rowspan="2">Reversionary Bonus</td>
+          <td class="text-center">USD</td>
+          <td class="text-center">100%</td>
+          <td class="text-center">105%</td>
+          <td class="text-center">98%</td>
+          <td class="text-center">82%</td>
+        </tr>
+        <tr>
+          <td class="text-center">HKD</td>
+          <td class="text-center">106%</td>
+          <td class="text-center">109%</td>
+          <td class="text-center">101%</td>
+          <td class="text-center">No Termination</td>
+        </tr>
+        <tr>
+          <td class="text-center">Policy Value</td>
+          <td class="text-center">USD</td>
+          <td class="text-center" colspan="4">No policy has reached the first policy anniversary and thus no Fulfillment Ratios are shown.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 产品 3：空表（有表头、无数据行），应产出 0 条记录但不视为整表失败 -->
+<div class="tableStyleRatio__container fund fund_2">
+  <p class="text-center fzBold">Empty Test Plan - Annuity (participating)</p>
+  <div class="tableStyleRatio__wrapper">
+    <table class="tableStyleRatio">
+      <thead>
+        <tr>
+          <th class="text-center" rowspan="3">Type</th>
+          <th class="text-center" rowspan="3">Policy Currency</th>
+          <td class="text-center" colspan="4">Fulfillment Ratios for Reporting Year 2025</td>
+        </tr>
+        <tr>
+          <td class="text-center" colspan="4">Policy Year <br />(Policy Effective in)</td>
+        </tr>
+        <tr>
+          <td class="text-center">1<br />(2024)</td>
+          <td class="text-center">2<br />(2023)</td>
+          <td class="text-center">3<br />(2022)</td>
+          <td class="text-center">4+<br />(Before 2021)</td>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 下一段落：Total Cash Value Ratio（不属于 fulfillment_ratio，解析器必须忽略） -->
+<h3>Total Cash Value Ratio</h3>
+<div class="tableStyleRatio__container fund fund_999">
+  <p class="text-center fzBold">Should Be Ignored - TCV Product</p>
+  <div class="tableStyleRatio__wrapper">
+    <table class="tableStyleRatio">
+      <thead><tr><th>Type</th></tr></thead>
+      <tbody><tr><td>TCV data must not be parsed as fulfillment ratio</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+</body>
+</html>

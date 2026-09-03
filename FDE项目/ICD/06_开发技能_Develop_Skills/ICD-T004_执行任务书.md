@@ -2,7 +2,7 @@
 
 > 执行方：vscode-deepseek  
 > 推动与审计：Codex  
-> 状态：CHANGES_REQUESTED（第三项数据口径方案已确认）  
+> 状态：ACCEPTED  
 > 派发日期：2026-09-03
 
 ## 目标
@@ -126,6 +126,13 @@ Jasper确认采用Codex建议方案：
 3. 唯一键使用`observation_year_raw`替代可空的`observation_year`，避免开放区间与真实单年碰撞，并保证SQLite幂等约束有效。
 4. 只要存在无法数值化但保留原文的观测项，本次`parse_result`写`PARTIAL`、`error_code=VALUE_UNPARSEABLE`；记录数仍包含这些原始观测项。
 5. 同步修订数据契约、DDL、迁移检测、解析器、写入层、fixture、真实验证与回归测试；完成后提交Codex重新审计。
+
+## Codex 独立审计 · Round 2 · ACCEPTED · 2026-09-03
+
+- Codex 独立复跑 T004 确定性测试、T002+T003 回归及关键模块 `py_compile`，全部退出码 0。
+- `Before 2015` 与真实数字年 `2014` 可并存：前者原文保留且整数年为 NULL，后者整数年为 2014；唯一键按 `observation_year_raw` 幂等。
+- fixture 与真实 AIA 均正确写 `PARTIAL + VALUE_UNPARSEABLE`，不可数值化记录保留原文；真实库 1573 行、其中 143 条 `Before 2015` 全部为 NULL、0 条虚构 2014。
+- 四类指标、币种分组、事务回滚、旧 Schema 检测、真实证据链与重复解析均符合任务书，T004 正式放行。
 
 ---
 
