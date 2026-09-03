@@ -1,0 +1,45 @@
+{
+  "agent_id": "ICD",
+  "name": "保司自主披露数据采集 Agent（Insurer Compliance Disclosures）",
+  "version": "0.1.0",
+  "status": "需求定义已确认，待Codex执行第2步起",
+
+  "description": "采集香港持牌保险公司自己官网公开披露的分红实现率(Fulfillment Ratio)+RBC风险为本资本披露声明(Disclosure Statement，含偿付能力充足率)，标准化后供下游项目只读查询",
+
+  "migration_note": "v0.1.0（2026-09-03）：需求定义完成，来自U020项目模块3数据缺口排查过程中的真实curl实测（非猜测），10家险企逐一验证过分红实现率入口，2家验证过RBC披露声明入口，详见01_初始化项目_Initialize_Project/需求定义.md第七节。",
+
+  "skills": [],
+  "tools": [],
+
+  "dependencies": {
+    "upstream": [],
+    "downstream": ["U020_月度行情热点解读（模块3联动影响分析，首要消费方）"]
+  },
+
+  "data_categories": [
+    {
+      "name": "分红实现率",
+      "en": "Fulfillment Ratio",
+      "legal_basis": "GN16/GL16",
+      "coverage": "10家险企实测，8家🟢开放，1家🟡(保诚，网页被拦但PDF可下载)，1家🔴(宏利，全站Akamai拦截)"
+    },
+    {
+      "name": "RBC披露声明",
+      "en": "Disclosure Statement",
+      "legal_basis": "IA 2025-08-08通函《Circular on Public Disclosure Requirements for the First Financial Year Adopting Risk-based Capital Regime》，覆盖全香港158家持牌保险公司",
+      "coverage": "只实测2家(友邦304%/保诚290%)，其余8家未测但法定要求都应披露"
+    }
+  ],
+
+  "not_in_scope": [
+    "银行保费融资Cap Rate、退保价值质押率（不是保司披露内容）",
+    "需要真实浏览器JS挑战才能访问的站点（宏利/IA官方聚合页），不引入Selenium/Playwright",
+    "实时/高频更新（这两类数据都是年度披露）",
+    "前端展示、自动定时调度"
+  ],
+
+  "archive_gate": {
+    "mark_confirmed": false,
+    "deliverables": ["settings.json", "agents/agent.yaml", "README.md", "执行记录.md"]
+  }
+}
