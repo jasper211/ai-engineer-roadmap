@@ -77,10 +77,9 @@ class _ConnectTimeoutHTTPHandler(urllib.request.HTTPHandler):
 
 class _ConnectTimeoutHTTPSHandler(urllib.request.HTTPSHandler):
     def https_open(self, req):
-        return self.do_open(
-            _HTTPSConnection, req,
-            context=self._context, check_hostname=self._check_hostname,
-        )
+        # Python 3.14 起 HTTPSHandler.__init__ 不再保存 self._check_hostname，
+        # 而是把 check_hostname 直接写入 context；https_open 只需传 context。
+        return self.do_open(_HTTPSConnection, req, context=self._context)
 
 
 class _LimitedRedirectHandler(urllib.request.HTTPRedirectHandler):

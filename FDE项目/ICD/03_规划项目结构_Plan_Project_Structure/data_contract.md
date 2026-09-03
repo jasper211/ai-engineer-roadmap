@@ -44,6 +44,7 @@
 | `fetch_run.content_hash` | 抓取失败（未取得原始字节，无法计算真实哈希）；成功时非空（CHECK 约束保证） |
 | `fetch_run.snapshot_path` | 快照未落盘（抓取失败）；成功时非空（CHECK 约束保证） |
 | `fulfillment_ratio.normalized_value` | 原文存在但**无法解析为数字**（保留 `raw_value`，标记，不静默丢弃） |
+| `fulfillment_ratio.observation_year` | 观察期为非数字开放区间（如 AIA 的 `Before 2015`）——原文保留在 `observation_year_raw`，整数年写 NULL，不虚构单年 |
 | `fulfillment_ratio.product_id` / `rbc 相关 product` | 产品尚未映射到规范实体（`UNMAPPED`） |
 | `rbc_statement.capital_base` / `prescribed_capital_amount` | 该份披露未公开此金额 |
 | `rbc_statement.risk_breakdown_json` | 未捕获风险分解 |
@@ -53,7 +54,7 @@
 - **抓取层**：`fetch_run` 唯一约束 `(source_id, content_hash)`。SQLite 的 UNIQUE 对 NULL 视为互不相等，因此：
   - 成功抓取：同一源、同一内容哈希（非 NULL）→ 判定"无新版本"，不重复落盘快照、不重复解析（只记一次运行）。
   - 失败抓取：`content_hash = NULL`，各失败尝试之间**不去重**（每次失败单独成行，保留完整失败轨迹），也不与任何成功行冲突。
-- **业务层**：`fulfillment_ratio` 唯一约束 `(insurer_code, product_name_raw, metric_type, scope_currency_raw, report_year, observation_year, run_id)`；`rbc_statement` 唯一约束 `(insurer_code, report_year, run_id)`。同一 `run_id` 重复处理 → UPSERT 到同一行，不产生重复记录。
+- **业务层**：`fulfillment_ratio` 唯一约束 `(insurer_code, product_name_raw, metric_type, scope_currency_raw, report_year, observation_year_raw, run_id)`；`rbc_statement` 唯一约束 `(insurer_code, report_year, run_id)`。同一 `run_id` 重复处理 → UPSERT 到同一行，不产生重复记录。
 - **跨运行**：新一次抓取产生新的 `run_id` → 新版本行，天然保留历史。
 
 ### 3.4 历史版本保留策略
@@ -65,7 +66,7 @@
 ### 3.5 产品名称变化但尚无 product_id 映射
 
 - 业务记录始终保存 `product_name_raw`（官网原始产品名），`product_id` 允许为 `NULL`。
-- `product_id IS NULL` 时，记录仍可经 `(insurer_code, product_name_raw, metric_type, scope_currency_raw, report_year, observation_year)` 查询。
+- `product_id IS NULL` 时，记录仍可经 `(insurer_code, product_name_raw, metric_type, scope_currency_raw, report_year, observation_year_raw)` 查询。
 - 后续建立映射（`product` + `product_alias`）后，回填 `product_id` 是**非破坏性 UPDATE**（`NULL → id`）；`product_name_raw` 永不删除，可追溯性不因映射而丧失。
 - 名称漂移（同一产品跨年度改名）会自然产生多条 `product_name_raw`，由 `product_alias` 指向同一 `product_id` 收敛，不在抓取阶段强行合并。
 
@@ -74,6 +75,13 @@
 - v0.2 相对 v0.1 的 `fulfillment_ratio` 变更：`dividend_type` 改名 `metric_type`（枚举由 `AD/TD/TCV/REVERSIONARY/OTHER` 扩为 `AD/TD/RB/TB/TCV/OTHER`），新增 `metric_type_raw`、`scope_currency_raw` 两列，唯一键纳入 `metric_type` 与 `scope_currency_raw`。
 - `REVERSIONARY` 旧标准值已移除：历史上若有用 `REVERSIONARY` 标记的归原红利，迁移时应映射为 `RB`（官网字段名保留在 `metric_type_raw`）。
 - `sqlite_store` 在初始化时检测旧版 `fulfillment_ratio`（缺 `metric_type`/`metric_type_raw`/`scope_currency_raw` 或仍含 `dividend_type`）并明确失败、提示迁移，绝不假装新列已存在；旧库迁移需人工重建表（当前尚无生产数据，重建无数据损失）。
+
+### 3.7 旧 Schema 迁移（v0.2 → v0.3）
+
+- v0.3 相对 v0.2 的 `fulfillment_ratio` 变更：新增 `observation_year_raw TEXT NOT NULL`（官网观察期原始标签），`observation_year` 由 `NOT NULL` 改为可空，唯一键由 `observation_year` 改用 `observation_year_raw`。
+- 数字年份同时写 `observation_year_raw` 原文标签与 `observation_year` 整数年；`Before 2015` 等开放区间标签写 `observation_year_raw='Before 2015'`、`observation_year=NULL`，不虚构为 2014 单年。
+- 唯一键改用 `observation_year_raw`（非空）保证 SQLite 幂等约束对开放区间与真实单年都有效，避免二者碰撞。
+- `sqlite_store` 在初始化时检测旧版 `fulfillment_ratio`（缺 `observation_year_raw`，或 `observation_year` 仍为 `NOT NULL`）并明确失败、提示迁移，不假装新列已存在。
 
 ## 四、SQLite DDL
 
@@ -171,13 +179,14 @@ CREATE TABLE fulfillment_ratio (
   metric_type       TEXT NOT NULL CHECK (metric_type IN ('AD','TD','RB','TB','TCV','OTHER')),
   metric_type_raw   TEXT NOT NULL,                           -- 官网原始字段名（如 AIA 的 AD/TD/RB/TB）
   report_year       INTEGER NOT NULL,                        -- 披露报告年度
-  observation_year  INTEGER NOT NULL,                        -- 比率对应的保单/观察年度
+  observation_year_raw TEXT NOT NULL,                        -- 官网观察期原始标签（如 '2024' / 'Before 2015'）
+  observation_year  INTEGER,                                 -- 比率对应的保单/观察年度（开放区间为 NULL）
   scope_currency_raw TEXT NOT NULL DEFAULT 'All',            -- 官网原始币种/披露分组（如 All/USD/HKD / MOP）
   raw_value         TEXT NOT NULL,                           -- 原始字符串（如 '94%'）
   normalized_value  REAL,                                    -- 小数比率 0.94；不可解析为 NULL
   unit              TEXT NOT NULL DEFAULT 'percent' CHECK (unit IN ('percent')),
   run_id            INTEGER NOT NULL REFERENCES fetch_run(run_id),
-  UNIQUE (insurer_code, product_name_raw, metric_type, scope_currency_raw, report_year, observation_year, run_id)
+  UNIQUE (insurer_code, product_name_raw, metric_type, scope_currency_raw, report_year, observation_year_raw, run_id)
 );
 
 -- 8) RBC 披露声明（业务记录）
@@ -259,7 +268,7 @@ INSERT INTO error_code (code, category, is_hard_failure, description) VALUES
 
 ```sql
 CREATE INDEX idx_fetch_run_source      ON fetch_run(source_id);
-CREATE INDEX idx_ratio_natural         ON fulfillment_ratio(insurer_code, product_name_raw, metric_type, scope_currency_raw, report_year, observation_year);
+CREATE INDEX idx_ratio_natural         ON fulfillment_ratio(insurer_code, product_name_raw, metric_type, scope_currency_raw, report_year, observation_year_raw);
 CREATE INDEX idx_ratio_product         ON fulfillment_ratio(product_id);
 CREATE INDEX idx_rbc_insurer_year      ON rbc_statement(insurer_code, report_year);
 CREATE INDEX idx_alias_raw_name        ON product_alias(raw_name);
@@ -270,7 +279,7 @@ CREATE INDEX idx_official_name_insurer ON insurer_official_name(insurer_code);
 
 ```sql
 -- 某险企某产品某年最新分红实现率（AD 口径，取最新抓取版本）
-SELECT fr.product_name_raw, fr.metric_type, fr.scope_currency_raw, fr.observation_year, fr.normalized_value, fr.raw_value,
+SELECT fr.product_name_raw, fr.metric_type, fr.scope_currency_raw, fr.observation_year_raw, fr.observation_year, fr.normalized_value, fr.raw_value,
        fr.run_id, fr2.final_url, fr2.fetched_at, fr2.content_hash, fr2.snapshot_path
 FROM fulfillment_ratio fr
 JOIN fetch_run fr2 ON fr2.run_id = fr.run_id
@@ -284,7 +293,7 @@ WHERE fr.insurer_code = 'AIA'
       AND x.metric_type = fr.metric_type
       AND x.scope_currency_raw = fr.scope_currency_raw
       AND x.report_year = fr.report_year
-      AND x.observation_year = fr.observation_year
+      AND x.observation_year_raw = fr.observation_year_raw
   );
 
 -- 某险企最新偿付能力比率

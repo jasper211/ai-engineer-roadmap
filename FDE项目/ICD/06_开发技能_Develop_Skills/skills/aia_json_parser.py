@@ -24,9 +24,9 @@ AIA JSON 结构（2026 版真实文件，report_year=2025，81 个产品）：
 - metric_type / metric_type_raw：AIA 四类指标字段 AD/TD/RB/TB 一一对应（官网字段名即键名）。
   RB(Reversionary Bonuses) 与 TB(Terminal Bonuses) 与 AD/TD 分开保存，不合并。
 - scope_currency_raw：取 currency.en 原样保存（All / USD / HKD / MOP），不拆分组合币种。
-- report_year：披露报告年度（取 report_year）；observation_year：数据数组的年份。
-- "Before 2015" 是 AIA 唯一的非标准年份标签，映射 observation_year = 2014（该群组
-  为 2015 年前签单保单的边界年，属本任务明确记录的解释性映射）。
+- report_year：披露报告年度（取 report_year）。
+- observation_year_raw / observation_year：数字年份同时写原文标签与整数年；"Before 2015"
+  等开放区间标签原样保存到 observation_year_raw，observation_year 写 NULL，不虚构单年。
 - ratio 解析：先剥离 <sup>...</sup> 脚注标记，再匹配整数/小数百分比转小数比率；
   无法解析（如 "Closed to sales" / "Not yet launched" / "N.A.<sup>(5)</sup>"）时
   normalized_value=None、保留 raw_value，计为 VALUE_UNPARSEABLE 软失败，不静默丢弃。
@@ -39,9 +39,8 @@ from typing import List, Optional
 # AIA 四个指标字段（官网顶层标题明确区分的四类口径）
 METRIC_KEYS = ("AD", "TD", "RB", "TB")
 
-# "Before 2015" 群组 → observation_year 边界年（2015 年前签单保单，取 2014 为整数表示）
+# "Before 2015" 开放区间标签：observation_year 写 NULL，原文保留在 observation_year_raw
 BEFORE_YEAR_LABEL = "Before 2015"
-BEFORE_YEAR_BOUNDARY = 2014
 
 # 百分比匹配：整数或小数 + '%'
 _PCT_RE = re.compile(r"^(\d+(?:\.\d+)?)%$")
@@ -73,15 +72,19 @@ def parse_ratio(ratio_str) -> Optional[float]:
     return None
 
 
-def parse_observation_year(year_str) -> int:
-    """把 year 标签解析为 observation_year 整数；无法解析抛 ValueError。"""
+def parse_observation_year(year_str):
+    """把 year 标签解析为 (observation_year_raw, observation_year)；无法解析抛 ValueError。
+
+    - 数字年份 "2024" → ("2024", 2024)（原文标签与整数年同时保存）
+    - "Before 2015" → ("Before 2015", None)（开放区间标签，整数年写 NULL，不虚构 2014）
+    """
     if year_str is None:
         raise ValueError("observation year 缺失")
     s = str(year_str).strip()
     if _YEAR_RE.match(s):
-        return int(s)
+        return (s, int(s))
     if s == BEFORE_YEAR_LABEL:
-        return BEFORE_YEAR_BOUNDARY
+        return (s, None)
     raise ValueError(f"无法解析的年份标签: {year_str!r}")
 
 
@@ -116,7 +119,8 @@ def parse_aia_json(body: bytes) -> dict:
 
     record 结构（可直接交给 ratio_writer 入库）：
       product_name_raw / metric_type / metric_type_raw / report_year /
-      observation_year / scope_currency_raw / raw_value / normalized_value / product_id
+      observation_year_raw / observation_year / scope_currency_raw / raw_value /
+      normalized_value / product_id
 
     结构缺键、类型错误、零产品、零业务记录 → 抛 AiaParseError（STRUCTURE_MISMATCH）。
     """
@@ -173,7 +177,7 @@ def parse_aia_json(body: bytes) -> dict:
                     if "year" not in item or "ratio" not in item:
                         raise AiaParseError(f"pData[{pi}].{key}[{gi}].data[{di}] 缺 year/ratio")
                     try:
-                        obs_year = parse_observation_year(item["year"])
+                        obs_raw, obs_year = parse_observation_year(item["year"])
                     except ValueError as e:
                         raise AiaParseError(f"pData[{pi}].{key}[{gi}].data[{di}] {e}")
 
@@ -187,6 +191,7 @@ def parse_aia_json(body: bytes) -> dict:
                         "metric_type": key,
                         "metric_type_raw": key,
                         "report_year": report_year,
+                        "observation_year_raw": obs_raw,
                         "observation_year": obs_year,
                         "scope_currency_raw": currency,
                         "raw_value": raw,

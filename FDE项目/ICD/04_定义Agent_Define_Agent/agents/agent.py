@@ -44,7 +44,7 @@ for _pkg_dir in (
     sys.path.insert(0, str(ICD_DIR / _pkg_dir))        # 让 tools/memory/skills 能被当作包 import
 
 from memory import workspace
-from skills import fetch_disclosure
+from skills import fetch_disclosure, parse_disclosure
 from tools import config_loader, fetch_recorder, sqlite_store
 
 SETTINGS_PATH = ICD_DIR / "02_配置项目_Configure_Project" / "settings.json"
@@ -170,6 +170,10 @@ def cmd_init_db(args) -> int:
 
     try:
         summary = sqlite_store.init_db(db_path, registry)
+    except sqlite_store.SchemaMigrationRequired as e:
+        print(f"[ERROR] Schema 迁移需要处理: {e}", file=sys.stderr)
+        print("数据库未修改。请按 data_contract.md 3.6 迁移说明重建旧版 fulfillment_ratio 表后再初始化。", file=sys.stderr)
+        return 1
     except Exception as e:  # noqa: BLE001
         # 异常信息仅输出异常类型与消息，绝不输出凭证/请求头
         print(f"[ERROR] 数据库初始化失败: {type(e).__name__}: {e}", file=sys.stderr)
@@ -248,16 +252,82 @@ def cmd_fetch(args) -> int:
     return code
 
 
+# ---------------------------------------------------------------------------
+# --parse
+# ---------------------------------------------------------------------------
+PARSE_EXIT_CODE = {
+    "OK": 0,
+    "STRUCTURE_MISMATCH": 2,
+    "ZERO_RECORD": 3,
+    "NO_FETCH_RUN": 1,
+    "SNAPSHOT_MISSING": 1,
+    "UNSUPPORTED_FORMAT": 1,
+    "DB_ERROR": 5,
+}
+
+
+def cmd_parse(args) -> int:
+    # 写路径门禁：在解析 DB / raw_data 路径、连接 SQLite 之前先完整校验配置。
+    settings_path = _resolve_settings(args)
+    registry_path = _resolve_registry(args)
+
+    errors: List[str] = []
+    try:
+        settings = config_loader.load_json(settings_path)
+        errors.extend(config_loader.validate_settings(settings))
+    except Exception as e:  # noqa: BLE001
+        errors.append(f"settings 校验失败: {e}")
+    try:
+        registry = config_loader.load_json(registry_path)
+        errors.extend(config_loader.validate_registry(registry))
+    except Exception as e:  # noqa: BLE001
+        errors.append(f"registry 校验失败: {e}")
+
+    if errors:
+        for msg in errors:
+            print(f"[ERROR] {msg}", file=sys.stderr)
+        print("配置校验失败；未解析、未写入数据库", file=sys.stderr)
+        return 1
+
+    db_path = workspace.resolve_db_path(args.db_path)
+    raw_root = workspace.resolve_raw_data_root(args.raw_data_root)
+
+    try:
+        conn = sqlite_store.connect(db_path)
+    except Exception as e:  # noqa: BLE001
+        print(f"[ERROR] 数据库连接失败: {type(e).__name__}: {e}", file=sys.stderr)
+        return 1
+
+    try:
+        src = fetch_recorder.get_source(conn, args.parse)
+    except sqlite3.OperationalError as e:
+        conn.close()
+        print(f"[ERROR] 数据库未初始化（请先 --init-db）: {e}", file=sys.stderr)
+        return 1
+
+    if src is None:
+        conn.close()
+        print(f"[ERROR] 未找到 source_id={args.parse}（请先 --init-db 且确认源存在）", file=sys.stderr)
+        return 1
+
+    result = parse_disclosure.parse_one_source(conn, src, raw_root)
+    print(json.dumps(result, ensure_ascii=False, indent=2))
+    code = PARSE_EXIT_CODE.get(result.get("result"), 1)
+    conn.close()
+    return code
+
+
 def _parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         prog="agent.py",
-        description="ICD Agent CLI：--status / --validate-config / --init-db / --fetch",
+        description="ICD Agent CLI：--status / --validate-config / --init-db / --fetch / --parse",
     )
     parser.add_argument("--status", action="store_true", help="报告结构化项目状态")
     parser.add_argument("--validate-config", action="store_true", help="严格校验配置")
     parser.add_argument("--init-db", action="store_true", help="初始化 SQLite（幂等）")
     parser.add_argument("--fetch", type=int, metavar="SOURCE_ID", help="按 source_id 抓取单个数据源（写快照与 fetch_run）")
     parser.add_argument("--dry-run", action="store_true", help="配合 --fetch：只抓取并计算哈希，不写快照与数据库")
+    parser.add_argument("--parse", type=int, metavar="SOURCE_ID", help="按 source_id 解析最新成功抓取的快照（写 fulfillment_ratio 与 parse_result）")
     parser.add_argument("--db-path", help="SQLite 路径覆盖（测试用临时目录；默认 data/icd.db）")
     parser.add_argument("--raw-data-root", help="raw_data 根目录覆盖（测试用临时目录；默认 07_接入记忆_Integrate_Memory/raw_data）")
     parser.add_argument("--settings", help="settings.json 路径覆盖（默认读取配置目录）")
@@ -273,6 +343,8 @@ def main(argv: Optional[List[str]] = None) -> int:
         return cmd_init_db(args)
     if args.fetch is not None:
         return cmd_fetch(args)
+    if args.parse is not None:
+        return cmd_parse(args)
     # 默认（含 --status 或无参数）都走状态报告
     return cmd_status(args)
 
