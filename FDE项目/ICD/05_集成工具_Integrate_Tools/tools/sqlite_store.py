@@ -121,14 +121,16 @@ CREATE TABLE IF NOT EXISTS fulfillment_ratio (
   insurer_code      TEXT NOT NULL REFERENCES insurer(insurer_code),
   product_id        INTEGER REFERENCES product(product_id),
   product_name_raw  TEXT NOT NULL,
-  dividend_type     TEXT NOT NULL CHECK (dividend_type IN ('AD','TD','TCV','REVERSIONARY','OTHER')),
+  metric_type       TEXT NOT NULL CHECK (metric_type IN ('AD','TD','RB','TB','TCV','OTHER')),
+  metric_type_raw   TEXT NOT NULL,
   report_year       INTEGER NOT NULL,
   observation_year  INTEGER NOT NULL,
+  scope_currency_raw TEXT NOT NULL DEFAULT 'All',
   raw_value         TEXT NOT NULL,
   normalized_value  REAL,
   unit              TEXT NOT NULL DEFAULT 'percent' CHECK (unit IN ('percent')),
   run_id            INTEGER NOT NULL REFERENCES fetch_run(run_id),
-  UNIQUE (insurer_code, product_name_raw, dividend_type, report_year, observation_year, run_id)
+  UNIQUE (insurer_code, product_name_raw, metric_type, scope_currency_raw, report_year, observation_year, run_id)
 );
 
 CREATE TABLE IF NOT EXISTS rbc_statement (
@@ -184,7 +186,7 @@ CREATE TABLE IF NOT EXISTS error_code (
 );
 
 CREATE INDEX IF NOT EXISTS idx_fetch_run_source      ON fetch_run(source_id);
-CREATE INDEX IF NOT EXISTS idx_ratio_natural         ON fulfillment_ratio(insurer_code, product_name_raw, dividend_type, report_year, observation_year);
+CREATE INDEX IF NOT EXISTS idx_ratio_natural         ON fulfillment_ratio(insurer_code, product_name_raw, metric_type, scope_currency_raw, report_year, observation_year);
 CREATE INDEX IF NOT EXISTS idx_ratio_product         ON fulfillment_ratio(product_id);
 CREATE INDEX IF NOT EXISTS idx_rbc_insurer_year      ON rbc_statement(insurer_code, report_year);
 CREATE INDEX IF NOT EXISTS idx_alias_raw_name        ON product_alias(raw_name);
@@ -205,6 +207,46 @@ ERROR_CODE_SEEDS: List[Tuple[str, str, int, str]] = [
     ("SNAPSHOT_WRITE_FAILED",  "IO",      1, "原始快照落盘失败"),
     ("DB_WRITE_FAILED",        "IO",      1, "SQLite 写入失败"),
 ]
+
+
+class SchemaMigrationRequired(Exception):
+    """检测到旧版 fulfillment_ratio 表结构，必须迁移后才能初始化（对齐 T004 决策补充）。"""
+
+
+# fulfillment_ratio v0.2 必须存在的新列；旧版以 dividend_type 命名标准指标列
+REQUIRED_RATIO_COLUMNS = {"metric_type", "metric_type_raw", "scope_currency_raw"}
+LEGACY_RATIO_COLUMN = "dividend_type"
+
+
+def fulfillment_ratio_columns(conn: sqlite3.Connection):
+    """返回 fulfillment_ratio 表的列名列表；表不存在返回 None。"""
+    exists = conn.execute(
+        "SELECT 1 FROM sqlite_master WHERE type='table' AND name='fulfillment_ratio'"
+    ).fetchone()
+    if exists is None:
+        return None
+    return [r[1] for r in conn.execute("PRAGMA table_info(fulfillment_ratio)").fetchall()]
+
+
+def detect_legacy_fulfillment_ratio(conn: sqlite3.Connection):
+    """若 fulfillment_ratio 为旧版结构（缺新列或仍含 dividend_type），返回迁移提示串；否则 None。"""
+    cols = fulfillment_ratio_columns(conn)
+    if cols is None:
+        return None  # 表不存在 → 正常建新表
+    colset = set(cols)
+    missing = sorted(REQUIRED_RATIO_COLUMNS - colset)
+    has_legacy = LEGACY_RATIO_COLUMN in colset
+    if not missing and not has_legacy:
+        return None
+    parts = []
+    if missing:
+        parts.append("缺少列: " + ", ".join(missing))
+    if has_legacy:
+        parts.append("仍含旧列 dividend_type")
+    return (
+        "fulfillment_ratio 表为旧版结构（" + "；".join(parts) + "）。"
+        "需按 data_contract.md 3.6 迁移说明重建该表后再初始化；本工具不假装新列已存在。"
+    )
 
 
 def connect(db_path: Path) -> sqlite3.Connection:
@@ -290,6 +332,10 @@ def init_db(db_path: Path, registry: dict) -> dict:
     """
     conn = connect(db_path)
     try:
+        # 迁移门禁：旧版 fulfillment_ratio 明确失败，不假装新列已存在（对齐 T004 决策补充）。
+        legacy = detect_legacy_fulfillment_ratio(conn)
+        if legacy:
+            raise SchemaMigrationRequired(legacy)
         create_schema(conn)
         seed_error_codes(conn)
         seed_insurers(conn, registry.get("insurers", []))

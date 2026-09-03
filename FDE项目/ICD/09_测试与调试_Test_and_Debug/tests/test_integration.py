@@ -348,7 +348,8 @@ def test_no_network_imports():
 # ---------------------------------------------------------------------------
 class _LocalServer:
     """本机临时 HTTP 服务器，覆盖：200 字节保真 / 重定向 / 403 / 404 / 5xx /
-    超时 / 超限 / 动态内容（版本变化）。所有请求头被记录用于 UA/凭证断言。"""
+    连接超时 / 慢响应体超时 / 响应体中途断连 / 超限 / 动态内容（版本变化）。
+    所有请求头被记录用于 UA/凭证断言。"""
 
     def __init__(self):
         self.content = b"hello-icd-bytes-200"
@@ -391,6 +392,10 @@ class _LocalServer:
         elif p == "/slow":
             time.sleep(2.0)
             self._respond(h, 200, b"slow")
+        elif p == "/slow-body":
+            self._respond_slow_body(h)
+        elif p == "/truncated":
+            self._respond_truncated(h)
         elif p == "/big":
             self._respond(h, 200, b"x" * (256 * 1024))
         elif p == "/dynamic":
@@ -405,13 +410,36 @@ class _LocalServer:
         h.end_headers()
         h.wfile.write(body)
 
+    def _respond_slow_body(self, h):
+        """先发 200 响应头（Content-Length=100），再只写 10 字节并 flush，
+        随后 sleep 超过客户端 read_timeout——客户端读完响应头进入 body 读取，
+        第二次 read 阻塞到超时，触发"响应体读取超时"。"""
+        h.send_response(200)
+        h.send_header("Content-Length", "100")
+        h.send_header("Content-Type", "application/octet-stream")
+        h.end_headers()
+        h.wfile.write(b"x" * 10)
+        h.wfile.flush()
+        time.sleep(2.0)  # 超过测试 read_timeout(0.3s)，剩余字节不发，连接保持
+
+    def _respond_truncated(self, h):
+        """承诺 Content-Length=1000，但只写 13 字节后立即返回关闭连接，
+        触发客户端 IncompleteRead（响应体中途断连）。"""
+        h.send_response(200)
+        h.send_header("Content-Length", "1000")
+        h.send_header("Content-Type", "application/octet-stream")
+        h.end_headers()
+        h.wfile.write(b"partial-bytes")
+        h.wfile.flush()
+        # 处理函数返回 → HTTP/1.0 连接关闭，但 Content-Length 未满足
+
     def stop(self):
         self.httpd.shutdown()
         self.httpd.server_close()
 
 
 def build_fetch_registry(base_url):
-    """构造 T003 本地测试注册表：1 家测试险企，11 条源覆盖各场景。"""
+    """构造 T003 本地测试注册表：1 家测试险企，13 条源覆盖各场景。"""
     def src(dtype, url, fmt, status, browser=False):
         return {
             "insurer_code": "TST", "disclosure_type": dtype,
@@ -442,6 +470,8 @@ def build_fetch_registry(base_url):
             src("fulfillment_ratio", f"{base_url}/dynamic", "html", "OPEN"),       # 9
             src("rbc", f"{base_url}/browser-only", "json", "OPEN", True),          # 10
             src("rbc", f"{base_url}/redirect", "json", "OPEN"),                    # 11
+             src("fulfillment_ratio", f"{base_url}/slow-body", "html", "OPEN"),     # 12
+             src("fulfillment_ratio", f"{base_url}/truncated", "html", "OPEN"),     # 13
         ],
     }
 
@@ -594,6 +624,66 @@ def test_t003_fetch_timeout():
             ).fetchone()
             check(row is not None and row[0] == "NETWORK_ERROR" and row[1] is None and row[2] is None,
                   "网络失败行三态正确（http_status NULL）", f"失败行: {row}")
+            _assert_no_tmp(raw_root)
+            conn.close()
+    finally:
+        srv.stop()
+
+
+def test_t003_fetch_slow_body_timeout():
+    print("\n[T003-13] 慢响应体：响应头成功后 body 读取超时 → NETWORK_ERROR")
+    print("-" * 60)
+    srv = _LocalServer()
+    try:
+        reg = build_fetch_registry(srv.base)
+        with tempfile.TemporaryDirectory() as td:
+            td = Path(td)
+            db, raw_root = td / "icd.db", td / "raw_data"
+            sqlite_store.init_db(db, reg)
+            conn = sqlite_store.connect(db)
+            src = fetch_recorder.get_source(conn, 12)
+            res = fetch_disclosure.fetch_one_source(conn, src, raw_root, read_timeout=0.3)
+            check(res["result"] == "NETWORK_ERROR", f"result=NETWORK_ERROR（{res['result']}）", f"结果: {res}")
+            check(res["http_status"] is None, "http_status=None（未误记为 HTTP 成功/错误）", f"http_status: {res['http_status']}")
+            check(res["content_hash"] is None and res["snapshot_path"] is None, "无哈希/快照", f"泄漏: {res}")
+            check(res["error_code"] == "NETWORK_TIMEOUT", f"error_code=NETWORK_TIMEOUT（{res['error_code']}）", f"error_code: {res['error_code']}")
+            row = conn.execute(
+                "SELECT fetch_status, http_status, content_hash, snapshot_path FROM fetch_run WHERE source_id=12"
+            ).fetchone()
+            check(row is not None and row[0] == "NETWORK_ERROR" and row[1] is None
+                  and row[2] is None and row[3] is None,
+                  "慢body失败行三态正确（http_status/content_hash/snapshot_path 全 NULL）", f"失败行: {row}")
+            check(len(_snapshot_files(raw_root, "TST", 12)) == 0, "无快照文件", "快照残留")
+            _assert_no_tmp(raw_root)
+            conn.close()
+    finally:
+        srv.stop()
+
+
+def test_t003_fetch_midstream_disconnect():
+    print("\n[T003-14] 响应体中途断连：NETWORK_ERROR/NETWORK_CONNECTION，无快照/哈希")
+    print("-" * 60)
+    srv = _LocalServer()
+    try:
+        reg = build_fetch_registry(srv.base)
+        with tempfile.TemporaryDirectory() as td:
+            td = Path(td)
+            db, raw_root = td / "icd.db", td / "raw_data"
+            sqlite_store.init_db(db, reg)
+            conn = sqlite_store.connect(db)
+            src = fetch_recorder.get_source(conn, 13)
+            res = fetch_disclosure.fetch_one_source(conn, src, raw_root, read_timeout=2.0)
+            check(res["result"] == "NETWORK_ERROR", f"result=NETWORK_ERROR（{res['result']}）", f"结果: {res}")
+            check(res["http_status"] is None, "http_status=None（未误记为 HTTP 成功/错误）", f"http_status: {res['http_status']}")
+            check(res["content_hash"] is None and res["snapshot_path"] is None, "无哈希/快照", f"泄漏: {res}")
+            check(res["error_code"] == "NETWORK_CONNECTION", f"error_code=NETWORK_CONNECTION（{res['error_code']}）", f"error_code: {res['error_code']}")
+            row = conn.execute(
+                "SELECT fetch_status, http_status, content_hash, snapshot_path FROM fetch_run WHERE source_id=13"
+            ).fetchone()
+            check(row is not None and row[0] == "NETWORK_ERROR" and row[1] is None
+                  and row[2] is None and row[3] is None,
+                  "断连失败行三态正确（全 NULL）", f"失败行: {row}")
+            check(len(_snapshot_files(raw_root, "TST", 13)) == 0, "无快照文件", "快照残留")
             _assert_no_tmp(raw_root)
             conn.close()
     finally:
@@ -825,6 +915,8 @@ def main():
     test_t003_fetch_redirect()
     test_t003_fetch_http_errors()
     test_t003_fetch_timeout()
+    test_t003_fetch_slow_body_timeout()
+    test_t003_fetch_midstream_disconnect()
     test_t003_fetch_oversized()
     test_t003_fetch_dedup_and_version()
     test_t003_fetch_reject()

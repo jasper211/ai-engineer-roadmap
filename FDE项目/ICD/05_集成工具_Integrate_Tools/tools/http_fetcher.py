@@ -123,13 +123,21 @@ def _map_network_error(reason) -> str:
 
 
 def _read_capped(resp, cap: int):
-    """读满响应体但总字节数不得超过 cap；超限返回 (None, 已读字节数)。"""
+    """读满响应体但总字节数不得超过 cap；超限返回 (None, 已读字节数)。
+
+    Python 的 http.client 有界 read(amt) 在 EOF 时只返回 b""、不抛异常，
+    因此这里主动检查：EOF 但 Content-Length（resp.length）尚未读满 → 抛
+    IncompleteRead，由 fetch() 折叠为 NETWORK_ERROR/NETWORK_CONNECTION。
+    """
     chunks = []
     total = 0
     while True:
         n = min(65536, cap + 1 - total)
         chunk = resp.read(n)
         if not chunk:
+            remaining = getattr(resp, "length", None)
+            if remaining:
+                raise http.client.IncompleteRead(b"".join(chunks), remaining)
             break
         chunks.append(chunk)
         total += len(chunk)
@@ -187,15 +195,39 @@ def fetch(
                 f"连接失败: {type(e).__name__}: {e}",
             )
 
-        with resp:
-            status = getattr(resp, "status", None) or getattr(resp, "code", None)
-            final_url = resp.geturl() if hasattr(resp, "geturl") else url
-            body, total = _read_capped(resp, cap)
+        status = getattr(resp, "status", None) or getattr(resp, "code", None)
+        final_url = resp.geturl() if hasattr(resp, "geturl") else url
+        try:
+            try:
+                body, total = _read_capped(resp, cap)
+            except (socket.timeout, TimeoutError) as e:
+                # 响应头已成功（200），但响应体读取超时 → 网络失败，不当作 HTTP 成功/错误
+                return FetchOutcome(
+                    "NETWORK_ERROR", None, final_url, b"", "NETWORK_TIMEOUT",
+                    f"响应体读取超时: {e}",
+                )
+            except http.client.IncompleteRead as e:
+                # 服务端承诺的 Content-Length 未满足即断开（body 中途断连）
+                return FetchOutcome(
+                    "NETWORK_ERROR", None, final_url, b"", "NETWORK_CONNECTION",
+                    f"响应体中途断连: {type(e).__name__}: {e}",
+                )
+            except (ConnectionError, OSError, http.client.HTTPException) as e:
+                # 其余响应体读取阶段连接异常统一归为 NETWORK_CONNECTION
+                return FetchOutcome(
+                    "NETWORK_ERROR", None, final_url, b"", "NETWORK_CONNECTION",
+                    f"响应体读取失败: {type(e).__name__}: {e}",
+                )
             if body is None:
                 return FetchOutcome(
                     "HTTP_ERROR", status, final_url, b"", None,
                     f"响应体超过上限 {cap} 字节（已读 >= {total}）",
                 )
             return FetchOutcome("OK", status, final_url, body, None, "")
+        finally:
+            try:
+                resp.close()
+            except Exception:  # noqa: BLE001 —— 关闭连接尽力而为，不掩盖业务结果
+                pass
     finally:
         _Timeouts.connect, _Timeouts.read = old
