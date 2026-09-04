@@ -135,7 +135,7 @@ def parse_one_source(conn, src: dict, raw_data_root) -> dict:
             base["result"] = "UNSUPPORTED_FORMAT"
             base["message"] = (
                 f"暂未接入 format={fmt!r} insurer={insurer!r} 的解析"
-                f"（已接入：AIA JSON、CTF HTML、CLO HTML、PRU RBC PDF；其余 HTML/PDF 待后续任务）"
+                f"（已接入：AIA JSON、CTF HTML、CLO HTML、PRUGI RBC PDF；其余 HTML/PDF 待后续任务）"
             )
             return base
     except pru_rbc_parser.PruRbcParseError as e:

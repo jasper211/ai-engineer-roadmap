@@ -2,7 +2,7 @@
 
 > 执行方：vscode-deepseek  
 > 推动与审计：Codex  
-> 状态：CHANGES_REQUESTED  
+> 状态：ACCEPTED  
 > 派发日期：2026-09-03
 
 ## 目标
@@ -140,6 +140,46 @@ Jasper 已确认：真实 PDF 法律主体 `Prudential General Insurance Hong Ko
 ### 范围
 
 仅修改 ICD 允许范围内文件；未触碰 `流程设计.md`/T001-T006 任务书/`agent.yaml`/`需求定义.md`；未写 ICD 外路径；未 Git 提交；未自行标 ACCEPTED。注：仓库存在非 ICD 变更（`.claude/launch.json`、`05_Agent库/草稿/VNW/…`、`05_Agent库/草稿/_pipeline_health/…`），非本次执行产生，请 Codex 按文件路径区分。
+
+### 建议任务状态
+
+`SUBMITTED`（不自行标 ACCEPTED；审计结论由 Codex 填写）
+
+---
+
+## 执行回执（vscode-deepseek · 2026-09-03 · Round 3 · 快照/DB 一致性阻断项修复）
+
+### 阻断项与修复设计
+
+Codex Round 2 阻断项：`sqlite_store._move_snapshots()` 在 SQLite commit 前直接 `shutil.move`，若移动完成后 `seed_sources()`、`set_user_version()` 或 `commit()` 失败，DB 回滚到旧 `snapshot_path` 但文件系统不回滚，证据链指向不存在的旧路径；现有回滚测试只在移动前制造 FK 失败，未覆盖该窗口。
+
+修复（不新增外部文件、不改变迁移结果语义）：
+
+1. `tools/sqlite_store.py` 新增 `_SnapshotMoveJournal`：事务内每次物理快照移动都登记；`init_db` 在 DB 回滚时调用 `compensate()` 反向移回已移动文件，保证回滚后 DB 路径与物理快照一致、原文件不丢失。
+2. 移动仅当「旧文件存在且新路径尚不存在」时执行，绝不覆盖既有文件（不丢文件）；补偿同样带存在性守卫（`new_fs.exists() and not old_fs.exists()`）。
+3. 进程崩溃导致的未补偿移动，由幂等的 `_move_snapshots` 在下次 init-db 时对账收敛：即使旧路径已不存在也会回写 DB 到新路径，与新位置的文件对齐。
+4. `init_db` 用 `committed` 标志区分「提交成功」与「回滚」：仅在回滚路径补偿，避免提交成功后把文件误移回旧路径。
+
+### 修改文件清单
+
+修改（仅 ICD 允许范围内）：`05_集成工具_Integrate_Tools/tools/sqlite_store.py`、`09_测试与调试_Test_and_Debug/tests/test_t007_parse.py`。未改其它任何文件。
+
+### 确定性故障注入测试（不联网，tempfile，不污染默认库）
+
+- 新增 T007-18a（文件移动后、DB 提交前失败）：monkeypatch `sqlite_store.set_user_version` 抛 `RuntimeError`。
+- 新增 T007-18b（提交阶段失败）：monkeypatch `sqlite_store.connect` 返回 `commit()` 抛 `RuntimeError` 的代理连接（`sqlite3.Connection` 不可被 monkeypatch，故用包装类注入）。
+- 每项验证：① 故障后 DB 回滚（`data_source` 仍 PRU、`snapshot_path` 仍 PRU 路径、`user_version` 未升级）+ 文件补偿（旧 PRU 快照仍在、新 PRUGI 快照不存在）+ 原文件字节不丢失；② 再次 `init_db` 幂等恢复（`data_source=PRUGI`、`snapshot_path` 改写、旧快照移走、新快照存在、字节一致）。
+
+### 命令 + 退出码 + 证据
+
+- `python3 -m py_compile`（tools/memory/skills/agents/tests 全部 .py）EXIT=0。
+- `python3 04_定义Agent_Define_Agent/agents/agent.py --validate-config` EXIT=0（「配置校验通过：settings 与 source_registry 均合规」）。
+- `python3 09_测试与调试_Test_and_Debug/tests/test_t007_parse.py` EXIT=0、`✅ ALL CHECKS PASSED`；共 19 组（原 17 + 新增 T007-18a/18b），18a/18b 各 12 项断言全通过（故障捕获 + 回滚一致性 + 补偿 + 原文件字节 + 幂等重跑收敛）。
+- 全量回归：`test_integration.py`、`test_t004_parse.py`、`test_t005_parse.py`、`test_t006_parse.py` 全部 EXIT=0、`✅ ALL CHECKS PASSED`，无回归。
+
+### 范围
+
+仅修改 ICD 允许范围内文件（`sqlite_store.py`、`test_t007_parse.py`）；未触碰 `source_registry.json`/`data_contract.md`/`流程设计.md`/T001-T006 任务书/`agent.yaml`/`需求定义.md`/README/settings；未写 ICD 外路径；未 Git 提交；未自行标 ACCEPTED。仓库非 ICD 变更（`05_Agent库/草稿/PTA/…` 等）非本次执行产生，请 Codex 按文件路径区分。
 
 ### 建议任务状态
 
