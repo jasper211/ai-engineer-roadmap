@@ -21,7 +21,7 @@ ICD · skills/parse_disclosure.py · 单源披露文件解析编排（L3-ICD-03 
 from pathlib import Path
 from typing import Optional
 
-from skills import aia_json_parser, clo_html_parser, ctf_html_parser, multi_html_parser, pdf_text, rbc_parser, yfl_api
+from skills import aia_json_parser, clo_html_parser, ctf_html_parser, multi_html_parser, nextjs_ratio, pdf_text, rbc_parser, yfl_api
 from tools import ratio_writer, rbc_writer
 
 # 快照入库用的逻辑前缀（对齐 memory/workspace.snapshot_relpath）
@@ -29,7 +29,7 @@ _SNAPSHOT_PREFIX = "raw_data"
 
 # 当前已接入解析的支持矩阵（与 parse_one_source 的分流一致；供 run_all 分类复用，
 # 避免编排层与解析层对「哪些源已接入」的判断发生漂移）。
-_SUPPORTED_RATIO_HTML_INSURERS = ("CTF", "CLO", "SUN", "BOC", "YFL")
+_SUPPORTED_RATIO_HTML_INSURERS = ("CTF", "CLO", "SUN", "BOC", "YFL", "AXA", "FWD")
 _SUPPORTED_RBC_PDF_INSURERS = ("PRUGI", "AIACO")
 
 
@@ -160,6 +160,8 @@ def parse_one_source(conn, src: dict, raw_data_root) -> dict:
             parsed = multi_html_parser.parse_boc_html(body)
         elif fmt == "html" and insurer == "YFL":
             parsed = yfl_api.parse_bundle(body)
+        elif fmt == "html" and insurer in ("AXA", "FWD"):
+            parsed = nextjs_ratio.parse_bundle(body)
         elif is_rbc:
             parsed = rbc_parser.parse_rbc(body)
         else:
@@ -193,6 +195,7 @@ def parse_one_source(conn, src: dict, raw_data_root) -> dict:
         clo_html_parser.CloParseError,
         multi_html_parser.MultiHtmlParseError,
         yfl_api.YflApiError,
+        nextjs_ratio.NextRatioError,
     ) as e:
         base["result"] = "STRUCTURE_MISMATCH"
         base["parse_status"] = "STRUCTURE_MISMATCH"

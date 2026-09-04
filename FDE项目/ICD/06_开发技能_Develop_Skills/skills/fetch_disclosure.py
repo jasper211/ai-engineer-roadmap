@@ -19,7 +19,7 @@ from typing import Optional
 
 from memory import workspace
 from tools import fetch_recorder, http_fetcher, snapshot
-from skills import yfl_api
+from skills import nextjs_ratio, yfl_api
 
 
 def validate_fetchable(src: dict) -> Optional[str]:
@@ -79,6 +79,10 @@ def fetch_one_source(
         outcome = yfl_api.collect(url, lambda target: http_fetcher.fetch(
             target, max_bytes=max_bytes, connect_timeout=connect_timeout, read_timeout=read_timeout,
         ))
+    elif insurer in ("AXA", "FWD") and src.get("disclosure_type") == "fulfillment_ratio":
+        outcome = nextjs_ratio.collect(url, insurer, lambda target: http_fetcher.fetch(
+            target, max_bytes=max_bytes, connect_timeout=connect_timeout, read_timeout=read_timeout,
+        ))
     else:
         outcome = http_fetcher.fetch(
             url, max_bytes=max_bytes, connect_timeout=connect_timeout, read_timeout=read_timeout,
@@ -116,7 +120,7 @@ def fetch_one_source(
     body = outcome.body
     content_hash = snapshot.sha256_hex(body)
     content_length = len(body)
-    evidence_format = "json" if insurer == "YFL" and src.get("disclosure_type") == "fulfillment_ratio" else src.get("format")
+    evidence_format = "json" if insurer in ("YFL", "AXA", "FWD") and src.get("disclosure_type") == "fulfillment_ratio" else src.get("format")
     ext = snapshot.ext_for_format(evidence_format)
     relpath = workspace.snapshot_relpath(insurer, source_id, content_hash, ext)
     fullpath = workspace.snapshot_fullpath(

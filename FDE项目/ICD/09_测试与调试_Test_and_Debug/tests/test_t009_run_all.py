@@ -264,7 +264,7 @@ def test_classify():
         ({"access_status": "OPEN", "disclosure_type": "fulfillment_ratio", "format": "json", "insurer_code": "AIA", "requires_browser": 0}, "fetch_parse"),
         ({"access_status": "OPEN", "disclosure_type": "fulfillment_ratio", "format": "html", "insurer_code": "CTF", "requires_browser": 0}, "fetch_parse"),
         ({"access_status": "OPEN", "disclosure_type": "rbc", "format": "pdf", "insurer_code": "PRUGI", "requires_browser": 0}, "fetch_parse"),
-        ({"access_status": "OPEN", "disclosure_type": "fulfillment_ratio", "format": "html", "insurer_code": "AXA", "requires_browser": 0}, "unsupported"),
+        ({"access_status": "OPEN", "disclosure_type": "fulfillment_ratio", "format": "html", "insurer_code": "AXA", "requires_browser": 0}, "fetch_parse"),
         ({"access_status": "PARTIAL", "disclosure_type": "fulfillment_ratio", "format": "pdf", "insurer_code": "PRU", "requires_browser": 0}, "unsupported"),
     ]
     for src, expected in cases:
@@ -339,8 +339,8 @@ def test_full_batch():
 
             # 计数
             c = summary["counts"]
-            check(c["processed"] == 5 and c["succeeded"] == 2 and c["failed"] == 3 and c["skipped"] == 3 and c["unsupported"] == 1,
-                  f"counts processed=5/succeeded=2/failed=3/skipped=3/unsupported=1（实际 {c}）", f"counts: {c}")
+            check(c["processed"] == 6 and c["succeeded"] == 2 and c["failed"] == 4 and c["skipped"] == 3 and c["unsupported"] == 0,
+                  f"counts processed=6/succeeded=2/failed=4/skipped=3/unsupported=0（实际 {c}）", f"counts: {c}")
 
             # 逐源：后一源（source_id=9 PRUGI）仍继续成功
             by_id = {e["source_id"]: e for e in summary["sources"]}
@@ -348,8 +348,8 @@ def test_full_batch():
                   f"source_id=1 成功且值部分不可数值化 OK(PARTIAL)，records={by_id[1]['records_written']}", f"s1: {by_id[1]}")
             check(by_id[2]["fetch_status"] == "HTTP_ERROR", f"source_id=2 HTTP 失败（{by_id[2]['fetch_status']}）", f"s2: {by_id[2]}")
             check(by_id[3]["parse_status"] == "STRUCTURE_MISMATCH", f"source_id=3 结构失败（{by_id[3]['parse_status']}）", f"s3: {by_id[3]}")
-            check(by_id[4]["action"] == "unsupported" and by_id[4]["fetch_status"] == "UNSUPPORTED",
-                  f"source_id=4 未接入（{by_id[4]['fetch_status']}）", f"s4: {by_id[4]}")
+            check(by_id[4]["action"] == "fetch_parse" and by_id[4]["fetch_status"] == "NETWORK_ERROR",
+                  f"source_id=4 已接入且坏 Next.js 结构显式失败（{by_id[4]['fetch_status']}）", f"s4: {by_id[4]}")
             check(by_id[5]["action"] == "skip_blocked", f"source_id=5 BLOCKED 跳过", f"s5: {by_id[5]}")
             check(by_id[6]["action"] == "skip_unverified", f"source_id=6 UNVERIFIED 跳过", f"s6: {by_id[6]}")
             check(by_id[7]["action"] == "skip_browser", f"source_id=7 requires_browser 跳过", f"s7: {by_id[7]}")
