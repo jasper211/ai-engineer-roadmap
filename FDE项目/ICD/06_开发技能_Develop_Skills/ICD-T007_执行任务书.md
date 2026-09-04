@@ -2,7 +2,7 @@
 
 > 执行方：vscode-deepseek  
 > 推动与审计：Codex  
-> 状态：DISPATCHED  
+> 状态：CHANGES_REQUESTED  
 > 派发日期：2026-09-03
 
 ## 目标
@@ -41,3 +41,106 @@
 ## 执行回执
 
 由 vscode-deepseek 追加依赖版本、命令、退出码、fixture/回归/真实网络证据和文件清单，不得自行标记 ACCEPTED。
+
+---
+
+## 执行回执（vscode-deepseek · 2026-09-03 · Round 1）
+
+### 完成摘要
+
+按任务书实现 Prudential（source_id=13）RBC 官方 PDF 的抓取、原始快照、文本层验证、Capital Adequacy 语义邻域解析、标准化与 SQLite 入库，形成首个 PDF/RBC 端到端闭环。核心比率（290%→2.90）由真实 PDF 独立提取，未写死；金额按 PDF 明示「in HKD thousands」标度折算绝对 HKD 入库，原文+标度无损保留在 `risk_breakdown_json`。
+
+### 修改/新增文件清单
+
+新增：
+1. `requirements.txt` — 显式声明 `pdfplumber>=0.11.0,<0.12`（维护活跃，非静默依赖全局环境）
+2. `06_开发技能_Develop_Skills/skills/pdf_text.py` — PDF 文本/表格提取（pdfplumber）；`%PDF` 签名校验、文字层校验（空→`PdfNoTextError`→`PDF_NO_TEXT`，不 OCR）；非 PDF→`PdfNotPdfError`
+3. `06_开发技能_Develop_Skills/skills/pru_rbc_parser.py` — Capital Adequacy / Ratio 语义邻域解析（报告年度/偿付能力比率/币种/可选金额/风险分解 JSON），不全文百分号正则猜数、不写死 290%
+4. `05_集成工具_Integrate_Tools/tools/rbc_writer.py` — `rbc_statement` 事务写入 + `parse_result`（幂等 UPSERT、原子回滚）
+5. `09_测试与调试_Test_and_Debug/tests/fixtures/pru_rbc_fixture.json` — 脱敏文本+表格 fixture
+6. `09_测试与调试_Test_and_Debug/tests/test_t007_parse.py` — 15 组确定性测试
+7. `07_接入记忆_Integrate_Memory/T007_真实验证证据.md` — 真实 PDF/DB 验证产物
+8. `07_接入记忆_Integrate_Memory/T007_真实PDF可再生素材_提取文本.txt` — 可再生文本证据（快照提取，非 OCR）
+
+修改：
+9. `06_开发技能_Develop_Skills/skills/parse_disclosure.py` — 接入 `pdf→PRU RBC` 分流 + PDF 错误语义（`PDF_NO_TEXT` / 非 PDF）
+10. `README.md` — 快速开始补 `--parse 13`、当前状态补 T007
+11. `02_配置项目_Configure_Project/settings.json` — status/stage/skills/tools/migration_note 更新
+
+未触碰允许范围外任何文件：未改 `source_registry.json`、`data_contract.md`、`流程设计.md`、T001-T006 任务书、`agent.yaml`；未写 ICD 外路径；未 Git 提交；未自行标 ACCEPTED。（`agent.py` 无需功能改动：解析分流在 `skills/parse_disclosure.py`，`--parse` 已通用，其退出码映射已覆盖 RBC 的 OK/STRUCTURE_MISMATCH 等结果。）
+
+### 依赖版本
+
+- Python 3.14.4
+- pdfplumber 0.11.10（基于 pdfminer.six 20260107，Pillow 12.2.0）
+
+### 真实网络证据（与 fixture 分开）
+
+- `SSL_CERT_FILE=/etc/ssl/cert.pem python3 ... --fetch 13` → EXIT=0；HTTP 200；Content-Type `application/pdf`；`%PDF-1.7` 签名；242184 字节；SHA-256 `b61630e9b275146bb4ea16a1f60ae189aa2e19daae11ea8a13751d66f97d0d51`；快照 `raw_data/PRU/13/{hash}.pdf`
+- 文字层：4 页、8142 字符（非扫描件，无需 OCR）
+- `--parse 13` → EXIT=0；`result=OK`；`run_id=6`；`report_year=2024`；`records_written=1`；`parse_status=OK`
+- DB 落库：`solvency_ratio=2.9`、`solvency_ratio_raw='290%'`、`capital_base=581167000.0`、`prescribed_capital_amount=200745000.0`、`currency='HKD'`；`integrity_check=ok`、`foreign_key_check=[]`；重复 `--parse 13` 幂等仍 1 行
+- 三处逐字抽查（PDF→DB）：① `Ratio of capital base to prescribed capital amount 290%` → `'290%'`/`2.9`；② `Capital base 581,167` → `581167000.0`；③ `Prescribed capital amount 200,745` → `200745000.0`（详见 `07_接入记忆_Integrate_Memory/T007_真实验证证据.md`）
+
+### 确定性测试（fixture，不联网，tempfile，不污染默认库）
+
+`python3 .../test_t007_parse.py` → EXIT=0，✅ ALL CHECKS PASSED，15 组：
+百分比泛化（290%→2.90/304%→3.04/110%→1.10，证明未写死）、金额解析、PDF 签名、官方语句邻域（290%→2.90/2024/HKD/金额/风险分解 JSON）、跨行断词、重复候选比率歧义→STRUCTURE_MISMATCH、结构漂移→STRUCTURE_MISMATCH、错误年份（缺失/不一致）→STRUCTURE_MISMATCH、非 PDF→PdfNotPdfError、无文字层（最小空白 PDF）→PdfNoTextError、最小文本 PDF 端到端、可选金额缺失→NULL、rbc_writer 幂等/回滚/零记录、端到端（本地 HTTP 服务器→fetch→parse→证据链+幂等+integrity/FK）、CLI 退出码。
+
+### 全量回归
+
+`test_integration.py`（T002+T003）、`test_t004_parse.py`、`test_t005_parse.py`、`test_t006_parse.py`、`test_t007_parse.py` 均 EXIT=0；`py_compile` 全部 EXIT=0。
+
+### 未决说明（供 Codex/Jasper 裁定，非阻断）
+
+1. **主体身份差异**：PDF 主体为「Prudential General Insurance Hong Kong Limited」（一般保险），与注册表 `PRU`（「Prudential Hong Kong Limited」，寿险）是同一集团两个不同持牌实体。注册表禁止修改，故仅记录，未改。
+2. **金额标度口径**：披露金额为「in HKD thousands」；本实现按 PDF 明示标度 ×1000 折算绝对 HKD 入库（币种金额语义），原文+标度保留在 `risk_breakdown_json`。若项目方偏好「保留披露原值 + 新增标度列」，属 Schema 决策。
+3. **rbc_risk_component 未填充**：Prudential（一般保险）风险分解（General Insurance Risk / Reserve and premium risk / Natural catastrophe risk / Counterparty default and other risk 等）与 `rbc_risk_component` 的 risk_type 枚举无法无损一一对应，故只写 `rbc_statement` 单行 + `risk_breakdown_json` 原文，不写规范化子表（避免有损合并口径）。
+
+### 建议任务状态
+
+`SUBMITTED`（不自行标 ACCEPTED；审计结论由 Codex 填写）
+
+---
+
+## 执行回执（vscode-deepseek · 2026-09-03 · Round 2 · Jasper 重大决策返工）
+
+### 决策依据
+
+Jasper 已确认：真实 PDF 法律主体 `Prudential General Insurance Hong Kong Limited`（一般保险）必须作为独立主体，使用独立且语义明确的 `insurer_code`，并在 RBC 数据中保留法律主体原文；不得继续归到寿险 `Prudential Hong Kong Limited`（`PRU`）。授权最小修改 source_registry、数据契约、SQLite Schema/迁移、解析写入、测试、README/settings 与任务回执。
+
+### 完成摘要
+
+1. **独立主体编码**：新增 `insurer_code=PRUGI`（= Prudential **G**eneral **I**nsurance），name_en `Prudential General Insurance Hong Kong Limited`；寿险保持 `PRU`。`source_registry.json` 中 RBC 源（entry_url 含 `PGHK-RBC-public-disclosure-statement-2024.pdf`）由 `PRU` 改为 `PRUGI`，schema_version 1.0→1.1，险企 10→11。
+2. **法律主体原文正式字段**：`rbc_statement` 新增 `legal_entity_name_raw TEXT NOT NULL`，保存「Authorized insurer's name」逐字原文；解析器无法提取即 `STRUCTURE_MISMATCH`，不再仅藏于 JSON。
+3. **金额标度无损**：金额标准值仍为绝对 HKD（`capital_base`/`prescribed_capital_amount`），新增正式字段 `capital_base_raw`/`prescribed_capital_amount_raw`（披露原文）、`amount_unit_raw`（单位原文，如 `in HKD thousands`）、`amount_scale`（规范化标度 `thousands`/`millions`），可无损复现「原文 × 标度 = 绝对 HKD」。
+4. **错误归属数据安全迁移**：`--init-db` 自动做 `pre-v4.bak` 全量备份后，在事务内①`data_source[13]` `PRU→PRUGI`；②删除错误归属 `rbc_statement`/`parse_result` 1 行（证据由备份+`fetch_run`+快照保留）；③移动快照 `raw_data/PRU/13/→raw_data/PRUGI/13/` 并回写 `fetch_run.snapshot_path`；④`ALTER TABLE` 补齐新列。迁移后 `--parse 13` 按新主体重建。`fulfillment_ratio`（4807 行）、其他险企与源不受影响。
+5. **风险分解不强行映射**：`rbc_risk_component` 仍 0 行，完整子风险分解（22 PCA + 5 资本基础）保留在 `risk_breakdown_json`，不写不兼容枚举。
+6. **schema 版本检测/迁移策略**：SQLite `PRAGMA user_version=4` 做版本检测；幂等（重复 init-db 无副作用）、原子（SQL 失败整体回滚，见 T007-17 测试）、主体隔离（PRU/PRUGI 分表分码）。
+
+### 修改文件清单
+
+修改：`source_registry.json`、`data_contract.md`（v0.5 + 3.8 迁移节）、`tools/sqlite_store.py`（新 rbc DDL + user_version + `migrate_rbc_v04` 迁移 + 备份）、`skills/pru_rbc_parser.py`（`_extract_legal_entity_name` + `_extract_currency_and_unit` + 新字段）、`tools/rbc_writer.py`（新列 UPSERT）、`skills/parse_disclosure.py`（rbc 分流 → `PRUGI`）、`agents/agent.py`（`--init-db` 传 `raw_data_root`）、`tests/test_t007_parse.py`（PRUGI 注册表 + 新字段断言 + T007-16 迁移/T007-17 回滚）、`tests/test_integration.py`（险企 10→11）、`tests/fixtures/pru_rbc_fixture.json`、`README.md`、`settings.json`（v0.5.0）。
+新增：`07_接入记忆_Integrate_Memory/T007_Round2_迁移与重建证据.md`。
+
+### 真实默认库证据（命令 + 退出码 + 真实 DB 行）
+
+- `--init-db` EXIT=0：迁移报告 4 条 actions（见上）；备份 `icd.db.pre-v4.bak` SHA-256 `9265688e…`。
+- `--parse 13` EXIT=0：`insurer_code=PRUGI`、`run_id=6`、`report_year=2024`、`records_written=1`、`parse_status=OK`。
+- DB 直查 `rbc_statement` 单行：`('PRUGI', 6, 2024, 'Prudential General Insurance Hong Kong Limited', 2.9, '290%', 581167000.0, '581,167', 200745000.0, '200,745', 'HKD', 'in HKD thousands', 'thousands')`。
+- `integrity_check=ok`、`foreign_key_check=[]`；`fulfillment_ratio`=4807、`fetch_run`=6、`rbc_risk_component`=0、`insurer`=11、`data_source`=21。
+- 移动后快照 SHA-256 `b61630e9b275146bb4ea16a1f60ae189aa2e19daae11ea8a13751d66f97d0d51`（字节未变）。
+
+### 确定性测试（不联网，tempfile）与全量回归
+
+- `py_compile`（tools/memory/skills/agents/tests 全部 .py）EXIT=0；`--validate-config` EXIT=0。
+- `test_t007_parse.py` EXIT=0（17 组，含新增 T007-16 迁移、T007-17 回滚，全部断言通过）。
+- `test_integration.py`（T002+T003）、`test_t004_parse.py`、`test_t005_parse.py`、`test_t006_parse.py` 全部 EXIT=0、✅ ALL CHECKS PASSED，无回归。
+
+### 范围
+
+仅修改 ICD 允许范围内文件；未触碰 `流程设计.md`/T001-T006 任务书/`agent.yaml`/`需求定义.md`；未写 ICD 外路径；未 Git 提交；未自行标 ACCEPTED。注：仓库存在非 ICD 变更（`.claude/launch.json`、`05_Agent库/草稿/VNW/…`、`05_Agent库/草稿/_pipeline_health/…`），非本次执行产生，请 Codex 按文件路径区分。
+
+### 建议任务状态
+
+`SUBMITTED`（不自行标 ACCEPTED；审计结论由 Codex 填写）

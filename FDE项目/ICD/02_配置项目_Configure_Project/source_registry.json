@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "1.1",
   "generated_at": "2026-09-03",
   "description": "ICD 数据源注册表。10 家险企来自需求定义§7 真实实测（本机 curl，非猜测）。URL 规范化说明：§7.2 以裸域名给出（未写 scheme），本注册表统一补 https://；仅当官方站点规范主机名带 www 时补 www。所有 access_status 为 UNVERIFIED 的条目 entry_url 与 format 均为 null（不得猜测），BLOCKED 条目为已实测确认被拦截。所有 legal_name 建议在使用前与 IA 持牌险企名录核对。",
   "insurers": [
@@ -12,6 +12,7 @@
     { "insurer_code": "BOC", "name_en": "BOC Group Life Assurance Company Limited", "name_zh": "中银集团人寿" },
     { "insurer_code": "CLO", "name_en": "China Life Insurance (Overseas) Company Limited", "name_zh": "中国人寿保险（海外）" },
     { "insurer_code": "PRU", "name_en": "Prudential Hong Kong Limited", "name_zh": "保诚保险" },
+    { "insurer_code": "PRUGI", "name_en": "Prudential General Insurance Hong Kong Limited", "name_zh": "保诚一般保险（香港）有限公司" },
     { "insurer_code": "MAN", "name_en": "Manulife (International) Limited", "name_zh": "宏利保险" }
   ],
   "sources": [
@@ -172,14 +173,14 @@
       "url_version": 1
     },
     {
-      "insurer_code": "PRU",
+      "insurer_code": "PRUGI",
       "disclosure_type": "rbc",
       "entry_url": "https://www.prudential.com.hk/content/dam/prudential-phkl/pdf/en/regulatory-information/PGHK-RBC-public-disclosure-statement-2024.pdf",
       "format": "pdf",
       "access_status": "OPEN",
-      "parser_hint": "PDF 资产路径不受该站 Incapsula 防护影响(与履行率网页 403 是两回事)。结构同友邦，偿付能力比率 = 290%。",
+      "parser_hint": "PDF 资产路径不受该站 Incapsula 防护影响(与履行率网页 403 是两回事)。文件名为 PGHK（Prudential General HK），实际法律主体为 'Prudential General Insurance Hong Kong Limited'（一般保险），与寿险 PRU（Prudential Hong Kong Limited）是同一集团两个不同持牌实体，故以独立 insurer_code=PRUGI 登记。偿付能力比率 = 290%。",
       "requires_browser": false,
-      "evidence_basis": "需求定义§7.3 curl实测（290%）",
+      "evidence_basis": "需求定义§7.3 curl实测（290%）；真实 PDF 第1页 'Authorized insurer's name' = Prudential General Insurance Hong Kong Limited（T007 Round 2 修正）",
       "allows_empty": false,
       "last_verified_at": "2026-09-03",
       "url_version": 1

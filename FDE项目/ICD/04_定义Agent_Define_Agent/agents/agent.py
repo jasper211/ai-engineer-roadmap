@@ -167,9 +167,11 @@ def cmd_init_db(args) -> int:
 
     # 校验通过后才解析 DB 路径（resolve 仅做路径规整，无目录/文件副作用）
     db_path = workspace.resolve_db_path(args.db_path)
+    # 主体隔离迁移需要 raw_data 根（移动误归属快照）；resolve 无副作用。
+    raw_root = workspace.resolve_raw_data_root(args.raw_data_root)
 
     try:
-        summary = sqlite_store.init_db(db_path, registry)
+        summary = sqlite_store.init_db(db_path, registry, raw_data_root=raw_root)
     except sqlite_store.SchemaMigrationRequired as e:
         print(f"[ERROR] Schema 迁移需要处理: {e}", file=sys.stderr)
         print("数据库未修改。请按 data_contract.md 3.6 迁移说明重建旧版 fulfillment_ratio 表后再初始化。", file=sys.stderr)

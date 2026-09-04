@@ -1,16 +1,16 @@
 {
   "agent_id": "ICD",
   "name": "保司自主披露数据采集 Agent（Insurer Compliance Disclosures）",
-  "version": "0.1.0",
-  "status": "AIA JSON（T004）、CTF Life HTML（T005）与中国人寿海外 CLO HTML（T006）分红实现率解析与入库已实现：--status / --validate-config / --init-db / --fetch（--dry-run）/ --parse 可用；其余 HTML 源与 PDF/RBC 解析未接入（T008）",
-  "stage": "06_开发技能_Develop_Skills（AIA JSON + CTF/CLO HTML 解析、标准化与事务入库）",
+  "version": "0.5.0",
+  "status": "AIA JSON（T004）、CTF Life HTML（T005）、中国人寿海外 CLO HTML（T006）分红实现率与 Prudential General Insurance 香港（PRUGI，一般保险）RBC PDF（T007）解析与入库已实现：--status / --validate-config / --init-db / --fetch（--dry-run）/ --parse 可用；其余 HTML 源与其余 RBC 源解析未接入（T008）",
+  "stage": "06_开发技能_Develop_Skills（AIA JSON + CTF/CLO HTML + Prudential General Insurance RBC PDF 解析、标准化与事务入库）",
 
   "description": "采集香港持牌保险公司自己官网公开披露的分红实现率(Fulfillment Ratio)+RBC风险为本资本披露声明(Disclosure Statement，含偿付能力充足率)，标准化后供下游项目只读查询",
 
-  "migration_note": "v0.1.0（2026-09-03）：需求定义完成，来自U020项目模块3数据缺口排查过程中的真实curl实测（非猜测），10家险企逐一验证过分红实现率入口，2家验证过RBC披露声明入口，详见01_初始化项目_Initialize_Project/需求定义.md第七节。v0.1.0+（2026-09-03，T002）：落地最小可运行骨架——agents/agent.py 三个CLI、tools/config_loader（严格校验）、tools/sqlite_store（12表迁移+幂等种子）、memory/workspace（DB路径推导）。本任务不联网、不解析真实披露文件。v0.1.0+（2026-09-03，T003）：落地 HTTP 抓取与原始证据固化——tools/http_fetcher（标准库GET：固定UA/连接读取超时/有限重定向/体量上限）、tools/snapshot（SHA-256+原子落盘）、tools/fetch_recorder（fetch_run 三态写入/去重）、skills/fetch_disclosure（L3-ICD-02 编排）、memory/workspace（raw_data 路径+防穿越）；agents/agent.py 增 --fetch/--dry-run/--raw-data-root。本任务不解析披露文件内容。v0.1.0+（2026-09-03，T004）：落地 AIA JSON 解析与入库——skills/aia_json_parser（四类指标 AD/TD/RB/TB 解析+标准化）、tools/ratio_writer（fulfillment_ratio 事务写入+parse_result）、skills/parse_disclosure（L3-ICD-03 编排）、agents/agent.py 增 --parse；fulfillment_ratio 迁移 v0.2：dividend_type→metric_type、枚举扩为 AD/TD/RB/TB/TCV/OTHER、新增 metric_type_raw 与 scope_currency_raw、唯一键纳入两者；旧 Schema 明确失败（SchemaMigrationRequired）。v0.3（2026-09-03，T004 第三项决策返工）：fulfillment_ratio 新增 observation_year_raw（官网观察期原始标签）、observation_year 改可空、唯一键改用 observation_year_raw；Before 2015 写 observation_year=NULL 不虚构 2014；存在不可数值化观测项时 parse_result 写 PARTIAL + VALUE_UNPARSEABLE 并保留全部原文记录。",
+  "migration_note": "v0.1.0（2026-09-03）：需求定义完成，来自U020项目模块3数据缺口排查过程中的真实curl实测（非猜测），10家险企逐一验证过分红实现率入口，2家验证过RBC披露声明入口，详见01_初始化项目_Initialize_Project/需求定义.md第七节。v0.1.0+（2026-09-03，T002）：落地最小可运行骨架——agents/agent.py 三个CLI、tools/config_loader（严格校验）、tools/sqlite_store（12表迁移+幂等种子）、memory/workspace（DB路径推导）。本任务不联网、不解析真实披露文件。v0.1.0+（2026-09-03，T003）：落地 HTTP 抓取与原始证据固化——tools/http_fetcher（标准库GET：固定UA/连接读取超时/有限重定向/体量上限）、tools/snapshot（SHA-256+原子落盘）、tools/fetch_recorder（fetch_run 三态写入/去重）、skills/fetch_disclosure（L3-ICD-02 编排）、memory/workspace（raw_data 路径+防穿越）；agents/agent.py 增 --fetch/--dry-run/--raw-data-root。本任务不解析披露文件内容。v0.1.0+（2026-09-03，T004）：落地 AIA JSON 解析与入库——skills/aia_json_parser（四类指标 AD/TD/RB/TB 解析+标准化）、tools/ratio_writer（fulfillment_ratio 事务写入+parse_result）、skills/parse_disclosure（L3-ICD-03 编排）、agents/agent.py 增 --parse；fulfillment_ratio 迁移 v0.2：dividend_type→metric_type、枚举扩为 AD/TD/RB/TB/TCV/OTHER、新增 metric_type_raw 与 scope_currency_raw、唯一键纳入两者；旧 Schema 明确失败（SchemaMigrationRequired）。v0.3（2026-09-03，T004 第三项决策返工）：fulfillment_ratio 新增 observation_year_raw（官网观察期原始标签）、observation_year 改可空、唯一键改用 observation_year_raw；Before 2015 写 observation_year=NULL 不虚构 2014；存在不可数值化观测项时 parse_result 写 PARTIAL + VALUE_UNPARSEABLE 并保留全部原文记录。v0.4（2026-09-03，T007）：落地 Prudential RBC 披露声明 PDF 解析与入库——skills/pdf_text（pdfplumber 文本/表格提取+PDF 签名/文字层校验，空文字层 PDF_NO_TEXT 不 OCR）、skills/pru_rbc_parser（Capital adequacy/Ratio 语义邻域解析：报告年度/偿付能力比率/币种/可选金额，不全文百分号正则猜数、不写死 290%）、tools/rbc_writer（rbc_statement 事务写入+parse_result，幂等/回滚）、requirements.txt（pdfplumber 依赖声明）；parse_disclosure 接入 pdf→PRU RBC 分流；金额按披露明示 in HKD thousands 标度折算绝对 HKD，原文+标度保留在 risk_breakdown_json。v0.5（2026-09-03，T007 Round 2 重大决策返工）：真实 PDF 法律主体为 Prudential General Insurance Hong Kong Limited（一般保险），与寿险 PRU 分离为独立主体 insurer_code=PRUGI；source_registry 该 RBC 源由 PRU 改为 PRUGI；rbc_statement 新增 legal_entity_name_raw（法律主体逐字原文，NOT NULL）、capital_base_raw/prescribed_capital_amount_raw（披露原文）、amount_unit_raw/amount_scale（单位原文/规范化标度）；SQLite 用 PRAGMA user_version=4 做 schema 版本检测，旧库自动做 pre-v4.bak 备份并幂等迁移（修正归属、移动快照、删除错误业务行）；风险分解仍不写不兼容枚举、原文留 risk_breakdown_json；--init-db 迁移后按新主体重新 --parse 重建。",
 
-  "skills": ["fetch_disclosure", "aia_json_parser", "ctf_html_parser", "clo_html_parser", "parse_disclosure"],
-  "tools": ["config_loader", "sqlite_store", "http_fetcher", "snapshot", "fetch_recorder", "ratio_writer"],
+  "skills": ["fetch_disclosure", "aia_json_parser", "ctf_html_parser", "clo_html_parser", "pdf_text", "pru_rbc_parser", "parse_disclosure"],
+  "tools": ["config_loader", "sqlite_store", "http_fetcher", "snapshot", "fetch_recorder", "ratio_writer", "rbc_writer"],
   "memory": ["workspace"],
 
   "dependencies": {
@@ -29,7 +29,7 @@
       "name": "RBC披露声明",
       "en": "Disclosure Statement",
       "legal_basis": "IA 2025-08-08通函《Circular on Public Disclosure Requirements for the First Financial Year Adopting Risk-based Capital Regime》，覆盖全香港158家持牌保险公司",
-      "coverage": "只实测2家(友邦304%/保诚290%)，其余8家未测但法定要求都应披露"
+      "coverage": "只实测2家(友邦304% / 保诚一般保险 PRUGI 290%)，其余8家未测但法定要求都应披露"
     }
   ],
 

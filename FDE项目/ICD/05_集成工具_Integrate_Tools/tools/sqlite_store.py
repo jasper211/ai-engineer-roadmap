@@ -5,7 +5,8 @@ ICD · tools/sqlite_store.py · SQLite 迁移与幂等初始化
 
 职责边界：把已验收的 `../03_规划项目结构_Plan_Project_Structure/data_contract.md`
 里的 12 张表 DDL + 6 个索引 + 11 条错误代码种子，转成可重复执行的迁移资源。
-本模块不访问网络、不解析披露文件、不删除任何已存在的行。
+本模块不访问网络、不解析披露文件。除 v0.4→v0.5 主体隔离迁移（T007 Round 2，
+按注册表修正错误归属并删除错误业务行，见 migrate_rbc_v04）外，不删除任何已存在的行。
 
 幂等保证（对齐任务书 T002 功能要求第 5 条与验收标准第 4/5 条）：
 - 建表用 `CREATE TABLE IF NOT EXISTS`，建索引用 `CREATE INDEX IF NOT EXISTS`，
@@ -13,12 +14,13 @@ ICD · tools/sqlite_store.py · SQLite 迁移与幂等初始化
 - 险企/错误代码用 `INSERT OR IGNORE`（主键冲突即跳过）。
 - 数据源用 `NOT EXISTS` 子查询按自然键去重（含 entry_url 为 NULL 的
   UNVERIFIED 条目——SQLite 的 UNIQUE 对 NULL 不去重，所以这里显式判空）。
-- 全程只 INSERT，绝无 DELETE/UPDATE，`fetch_run` 与业务表已有行不受影响。
+- 常规种子只 INSERT，绝无 DELETE/UPDATE，`fetch_run` 与业务表已有行不受影响。
 """
 
+import shutil
 import sqlite3
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
 
 # 12 张表的规范名称（顺序即 data_contract.md 定义顺序，验收标准第 3 条用）
 TABLES: List[str] = [
@@ -139,11 +141,16 @@ CREATE TABLE IF NOT EXISTS rbc_statement (
   insurer_code              TEXT NOT NULL REFERENCES insurer(insurer_code),
   run_id                    INTEGER NOT NULL REFERENCES fetch_run(run_id),
   report_year               INTEGER NOT NULL,
+  legal_entity_name_raw     TEXT NOT NULL,
   solvency_ratio            REAL,
   solvency_ratio_raw        TEXT,
   capital_base              REAL,
+  capital_base_raw          TEXT,
   prescribed_capital_amount REAL,
+  prescribed_capital_amount_raw TEXT,
   currency                  TEXT NOT NULL DEFAULT 'HKD',
+  amount_unit_raw           TEXT,
+  amount_scale              TEXT CHECK (amount_scale IS NULL OR amount_scale IN ('thousands','millions')),
   risk_breakdown_json       TEXT,
   UNIQUE (insurer_code, report_year, run_id)
 );
@@ -347,10 +354,198 @@ def collect_counts(conn: sqlite3.Connection) -> Dict[str, int]:
     return {t: conn.execute(f"SELECT COUNT(*) FROM {t}").fetchone()[0] for t in TABLES}
 
 
-def init_db(db_path: Path, registry: dict) -> dict:
-    """初始化数据库：建 schema + 播种险企/数据源/错误代码，全程幂等、只增不改。
+# ---------------------------------------------------------------------------
+# Schema 版本与 v0.4 → v0.5 迁移（T007 Round 2：法律主体隔离）
+# ---------------------------------------------------------------------------
+SCHEMA_VERSION = 4  # PRAGMA user_version 整型版本；对应 data_contract.md 契约 v0.5
 
-    返回摘要 dict：12 张表是否齐备 + 各表行数（供 --init-db 输出与测试断言）。
+# rbc_statement v0.5 新增列（ALTER TABLE ADD COLUMN 顺序；语义见 data_contract.md 3.8）
+RBC_V04_ADD_COLUMNS: List[Tuple[str, str]] = [
+    ("legal_entity_name_raw", "TEXT NOT NULL"),
+    ("capital_base_raw", "TEXT"),
+    ("prescribed_capital_amount_raw", "TEXT"),
+    ("amount_unit_raw", "TEXT"),
+    ("amount_scale", "TEXT CHECK (amount_scale IS NULL OR amount_scale IN ('thousands','millions'))"),
+]
+
+
+def get_user_version(conn: sqlite3.Connection) -> int:
+    """读取 SQLite PRAGMA user_version（整型 schema 版本；未设置时为 0）。"""
+    return conn.execute("PRAGMA user_version").fetchone()[0]
+
+
+def set_user_version(conn: sqlite3.Connection, version: int) -> None:
+    conn.execute(f"PRAGMA user_version = {int(version)}")
+
+
+def rbc_statement_columns(conn: sqlite3.Connection) -> Optional[List[str]]:
+    """返回 rbc_statement 表的列名列表；表不存在返回 None。"""
+    exists = conn.execute(
+        "SELECT 1 FROM sqlite_master WHERE type='table' AND name='rbc_statement'"
+    ).fetchone()
+    if exists is None:
+        return None
+    return [r[1] for r in conn.execute("PRAGMA table_info(rbc_statement)").fetchall()]
+
+
+def _backup_db(conn: sqlite3.Connection, db_path: Path) -> Path:
+    """迁移前用 SQLite backup API 复制一份全量备份（回滚/审计依据）。"""
+    bak = db_path.with_name(db_path.name + f".pre-v{SCHEMA_VERSION}.bak")
+    dest = sqlite3.connect(str(bak))
+    try:
+        conn.backup(dest)
+    finally:
+        dest.close()
+    return bak
+
+
+def _reconcile_source_entities(conn: sqlite3.Connection, registry: dict) -> List[Tuple[int, str, str, str]]:
+    """按注册表 entry_url→insurer_code 映射，找出 DB 中错误归属的数据源。
+
+    返回 [(source_id, db_insurer_code, correct_insurer_code, entry_url), ...]。
+    仅比较 entry_url 非空的源；URL 唯一（UNIQUE 约束），故映射唯一。
+    """
+    url_to_insurer: Dict[str, str] = {}
+    for s in registry.get("sources", []):
+        u = s.get("entry_url")
+        if u:
+            url_to_insurer[u] = s.get("insurer_code")
+    fixes: List[Tuple[int, str, str, str]] = []
+    for source_id, db_code, url in conn.execute(
+        "SELECT source_id, insurer_code, entry_url FROM data_source WHERE entry_url IS NOT NULL"
+    ):
+        correct = url_to_insurer.get(url)
+        if correct and correct != db_code:
+            fixes.append((source_id, db_code, correct, url))
+    return fixes
+
+
+def _rehome_snapshot_path(snapshot_path: str, old_code: str, source_id: int, new_code: str) -> str:
+    """把 'raw_data/{old}/{sid}/...' 重写为 'raw_data/{new}/{sid}/...'；不匹配则原样返回。"""
+    prefix = f"raw_data/{old_code}/{int(source_id)}/"
+    if snapshot_path.startswith(prefix):
+        return f"raw_data/{new_code}/{int(source_id)}/" + snapshot_path[len(prefix):]
+    return snapshot_path
+
+
+def _move_snapshots(
+    conn: sqlite3.Connection,
+    raw_data_root: Optional[Path],
+    source_id: int,
+    old_code: str,
+    new_code: str,
+) -> List[Tuple[int, str, str, bool]]:
+    """移动该源的成功快照目录并回写 fetch_run.snapshot_path。
+
+    返回 [(run_id, old_path, new_path, did_move), ...]。raw_data_root 为 None 时
+    仅回写 DB 路径（不移动文件，用于无文件系统的纯 DB 场景）。
+    """
+    moves: List[Tuple[int, str, str, bool]] = []
+    rows = conn.execute(
+        "SELECT run_id, snapshot_path FROM fetch_run WHERE source_id=? AND snapshot_path IS NOT NULL",
+        (source_id,),
+    ).fetchall()
+    for run_id, snapshot_path in rows:
+        new_path = _rehome_snapshot_path(snapshot_path, old_code, source_id, new_code)
+        if new_path == snapshot_path:
+            continue
+        did_move = False
+        if raw_data_root is not None:
+            old_rel = snapshot_path[len("raw_data/"):] if snapshot_path.startswith("raw_data/") else snapshot_path
+            new_rel = new_path[len("raw_data/"):] if new_path.startswith("raw_data/") else new_path
+            old_fs = Path(raw_data_root) / old_rel
+            new_fs = Path(raw_data_root) / new_rel
+            if old_fs.exists():
+                new_fs.parent.mkdir(parents=True, exist_ok=True)
+                shutil.move(str(old_fs), str(new_fs))
+                did_move = True
+        conn.execute("UPDATE fetch_run SET snapshot_path=? WHERE run_id=?", (new_path, run_id))
+        moves.append((run_id, snapshot_path, new_path, did_move))
+    return moves
+
+
+def _delete_wrong_rbc_rows(conn: sqlite3.Connection, source_id: int, old_code: str) -> int:
+    """删除该源下错误归属（insurer_code=old_code）的 rbc 业务行及其 parse_result。
+
+    rbc_risk_component 先删（FK 依赖 rbc_statement.rbc_id）；parse_result 只删
+    确有错误 rbc 行对应 run_id 的记录。返回删除的 rbc_statement 行数。
+    """
+    rows = conn.execute(
+        "SELECT rbc_id, run_id FROM rbc_statement WHERE insurer_code=? AND run_id IN "
+        "(SELECT run_id FROM fetch_run WHERE source_id=?)",
+        (old_code, source_id),
+    ).fetchall()
+    if not rows:
+        return 0
+    rbc_ids = [r[0] for r in rows]
+    run_ids = sorted({r[1] for r in rows})
+    rq = ",".join("?" * len(rbc_ids))
+    conn.execute(f"DELETE FROM rbc_risk_component WHERE rbc_id IN ({rq})", tuple(rbc_ids))
+    conn.execute(f"DELETE FROM rbc_statement WHERE rbc_id IN ({rq})", tuple(rbc_ids))
+    uq = ",".join("?" * len(run_ids))
+    conn.execute(f"DELETE FROM parse_result WHERE run_id IN ({uq})", tuple(run_ids))
+    return len(rbc_ids)
+
+
+def migrate_rbc_v04(
+    conn: sqlite3.Connection,
+    registry: dict,
+    raw_data_root: Optional[Path] = None,
+) -> dict:
+    """执行 v0.4 → v0.5 迁移（幂等、原子）。返回迁移报告 dict。
+
+    步骤（在调用方事务内，任一失败由调用方回滚）：
+    1. 按注册表修正 data_source 的错误主体归属（如 PRU→PRUGI 的 RBC 源）。
+    2. 删除错误归属的 rbc_statement / rbc_risk_component / parse_result 行。
+    3. 补齐 rbc_statement 新列（错误行已删，表为空，NOT NULL 可安全添加）。
+    4. 移动 raw_data 快照目录 + 回写 fetch_run.snapshot_path。
+    不触碰其他来源、不触碰 fulfillment_ratio。错误业务行删除后由调用方按新主体重新 --parse 重建。
+    """
+    report: dict = {"schema_version": SCHEMA_VERSION, "actions": []}
+    cols = rbc_statement_columns(conn)
+    if cols is None:
+        report["actions"].append("rbc_statement 不存在，跳过迁移（新库/空库）")
+        return report
+    existing = set(cols)
+
+    # 1) 修正主体归属
+    fixes = _reconcile_source_entities(conn, registry)
+    for source_id, old, new, url in fixes:
+        conn.execute("UPDATE data_source SET insurer_code=? WHERE source_id=?", (new, source_id))
+        report["actions"].append(f"data_source[{source_id}] insurer_code {old}→{new} ({url})")
+
+    # 2) 删除错误归属业务行（先删，确保第 3 步加 NOT NULL 列时表为空）
+    for source_id, old, new, url in fixes:
+        n = _delete_wrong_rbc_rows(conn, source_id, old)
+        if n:
+            report["actions"].append(f"删除错误归属 rbc_statement {n} 行（insurer_code={old}）")
+
+    # 3) 补齐新列（错误行已删，表为空，NOT NULL 可安全添加）
+    added = [c for c, _ in RBC_V04_ADD_COLUMNS if c not in existing]
+    for colname, ddl in RBC_V04_ADD_COLUMNS:
+        if colname not in existing:
+            conn.execute(f"ALTER TABLE rbc_statement ADD COLUMN {colname} {ddl}")
+    if added:
+        report["actions"].append("rbc_statement 新增列: " + ", ".join(added))
+
+    # 4) 移动快照 + 回写 fetch_run.snapshot_path
+    for source_id, old, new, url in fixes:
+        for run_id, old_path, new_path, did_move in _move_snapshots(conn, raw_data_root, source_id, old, new):
+            report["actions"].append(
+                f"fetch_run[{run_id}] snapshot_path {old_path}→{new_path} (move={'yes' if did_move else 'no'})"
+            )
+
+    if not fixes and not added:
+        report["actions"].append("无迁移项（已是最新 schema 且无错误归属）")
+    return report
+
+
+def init_db(db_path: Path, registry: dict, raw_data_root: Optional[Path] = None) -> dict:
+    """初始化数据库：建 schema + 播种险企/数据源/错误代码，全程幂等。
+
+    先做 schema 版本检测（PRAGMA user_version）；旧库（user_version < 4 且已有表）
+    会先做 .pre-v4.bak 全量备份，再执行 v0.4→v0.5 主体隔离迁移。返回摘要 dict：
+    12 张表是否齐备 + 各表行数 +（迁移时）迁移报告（供 --init-db 输出与测试断言）。
     """
     conn = connect(db_path)
     try:
@@ -358,21 +553,44 @@ def init_db(db_path: Path, registry: dict) -> dict:
         legacy = detect_legacy_fulfillment_ratio(conn)
         if legacy:
             raise SchemaMigrationRequired(legacy)
+
+        preexisting = conn.execute(
+            "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'"
+        ).fetchone()[0]
+        needs_migration = preexisting > 0 and get_user_version(conn) < SCHEMA_VERSION
+
+        backup_path: Optional[Path] = None
+        if needs_migration:
+            backup_path = _backup_db(conn, db_path)
+
         create_schema(conn)
         seed_error_codes(conn)
+        # 先播种险企，确保新主体（如 PRUGI）存在，迁移的 data_source 归属 UPDATE 才能通过 FK。
         seed_insurers(conn, registry.get("insurers", []))
+
+        migration_report: Optional[dict] = None
+        if needs_migration:
+            migration_report = migrate_rbc_v04(conn, registry, raw_data_root)
+
         seed_sources(conn, registry.get("sources", []))
+        set_user_version(conn, SCHEMA_VERSION)
         conn.commit()
+
         counts = collect_counts(conn)
         names = table_names(conn)
         missing = [t for t in TABLES if t not in names]
-        return {
-            "schema_version": "1.0",
+        result = {
+            "schema_version": SCHEMA_VERSION,
+            "user_version": get_user_version(conn),
             "table_count": len([t for t in TABLES if t in names]),
             "tables_present": [t for t in TABLES if t in names],
             "missing_tables": missing,
             "counts": counts,
         }
+        if migration_report is not None:
+            migration_report["backup_path"] = str(backup_path) if backup_path else None
+            result["migration"] = migration_report
+        return result
     except Exception:
         conn.rollback()
         raise

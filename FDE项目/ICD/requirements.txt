@@ -1,0 +1,10 @@
+# ICD Agent · Python 依赖声明（最小化）
+#
+# 本文件是 ICD 的显式依赖声明，避免静默依赖全局环境（对齐任务书 T007 允许范围）。
+# 仅声明 PDF 文本/表格提取所需的维护活跃库；解析器不联网、不执行 PDF 内嵌代码。
+#
+# 安装：pip install -r requirements.txt
+
+# pdfplumber 基于 pdfminer.six，用于 RBC 披露声明 PDF 的文本层与表格提取。
+# 版本 0.11.x 为维护活跃版本；解析器仅在受控快照上运行，不做 OCR。
+pdfplumber>=0.11.0,<0.12

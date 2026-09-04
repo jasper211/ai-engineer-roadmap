@@ -6,11 +6,11 @@ ICD · skills/parse_disclosure.py · 单源披露文件解析编排（L3-ICD-03 
 职责边界：把"定位快照 → 读原始字节 → 按格式解析 → 标准化 → 事务入库 + parse_result"
 串成一次源级解析操作。不访问网络（原始字节已由 L3-ICD-02 抓取并固化为快照）。
 
-对齐任务书 T004 功能要求与验收标准：
+对齐任务书 T004/T005/T006/T007 功能要求与验收标准：
 - 解析必须通过 run_id 反查真实快照（URL/时间/哈希/路径），不凭空构造。
 - 结构缺键/类型错误/零业务记录 → 明确失败，不写业务表（只记 parse_result）。
 - 同 run_id 重复解析幂等；业务写入走事务，任何硬失败不留部分业务行。
-- 记录数覆盖 AIA 全部四类指标（AD/TD/RB/TB），不静默丢产品/丢组。
+- 记录数覆盖 AIA 四类指标（AD/TD/RB/TB）与 CTF/CLO 表格与 Prudential RBC PDF。
 - 存在无法数值化但保留原文的观测项时，parse_result 写 PARTIAL + VALUE_UNPARSEABLE（软失败）。
 
 结果 dict 顶层 result 取值：
@@ -21,8 +21,8 @@ ICD · skills/parse_disclosure.py · 单源披露文件解析编排（L3-ICD-03 
 from pathlib import Path
 from typing import Optional
 
-from skills import aia_json_parser, clo_html_parser, ctf_html_parser
-from tools import ratio_writer
+from skills import aia_json_parser, clo_html_parser, ctf_html_parser, pdf_text, pru_rbc_parser
+from tools import ratio_writer, rbc_writer
 
 # 快照入库用的逻辑前缀（对齐 memory/workspace.snapshot_relpath）
 _SNAPSHOT_PREFIX = "raw_data"
@@ -58,6 +58,18 @@ def _snapshot_file(raw_data_root, snapshot_path: str) -> Path:
     if f != root and root not in f.parents:
         raise ValueError(f"快照路径越界 raw_data 根: {f}")
     return f
+
+
+def _record_parse_failure(conn, run_id: int, base: dict, parse_status: str, error_code: str, message: str) -> dict:
+    """失败路径：只写 parse_result（不写业务行）；parse_result 写入失败也须报告。"""
+    try:
+        ratio_writer.upsert_parse_result(conn, run_id, parse_status, 0, error_code, message)
+        conn.commit()
+    except Exception as we:  # noqa: BLE001 —— 记录失败也须报告，不掩盖解析结论
+        base["result"] = "DB_ERROR"
+        base["error_code"] = "DB_WRITE_FAILED"
+        base["message"] = f"parse_result 写入失败: {type(we).__name__}: {we}"
+    return base
 
 
 def parse_one_source(conn, src: dict, raw_data_root) -> dict:
@@ -108,7 +120,8 @@ def parse_one_source(conn, src: dict, raw_data_root) -> dict:
         base["message"] = f"快照读取失败: {type(e).__name__}: {e}"
         return base
 
-    # 3) 按格式 + 险企分流解析（T004 接入 AIA JSON；T005 接入 CTF Life HTML）
+    # 3) 按格式 + 险企分流解析（T004 AIA JSON / T005 CTF HTML / T006 CLO HTML / T007 PRUGI RBC PDF）
+    is_rbc = fmt == "pdf" and insurer == "PRUGI"
     try:
         if fmt == "json":
             parsed = aia_json_parser.parse_aia_json(body)
@@ -116,13 +129,33 @@ def parse_one_source(conn, src: dict, raw_data_root) -> dict:
             parsed = ctf_html_parser.parse_ctf_html(body)
         elif fmt == "html" and insurer == "CLO":
             parsed = clo_html_parser.parse_clo_html(body)
+        elif is_rbc:
+            parsed = pru_rbc_parser.parse_pru_rbc(body)
         else:
             base["result"] = "UNSUPPORTED_FORMAT"
             base["message"] = (
                 f"暂未接入 format={fmt!r} insurer={insurer!r} 的解析"
-                f"（已接入：AIA JSON、CTF HTML、CLO HTML；其余 HTML/PDF 待后续任务）"
+                f"（已接入：AIA JSON、CTF HTML、CLO HTML、PRU RBC PDF；其余 HTML/PDF 待后续任务）"
             )
             return base
+    except pru_rbc_parser.PruRbcParseError as e:
+        base["result"] = "STRUCTURE_MISMATCH"
+        base["parse_status"] = "STRUCTURE_MISMATCH"
+        base["error_code"] = "STRUCTURE_MISMATCH"
+        base["message"] = str(e)
+        return _record_parse_failure(conn, run_id, base, "STRUCTURE_MISMATCH", "STRUCTURE_MISMATCH", str(e))
+    except pdf_text.PdfNoTextError as e:
+        base["result"] = "STRUCTURE_MISMATCH"
+        base["parse_status"] = "STRUCTURE_MISMATCH"
+        base["error_code"] = "PDF_NO_TEXT"
+        base["message"] = str(e)
+        return _record_parse_failure(conn, run_id, base, "STRUCTURE_MISMATCH", "PDF_NO_TEXT", str(e))
+    except (pdf_text.PdfNotPdfError, pdf_text.PdfExtractionError) as e:
+        base["result"] = "STRUCTURE_MISMATCH"
+        base["parse_status"] = "STRUCTURE_MISMATCH"
+        base["error_code"] = "STRUCTURE_MISMATCH"
+        base["message"] = str(e)
+        return _record_parse_failure(conn, run_id, base, "STRUCTURE_MISMATCH", "STRUCTURE_MISMATCH", str(e))
     except (
         aia_json_parser.AiaParseError,
         ctf_html_parser.CtfParseError,
@@ -132,15 +165,7 @@ def parse_one_source(conn, src: dict, raw_data_root) -> dict:
         base["parse_status"] = "STRUCTURE_MISMATCH"
         base["error_code"] = "STRUCTURE_MISMATCH"
         base["message"] = str(e)
-        try:
-            ratio_writer.write_parse_outcome(
-                conn, run_id, insurer, [], "STRUCTURE_MISMATCH", "STRUCTURE_MISMATCH", str(e),
-            )
-        except Exception as we:  # noqa: BLE001 —— 记录失败也须报告，不掩盖解析结论
-            base["result"] = "DB_ERROR"
-            base["error_code"] = "DB_WRITE_FAILED"
-            base["message"] = f"parse_result 写入失败: {type(we).__name__}: {we}"
-        return base
+        return _record_parse_failure(conn, run_id, base, "STRUCTURE_MISMATCH", "STRUCTURE_MISMATCH", str(e))
 
     status = parsed["status"]
     records = parsed["records"]
@@ -151,6 +176,7 @@ def parse_one_source(conn, src: dict, raw_data_root) -> dict:
 
     # 第三项决策补充：只要存在无法数值化但保留原文的观测项，parse_result 写 PARTIAL
     # + VALUE_UNPARSEABLE（软失败），记录数仍包含这些原始观测项，不静默丢弃。
+    # RBC 单条声明无该软失败语义（金额可选、缺失即 NULL，属 OK）。
     if status == "OK" and value_unparseable > 0:
         parse_status = "PARTIAL"
         error_code = "VALUE_UNPARSEABLE"
@@ -164,16 +190,27 @@ def parse_one_source(conn, src: dict, raw_data_root) -> dict:
     base["parse_status"] = parse_status
     base["error_code"] = error_code
 
-    message = (
-        f"products={parsed['product_count']}, records={len(records)}, "
-        f"value_unparseable={value_unparseable}"
-    )
+    if is_rbc:
+        message = (
+            f"report_year={parsed['report_year']}, records={len(records)}, "
+            f"solvency_ratio_raw={records[0]['solvency_ratio_raw'] if records else None}"
+        )
+    else:
+        message = (
+            f"products={parsed['product_count']}, records={len(records)}, "
+            f"value_unparseable={value_unparseable}"
+        )
 
     # 4) 事务入库（OK/PARTIAL 写全部业务行；ZERO_RECORD 只写 parse_result，不写业务表）
     try:
-        n = ratio_writer.write_parse_outcome(
-            conn, run_id, insurer, records, parse_status, error_code, message,
-        )
+        if is_rbc:
+            n = rbc_writer.write_rbc_outcome(
+                conn, run_id, insurer, records, parse_status, error_code, message,
+            )
+        else:
+            n = ratio_writer.write_parse_outcome(
+                conn, run_id, insurer, records, parse_status, error_code, message,
+            )
     except Exception as e:  # noqa: BLE001 —— DB 写失败须清晰报告，业务行已回滚
         base["result"] = "DB_ERROR"
         base["error_code"] = "DB_WRITE_FAILED"

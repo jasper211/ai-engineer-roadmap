@@ -6,7 +6,7 @@ ICD 集成测试（T002）
 覆盖任务书验收标准：
 - 配置校验：正常配置 0 错误；四类损坏 fixture（非法 JSON / 重复险企 /
   未知险企引用 / UNVERIFIED 带 URL）各非零退出。
-- SQLite 初始化：12 张表、10 家险企、21 条数据源、11 条错误代码种子；
+- SQLite 初始化：12 张表、11 家险企、21 条数据源、11 条错误代码种子；
   二次初始化不产生重复；fetch_run 已有行在二次初始化后仍存在。
 - CLI：--status 在数据库不存在/存在两种情况下输出正确；
   从项目根 / ICD 根 / 任意临时目录运行均成功（路径从 __file__ 推导）。
@@ -169,7 +169,7 @@ def test_init_db_schema_and_seeds():
         check(summary["table_count"] == 12, f"12 张表齐备（missing={summary['missing_tables']}）",
               f"表缺失：{summary['missing_tables']}")
         c = summary["counts"]
-        check(c["insurer"] == 10, f"险企 10 家（实际 {c['insurer']}）", f"险企数错误：{c['insurer']}")
+        check(c["insurer"] == 11, f"险企 11 家（实际 {c['insurer']}）", f"险企数错误：{c['insurer']}")
         check(c["data_source"] == 21, f"数据源 21 条（实际 {c['data_source']}）", f"数据源数错误：{c['data_source']}")
         check(c["error_code"] == 11, f"错误代码 11 条（实际 {c['error_code']}）", f"错误代码数错误：{c['error_code']}")
 
@@ -183,7 +183,7 @@ def test_init_db_idempotent():
         sqlite_store.init_db(db, reg)
         summary2 = sqlite_store.init_db(db, reg)
         c = summary2["counts"]
-        check(c["insurer"] == 10, f"二次初始化险企仍 10（实际 {c['insurer']}）", f"险企重复：{c['insurer']}")
+        check(c["insurer"] == 11, f"二次初始化险企仍 11（实际 {c['insurer']}）", f"险企重复：{c['insurer']}")
         check(c["data_source"] == 21, f"二次初始化数据源仍 21（实际 {c['data_source']}）", f"数据源重复：{c['data_source']}")
         check(c["error_code"] == 11, f"二次初始化错误代码仍 11（实际 {c['error_code']}）", f"错误代码重复：{c['error_code']}")
 
@@ -311,7 +311,7 @@ def test_cli_status_db_absent_and_present():
                 ok = False
         check(ok and data["database"]["exists"] is False, "DB 不存在 → exists=false", f"退出码/JSON 异常：{r.returncode} {r.stdout}")
         check(data is not None and data["agent_id"] == "ICD", "agent_id=ICD", f"agent_id 错误：{data}")
-        check(data is not None and data["insurer_count"] == 10, "insurer_count=10", f"insurer_count 错误：{data}")
+        check(data is not None and data["insurer_count"] == 11, "insurer_count=11", f"insurer_count 错误：{data}")
         check(data is not None and data["source_count"] == 21, "source_count=21", f"source_count 错误：{data}")
 
         # 情况二：先初始化，数据库存在

@@ -1,7 +1,7 @@
 # ICD · 数据契约（SQLite Schema 设计）
 
 > Agent ID: ICD
-> 版本: v0.1.0
+> 版本: v0.5.0
 > 日期: 2026-09-03
 > 阶段: SOP 第2步——流程设计（ICD-T001）
 > 定位: 本文 DDL 可直接转为 SQLite schema；JSON/HTML/PDF 三类实现按同一契约开发与验收。
@@ -34,6 +34,7 @@
 - 所有百分比/比率，统一存储为**小数比率**（原值 ÷ 100）：`94% → 0.94`，`100% → 1.0`，`304% → 3.04`。
 - 原始字符串始终保留在 `*_raw` 列（`fulfillment_ratio.raw_value`、`rbc_statement.solvency_ratio_raw`），保证"不丢原文、不自行四舍五入"。
 - 这一约定同时约束分红实现率（单位 `percent`）与 RBC 偿付能力比率（单位 `percent`）；RBC 的资本基础/规定资本额是**币种金额**，用 `currency` 列区分，不套用百分比约定。
+- **RBC 金额标度**：`capital_base` / `prescribed_capital_amount` 一律存**绝对 HKD**；当披露明示「in HKD thousands / millions」时按标度折算（如 `581,167` 千 → `581167000.0`），同时 `*_raw` 列保留披露原文、`amount_unit_raw` 保留单位原文、`amount_scale` 保留规范化标度，保证无损复现（见 3.8）。
 
 ### 3.2 空值语义（NULL ≠ 0 ≠ "无数据"）
 
@@ -46,8 +47,10 @@
 | `fulfillment_ratio.normalized_value` | 原文存在但**无法解析为数字**（保留 `raw_value`，标记，不静默丢弃） |
 | `fulfillment_ratio.observation_year` | 观察期为非数字开放区间（如 AIA 的 `Before 2015`）——原文保留在 `observation_year_raw`，整数年写 NULL，不虚构单年 |
 | `fulfillment_ratio.product_id` / `rbc 相关 product` | 产品尚未映射到规范实体（`UNMAPPED`） |
-| `rbc_statement.capital_base` / `prescribed_capital_amount` | 该份披露未公开此金额 |
+| `rbc_statement.capital_base` / `prescribed_capital_amount` | 该份披露未公开此金额（对应 `*_raw` 列同步为 NULL） |
+| `rbc_statement.amount_unit_raw` / `amount_scale` | 该披露未明示单位/标度（视为绝对金额，不折算） |
 | `rbc_statement.risk_breakdown_json` | 未捕获风险分解 |
+| `rbc_statement.legal_entity_name_raw` | 恒非空——法律主体是核心归属，缺失即 `STRUCTURE_MISMATCH`，不写 NULL |
 
 ### 3.3 重复抓取幂等策略
 
@@ -83,6 +86,15 @@
 - 唯一键改用 `observation_year_raw`（非空）保证 SQLite 幂等约束对开放区间与真实单年都有效，避免二者碰撞。
 - `sqlite_store` 在初始化时检测旧版 `fulfillment_ratio`（缺 `observation_year_raw`，或 `observation_year` 仍为 `NOT NULL`）并明确失败、提示迁移，不假装新列已存在。
 
+### 3.8 旧 Schema 迁移与主体隔离（v0.4 → v0.5，T007 Round 2）
+
+- **法律主体隔离**：真实 RBC PDF 法律主体为 `Prudential General Insurance Hong Kong Limited`（一般保险），与寿险 `Prudential Hong Kong Limited`（`insurer_code=PRU`）是同一集团两个不同持牌实体。二者必须用**独立且语义明确**的 `insurer_code` 区分：寿险保持 `PRU`，一般保险新增 `PRUGI`（= Prudential **G**eneral **I**nsurance）。`data_source` 中原先误归到 `PRU` 的 RBC 源（entry_url 含 `PGHK-RBC-public-disclosure-statement-2024.pdf`）改为 `PRUGI`。
+- **法律主体原文**：`rbc_statement` 新增 `legal_entity_name_raw TEXT NOT NULL` 作为正式字段，保存披露声明「Authorized insurer's name」逐字原文（如 `Prudential General Insurance Hong Kong Limited`），不得仅藏在 JSON。解析器无法提取该字段即 `STRUCTURE_MISMATCH`（主体身份是核心归属，缺失即不可安全归属）。
+- **金额标度无损保留**：披露金额可能以「in HKD thousands」等标度给出。`capital_base` / `prescribed_capital_amount` 仍保存**绝对 HKD 标准值**（按披露明示标度折算，非猜数）；同时新增 `capital_base_raw` / `prescribed_capital_amount_raw` 保存披露原文（如 `581,167`），`amount_unit_raw` 保存披露单位原文（如 `in HKD thousands`），`amount_scale` 保存规范化标度（`thousands`/`millions`；NULL = 未明示标度，视为绝对）。据此可无损复现「原文值 × 标度 = 绝对 HKD」。
+- **风险分解不强行映射**：Prudential（一般保险）的 PCA 子风险（General Insurance Risk / Reserve and premium risk / Natural catastrophe risk 等）与 `rbc_risk_component.risk_type` 枚举无法无损一一对应，故**不写规范化子表**，原文完整保留在 `rbc_statement.risk_breakdown_json`（含全部子风险行与标度），避免有损合并口径。
+- **Schema 版本与迁移策略**：用 SQLite `PRAGMA user_version` 作为整型 schema 版本，当前值为 `4`（对应契约 v0.5）。`sqlite_store.init_db` 在 `user_version < 4` 且库中已存在旧表时执行幂等迁移：先对既有库做 `.pre-v4.bak` 全量备份（回滚依据），再在事务内①按注册表修正 `data_source.insurer_code` 的错误归属；②移动 `raw_data/{旧主体}/{source}/{hash}.{ext}` 快照至新主体目录并回写 `fetch_run.snapshot_path`；③删除错误归属的 `rbc_statement` / `parse_result` 业务行（错误状态由备份 + `fetch_run` + 快照保留证据，其他来源数据不受影响）；④`ALTER TABLE rbc_statement ADD COLUMN` 补齐新列。迁移后按新主体重新 `--parse` 重建业务行。迁移幂等（重复运行无副作用）、原子（任一失败整体回滚）。
+- **不影响其他来源**：迁移仅作用于 entry_url 命中「错误主体映射」的 RBC 源及其下游 `fetch_run`/`rbc_statement`/`parse_result`，`fulfillment_ratio`、其他险企（AIA/CTF/CLO 等）数据一律不动。
+
 ## 四、SQLite DDL
 
 ```sql
@@ -90,7 +102,7 @@ PRAGMA foreign_keys = ON;
 
 -- 1) 险企规范实体
 CREATE TABLE insurer (
-  insurer_code    TEXT PRIMARY KEY,                          -- 规范代码: 'AIA','AXA','YFL','SUN','CTF','FWD','BOC','CLO','PRU','MAN'
+  insurer_code    TEXT PRIMARY KEY,                          -- 规范代码: 'AIA','AXA','YFL','SUN','CTF','FWD','BOC','CLO','PRU','PRUGI','MAN'（PRU=寿险，PRUGI=同集团一般保险，二者为不同持牌实体）
   name_en         TEXT NOT NULL,                             -- 英文规范名
   name_zh         TEXT,                                      -- 中文规范名（可空）
   legal_name_note TEXT,                                      -- 法律实体名备注 / 待与 IA 持牌险企名录核对
@@ -195,12 +207,17 @@ CREATE TABLE rbc_statement (
   insurer_code              TEXT NOT NULL REFERENCES insurer(insurer_code),
   run_id                    INTEGER NOT NULL REFERENCES fetch_run(run_id),
   report_year               INTEGER NOT NULL,                -- 披露财年（如 2024）
+  legal_entity_name_raw     TEXT NOT NULL,                   -- 披露声明法律主体逐字原文（如 'Prudential General Insurance Hong Kong Limited'）
   solvency_ratio            REAL,                            -- 偿付能力比率，小数（3.04 = 304%）
   solvency_ratio_raw        TEXT,                            -- 原始字符串（如 '304%'）
-  capital_base              REAL,                            -- 资本基础（币种金额）
-  prescribed_capital_amount REAL,                            -- 规定资本额（币种金额）
+  capital_base              REAL,                            -- 资本基础（绝对币种金额，按 amount_scale 折算）
+  capital_base_raw          TEXT,                            -- 资本基础披露原文（如 '581,167'，未折算）
+  prescribed_capital_amount REAL,                            -- 规定资本额（绝对币种金额，按 amount_scale 折算）
+  prescribed_capital_amount_raw TEXT,                        -- 规定资本额披露原文（如 '200,745'，未折算）
   currency                  TEXT NOT NULL DEFAULT 'HKD',
-  risk_breakdown_json       TEXT,                            -- 可选：原始风险分解 JSON 字符串
+  amount_unit_raw           TEXT,                            -- 披露单位原文（如 'in HKD thousands'）
+  amount_scale              TEXT CHECK (amount_scale IS NULL OR amount_scale IN ('thousands','millions')),  -- 规范化标度；NULL=未明示（视为绝对）
+  risk_breakdown_json       TEXT,                            -- 可选：原始风险分解 JSON 字符串（含全部子风险行与标度）
   UNIQUE (insurer_code, report_year, run_id)
 );
 
@@ -296,11 +313,15 @@ WHERE fr.insurer_code = 'AIA'
       AND x.observation_year_raw = fr.observation_year_raw
   );
 
--- 某险企最新偿付能力比率
-SELECT insurer_code, report_year, solvency_ratio, solvency_ratio_raw, currency, fr2.final_url, fr2.fetched_at
+-- 某险企最新偿付能力比率（含法律主体原文与金额标度无损字段）
+SELECT r.insurer_code, r.report_year, r.legal_entity_name_raw,
+       r.solvency_ratio, r.solvency_ratio_raw, r.currency,
+       r.capital_base, r.capital_base_raw, r.prescribed_capital_amount, r.prescribed_capital_amount_raw,
+       r.amount_unit_raw, r.amount_scale,
+       fr2.final_url, fr2.fetched_at
 FROM rbc_statement r
 JOIN fetch_run fr2 ON fr2.run_id = r.run_id
-WHERE r.insurer_code = 'AIA'
+WHERE r.insurer_code = 'PRUGI'
   AND r.run_id = (SELECT MAX(x.run_id) FROM rbc_statement x WHERE x.insurer_code = r.insurer_code AND x.report_year = r.report_year);
 ```
 
