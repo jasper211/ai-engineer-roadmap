@@ -2,7 +2,7 @@
 
 > 执行方：vscode-deepseek  
 > 推动与审计：Codex  
-> 状态：DISPATCHED  
+> 状态：ACCEPTED  
 > 派发日期：2026-09-04
 
 ## 目标
@@ -89,4 +89,3 @@ for t in test_integration test_t004_parse test_t005_parse test_t006_parse test_t
 1. **CTF 页 CSRF token 轮换导致哈希非确定**：CTF 页内嵌 `<meta name="csrf-token" content="…">` 每次请求轮换，实测 1015616 字节中 70 字节差异全在 csrf-token，使内容哈希每次不同、`UNCHANGED` 去重对 CTF 失效，联网重跑会追加「同业务数据、不同 run_id」的新版本。属抓取层内容规范化问题（T003/T005），不在 T009 编排范围；本次验证产生的伪新版本（run_id=9 / 1969 行 / 快照）已精确回滚，默认库恢复 4807+2。建议后续在抓取层对已知动态 token 做哈希前规范化（不影响快照保真度——快照仍存原始字节，仅去重哈希可选用规范化内容哈希）。
 2. **索引源（AIA rbc）覆盖语义**：`coverage_status(AIA, rbc)=FULL` 表示「官方索引可确定性定位目标 PDF」，业务数据实际归属 AIACO（独立主体）；已在摘要/契约注明，如需区分「发现覆盖」与「业务覆盖」可另行约定。
 3. **退出码约定**：`--run-all` 批次完整跑完（含单源失败）即 EXIT=0，单源失败已隔离并写入摘要；仅全局配置/数据库硬失败 EXIT=1。若审计期望「存在源失败即非零」，可再议。
-
