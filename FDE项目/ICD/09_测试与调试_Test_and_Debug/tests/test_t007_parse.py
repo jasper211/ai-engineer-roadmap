@@ -747,6 +747,118 @@ def test_migration_rollback():
         check((Path(raw_root) / "PRU" / str(sid) / f"{_HASH}.pdf").exists(), "回滚后 PRU 快照仍在", "快照被移动")
 
 
+# ---------------------------------------------------------------------------
+# T007-18 · 迁移故障注入：文件操作后 / DB 提交前 / 提交阶段失败 → 补偿恢复
+# ---------------------------------------------------------------------------
+class _CommitFailingConn:
+    """包装真实连接，仅在 commit() 时抛错，其余方法全部委托（模拟提交阶段故障）。"""
+
+    def __init__(self, real):
+        self._real = real
+
+    def __getattr__(self, name):
+        return getattr(self._real, name)
+
+    def commit(self):
+        raise RuntimeError("injected: commit failure")
+
+
+def _assert_recovered(db, raw_root, sid, original_bytes, label):
+    """断言故障后 DB 与物理快照一致（都在旧 PRU 路径）、原文件字节不丢失。"""
+    conn = sqlite_store.connect(db)
+    code = conn.execute("SELECT insurer_code FROM data_source WHERE entry_url=?", (_WRONG_URL,)).fetchone()[0]
+    sp = conn.execute("SELECT snapshot_path FROM fetch_run WHERE source_id=?", (sid,)).fetchone()[0]
+    uv = sqlite_store.get_user_version(conn)
+    conn.close()
+    old_pdf = Path(raw_root) / "PRU" / str(sid) / f"{_HASH}.pdf"
+    new_pdf = Path(raw_root) / "PRUGI" / str(sid) / f"{_HASH}.pdf"
+    check(code == "PRU", f"[{label}] 回滚后 data_source 仍 PRU（{code}）", f"[{label}] 归属被改: {code}")
+    check(sp == f"raw_data/PRU/{sid}/{_HASH}.pdf",
+          f"[{label}] 回滚后 snapshot_path 仍 PRU 路径（{sp}）", f"[{label}] snapshot_path: {sp}")
+    check(uv < sqlite_store.SCHEMA_VERSION, f"[{label}] 回滚后 user_version 未升级（{uv}）", f"[{label}] user_version: {uv}")
+    check(old_pdf.exists(), f"[{label}] 补偿后旧 PRU 快照仍在", f"[{label}] 旧快照丢失")
+    check(not new_pdf.exists(), f"[{label}] 补偿后新 PRUGI 快照不存在", f"[{label}] 新快照残留")
+    check(old_pdf.read_bytes() == original_bytes, f"[{label}] 原文件字节不丢失", f"[{label}] 文件内容被破坏")
+
+
+def _assert_recovered_after_rerun(db, raw_root, sid, original_bytes, label):
+    """断言再次 init-db 后迁移完成：DB 与物理快照一致（都在新 PRUGI 路径）。"""
+    conn = sqlite_store.connect(db)
+    code = conn.execute("SELECT insurer_code FROM data_source WHERE entry_url=?", (_WRONG_URL,)).fetchone()[0]
+    sp = conn.execute("SELECT snapshot_path FROM fetch_run WHERE source_id=?", (sid,)).fetchone()[0]
+    conn.close()
+    old_pdf = Path(raw_root) / "PRU" / str(sid) / f"{_HASH}.pdf"
+    new_pdf = Path(raw_root) / "PRUGI" / str(sid) / f"{_HASH}.pdf"
+    check(code == "PRUGI", f"[{label}] 重跑后 data_source=PRUGI（{code}）", f"[{label}] insurer_code: {code}")
+    check(sp == f"raw_data/PRUGI/{sid}/{_HASH}.pdf",
+          f"[{label}] 重跑后 snapshot_path 已改写（{sp}）", f"[{label}] snapshot_path: {sp}")
+    check(not old_pdf.exists(), f"[{label}] 重跑后旧 PRU 快照已移走", f"[{label}] 旧快照残留")
+    check(new_pdf.exists(), f"[{label}] 重跑后新 PRUGI 快照存在", f"[{label}] 新快照缺失")
+    check(new_pdf.read_bytes() == original_bytes, f"[{label}] 重跑后文件字节一致", f"[{label}] 重跑后文件内容被破坏")
+
+
+def test_migration_move_before_commit_fault():
+    print("\n[T007-18a] 迁移故障注入：文件移动后、DB 提交前失败（set_user_version）→ 补偿 + 幂等重跑")
+    print("-" * 60)
+    with tempfile.TemporaryDirectory() as td:
+        td = Path(td)
+        db = td / "icd.db"
+        raw_root = td / "raw_data"
+        sid, run_id = _build_legacy_rbc_db(db, raw_root)
+        reg = _migration_registry()
+        original_bytes = (Path(raw_root) / "PRU" / str(sid) / f"{_HASH}.pdf").read_bytes()
+
+        _orig = sqlite_store.set_user_version
+        def _boom(conn, version):
+            raise RuntimeError("injected: set_user_version failure")
+        sqlite_store.set_user_version = _boom
+        try:
+            raised = False
+            try:
+                sqlite_store.init_db(db, reg, raw_data_root=raw_root)
+            except RuntimeError as e:
+                raised = "set_user_version" in str(e)
+            check(raised, "故障注入被捕获（set_user_version 抛 RuntimeError）", "未按预期抛出")
+        finally:
+            sqlite_store.set_user_version = _orig
+
+        _assert_recovered(db, raw_root, sid, original_bytes, "18a")
+
+        sqlite_store.init_db(db, reg, raw_data_root=raw_root)
+        _assert_recovered_after_rerun(db, raw_root, sid, original_bytes, "18a")
+
+
+def test_migration_move_commit_phase_fault():
+    print("\n[T007-18b] 迁移故障注入：文件移动后、提交阶段失败（commit）→ 补偿 + 幂等重跑")
+    print("-" * 60)
+    with tempfile.TemporaryDirectory() as td:
+        td = Path(td)
+        db = td / "icd.db"
+        raw_root = td / "raw_data"
+        sid, run_id = _build_legacy_rbc_db(db, raw_root)
+        reg = _migration_registry()
+        original_bytes = (Path(raw_root) / "PRU" / str(sid) / f"{_HASH}.pdf").read_bytes()
+
+        _orig = sqlite_store.connect
+        def _boom(db_path):
+            return _CommitFailingConn(_orig(db_path))
+        sqlite_store.connect = _boom
+        try:
+            raised = False
+            try:
+                sqlite_store.init_db(db, reg, raw_data_root=raw_root)
+            except RuntimeError as e:
+                raised = "commit" in str(e)
+            check(raised, "故障注入被捕获（commit 抛 RuntimeError）", "未按预期抛出")
+        finally:
+            sqlite_store.connect = _orig
+
+        _assert_recovered(db, raw_root, sid, original_bytes, "18b")
+
+        sqlite_store.init_db(db, reg, raw_data_root=raw_root)
+        _assert_recovered_after_rerun(db, raw_root, sid, original_bytes, "18b")
+
+
 def main():
     print("=" * 60)
     print("ICD 集成测试（T007 · Prudential RBC PDF 解析与入库）")
@@ -768,6 +880,8 @@ def main():
     test_cli_parse()
     test_migration_rbc_v04()
     test_migration_rollback()
+    test_migration_move_before_commit_fault()
+    test_migration_move_commit_phase_fault()
 
     print("\n" + "=" * 60)
     if FAILURES:

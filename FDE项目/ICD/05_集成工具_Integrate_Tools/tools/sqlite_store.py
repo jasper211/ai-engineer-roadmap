@@ -428,17 +428,59 @@ def _rehome_snapshot_path(snapshot_path: str, old_code: str, source_id: int, new
     return snapshot_path
 
 
+class _SnapshotMoveJournal:
+    """追踪事务内已完成的物理快照移动，支持 DB 回滚时的反向补偿。
+
+    rename 是原子操作、不销毁字节；本类把"移动了哪些文件"记在内存里，供
+    init_db 在事务失败（DB 回滚到旧 snapshot_path）时把文件反向移回原路径，
+    保证回滚后 DB 路径与物理快照一致、原文件不丢失。进程崩溃导致的未补偿
+    移动，由幂等的 _move_snapshots 在下次 init-db 时对账收敛：即使旧路径已
+    不存在，也会把 DB 回写到新路径，与新位置的文件对齐。
+    """
+
+    def __init__(self) -> None:
+        self._moves: List[Tuple[Path, Path]] = []
+
+    def move(self, old_fs: Path, new_fs: Path) -> None:
+        """原子移动 old_fs → new_fs 并登记（供回滚时反向补偿）。"""
+        new_fs.parent.mkdir(parents=True, exist_ok=True)
+        shutil.move(str(old_fs), str(new_fs))
+        self._moves.append((old_fs, new_fs))
+
+    def compensate(self) -> List[str]:
+        """反向恢复已移动的文件；返回恢复动作描述（供日志/测试断言）。"""
+        undone: List[str] = []
+        for old_fs, new_fs in reversed(self._moves):
+            if new_fs.exists() and not old_fs.exists():
+                old_fs.parent.mkdir(parents=True, exist_ok=True)
+                shutil.move(str(new_fs), str(old_fs))
+                undone.append(f"{new_fs}→{old_fs}")
+        self._moves.clear()
+        return undone
+
+    def mark_committed(self) -> None:
+        """DB 提交成功后调用：清空追踪，避免后续误补偿。"""
+        self._moves.clear()
+
+
 def _move_snapshots(
     conn: sqlite3.Connection,
     raw_data_root: Optional[Path],
     source_id: int,
     old_code: str,
     new_code: str,
+    journal: Optional["_SnapshotMoveJournal"] = None,
 ) -> List[Tuple[int, str, str, bool]]:
     """移动该源的成功快照目录并回写 fetch_run.snapshot_path。
 
     返回 [(run_id, old_path, new_path, did_move), ...]。raw_data_root 为 None 时
     仅回写 DB 路径（不移动文件，用于无文件系统的纯 DB 场景）。
+
+    一致性策略（对齐 T007 Round 2 阻断项修复）：
+    - 仅当旧文件存在且新路径尚不存在时才移动，绝不覆盖既有文件（不丢文件）；
+    - 移动通过 journal 登记，init_db 在 DB 回滚时反向补偿；
+    - 若旧文件已不存在（上次崩溃已移动）或新文件已存在（已对账），不重复移动，
+      但仍回写 DB 路径，使 DB 与物理快照收敛一致（幂等恢复）。
     """
     moves: List[Tuple[int, str, str, bool]] = []
     rows = conn.execute(
@@ -455,9 +497,12 @@ def _move_snapshots(
             new_rel = new_path[len("raw_data/"):] if new_path.startswith("raw_data/") else new_path
             old_fs = Path(raw_data_root) / old_rel
             new_fs = Path(raw_data_root) / new_rel
-            if old_fs.exists():
-                new_fs.parent.mkdir(parents=True, exist_ok=True)
-                shutil.move(str(old_fs), str(new_fs))
+            if old_fs.exists() and not new_fs.exists():
+                if journal is not None:
+                    journal.move(old_fs, new_fs)
+                else:
+                    new_fs.parent.mkdir(parents=True, exist_ok=True)
+                    shutil.move(str(old_fs), str(new_fs))
                 did_move = True
         conn.execute("UPDATE fetch_run SET snapshot_path=? WHERE run_id=?", (new_path, run_id))
         moves.append((run_id, snapshot_path, new_path, did_move))
@@ -491,6 +536,7 @@ def migrate_rbc_v04(
     conn: sqlite3.Connection,
     registry: dict,
     raw_data_root: Optional[Path] = None,
+    journal: Optional["_SnapshotMoveJournal"] = None,
 ) -> dict:
     """执行 v0.4 → v0.5 迁移（幂等、原子）。返回迁移报告 dict。
 
@@ -530,7 +576,7 @@ def migrate_rbc_v04(
 
     # 4) 移动快照 + 回写 fetch_run.snapshot_path
     for source_id, old, new, url in fixes:
-        for run_id, old_path, new_path, did_move in _move_snapshots(conn, raw_data_root, source_id, old, new):
+        for run_id, old_path, new_path, did_move in _move_snapshots(conn, raw_data_root, source_id, old, new, journal):
             report["actions"].append(
                 f"fetch_run[{run_id}] snapshot_path {old_path}→{new_path} (move={'yes' if did_move else 'no'})"
             )
@@ -546,8 +592,15 @@ def init_db(db_path: Path, registry: dict, raw_data_root: Optional[Path] = None)
     先做 schema 版本检测（PRAGMA user_version）；旧库（user_version < 4 且已有表）
     会先做 .pre-v4.bak 全量备份，再执行 v0.4→v0.5 主体隔离迁移。返回摘要 dict：
     12 张表是否齐备 + 各表行数 +（迁移时）迁移报告（供 --init-db 输出与测试断言）。
+
+    快照一致性（T007 Round 2）：迁移中的物理快照移动通过 _SnapshotMoveJournal 登记；
+    事务提交前若 seed_sources / set_user_version / commit 任一失败，DB 回滚的同时会
+    反向补偿已移动的文件，保证 DB 路径与物理快照一致、原文件不丢失。崩溃导致的
+    未补偿移动由幂等的 _move_snapshots 在下次 init-db 时对账收敛。
     """
     conn = connect(db_path)
+    journal = _SnapshotMoveJournal()
+    committed = False
     try:
         # 迁移门禁：旧版 fulfillment_ratio 明确失败，不假装新列已存在（对齐 T004 决策补充）。
         legacy = detect_legacy_fulfillment_ratio(conn)
@@ -570,11 +623,13 @@ def init_db(db_path: Path, registry: dict, raw_data_root: Optional[Path] = None)
 
         migration_report: Optional[dict] = None
         if needs_migration:
-            migration_report = migrate_rbc_v04(conn, registry, raw_data_root)
+            migration_report = migrate_rbc_v04(conn, registry, raw_data_root, journal)
 
         seed_sources(conn, registry.get("sources", []))
         set_user_version(conn, SCHEMA_VERSION)
         conn.commit()
+        committed = True
+        journal.mark_committed()
 
         counts = collect_counts(conn)
         names = table_names(conn)
@@ -593,6 +648,12 @@ def init_db(db_path: Path, registry: dict, raw_data_root: Optional[Path] = None)
         return result
     except Exception:
         conn.rollback()
+        if not committed:
+            try:
+                journal.compensate()
+            except Exception:
+                # 补偿尽力而为；未恢复的移动由下次 init-db 幂等对账收敛。
+                pass
         raise
     finally:
         conn.close()
