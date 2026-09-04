@@ -45,7 +45,7 @@ for _pkg_dir in (
     sys.path.insert(0, str(ICD_DIR / _pkg_dir))        # 让 tools/memory/skills 能被当作包 import
 
 from memory import workspace
-from skills import fetch_disclosure, parse_disclosure, rbc_index_discovery
+from skills import fetch_disclosure, parse_disclosure, rbc_index_discovery, run_all
 from tools import config_loader, fetch_recorder, sqlite_store
 
 SETTINGS_PATH = ICD_DIR / "02_配置项目_Configure_Project" / "settings.json"
@@ -366,62 +366,104 @@ def cmd_discover(args) -> int:
         print(f"[ERROR] 未找到 source_id={args.discover}（请先 --init-db 且确认源存在）", file=sys.stderr)
         return 1
 
-    run = parse_disclosure._latest_ok_run(conn, args.discover)
-    if run is None:
-        conn.close()
-        print(json.dumps({
-            "source_id": args.discover, "result": "NO_FETCH_RUN",
-            "message": "未找到可发现索引的成功抓取（请先 --fetch 该索引源）",
-        }, ensure_ascii=False, indent=2))
-        return 1
-
-    try:
-        fpath = parse_disclosure._snapshot_file(raw_root, run["snapshot_path"])
-    except ValueError as e:
-        conn.close()
-        print(json.dumps({"source_id": args.discover, "result": "SNAPSHOT_MISSING", "message": str(e)}, ensure_ascii=False, indent=2))
-        return 1
-    if not fpath.exists():
-        conn.close()
-        print(json.dumps({"source_id": args.discover, "result": "SNAPSHOT_MISSING", "message": f"快照不存在: {fpath}"}, ensure_ascii=False, indent=2))
-        return 1
-    try:
-        html = fpath.read_bytes()
-    except OSError as e:
-        conn.close()
-        print(json.dumps({"source_id": args.discover, "result": "SNAPSHOT_MISSING", "message": f"快照读取失败: {e}"}, ensure_ascii=False, indent=2))
-        return 1
-
-    # 从 parser_hint 提取已登记目标文件名（消歧选择器，可选；无则要求唯一候选）
-    hint = None
-    hint_text = src.get("parser_hint") or ""
-    m = re.search(r"([A-Za-z0-9][\w\s%.-]*\.pdf)", hint_text, re.IGNORECASE)
-    if m:
-        hint = m.group(1).strip()
-
-    candidates = rbc_index_discovery.extract_disclosure_pdf_candidates(html)
+    # 复用 run_all.discover_for_source（定位快照 → 读字节 → 确定性发现）
+    d = run_all.discover_for_source(conn, src, raw_root)
     conn.close()
-    try:
-        url = rbc_index_discovery.discover_disclosure_pdf(html, filename_hint=hint)
-    except rbc_index_discovery.RbcIndexDiscoveryError as e:
-        print(json.dumps({
-            "source_id": args.discover, "result": "AMBIGUOUS_OR_NO_MATCH",
-            "message": str(e), "candidate_count": len(candidates), "filename_hint": hint,
-        }, ensure_ascii=False, indent=2))
-        return 2
 
-    print(json.dumps({
-        "source_id": args.discover, "result": "OK",
-        "discovered_pdf_url": url, "candidate_count": len(candidates),
-        "filename_hint": hint, "run_id": run["run_id"],
-    }, ensure_ascii=False, indent=2))
+    out = {
+        "source_id": args.discover,
+        "result": d["result"],
+        "run_id": d.get("run_id"),
+        "candidate_count": d.get("candidate_count"),
+        "filename_hint": d.get("filename_hint"),
+    }
+    if d["result"] == "OK":
+        out["discovered_pdf_url"] = d.get("discovered_pdf_url")
+        print(json.dumps(out, ensure_ascii=False, indent=2))
+        return 0
+    out["message"] = d.get("message")
+    print(json.dumps(out, ensure_ascii=False, indent=2))
+    return 2 if d["result"] == "AMBIGUOUS_OR_NO_MATCH" else 1
+
+
+# ---------------------------------------------------------------------------
+# --run-all（T009：全量运行编排 + 摘要 + coverage_status 闭环，L3-ICD-06）
+# ---------------------------------------------------------------------------
+def cmd_run_all(args) -> int:
+    # 写路径门禁：在解析 DB / raw_data / summaries 路径、连接 SQLite 之前先完整校验配置。
+    settings_path = _resolve_settings(args)
+    registry_path = _resolve_registry(args)
+
+    errors: List[str] = []
+    try:
+        settings = config_loader.load_json(settings_path)
+        errors.extend(config_loader.validate_settings(settings))
+    except Exception as e:  # noqa: BLE001
+        errors.append(f"settings 校验失败: {e}")
+    try:
+        registry = config_loader.load_json(registry_path)
+        errors.extend(config_loader.validate_registry(registry))
+    except Exception as e:  # noqa: BLE001
+        errors.append(f"registry 校验失败: {e}")
+
+    if errors:
+        for msg in errors:
+            print(f"[ERROR] {msg}", file=sys.stderr)
+        print("配置校验失败；未执行全量运行、未写入数据库或摘要", file=sys.stderr)
+        return 1
+
+    db_path = workspace.resolve_db_path(args.db_path)
+    raw_root = workspace.resolve_raw_data_root(args.raw_data_root)
+    summary_root = workspace.resolve_summaries_root(args.summaries_root)
+
+    try:
+        conn = sqlite_store.connect(db_path)
+    except Exception as e:  # noqa: BLE001
+        print(f"[ERROR] 数据库连接失败: {type(e).__name__}: {e}", file=sys.stderr)
+        return 1
+
+    try:
+        # 初始化门禁：关键表齐全才允许批次运行（未初始化/损坏 → 硬失败）。
+        names = set(sqlite_store.table_names(conn))
+        required = {
+            "data_source", "fetch_run", "coverage_status", "fulfillment_ratio",
+            "rbc_statement", "parse_result", "error_code", "insurer",
+        }
+        missing = required - names
+        if missing:
+            raise sqlite3.OperationalError(
+                f"数据库未初始化，缺少表: {sorted(missing)}（请先 --init-db）"
+            )
+
+        summary = run_all.run_all(
+            conn, raw_root,
+            no_network=bool(args.no_network),
+            summary_dir=summary_root,
+        )
+    except sqlite3.OperationalError as e:
+        conn.close()
+        print(f"[ERROR] {e}", file=sys.stderr)
+        return 1
+    except sqlite3.DatabaseError as e:
+        conn.close()
+        print(f"[ERROR] 数据库损坏: {type(e).__name__}: {e}", file=sys.stderr)
+        return 1
+    except Exception as e:  # noqa: BLE001
+        conn.close()
+        print(f"[ERROR] 全量运行失败: {type(e).__name__}: {e}", file=sys.stderr)
+        return 1
+
+    conn.close()
+    print(json.dumps(summary, ensure_ascii=False, indent=2))
+    # 批次语义：单源失败已隔离并写入摘要，只要批次完整跑完即退出 0；
+    # 仅全局配置/数据库硬失败才非零（上文已处理）。
     return 0
 
 
 def _parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         prog="agent.py",
-        description="ICD Agent CLI：--status / --validate-config / --init-db / --fetch / --discover / --parse",
+        description="ICD Agent CLI：--status / --validate-config / --init-db / --fetch / --discover / --parse / --run-all",
     )
     parser.add_argument("--status", action="store_true", help="报告结构化项目状态")
     parser.add_argument("--validate-config", action="store_true", help="严格校验配置")
@@ -430,8 +472,11 @@ def _parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     parser.add_argument("--dry-run", action="store_true", help="配合 --fetch：只抓取并计算哈希，不写快照与数据库")
     parser.add_argument("--parse", type=int, metavar="SOURCE_ID", help="按 source_id 解析最新成功抓取的快照（写 fulfillment_ratio 与 parse_result）")
     parser.add_argument("--discover", type=int, metavar="SOURCE_ID", help="按 source_id 读取最新索引快照，确定性发现目标 PDF 链接（只读，不写数据）")
+    parser.add_argument("--run-all", action="store_true", help="全量运行：按 source_id 顺序处理所有 active 源，生成摘要并更新 coverage_status")
+    parser.add_argument("--no-network", action="store_true", help="配合 --run-all：跳过抓取，基于既有快照完成解析/汇总（确定性模式）")
     parser.add_argument("--db-path", help="SQLite 路径覆盖（测试用临时目录；默认 data/icd.db）")
     parser.add_argument("--raw-data-root", help="raw_data 根目录覆盖（测试用临时目录；默认 07_接入记忆_Integrate_Memory/raw_data）")
+    parser.add_argument("--summaries-root", help="运行摘要目录覆盖（测试用临时目录；默认 07_接入记忆_Integrate_Memory/summaries）")
     parser.add_argument("--settings", help="settings.json 路径覆盖（默认读取配置目录）")
     parser.add_argument("--registry", help="source_registry.json 路径覆盖（默认读取配置目录）")
     return parser.parse_args(argv)
@@ -449,6 +494,8 @@ def main(argv: Optional[List[str]] = None) -> int:
         return cmd_parse(args)
     if args.discover is not None:
         return cmd_discover(args)
+    if args.run_all:
+        return cmd_run_all(args)
     # 默认（含 --status 或无参数）都走状态报告
     return cmd_status(args)
 

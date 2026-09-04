@@ -183,6 +183,10 @@ CREATE TABLE IF NOT EXISTS coverage_status (
   coverage_status     TEXT NOT NULL CHECK (coverage_status IN ('FULL','PARTIAL','MISSING','BLOCKED','UNVERIFIED')),
   last_success_run_id INTEGER REFERENCES fetch_run(run_id),
   last_checked_at     TEXT,
+  last_attempt_at     TEXT,
+  last_success_at     TEXT,
+  last_error_code     TEXT REFERENCES error_code(code),
+  last_error_message  TEXT,
   UNIQUE (insurer_code, disclosure_type)
 );
 
@@ -357,7 +361,7 @@ def collect_counts(conn: sqlite3.Connection) -> Dict[str, int]:
 # ---------------------------------------------------------------------------
 # Schema 版本与 v0.4 → v0.5 迁移（T007 Round 2：法律主体隔离）
 # ---------------------------------------------------------------------------
-SCHEMA_VERSION = 5  # PRAGMA user_version 整型版本；对应 data_contract.md 契约 v0.6（T008：AIA rbc 索引源元数据修正 + AIACO 主体种子）
+SCHEMA_VERSION = 6  # PRAGMA user_version 整型版本；对应 data_contract.md 契约 v0.7（T009：coverage_status 新增 last_attempt_at/last_success_at/last_error_code/last_error_message 列）
 
 # rbc_statement v0.5 新增列（ALTER TABLE ADD COLUMN 顺序；语义见 data_contract.md 3.8）
 RBC_V04_ADD_COLUMNS: List[Tuple[str, str]] = [
@@ -623,6 +627,53 @@ def migrate_rbc_v05(conn: sqlite3.Connection, registry: dict) -> dict:
     return report
 
 
+# coverage_status v0.6 新增列（ALTER TABLE ADD COLUMN 顺序；语义见 data_contract.md 3.10）
+# 注意：SQLite 的 ADD COLUMN 仅当默认值为 NULL 时才允许带 REFERENCES 约束，故
+# last_error_code 不加 NOT NULL（失败才写值，成功/未覆盖为 NULL）。
+COVERAGE_V06_ADD_COLUMNS: List[Tuple[str, str]] = [
+    ("last_attempt_at", "TEXT"),
+    ("last_success_at", "TEXT"),
+    ("last_error_code", "TEXT REFERENCES error_code(code)"),
+    ("last_error_message", "TEXT"),
+]
+
+
+def coverage_status_columns(conn: sqlite3.Connection) -> Optional[List[str]]:
+    """返回 coverage_status 表的列名列表；表不存在返回 None。"""
+    exists = conn.execute(
+        "SELECT 1 FROM sqlite_master WHERE type='table' AND name='coverage_status'"
+    ).fetchone()
+    if exists is None:
+        return None
+    return [r[1] for r in conn.execute("PRAGMA table_info(coverage_status)").fetchall()]
+
+
+def migrate_coverage_v06(conn: sqlite3.Connection) -> dict:
+    """执行 v0.6 → v0.7 迁移（T009：coverage_status 补齐运行/错误契约字段，幂等、原子）。
+
+    T009 前 coverage_status 只有 last_success_run_id 与 last_checked_at，无法记录
+    last_attempt_at / last_success_at / last_error_code / last_error_message。本迁移为
+    既有库 ALTER TABLE ADD COLUMN 补齐四列；新库由 create_schema 直接建全量列，本迁移
+    检测到列已齐备即无操作。不触碰任何已有行（新增列对既有行为 NULL，语义安全）。
+    """
+    report: dict = {"schema_version": SCHEMA_VERSION, "actions": []}
+    cols = coverage_status_columns(conn)
+    if cols is None:
+        report["actions"].append("coverage_status 不存在，跳过迁移（新库由 create_schema 建全量列）")
+        return report
+    existing = set(cols)
+    added: List[str] = []
+    for colname, ddl in COVERAGE_V06_ADD_COLUMNS:
+        if colname not in existing:
+            conn.execute(f"ALTER TABLE coverage_status ADD COLUMN {colname} {ddl}")
+            added.append(colname)
+    if added:
+        report["actions"].append("coverage_status 新增列: " + ", ".join(added))
+    else:
+        report["actions"].append("coverage_status 已是最新 schema（无迁移项）")
+    return report
+
+
 def init_db(db_path: Path, registry: dict, raw_data_root: Optional[Path] = None) -> dict:
     """初始化数据库：建 schema + 播种险企/数据源/错误代码，全程幂等。
 
@@ -663,6 +714,8 @@ def init_db(db_path: Path, registry: dict, raw_data_root: Optional[Path] = None)
             migration_report = migrate_rbc_v04(conn, registry, raw_data_root, journal)
             v05 = migrate_rbc_v05(conn, registry)
             migration_report.setdefault("actions", []).extend(v05.get("actions", []))
+            v06 = migrate_coverage_v06(conn)
+            migration_report.setdefault("actions", []).extend(v06.get("actions", []))
 
         seed_sources(conn, registry.get("sources", []))
         set_user_version(conn, SCHEMA_VERSION)

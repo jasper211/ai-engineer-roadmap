@@ -27,6 +27,30 @@ from tools import ratio_writer, rbc_writer
 # 快照入库用的逻辑前缀（对齐 memory/workspace.snapshot_relpath）
 _SNAPSHOT_PREFIX = "raw_data"
 
+# 当前已接入解析的支持矩阵（与 parse_one_source 的分流一致；供 run_all 分类复用，
+# 避免编排层与解析层对「哪些源已接入」的判断发生漂移）。
+_SUPPORTED_RATIO_HTML_INSURERS = ("CTF", "CLO")
+_SUPPORTED_RBC_PDF_INSURERS = ("PRUGI", "AIACO")
+
+
+def supports_parse(src: dict) -> bool:
+    """判断某数据源是否已接入解析（True = parse_one_source 会走真实解析分支）。
+
+    已接入：json（任意险企，当前仅 AIA）；html 且 insurer ∈ {CTF, CLO}；
+    pdf 且 insurer ∈ {PRUGI, AIACO}（RBC）。其余（AXA/YFL/SUN/FWD/BOC 的
+    html、PRU 履行率 pdf 等）→ False（parse_one_source 返回 UNSUPPORTED_FORMAT）。
+    注意：rbc 索引源（html）不在此支持矩阵内——它走「发现」而非「解析」。
+    """
+    fmt = src.get("format")
+    insurer = src.get("insurer_code")
+    if fmt == "json":
+        return True
+    if fmt == "html":
+        return insurer in _SUPPORTED_RATIO_HTML_INSURERS
+    if fmt == "pdf":
+        return insurer in _SUPPORTED_RBC_PDF_INSURERS
+    return False
+
 
 def _latest_ok_run(conn, source_id: int) -> Optional[dict]:
     """取某数据源最新一次成功抓取（fetch_status='OK'）；无则 None。"""
