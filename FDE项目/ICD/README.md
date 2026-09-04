@@ -28,15 +28,16 @@ python3 04_定义Agent_Define_Agent/agents/agent.py --fetch 1
 # 抓取演练（只抓取并计算 SHA-256，不写快照、不写数据库）
 python3 04_定义Agent_Define_Agent/agents/agent.py --fetch 1 --dry-run
 
-# 解析最新成功抓取的快照（AIA JSON source_id=1 / CTF Life HTML source_id=5 → fulfillment_ratio + parse_result；需先 --fetch）
+# 解析最新成功抓取的快照（AIA JSON source_id=1 / CTF Life HTML source_id=5 / CLO HTML source_id=9 → fulfillment_ratio + parse_result；需先 --fetch）
 python3 04_定义Agent_Define_Agent/agents/agent.py --parse 1
 python3 04_定义Agent_Define_Agent/agents/agent.py --parse 5
+python3 04_定义Agent_Define_Agent/agents/agent.py --parse 9
 ```
 
 - 数据库默认写入 `07_接入记忆_Integrate_Memory/data/icd.db`（ICD 专属，与 `raw_data/` 快照隔离）。
 - 原始快照默认写入 `07_接入记忆_Integrate_Memory/raw_data/{insurer}/{source}/{hash}.{ext}`。
 - 测试请用 `--db-path`、`--raw-data-root` 指向临时目录，不污染默认数据库与快照目录。
-- 当前状态：T004 已交付 AIA JSON 分红实现率解析与入库（--parse 1）；T005 已交付 CTF Life HTML 表格解析与入库（--parse 5）。`fulfillment_ratio` 采用 `AD/TD/RB/TB/TCV/OTHER` 指标枚举 + `metric_type_raw` + `scope_currency_raw`，四类指标与币种分组无损保存；`observation_year_raw` 原样保存官网观察期标签（AIA `Before 2015`、CTF `11+(Before 2014)` 均写 `observation_year=NULL`，不虚构单年），存在不可数值化观测项时 `parse_result` 写 `PARTIAL` + `VALUE_UNPARSEABLE` 并保留原文。CTF HTML 解析基于表格层级/表头/rowspan/colspan 语义恢复记录（`skills/ctf_html_parser.py`），官网 `Policy Value`/`Special Bonus` 映射到 `OTHER` 且原文保留在 `metric_type_raw`。其余 HTML 源（AXA/YFL/SUN/FWD/BOC/CLO）、PDF/RBC（T006）解析尚未接入。
+- 当前状态：T004 已交付 AIA JSON 分红实现率解析与入库（--parse 1）；T005 已交付 CTF Life HTML 表格解析与入库（--parse 5）；T006 已交付中国人寿（海外）CLO HTML 分红实现率解析与入库（--parse 9）。`fulfillment_ratio` 采用 `AD/TD/RB/TB/TCV/OTHER` 指标枚举 + `metric_type_raw` + `scope_currency_raw`，四类指标与币种分组无损保存；`observation_year_raw` 原样保存官网观察期标签（AIA `Before 2015`、CTF `11+(Before 2014)`、CLO `Policy Year 10+ (2014 or before)` 均写 `observation_year=NULL`，不虚构单年），存在不可数值化观测项时 `parse_result` 写 `PARTIAL` + `VALUE_UNPARSEABLE` 并保留原文。CTF HTML 解析基于表格层级/表头/rowspan/colspan 语义恢复记录（`skills/ctf_html_parser.py`），官网 `Policy Value`/`Special Bonus` 映射到 `OTHER` 且原文保留在 `metric_type_raw`。CLO HTML 解析基于 `<script>` 内嵌 JS 数组（`policyYears`/`dataSets1`/`dataSets2`/`dataSets3`）确定性提取（`skills/clo_html_parser.py`），`Annual Dividend`→`AD`、`Terminal Dividend`→`TD`、`Accumulated Interest`→`OTHER`，并排除「Historical Crediting Interest Rate for Universal Life Plans」万能寿险结算利率静态表。其余 HTML 源（AXA/YFL/SUN/FWD/BOC）、PDF/RBC 解析尚未接入。
 
 ## 架构
 

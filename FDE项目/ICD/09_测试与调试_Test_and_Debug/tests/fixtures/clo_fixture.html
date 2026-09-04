@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Dividend Philosophy and Investment Strategy | China Life (Overseas) (sanitized fixture)</title>
+</head>
+<body>
+
+<!-- 导航（解析器必须忽略） -->
+<nav><a href="/">Home</a> · <a href="/products">Products</a> · <a href="/about">About Us</a></nav>
+
+<h1>Dividend Philosophy and Investment Strategy</h1>
+
+<h3>Dividend Philosophy</h3>
+<p>Some prose about dividend philosophy &amp; non-guaranteed benefits.</p>
+
+<h3>Investment Strategy</h3>
+<p>More prose that must not be parsed.</p>
+
+<h3>Reporting year: 2025</h3>
+
+<p>The following table shows the fulfillment ratio for each of the product series.
+The fulfillment ratio are taken from policies issued since 2010 and with
+non-guaranteed annual dividends, reversionary bonus, terminal dividends or
+accumulation interests.</p>
+
+<p><strong>Fulfillment ratio calculation for annual dividends</strong></p>
+<p>Some explanation prose.</p>
+
+<h3 style="font-weight: bold; font-size: 22px;">1) Participating Plans - with Annual Dividend</h3>
+<p>Please select the product series:</p>
+<select id="prd-select"><option value="">Please select</option></select>
+<p>&nbsp;</p>
+<div id="part1"></div>
+
+<p>&nbsp;</p>
+
+<h3 style="font-weight: bold; font-size: 22px;">2) Participating Plans - with Terminal Dividend</h3>
+<p>Please select the product series:</p>
+<select id="prd-select2"><option value="">Please select</option></select>
+<p>&nbsp;</p>
+<div id="part2"></div>
+
+<!-- 注释掉的第三段：3) Plans with Accumulated Interest（本年无数据） -->
+
+<!-- =====================================================================
+     万能寿险结算利率段落（Historical Crediting Interest Rate for Universal
+     Life Plans）—— 静态 <table>，属另一种披露口径，解析器必须忽略，不得入库。
+     ===================================================================== -->
+<h2>Historical Crediting Interest Rate for Universal Life Plans</h2>
+<h3>Reporting year: 2021</h3>
+<h3>Prime Universal Life Insurance Plan</h3>
+<table class="table" width="100%">
+  <tbody>
+    <tr>
+      <td bgcolor="#e3e3e3">2025</td><td bgcolor="#e3e3e3">2024</td><td bgcolor="#e3e3e3">2023</td>
+      <td bgcolor="#e3e3e3">2022</td><td bgcolor="#e3e3e3">2021</td><td bgcolor="#e3e3e3">2020</td>
+    </tr>
+    <tr>
+      <td>3.55%</td><td>4.67%</td><td>4.80%</td><td>4.80%</td><td>4.80%</td><td>4.80%</td>
+    </tr>
+  </tbody>
+</table>
+
+<p style="margin-top: -10px;">Notes:</p>
+<p style="margin-top: -10px;">1) Some of the above results are shown as "N/A" because in the respective year the product had not yet been launched.</p>
+
+<!-- =====================================================================
+     真实分红实现率数据内嵌在 <script> 里（客户端渲染到 #part1/#part2）。
+     解析器必须按变量名确定性提取，绝不按全页百分号正则猜。
+     ===================================================================== -->
+<script>
+window.addEventListener("DOMContentLoaded", function() {
+  clio_prd_dividend();
+});
+
+function clio_prd_dividend() {
+  (function($, Drupal) {
+
+    var policyYears = [
+      "Policy Year 1 (2024)",
+      "Policy Year 2 (2023)",
+      "Policy Year 3 (2022)",
+      "Policy Year 4 (2021)",
+      "Policy Year 5 (2020)",
+      "Policy Year 6 (2019)",
+      "Policy Year 7 (2018)",
+      "Policy Year 8 (2017)",
+      "Policy Year 9 (2016)",
+      "Policy Year 10 (2015)",
+      "Policy Year 10+ (2014 or before)"
+    ];
+
+    var dataSets1 = [
+      [
+        "Alpha Participating Endowment Plan",
+        "Product type - Participating endowment",
+        "Applied to all currencies plan",
+        "100%",
+        "70%",
+        "74%",
+        "66%",
+        "67%",
+        "65%",
+        "67%",
+        "64%",
+        "68%",
+        "71%",
+        "76%"
+      ],
+      [
+        "Beta RMB Savings Plan",
+        "Product type - Participating endowment",
+        "Applied to RMB plan",
+        "NA",
+        "NA",
+        "NA",
+        "NA",
+        "NA",
+        "NA",
+        "NA",
+        "84%",
+        "NA",
+        "NA",
+        "NA"
+      ]
+    ];
+
+    var dataSets2 = [
+      [
+        "Gamma Participating Whole Life Plan",
+        "Product type - Participating whole life",
+        "Applied to all currencies plan",
+        "NA",
+        "NA",
+        "78%",
+        "70%",
+        "68%",
+        "68%",
+        "68%",
+        "69%",
+        "69%",
+        "72%",
+        "75%"
+      ]
+    ];
+
+    var dataSets3 = [];
+
+  })(jQuery, Drupal);
+}
+</script>
+
+</body>
+</html>
