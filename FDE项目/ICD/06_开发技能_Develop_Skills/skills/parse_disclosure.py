@@ -21,7 +21,7 @@ ICD · skills/parse_disclosure.py · 单源披露文件解析编排（L3-ICD-03 
 from pathlib import Path
 from typing import Optional
 
-from skills import aia_json_parser, clo_html_parser, ctf_html_parser, pdf_text, pru_rbc_parser
+from skills import aia_json_parser, clo_html_parser, ctf_html_parser, pdf_text, rbc_parser
 from tools import ratio_writer, rbc_writer
 
 # 快照入库用的逻辑前缀（对齐 memory/workspace.snapshot_relpath）
@@ -120,8 +120,9 @@ def parse_one_source(conn, src: dict, raw_data_root) -> dict:
         base["message"] = f"快照读取失败: {type(e).__name__}: {e}"
         return base
 
-    # 3) 按格式 + 险企分流解析（T004 AIA JSON / T005 CTF HTML / T006 CLO HTML / T007 PRUGI RBC PDF）
-    is_rbc = fmt == "pdf" and insurer == "PRUGI"
+    # 3) 按格式 + 险企分流解析（T004 AIA JSON / T005 CTF HTML / T006 CLO HTML /
+    #    T007 PRUGI RBC PDF / T008 AIACO RBC PDF，后两者共用通用 rbc_parser）
+    is_rbc = fmt == "pdf" and insurer in ("PRUGI", "AIACO")
     try:
         if fmt == "json":
             parsed = aia_json_parser.parse_aia_json(body)
@@ -130,15 +131,15 @@ def parse_one_source(conn, src: dict, raw_data_root) -> dict:
         elif fmt == "html" and insurer == "CLO":
             parsed = clo_html_parser.parse_clo_html(body)
         elif is_rbc:
-            parsed = pru_rbc_parser.parse_pru_rbc(body)
+            parsed = rbc_parser.parse_rbc(body)
         else:
             base["result"] = "UNSUPPORTED_FORMAT"
             base["message"] = (
                 f"暂未接入 format={fmt!r} insurer={insurer!r} 的解析"
-                f"（已接入：AIA JSON、CTF HTML、CLO HTML、PRUGI RBC PDF；其余 HTML/PDF 待后续任务）"
+                f"（已接入：AIA JSON、CTF HTML、CLO HTML、PRUGI/AIACO RBC PDF；其余 HTML/PDF 待后续任务）"
             )
             return base
-    except pru_rbc_parser.PruRbcParseError as e:
+    except rbc_parser.RbcParseError as e:
         base["result"] = "STRUCTURE_MISMATCH"
         base["parse_status"] = "STRUCTURE_MISMATCH"
         base["error_code"] = "STRUCTURE_MISMATCH"

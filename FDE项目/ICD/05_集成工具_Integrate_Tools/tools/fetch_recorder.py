@@ -107,16 +107,16 @@ def find_ok_by_hash(
 
 _KEYS = (
     "source_id", "insurer_code", "disclosure_type",
-    "entry_url", "format", "access_status", "requires_browser",
+    "entry_url", "format", "access_status", "requires_browser", "parser_hint",
 )
 
 
 def get_source(conn: sqlite3.Connection, source_id: int) -> Optional[Dict]:
-    """按 source_id 取数据源行（含抓取门禁所需字段）；不存在返回 None。"""
+    """按 source_id 取数据源行（含抓取门禁与 --discover 消歧所需的 parser_hint）；不存在返回 None。"""
     row = conn.execute(
         """
         SELECT source_id, insurer_code, disclosure_type, entry_url,
-               format, access_status, requires_browser
+               format, access_status, requires_browser, parser_hint
         FROM data_source
         WHERE source_id = ?
         """,

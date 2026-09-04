@@ -664,7 +664,7 @@ def test_migration_rbc_v04():
         summary = sqlite_store.init_db(db, reg, raw_data_root=raw_root)
 
         # 备份存在
-        bak = db.with_name("icd.db.pre-v4.bak")
+        bak = db.with_name("icd.db.pre-v5.bak")
         check(bak.exists(), f"迁移前全量备份 {bak.name} 存在", "迁移前未生成备份")
 
         # 迁移报告

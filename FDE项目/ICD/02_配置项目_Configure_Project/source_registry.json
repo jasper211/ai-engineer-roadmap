@@ -1,9 +1,10 @@
 {
-  "schema_version": "1.1",
+  "schema_version": "1.2",
   "generated_at": "2026-09-03",
-  "description": "ICD 数据源注册表。10 家险企来自需求定义§7 真实实测（本机 curl，非猜测）。URL 规范化说明：§7.2 以裸域名给出（未写 scheme），本注册表统一补 https://；仅当官方站点规范主机名带 www 时补 www。所有 access_status 为 UNVERIFIED 的条目 entry_url 与 format 均为 null（不得猜测），BLOCKED 条目为已实测确认被拦截。所有 legal_name 建议在使用前与 IA 持牌险企名录核对。",
+  "description": "ICD 数据源注册表。险企来自需求定义§7 真实实测（本机 curl，非猜测）。URL 规范化说明：§7.2 以裸域名给出（未写 scheme），本注册表统一补 https://；仅当官方站点规范主机名带 www 时补 www。所有 access_status 为 UNVERIFIED 的条目 entry_url 与 format 均为 null（不得猜测），BLOCKED 条目为已实测确认被拦截。所有 legal_name 建议在使用前与 IA 持牌险企名录核对。T007 起：Prudential General Insurance 香港（PRUGI）与寿险 PRU 为不同持牌实体，独立编码。T008 起：AIA Company Limited（AIACO，2024 RBC Disclosure Statement，304%）与寿险 AIA International Limited（AIA）为不同持牌实体，独立编码；source_id=12 为 AIA 官方监管披露索引（发现源，format=html），其发现的最终 PDF 以独立 AIACO rbc 源登记（两段证据链）。",
   "insurers": [
     { "insurer_code": "AIA", "name_en": "AIA International Limited", "name_zh": "友邦保险" },
+    { "insurer_code": "AIACO", "name_en": "AIA Company Limited", "name_zh": null },
     { "insurer_code": "AXA", "name_en": "AXA China Region Insurance Company Limited", "name_zh": "安盛保险" },
     { "insurer_code": "YFL", "name_en": "YF Life Insurance International Limited", "name_zh": "万通保险" },
     { "insurer_code": "SUN", "name_en": "Sun Life Hong Kong Limited", "name_zh": "永明金融（香港）" },
@@ -163,11 +164,11 @@
       "insurer_code": "AIA",
       "disclosure_type": "rbc",
       "entry_url": "https://www.aia.com/en/investor-relations/overview/regulatory-disclosures",
-      "format": "pdf",
+      "format": "html",
       "access_status": "OPEN",
-      "parser_hint": "索引页列 PDF 链接(文件名形如 'AIA Co Disclosure Statement 2024_Eng.pdf')。第4章 Capital adequacy：按市场/利率/信用利差/权益/物业/货币/寿险/一般保险/操作风险逐项列 Prescribed Capital Amount；Capital Base 按 Tier 1/Tier 2 拆分；'Ratio of capital base to prescribed capital amount' = 304%（即偿付能力充足率）。",
+      "parser_hint": "监管披露索引页（HTML，非 PDF 本体）。T008 实测该索引同时列出三家持牌实体的 2024 英文 Disclosure Statement PDF：AIA Co（AIA Company Limited，偿付能力比率 304%）、AIAI（AIA International Limited，212%）、AIAE（AIA Everest Life Company Limited，457%）。本注册表 §7.3 已登记的目标为 AIA Company Limited 的 2024 英文 Disclosure Statement（304%），目标文件名 'AIA Co Disclosure Statement 2024_Eng.pdf'（discover 消歧选择器）。索引发现 → PDF 抓取为两段证据链：本索引为发现源，最终 PDF 以独立源登记（见本文件 AIACO rbc 条目）。",
       "requires_browser": false,
-      "evidence_basis": "需求定义§7.3 curl实测（304%）",
+      "evidence_basis": "需求定义§7.3 curl实测（304%）；T008 真实索引抓取（HTTP 200）确认索引含 AIA Co/AIAI/AIAE 三家 2024 英文 Disclosure Statement，AIA Co PDF 第1页 'Authorised insurer's name' = AIA Company Limited",
       "allows_empty": false,
       "last_verified_at": "2026-09-03",
       "url_version": 1
@@ -287,6 +288,19 @@
       "evidence_basis": "需求定义§7.3：其余8家未测（法定应披露，URL待确认）",
       "allows_empty": false,
       "last_verified_at": null,
+      "url_version": 1
+    },
+    {
+      "insurer_code": "AIACO",
+      "disclosure_type": "rbc",
+      "entry_url": "https://www.aia.com/content/dam/group-wise/en/docs/investor-relations/2025/AIA%20Co%20Disclosure%20Statement%202024_Eng.pdf",
+      "format": "pdf",
+      "access_status": "OPEN",
+      "parser_hint": "AIA Company Limited 2024 英文 Disclosure Statement（RBC）最终 PDF。由 source_id=12 官方索引发现（skills/rbc_index_discovery 消歧定位），两段证据链：索引 fetch_run + 本 PDF fetch_run。第1页 Company profile 'Authorised insurer's name' = AIA Company Limited（与寿险 AIA International Limited 为不同持牌实体，独立 insurer_code=AIACO，不得混用）。第4章 Capital adequacy：'Ratio of capital base to prescribed capital amount' = 304%；金额单位 'in HKD thousands'（Capital base 70,993,766 / Prescribed capital amount 23,371,785，折算绝对 HKD 入库）。",
+      "requires_browser": false,
+      "evidence_basis": "T008 真实索引发现 + PDF 抓取（HTTP 200，%PDF-1.6）+ 文字层 'Authorised insurer's name' = AIA Company Limited 核实；304% 由真实 PDF 独立提取（非写死）",
+      "allows_empty": false,
+      "last_verified_at": "2026-09-03",
       "url_version": 1
     }
   ]
