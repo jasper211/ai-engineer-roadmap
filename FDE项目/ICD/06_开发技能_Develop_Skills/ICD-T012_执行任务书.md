@@ -2,7 +2,7 @@
 
 > 执行与自审：Codex  
 > 里程碑复核：vscode-deepseek（延后集中执行）  
-> 状态：IN_PROGRESS  
+> 状态：ACCEPTED（Codex 自审；待里程碑异模型复核）  
 > 派发日期：2026-09-04
 
 ## 目标

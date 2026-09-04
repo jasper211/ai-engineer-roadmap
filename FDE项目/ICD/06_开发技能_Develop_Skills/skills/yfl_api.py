@@ -82,15 +82,22 @@ def collect(page_url: str, page_fetch: Callable[[str], object], post_json: Calla
     try:
         products = discover_products(page_result.body)
         calls = []
+        no_data_products = []
         for product in products:
             code = product["product_code"]
             status, raw = post_json(CURRENCY_PATH, {"productCode": code})
             currency_response = json.loads(raw)
-            if status != 200 or currency_response.get("code") != 200 or not isinstance(currency_response.get("data"), list):
+            if status != 200 or currency_response.get("code") != 200:
                 raise YflApiError(f"YFL currency API 失败 product={code}")
-            currencies = currency_response["data"]
+            currencies = currency_response.get("data")
+            if currencies is None:
+                no_data_products.append({"product": product, "reason": "currency_api_data_null"})
+                continue
+            if not isinstance(currencies, list):
+                raise YflApiError(f"YFL currency API data 类型异常 product={code}")
             if not currencies:
-                currencies = [{"currency": "ALL", "value": "ALL"}]
+                no_data_products.append({"product": product, "reason": "currency_api_data_empty"})
+                continue
             for item in currencies:
                 currency = item.get("value")
                 if not isinstance(currency, str) or not currency:
@@ -108,6 +115,7 @@ def collect(page_url: str, page_fetch: Callable[[str], object], post_json: Calla
             "currency_endpoint": CURRENCY_PATH,
             "dividend_endpoint": DIVIDEND_PATH,
             "calls": calls,
+            "no_data_products": no_data_products,
         }
         body = json.dumps(bundle, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
         return YflCollectOutcome("OK", body, 200, page_result.final_url or page_url)
