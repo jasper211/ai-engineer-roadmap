@@ -19,6 +19,7 @@ from typing import Optional
 
 from memory import workspace
 from tools import fetch_recorder, http_fetcher, snapshot
+from skills import yfl_api
 
 
 def validate_fetchable(src: dict) -> Optional[str]:
@@ -74,12 +75,14 @@ def fetch_one_source(
         return base
 
     url = src["entry_url"]
-    outcome = http_fetcher.fetch(
-        url,
-        max_bytes=max_bytes,
-        connect_timeout=connect_timeout,
-        read_timeout=read_timeout,
-    )
+    if insurer == "YFL" and src.get("disclosure_type") == "fulfillment_ratio":
+        outcome = yfl_api.collect(url, lambda target: http_fetcher.fetch(
+            target, max_bytes=max_bytes, connect_timeout=connect_timeout, read_timeout=read_timeout,
+        ))
+    else:
+        outcome = http_fetcher.fetch(
+            url, max_bytes=max_bytes, connect_timeout=connect_timeout, read_timeout=read_timeout,
+        )
 
     # HTTP 失败：有状态码、无哈希/快照
     if outcome.fetch_status == "HTTP_ERROR":
@@ -113,7 +116,8 @@ def fetch_one_source(
     body = outcome.body
     content_hash = snapshot.sha256_hex(body)
     content_length = len(body)
-    ext = snapshot.ext_for_format(src.get("format"))
+    evidence_format = "json" if insurer == "YFL" and src.get("disclosure_type") == "fulfillment_ratio" else src.get("format")
+    ext = snapshot.ext_for_format(evidence_format)
     relpath = workspace.snapshot_relpath(insurer, source_id, content_hash, ext)
     fullpath = workspace.snapshot_fullpath(
         raw_data_root, insurer, source_id, content_hash, ext

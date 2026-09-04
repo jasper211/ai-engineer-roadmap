@@ -21,7 +21,7 @@ ICD · skills/parse_disclosure.py · 单源披露文件解析编排（L3-ICD-03 
 from pathlib import Path
 from typing import Optional
 
-from skills import aia_json_parser, clo_html_parser, ctf_html_parser, pdf_text, rbc_parser
+from skills import aia_json_parser, clo_html_parser, ctf_html_parser, multi_html_parser, pdf_text, rbc_parser, yfl_api
 from tools import ratio_writer, rbc_writer
 
 # 快照入库用的逻辑前缀（对齐 memory/workspace.snapshot_relpath）
@@ -29,15 +29,15 @@ _SNAPSHOT_PREFIX = "raw_data"
 
 # 当前已接入解析的支持矩阵（与 parse_one_source 的分流一致；供 run_all 分类复用，
 # 避免编排层与解析层对「哪些源已接入」的判断发生漂移）。
-_SUPPORTED_RATIO_HTML_INSURERS = ("CTF", "CLO")
+_SUPPORTED_RATIO_HTML_INSURERS = ("CTF", "CLO", "SUN", "BOC", "YFL")
 _SUPPORTED_RBC_PDF_INSURERS = ("PRUGI", "AIACO")
 
 
 def supports_parse(src: dict) -> bool:
     """判断某数据源是否已接入解析（True = parse_one_source 会走真实解析分支）。
 
-    已接入：json（任意险企，当前仅 AIA）；html 且 insurer ∈ {CTF, CLO}；
-    pdf 且 insurer ∈ {PRUGI, AIACO}（RBC）。其余（AXA/YFL/SUN/FWD/BOC 的
+    已接入：json（任意险企，当前仅 AIA）；html 且 insurer ∈ {CTF, CLO, SUN, BOC}；
+    pdf 且 insurer ∈ {PRUGI, AIACO}（RBC）。其余（AXA/YFL/FWD 的
     html、PRU 履行率 pdf 等）→ False（parse_one_source 返回 UNSUPPORTED_FORMAT）。
     注意：rbc 索引源（html）不在此支持矩阵内——它走「发现」而非「解析」。
     """
@@ -154,13 +154,19 @@ def parse_one_source(conn, src: dict, raw_data_root) -> dict:
             parsed = ctf_html_parser.parse_ctf_html(body)
         elif fmt == "html" and insurer == "CLO":
             parsed = clo_html_parser.parse_clo_html(body)
+        elif fmt == "html" and insurer == "SUN":
+            parsed = multi_html_parser.parse_sun_html(body)
+        elif fmt == "html" and insurer == "BOC":
+            parsed = multi_html_parser.parse_boc_html(body)
+        elif fmt == "html" and insurer == "YFL":
+            parsed = yfl_api.parse_bundle(body)
         elif is_rbc:
             parsed = rbc_parser.parse_rbc(body)
         else:
             base["result"] = "UNSUPPORTED_FORMAT"
             base["message"] = (
                 f"暂未接入 format={fmt!r} insurer={insurer!r} 的解析"
-                f"（已接入：AIA JSON、CTF HTML、CLO HTML、PRUGI/AIACO RBC PDF；其余 HTML/PDF 待后续任务）"
+                f"（已接入：AIA JSON、CTF/CLO/SUN/BOC HTML、PRUGI/AIACO RBC PDF；其余 HTML/PDF 待后续任务）"
             )
             return base
     except rbc_parser.RbcParseError as e:
@@ -185,6 +191,8 @@ def parse_one_source(conn, src: dict, raw_data_root) -> dict:
         aia_json_parser.AiaParseError,
         ctf_html_parser.CtfParseError,
         clo_html_parser.CloParseError,
+        multi_html_parser.MultiHtmlParseError,
+        yfl_api.YflApiError,
     ) as e:
         base["result"] = "STRUCTURE_MISMATCH"
         base["parse_status"] = "STRUCTURE_MISMATCH"
