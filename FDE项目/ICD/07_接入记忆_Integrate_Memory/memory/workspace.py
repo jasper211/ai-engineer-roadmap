@@ -51,6 +51,7 @@ def ensure_data_dir(db_path: Path) -> Path:
 # raw_data 快照路径能力（对齐任务书 T003 允许范围）
 # ---------------------------------------------------------------------------
 RAW_DATA_DIR = NUMBERED_DIR / "raw_data"   # 07_接入记忆_Integrate_Memory/raw_data/
+SUMMARIES_DIR = NUMBERED_DIR / "summaries"  # 07_接入记忆_Integrate_Memory/summaries/（运行摘要受控目录）
 # insurer_code 只能由字母数字下划线连字符组成，杜绝路径穿越（如 "../" 或绝对路径）
 _INSURER_DIR_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]*$")
 # 快照扩展名白名单（对齐注册表 format 三值）
@@ -67,6 +68,18 @@ def resolve_raw_data_root(raw_data_root_override: Optional[str] = None) -> Path:
     if raw_data_root_override:
         return Path(raw_data_root_override).resolve()
     return RAW_DATA_DIR
+
+
+def summaries_root() -> Path:
+    """返回运行摘要受控目录（绝对路径），不创建任何目录。"""
+    return SUMMARIES_DIR
+
+
+def resolve_summaries_root(summaries_root_override: Optional[str] = None) -> Path:
+    """解析运行摘要目录：显式覆盖优先（测试用临时目录），否则回落默认。"""
+    if summaries_root_override:
+        return Path(summaries_root_override).resolve()
+    return SUMMARIES_DIR
 
 
 def snapshot_relpath(

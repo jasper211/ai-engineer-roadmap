@@ -1,8 +1,8 @@
 # ICD · 数据契约（SQLite Schema 设计）
 
 > Agent ID: ICD
-> 版本: v0.6.0
-> 日期: 2026-09-03
+> 版本: v0.7.0
+> 日期: 2026-09-04
 > 阶段: SOP 第2步——流程设计（ICD-T001）
 > 定位: 本文 DDL 可直接转为 SQLite schema；JSON/HTML/PDF 三类实现按同一契约开发与验收。
 > 配套文件: `../02_配置项目_Configure_Project/source_registry.json`、`流程设计.md`
@@ -100,6 +100,17 @@
 - **AIACO 独立主体**：AIA 官方监管披露索引实测同时列出三家持牌实体的 2024 英文 Disclosure Statement PDF（AIA Co 304%、AIAI 212%、AIAE 457%）。§7.3 已登记目标为 AIA Company Limited（304%）。其真实法律主体 `AIA Company Limited` 与寿险 `AIA International Limited`（`insurer_code=AIA`）为**不同持牌实体**，按 T007 已确认的主体隔离政策新增独立 `insurer_code=AIACO`（= AIA **Co**mpany），法律主体原文保存在 `rbc_statement.legal_entity_name_raw`，不得混用。
 - **索引→PDF 两段证据链**：RBC 披露可能存在「官方索引页（HTML）→ 最终 PDF」两段链路。本契约约定：索引页作为**发现源**（`disclosure_type=rbc`、`format=html`、`entry_url` 为索引 URL），其抓取产生一段 `fetch_run` 证据；发现的最终 PDF 以**独立源**登记（`disclosure_type=rbc`、`format=pdf`、`entry_url` 为 PDF URL），其抓取产生第二段 `fetch_run` 证据。业务记录（`rbc_statement`）的 `run_id` 指向**最终 PDF 的 `fetch_run`**，据此可回查 PDF 的 URL/HTTP/哈希/快照；索引段的 `fetch_run` 作为发现证据独立保留。两段链路的关系记录在 PDF 源的 `parser_hint`/`evidence_basis`（标注「由 source_id=12 索引发现」）。
 - **索引源元数据修正**：T008 前 `source_id=12`（AIA rbc）被登记为 `format=pdf`，但 entry_url 实为索引页（HTML）。v0.6 将其 `format` 修正为 `html` 并刷新 `parser_hint`；该源从未被抓取（无 `fetch_run`/快照），仅元数据修正、安全幂等。SQLite `PRAGMA user_version` 由 `4` 升为 `5`（对应契约 v0.6），`sqlite_store.init_db` 对旧库做 `.pre-v5.bak` 全量备份后执行 v0.5→v0.6 元数据迁移（新增 AIACO 主体与 AIACO rbc PDF 源由种子以 `INSERT OR IGNORE` 完成，不重复）。
+
+### 3.10 旧 Schema 迁移与 coverage_status 运行/错误字段（v0.6 → v0.7，T009）
+
+- **覆盖状态闭环**：T009 前 `coverage_status` 只有 `last_success_run_id` 与 `last_checked_at`，无法记录「最后尝试时间 / 最后成功时间 / 最后错误码 / 最后错误信息」。v0.7 新增四列 `last_attempt_at TEXT`、`last_success_at TEXT`、`last_error_code TEXT REFERENCES error_code(code)`、`last_error_message TEXT`（`last_checked_at` 保留为向后兼容别名，与 `last_attempt_at` 同值）。
+- **状态语义（确定性优先级）**：`coverage_status` 按险企 × 披露类型反映最新真实结果，取值限定 `FULL / PARTIAL / MISSING / BLOCKED / UNVERIFIED`：
+  - 该对（险企 × 披露类型）全部源均为 `access_status=BLOCKED` 或 `requires_browser=1` → `BLOCKED`；
+  - 否则全部源均为 `access_status=UNVERIFIED` → `UNVERIFIED`；
+  - 否则（存在可处理源，`access_status ∈ {OPEN, PARTIAL}` 且非 `requires_browser`）按业务记录判定：至少一源成功（`records_written > 0`，索引发现源以确定性定位成功为准）且全部可处理源成功 → `FULL`；至少一源成功但有可处理源失败/未接入 → `PARTIAL`；无任何成功 → `MISSING`。
+- **不得混淆「值不可数值化」与「覆盖缺失」**：`parse_result=PARTIAL`（存在 `normalized_value=NULL` 但 `raw_value` 保留、`records_written > 0`）是数据质量软失败，**仍计为源覆盖成功**；`coverage_status=PARTIAL` 仅表示「该险企 × 披露类型下部分源未覆盖/失败」，二者是不同维度。
+- **upsert 规则**：`coverage_status` 唯一键 `UNIQUE(insurer_code, disclosure_type)`，每次运行对同一自然键 UPSERT；`last_attempt_at` 每次尝试即更新；`last_success_at` / `last_success_run_id` 仅在本次成功时更新（失败保留上一次成功时间）；`last_error_code` / `last_error_message` 失败时写入、成功时清空。
+- **迁移**：SQLite `PRAGMA user_version` 由 `5` 升为 `6`（对应契约 v0.7），`sqlite_store.init_db` 对旧库做 `.pre-v6.bak` 全量备份后 `ALTER TABLE coverage_status ADD COLUMN` 补齐四列；新库由建表 DDL 直接建全量列。不触碰任何既有行（新增列对既有行为 NULL，语义安全）。
 
 ## 四、SQLite DDL
 
@@ -258,6 +269,10 @@ CREATE TABLE coverage_status (
   coverage_status     TEXT NOT NULL CHECK (coverage_status IN ('FULL','PARTIAL','MISSING','BLOCKED','UNVERIFIED')),
   last_success_run_id INTEGER REFERENCES fetch_run(run_id),
   last_checked_at     TEXT,
+  last_attempt_at     TEXT,
+  last_success_at     TEXT,
+  last_error_code     TEXT REFERENCES error_code(code),
+  last_error_message  TEXT,
   UNIQUE (insurer_code, disclosure_type)
 );
 

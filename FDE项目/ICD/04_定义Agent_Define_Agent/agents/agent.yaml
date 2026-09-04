@@ -2,25 +2,45 @@
 
 name: ICD
 full_name: 保司自主披露数据采集 Agent（Insurer Compliance Disclosures）
-version: 0.1.0
+version: 0.7.0
 entrypoint: 04_定义Agent_Define_Agent/agents/agent.py
 
 description: >
   采集香港持牌保险公司官网公开披露的分红实现率（Fulfillment Ratio，GN16/GL16）
   与 RBC 风险为本资本披露声明（Disclosure Statement，含偿付能力充足率），标准化后
-  供下游项目只读查询。本阶段（T002）提供最小可运行骨架：--status / --validate-config
-  / --init-db 三个 CLI，尚未接入 HTTP 抓取与披露文件解析（T003 起）。
+  供下游项目只读查询。已实现完整采集链路：--status / --validate-config / --init-db /
+  --fetch（--dry-run）/ --discover / --parse 单源能力，以及 --run-all（--no-network）
+  全量运行编排、运行摘要与 coverage_status 闭环（L3-ICD-06）。
 
 loop: cli
-skills: []
+skills:
+  - fetch_disclosure     # L3-ICD-02：HTTP 抓取与原始证据固化
+  - parse_disclosure     # L3-ICD-03：按 JSON/HTML/PDF 分流解析编排
+  - aia_json_parser      # AIA 静态 JSON 分红实现率解析
+  - ctf_html_parser      # CTF Life 纯 HTML 表格解析
+  - clo_html_parser      # 中国人寿（海外）内嵌 JS 数组解析
+  - pdf_text             # PDF 文本/表格提取 + 签名/文字层校验
+  - rbc_parser           # 通用 RBC 披露声明解析（PRUGI/AIACO）
+  - pru_rbc_parser       # 向后兼容垫片（泛化后保留）
+  - rbc_index_discovery  # 官方索引 → 目标 PDF 确定性发现
+  - run_all              # L3-ICD-06：全量编排 + coverage 推导
+  - summary_writer       # L3-ICD-06：JSON+Markdown 运行摘要
 tools:
   - config_loader   # 加载并严格校验 settings.json 与 source_registry.json
   - sqlite_store    # SQLite schema 迁移、种子数据与幂等初始化
+  - http_fetcher    # 标准库 HTTP GET（固定 UA/超时/重定向/体量上限）
+  - snapshot        # SHA-256 + 原子落盘
+  - fetch_recorder  # fetch_run 三态写入/去重
+  - ratio_writer    # fulfillment_ratio 事务写入 + parse_result
+  - rbc_writer      # rbc_statement 事务写入 + parse_result
+  - coverage_writer # coverage_status 确定性 UPSERT
 memory:
-  - workspace       # ICD 专属数据目录（data/icd.db）路径推导
+  - workspace       # ICD 专属数据目录（data/icd.db、raw_data/、summaries/）路径推导
 
 safety:
-  - "本任务不访问网络、不解析真实披露文件"
+  - "不读取/记录密钥、Cookie 或完整请求头；异常输出仅含安全元数据"
   - "--init-db 幂等：重复执行不删除 fetch_run 或业务表已有行，不产生重复种子数据"
+  - "--run-all 单源失败隔离：BLOCKED/UNVERIFIED/requires_browser 跳过（不发网络请求），未接入源标 unsupported，不假装成功"
+  - "运行摘要采用唯一 run_id 写入受控 summaries/ 目录，绝不覆盖历史"
   - "所有路径从 Path(__file__) 推导，不依赖当前工作目录（cwd）"
-  - "仅使用 Python 标准库；异常输出不含凭证或完整请求头"
+  - "不引入浏览器自动化；仅使用 Python 标准库（PDF 提取用显式声明的 pdfplumber）"

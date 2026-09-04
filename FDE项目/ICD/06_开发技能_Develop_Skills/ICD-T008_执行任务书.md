@@ -2,7 +2,7 @@
 
 > 执行方：vscode-deepseek  
 > 推动与审计：Codex  
-> 状态：DISPATCHED  
+> 状态：ACCEPTED  
 > 派发日期：2026-09-03
 
 ## 目标

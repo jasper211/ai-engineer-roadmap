@@ -663,8 +663,8 @@ def test_migration_rbc_v04():
         reg = _migration_registry()
         summary = sqlite_store.init_db(db, reg, raw_data_root=raw_root)
 
-        # 备份存在
-        bak = db.with_name("icd.db.pre-v5.bak")
+        # 备份存在（备份名随 SCHEMA_VERSION 递增，避免版本升级后硬编码失效）
+        bak = db.with_name(f"icd.db.pre-v{sqlite_store.SCHEMA_VERSION}.bak")
         check(bak.exists(), f"迁移前全量备份 {bak.name} 存在", "迁移前未生成备份")
 
         # 迁移报告
