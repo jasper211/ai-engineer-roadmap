@@ -27,6 +27,7 @@ ICD Agent · 主循环入口（CLI）
 
 import argparse
 import json
+import re
 import sqlite3
 import sys
 from pathlib import Path
@@ -44,7 +45,7 @@ for _pkg_dir in (
     sys.path.insert(0, str(ICD_DIR / _pkg_dir))        # 让 tools/memory/skills 能被当作包 import
 
 from memory import workspace
-from skills import fetch_disclosure, parse_disclosure
+from skills import fetch_disclosure, parse_disclosure, rbc_index_discovery
 from tools import config_loader, fetch_recorder, sqlite_store
 
 SETTINGS_PATH = ICD_DIR / "02_配置项目_Configure_Project" / "settings.json"
@@ -319,10 +320,108 @@ def cmd_parse(args) -> int:
     return code
 
 
+# ---------------------------------------------------------------------------
+# --discover（T008：只读，从索引快照确定性发现目标 PDF 链接）
+# ---------------------------------------------------------------------------
+def cmd_discover(args) -> int:
+    # 只读命令：校验配置 → 读取该源最新成功抓取的索引快照 → 确定性发现 PDF 链接。
+    settings_path = _resolve_settings(args)
+    registry_path = _resolve_registry(args)
+
+    errors: List[str] = []
+    try:
+        settings = config_loader.load_json(settings_path)
+        errors.extend(config_loader.validate_settings(settings))
+    except Exception as e:  # noqa: BLE001
+        errors.append(f"settings 校验失败: {e}")
+    try:
+        registry = config_loader.load_json(registry_path)
+        errors.extend(config_loader.validate_registry(registry))
+    except Exception as e:  # noqa: BLE001
+        errors.append(f"registry 校验失败: {e}")
+
+    if errors:
+        for msg in errors:
+            print(f"[ERROR] {msg}", file=sys.stderr)
+        print("配置校验失败；未发现、未写入任何数据", file=sys.stderr)
+        return 1
+
+    db_path = workspace.resolve_db_path(args.db_path)
+    raw_root = workspace.resolve_raw_data_root(args.raw_data_root)
+
+    try:
+        conn = sqlite_store.connect(db_path)
+    except Exception as e:  # noqa: BLE001
+        print(f"[ERROR] 数据库连接失败: {type(e).__name__}: {e}", file=sys.stderr)
+        return 1
+
+    try:
+        src = fetch_recorder.get_source(conn, args.discover)
+    except sqlite3.OperationalError as e:
+        conn.close()
+        print(f"[ERROR] 数据库未初始化（请先 --init-db）: {e}", file=sys.stderr)
+        return 1
+    if src is None:
+        conn.close()
+        print(f"[ERROR] 未找到 source_id={args.discover}（请先 --init-db 且确认源存在）", file=sys.stderr)
+        return 1
+
+    run = parse_disclosure._latest_ok_run(conn, args.discover)
+    if run is None:
+        conn.close()
+        print(json.dumps({
+            "source_id": args.discover, "result": "NO_FETCH_RUN",
+            "message": "未找到可发现索引的成功抓取（请先 --fetch 该索引源）",
+        }, ensure_ascii=False, indent=2))
+        return 1
+
+    try:
+        fpath = parse_disclosure._snapshot_file(raw_root, run["snapshot_path"])
+    except ValueError as e:
+        conn.close()
+        print(json.dumps({"source_id": args.discover, "result": "SNAPSHOT_MISSING", "message": str(e)}, ensure_ascii=False, indent=2))
+        return 1
+    if not fpath.exists():
+        conn.close()
+        print(json.dumps({"source_id": args.discover, "result": "SNAPSHOT_MISSING", "message": f"快照不存在: {fpath}"}, ensure_ascii=False, indent=2))
+        return 1
+    try:
+        html = fpath.read_bytes()
+    except OSError as e:
+        conn.close()
+        print(json.dumps({"source_id": args.discover, "result": "SNAPSHOT_MISSING", "message": f"快照读取失败: {e}"}, ensure_ascii=False, indent=2))
+        return 1
+
+    # 从 parser_hint 提取已登记目标文件名（消歧选择器，可选；无则要求唯一候选）
+    hint = None
+    hint_text = src.get("parser_hint") or ""
+    m = re.search(r"([A-Za-z0-9][\w\s%.-]*\.pdf)", hint_text, re.IGNORECASE)
+    if m:
+        hint = m.group(1).strip()
+
+    candidates = rbc_index_discovery.extract_disclosure_pdf_candidates(html)
+    conn.close()
+    try:
+        url = rbc_index_discovery.discover_disclosure_pdf(html, filename_hint=hint)
+    except rbc_index_discovery.RbcIndexDiscoveryError as e:
+        print(json.dumps({
+            "source_id": args.discover, "result": "AMBIGUOUS_OR_NO_MATCH",
+            "message": str(e), "candidate_count": len(candidates), "filename_hint": hint,
+        }, ensure_ascii=False, indent=2))
+        return 2
+
+    print(json.dumps({
+        "source_id": args.discover, "result": "OK",
+        "discovered_pdf_url": url, "candidate_count": len(candidates),
+        "filename_hint": hint, "run_id": run["run_id"],
+    }, ensure_ascii=False, indent=2))
+    return 0
+
+
 def _parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         prog="agent.py",
-        description="ICD Agent CLI：--status / --validate-config / --init-db / --fetch / --parse",
+        description="ICD Agent CLI：--status / --validate-config / --init-db / --fetch / --discover / --parse",
     )
     parser.add_argument("--status", action="store_true", help="报告结构化项目状态")
     parser.add_argument("--validate-config", action="store_true", help="严格校验配置")
@@ -330,6 +429,7 @@ def _parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     parser.add_argument("--fetch", type=int, metavar="SOURCE_ID", help="按 source_id 抓取单个数据源（写快照与 fetch_run）")
     parser.add_argument("--dry-run", action="store_true", help="配合 --fetch：只抓取并计算哈希，不写快照与数据库")
     parser.add_argument("--parse", type=int, metavar="SOURCE_ID", help="按 source_id 解析最新成功抓取的快照（写 fulfillment_ratio 与 parse_result）")
+    parser.add_argument("--discover", type=int, metavar="SOURCE_ID", help="按 source_id 读取最新索引快照，确定性发现目标 PDF 链接（只读，不写数据）")
     parser.add_argument("--db-path", help="SQLite 路径覆盖（测试用临时目录；默认 data/icd.db）")
     parser.add_argument("--raw-data-root", help="raw_data 根目录覆盖（测试用临时目录；默认 07_接入记忆_Integrate_Memory/raw_data）")
     parser.add_argument("--settings", help="settings.json 路径覆盖（默认读取配置目录）")
@@ -347,6 +447,8 @@ def main(argv: Optional[List[str]] = None) -> int:
         return cmd_fetch(args)
     if args.parse is not None:
         return cmd_parse(args)
+    if args.discover is not None:
+        return cmd_discover(args)
     # 默认（含 --status 或无参数）都走状态报告
     return cmd_status(args)
 

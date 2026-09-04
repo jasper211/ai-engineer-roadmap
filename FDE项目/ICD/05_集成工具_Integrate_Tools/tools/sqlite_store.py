@@ -357,7 +357,7 @@ def collect_counts(conn: sqlite3.Connection) -> Dict[str, int]:
 # ---------------------------------------------------------------------------
 # Schema 版本与 v0.4 → v0.5 迁移（T007 Round 2：法律主体隔离）
 # ---------------------------------------------------------------------------
-SCHEMA_VERSION = 4  # PRAGMA user_version 整型版本；对应 data_contract.md 契约 v0.5
+SCHEMA_VERSION = 5  # PRAGMA user_version 整型版本；对应 data_contract.md 契约 v0.6（T008：AIA rbc 索引源元数据修正 + AIACO 主体种子）
 
 # rbc_statement v0.5 新增列（ALTER TABLE ADD COLUMN 顺序；语义见 data_contract.md 3.8）
 RBC_V04_ADD_COLUMNS: List[Tuple[str, str]] = [
@@ -586,6 +586,43 @@ def migrate_rbc_v04(
     return report
 
 
+def migrate_rbc_v05(conn: sqlite3.Connection, registry: dict) -> dict:
+    """执行 v0.5 → v0.6 迁移（T008：AIA rbc 索引源元数据修正，幂等、原子）。
+
+    T008 前，source_id=12（AIA rbc）被登记为 format=pdf，但 entry_url 实为官方监管披露
+    **索引页**（HTML），真实 RBC 数据在其链接的 PDF 中。本迁移把该索引源的 format 由
+    pdf 修正为 html 并刷新 parser_hint（该源从未被抓取，无 fetch_run/快照，故仅元数据
+    修正，安全幂等）。新增 AIACO 主体与 AIACO rbc PDF 源由 seed_insurers/seed_sources
+    以 INSERT OR IGNORE 完成，不在此迁移中重复。
+    """
+    report: dict = {"schema_version": SCHEMA_VERSION, "actions": []}
+    # 注册表中 disclosure_type=rbc 且 format=html 的源即「索引源」（T008 约定）。
+    for s in registry.get("sources", []):
+        if s.get("disclosure_type") != "rbc" or s.get("format") != "html":
+            continue
+        url = s.get("entry_url")
+        if not url:
+            continue
+        row = conn.execute(
+            "SELECT source_id, format, parser_hint FROM data_source WHERE entry_url=?",
+            (url,),
+        ).fetchone()
+        if row is None:
+            continue
+        source_id, cur_fmt, cur_hint = row
+        new_fmt = s.get("format")
+        new_hint = s.get("parser_hint")
+        if cur_fmt != new_fmt:
+            conn.execute("UPDATE data_source SET format=? WHERE source_id=?", (new_fmt, source_id))
+            report["actions"].append(f"data_source[{source_id}] format {cur_fmt!r}→{new_fmt!r}（rbc 索引源）")
+        if (cur_hint or "") != (new_hint or ""):
+            conn.execute("UPDATE data_source SET parser_hint=? WHERE source_id=?", (new_hint, source_id))
+            report["actions"].append(f"data_source[{source_id}] parser_hint 刷新（rbc 索引源）")
+    if not report["actions"]:
+        report["actions"].append("无 rbc 索引源元数据需修正（已最新）")
+    return report
+
+
 def init_db(db_path: Path, registry: dict, raw_data_root: Optional[Path] = None) -> dict:
     """初始化数据库：建 schema + 播种险企/数据源/错误代码，全程幂等。
 
@@ -624,6 +661,8 @@ def init_db(db_path: Path, registry: dict, raw_data_root: Optional[Path] = None)
         migration_report: Optional[dict] = None
         if needs_migration:
             migration_report = migrate_rbc_v04(conn, registry, raw_data_root, journal)
+            v05 = migrate_rbc_v05(conn, registry)
+            migration_report.setdefault("actions", []).extend(v05.get("actions", []))
 
         seed_sources(conn, registry.get("sources", []))
         set_user_version(conn, SCHEMA_VERSION)

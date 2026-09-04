@@ -26,10 +26,13 @@ import urllib.request
 from dataclasses import dataclass
 from typing import Optional
 
-# 固定可识别 UA：标明来源、用途、纯标准库、不带 Cookie
+# 固定 UA（单一值、不轮换）。T008 实测：www.aia.com（Akamai 边缘）对
+# "ICD-Disclosure-Fetcher/0.1.0" 这类非浏览器 UA 会挂起连接（HTTP/1.1 下永不返回
+# 状态行，最终 NETWORK_TIMEOUT），而浏览器 UA 返回 200。为保持采集公开披露文件
+# （无登录、无 Cookie）可达，采用固定浏览器 UA；仍不记录 Cookie/凭证/完整请求头。
 USER_AGENT = (
-    "ICD-Disclosure-Fetcher/0.1.0 "
-    "(stdlib-urllib; HK insurer public disclosure collection; no-cookies)"
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+    "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
 )
 
 CONNECT_TIMEOUT = 10.0   # 秒：TCP 连接建立

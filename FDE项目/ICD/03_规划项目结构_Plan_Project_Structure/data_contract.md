@@ -1,7 +1,7 @@
 # ICD · 数据契约（SQLite Schema 设计）
 
 > Agent ID: ICD
-> 版本: v0.5.0
+> 版本: v0.6.0
 > 日期: 2026-09-03
 > 阶段: SOP 第2步——流程设计（ICD-T001）
 > 定位: 本文 DDL 可直接转为 SQLite schema；JSON/HTML/PDF 三类实现按同一契约开发与验收。
@@ -92,8 +92,14 @@
 - **法律主体原文**：`rbc_statement` 新增 `legal_entity_name_raw TEXT NOT NULL` 作为正式字段，保存披露声明「Authorized insurer's name」逐字原文（如 `Prudential General Insurance Hong Kong Limited`），不得仅藏在 JSON。解析器无法提取该字段即 `STRUCTURE_MISMATCH`（主体身份是核心归属，缺失即不可安全归属）。
 - **金额标度无损保留**：披露金额可能以「in HKD thousands」等标度给出。`capital_base` / `prescribed_capital_amount` 仍保存**绝对 HKD 标准值**（按披露明示标度折算，非猜数）；同时新增 `capital_base_raw` / `prescribed_capital_amount_raw` 保存披露原文（如 `581,167`），`amount_unit_raw` 保存披露单位原文（如 `in HKD thousands`），`amount_scale` 保存规范化标度（`thousands`/`millions`；NULL = 未明示标度，视为绝对）。据此可无损复现「原文值 × 标度 = 绝对 HKD」。
 - **风险分解不强行映射**：Prudential（一般保险）的 PCA 子风险（General Insurance Risk / Reserve and premium risk / Natural catastrophe risk 等）与 `rbc_risk_component.risk_type` 枚举无法无损一一对应，故**不写规范化子表**，原文完整保留在 `rbc_statement.risk_breakdown_json`（含全部子风险行与标度），避免有损合并口径。
-- **Schema 版本与迁移策略**：用 SQLite `PRAGMA user_version` 作为整型 schema 版本，当前值为 `4`（对应契约 v0.5）。`sqlite_store.init_db` 在 `user_version < 4` 且库中已存在旧表时执行幂等迁移：先对既有库做 `.pre-v4.bak` 全量备份（回滚依据），再在事务内①按注册表修正 `data_source.insurer_code` 的错误归属；②移动 `raw_data/{旧主体}/{source}/{hash}.{ext}` 快照至新主体目录并回写 `fetch_run.snapshot_path`；③删除错误归属的 `rbc_statement` / `parse_result` 业务行（错误状态由备份 + `fetch_run` + 快照保留证据，其他来源数据不受影响）；④`ALTER TABLE rbc_statement ADD COLUMN` 补齐新列。迁移后按新主体重新 `--parse` 重建业务行。迁移幂等（重复运行无副作用）、原子（任一失败整体回滚）。
+- **Schema 版本与迁移策略**：用 SQLite `PRAGMA user_version` 作为整型 schema 版本，v0.4→v0.5 迁移对应版本值 `4`（v0.6 起升为 `5`，见 3.9）。`sqlite_store.init_db` 在 `user_version < 4` 且库中已存在旧表时执行幂等迁移：先对既有库做 `.pre-v4.bak` 全量备份（回滚依据），再在事务内①按注册表修正 `data_source.insurer_code` 的错误归属；②移动 `raw_data/{旧主体}/{source}/{hash}.{ext}` 快照至新主体目录并回写 `fetch_run.snapshot_path`；③删除错误归属的 `rbc_statement` / `parse_result` 业务行（错误状态由备份 + `fetch_run` + 快照保留证据，其他来源数据不受影响）；④`ALTER TABLE rbc_statement ADD COLUMN` 补齐新列。迁移后按新主体重新 `--parse` 重建业务行。迁移幂等（重复运行无副作用）、原子（任一失败整体回滚）。
 - **不影响其他来源**：迁移仅作用于 entry_url 命中「错误主体映射」的 RBC 源及其下游 `fetch_run`/`rbc_statement`/`parse_result`，`fulfillment_ratio`、其他险企（AIA/CTF/CLO 等）数据一律不动。
+
+### 3.9 旧 Schema 迁移与索引→PDF 两段证据链（v0.5 → v0.6，T008）
+
+- **AIACO 独立主体**：AIA 官方监管披露索引实测同时列出三家持牌实体的 2024 英文 Disclosure Statement PDF（AIA Co 304%、AIAI 212%、AIAE 457%）。§7.3 已登记目标为 AIA Company Limited（304%）。其真实法律主体 `AIA Company Limited` 与寿险 `AIA International Limited`（`insurer_code=AIA`）为**不同持牌实体**，按 T007 已确认的主体隔离政策新增独立 `insurer_code=AIACO`（= AIA **Co**mpany），法律主体原文保存在 `rbc_statement.legal_entity_name_raw`，不得混用。
+- **索引→PDF 两段证据链**：RBC 披露可能存在「官方索引页（HTML）→ 最终 PDF」两段链路。本契约约定：索引页作为**发现源**（`disclosure_type=rbc`、`format=html`、`entry_url` 为索引 URL），其抓取产生一段 `fetch_run` 证据；发现的最终 PDF 以**独立源**登记（`disclosure_type=rbc`、`format=pdf`、`entry_url` 为 PDF URL），其抓取产生第二段 `fetch_run` 证据。业务记录（`rbc_statement`）的 `run_id` 指向**最终 PDF 的 `fetch_run`**，据此可回查 PDF 的 URL/HTTP/哈希/快照；索引段的 `fetch_run` 作为发现证据独立保留。两段链路的关系记录在 PDF 源的 `parser_hint`/`evidence_basis`（标注「由 source_id=12 索引发现」）。
+- **索引源元数据修正**：T008 前 `source_id=12`（AIA rbc）被登记为 `format=pdf`，但 entry_url 实为索引页（HTML）。v0.6 将其 `format` 修正为 `html` 并刷新 `parser_hint`；该源从未被抓取（无 `fetch_run`/快照），仅元数据修正、安全幂等。SQLite `PRAGMA user_version` 由 `4` 升为 `5`（对应契约 v0.6），`sqlite_store.init_db` 对旧库做 `.pre-v5.bak` 全量备份后执行 v0.5→v0.6 元数据迁移（新增 AIACO 主体与 AIACO rbc PDF 源由种子以 `INSERT OR IGNORE` 完成，不重复）。
 
 ## 四、SQLite DDL
 
@@ -102,7 +108,7 @@ PRAGMA foreign_keys = ON;
 
 -- 1) 险企规范实体
 CREATE TABLE insurer (
-  insurer_code    TEXT PRIMARY KEY,                          -- 规范代码: 'AIA','AXA','YFL','SUN','CTF','FWD','BOC','CLO','PRU','PRUGI','MAN'（PRU=寿险，PRUGI=同集团一般保险，二者为不同持牌实体）
+  insurer_code    TEXT PRIMARY KEY,                          -- 规范代码: 'AIA','AIACO','AXA','YFL','SUN','CTF','FWD','BOC','CLO','PRU','PRUGI','MAN'（AIA=AIA International Limited 寿险，AIACO=AIA Company Limited 不同持牌实体；PRU=寿险，PRUGI=同集团一般保险，均为不同持牌实体）
   name_en         TEXT NOT NULL,                             -- 英文规范名
   name_zh         TEXT,                                      -- 中文规范名（可空）
   legal_name_note TEXT,                                      -- 法律实体名备注 / 待与 IA 持牌险企名录核对
