@@ -5,6 +5,7 @@ from .models import MetricMeta, QueryRequest, ValidationError, NotComparableErro
 
 ALLOWED_QUERY_TYPES = {"market_trend", "company_ranking", "financial_snapshot",
                        "company_period_values", "compare_periods",
+                       "annual_market_series", "annual_company_components",
                        "describe_metric", "list_metrics", "healthcheck"}
 
 # 模板 ID 映射（供 lineage 使用）
@@ -14,6 +15,8 @@ TEMPLATE_ID = {
     "financial_snapshot": "Q4_FINANCIAL_SNAPSHOT_V1",
     "company_period_values": "Q5_COMPANY_PERIOD_VALUES_V1",
     "compare_periods": "Q6_COMPARE_PERIODS_V1",
+    "annual_market_series": "Q7_ANNUAL_MARKET_SERIES_V1",
+    "annual_company_components": "Q8_ANNUAL_COMPANY_COMPONENTS_V1",
     "describe_metric": "M2_DESCRIBE_METRIC_V1",
     "list_metrics": "M1_LIST_METRICS_V1",
     "healthcheck": "H1_HEALTHCHECK_V1",
@@ -45,14 +48,18 @@ class QueryBuilder:
         if qt == "financial_snapshot": return self._financial_snapshot(req)
         if qt == "company_period_values": return self._company_period_values(req)
         if qt == "compare_periods": return self._compare_periods(req)
+        if qt == "annual_market_series": return self._annual_market_series(req)
+        if qt == "annual_company_components": return self._annual_company_components(req)
         raise ValidationError(f"未实现 query_type: {qt}")
 
     def _health(self):
         rows = {}
-        for db_id in ["master", "standard", "annual", "provisional2025", "financial"]:
-            if db_id == "standard":
+        for db_id in ["master", "standard", "annual", "annual_market", "provisional2025", "financial"]:
+            if db_id in ("standard", "annual_market"):
                 n = 0
-                for t in ["market_facts", "company_facts", "schema_metrics", "annual_facts"]:
+                tables = (["market_facts", "company_facts", "schema_metrics", "annual_facts"] if db_id == "standard" else
+                          ["market_amount_facts", "market_detail_facts", "new_business_detail_facts", "termination_rate_facts", "group_retirement_facts", "annuity_other_facts"])
+                for t in tables:
                     n += int(self.conns.count(db_id, t))
                 rows[db_id] = n
             else:
@@ -209,6 +216,35 @@ class QueryBuilder:
             return {"query_type": "company_period_values", "data": data, "metric": req.metric_id,
                     "identity_mode": req.identity_mode, "source_layer": "provisional2025", "identity_note": ident.get("note")}
         raise ValidationError(f"不支持 company_period_values 的源层 {meta.source_layer}")
+
+    def _annual_market_series(self, req):
+        """Catalog-driven annual market query; request values never become SQL identifiers."""
+        meta=self.catalog.get(req.metric_id); sf=meta.source_filter or {}; table=meta.source_table
+        allowed={
+          'market_amount_facts':('metric_id','section','linked_status','insurance_type','component_type'),
+          'market_detail_facts':('metric_id','linked_status','participation_status','insurance_type','component_type'),
+          'new_business_detail_facts':('metric_id','linked_status','participation_status','payment_basis','insurance_type','component_type'),
+          'termination_rate_facts':('metric_id','linked_status','participation_status','insurance_type','policy_year_band'),
+          'group_retirement_facts':('metric_id','section','business_class','payment_basis','component_type'),
+          'annuity_other_facts':('metric_id','section','linked_status','insurance_type','payment_basis','component_type')}
+        if table not in allowed: raise ValidationError('年度市场事实表未列入白名单。')
+        where=['report_year=?']; args=[int(req.period)]
+        for key in allowed[table]:
+            if key in sf: where.append(f'{key}=?'); args.append(sf[key])
+        rows=self.conns.get('annual_market').execute(
+          f"SELECT observation_year,value,record_status,schema_version,source_file,source_locator FROM {table} WHERE "+' AND '.join(where)+' ORDER BY observation_year',args).fetchall()
+        data=[{'period':str(r[0]),'value':None if r[1] is None else float(r[1]),'unit':meta.unit,'record_status':r[2],'schema':r[3],'source_file':r[4],'source_locator':r[5]} for r in rows]
+        return {'query_type':'annual_market_series','data':data,'metric':req.metric_id,'source_unit':meta.unit,'source_layer':'annual_market','source_db':'annual_market','source_table':table,'certification':'certified'}
+
+    def _annual_company_components(self, req):
+        meta=self.catalog.get(req.metric_id); sf=meta.source_filter or {}; entity=(req.filters or {}).get('entity')
+        where=["report_year=?","table_id=?","metric_id=?","entity_scope=?"]
+        args=[int(req.period),sf['table_id'],sf['metric_id'],meta.entity_scope]
+        if sf.get('payment_basis'): where.append('payment_basis=?'); args.append(sf['payment_basis'])
+        if entity: where.append('insurer_name_source=?'); args.append(entity)
+        rows=self.conns.get('annual').execute('SELECT insurer_name_source,payment_basis,value,record_status,schema_version,source_file,source_locator FROM company_payment_facts WHERE '+' AND '.join(where)+' ORDER BY value DESC',args).fetchall()
+        data=[{'entity':r[0],'payment_basis':r[1],'value':None if r[2] is None else float(r[2]),'unit':meta.unit,'record_status':r[3],'schema':r[4],'source_file':r[5],'source_locator':r[6]} for r in rows]
+        return {'query_type':'annual_company_components','data':data,'metric':req.metric_id,'source_unit':meta.unit,'source_layer':'annual','source_db':'annual','source_table':'company_payment_facts','certification':'certified'}
 
     def _compare_periods(self, req):
         from .models import (NotComparableError, ValidationError, SchemaBridgeRequiredError, L11CountMixError)

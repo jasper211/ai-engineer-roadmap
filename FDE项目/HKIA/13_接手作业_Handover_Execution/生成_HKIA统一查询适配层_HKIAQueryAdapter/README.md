@@ -1,16 +1,18 @@
 # HKIA 统一查询适配层 v1 (HKIAQueryAdapter)
 
-> 本地、只读、可测试的语义查询适配层。把 5 个 SQLite 数据源 + 公司桥 v2.1 + 口径规则收口成标准接口。
+> 本地、只读、可测试的语义查询适配层。把 6 个 SQLite 数据源 + 公司桥 v2.1 + 口径规则收口成标准接口。
 > **核心价值**：模型只能调用经过口径约束的语义接口，不能直接拼 SQL、猜单位、猜认证状态或越发布门禁。
 
 ---
 
 ## 一、能做什么
 
-提供 8 种白名单语义查询：
-`market_trend` / `company_ranking` / `financial_snapshot` / `company_period_values` / `compare_periods` / `describe_metric` / `list_metrics` / `healthcheck`
+提供10种白名单语义查询，在原接口上新增：
+`annual_market_series` / `annual_company_components`。
 
-覆盖 5 库：主库 / 标准事实层 / 年度公司层 / 2025 provisional 公司层 / 行业财务层。
+覆盖6库：主库 / 标准事实层 / 年度公司层 / 年度市场层 / 2025 provisional公司层 / 行业财务层。
+
+年度市场层覆盖L1–L7；公司层新增无损的L14–L16缴费方式组件表，并开放L13、L16、L19目录指标。
 
 ## 二、能力边界
 
@@ -60,7 +62,7 @@ CLI 标准输出仅 JSON；成功退出码 0，被阻断非零。
 ```bash
 python3 tests/test_all.py
 ```
-覆盖：5 库行数 / Q1-Q4 / 防误用硬阻断（count→金额、L16vsL1、裸公司名、+65.4%、SQL注入字段）/ 契约结构 / 季度 non-certified。
+覆盖：6库行数 / Q1-Q4 / 年度L1–L7 / L16完整组件 / 防误用硬阻断 / 契约结构 / 季度non-certified。
 
 ## 六、版本升级方式
 
@@ -70,7 +72,7 @@ python3 tests/test_all.py
 
 ## 七、禁止事项（对使用者）
 
-- 不得直接 `import sqlite3` 读取 5 个源库原始表（应使用适配层语义接口）。
+- 不得直接 `import sqlite3` 读取6个源库原始表（应使用适配层语义接口）。
 - 不得将返回的 `source_unit`/`output_unit` 之外的单位当作已认证数值直接聚合。
 - 不得无视 `comparability.status` 或 `release.status` 仍发布增长率。
 - 不得把季度数据当作 certified（2023Q1 等永远是 provisional）。

@@ -4,9 +4,11 @@ from typing import Optional
 from .models import ValidationError
 
 MONEY = ("HKD_thousand", "HKD_million")
+DIMENSIONLESS = ("percentage_point",)
 ALIASES = {"千港元": "HKD_thousand", "hkd_thousand": "HKD_thousand",
            "HKD_million": "HKD_million", "百万港元": "HKD_million",
-           "count": "count", "Count": "count"}
+           "count": "count", "Count": "count",
+           "percentage_point": "percentage_point", "百分点": "percentage_point"}
 
 
 def normalize_unit(u: Optional[str]) -> Optional[str]:
@@ -18,7 +20,7 @@ def normalize_unit(u: Optional[str]) -> Optional[str]:
         return ALIASES[u]
     if u == "count":
         return "count"
-    if u in MONEY:
+    if u in MONEY or u in DIMENSIONLESS:
         return u
     return None  # 未知
 
@@ -36,6 +38,10 @@ def convert(value, from_unit: str, to_unit: str) -> float:
     f, t = normalize_unit(from_unit), normalize_unit(to_unit)
     if f is None or t is None:
         raise ValidationError(f"未知或空单位: from={from_unit!r} to={to_unit!r}")
+    if f in DIMENSIONLESS or t in DIMENSIONLESS:
+        if f == t:
+            return float(value)
+        raise ValidationError("比率单位不得与金额或count转换。")
     if f == "count" or t == "count":
         raise ValidationError("count 不得转换为金额单位，也不得参与金额聚合。")
     if f == t:
@@ -62,6 +68,10 @@ def resolve_output_unit(metric_unit: Optional[str], requested: Optional[str]) ->
         if normalize_unit(requested) == "count":
             return "count"
         raise ValidationError("count 指标不接受金额或未知输出单位。")
+    if src in DIMENSIONLESS:
+        if requested is None or normalize_unit(requested) == src:
+            return src
+        raise ValidationError("比率指标只接受相同的比率输出单位。")
     # 金额指标
     if requested is None:
         return src
