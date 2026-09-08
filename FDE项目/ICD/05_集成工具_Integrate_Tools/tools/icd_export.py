@@ -28,6 +28,10 @@ def build(db_path: Path | str, raw_root: Path | str) -> Dict[str, Any]:
     health = icd_health.check(db_path, raw_root)
     if health["status"] == "CRITICAL":
         raise ValueError("ICD 健康状态为 CRITICAL，禁止发布交换包")
+    # checked_at 是执行噪声，不属于数据版本；导出包移除它，避免同一数据连续导出
+    # 产生不同内容哈希。时效判断结论和 stale 列表仍完整保留。
+    health = dict(health)
+    health.pop("checked_at", None)
     with icd_query.ICDClient.open_readonly(db_path) as client:
         fulfillment = []
         for code in sorted({x["insurer_code"] for x in client.coverage(disclosure_type="fulfillment_ratio")["data"]}):

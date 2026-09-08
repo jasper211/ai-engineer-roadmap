@@ -46,7 +46,7 @@ for _pkg_dir in (
 
 from memory import workspace
 from skills import fetch_disclosure, parse_disclosure, rbc_index_discovery, run_all
-from tools import config_loader, fetch_recorder, icd_analysis, icd_export, icd_health, icd_query, sqlite_store
+from tools import config_loader, fetch_recorder, icd_analysis, icd_export, icd_export_validator, icd_health, icd_query, sqlite_store
 
 SETTINGS_PATH = ICD_DIR / "02_配置项目_Configure_Project" / "settings.json"
 REGISTRY_PATH = ICD_DIR / "02_配置项目_Configure_Project" / "source_registry.json"
@@ -540,6 +540,13 @@ def cmd_export(args) -> int:
     return 0
 
 
+def cmd_validate_export(args) -> int:
+    """从消费者视角独立验收交换包。"""
+    result = icd_export_validator.validate(args.validate_export)
+    print(json.dumps(result, ensure_ascii=False, indent=2))
+    return result["exit_code"]
+
+
 def _parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         prog="agent.py",
@@ -557,6 +564,7 @@ def _parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     parser.add_argument("--analyze", action="store_true", help="生成业务分析 JSON + Markdown 快照")
     parser.add_argument("--health", action="store_true", help="只读生产健康检查（0健康/1已知缺口/2完整性故障）")
     parser.add_argument("--export", action="store_true", help="生成面向下游的内容寻址 JSON/JSONL 交换包")
+    parser.add_argument("--validate-export", metavar="BUNDLE_PATH", help="从消费者视角验收交换包契约、哈希和语义")
     parser.add_argument("--insurer", help="查询过滤：insurer_code")
     parser.add_argument("--product", help="分红查询过滤：官网产品名称包含文字")
     parser.add_argument("--metric", help="分红查询过滤：AD/TD/RB/TB/TCV/OTHER")
@@ -597,6 +605,8 @@ def main(argv: Optional[List[str]] = None) -> int:
         return cmd_health(args)
     if args.export:
         return cmd_export(args)
+    if args.validate_export:
+        return cmd_validate_export(args)
     if args.query:
         return cmd_query(args)
     # 默认（含 --status 或无参数）都走状态报告

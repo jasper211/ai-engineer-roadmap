@@ -24,6 +24,8 @@ def main():
     raw = ICD / "07_接入记忆_Integrate_Memory/raw_data"
     before = sha(db)
     bundle = icd_export.build(db, raw)
+    bundle_again = icd_export.build(db, raw)
+    assert bundle_again == bundle
     assert len(bundle["fulfillment"]) == 13039 and len(bundle["rbc"]) == 8
     assert all({"run_id", "sha256", "source_url", "raw_value"} <= set(x) for x in bundle["fulfillment"])
     with tempfile.TemporaryDirectory() as td:
