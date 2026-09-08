@@ -137,15 +137,15 @@
     {
       "insurer_code": "PRU",
       "disclosure_type": "fulfillment_ratio",
-      "entry_url": "https://www.prudential.com.hk/performance/fulfillment-ratio/tc/WP-Track-Record-TC.pdf",
-      "format": "pdf",
-      "access_status": "PARTIAL",
-      "parser_hint": "网页 fulfill-ratio/* 被 Incapsula 拦(跳转+JS挑战)；但此 PDF 可直接下载。标题为'第20保单年度的实际平均总内部回报率'，内容是 IRR 数据(产品 A-J，6.18%/5.98%/6.75% 等)，非标准履行率格式——该线索价值在 IRR 不在履行率本身；PyPDF2 能提取文字但字体编码特殊需处理换行/断词。",
+      "entry_url": "https://www.prudential.com.hk/tc/general/performance/fulfillment-ratio/",
+      "format": "html",
+      "access_status": "OPEN",
+      "parser_hint": "AEM 首屏 HTML 直接包含 2025 报告年度标准分红实现率产品表；不得混用旧 WP-Track-Record-TC.pdf（该文件为 IRR）。",
       "requires_browser": false,
-      "evidence_basis": "需求定义§7.2 curl实测",
+      "evidence_basis": "T014 2026-09-07 curl 实测：HTTP 200，首屏 HTML 含产品、指标、货币、观察期及比率表",
       "allows_empty": false,
-      "last_verified_at": "2026-09-03",
-      "url_version": 1
+      "last_verified_at": "2026-09-07",
+      "url_version": 2
     },
     {
       "insurer_code": "MAN",
