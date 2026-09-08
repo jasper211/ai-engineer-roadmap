@@ -46,7 +46,7 @@ for _pkg_dir in (
 
 from memory import workspace
 from skills import fetch_disclosure, parse_disclosure, rbc_index_discovery, run_all
-from tools import config_loader, fetch_recorder, sqlite_store
+from tools import config_loader, fetch_recorder, icd_query, sqlite_store
 
 SETTINGS_PATH = ICD_DIR / "02_配置项目_Configure_Project" / "settings.json"
 REGISTRY_PATH = ICD_DIR / "02_配置项目_Configure_Project" / "source_registry.json"
@@ -460,6 +460,39 @@ def cmd_run_all(args) -> int:
     return 0
 
 
+def cmd_query(args) -> int:
+    """执行白名单只读查询，并输出稳定 JSON。"""
+    db_path = workspace.resolve_db_path(args.db_path)
+    try:
+        with icd_query.ICDClient.open_readonly(db_path) as client:
+            common = {"insurer_code": args.insurer}
+            if args.query == "fulfillment":
+                result = client.fulfillment(
+                    **common, product_name=args.product, metric_type=args.metric,
+                    report_year=args.report_year, include_history=args.include_history,
+                    limit=args.limit,
+                )
+            elif args.query == "rbc":
+                result = client.rbc(
+                    **common, report_year=args.report_year,
+                    include_history=args.include_history, limit=args.limit,
+                )
+            elif args.query == "coverage":
+                result = client.coverage(**common, disclosure_type=args.disclosure_type)
+            else:
+                if args.run_id is None:
+                    raise icd_query.ICDQueryError("evidence 查询必须提供 --run-id")
+                result = client.evidence(run_id=args.run_id)
+    except icd_query.ICDQueryError as exc:
+        print(f"[ERROR] {exc}", file=sys.stderr)
+        return 2
+    except sqlite3.Error as exc:
+        print(f"[ERROR] 查询失败: {exc}", file=sys.stderr)
+        return 1
+    print(json.dumps(result, ensure_ascii=False, indent=2))
+    return 0
+
+
 def _parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         prog="agent.py",
@@ -473,6 +506,15 @@ def _parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     parser.add_argument("--parse", type=int, metavar="SOURCE_ID", help="按 source_id 解析最新成功抓取的快照（写 fulfillment_ratio 与 parse_result）")
     parser.add_argument("--discover", type=int, metavar="SOURCE_ID", help="按 source_id 读取最新索引快照，确定性发现目标 PDF 链接（只读，不写数据）")
     parser.add_argument("--run-all", action="store_true", help="全量运行：按 source_id 顺序处理所有 active 源，生成摘要并更新 coverage_status")
+    parser.add_argument("--query", choices=("fulfillment", "rbc", "coverage", "evidence"), help="只读查询标准化数据或来源证据")
+    parser.add_argument("--insurer", help="查询过滤：insurer_code")
+    parser.add_argument("--product", help="分红查询过滤：官网产品名称包含文字")
+    parser.add_argument("--metric", help="分红查询过滤：AD/TD/RB/TB/TCV/OTHER")
+    parser.add_argument("--report-year", type=int, help="业务查询过滤：报告年度")
+    parser.add_argument("--include-history", action="store_true", help="业务查询返回历史抓取版本；默认仅最新成功版本")
+    parser.add_argument("--limit", type=int, default=1000, help="业务查询最大返回行数，1..5000（默认1000）")
+    parser.add_argument("--disclosure-type", help="覆盖查询过滤：fulfillment_ratio/total_cash_value_ratio/rbc")
+    parser.add_argument("--run-id", type=int, help="证据查询：fetch_run ID")
     parser.add_argument("--no-network", action="store_true", help="配合 --run-all：跳过抓取，基于既有快照完成解析/汇总（确定性模式）")
     parser.add_argument("--db-path", help="SQLite 路径覆盖（测试用临时目录；默认 data/icd.db）")
     parser.add_argument("--raw-data-root", help="raw_data 根目录覆盖（测试用临时目录；默认 07_接入记忆_Integrate_Memory/raw_data）")
@@ -496,6 +538,8 @@ def main(argv: Optional[List[str]] = None) -> int:
         return cmd_discover(args)
     if args.run_all:
         return cmd_run_all(args)
+    if args.query:
+        return cmd_query(args)
     # 默认（含 --status 或无参数）都走状态报告
     return cmd_status(args)
 

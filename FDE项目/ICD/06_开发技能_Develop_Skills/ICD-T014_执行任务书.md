@@ -1,7 +1,7 @@
 # ICD-T014 · 保诚与宏利官方数据接入专项
 
 > 执行与审计：Codex  
-> 状态：IN_PROGRESS  
+> 状态：ACCEPTED（Codex 自审）  
 > 日期：2026-09-07
 
 ## 目标
@@ -16,3 +16,15 @@
 4. 找到来源后保留 URL、原始快照、SHA-256、抓取运行记录、离线解析、原文值、结构漂移失败语义和幂等证据。
 5. 相关测试通过，真实数据抽样、数据库 integrity/FK 和全量离线编排通过后由 Codex 自审放行。
 6. 若穷尽官方公开入口仍不可获取，必须记录检索路径和可复核阻断证据，保持 MISSING/BLOCKED，不伪造成功。
+
+## 执行回执与自审
+
+- PRU：官方 AEM 履行率页可直接 HTTP 获取，`run_id=18`，HTTP 200，快照 903,607 bytes，SHA-256 `b7f42f2914f1f841438e31ca8e5116c39c08f7c5cfeb94e77124dfbe643ec1c7`。
+- 新增 `skills/pru_html_parser.py` 并接入统一解析入口。按产品标题、指标/报告年度标题和表格结构解析，结构不完整时 fail closed；旧 IRR PDF 未混入。
+- PRU 入库：报告年度 2025、80 个产品、2,343 条；数值 462 条、原始占位值 1,881 条，后者无损保留并形成 `PARTIAL/VALUE_UNPARSEABLE` 解析结果，但来源覆盖为 `FULL`。
+- MAN：核验官方履行率页、`tools.manulife.com.hk` 前端组件、`ss1.php` POST 接口及官方静态 PDF，均由 Akamai 返回 HTTP 403；搜索索引与历史归档只用于定位官方入口，未作为数据入库。覆盖保持 `BLOCKED`。
+- MAN 注册表改为精确官方履行率页；默认库在确认旧/新 URL 均无抓取记录后以事务保留原 `source_id=11` 更新，重新初始化仍为 22 个数据源，无重复源。
+- 定向测试：T014 PASS；全量 11 套测试脚本全部 PASS。首次沙箱运行因禁止绑定本机回环端口失败，允许回环后原套件通过，属于环境权限而非产品缺陷。
+- 全量离线编排：processed=12、succeeded=12、failed=0；分红表累计 13,039 条、9 家，PRU `FULL`、MAN `BLOCKED`。
+- 数据库：`integrity_check=ok`、`foreign_key_check=[]`；重复离线解析行数稳定。
+- 审计结论：满足验收标准。保诚正式放行；宏利按标准第 6 条以可复核阻断状态放行，不虚构第 10 家覆盖。

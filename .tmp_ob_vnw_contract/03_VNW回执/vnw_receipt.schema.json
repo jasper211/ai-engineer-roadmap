@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://jasper.local/ob-vnw/vnw_receipt.schema.json",
+  "title": "VNW消费回执",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "release_id", "consumer", "processed_at", "mode", "status", "summary", "source_results", "affected_l3"],
+  "properties": {
+    "schema_version": {"const": "ob-vnw.vnw-receipt.v1"},
+    "release_id": {"type": "string"},
+    "consumer": {"const": "VNW_AGENT"},
+    "processed_at": {"type": "string", "format": "date-time"},
+    "mode": {"enum": ["READ_ONLY_VALIDATE", "APPLY"]},
+    "status": {"enum": ["VALIDATION_FAILED", "READY_FOR_REVIEW", "APPLIED", "PARTIALLY_APPLIED"]},
+    "summary": {"type": "object", "required": ["total", "valid", "invalid", "publishable"], "properties": {"total": {"type": "integer"}, "valid": {"type": "integer"}, "invalid": {"type": "integer"}, "publishable": {"type": "integer"}}, "additionalProperties": false},
+    "source_results": {"type": "array", "items": {"type": "object"}},
+    "affected_l3": {"type": "array", "items": {"type": "object", "required": ["l3_code", "affected_panels", "reanalysis_candidate"], "properties": {"l3_code": {"type": "string"}, "affected_panels": {"type": "array", "items": {"enum": ["A", "B", "C", "D", "E", "F"]}}, "reanalysis_candidate": {"type": "boolean"}}, "additionalProperties": false}},
+    "errors": {"type": "array", "items": {"type": "string"}}
+  }
+}

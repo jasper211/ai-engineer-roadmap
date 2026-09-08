@@ -161,16 +161,32 @@ def _extract_currency_and_unit(full_text: str, all_tables) -> Tuple[str, str, Op
         unit_raw = f"in {currency} {scale}".strip() if scale else f"in {currency}"
         return currency, scale, unit_raw
 
-    found = _from_match(_UNIT_RE.search(full_text))
-    if found:
-        return found
+    # 同一 PDF 可能同时出现被表格切断的 "Unit: in HKD" 与完整的
+    # "Unit: in HKD thousands"。必须穷尽候选并优先选择带标度者，避免金额漏乘。
+    candidates = []
+    for m in _UNIT_RE.finditer(full_text):
+        found = _from_match(m)
+        if found:
+            candidates.append(found)
     for tbl in all_tables:
         for row in tbl:
             for cell in row:
                 if cell:
-                    found = _from_match(_UNIT_RE.search(str(cell)))
-                    if found:
-                        return found
+                    for m in _UNIT_RE.finditer(str(cell)):
+                        found = _from_match(m)
+                        if found:
+                            candidates.append(found)
+    scaled = [item for item in candidates if item[1]]
+    if scaled:
+        scales = {(item[0], item[1]) for item in scaled}
+        if len(scales) > 1:
+            raise RbcParseError(f"RBC 金额单位/标度歧义: {sorted(scales)!r}")
+        return scaled[0]
+    if candidates:
+        currencies = {item[0] for item in candidates}
+        if len(currencies) > 1:
+            raise RbcParseError(f"RBC 金额币种歧义: {sorted(currencies)!r}")
+        return candidates[0]
     return "HKD", "", None
 
 

@@ -1,0 +1,24 @@
+{
+  "schema_version": "ob-vnw.knowledge-types.v1",
+  "policy": {
+    "publishable_lifecycle_status": ["CONFIRMED"],
+    "non_fact_evidence_levels": ["CONTEXT_ONLY"],
+    "rule": "只有CONFIRMED记录可进入VNW正式事实候选；CONTEXT_ONLY只进入面板F来源说明，不参与Gate或自动结论。UNDER_REVIEW和DRAFT仅进入待补清单。"
+  },
+  "types": {
+    "PROCESS_BLUEPRINT": {"label": "流程蓝图", "default_panels": ["A", "B", "C", "F"], "reanalyze": true},
+    "L4_DELIVERY": {"label": "L4交付物", "default_panels": ["A", "C", "D", "E", "F"], "reanalyze": true},
+    "D1_D6_ASSESSMENT": {"label": "D1-D6评估", "default_panels": ["D", "E", "F"], "reanalyze": true},
+    "SOP": {"label": "SOP", "default_panels": ["A", "B", "C", "F"], "reanalyze": true},
+    "BUSINESS_RULE": {"label": "业务规则", "default_panels": ["B", "C", "D", "E", "F"], "reanalyze": true},
+    "ORG_ROLE": {"label": "岗位族与部门", "default_panels": ["B", "F"], "reanalyze": true},
+    "TASK_DECOMPOSITION": {"label": "任务拆分与时序", "default_panels": ["C", "D", "E", "F"], "reanalyze": true},
+    "AI_FEASIBILITY": {"label": "AI/Skill可行性", "default_panels": ["C", "D", "E", "F"], "reanalyze": true},
+    "KPI_QUALITY": {"label": "KPI与质量锚点", "default_panels": ["D", "E", "F"], "reanalyze": true},
+    "VALUE_NODE_MAPPING": {"label": "价值节点映射", "default_panels": ["A", "B", "C", "E", "F"], "reanalyze": true},
+    "L2_CAPABILITY": {"label": "L2业务能力", "default_panels": ["E", "F"], "reanalyze": true},
+    "METHODOLOGY": {"label": "分析方法论", "default_panels": ["F"], "reanalyze": true},
+    "AGENT_DESIGN": {"label": "Agent/Skill设计输入", "default_panels": ["C", "D", "E", "F"], "reanalyze": true},
+    "DATA_MAPPING": {"label": "数据映射与口径", "default_panels": ["F"], "reanalyze": true}
+  }
+}

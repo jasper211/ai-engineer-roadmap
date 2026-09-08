@@ -531,8 +531,8 @@ def test_migration_v05():
         check(fmt == "html", f"迁移后索引源 format=html（{fmt}）", f"fmt: {fmt}")
         check(conn.execute("SELECT COUNT(*) FROM insurer").fetchone()[0] == 12,
               "迁移+种子后险企 12", "险企数错误")
-        check(conn.execute("SELECT COUNT(*) FROM data_source").fetchone()[0] == 22,
-              "迁移+种子后源 22", "源数错误")
+        check(conn.execute("SELECT COUNT(*) FROM data_source").fetchone()[0] == 24,
+              "迁移+种子后源 24", "源数错误")
         check(conn.execute("SELECT COUNT(*) FROM insurer WHERE insurer_code='AIACO'").fetchone()[0] == 1,
               "AIACO 主体存在", "AIACO 缺失")
         check(conn.execute("SELECT COUNT(*) FROM data_source WHERE insurer_code='AIACO' AND format='pdf'").fetchone()[0] == 1,
