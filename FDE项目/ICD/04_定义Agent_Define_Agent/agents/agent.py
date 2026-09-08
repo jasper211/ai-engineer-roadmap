@@ -46,7 +46,7 @@ for _pkg_dir in (
 
 from memory import workspace
 from skills import fetch_disclosure, parse_disclosure, rbc_index_discovery, run_all
-from tools import config_loader, fetch_recorder, icd_query, sqlite_store
+from tools import config_loader, fetch_recorder, icd_analysis, icd_export, icd_health, icd_query, sqlite_store
 
 SETTINGS_PATH = ICD_DIR / "02_配置项目_Configure_Project" / "settings.json"
 REGISTRY_PATH = ICD_DIR / "02_配置项目_Configure_Project" / "source_registry.json"
@@ -493,6 +493,53 @@ def cmd_query(args) -> int:
     return 0
 
 
+def cmd_analyze(args) -> int:
+    """从只读数据库生成 JSON + Markdown 业务分析快照。"""
+    db_path = workspace.resolve_db_path(args.db_path)
+    output_dir = workspace.resolve_reports_root(args.reports_root)
+    try:
+        report = icd_analysis.build(db_path)
+        files = icd_analysis.write(report, output_dir)
+    except (icd_query.ICDQueryError, OSError, sqlite3.Error) as exc:
+        print(f"[ERROR] 业务分析生成失败: {exc}", file=sys.stderr)
+        return 1
+    print(json.dumps({"result": "OK", "data_as_of": report["data_as_of"],
+                      "fulfillment_insurers": len(report["fulfillment_summary"]),
+                      "rbc_entities": len(report["rbc_summary"]), **files},
+                     ensure_ascii=False, indent=2))
+    return 0
+
+
+def cmd_health(args) -> int:
+    """只读生产健康检查；0=健康、1=有已知缺口、2=完整性故障。"""
+    try:
+        result = icd_health.check(
+            workspace.resolve_db_path(args.db_path),
+            workspace.resolve_raw_data_root(args.raw_data_root),
+            max_age_days=args.max_age_days,
+        )
+    except (icd_query.ICDQueryError, OSError, ValueError, sqlite3.Error) as exc:
+        print(f"[ERROR] 健康检查失败: {exc}", file=sys.stderr)
+        return 2
+    print(json.dumps(result, ensure_ascii=False, indent=2))
+    return result["exit_code"]
+
+
+def cmd_export(args) -> int:
+    """生成面向下游的内容寻址交换包；CRITICAL 健康状态禁止发布。"""
+    try:
+        bundle = icd_export.build(
+            workspace.resolve_db_path(args.db_path),
+            workspace.resolve_raw_data_root(args.raw_data_root),
+        )
+        result = icd_export.write(bundle, workspace.resolve_exports_root(args.exports_root))
+    except (icd_query.ICDQueryError, OSError, ValueError, sqlite3.Error) as exc:
+        print(f"[ERROR] 交换包生成失败: {exc}", file=sys.stderr)
+        return 2
+    print(json.dumps(result, ensure_ascii=False, indent=2))
+    return 0
+
+
 def _parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         prog="agent.py",
@@ -507,6 +554,9 @@ def _parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     parser.add_argument("--discover", type=int, metavar="SOURCE_ID", help="按 source_id 读取最新索引快照，确定性发现目标 PDF 链接（只读，不写数据）")
     parser.add_argument("--run-all", action="store_true", help="全量运行：按 source_id 顺序处理所有 active 源，生成摘要并更新 coverage_status")
     parser.add_argument("--query", choices=("fulfillment", "rbc", "coverage", "evidence"), help="只读查询标准化数据或来源证据")
+    parser.add_argument("--analyze", action="store_true", help="生成业务分析 JSON + Markdown 快照")
+    parser.add_argument("--health", action="store_true", help="只读生产健康检查（0健康/1已知缺口/2完整性故障）")
+    parser.add_argument("--export", action="store_true", help="生成面向下游的内容寻址 JSON/JSONL 交换包")
     parser.add_argument("--insurer", help="查询过滤：insurer_code")
     parser.add_argument("--product", help="分红查询过滤：官网产品名称包含文字")
     parser.add_argument("--metric", help="分红查询过滤：AD/TD/RB/TB/TCV/OTHER")
@@ -519,6 +569,9 @@ def _parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     parser.add_argument("--db-path", help="SQLite 路径覆盖（测试用临时目录；默认 data/icd.db）")
     parser.add_argument("--raw-data-root", help="raw_data 根目录覆盖（测试用临时目录；默认 07_接入记忆_Integrate_Memory/raw_data）")
     parser.add_argument("--summaries-root", help="运行摘要目录覆盖（测试用临时目录；默认 07_接入记忆_Integrate_Memory/summaries）")
+    parser.add_argument("--reports-root", help="业务分析报告目录覆盖（默认 07_接入记忆_Integrate_Memory/reports）")
+    parser.add_argument("--exports-root", help="下游交换包目录覆盖（默认 07_接入记忆_Integrate_Memory/exports）")
+    parser.add_argument("--max-age-days", type=int, default=400, help="健康检查：成功抓取最大允许年龄（默认400天）")
     parser.add_argument("--settings", help="settings.json 路径覆盖（默认读取配置目录）")
     parser.add_argument("--registry", help="source_registry.json 路径覆盖（默认读取配置目录）")
     return parser.parse_args(argv)
@@ -538,6 +591,12 @@ def main(argv: Optional[List[str]] = None) -> int:
         return cmd_discover(args)
     if args.run_all:
         return cmd_run_all(args)
+    if args.analyze:
+        return cmd_analyze(args)
+    if args.health:
+        return cmd_health(args)
+    if args.export:
+        return cmd_export(args)
     if args.query:
         return cmd_query(args)
     # 默认（含 --status 或无参数）都走状态报告

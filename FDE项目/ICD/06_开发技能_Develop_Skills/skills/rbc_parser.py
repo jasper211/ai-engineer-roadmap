@@ -76,6 +76,11 @@ _COMPANY_NAME_RE = re.compile(r"company\s+name\s*:?\s*([A-Za-z][^\n]*)", re.IGNO
 
 # 年份："31 December 2024"（大小写不敏感）
 _YEAR_RE = re.compile(r"31\s+december\s+(\d{4})", re.IGNORECASE)
+# 披露声明标题中的报告时点。正文常同时展示上一年度比较数，因此报告年度应优先取
+# 标题 "Disclosure Statement at 31 December YYYY"，而不能把所有比较期混成歧义。
+_DISCLOSURE_TITLE_YEAR_RE = re.compile(
+    r"disclosure\s+statement\s+at\s+31\s+december\s+(\d{4})", re.IGNORECASE
+)
 # 币种/标度："Unit: in HKD thousands"
 _UNIT_RE = re.compile(r"unit\s*:\s*in\s+([A-Za-z]{3})\s*(thousands|millions)?", re.IGNORECASE)
 # 百分比：整数或小数 + '%'
@@ -103,6 +108,14 @@ def _clean_legal_name(s) -> str:
     s = _norm_keep_case(s)
     s = re.sub(
         r"\s*\(\s*the\s+[\u201c\u201d'\"]?company[\u201c\u201d'\"]?\s*\)\s*$",
+        "",
+        s,
+        flags=re.IGNORECASE,
+    )
+    # 公司名称后另列的注册地说明不是法律名称的一部分。仅裁剪完整、明确的固定说明，
+    # 不裁剪名称内部的 "(Bermuda)" 等合法组成。
+    s = re.sub(
+        r"\s*\(\s*incorporated\s+in\s+bermuda\s+with\s+limited\s+liability\s*\)\s*$",
         "",
         s,
         flags=re.IGNORECASE,
@@ -209,6 +222,13 @@ def _extract_legal_entity_name(full_text: str) -> str:
             for j in range(i + 1, len(lines)):
                 cand = lines[j].strip()
                 if cand:
+                    # PDF 文字层可能把紧随名称的括号说明拆成两行；只在括号未闭合时
+                    # 拼接后续行，交由精确的注册地说明裁剪规则处理。
+                    k = j + 1
+                    while cand.count("(") > cand.count(")") and k < len(lines):
+                        if lines[k].strip():
+                            cand += " " + lines[k].strip()
+                        k += 1
                     return _clean_legal_name(cand)
             break
 
@@ -359,18 +379,30 @@ def extract_rbc(pages: List[Dict[str, Any]]) -> Dict[str, Any]:
     if SECTION_HEADING not in norm_text:
         raise RbcParseError("未找到 'Capital adequacy' 段落（结构漂移/非 RBC 披露）")
 
-    # 2) 报告年度：唯一且非空
-    years = set(_YEAR_RE.findall(full_text))
+    # 2) 报告年度：优先使用披露标题的唯一时点；正文可能含上一年比较数据。
+    # 标题缺失时才回退到全文唯一年度，保持旧版 PDF 的兼容性和 fail-closed 语义。
+    title_years = set(_DISCLOSURE_TITLE_YEAR_RE.findall(full_text))
     for tbl in all_tables:
         for row in tbl:
             for cell in row:
                 if cell:
-                    years.update(_YEAR_RE.findall(str(cell)))
-    if not years:
-        raise RbcParseError("报告年度缺失（未找到 '31 December YYYY'）")
-    if len(years) != 1:
-        raise RbcParseError(f"报告年度不一致或歧义: {sorted(years)}")
-    report_year = int(years.pop())
+                    title_years.update(_DISCLOSURE_TITLE_YEAR_RE.findall(str(cell)))
+    if len(title_years) > 1:
+        raise RbcParseError(f"披露标题报告年度不一致或歧义: {sorted(title_years)}")
+    if title_years:
+        report_year = int(next(iter(title_years)))
+    else:
+        years = set(_YEAR_RE.findall(full_text))
+        for tbl in all_tables:
+            for row in tbl:
+                for cell in row:
+                    if cell:
+                        years.update(_YEAR_RE.findall(str(cell)))
+        if not years:
+            raise RbcParseError("报告年度缺失（未找到 '31 December YYYY'）")
+        if len(years) != 1:
+            raise RbcParseError(f"报告年度不一致或歧义: {sorted(years)}")
+        report_year = int(years.pop())
 
     # 3) 法律主体原文（核心归属；缺失即 STRUCTURE_MISMATCH）
     legal_entity_name_raw = _extract_legal_entity_name(full_text)

@@ -50,11 +50,24 @@ python3 04_定义Agent_Define_Agent/agents/agent.py --query fulfillment --insure
 python3 04_定义Agent_Define_Agent/agents/agent.py --query rbc --insurer AIACO
 python3 04_定义Agent_Define_Agent/agents/agent.py --query coverage --disclosure-type fulfillment_ratio
 python3 04_定义Agent_Define_Agent/agents/agent.py --query evidence --run-id 18
+
+# 生成最新业务分析快照（JSON + Markdown；读取数据库时强制只读）
+python3 04_定义Agent_Define_Agent/agents/agent.py --analyze
+
+# 生产健康检查：0=HEALTHY，1=DEGRADED（已知覆盖/时效缺口），2=CRITICAL（完整性故障）
+python3 04_定义Agent_Define_Agent/agents/agent.py --health
 ```
 
 - 运行摘要默认写入 `07_接入记忆_Integrate_Memory/summaries/{run_id}.json` 与 `.md`（受控目录，run_id 唯一、不覆盖历史）；测试请用 `--summaries-root` 指向临时目录。
 - `coverage_status` 按险企 × 披露类型反映最新真实结果（`FULL/PARTIAL/MISSING/BLOCKED/UNVERIFIED`），`parse_result=PARTIAL`（值不可数值化）仍计为覆盖成功，不误判为覆盖缺失。
 - 查询连接强制使用 SQLite 只读模式；默认只返回每个自然业务键的最新成功快照版本，`--include-history` 才返回历史抓取版本。准确性口径见 `10_部署与运行_Deploy_and_Run/数据准确性保障.md`。
+- 业务分析默认写入 `07_接入记忆_Integrate_Memory/reports/ICD_业务分析_最新.json` 与 `.md`；分红中位数仅作披露数据分布概览，不支持跨产品直接排名。
+
+## 当前覆盖基线（2026-09-08）
+
+- 分红实现率：9 家、13,039 条；宏利因 Akamai 403 保持 `BLOCKED`。
+- RBC：8 个独立持牌法律主体；YFL 官方 PDF 无文字层而安全失败，CTF/CLO/MAN 尚无可核验的 2024 官方文件。
+- 已提供只读明细查询、证据反查、覆盖查询、全量运行摘要和业务分析 JSON/Markdown 输出。
 
 - 数据库默认写入 `07_接入记忆_Integrate_Memory/data/icd.db`（ICD 专属，与 `raw_data/` 快照隔离）。
 - 原始快照默认写入 `07_接入记忆_Integrate_Memory/raw_data/{insurer}/{source}/{hash}.{ext}`。
