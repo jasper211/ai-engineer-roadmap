@@ -52,6 +52,8 @@ def ensure_data_dir(db_path: Path) -> Path:
 # ---------------------------------------------------------------------------
 RAW_DATA_DIR = NUMBERED_DIR / "raw_data"   # 07_接入记忆_Integrate_Memory/raw_data/
 SUMMARIES_DIR = NUMBERED_DIR / "summaries"  # 07_接入记忆_Integrate_Memory/summaries/（运行摘要受控目录）
+REPORTS_DIR = NUMBERED_DIR / "reports"  # 只读数据生成的业务分析报告
+EXPORTS_DIR = NUMBERED_DIR / "exports"  # 面向下游的内容寻址交换包
 # insurer_code 只能由字母数字下划线连字符组成，杜绝路径穿越（如 "../" 或绝对路径）
 _INSURER_DIR_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]*$")
 # 快照扩展名白名单（对齐注册表 format 三值）
@@ -80,6 +82,20 @@ def resolve_summaries_root(summaries_root_override: Optional[str] = None) -> Pat
     if summaries_root_override:
         return Path(summaries_root_override).resolve()
     return SUMMARIES_DIR
+
+
+def resolve_reports_root(reports_root_override: Optional[str] = None) -> Path:
+    """解析业务分析报告目录：显式覆盖优先，否则回落默认受控目录。"""
+    if reports_root_override:
+        return Path(reports_root_override).resolve()
+    return REPORTS_DIR
+
+
+def resolve_exports_root(exports_root_override: Optional[str] = None) -> Path:
+    """解析下游交换包目录：显式覆盖优先，否则回落默认受控目录。"""
+    if exports_root_override:
+        return Path(exports_root_override).resolve()
+    return EXPORTS_DIR
 
 
 def snapshot_relpath(
