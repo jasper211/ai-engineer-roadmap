@@ -87,7 +87,7 @@ class HKIAClient:
         # 结构/值域校验
         validate_request(req, meta)
         # 年度支持校验（certified 层只支持 2022-2024）
-        if meta.source_layer == "annual":
+        if meta.source_layer in ("annual", "annual_market"):
             validate_supported_year(req.period, [2022, 2023, 2024])
         # 单位（硬失败）
         out_unit = units_mod.resolve_output_unit(meta.unit, req.output_unit)
