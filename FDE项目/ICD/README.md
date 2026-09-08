@@ -56,6 +56,12 @@ python3 04_定义Agent_Define_Agent/agents/agent.py --analyze
 
 # 生产健康检查：0=HEALTHY，1=DEGRADED（已知覆盖/时效缺口），2=CRITICAL（完整性故障）
 python3 04_定义Agent_Define_Agent/agents/agent.py --health
+
+# 生成面向 U020 等下游的内容寻址交换包；CRITICAL 状态禁止发布
+python3 04_定义Agent_Define_Agent/agents/agent.py --export
+
+# 下游在读入前独立验收包身份、哈希、字段、记录数与语义
+python3 04_定义Agent_Define_Agent/agents/agent.py --validate-export 07_接入记忆_Integrate_Memory/exports/<bundle_id>
 ```
 
 - 运行摘要默认写入 `07_接入记忆_Integrate_Memory/summaries/{run_id}.json` 与 `.md`（受控目录，run_id 唯一、不覆盖历史）；测试请用 `--summaries-root` 指向临时目录。
