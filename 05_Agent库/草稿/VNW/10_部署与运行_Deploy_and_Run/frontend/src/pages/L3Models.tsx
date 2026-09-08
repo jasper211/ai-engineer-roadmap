@@ -7,6 +7,7 @@ const scopeLabels: Record<string, string> = {
   blueprint: '流程蓝图', l4_delivery: 'L4与交付物', value_nodes: '价值节点',
   vn_l4_mapping: '价值节点-L4映射', l2_capability: 'L2能力', kpi: 'KPI',
   value_stream: '价值流', readiness: '建模准入', evidence: '证据注册表',
+  ob_knowledge: 'OB知识发布',
   l3_removed: 'L3已从源头移除',
 }
 
@@ -256,6 +257,25 @@ export default function L3Models() {
                 </div>
               </div>
 
+              {pendingUpdate.ob_collaboration && (
+                <div className="mt-4 rounded-xl border border-violet-200 bg-violet-50/80 p-4 text-xs">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <p className="font-semibold text-violet-900">OB协同发布 · {pendingUpdate.ob_collaboration.release_id || '批次未识别'}</p>
+                    <span className="rounded-full bg-white px-2 py-1 text-[10px] font-medium text-violet-700">待人工应用</span>
+                  </div>
+                  {pendingUpdate.ob_collaboration.status === 'INVALID' ? (
+                    <p className="mt-2 text-rose-700">协同包校验失败：{pendingUpdate.ob_collaboration.error || '未知错误'}。本次不得进入模型。</p>
+                  ) : (
+                    <div className="mt-2 grid gap-2 text-violet-900/80 md:grid-cols-4">
+                      <p><strong>{pendingUpdate.ob_collaboration.publishable_source_count ?? 0}</strong> 条正式候选</p>
+                      <p><strong>{pendingUpdate.ob_collaboration.context_only_source_count ?? 0}</strong> 条草稿已隔离</p>
+                      <p><strong>{pendingUpdate.ob_collaboration.unregistered_file_count ?? 0}</strong> 个文件待治理</p>
+                      <p>当前只展示影响，<strong>尚未改动SSOT</strong></p>
+                    </div>
+                  )}
+                </div>
+              )}
+
               {showUpdateDetails && pendingUpdate.changes.length > 0 && (
                 <div className="mt-4 space-y-3 border-t border-amber-200 pt-4">
                   <div className="grid gap-2 text-[11px] md:grid-cols-3">
@@ -268,7 +288,7 @@ export default function L3Models() {
                     return (
                       <article key={change.l3_code} className="rounded-xl border border-amber-200 bg-white p-4">
                         <div className="flex flex-wrap items-center justify-between gap-2">
-                          <div className="flex items-center gap-2"><span className="font-mono text-xs font-semibold text-blue-700">{change.l3_code}</span><span className="rounded-full bg-amber-100 px-2 py-1 text-[10px] font-medium text-amber-800">{meaning.status}</span></div>
+                          <div className="flex items-center gap-2"><span className="font-mono text-xs font-semibold text-blue-700">{change.l3_code}</span><span className="rounded-full bg-amber-100 px-2 py-1 text-[10px] font-medium text-amber-800">{meaning.status}</span>{change.origins?.includes('OB_COLLABORATION') && <span className="rounded-full bg-violet-100 px-2 py-1 text-[10px] font-medium text-violet-700">OB协同发布</span>}</div>
                           <span className="text-[10px] text-text-muted">影响面板：{change.affected_panels.join(' / ')}</span>
                         </div>
                         <div className="mt-3 grid gap-3 text-xs lg:grid-cols-3">

@@ -14,7 +14,7 @@ from skills.l3_model_builder import BlueprintIndex, L3ModelBuilder, d1d6_name_ke
 from skills.l3_analysis_contract import ANALYSIS_STANDARD_ID, analysis_input_hash, eligible_analysis_evidence_ids, validate_analysis_package  # noqa: E402
 from skills.l3_analysis_runner import L3AnalysisRunner, _json_from_text, clear_resolved_l4_missing, normalize_model_package  # noqa: E402
 from skills.blueprint_parser import parse_blueprint  # noqa: E402
-from skills.source_update import compare_snapshot_sets  # noqa: E402
+from skills.source_update import compare_snapshot_sets, merge_ob_collaboration_release  # noqa: E402
 from tools.evidence import EvidenceClass, EvidenceRecord, EvidenceStatus, SourceRef, authoritative  # noqa: E402
 from tools.obsidian_reader import note_is_eligible  # noqa: E402
 from tools.postgres_reader import BulkPostgresL3Reader, assert_read_only_sql  # noqa: E402
@@ -63,6 +63,35 @@ class L3ModelSystemTests(unittest.TestCase):
             self.assertEqual(report["changes"][0]["l3_code"], "L3-T")
             self.assertIn("l4_delivery", report["changes"][0]["changed_scopes"])
             self.assertIn("E", report["changes"][0]["affected_panels"])
+
+    def test_ob_collaboration_release_is_visible_but_not_applied(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            manifest = {
+                "release_id": "OB-TEST-001",
+                "published_at": "2026-09-08T00:00:00Z",
+                "sources": [{"source_id": "S1", "relative_path": "流程卡片/L3-T.md"}],
+            }
+            receipt = {
+                "release_id": "OB-TEST-001",
+                "processed_at": "2026-09-08T00:01:00Z",
+                "source_results": [{"source_id": "S1", "valid": True, "publishable": True}],
+                "affected_l3": [{"l3_code": "L3-T", "affected_panels": ["A", "F"], "reanalysis_candidate": True}],
+            }
+            (root / "manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+            (root / "receipt.json").write_text(json.dumps(receipt), encoding="utf-8")
+            base = {
+                "schema_version": "vnw.source-update.v1", "generated_at": "now",
+                "before_l3_count": 1, "after_l3_count": 1, "changed_l3_count": 0,
+                "reanalyze_l3_count": 0, "blocked_l3_count": 0, "changes": [],
+            }
+
+            report = merge_ob_collaboration_release(base, root / "receipt.json", root / "manifest.json")
+
+            self.assertEqual(report["changed_l3_count"], 1)
+            self.assertEqual(report["reanalyze_l3_count"], 1)
+            self.assertEqual(report["changes"][0]["origins"], ["OB_COLLABORATION"])
+            self.assertEqual(report["ob_collaboration"]["application_mode"], "MANUAL_REVIEW_REQUIRED")
 
     def test_model_analysis_package_takes_precedence_over_reviewed_fallback(self):
         with tempfile.TemporaryDirectory() as tmp:

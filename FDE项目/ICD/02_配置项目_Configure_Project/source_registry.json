@@ -150,15 +150,15 @@
     {
       "insurer_code": "MAN",
       "disclosure_type": "fulfillment_ratio",
-      "entry_url": "https://www.manulife.com.hk/zh-hk/individual.html",
+      "entry_url": "https://www.manulife.com.hk/en/individual/products/understanding-your-participating-policy/fulfillment-ratio.html",
       "format": null,
       "access_status": "BLOCKED",
-      "parser_hint": "全站 HTTP 403，server: AkamaiGHost，Reference: errors.edgesuite.net——域名级 Akamai 机器人防护，非路径错误。本次不引入 Selenium/Playwright，维持 BLOCKED。",
+      "parser_hint": "官方履行率页、tools.manulife.com.hk 数据组件/API 及官方静态 PDF 均返回 Akamai 403；维持 BLOCKED，不以搜索摘要或历史归档数据代替当前官方原始数据。",
       "requires_browser": true,
-      "evidence_basis": "需求定义§7.2 curl实测（确认被拦截）",
+      "evidence_basis": "T014 2026-09-07 实测：官方主页面、fulfillment-ratio.pdf、前端脚本及 ss1.php POST 数据接口均为 HTTP 403；搜索索引仅用于确认官方页面存在，不入库",
       "allows_empty": false,
-      "last_verified_at": "2026-09-03",
-      "url_version": 1
+      "last_verified_at": "2026-09-07",
+      "url_version": 2
     },
     {
       "insurer_code": "AIA",
@@ -189,41 +189,41 @@
     {
       "insurer_code": "AXA",
       "disclosure_type": "rbc",
-      "entry_url": null,
-      "format": null,
-      "access_status": "UNVERIFIED",
-      "parser_hint": "未实测 RBC URL，不得猜测。需按 '险企官网 + investor-relations/regulatory-disclosures/financial-information 路径 + 关键词 Disclosure Statement' 逐一搜索确认。",
+      "entry_url": "https://hk-axa-web-2024.cdn.prismic.io/hk-axa-web-2024/aRti67pReVYa4j_G_Disclosure_Statement_Template_for_YE2024_Eng_Sep2025-postupdate--ACRI2024.12v7.pdf",
+      "format": "pdf",
+      "access_status": "OPEN",
+      "parser_hint": "AXA 官方 /en/cri 页面链接的 Prismic CDN 2024 RBC PDF。法律主体必须为 AXA China Region Insurance Company Limited；204%；金额单位 in HKD thousands。",
       "requires_browser": false,
-      "evidence_basis": "需求定义§7.3：其余8家未测（法定应披露，URL待确认）",
+      "evidence_basis": "T017 2026-09-07 AXA 官方 /en/cri 页面 2024 链接 + PDF HTTP 200；法律主体、204%、Capital base 10,636,247、PCA 5,189,682 独立提取",
       "allows_empty": false,
-      "last_verified_at": null,
-      "url_version": 1
+      "last_verified_at": "2026-09-07",
+      "url_version": 2
     },
     {
       "insurer_code": "YFL",
       "disclosure_type": "rbc",
-      "entry_url": null,
-      "format": null,
-      "access_status": "UNVERIFIED",
-      "parser_hint": "未实测 RBC URL，不得猜测。需按 '险企官网 + investor-relations/regulatory-disclosures/financial-information 路径 + 关键词 Disclosure Statement' 逐一搜索确认。",
+      "entry_url": "https://www.yflife.com/sites/default/files/FinancialInformation/Disclosure_Statement_YE2024_YF%20Life%20%28Eng%29.pdf",
+      "format": "pdf",
+      "access_status": "OPEN",
+      "parser_hint": "YF Life 官网 2024 RBC PDF；HTTP 可达但本地 pdfplumber 检测为无文字层，按 PDF_NO_TEXT 安全失败，不 OCR 猜数。",
       "requires_browser": false,
-      "evidence_basis": "需求定义§7.3：其余8家未测（法定应披露，URL待确认）",
+      "evidence_basis": "T017 2026-09-07 官方 PDF HTTP 200，868845 bytes；本地文字层为空，待找到官方可提取版本或明确批准受控 OCR",
       "allows_empty": false,
-      "last_verified_at": null,
-      "url_version": 1
+      "last_verified_at": "2026-09-07",
+      "url_version": 2
     },
     {
       "insurer_code": "SUN",
       "disclosure_type": "rbc",
-      "entry_url": null,
-      "format": null,
-      "access_status": "UNVERIFIED",
-      "parser_hint": "未实测 RBC URL，不得猜测。需按 '险企官网 + investor-relations/regulatory-disclosures/financial-information 路径 + 关键词 Disclosure Statement' 逐一搜索确认。",
+      "entry_url": "https://www.sunlife.com.hk/content/dam/sunlife/regional/hong-kong/documents/SLHK-Disclosure-Statement-YE2024-Eng.pdf",
+      "format": "pdf",
+      "access_status": "OPEN",
+      "parser_hint": "Sun Life 香港官方 2024 RBC PDF。法律主体必须为 Sun Life Hong Kong Limited；229%；金额单位 in HKD thousands。",
       "requires_browser": false,
-      "evidence_basis": "需求定义§7.3：其余8家未测（法定应披露，URL待确认）",
+      "evidence_basis": "T017 2026-09-07 官方 PDF HTTP 200；法律主体、229%、Capital base 20,981,085、PCA 9,165,514 独立提取",
       "allows_empty": false,
-      "last_verified_at": null,
-      "url_version": 1
+      "last_verified_at": "2026-09-07",
+      "url_version": 2
     },
     {
       "insurer_code": "CTF",
@@ -301,6 +301,32 @@
       "evidence_basis": "T008 真实索引发现 + PDF 抓取（HTTP 200，%PDF-1.6）+ 文字层 'Authorised insurer's name' = AIA Company Limited 核实；304% 由真实 PDF 独立提取（非写死）",
       "allows_empty": false,
       "last_verified_at": "2026-09-03",
+      "url_version": 1
+    },
+    {
+      "insurer_code": "AIA",
+      "disclosure_type": "rbc",
+      "entry_url": "https://www.aia.com/content/dam/group-wise/en/docs/investor-relations/2025/AIAI%20Disclosure%20Statement%202024_Eng.pdf",
+      "format": "pdf",
+      "access_status": "OPEN",
+      "parser_hint": "AIA International Limited 2024 英文 RBC Disclosure Statement 最终 PDF，由同码官方监管披露索引 source_id=12 发现。文件内 Authorised insurer's name 必须精确为 AIA International Limited；Capital adequacy 比率 212%，金额单位 in HKD thousands。",
+      "requires_browser": false,
+      "evidence_basis": "T016 2026-09-07 官方索引定位 + PDF HTTP 200；文件内法律主体、212%、Capital base 183,772,393、PCA 86,668,623 独立提取",
+      "allows_empty": false,
+      "last_verified_at": "2026-09-07",
+      "url_version": 1
+    },
+    {
+      "insurer_code": "PRU",
+      "disclosure_type": "rbc",
+      "entry_url": "https://www.prudential.com.hk/content/dam/prudential-phkl/pdf/en/regulatory-information/PHKL-RBC-public-disclosure-statement-2024.pdf",
+      "format": "pdf",
+      "access_status": "OPEN",
+      "parser_hint": "Prudential Hong Kong Limited 寿险主体 2024 RBC Disclosure Statement。必须与 PRUGI 一般保险主体分离；文件内 Authorized insurer's name 必须精确为 Prudential Hong Kong Limited；Capital adequacy 比率 239%，金额单位 in HKD thousands。",
+      "requires_browser": false,
+      "evidence_basis": "T016 2026-09-07 保诚官方监管披露页定位 + PDF HTTP 200；文件内法律主体、239%、Capital base 113,845,439、PCA 47,664,502 独立提取",
+      "allows_empty": false,
+      "last_verified_at": "2026-09-07",
       "url_version": 1
     }
   ]

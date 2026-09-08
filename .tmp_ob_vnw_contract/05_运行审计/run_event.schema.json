@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://jasper.local/ob-vnw/run_event.schema.json",
+  "title": "OB-VNW运行审计事件",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "event_id", "release_id", "actor", "mode", "started_at", "finished_at", "exit_code", "manifest_sha256", "receipt_path"],
+  "properties": {
+    "schema_version": {"const": "ob-vnw.run-event.v1"},
+    "event_id": {"type": "string", "minLength": 1},
+    "release_id": {"type": "string", "minLength": 1},
+    "actor": {"enum": ["OB_AGENT", "VNW_AGENT", "HUMAN"]},
+    "mode": {"enum": ["PUBLISH", "READ_ONLY_VALIDATE", "APPLY", "ANALYZE", "DEPLOY"]},
+    "started_at": {"type": "string", "format": "date-time"},
+    "finished_at": {"type": "string", "format": "date-time"},
+    "exit_code": {"type": "integer"},
+    "manifest_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "receipt_path": {"type": "string"},
+    "note": {"type": "string"}
+  }
+}

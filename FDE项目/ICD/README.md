@@ -44,10 +44,17 @@ python3 04_定义Agent_Define_Agent/agents/agent.py --run-all
 
 # 全量运行 · 确定性模式：跳过抓取，基于既有快照完成解析/汇总（不联网）
 python3 04_定义Agent_Define_Agent/agents/agent.py --run-all --no-network
+
+# 只读查询：结果包含官方URL、抓取时间、SHA-256、快照路径和官网原始值
+python3 04_定义Agent_Define_Agent/agents/agent.py --query fulfillment --insurer PRU --report-year 2025 --limit 20
+python3 04_定义Agent_Define_Agent/agents/agent.py --query rbc --insurer AIACO
+python3 04_定义Agent_Define_Agent/agents/agent.py --query coverage --disclosure-type fulfillment_ratio
+python3 04_定义Agent_Define_Agent/agents/agent.py --query evidence --run-id 18
 ```
 
 - 运行摘要默认写入 `07_接入记忆_Integrate_Memory/summaries/{run_id}.json` 与 `.md`（受控目录，run_id 唯一、不覆盖历史）；测试请用 `--summaries-root` 指向临时目录。
 - `coverage_status` 按险企 × 披露类型反映最新真实结果（`FULL/PARTIAL/MISSING/BLOCKED/UNVERIFIED`），`parse_result=PARTIAL`（值不可数值化）仍计为覆盖成功，不误判为覆盖缺失。
+- 查询连接强制使用 SQLite 只读模式；默认只返回每个自然业务键的最新成功快照版本，`--include-history` 才返回历史抓取版本。准确性口径见 `10_部署与运行_Deploy_and_Run/数据准确性保障.md`。
 
 - 数据库默认写入 `07_接入记忆_Integrate_Memory/data/icd.db`（ICD 专属，与 `raw_data/` 快照隔离）。
 - 原始快照默认写入 `07_接入记忆_Integrate_Memory/raw_data/{insurer}/{source}/{hash}.{ext}`。

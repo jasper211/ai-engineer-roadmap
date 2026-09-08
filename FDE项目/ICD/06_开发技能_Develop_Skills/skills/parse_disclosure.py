@@ -30,15 +30,13 @@ _SNAPSHOT_PREFIX = "raw_data"
 # 当前已接入解析的支持矩阵（与 parse_one_source 的分流一致；供 run_all 分类复用，
 # 避免编排层与解析层对「哪些源已接入」的判断发生漂移）。
 _SUPPORTED_RATIO_HTML_INSURERS = ("CTF", "CLO", "SUN", "BOC", "YFL", "AXA", "FWD", "PRU")
-_SUPPORTED_RBC_PDF_INSURERS = ("PRUGI", "AIACO")
 
 
 def supports_parse(src: dict) -> bool:
     """判断某数据源是否已接入解析（True = parse_one_source 会走真实解析分支）。
 
     已接入：json（任意险企，当前仅 AIA）；html 且 insurer ∈ {CTF, CLO, SUN, BOC}；
-    pdf 且 insurer ∈ {PRUGI, AIACO}（RBC）。其余（AXA/YFL/FWD 的
-    html、PRU 履行率 pdf 等）→ False（parse_one_source 返回 UNSUPPORTED_FORMAT）。
+    rbc+pdf 使用通用 RBC 解析器并强制核对法律主体。其他未接入组合返回 False。
     注意：rbc 索引源（html）不在此支持矩阵内——它走「发现」而非「解析」。
     """
     fmt = src.get("format")
@@ -48,7 +46,7 @@ def supports_parse(src: dict) -> bool:
     if fmt == "html":
         return insurer in _SUPPORTED_RATIO_HTML_INSURERS
     if fmt == "pdf":
-        return insurer in _SUPPORTED_RBC_PDF_INSURERS
+        return src.get("disclosure_type") == "rbc"
     return False
 
 
@@ -144,9 +142,9 @@ def parse_one_source(conn, src: dict, raw_data_root) -> dict:
         base["message"] = f"快照读取失败: {type(e).__name__}: {e}"
         return base
 
-    # 3) 按格式 + 险企分流解析（T004 AIA JSON / T005 CTF HTML / T006 CLO HTML /
-    #    T007 PRUGI RBC PDF / T008 AIACO RBC PDF，后两者共用通用 rbc_parser）
-    is_rbc = fmt == "pdf" and insurer in ("PRUGI", "AIACO")
+    # 3) 按格式 + 险企分流解析。所有 rbc+pdf 来源共用通用解析器；
+    #    法律主体在写库前必须与 insurer.name_en 精确一致。
+    is_rbc = fmt == "pdf" and src.get("disclosure_type") == "rbc"
     try:
         if fmt == "json":
             parsed = aia_json_parser.parse_aia_json(body)
@@ -212,6 +210,25 @@ def parse_one_source(conn, src: dict, raw_data_root) -> dict:
     base["report_year"] = parsed["report_year"]
     base["product_count"] = parsed["product_count"]
     base["value_unparseable"] = value_unparseable
+
+    if is_rbc and records:
+        expected = conn.execute(
+            "SELECT name_en FROM insurer WHERE insurer_code=?", (insurer,)
+        ).fetchone()
+        expected_name = expected[0] if expected else None
+        actual_names = {r.get("legal_entity_name_raw") for r in records}
+        if expected_name is None or actual_names != {expected_name}:
+            message = (
+                f"RBC 法律主体不匹配：insurer_code={insurer}, "
+                f"expected={expected_name!r}, actual={sorted(str(x) for x in actual_names)!r}"
+            )
+            base["result"] = "STRUCTURE_MISMATCH"
+            base["parse_status"] = "STRUCTURE_MISMATCH"
+            base["error_code"] = "STRUCTURE_MISMATCH"
+            base["message"] = message
+            return _record_parse_failure(
+                conn, run_id, base, "STRUCTURE_MISMATCH", "STRUCTURE_MISMATCH", message
+            )
 
     # 第三项决策补充：只要存在无法数值化但保留原文的观测项，parse_result 写 PARTIAL
     # + VALUE_UNPARSEABLE（软失败），记录数仍包含这些原始观测项，不静默丢弃。

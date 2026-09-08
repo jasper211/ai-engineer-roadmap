@@ -518,10 +518,21 @@ def main() -> int:
             shutil.rmtree(snapshot_dir)
         results = builder.build_and_write(codes, snapshot_dir)
         if source_update_mode:
-            from skills.source_update import compare_snapshot_sets, write_update_report
+            from skills.source_update import compare_snapshot_sets, merge_ob_collaboration_release, write_update_report
 
             current_dir = AGENT_ROOT / "10_部署与运行_Deploy_and_Run/frontend/public/data/model_snapshots"
             report = compare_snapshot_sets(current_dir, snapshot_dir)
+            if args.check_source_updates:
+                collaboration_root = Path(
+                    "/Users/a112233/Desktop/Jasper工作文档（不含EA项目）/"
+                    "项目工作区/OB-VNW协同工作区"
+                )
+                report = merge_ob_collaboration_release(
+                    report,
+                    collaboration_root / "03_VNW回执/latest_receipt.json",
+                    collaboration_root / "02_OB发布/input_manifest.json",
+                    collaboration_root / "02_OB发布/unregistered_files.json",
+                )
             index_path = snapshot_dir / "index.json"
             candidate_index = json.loads(index_path.read_text(encoding="utf-8"))
             candidate_index["source_update_summary"] = {

@@ -77,6 +77,18 @@ export interface SourceUpdateReport {
   reanalyze_l3_count: number
   blocked_l3_count: number
   applied: boolean
+  ob_collaboration?: {
+    status: 'READY_FOR_REVIEW' | 'INVALID'
+    release_id?: string
+    published_at?: string
+    processed_at?: string
+    valid_source_count?: number
+    publishable_source_count?: number
+    context_only_source_count?: number
+    unregistered_file_count?: number
+    application_mode: 'MANUAL_REVIEW_REQUIRED'
+    error?: string
+  }
   changes: {
     l3_code: string
     status: 'ADDED' | 'CHANGED' | 'REMOVED'
@@ -87,6 +99,8 @@ export interface SourceUpdateReport {
     current_analysis_input_hash: string
     added_source_objects: string[]
     removed_source_objects: string[]
+    origins?: ('SSOT_SNAPSHOT' | 'OB_COLLABORATION')[]
+    release_id?: string
   }[]
 }
 
