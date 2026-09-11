@@ -49,6 +49,10 @@ def _load_watched_projects() -> List[dict]:
     return data.get("projects", [])
 
 
+def _is_project_enabled(project: dict) -> bool:
+    return project.get("enabled", True) is not False
+
+
 def _save_watched_projects(projects: List[dict]) -> None:
     """写回daily_scan_projects.json——保留原有的_meta字段（不重新生成，避免
     人工维护的说明文字被API写操作覆盖掉），只替换projects数组本身。"""
@@ -95,7 +99,7 @@ def add_watched_project(name: str, project_root: str, exclude_dirs: List[str] = 
     if any(p.get("name") == name for p in projects):
         return {"success": False, "error": f"项目名称已存在: {name}"}
 
-    entry = {"name": name, "project_root": str(root)}
+    entry = {"name": name, "project_root": str(root), "enabled": True}
     if exclude_dirs:
         entry["exclude_dirs"] = exclude_dirs
     projects.append(entry)
@@ -119,6 +123,17 @@ def remove_watched_project(name: str) -> dict:
         return {"success": False, "error": f"未找到项目: {name}"}
     _save_watched_projects(remaining)
     return {"success": True}
+
+
+def set_watched_project_enabled(name: str, enabled: bool) -> dict:
+    projects = _load_watched_projects()
+    for project in projects:
+        if project.get("name") != name:
+            continue
+        project["enabled"] = bool(enabled)
+        _save_watched_projects(projects)
+        return {"success": True, "enabled": bool(enabled)}
+    return {"success": False, "error": f"未找到项目: {name}"}
 
 
 TEXT_PREVIEW_EXTENSIONS = {
@@ -191,7 +206,7 @@ def list_projects() -> List[dict]:
         name = p.get("name", "")
         root = Path(p.get("project_root", ""))
         entry = {"name": name, "project_root": str(root), "exists": root.exists(),
-                  "last_daily_scan": None}
+                 "enabled": _is_project_enabled(p), "last_daily_scan": None}
         if root.exists():
             workspace = ws.get_project_workspace(root)
             state = ws.load_state(workspace)
@@ -203,7 +218,7 @@ def list_projects() -> List[dict]:
 def aggregate_tasks(project_filter: str = "all") -> dict:
     """跨项目聚合 list_tasks_from_state() 的结果——project_filter="all" 时
     合并所有已配置项目，否则只看指定项目（按 name 精确匹配）。"""
-    projects = _load_watched_projects()
+    projects = [p for p in _load_watched_projects() if _is_project_enabled(p)]
     if project_filter != "all":
         projects = [p for p in projects if p.get("name") == project_filter]
 
@@ -473,7 +488,7 @@ def activity_feed(project_filter: str = "all") -> List[dict]:
     前端按project_name分组展示，保留"这是哪个项目的动态"这层信息）。
     从没跑过daily-scan的项目（latest_report_summary返回None）直接跳过，
     不在列表里出现空占位。"""
-    projects = _load_watched_projects()
+    projects = [p for p in _load_watched_projects() if _is_project_enabled(p)]
     if project_filter != "all":
         projects = [p for p in projects if p.get("name") == project_filter]
 
@@ -498,7 +513,7 @@ def activity_feed_range(project_filter: str = "all", days: int = 1) -> List[dict
     """
     days = days if days in (1, 3, 7, 30) else 1
     cutoff = datetime.now() - timedelta(days=days)
-    projects = _load_watched_projects()
+    projects = [p for p in _load_watched_projects() if _is_project_enabled(p)]
     if project_filter != "all":
         projects = [p for p in projects if p.get("name") == project_filter]
 
@@ -630,6 +645,10 @@ def _build_cross_project_relations(projects: List[dict]) -> List[dict]:
 def command_center(days: int = 1) -> dict:
     """个人指挥中心SSOT：三项目最新成功巡检事实 + 下游任务 + 跨项目关系线索。"""
     days = days if days in (1, 3, 7, 30) else 1
+    projects_config = _load_watched_projects()
+    enabled_projects = {p.get("name", ""): p for p in projects_config if _is_project_enabled(p)}
+    disabled_projects = [p for p in projects_config if not _is_project_enabled(p)]
+
     feed = activity_feed_range("all", days)
     task_buckets = aggregate_tasks("all")
     open_tasks = task_buckets["new"] + task_buckets["aging"]
@@ -650,6 +669,7 @@ def command_center(days: int = 1) -> dict:
     project_entries = []
     for entry in feed:
         name = entry["project_name"]
+        project_enabled = name in enabled_projects
         pinned_files = _pnl_jasper_taskbooks() if name == PNL_PROJECT_NAME else []
         pinned_paths = {item["file"] for item in pinned_files}
         changes = []
@@ -674,6 +694,30 @@ def command_center(days: int = 1) -> dict:
             "related_tasks": project_tasks,
             "total_changes": entry.get("files_added", 0) + entry.get("files_changed", 0)
                              + entry.get("files_removed", 0),
+            "enabled": project_enabled,
+        })
+
+    # 停用项目也保留在指挥中心项目列表，避免从“已保存项目”里消失；默认不参与任务/关系分析。
+    for project in disabled_projects:
+        name = project.get("name", "")
+        if name in {item.get("project_name") for item in project_entries}:
+            continue
+        role = PROJECT_ROLES.get(name, {"role": "other", "label": "观察项目", "question": "该项目已暂停巡检，可随时恢复后重启任务追踪。"})
+        project_entries.append({
+            "project_name": name,
+            "generated_at": "",
+            "files_added": 0,
+            "files_changed": 0,
+            "files_removed": 0,
+            "changes": [],
+            "relationships": [],
+            "resolved_tasks": [],
+            "skipped_llm_call": False,
+            "total_changes": 0,
+            "pinned_files": [],
+            "related_tasks": [],
+            "enabled": False,
+            **role,
         })
     role_order = {"core": 0, "finance": 1, "lab": 2, "case": 3, "other": 4}
     project_entries.sort(key=lambda p: role_order.get(p["role"], 9))
@@ -751,7 +795,7 @@ def execution_history(project_filter: str = "all", limit: int = 30) -> List[dict
     每次真实执行/dry-run都会追加一条），按 timestamp 降序、只取最近 limit 条。
     这是纯读取，不新增任何字段，跟 state.json 里已经存在的结构完全一致，
     只是加了 project_name 标注来源、并做跨项目合并排序。"""
-    projects = _load_watched_projects()
+    projects = [p for p in _load_watched_projects() if _is_project_enabled(p)]
     if project_filter != "all":
         projects = [p for p in projects if p.get("name") == project_filter]
 

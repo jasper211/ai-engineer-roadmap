@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react'
-import { Plus, Trash2, Loader2 } from 'lucide-react'
-import { fetchWatchedProjects, addWatchedProject, removeWatchedProject, type WatchedProjectConfig } from '../lib/api'
+import { CheckCircle2, Plus, Loader2 } from 'lucide-react'
+import {
+  addWatchedProject, fetchWatchedProjects,
+  setWatchedProjectEnabled,
+  type WatchedProjectConfig,
+} from '../lib/api'
 
 // 新增项目/移除项目——之前只能手改daily_scan_projects.json再手动跑
 // --seed-baseline，这里把两步合成一次表单提交：后端add_watched_project()
@@ -11,7 +15,7 @@ export function WatchedProjectManager({ onChanged }: { onChanged?: () => void })
   const [root, setRoot] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [removingName, setRemovingName] = useState<string | null>(null)
+  const [updatingName, setUpdatingName] = useState<string | null>(null)
 
   const reload = () => fetchWatchedProjects().then(setProjects)
 
@@ -38,14 +42,14 @@ export function WatchedProjectManager({ onChanged }: { onChanged?: () => void })
     }
   }
 
-  async function handleRemove(projectName: string) {
-    setRemovingName(projectName)
+  async function handleToggle(projectName: string, enabled: boolean) {
+    setUpdatingName(projectName)
     try {
-      await removeWatchedProject(projectName)
+      await setWatchedProjectEnabled(projectName, enabled)
       await reload()
       onChanged?.()
     } finally {
-      setRemovingName(null)
+      setUpdatingName(null)
     }
   }
 
@@ -56,21 +60,22 @@ export function WatchedProjectManager({ onChanged }: { onChanged?: () => void })
       <div className="space-y-2 mb-3">
         {projects.map((p) => (
           <div key={p.name} className="rounded-radius-md border border-border-default bg-bg-elevated p-3 flex items-center gap-3">
+            <button
+              onClick={() => handleToggle(p.name, !p.enabled)}
+              disabled={updatingName === p.name}
+              className={`rounded-md px-2 py-1 text-xs ${p.enabled ? 'text-text-secondary hover:text-accent-warning' : 'text-accent-success'}`}
+              aria-label={`${p.enabled ? '停用' : '启用'} ${p.name}`}
+            >
+              {updatingName === p.name ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle2 size={14} />}
+            </button>
             <div className="flex-1 min-w-0">
               <div className="text-sm font-medium">{p.name}</div>
               <div className="text-xs text-text-muted truncate">{p.project_root}</div>
+              <div className="text-xs text-text-muted mt-0.5">{p.enabled ? '启用中：纳入巡检与推送' : '已暂停：仅保留配置不巡检'}</div>
               {p.exclude_dirs && p.exclude_dirs.length > 0 && (
                 <div className="text-xs text-text-muted mt-0.5">排除: {p.exclude_dirs.join('、')}</div>
               )}
             </div>
-            <button
-              onClick={() => handleRemove(p.name)}
-              disabled={removingName === p.name}
-              aria-label={`移除 ${p.name}`}
-              className="text-text-muted hover:text-accent-danger disabled:opacity-50"
-            >
-              {removingName === p.name ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
-            </button>
           </div>
         ))}
         {projects.length === 0 && <p className="text-sm text-text-muted">还没有配置任何巡检项目</p>}

@@ -82,6 +82,7 @@ export interface PinnedFile {
 export interface ProjectInfo {
   name: string
   project_root: string
+  enabled: boolean
   exists: boolean
   last_daily_scan: { timestamp: string; report_path: string } | null
 }
@@ -161,6 +162,7 @@ export interface CommandProject extends ActivityFeedEntry {
   label: string
   question: string
   total_changes: number
+  enabled: boolean
   related_tasks: Task[]
   pinned_files: PinnedFile[]
 }
@@ -245,6 +247,7 @@ export interface RelatedDocumentsResponse {
 export interface WatchedProjectConfig {
   name: string
   project_root: string
+  enabled: boolean
   exclude_dirs?: string[]
   exclude_note?: string
 }
@@ -322,6 +325,15 @@ export async function addWatchedProject(
 
 export async function removeWatchedProject(name: string): Promise<{ success: boolean; error?: string }> {
   const resp = await fetch(`/api/watched-projects/${encodeURIComponent(name)}`, { method: 'DELETE' })
+  return resp.json()
+}
+
+export async function setWatchedProjectEnabled(name: string, enabled: boolean): Promise<{ success: boolean; enabled?: boolean; error?: string }> {
+  const resp = await fetch(`/api/watched-projects/${encodeURIComponent(name)}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ enabled }),
+  })
   return resp.json()
 }
 

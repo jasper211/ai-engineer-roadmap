@@ -85,7 +85,7 @@ class Handler(BaseHTTPRequestHandler):
         # 预检请求兜底（同上，单用户本地工具场景下大概率用不到，但补上不费事）。
         self.send_response(204)
         self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS")
         self.send_header("Access-Control-Allow-Headers", "Content-Type")
         self.end_headers()
 
@@ -231,6 +231,24 @@ class Handler(BaseHTTPRequestHandler):
         name = unquote(match.group(1))
         result = views.remove_watched_project(name)
         self._send_json(200 if result.get("success") else 404, result)
+
+    def do_PATCH(self):
+        parsed = urlparse(self.path)
+        match = WATCHED_PROJECT_PATH.match(parsed.path)
+        if not match:
+            self._send_json(404, {"error": f"未知接口: {parsed.path}"})
+            return
+        name = unquote(match.group(1))
+        try:
+            body = self._read_json_body()
+        except json.JSONDecodeError:
+            self._send_json(400, {"error": "请求体不是合法JSON"})
+            return
+        if "enabled" not in body:
+            self._send_json(400, {"error": "请求体缺少 enabled 字段"})
+            return
+        result = views.set_watched_project_enabled(name, body.get("enabled"))
+        self._send_json(200 if result.get("success") else 400, result)
 
 
 def main():
