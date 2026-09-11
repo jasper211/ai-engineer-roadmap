@@ -213,9 +213,9 @@ export function TaskBoard() {
     fetchCommandCenter(rangeDays).then(response => {
       setData(response)
       setActiveProject(prev => {
-        if (prev && response.projects.some(project => project.project_name === prev)) return prev
+        if (prev && response.projects.some(project => project.project_name === prev && project.enabled)) return prev
         const ordered = [...response.projects].sort((a, b) => (ROLE_ORDER[a.role] ?? 9) - (ROLE_ORDER[b.role] ?? 9))
-        return ordered[0]?.project_name ?? null
+        return ordered.find(project => project.enabled)?.project_name ?? ordered[0]?.project_name ?? null
       })
     }).catch(e => setError(String(e)))
   }, [rangeDays])
@@ -237,7 +237,7 @@ export function TaskBoard() {
     if (!current) return null
     const query = fileQuery.trim().toLocaleLowerCase()
     const changes = current.changes.filter(change => {
-      const typeMatch = changeType === 'all' || change.change_type === changeType
+        const typeMatch = changeType === 'all' || change.change_type === changeType
       const memberMatch = member === 'all' || peopleFromWho(change.who).includes(member)
       const fileMatch = matchesFileQuery(change, query)
       return typeMatch && memberMatch && fileMatch
@@ -270,10 +270,14 @@ export function TaskBoard() {
       <div className="flex flex-wrap gap-2">
         {[...data.projects].sort((a, b) => (ROLE_ORDER[a.role] ?? 9) - (ROLE_ORDER[b.role] ?? 9)).map(project => {
           const importantCount = project.changes.filter(change => change.important_to_me).length
-          const isActive = project.project_name === activeProject
+        const isActive = project.project_name === activeProject
+        const isDisabled = !project.enabled
           return (
-            <button key={project.project_name} onClick={() => setActiveProject(project.project_name)}
-              className={`flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm transition ${isActive ? 'border-accent-primary bg-accent-primary/10 text-text-primary' : 'border-border-default bg-bg-elevated text-text-secondary hover:text-text-primary'}`}>
+            <button key={project.project_name}
+              disabled={isDisabled}
+              onClick={() => setActiveProject(project.project_name)}
+              title={isDisabled ? '该项目已暂停，点击前先在项目管理中启用' : ''}
+              className={`flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm transition ${isActive ? 'border-accent-primary bg-accent-primary/10 text-text-primary' : 'border-border-default bg-bg-elevated'} ${isDisabled ? 'cursor-not-allowed opacity-60' : 'text-text-secondary hover:text-text-primary'}`}>
               <FolderKanban size={15}/>
               <span className="font-medium">{project.project_name}</span>
               <span className="rounded bg-bg-surface px-1.5 py-0.5 font-mono text-[10px] text-text-muted">{project.total_changes}</span>

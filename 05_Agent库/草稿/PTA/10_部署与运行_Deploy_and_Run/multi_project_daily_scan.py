@@ -50,6 +50,11 @@ def load_projects(config_path: Path) -> list:
     return data.get("projects", [])
 
 
+def project_enabled(project: dict) -> bool:
+    # enabled 字段默认按 True 处理，避免未配置项目历史记录导致误关断。
+    return project.get("enabled", True) is not False
+
+
 def scan_one(project: dict, notify: bool, force: bool) -> bool:
     name = project.get("name", project.get("project_root", "?"))
     root = project.get("project_root")
@@ -82,19 +87,27 @@ def main():
 
     config_path = Path(args.config) if args.config else DEFAULT_CONFIG_PATH
     projects = load_projects(config_path)
+    enabled_projects = [p for p in projects if project_enabled(p)]
+    disabled_projects = [p.get("name", p.get("project_root", "?")) for p in projects if not project_enabled(p)]
+
+    if not enabled_projects:
+        print("[提示] 当前没有配置为启用的项目（enabled=true），没有执行任务。")
+        if disabled_projects:
+            print(f"[提示] 已保留但暂停扫描的项目：{', '.join(disabled_projects)}")
+        return
 
     if not projects:
         print("[提示] 项目清单为空，无事可做。")
         return
 
-    results = {p.get("name", p.get("project_root", "?")): scan_one(p, args.notify, args.force) for p in projects}
+    results = {p.get("name", p.get("project_root", "?")): scan_one(p, args.notify, args.force) for p in enabled_projects}
 
     # 三个项目各自巡检完成后，再做一次跨项目关系分析。页面打开时只读结果，
     # 不会因为刷新驾驶舱产生新的API费用。
     api_key = os.environ.get("DEEPSEEK_API_KEY", "")
     if api_key:
         reports = []
-        for project in projects:
+        for project in enabled_projects:
             root = Path(project.get("project_root", ""))
             if not root.exists():
                 continue
@@ -112,7 +125,9 @@ def main():
     else:
         print("[提示] 未设置DEEPSEEK_API_KEY，跳过跨项目关系分析")
 
-    print(f"\n{'=' * 60}\n多项目巡检完成：{sum(results.values())}/{len(results)} 个项目成功\n{'=' * 60}")
+    print(f"\n{'=' * 60}\n多项目巡检完成：{sum(results.values())}/{len(results)} 个启用项目成功\n{'=' * 60}")
+    if disabled_projects:
+        print(f"[跳过] 已暂停项目：{', '.join(disabled_projects)}")
     for name, ok in results.items():
         print(f"  {'✅' if ok else '❌'} {name}")
 
