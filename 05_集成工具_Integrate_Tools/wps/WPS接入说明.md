@@ -16,18 +16,43 @@
 创建后记下 **APPID（AK）** 与 **APPKEY（SK）**。
 
 ### 2. 申请API权限（scope）
-按你实际要读的表型勾选，建议一次全申请，省得以后补：
 
-| scope | 用途 | 缺了会怎样 |
+⚠️ **以下是2026-09-16实测校准过的清单，与官方文档标注不完全一致**——文档写 `read` 的，
+平台实际可能要 `readwrite`。以平台报错点名的为准（报错会直接写明缺哪个scope）。
+
+| scope | 用途 | 实测状态 |
 |---|---|---|
-| `kso.dbsheet.read` | 读多维表格结构与记录 | 多维表格全部读不了 |
-| `kso.sheets.read` | 读传统表格工作表与单元格 | 传统表格读不了 |
-| `kso.airsheet.read` + `kso.airsheet.readwrite` | 读智能表格 | 智能表格读不了（文档标注canonical是readwrite，只读接口建议两个都申请）|
-| `kso.file.read` | 文件信息、盘内文件列表 | 无法核对file_id、无法列目录 |
-| `kso.file_link.readwrite` | 用分享链接解析出file_id | `resolve` 命令不可用，只能手工找file_id |
-| `kso.doclib.read` | 团队文档库列表（取drive_id） | `ls` 不带参数时列不出团队盘 |
+| `kso.drive.readwrite` | `/v7/drives` | **申请了也没用**，见下 |
+| `kso.file.read` | 文件信息、盘内文件列表 | 待验 |
+| `kso.dbsheet.read` | 读多维表格结构与记录 | 待验 |
+| `kso.sheets.read` | 读传统表格工作表与单元格 | 待验 |
+| `kso.airsheet.read` + `kso.airsheet.readwrite` | 读智能表格 | 待验 |
+| `kso.file_link.readwrite` | 分享链接解析file_id（单文件定位才用） | 待验 |
+| `kso.doclib.readwrite` | `/v7/doclibs` 列团队文档库 | **申请了也没用**，见下 |
+| `kso.contact.read` | `/v7/companies/current` 拿company_id | 可选 |
 
-> `kso.file_link.readwrite` 名字里是readwrite，但这是平台对"获取分享链接信息"标注的scope，本工具只做GET。
+**关于 readwrite**：平台的scope划分里不少能力只有readwrite一档，只读场景也得申请。
+本工具的客户端**只实现了GET与读取语义的POST**（列举/查找），没有任何写接口，
+申请readwrite不等于工具会写。
+
+**`/v7/doclibs` 这条路走不通**：它按"当前用户的团队文档库"返回，而
+`client_credentials` 换来的是**租户token**（代表企业，没有用户身份），
+调用固定返回 `400002059 用户不在企业内`——补申请 `kso.doclib.readwrite` 也解决不了。
+要用它只能走用户授权流程拿用户token（需配回调地址）。
+**改用 `/v7/drives` + `kso.drive.readwrite` 即可，租户token可用。**
+
+另外 `/v7/doclibs` 的 `page_size` 是必填参数，不传会报 `400000004 请求参数不支持`。
+
+**`/v7/drives` 也走不通**：scope生效后（403变400）依然对**所有**参数组合返回
+`400000004 请求参数不支持`——无参数、`limit`、`offset+limit`、`type`、`company_id`、`page` 全试过，
+POST和单数路径`/v7/drive`则是404。它应该不是列表接口，而是需要 `/v7/drives/{drive_id}` 形式，
+得先有drive_id才能用。
+
+**结论：租户token下拿drive_id只有一条路——`resolve` 一个分享链接**
+（`/v7/links/{link_id}/meta` 返回 `drive_id` 与 `file_id`）。
+拿到drive_id后，`/v7/drives/{drive_id}/files/0/children` 递归遍历整个盘是可用的，
+所以**一个盘只需要一条链接**，不需要每个文件都发。
+若要彻底免链接，得走用户授权流程拿用户token，再用 `/v7/doclibs`（需配回调地址）。
 
 ### 3. 配置数据权限并提交审核
 光有API权限还不够。应用还必须对**目标盘/目标文件**有访问权限，否则调用会返回权限错误。
@@ -57,16 +82,36 @@ cp wps_sources.example.json wps_sources.json   # 填要同步的文档
 
 ```bash
 python3 wps_sync.py doctor                    # 验凭证，换一次token
-python3 wps_sync.py resolve <分享链接>         # 链接 → file_id，并产出可粘贴的源条目
-python3 wps_sync.py ls                        # 列团队盘，拿 drive_id
-python3 wps_sync.py ls <drive_id>             # 列盘内文件，拿 file_id
+python3 wps_sync.py tree                      # 递归打印所有团队盘的目录树 ← 先跑这个
+python3 wps_sync.py tree <drive_id> <folder_id>  # 只看某个盘/某个文件夹
+python3 wps_sync.py discover <别名>            # 某个folder源会同步哪些文件（只看不抓）
 python3 wps_sync.py sync                      # 全量同步落快照（定时任务跑这个）
 python3 wps_sync.py sync 某个别名              # 只同步指定源
 python3 wps_sync.py pull 某个别名              # 现拉最新内容到stdout，不落地
 python3 wps_sync.py status                    # 各源上次检查/上次变更时间与内容指纹
+python3 wps_sync.py ls / resolve <分享链接>     # 单个文件定位时才用得上
 ```
 
-**分享链接里 `/l/` 后面的是 `link_id`，不是 `file_id`**，必须先 `resolve` 一次。
+### 多个文件夹下的多个文件，不用逐个填
+
+用 **folder 源**：给一个文件夹、或者干脆给整个盘，工具自己递归进去找表。
+
+```json
+{ "alias": "全部团队盘", "kind": "folder", "drive_id": "all", "folder_id": "0" }
+```
+
+- `drive_id: "all"` = 遍历所有团队盘；填具体 id = 只走那个盘
+- `folder_id: "0"` = 从盘根目录开始；填文件夹 id = 只走那个文件夹
+- 默认只同步 `dbsheet` / `sheets` / `airsheet` 三类表，其余文件跳过（`kinds` 可改）
+- 递归深度默认 8 层，`max_depth` 可调
+
+展开后**每个文件一份独立快照**（`snapshots/<别名>/<盘内路径>/`），各自独立 hash 和 history——
+某张表改了，只有那张表留新版本，能直接定位是哪份文件变的。
+同时会落一份 `<别名>/_清单`，所以**文件新增、删除、改名本身也会被记为变更**。
+
+先跑 `tree` 看清楚有什么，再决定 folder 源怎么圈。
+
+**单个文件**才需要 `resolve`：分享链接里 `/l/` 后面的是 `link_id`，不是 `file_id`。
 
 ### 快照布局
 ```
