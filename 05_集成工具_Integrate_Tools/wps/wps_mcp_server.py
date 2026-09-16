@@ -19,10 +19,11 @@ from typing import Any
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
-from wps_client import WPSClient, WPSError, EXT_KIND, _ext_of, _is_folder  # noqa: E402
+from wps_client import (WPSClient, WPSError, EXT_KIND, _ext_of, _is_folder,  # noqa: E402
+                        extract_document_text)
 
 SERVER_NAME = "wps-cloud-docs"
-SERVER_VERSION = "0.1.0"
+SERVER_VERSION = "0.2.0"
 PROTOCOL_FALLBACK = "2024-11-05"
 
 TOKEN_HOME = Path(os.environ.get("WPS_TOKEN_DIR") or (Path.home() / ".wps_mcp"))
@@ -183,6 +184,36 @@ def t_search_files(args: dict) -> str:
     return head + "：\n\n" + ("\n".join(hits) if hits else "  （无命中）")
 
 
+def t_read_document(args: dict) -> str:
+    """读 Word/PPT/纯文本 的正文。表格请用 wps_read_sheet。"""
+    client = build_client()
+    file_id = args["file_id"]
+    meta = client.file_meta(file_id)
+    name = str(meta.get("name", file_id))
+    size = int(meta.get("size", 0))
+    if size > 40 * 1024 * 1024:
+        raise WPSError(f"{name} 有 {size/1048576:.1f}MB，超过 40MB 上限")
+
+    blob = client.file_bytes(file_id, str(meta.get("drive_id") or "") or None)
+    paragraphs, fmt = extract_document_text(name, blob)
+
+    keyword = args.get("contains")
+    if keyword:
+        hits = [(i, p) for i, p in enumerate(paragraphs) if keyword in p]
+        head = f"{name}（{fmt}）共 {len(paragraphs)} 段，含「{keyword}」的有 {len(hits)} 段：\n"
+        body = "\n".join(f"  [{i}] {p}" for i, p in hits[:80])
+        return head + "\n" + (body or "  （无命中）")
+
+    start = max(int(args.get("from_paragraph", 0)), 0)
+    limit = min(int(args.get("limit", 200)), 500)
+    chunk = paragraphs[start:start + limit]
+    head = (f"{name}（{fmt}）\n共 {len(paragraphs)} 段、{sum(len(x) for x in paragraphs)} 字，"
+            f"本次显示第 {start}~{start + len(chunk) - 1} 段\n")
+    if start + limit < len(paragraphs):
+        head += f"还有 {len(paragraphs) - start - limit} 段未显示，用 from_paragraph 继续读\n"
+    return head + "\n" + "\n".join(chunk)
+
+
 def t_file_info(args: dict) -> str:
     client = build_client()
     return json.dumps(client.file_meta(args["file_id"]), ensure_ascii=False, indent=2)
@@ -294,7 +325,7 @@ TOOLS: list[dict] = [
      "inputSchema": {"type": "object", "properties": {
          "drive_id": {"type": "string"},
          "folder_id": {"type": "string", "description": "从哪个目录开始，默认0"},
-         "name_contains": {"type": "string", "description": "文件名关键字，不区分大小写"},
+         "name_contains": {"type": "string", "description": "文件名关键字，不区分大小写。注意：是精确子串匹配，不做简繁转换。实测同一文件夹内会简繁混用（如正文「顧問服務協議」、附件「服务工作范围及验收标准」），所以中文关键词建议简体和繁体各搜一次，或改用更短的、简繁同形的片段（如「协议」→「議」两种都试）。搜不到时优先怀疑简繁问题。"},
          "only_sheets": {"type": "boolean", "description": "只返回可读取的表格，默认true"},
          "max_depth": {"type": "integer", "description": "递归深度，默认3，最大6"},
          "limit": {"type": "integer", "description": "最多返回多少条，默认50，最大200"}},
@@ -314,6 +345,13 @@ TOOLS: list[dict] = [
          "sheet_id": {"type": "string", "description": "不传则读第一张数据表"},
          "page_size": {"type": "integer", "description": "每页条数，默认100"}},
          "required": ["file_id"]}, "_fn": t_read_dbsheet},
+    {"name": "wps_read_document", "description": "读 Word(.docx)、PPT(.pptx) 或纯文本(.txt/.md/.csv/.json等) 的正文。表格请改用 wps_read_sheet。不支持 PDF 和旧版 .doc（二进制格式，本工具只用标准库）——很多合同同时存有 .docx 和 .pdf 两版，优先找 .docx。长文档分段返回，可用 contains 只看命中关键词的段落。",
+     "inputSchema": {"type": "object", "properties": {
+         "file_id": {"type": "string"},
+         "contains": {"type": "string", "description": "只返回含该关键词的段落（附段号）。中文注意简繁问题"},
+         "from_paragraph": {"type": "integer", "description": "从第几段开始，默认0"},
+         "limit": {"type": "integer", "description": "最多返回多少段，默认200，最大500"}},
+         "required": ["file_id"]}, "_fn": t_read_document},
     {"name": "wps_file_info", "description": "获取单个文件的元信息（名称、类型、大小、修改时间等）。",
      "inputSchema": {"type": "object", "properties": {"file_id": {"type": "string"}},
                      "required": ["file_id"]}, "_fn": t_file_info},

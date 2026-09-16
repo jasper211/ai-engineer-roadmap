@@ -12,9 +12,12 @@ V1只读：只实现GET与读取语义的POST（列举/查找），不提供任�
 """
 from __future__ import annotations
 
+import io
 import json
 import os
+import re
 import ssl
+import zipfile
 import threading
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -371,6 +374,30 @@ class WPSClient:
             level = next_level
         return sorted(found, key=lambda x: x["_path"])
 
+    # ---------- 文件下载与正文抽取 ----------
+
+    def download_url(self, file_id: str, drive_id: str | None = None) -> str:
+        """取文件的临时下载地址。drive_id不给就先查meta拿。权限 kso.file.read。"""
+        if not drive_id:
+            drive_id = str(self.file_meta(file_id).get("drive_id", ""))
+        if not drive_id:
+            raise WPSError(f"拿不到 drive_id，无法下载 {file_id}")
+        return self.call("GET", f"/v7/drives/{drive_id}/files/{file_id}/download")["url"]
+
+    def file_bytes(self, file_id: str, drive_id: str | None = None,
+                   max_bytes: int = 40 * 1024 * 1024) -> bytes:
+        """下载文件内容。那个临时url必须带Authorization头，裸请求返回403 userNotLogin。"""
+        url = self.download_url(file_id, drive_id)
+        req = urllib.request.Request(url, headers={"Authorization": f"Bearer {self.token()}"})
+        try:
+            with urllib.request.urlopen(req, timeout=self._timeout * 3, context=self._ssl) as resp:
+                blob = resp.read(max_bytes + 1)
+        except urllib.error.HTTPError as exc:
+            raise WPSError(f"下载失败 HTTP {exc.code}：{exc.read()[:200].decode('utf-8','replace')}") from exc
+        if len(blob) > max_bytes:
+            raise WPSError(f"文件超过 {max_bytes // 1048576}MB 上限，拒绝下载")
+        return blob
+
     # ---------- 多维表格 dbsheet ----------
 
     def dbsheet_schema(self, file_id: str) -> dict:
@@ -463,6 +490,62 @@ def _next_cursor(data: dict) -> Any:
         if data.get(key):
             return data[key]
     return None
+
+
+TEXT_EXTS = {"txt", "md", "markdown", "csv", "tsv", "json", "xml", "log", "yml", "yaml"}
+
+
+def extract_document_text(name: str, blob: bytes) -> tuple[list[str], str]:
+    """从文件字节里抽正文，返回（段落列表，格式说明）。只用标准库。
+
+    docx/pptx 本质是zip+xml，直接解出文本节点即可；
+    PDF 与旧版 .doc 是二进制格式，标准库解不了，明确拒绝而不是返回乱码。
+    """
+    ext = name.rsplit(".", 1)[-1].lower() if "." in name else ""
+
+    if ext in TEXT_EXTS:
+        for enc in ("utf-8", "gb18030", "utf-16"):
+            try:
+                text = blob.decode(enc)
+                break
+            except UnicodeDecodeError:
+                continue
+        else:
+            text = blob.decode("utf-8", "replace")
+        return [ln for ln in text.splitlines() if ln.strip()], f"纯文本({ext})"
+
+    if ext in ("docx", "pptx"):
+        try:
+            zf = zipfile.ZipFile(io.BytesIO(blob))
+        except zipfile.BadZipFile as exc:
+            raise WPSError(f"{name} 不是有效的 {ext} 文件") from exc
+        if ext == "docx":
+            targets = ["word/document.xml"]
+        else:
+            targets = sorted(n for n in zf.namelist()
+                             if re.match(r"ppt/slides/slide\d+\.xml$", n))
+        paragraphs: list[str] = []
+        for target in targets:
+            xml = zf.read(target).decode("utf-8", "replace")
+            for chunk in re.split(r"</w:p>|</a:p>", xml):
+                pieces = re.findall(r"<(?:w|a):t[^>]*>(.*?)</(?:w|a):t>", chunk, re.S)
+                line = re.sub(r"<[^>]+>", "", "".join(pieces)).strip()
+                if line:
+                    paragraphs.append(_unescape_xml(line))
+        return paragraphs, f"{ext}（{len(targets)}个XML部件）"
+
+    if ext == "pdf":
+        raise WPSError("PDF 正文需要专门的解析库，本工具只用标准库故不支持。"
+                       "可改读同名的 .docx（很多合同两种格式都存），或另行OCR处理。")
+    if ext == "doc":
+        raise WPSError("旧版 .doc 是二进制格式，标准库无法解析。请在WPS里另存为 .docx。")
+    raise WPSError(f"不支持的格式：.{ext}（支持 docx/pptx 与纯文本类）")
+
+
+def _unescape_xml(text: str) -> str:
+    for a, b in (("&amp;", "&"), ("&lt;", "<"), ("&gt;", ">"), ("&quot;", '"'), ("&apos;", "'")):
+        text = text.replace(a, b)
+    return text
 
 
 def client_from_config(config_path: str | Path, token_cache: str | Path | None = None,
