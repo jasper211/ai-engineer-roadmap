@@ -27,79 +27,65 @@ kso.airsheet.readwrite      智能表格
 > **注意名称与官方文档有出入**：文档里标 `read` 的，平台实际常要 `readwrite`。
 > 以调用时的报错为准——报错会直接点名缺哪个 scope，把那句话给管理员即可。
 
-申请完成后，把 **APPID**（形如 `AK2026xxxxxxxx`）发给使用者即可。
-**APPKEY 原则上不需要外发**——使用者用 `config init --app-id` 走浏览器绑定。
-（若个别使用者绑定后提示凭证缺失，再单独把 APPKEY 给他，见第二节的退路。）
+### 凭证怎么给使用者
+
+**实测结论：APPKEY 必须提供，绕不开。**
+
+原本设想让使用者用 `wps365-cli config init --app-id <APPID>` 自助绑定，管理员只发 APPID。
+**实测在普通成员账号上不可行**——开发者后台只允许他创建新应用，看不到、也绑不了企业已有的应用；
+而新建的应用没有上面这些 scope，装完也用不了。
+
+所以交付方式是：**管理员把 APPID 与 APPKEY 填进 `install_wps_mcp.sh`，连同
+`wps_sheets_mcp.py` 一起发给使用者**，使用者跑脚本即可。
+
+> ⚠️ **这意味着 APPKEY 会进到每一台使用者的机器。** 企业内部应用通常可接受，但请知悉：
+> 填好凭证的脚本等同密钥文件，不要提交代码仓库、不要放共享盘、不要在群里转发；
+> 人员变动或疑似外泄时，在后台重置 APPKEY 并重新分发脚本。
 
 ---
 
 ## 二、使用者装（约 5 分钟）
 
-### 1. 安装
+管理员会给你两个文件：`install_wps_mcp.sh` 和 `wps_sheets_mcp.py`。
+**放在同一个目录**，然后：
 
 ```bash
-curl -fsSL https://open-docs.wpscdn.cn/cli/install.sh | bash
+bash install_wps_mcp.sh
 ```
 
-装到 `~/.local/bin/wps365-cli`，**不需要 sudo**，无运行时依赖（不需要 Node/Python）。
-脚本带 SHA256 校验，源为金山官方 CDN。Windows 用 PowerShell：
-`irm https://open-docs.wpscdn.cn/cli/install.ps1 | iex`
+脚本会依次完成：装 wps365-cli → 校验并写入凭证 → 引导你授权 → 验证 → 装传统表格工具 →
+写入 Claude Code 配置（自动备份原配置）。**最后重启 Claude Code 即可使用。**
 
-### 2. 绑定应用
+中途需要你做的只有一件事：**设备码授权**。脚本会显示一个链接和验证码，
+在浏览器打开、确认授权即可。授权范围仅限你本人有权限的内容。
 
-```bash
-wps365-cli config init --app-id <管理员给的APPID>
+### 三个会卡住人的点
+
+**1. 授权链接若是 `http://` 开头，手动改成 `https://`**
+
+浏览器在 http 下不发送登录 cookie，页面会**不停刷新且永远登不进去**，
+看起来像网站坏了。实测就是这个原因，改成 https 立刻正常。
+
+现在的浏览器默认隐藏地址栏里的 `http://`/`https://` 前缀，两者**看上去完全一样**，
+所以别去地址栏改——直接把验证码填进这个模板打开：
+
+```
+https://openapi.wps.cn/view/oauth/device/verify?user_code=终端给你的码
 ```
 
-会给一个链接和绑定码（或终端里的二维码），在浏览器确认即可。
-`--app-id` 是**绑定企业已有应用**，不会创建新应用，所以不需要"创建应用"的权限。
+**2. 打开授权链接前，先在同一浏览器登录企业账号**
 
-> **退路**：如果绑定后 `wps365-cli auth status` 显示 `client_secret_configured: false`，
-> 找管理员要 APPKEY，执行一次：
-> ```bash
-> wps365-cli auth setup --client-id <APPID> --client-secret <APPKEY>
-> ```
-> 注意别把 APPKEY 直接打在命令行里（会进 shell 历史），用交互提示或环境变量更稳妥。
+没有登录态同样会 401 循环。
 
-凭证存放在系统钥匙串，**不落在配置文件里**——`config.json` 只有 client_id，没有密钥。
+**3. macOS 可能弹出钥匙串授权框**
 
-### 3. 授权
+写入凭证时系统会问「wps365-cli 想要访问钥匙串」，**点【允许】或【始终允许】**。
+不点的话脚本会一直挂在那里，没有任何提示，看着像死机。
 
-```bash
-wps365-cli auth login --device --scopes "kso.user_base.read,kso.file.read,kso.file.search,kso.doclib.readwrite,kso.drive.readwrite,kso.file_link.readwrite,kso.dbsheet.read,kso.sheets.read,kso.airsheet.read,kso.airsheet.readwrite"
-```
+### Windows
 
-设备码流程：给一个 code 和链接，在浏览器确认即可。**不需要回调地址、不需要本地起服务。**
-
-验证：
-
-```bash
-wps365-cli user me
-wps365-cli mcp doctor     # 应显示 ok:true、catalog_commands:120
-```
-
-### 4. 接入 Claude Code
-
-```bash
-wps365-cli mcp config
-```
-
-把它打印的片段贴进 `~/.claude.json` 的 `mcpServers`，**重启客户端**后生效：
-
-```json
-{
-  "wps365": {
-    "command": "/Users/<你>/.local/bin/wps365-cli",
-    "args": ["mcp", "serve"],
-    "env": {},
-    "timeout": 600
-  }
-}
-```
-
-`env` 是空的——凭证由 CLI 自己管（存在 `~/Library/Application Support/wps365-cli`）。
-
----
+装工具那条换成 PowerShell：`irm https://open-docs.wpscdn.cn/cli/install.ps1 | iex`，
+其余步骤手动执行脚本里的对应命令（`auth setup` / `auth login --device` / `mcp config`）。
 
 ## 三、权限边界
 
@@ -154,39 +140,49 @@ token 里的 scope 在**授权那一刻就固化了**。后台新申请的权限
 
 ---
 
-## 六、传统表格（.xls/.xlsx）要额外处理
+## 六、传统表格（.xls/.xlsx）需加装一个补充工具
 
-**这是官方 MCP 的一个缺口，务必告知使用者。**
-
-官方 120 个工具里只有 `airsheet`（智能表格 .ksheet）和 `dbsheet`（多维表格 .dbt），
-**没有传统表格的读取工具**；`drive_file_content_get` 对 `.xls` 和 `.xlsx` 都返回
-`400008018 文档内容抽取失败`（两种格式实测均失败，不是旧格式的问题）。
+**官方 MCP 有一个缺口**：120 个工具里只有 `airsheet`（智能表格 .ksheet）和
+`dbsheet`（多维表格 .dbt），**没有传统表格的读取工具**；`drive_file_content_get`
+对 `.xls` 和 `.xlsx` 都返回 `400008018 文档内容抽取失败`（两种格式实测均失败）。
 
 而企业日常数据大多是传统表格——结算、佣金、实收、费用这些库翻下来几乎全是 `.xlsx`。
 
-**底层接口是通的**（scope `kso.sheets.read` 即可），两步：
+### 解决：`wps_sheets_mcp.py`
 
-```bash
-# 1. 拿工作表列表，注意取 sheets[].sheet_id，并看 active_area 确定实际数据范围
-wps365-cli api get "/v7/sheets/<file_id>/worksheets"
+**安装脚本已经自动装好它了**，前提是它和 `install_wps_mcp.sh` 放在同一目录——
+这就是管理员要发两个文件的原因。本节说明它是什么、以及需要手动处理时怎么办。
 
-# 2. 读选区。filter.condition 传空数组 = 不筛选、输出该选区全部单元格
-wps365-cli api post "/v7/sheets/<file_id>/worksheets/<sheet_id>/range_data/find" \
-  --data '{"range":{"row_from":0,"row_to":99,"col_from":0,"col_to":20},
-           "filter":{"condition":[],"search":[],"duplicates":{"col":[]}}}'
+它是单文件补充服务，**零第三方依赖**，有 python3 即可。
+**不碰凭证、不发 HTTP**，全部转调 `wps365-cli api`——认证、刷新全由官方 CLI 负责，
+所以不需要额外授权，也不会因为 token 过期而失效。
+
+手动安装（脚本跳过时，比如机器上没有 python3、或两个文件没放一起）：
+把文件放到任意位置，加进 `~/.claude.json` 的 `mcpServers`：
+
+```json
+{
+  "wps-sheets": {
+    "type": "stdio",
+    "command": "python3",
+    "args": ["<绝对路径>/wps_sheets_mcp.py"],
+    "env": {"WPS365_CLI": "/Users/<你>/.local/bin/wps365-cli"}
+  }
+}
 ```
 
-> ⚠️ **AI 不会自己发现这条路。** MCP 工具是自描述的，Agent 连上就知道有什么、怎么调；
-> 而上面这两条命令不在工具列表里。AI 看到没有表格工具，会去试 `drive_file_content_get`，
-> 失败后就告诉你"读不了"。
-> **必须把这一节内容放进使用者项目的 `CLAUDE.md`（或等价的 AI 指引文件）**，AI 才会用。
+装好后多出两个工具（重启客户端生效）：
 
-> ⚠️ 返回的是**扁平单元格列表**，每个单元格带 `pic_data`/`sha1`/`num_format` 等字段约 300 字节。
-> 一张百行表的原始 JSON 能到 MB 级，直接喂给 AI 会撑爆上下文。
-> 让 AI 先按 `row_from`/`col_from` 拍成网格再看，只取 `cell_text`。
+| 工具 | 用途 |
+|---|---|
+| `sheet_worksheets` | 列出工作表及**实际数据范围**，并标出空表 |
+| `sheet_read` | 读单元格，输出 TSV 网格；不传范围时自动按数据范围读整张表 |
 
-> ⚠️ 这条路依赖 **Agent 能执行 shell**。Claude Code 可以；Cursor、Workbuddy 等
-> 若没有终端能力，这条路不通，只能等官方补工具或自建一个薄封装。
+输出已拍成网格（原始接口返回的是扁平单元格列表，每格带 `pic_data`/`sha1` 等字段约 300 字节，
+一张百行表的原始 JSON 能到 MB 级，直接给 AI 会撑爆上下文）。
+
+> 这是**自描述**的 MCP 工具，AI 连上就知道有它、会自己调用，
+> 不需要在 `CLAUDE.md` 里额外教它怎么拼接口。
 
 ---
 
