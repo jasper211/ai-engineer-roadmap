@@ -106,11 +106,22 @@ fi
 # ---------- 4. 验证 ----------
 step "验证连通性"
 "$CLI" $T user me >/dev/null 2>&1 && ok "身份验证通过" || warn "user me 调用失败，稍后可用 wps365-cli mcp doctor 排查"
-if "$CLI" $T drive file search --keyword "test" --page-size 1 >/dev/null 2>&1; then
-    ok "文件搜索可用"
-else
-    warn "文件搜索不可用——多半是缺 kso.file.search，请管理员在后台申请后重跑本脚本"
-fi
+# 分两步查，才能把「不在企业内」和「缺scope」区分开——两者现象一样但解法完全不同
+DOCLIB=$("$CLI" $T drive doclib list --page-size 1 2>&1)
+case "$DOCLIB" in
+    *400002059*|*"用户不在企业内"*)
+        warn "读不到团队文档库：你的账号不在企业内，或未被授予团队文档权限。"
+        warn "请先联系管理员把你加入企业并开放相应文档库——在那之前 Agent 读不到任何企业文件。" ;;
+    *'"code": 0'*|*'"code":0'*)
+        ok "团队文档库可访问"
+        if "$CLI" $T drive file search --keyword "a" --page-size 1 >/dev/null 2>&1; then
+            ok "全库搜索可用"
+        else
+            warn "全库搜索不可用——多半缺 kso.file.search，请管理员在后台申请后重新运行本脚本"
+        fi ;;
+    *)
+        warn "团队库检查异常：$(printf '%s' "$DOCLIB" | head -c 150)" ;;
+esac
 
 # ---------- 5. 传统表格补充工具 ----------
 if [ -n "$PY" ]; then
