@@ -18,6 +18,7 @@ CLI="$HOME/.local/bin/wps365-cli"
 T="--timeout 25s"   # 凭证错误时 CLI 可能长时间挂起，统一加超时
 SHEETS_DIR="$HOME/.local/share/wps365-sheets"
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+OCR_DIR=""
 CLAUDE_CFG="$HOME/.claude.json"
 
 step() { echo; echo "▶ $*"; }
@@ -110,8 +111,9 @@ step "验证连通性"
 DOCLIB=$("$CLI" $T drive doclib list --page-size 1 2>&1)
 case "$DOCLIB" in
     *400002059*|*"用户不在企业内"*)
-        warn "读不到团队文档库：你的账号不在企业内，或未被授予团队文档权限。"
-        warn "请先联系管理员把你加入企业并开放相应文档库——在那之前 Agent 读不到任何企业文件。" ;;
+        warn "读不到团队文档库：授权时登录的那个账号不在企业内，或未被授予团队文档权限。"
+        warn "模式A请确认使用者已加入企业；模式B请确认授权时登录的是有权限的账号——"
+        warn "在此之前 Agent 读不到任何企业文件。" ;;
     *'"code": 0'*|*'"code":0'*)
         ok "团队文档库可访问"
         if "$CLI" $T drive file search --keyword "a" --page-size 1 >/dev/null 2>&1; then
@@ -129,10 +131,37 @@ if [ -n "$PY" ]; then
     if [ -f "$HERE/wps_sheets_mcp.py" ]; then
         mkdir -p "$SHEETS_DIR"
         cp "$HERE/wps_sheets_mcp.py" "$SHEETS_DIR/"
-        ok "已安装到 $SHEETS_DIR"
+        ok "传统表格工具已安装到 $SHEETS_DIR"
     else
         warn "同目录没找到 wps_sheets_mcp.py，跳过（传统表格将无法读取）"
         SHEETS_DIR=""
+    fi
+
+    # 扫描件 OCR：多平台，按当前系统检查依赖并给出对应指引
+    if [ -f "$HERE/wps_ocr_mcp.py" ]; then
+        mkdir -p "$SHEETS_DIR"
+        cp "$HERE/wps_ocr_mcp.py" "$SHEETS_DIR/"
+        OCR_DIR="$SHEETS_DIR"
+        case "$(uname)" in
+            Darwin)
+                if command -v swiftc >/dev/null 2>&1 || [ -x /usr/bin/swiftc ]; then
+                    ok "扫描件OCR已就绪（macOS系统自带Vision，零额外依赖）"
+                else
+                    warn "扫描件OCR需要 swift 编译器，请执行：xcode-select --install"
+                fi ;;
+            Linux)
+                MISS=""
+                "$PY" -c "import pypdfium2" >/dev/null 2>&1 || MISS="pypdfium2"
+                command -v tesseract >/dev/null 2>&1 || MISS="$MISS tesseract"
+                if [ -z "$MISS" ]; then
+                    ok "扫描件OCR已就绪（tesseract）"
+                else
+                    warn "扫描件OCR还缺：$MISS"
+                    warn "  pip install pypdfium2 && sudo apt install tesseract-ocr tesseract-ocr-chi-sim tesseract-ocr-chi-tra"
+                fi ;;
+            *)
+                warn "扫描件OCR：Windows 请在安装后让 Agent 调用 ocr_status 查看本机缺什么" ;;
+        esac
     fi
 else
     SHEETS_DIR=""
@@ -144,9 +173,9 @@ if [ -z "$PY" ]; then
     warn "缺 python3，请手动把下面内容加进 $CLAUDE_CFG 的 mcpServers："
     echo "      \"wps365\": {\"command\": \"$CLI\", \"args\": [\"mcp\",\"serve\"], \"env\": {}, \"timeout\": 600}"
 else
-    "$PY" - "$CLAUDE_CFG" "$CLI" "$SHEETS_DIR" <<'PYEOF'
+    "$PY" - "$CLAUDE_CFG" "$CLI" "$SHEETS_DIR" "$OCR_DIR" <<'PYEOF'
 import json, os, shutil, sys, time
-cfg_path, cli, sheets_dir = sys.argv[1], sys.argv[2], sys.argv[3]
+cfg_path, cli, sheets_dir, ocr_dir = sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4]
 
 if os.path.exists(cfg_path):
     shutil.copy2(cfg_path, f"{cfg_path}.bak-{time.strftime('%Y%m%d-%H%M%S')}")
@@ -164,6 +193,10 @@ if sheets_dir:
     servers["wps-sheets"] = {"type": "stdio", "command": "python3",
                              "args": [os.path.join(sheets_dir, "wps_sheets_mcp.py")],
                              "env": {"WPS365_CLI": cli}}
+if ocr_dir:
+    servers["wps-ocr"] = {"type": "stdio", "command": "python3",
+                          "args": [os.path.join(ocr_dir, "wps_ocr_mcp.py")],
+                          "env": {"WPS365_CLI": cli}}
 json.dump(data, open(cfg_path, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
 print(f"  ✓ 已写入（原配置已备份）。当前 MCP：{', '.join(servers)}")
 PYEOF
@@ -177,5 +210,16 @@ echo
 echo "  ▸ 重启 Claude Code 后即可使用"
 echo "  ▸ 排查：$CLI mcp doctor"
 echo "  ▸ 能读：云文档目录、全库搜索、Word/PDF正文、表格内容"
-echo "  ▸ 读不了：扫描件PDF（平台不提供OCR，需另接）"
+echo "  ▸ 扫描件PDF：用 ocr_scanned_pdf 本地识别（数据不出本机）；先调 ocr_status 自查依赖"
+echo
+echo "  ▸ 用 Cursor / Claude Desktop 等其他客户端？把下面这段贴进它的 MCP 配置："
+echo
+echo "      \"wps365\":     { \"command\": \"$CLI\", \"args\": [\"mcp\",\"serve\"], \"env\": {}, \"timeout\": 600 }"
+if [ -n "$SHEETS_DIR" ]; then
+    echo "      \"wps-sheets\": { \"command\": \"python3\", \"args\": [\"$SHEETS_DIR/wps_sheets_mcp.py\"], \"env\": {\"WPS365_CLI\": \"$CLI\"} }"
+fi
+if [ -n "$OCR_DIR" ]; then
+    echo "      \"wps-ocr\":    { \"command\": \"python3\", \"args\": [\"$OCR_DIR/wps_ocr_mcp.py\"], \"env\": {\"WPS365_CLI\": \"$CLI\"} }"
+fi
+echo "    配置文件位置见交付说明第七节。凭证共用，无需重新授权。"
 echo

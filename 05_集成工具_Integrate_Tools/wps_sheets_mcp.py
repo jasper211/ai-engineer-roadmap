@@ -56,7 +56,9 @@ def cli_json(args: list[str]) -> dict:
     """调 wps365-cli 并解析其 JSON 输出。认证由 CLI 自理。"""
     cli = find_cli()
     try:
+        # 显式 utf-8：Windows 中文系统默认按 GBK 解码，CLI 输出的 UTF-8 会解码失败
         proc = subprocess.run([cli, *args], capture_output=True, text=True,
+                              encoding="utf-8", errors="replace",
                               timeout=CALL_TIMEOUT)
     except subprocess.TimeoutExpired:
         raise ToolError(f"调用超时（{CALL_TIMEOUT}s）：{' '.join(args)}") from None
@@ -117,6 +119,9 @@ def t_read(args: dict) -> str:
         sheet_id = target.get("sheet_id")
     else:
         target = next((s for s in sheets if str(s.get("sheet_id")) == str(sheet_id)), None)
+        if target is None:
+            ids = ", ".join(str(s.get("sheet_id")) for s in sheets)
+            raise ToolError(f"没有 sheet_id={sheet_id} 的工作表，可用的有：{ids}")
 
     # 没指定范围就按 active_area 读全表——AI 通常不知道表有多大
     area = (target or {}).get("active_area") or {}
@@ -125,15 +130,11 @@ def t_read(args: dict) -> str:
     col_from = int(args.get("col_from", area.get("col_from", 0)))
     col_to = int(args.get("col_to", area.get("col_to", 29)))
 
-    body = {
-        "range": {"row_from": row_from, "row_to": row_to,
-                  "col_from": col_from, "col_to": col_to},
-        # condition 传空数组 = 不筛选、输出选区内全部单元格
-        "filter": {"condition": [], "search": [], "duplicates": {"col": []}},
-    }
-    data = cli_json(["api", "post",
-                     f"/v7/sheets/{file_id}/worksheets/{sheet_id}/range_data/find",
-                     "--data", json.dumps(body, ensure_ascii=False)])
+    # 用普通 GET 而非 range_data/find：find 是筛选接口，会把第 0 行当表头剔除
+    q = [f"--query={k}={v}" for k, v in (("row_from", row_from), ("row_to", row_to),
+                                         ("col_from", col_from), ("col_to", col_to))]
+    data = cli_json(["api", "get",
+                     f"/v7/sheets/{file_id}/worksheets/{sheet_id}/range_data", *q])
 
     grid: dict[tuple[int, int], str] = {}
     for cell in _as_list(data.get("range_data")):
@@ -216,6 +217,8 @@ def _err(i, c, m): return {"jsonrpc": "2.0", "id": i, "error": {"code": c, "mess
 
 
 def main() -> int:
+    for stream in (sys.stdin, sys.stdout, sys.stderr):
+        stream.reconfigure(encoding="utf-8")
     log(f"{SERVER_NAME} {SERVER_VERSION} 启动")
     for line in sys.stdin:
         line = line.strip()

@@ -89,12 +89,23 @@ kso.airsheet.readwrite      智能表格
 
 ## 二、使用者装（约 5 分钟）
 
-管理员会给你两个文件：`install_wps_mcp.sh` 和 `wps_sheets_mcp.py`。
-**放在同一个目录**，然后：
+管理员会给你**一个安装脚本**加两个工具文件（`wps_sheets_mcp.py`、`wps_ocr_mcp.py`），
+**三个放在同一个目录**，然后按你的系统选一条：
+
+**macOS / Linux**
 
 ```bash
 bash install_wps_mcp.sh
 ```
+
+**Windows**（在 PowerShell 里）
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\install_wps_mcp.ps1
+```
+
+> 两个脚本做的事完全一样。Windows 版若提示找不到 `wps365-cli`，**关掉 PowerShell 重开**再跑一次
+> （安装程序改了 PATH，当前窗口读不到）。
 
 脚本会依次完成：装 wps365-cli → 校验并写入凭证 → 引导你授权 → 验证 → 装传统表格工具 →
 写入 Claude Code 配置（自动备份原配置）。**最后重启 Claude Code 即可使用。**
@@ -125,10 +136,16 @@ https://openapi.wps.cn/view/oauth/device/verify?user_code=终端给你的码
 写入凭证时系统会问「wps365-cli 想要访问钥匙串」，**点【允许】或【始终允许】**。
 不点的话脚本会一直挂在那里，没有任何提示，看着像死机。
 
-### Windows
+### Windows 补充说明
 
-装工具那条换成 PowerShell：`irm https://open-docs.wpscdn.cn/cli/install.ps1 | iex`，
-其余步骤手动执行脚本里的对应命令（`auth setup` / `auth login --device` / `mcp config`）。
+- 安装脚本用 `install_wps_mcp.ps1`（PowerShell 版），行为与 bash 版一致
+- 若 PowerShell 拦截脚本执行，用上面带 `-ExecutionPolicy Bypass` 的命令
+- 装完让 Agent 调用 `ocr_status`，它会告诉你扫描件 OCR 还缺什么、具体怎么装
+
+> ⚠️ **PowerShell 版未在 Windows 机器上实测**（我们没有测试环境）。
+> 若它在某一步失败，改用手动方式——交付说明第二节里的每条命令都是逐条验证过的，
+> 按 `auth setup` → `auth login --device` → `mcp config` 的顺序手动执行即可，
+> 把失败信息反馈回来我们再修脚本。
 
 ## 三、权限边界
 
@@ -154,6 +171,7 @@ https://openapi.wps.cn/view/oauth/device/verify?user_code=终端给你的码
 | `drive_file_list` | 列目录 |
 | `drive_file_content_get` | 读正文（docx / 文本型PDF / pptx），支持 `--format markdown` |
 | `dbsheet_record_list` | 多维表格记录 |
+| `ocr_scanned_pdf` / `ocr_status` | **扫描件PDF本地OCR**（补充工具，多平台自适应） |
 | `airsheet_data_get` | 智能表格数据 |
 
 还覆盖日历、IM、邮件、会议等业务域，完整列表：`wps365-cli mcp tools`
@@ -171,23 +189,36 @@ token 里的 scope 在**授权那一刻就固化了**。后台新申请的权限
 必须重跑一次 `auth login --device --scopes "..."`，否则一直报缺 scope，
 容易误判成"申请没生效"。
 
-### 2. 扫描件 PDF 读不到正文，这是平台级限制
+### 2. 扫描件 PDF：平台不给正文，需用附带的本地 OCR
 
-`drive_file_content_get` 对扫描件返回 `src_format_detail: "PDF-scan"` 但没有正文，
-`--format ocr` 报"请求参数不支持"。**WPS 开放平台不提供 OCR。**
+WPS 平台**不提供 OCR**。`drive_file_content_get` 对扫描件返回
+`src_format_detail: "PDF-scan"` 但没有正文内容，`--format ocr` 也不支持。
 
-实测样本：一份 2.2MB 的合同 PDF，0 个字体、14 张 JPEG 图像——整页都是图片。
-而同目录下 149KB 的那份有 16 处字体，是 Word 导出的文本型 PDF，可以正常读。
+合同、尽调这类归档件大多是扫描件——实测「合约管理」库 2624 份 PDF 里相当比例是整页图像
+（一份 2.2MB 的合同：0 个字体、21 处图像）。
 
-**两类 PDF 处理方式完全不同**：
+**解决**：交付包里的 `wps_ocr_mcp.py`，**按操作系统自动选用本地 OCR 引擎**，
+一律本地识别，**内容不发送给任何第三方**。
 
-- **文本型 PDF** → 直接可读
-- **扫描件 PDF** → 必须自接 OCR（本地 tesseract 或云 OCR），**换任何工具都一样**
+| 系统 | 引擎 | 需要装什么 | 验证情况 |
+|---|---|---|---|
+| **macOS** | 系统自带 PDFKit + Vision | **零依赖**（缺 swift 时执行 `xcode-select --install`） | ✅ 真实扫描合同实测通过 |
+| **Windows** | pypdfium2 + 系统自带 Windows.Media.Ocr | `pip install pypdfium2`；再到「设置 > 时间和语言 > 语言」为中文添加「光学字符识别」可选功能 | ⚠️ 代码未在 Windows 实测 |
+| **Linux / 通用** | pypdfium2 + tesseract | `pip install pypdfium2` + `sudo apt install tesseract-ocr tesseract-ocr-chi-sim tesseract-ocr-chi-tra` | ⚠️ 代码未实测 |
 
-合同类文件常有 `.docx` 和 `.pdf` 两个版本，**优先读 `.docx`**。
-旧版 `.doc`（二进制格式）不支持，需另存为 `.docx`。
+> **诚实说明**：macOS 路径用真实扫描合同端到端验证过；Windows/Linux 路径的
+> **PDF 渲染环节（pypdfium2）已在本机验证可用**，但 OCR 识别环节（Windows.Media.Ocr / tesseract）
+> 没有对应机器实测。首次在这两种系统上使用时请留意，有问题反馈回来修。
 
----
+### 装完先让 Agent 自查
+
+工具 `ocr_status` 会报告：当前系统、用哪个引擎、是否可用、**不可用时按本机系统给出具体安装命令**。
+安装脚本在 macOS/Linux 上会自动检查；Windows 上装完直接让 Agent 调用 `ocr_status` 即可。
+
+工具 `ocr_scanned_pdf`：约 2-3 秒/页，默认前 10 页，长文档用 `from_page` 分批。
+对**有文本层**的 PDF 会主动劝退、提示改用官方工具，不做无谓的 OCR。
+
+> ⚠️ OCR 会有错字。金额、证件号、账号这类关键数字**务必回原件核对**，别直接拿去做账。
 
 ## 六、传统表格（.xls/.xlsx）需加装一个补充工具
 
@@ -235,7 +266,79 @@ token 里的 scope 在**授权那一刻就固化了**。后台新申请的权限
 
 ---
 
-## 七、排查
+## 七、接入不同的 Agent 客户端
+
+这套东西是标准 **MCP（Model Context Protocol）stdio 服务**，
+**任何支持 MCP 的客户端都能接**，不限于 Claude Code。
+
+装好后一共三个 server：
+
+| server | 作用 | 来源 |
+|---|---|---|
+| `wps365` | 官方 120 个工具（搜索、目录、文档正文、多维表格…） | 官方 CLI 自带 |
+| `wps-sheets` | 传统表格 `.xls/.xlsx` 读取 | 本交付包补充 |
+| `wps-ocr` | 扫描件 PDF 本地 OCR | 本交付包补充 |
+
+### 配置文件位置
+
+**安装脚本只会自动写 Claude Code 的配置**，用其他客户端请手动把下面的片段贴进对应文件：
+
+| 客户端 | 配置文件 |
+|---|---|
+| **Claude Code** | `~/.claude.json`（Windows：`%USERPROFILE%\.claude.json`），键名 `mcpServers` |
+| **Claude Desktop** | macOS `~/Library/Application Support/Claude/claude_desktop_config.json`<br>Windows `%APPDATA%\Claude\claude_desktop_config.json` |
+| **Cursor** | 全局 `~/.cursor/mcp.json`；或项目级 `<项目>/.cursor/mcp.json` |
+| **其他 MCP 客户端** | 查该客户端文档中 "MCP server" 的配置位置，格式基本一致 |
+
+> 客户端的配置路径可能随版本变化，**以各自官方文档为准**。
+
+### 配置片段（三个 server）
+
+把 `<CLI路径>`、`<python命令>`、`<工具目录>` 换成你机器上的实际值：
+
+```json
+{
+  "mcpServers": {
+    "wps365": {
+      "command": "<CLI路径>",
+      "args": ["mcp", "serve"],
+      "env": {},
+      "timeout": 600
+    },
+    "wps-sheets": {
+      "command": "<python命令>",
+      "args": ["<工具目录>/wps_sheets_mcp.py"],
+      "env": { "WPS365_CLI": "<CLI路径>" }
+    },
+    "wps-ocr": {
+      "command": "<python命令>",
+      "args": ["<工具目录>/wps_ocr_mcp.py"],
+      "env": { "WPS365_CLI": "<CLI路径>" }
+    }
+  }
+}
+```
+
+**各值怎么取**：
+
+| 占位符 | macOS / Linux | Windows |
+|---|---|---|
+| `<CLI路径>` | `~/.local/bin/wps365-cli`（写绝对路径） | `where wps365-cli` 的输出 |
+| `<python命令>` | `python3` | 通常是 `python`，以 `where python` 为准 |
+| `<工具目录>` | `~/.local/share/wps365-sheets` | `%LOCALAPPDATA%\wps365-tools` |
+
+安装脚本跑完会**把实际路径直接打印出来**，照抄即可，不用自己拼。
+
+官方那个 server 也可以用 `wps365-cli mcp config` 生成现成片段。
+
+### 凭证是共用的
+
+三个 server 都通过 `wps365-cli` 取凭证，**授权一次，所有客户端共用**。
+在 Claude Code 里授权过，Cursor 那边直接配上就能用，不需要重新授权。
+
+---
+
+## 八、排查
 
 ```bash
 wps365-cli mcp doctor        # 一次看清 spec/凭证/授权状态
