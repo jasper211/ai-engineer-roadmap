@@ -8,7 +8,7 @@ PDA 主循环入口。demo 阶段是一次性全量流程，不做常驻监控/�
     python3 agent.py --enrich        # 读取底表 -> 清洗 -> 加S8的13个衍生字段 -> 存CSV
     python3 agent.py --sync-targets  # 只读同步fact_target目标APE快照（需要db_config_local.py）
     python3 agent.py --s1            # 复刻S1_总览仪表盘的A-H八个板块 -> 存CSV
-    python3 agent.py --s2            # 复刻S2_业务端视角的核心板块(A/B/C-H/I/J/K/O) -> 存CSV
+    python3 agent.py --s2            # 复刻S2_业务端视角全部20个板块(A/B/C-H/I/J/K/O/S/T) -> 存CSV
     python3 agent.py --s3            # 复刻S3_执行管理端的核心板块(A/B/C/D/G/H) -> 存CSV
     python3 agent.py --s4            # 复刻S4_产品端视角全部板块(A/B/C/D/E) -> 存CSV
     python3 agent.py --s5            # 复刻S5_财务端视角全部板块(A/B/C/D/E/F/G/H) -> 存CSV
@@ -43,7 +43,7 @@ from memory.workspace import Workspace
 
 RAW_DATA_DIR = AGENT_ROOT / "07_接入记忆_Integrate_Memory" / "raw_data"
 FACT_TARGET_SNAPSHOT = AGENT_ROOT / "07_接入记忆_Integrate_Memory" / "data" / "fact_target_snapshot.csv"
-AGENT_VERSION = "v0.10.0"
+AGENT_VERSION = "v0.11.0"
 
 
 def run():
@@ -165,9 +165,9 @@ def build_s2():
         else:
             pd.DataFrame(rows).to_csv(out_dir / f"{section}.csv", index=False, encoding="utf-8-sig")
 
-    print("✅ S2_业务端视角 核心板块(A/B/C-H/I/J/K/O)已生成")
-    print("   A/B/C/I/J/K/O 已用真实『业绩分析报表_0724.xlsx』核验，D-H为同规则参数化推算")
-    print("   S/T(partner_code维度)未实现，见 S2_业务端视角_反推标准_v0.1.md")
+    print("✅ S2_业务端视角 全部20个板块(A/B/C-H/I/J/K/O/S/T)已生成")
+    print("   A/B/C/I/J/K/O/S/T 已用真实『业绩分析报表_0724.xlsx』核验，D-H/L-T月度趋势为同规则参数化推算")
+    print("   S节行排序有已知限制，见 S2_业务端视角_反推标准_v0.1.md")
     print(f"输出目录: {out_dir}")
 
 
@@ -317,7 +317,7 @@ def main():
     ap.add_argument("--enrich", action="store_true", help="清洗+加S8的13个衍生字段，存CSV")
     ap.add_argument("--sync-targets", action="store_true", dest="sync_targets", help="只读同步fact_target目标APE快照")
     ap.add_argument("--s1", action="store_true", help="复刻S1_总览仪表盘A-H八个板块，存CSV")
-    ap.add_argument("--s2", action="store_true", help="复刻S2_业务端视角核心板块，存CSV")
+    ap.add_argument("--s2", action="store_true", help="复刻S2_业务端视角全部20个板块，存CSV")
     ap.add_argument("--s3", action="store_true", help="复刻S3_执行管理端核心板块，存CSV")
     ap.add_argument("--s4", action="store_true", help="复刻S4_产品端视角全部板块，存CSV")
     ap.add_argument("--s5", action="store_true", help="复刻S5_财务端视角全部板块，存CSV")
