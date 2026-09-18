@@ -26,6 +26,9 @@ from skills.s2_business_view import S2BusinessViewBuilder
 from skills.s3_execution_view import S3ExecutionViewBuilder
 from skills.s4_product_view import S4ProductViewBuilder
 from skills.s5_finance_view import S5FinanceViewBuilder
+from skills.s6_market_cross_view import S6MarketCrossViewBuilder
+from skills.s7_compliance_view import S7ComplianceViewBuilder
+from skills.s9_agent_ka_view import S9AgentKaViewBuilder
 
 RAW_DATA_DIR = AGENT_ROOT / "07_接入记忆_Integrate_Memory" / "raw_data"
 REPORT_FILE = RAW_DATA_DIR / "业绩分析报表_0724.xlsx"
@@ -342,6 +345,88 @@ def main():
         check("S5-B_premium 怡泰2026-01", abs(bp["怡泰财富管理有限公司"]["2026-01"] - 74396333.7) < 0.01)
     else:
         check("⚠️ 报表文件不存在，跳过S5独立核验", True)
+
+    # ---- L3-PDA-11：s6_market_cross_view，对照真实"业绩分析报表"S6_市场与交叉视角独立核验 ----
+    if REPORT_FILE.exists():
+        s6b = S6MarketCrossViewBuilder(df)
+
+        a = {r["KA"]: r for r in s6b._cross_table("批核", "ka")}
+        check("S6-A 天誉国际/天誉国际(MGA) 同行经代列", abs(a["天誉国际"]["同行经代"] - 44347079.86) < 0.01
+              and abs(a["天誉国际(MGA)"]["同行经代"] - 22040525.74) < 0.01)
+        check("S6-A 行数57（56个KA+合计，全0行已过滤）", len(s6b._cross_table("批核", "ka")) == 57)
+
+        d = {r["保司"]: r for r in s6b._cross_table("批核", "carrier")}
+        check("S6-D 永明整行8个业务细分", abs(d["永明"]["天领业务"] - 50585272.04) < 0.01
+              and abs(d["永明"]["BK业务"] - 231135120.06) < 0.01 and abs(d["永明"]["合计"] - 522699342.4) < 0.01)
+
+        b6 = {r["KA"]: r for r in s6b._cross_table("未批核", "ka")}
+        check("S6-B 天誉国际(MGA)未批核", abs(b6["天誉国际(MGA)"]["同行经代"] - 39142184.84) < 0.01)
+
+        c6 = {r["KA"]: r for r in s6b._cross_table("待签", "ka")}
+        check("S6-C 天誉国际(MGA)/唯思 待签", abs(c6["天誉国际(MGA)"]["同行经代"] - 6236700) < 0.01
+              and abs(c6["唯思"]["同行经代"] - 3352000) < 0.01)
+    else:
+        check("⚠️ 报表文件不存在，跳过S6独立核验", True)
+
+    # ---- L3-PDA-12：s7_compliance_view，对照真实"业绩分析报表"S7_合规端视角独立核验 ----
+    if REPORT_FILE.exists():
+        s7b = S7ComplianceViewBuilder(df)
+
+        a7 = {r["签单供应商"]: r for r in s7b.section_a()}
+        yt = a7["怡泰财富管理有限公司"]
+        check("S7-A 怡泰批核/未批核/待签/distinct数量列", abs(yt["2026批核APE"] - 238231097.58) < 0.01
+              and yt["批核件数"] == 240 and abs(yt["未批核APE"] - 29823924) < 0.01 and yt["未批核件数"] == 46
+              and abs(yt["待签APE"] - 2535000) < 0.01 and yt["待签件数"] == 5
+              and yt["保险公司数"] == 12 and yt["产品数"] == 20 and yt["KA数"] == 15 and yt["TR数"] == 7)
+
+        ba7 = {r["签单供应商"]: r for r in s7b.section_b_ape()}
+        check("S7-B_ape 怡泰整行8个业务细分", abs(ba7["怡泰财富管理有限公司"]["BK业务"] - 231135120.06) < 0.01
+              and abs(ba7["怡泰财富管理有限公司"]["合计"] - 238231097.58) < 0.01)
+
+        e7 = s7b.section_e()
+        check("S7-E 前2条时效异常（244天/220天）", e7[0]["保单号"] == 611221282 and e7[0]["时效(天)"] == 244
+              and e7[0]["牌照"] == "众和恒富理财集团" and e7[1]["保单号"] == 611208853 and e7[1]["时效(天)"] == 220)
+
+        f7 = {r["TR"]: r for r in s7b.section_f()}
+        check("S7-F 李咏媱/余文茜（业务线数用SEGMENT_GROUPS折算）", abs(f7["李咏媱"]["APE"] - 51095259.2) < 0.01
+              and f7["李咏媱"]["件数"] == 158 and f7["李咏媱"]["业务线数"] == 5
+              and abs(f7["余文茜"]["APE"] - 44473555.74) < 0.01 and f7["余文茜"]["业务线数"] == 2)
+    else:
+        check("⚠️ 报表文件不存在，跳过S7独立核验", True)
+
+    # ---- L3-PDA-13：s9_agent_ka_view，对照真实"业绩分析报表"S9_代理人与KA业务独立核验 ----
+    if REPORT_FILE.exists() and FACT_TARGET_SNAPSHOT.exists():
+        s9b = S9AgentKaViewBuilder(df, fact_target)
+
+        a9 = {r["业务细分"]: r for r in s9b.section_a()}
+        check("S9-A 合计（5条代理人业务线过滤自S2-A）", a9["合计"]["目标APE"] == 413000000
+              and abs(a9["合计"]["2026批核APE"] - 100419374.05) < 0.01 and a9["合计"]["批核件数"] == 273)
+
+        b9 = {r["KEY ACCOUNT"]: r for r in s9b.section_b()}
+        check("S9-B 苏州贴牌/厦门贴牌并列（2026批核APE相同，用总APE降序二级排序）",
+              b9["苏州贴牌"]["2026批核APE"] == b9["厦门贴牌"]["2026批核APE"] == 273000.0
+              and b9["苏州贴牌"]["总APE"] > b9["厦门贴牌"]["总APE"])
+        check("S9-B 合计200件", b9["合计"]["批核件数"] == 200)
+
+        d9 = {r["指标"]: r for r in s9b.section_d()}
+        check("S9-D 预约APE 2026-01（标题写含流失单，实测=S2的res/sign/issue三态口径）",
+              abs(d9["预约 APE"]["2026-01"] - 6673951.26) < 0.01)
+
+        f9 = s9b.section_f()
+        f9_iclub = {r["KEY ACCOUNT"]: r for r in f9["ICLUB业务"]}
+        check("S9-F-ICLUB 个人转介", abs(f9_iclub["个人转介"]["2026批核APE"] - 18526812.08) < 0.01)
+
+        g9 = {r["指标"]: r for r in s9b.section_g()}
+        check("S9-G 批核APE 2026-03（segment IN ICLUB/合伙转介/IFA）", abs(g9["批核 APE"]["2026-03"] - 834747.01) < 0.01)
+
+        h9 = s9b.section_h()
+        h9_res = {r["KEY ACCOUNT"]: r for r in h9["预约_APE"]}
+        check("S9-H 天领重庆预约APE W01 + 长沙贴牌不在预约表(0贡献已过滤)",
+              h9_res["天领重庆"]["2026W01"] == 156000.0 and "长沙贴牌" not in h9_res)
+        h9_issue = {r["KEY ACCOUNT"] for r in h9["批核_APE"]}
+        check("S9-H 长沙贴牌出现在批核表(该子表独立过滤0贡献KA)", "长沙贴牌" in h9_issue)
+    else:
+        check("⚠️ 报表文件或fact_target快照不存在，跳过S9独立核验", True)
 
     print()
     if failures:
