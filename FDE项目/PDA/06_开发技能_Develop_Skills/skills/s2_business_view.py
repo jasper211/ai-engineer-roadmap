@@ -1,16 +1,21 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-技能：复刻《业绩分析报表》S2_业务端视角 的核心板块（A/B/C-H/I/J/K/O，20个板块中18个）。
+技能：复刻《业绩分析报表》S2_业务端视角 全部20个板块（A/B/C-H/I/J/K/O/S/T）。
 
 对应 01_初始化项目_Initialize_Project/S2_业务端视角_反推标准_v0.1.md。
-S/T节（按partner_code分组的银行各分行明细）是新维度，尚未验证，本版本不实现。
 
-两条贯穿全表的关键规则（跟S1不同，S2专属）：
+三条贯穿全表的关键规则（跟S1不同，S2专属）：
 1. "同行经代"分组 = segment_code IN ('同行经代','MGA业务')——MGA业务在segment层面
    折进"同行经代"，不是"永明经代"，也不是S1用的"业务大类"重分类逻辑，是独立的规则。
    但对应fact_target查目标值时，"同行经代"只取BRK这一个编码的目标，不含TA(MGA的目标)。
 2. "流失类" = 取消投保/退保/搁置受保，不含拒保——跟S1"流失"口径一致。
+3. S/T节（partner_code维度，银行各分行明细）：行=segment_code=BK业务历史出现过的
+   全部partner_code参照列表(不限2026/不限状态)，跟S4-A"零业务也列出"同一模式；
+   月份范围固定2026-01~2026-08；T节行顺序完全跟随S节(footnote明写)，不独立排序；
+   S节自身的行排序footnote写"按合计APE降序"，但实测发现至少2处相邻行顺序对不上
+   纯APE降序（如"许菁"12870000排在"徐艳"15600000之前），排序规则未完全破解，
+   属于已知限制——不影响每行/每列的实际数值，只影响行的展示顺序。
 """
 import pandas as pd
 
@@ -225,12 +230,57 @@ class S2BusinessViewBuilder:
     def bank_monthly_trend(self, date_col: str, mode: str, year: int = 2026):
         return self.monthly_trend(self.df[self.df["segment_code"] == "BK业务"], date_col, mode, year)
 
+    # ---- S/T. 批核业绩—银行各分行（partner_code维度，行=BK业务历史出现过的全部partner_code参照列表） ----
+    def _bank_partner_frame(self):
+        """S/T节：issue_ym+仅生效(同E节口径)，按partner_code分组；行=segment_code=BK业务下
+        历史出现过的全部partner_code(不限2026/不限状态，48个，含全0参照行，同S4-A的'零业务也列出'模式)；
+        月份范围固定2026-01~2026-08(报表自身表头如此，不是全年12个月)。T节行顺序跟随S节(footnote明写)，
+        不是T自己按件数重新排序。"""
+        bk_all = self.df[self.df["segment_code"] == "BK业务"]
+        pop = bk_all[(bk_all["policy_status"] == "生效") & (bk_all["issue_date"].dt.year == 2026)]
+        months = [f"2026-{m:02d}" for m in range(1, 9)]
+        month = pop["issue_date"].dt.strftime("%Y-%m")
+        partners = bk_all["partner_code"].dropna().unique()
+
+        triples = []
+        for p in partners:
+            mask = pop["partner_code"] == p
+            g, gm = pop[mask], month[mask]
+            ape_row, cnt_row = {"合作伙伴(分行)": p}, {"合作伙伴(分行)": p}
+            ape_total, cnt_total = 0.0, 0
+            for m in months:
+                sub = g[gm == m]
+                ape_row[m] = float(sub["ape"].sum())
+                cnt_row[m] = int(len(sub))
+                ape_total += ape_row[m]
+                cnt_total += cnt_row[m]
+            ape_row["合计"], cnt_row["合计"] = ape_total, cnt_total
+            triples.append((ape_total, ape_row, cnt_row))
+        triples.sort(key=lambda t: t[0], reverse=True)
+        ape_rows = [t[1] for t in triples]
+        cnt_rows = [t[2] for t in triples]
+
+        ape_total_row, cnt_total_row = {"合作伙伴(分行)": "合计"}, {"合作伙伴(分行)": "合计"}
+        for m in months + ["合计"]:
+            ape_total_row[m] = sum(r[m] for r in ape_rows)
+            cnt_total_row[m] = sum(r[m] for r in cnt_rows)
+        ape_rows.append(ape_total_row)
+        cnt_rows.append(cnt_total_row)
+        return ape_rows, cnt_rows
+
+    def section_s(self):
+        return self._bank_partner_frame()[0]
+
+    def section_t(self):
+        return self._bank_partner_frame()[1]
+
     def build_core(self) -> dict:
-        """A/B/C-H/I/J/K/O——18个已核验或高置信度板块。S/T(partner_code维度)未实现，见标准文档三节。"""
+        """A/B/C-H/I/J/K/O/S/T——20个板块全部实现，核心已核验，部分同规则参数化推算。"""
         return {
             "A": self.segment_summary(carrier=None),
             "B": self.segment_summary(carrier="香港永明金融有限公司"),
             "C": self.section_c(), "D": self.section_d(), "E": self.section_e(),
             "F": self.section_f(), "G": self.section_g(), "H": self.section_h(),
             "I": self.section_i(), "J": self.section_j(), "K": self.section_k(), "O": self.section_o(),
+            "S": self.section_s(), "T": self.section_t(),
         }

@@ -251,6 +251,20 @@ def main():
         o = s2b.section_o()
         check("S2-O 只有民生银行/平安银行/合计3行（不含0值幽灵行）",
               [r["KEY ACCOUNT"] for r in o] == ["民生银行", "平安银行", "合计"])
+
+        s_rows = {r["合作伙伴(分行)"]: r for r in s2b.section_s()}
+        check("S2-S 民生广州分行（issue_ym+仅生效，月份固定2026-01~08）",
+              abs(s_rows["民生广州分行"]["2026-01"] - 780000) < 0.01
+              and abs(s_rows["民生广州分行"]["合计"] - 44089560.06) < 0.01)
+        check("S2-S 民生郑州全0参照行（partner_code参照列表不过滤零业务，同S4-A模式）",
+              s_rows["民生郑州"]["合计"] == 0)
+        check("S2-S 行数49（48个历史partner_code+合计）", len(s_rows) == 49)
+        check("S2-S 合计行", abs(s_rows["合计"]["合计"] - 231135120.06) < 0.01)
+
+        t_rows = {r["合作伙伴(分行)"]: r for r in s2b.section_t()}
+        check("S2-T 民生广州分行件数（行顺序跟随S节，同一partner_code）",
+              t_rows["民生广州分行"]["2026-01"] == 1 and t_rows["民生广州分行"]["合计"] == 25)
+        check("S2-T 合计201件", t_rows["合计"]["合计"] == 201)
     else:
         check("⚠️ 报表文件或fact_target快照不存在，跳过S2独立核验", True)
 
