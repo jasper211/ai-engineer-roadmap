@@ -21,9 +21,13 @@ from skills.cleaner import Cleaner, UnmappedStatusError
 from skills.aggregator import Aggregator
 from skills.dashboard_generator import DashboardGenerator
 from skills.report_enricher import ReportEnricher, UnmappedPolicyStageError
+from skills.s1_dashboard import S1DashboardBuilder
+from skills.s2_business_view import S2BusinessViewBuilder
+from skills.s3_execution_view import S3ExecutionViewBuilder
 
 RAW_DATA_DIR = AGENT_ROOT / "07_接入记忆_Integrate_Memory" / "raw_data"
 REPORT_FILE = RAW_DATA_DIR / "业绩分析报表_0724.xlsx"
+FACT_TARGET_SNAPSHOT = AGENT_ROOT / "07_接入记忆_Integrate_Memory" / "data" / "fact_target_snapshot.csv"
 
 failures = []
 
@@ -150,6 +154,128 @@ def main():
         check("policy_status 出现未知取值时 enrich 应抛出 UnmappedPolicyStageError", False)
     except UnmappedPolicyStageError:
         check("policy_status 出现未知取值时 enrich 正确抛出 UnmappedPolicyStageError", True)
+
+    # ---- L3-PDA-06：s1_dashboard，对照真实"业绩分析报表"S1_总览仪表盘独立核验 ----
+    # ground truth数字直接抄自S1 sheet原文（2026-07-31人工核对时记录），不是从builder自己反算的。
+    if REPORT_FILE.exists() and FACT_TARGET_SNAPSHOT.exists():
+        import pandas as pd
+        fact_target = pd.read_csv(FACT_TARGET_SNAPSHOT)
+        s1 = S1DashboardBuilder(enriched, fact_target, report_month="2026-07").build_all()
+
+        a = {r["指标"]: r for r in s1["A"]}
+        check("S1-A 全业务目标APE", a["2026全业务目标"]["目标APE"] == 1113000000)
+        check("S1-A 全业务已达成APE", abs(a["2026全业务目标"]["已达成APE"] - 618939268.33) < 0.01)
+        check("S1-A 永明目标APE", a["2026永明业务目标"]["目标APE"] == 976100000)
+        check("S1-A 永明已达成APE", abs(a["2026永明业务目标"]["已达成APE"] - 522699342.4) < 0.01)
+
+        b = {r["指标行"]: r for r in s1["B"]}
+        b_truth = {
+            "批核(2025)": (1645, 616841098.5942),
+            "批核(2026)": (1205, 618939268.33),
+            "未批核(跨年)": (260, 123714140.47),
+            "待签(跨年)": (55, 20033148.4),
+            "流失(2026)": (97, 34167370.61),
+        }
+        for label, (count, ape) in b_truth.items():
+            check(f"S1-B『{label}』件数+APE", b[label]["件数"] == count and abs(b[label]["APE"] - ape) < 0.01)
+
+        c_first = s1["C"][0]
+        check("S1-C 首月(2025-01)件数+APE", c_first["年月"] == "2025-01" and c_first["件数"] == 69
+              and abs(c_first["APE"] - 22560612.856) < 0.01 and c_first["环比增长%"] is None)
+
+        d_first = s1["D"][0]
+        check("S1-D 首月(2025-01)件数+APE", d_first["年月"] == "2025-01" and d_first["件数"] == 70
+              and abs(d_first["APE"] - 25095612.856) < 0.01)
+
+        e_by_month = {r["年月"]: r for r in s1["E"]}
+        check("S1-E 2026-01 同比增长%", abs(e_by_month["2026-01"]["同比增长%"] - 1.8206296247174274) < 1e-6)
+
+        f = {r["保单状态"]: r for r in s1["F"]}
+        check("S1-F A.批核(2026)", f["A.批核(2026)"]["件数"] == 1205
+              and abs(f["A.批核(2026)"]["APE"] - 618939268.33) < 0.01)
+        check("S1-F G.失效恒为0", f["G.失效"]["件数"] == 0 and f["G.失效"]["APE"] == 0)
+        check("S1-F 合计1617件（拒保2条不计入本表，是报表自身的已知缺口）", f["合计"]["件数"] == 1617)
+
+        g = {r["业务类型"]: r for r in s1["G"]}
+        check("S1-G 经代业务（必须用业务大类含MGA重分类，否则会差91件）",
+              g["经代业务"]["批核件数"] == 932 and abs(g["经代业务"]["2026批核APE"] - 518519894.28) < 0.01)
+        check("S1-G 合计批核件数=1205", g["合计"]["批核件数"] == 1205)
+
+        h = {r["牌照"]: r for r in s1["H"]}
+        check("S1-H JF 2026-01", abs(h["JF"]["2026-01"] - 45864039.84) < 0.01)
+        check("S1-H UNIWIN 2026-01", abs(h["UNIWIN"]["2026-01"] - 21654896.28) < 0.01)
+        check("S1-H DW Bank 2026-01", abs(h["DW Bank"]["2026-01"] - 18259800) < 0.01)
+        check("S1-H DW-Non-Bank 2026-01", abs(h["DW-Non-Bank"]["2026-01"] - 401809.2) < 0.01)
+        check("S1-H Sub Total 2026-01 = JF+UNIWIN+DW-Non-Bank+EG（不含DW Bank）",
+              abs(h["Sub Total"]["2026-01"] - 67920745.32) < 0.01)
+        check("S1-H JF 未批核", abs(h["JF"]["未批核"] - 23077485.2) < 0.01)
+        check("S1-H JF 本月已递交", abs(h["JF"]["本月已递交"] - 14526341.81) < 0.01)
+    else:
+        check("⚠️ 报表文件或fact_target快照不存在，跳过S1独立核验", True)
+
+    # ---- L3-PDA-07：s2_business_view，对照真实"业绩分析报表"S2_业务端视角独立核验 ----
+    if REPORT_FILE.exists() and FACT_TARGET_SNAPSHOT.exists():
+        s2b = S2BusinessViewBuilder(df, fact_target)
+
+        a = {r["业务细分"]: r for r in s2b.segment_summary(carrier=None)}
+        check("S2-A 同行经代（含MGA折算,批核319件）", a["同行经代"]["批核件数"] == 319
+              and abs(a["同行经代"]["2026批核APE"] - 133982611.88) < 0.01)
+        check("S2-A 合计目标APE=1,113,000,000", abs(a["合计"]["目标APE"] - 1113000000) < 0.01)
+
+        bb = {r["业务细分"]: r for r in s2b.segment_summary(carrier="香港永明金融有限公司")}
+        check("S2-B 同行经代（永明子集,批核221件,目标140M）", bb["同行经代"]["批核件数"] == 221
+              and abs(bb["同行经代"]["目标APE"] - 140000000) < 0.01)
+
+        c = {r["业务细分"]: r for r in s2b.section_c()}
+        check("S2-C 天领业务2026-01（流失类排除口径）",
+              abs(c["天领业务"]["2026-01"]["ape"] - 6673951) < 1)
+
+        i = {r["KEY ACCOUNT"]: r for r in s2b.section_i()}
+        check("S2-I 天誉国际/天誉国际(MGA) 拆分正确", "天誉国际(MGA)" in i
+              and i["天誉国际(MGA)"]["批核件数"] == 91 and i["天誉国际"]["批核件数"] == 96)
+
+        j = {r["推荐人"]: r for r in s2b.section_j()}
+        check("S2-J 姜通（referral_code不限carrier）", j["姜通"]["批核件数"] == 349
+              and abs(j["姜通"]["2026批核APE"] - 124571660.7) < 0.01)
+
+        k = s2b.section_k()
+        k_total = [r for r in k if r["KEY ACCOUNT"] == "合计"][0]
+        check("S2-K 合计批核件数=731（=A节同行经代319+永明经代412）", k_total["批核件数"] == 731)
+        check("S2-K 行数27（26个KA+合计,天誉国际(MGA)独立成行）", len(k) == 27)
+
+        o = s2b.section_o()
+        check("S2-O 只有民生银行/平安银行/合计3行（不含0值幽灵行）",
+              [r["KEY ACCOUNT"] for r in o] == ["民生银行", "平安银行", "合计"])
+    else:
+        check("⚠️ 报表文件或fact_target快照不存在，跳过S2独立核验", True)
+
+    # ---- L3-PDA-08：s3_execution_view，对照真实"业绩分析报表"S3_执行管理端独立核验 ----
+    if REPORT_FILE.exists():
+        s3b = S3ExecutionViewBuilder(df)
+
+        funnel = s3b.funnel()
+        check("S3-A 预约W01/W02/W03（周定义=%YW%U，周日起始）",
+              funnel["预约"]["2026W01"]["count"] == 16 and funnel["预约"]["2026W02"]["count"] == 36
+              and funnel["预约"]["2026W03"]["count"] == 35)
+        check("S3-A 批核W01（仅status=生效）",
+              abs(funnel["批核"]["2026W01"]["ape"] - 18039303.12) < 0.01 and funnel["批核"]["2026W01"]["count"] == 63)
+        check("S3-A 周列表从W01开始（不含%U产生的W00零头）",
+              "2026W00" not in funnel["预约"])
+
+        b_seg = {r["业务细分"]: r for r in s3b.section_b()}
+        check("S3-B 天领业务W01", abs(b_seg["天领业务"]["2026W01"]["ape"] - 156000) < 0.01)
+
+        g = {r["业务细分"]: r for r in s3b.section_g()}
+        check("S3-G 天领业务时效7项指标", g["天领业务"]["件数"] == 200
+              and abs(g["天领业务"]["平均时效(天)"] - 20.2) < 0.05
+              and g["天领业务"]["SLA达标率≤60"] is not None and abs(g["天领业务"]["SLA达标率≤60"] - 0.985) < 0.001)
+
+        h = {r["时效分档"]: r for r in s3b.section_h()}
+        check("S3-H ≤7天分档排除TAT<0异常值(126件不是127件)", h["≤7天"]["件数"] == 126
+              and abs(h["≤7天"]["APE"] - 35843324.08) < 1)
+        check("S3-H 合计=全量1205件（不是6档相加的1204件）", h["合计"]["件数"] == 1205)
+    else:
+        check("⚠️ 报表文件不存在，跳过S3独立核验", True)
 
     print()
     if failures:

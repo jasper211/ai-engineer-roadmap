@@ -1,6 +1,6 @@
 agent_id: PDA
 name: 业绩数据多维分析 Agent（围绕牌照端 issuing_entity）
-version: 0.2.0
+version: 0.5.0
 status: 测试中
 entrypoint: agent.py
 capabilities:
@@ -9,6 +9,10 @@ capabilities:
   - aggregate_by_issuing_entity  # 围绕issuing_entity的7类多维聚合，对齐阶段一原型DATA结构
   - generate_html_dashboard  # 复用阶段一原型的Chart.js模板注入修正后数据
   - enrich_report_derived_fields  # 反推还原S8_明细数据底表13个衍生字段，用真实S8 sheet逐行核验
+  - sync_target_ape  # 只读同步服务器fact_target目标APE数据（tools/fact_target_sync.py）
+  - build_s1_dashboard  # 反推还原S1_总览仪表盘A-H全部8个板块，用真实报表逐项核验
+  - build_s2_business_view  # 反推还原S2_业务端视角核心板块(A/B/C-H/I/J/K/O)，用真实报表逐项核验
+  - build_s3_execution_view  # 反推还原S3_执行管理端核心板块(A/B/C/D/G/H)，含周度趋势(%YW%U周定义)+签批时效分析
 boundaries:
-  included: 单份底表Excel的一次性清洗+聚合+看板生成demo；修复真实核实发现的日期类型bug和future_dated计数bug；S8明细底表13个衍生字段（12个已100%核验，1个待补标准化规则）
-  deferred: CRM/保司系统实时同步、多用户权限、知识库问答（阶段二/三，前提未确认）、sum_assured/referral_code字段的清洗与聚合（当前维度框架未用到）、S1-S7/S9共7张专题视角表+PPT生成（涉及外部目标APE数据源，暂未接入）
+  included: 单份底表Excel的一次性清洗+聚合+看板生成demo；修复真实核实发现的日期类型bug和future_dated计数bug；S8明细底表13个衍生字段（12个已100%核验，1个待补标准化规则）；S1_总览仪表盘A-H全部8个板块（100%核验）；S2_业务端视角核心12个子板块（A/B/C/I/J/K/O已核验，D-H同规则推算）；S3_执行管理端核心6个子板块（A/B/C/D/G/H全部100%核验）
+  deferred: CRM/保司系统实时同步、多用户权限、知识库问答（阶段二/三，前提未确认）、sum_assured/referral_code字段的清洗与聚合（当前维度框架未用到）、S2的S/T板块（partner_code维度）、S3的E/F(未批核待签透视表)+J-O(同行/银行周度趋势)、S4-S7/S9共6张专题视角表+PPT生成（PPT生成代码Jasper已提供但是报表→PPT阶段，不含raw→报表阶段）

@@ -1,29 +1,33 @@
 {
   "agent_id": "PDA",
   "name": "业绩数据多维分析 Agent（围绕牌照端 issuing_entity）",
-  "version": "0.2.0",
+  "version": "0.5.0",
   "status": "测试中",
-  "description": "读取业绩数据底表 Excel，清洗标准化（含日期类型修正、policy_status三档映射、future_dated标记），围绕issuing_entity做7类多维聚合，生成可交互HTML看板；同时反推还原《业绩分析报表》S8明细底表的13个衍生字段规则，为下一步复刻多sheet专题报表打基础。不做增量/调度/云端/CRM对接。",
+  "description": "读取业绩数据底表 Excel，清洗标准化，围绕issuing_entity做7类多维聚合生成HTML看板；反推还原《业绩分析报表》S8明细底表的13个衍生字段（12个已核验）；反推还原S1_总览仪表盘A-H全部8个板块+S2_业务端视角核心12个子板块+S3_执行管理端核心6个子板块，含只读同步服务器fact_target目标APE数据源。不做增量/调度/云端/CRM对接。",
   "entrypoint": "04_定义Agent_Define_Agent/agents/agent.py",
 
-  "migration_note": "v0.1.0：以FDE角色承接《业绩数据分析项目启动方案》，按Agent搭建SOP v1.2的01-11骨架搭建。真实底表核实（需求定义.md第十一节）发现阶段一原型有2个未被发现的真实bug：①res_date/sign_date/submit_date字段混有Excel序列号整数，朴素pd.to_datetime会静默解析成1970年附近的错误时间戳，直接污染'运营效率'维度；②future_dated真实为53条而非原型footer硬编码的11条。Jasper确认'按你的发现和逻辑出来'后，本版本直接把这两处修复设计进L3-PDA-02清洗流程，不再逐条等待业务侧确认。v0.1.1：Jasper反馈'看板内选择后下方各模块没有显示数据'，实测（curl直连CDN URL）发现阶段一原型引用的Chart.js CDN地址（4.4.4版chart.umd.min.js）返回404，导致Chart未定义、整个交互脚本在图表初始化处崩溃。改为把Chart.js 4.5.0 UMD包内联进HTML（skills/vendor/chart.umd.min.js），看板不再依赖任何外部网络请求；并给图表初始化/更新逻辑加了CHART_AVAILABLE防御性判断，避免同类问题再次拖垮整个交互层。v0.2.0：Jasper提出真实工作场景比阶段一深得多——raw表还要经过Python+模型结构要求生成9-sheet专题报表(业绩分析报表_0724.xlsx)，再生成周报PPT。现有生成代码Jasper暂时无法提供，改为从产出物反推标准。新增skills/report_enricher.py，反推还原S8_明细数据底表的13个衍生字段，用真实S8 sheet逐行核验，12个字段100%匹配；过程中先后发现并（Jasper手动）修复了S8表头列错位bug，'首年折扣(标准化)'确认来源字段=SQ_rate但标准化规则待补，本版本原样透传不擅自编规则。S1-S9其余7张专题视角表+PPT生成留待下一批（涉及目标APE外部数据源，目前在服务器数据库只读、暂未接入）。",
+  "migration_note": "v0.1.0：以FDE角色承接《业绩数据分析项目启动方案》，按Agent搭建SOP v1.2的01-11骨架搭建。真实底表核实（需求定义.md第十一节）发现阶段一原型有2个未被发现的真实bug：①res_date/sign_date/submit_date字段混有Excel序列号整数，朴素pd.to_datetime会静默解析成1970年附近的错误时间戳，直接污染'运营效率'维度；②future_dated真实为53条而非原型footer硬编码的11条。Jasper确认'按你的发现和逻辑出来'后，本版本直接把这两处修复设计进L3-PDA-02清洗流程，不再逐条等待业务侧确认。v0.1.1：Jasper反馈'看板内选择后下方各模块没有显示数据'，实测（curl直连CDN URL）发现阶段一原型引用的Chart.js CDN地址（4.4.4版chart.umd.min.js）返回404，导致Chart未定义、整个交互脚本在图表初始化处崩溃。改为把Chart.js 4.5.0 UMD包内联进HTML，看板不再依赖任何外部网络请求。v0.2.0：Jasper提出真实工作场景比阶段一深得多——raw表还要经过Python+模型结构要求生成9-sheet专题报表(业绩分析报表_0724.xlsx)，再生成周报PPT。现有生成代码Jasper暂时无法提供，改为从产出物反推标准。新增skills/report_enricher.py，反推还原S8_明细数据底表的13个衍生字段，12个字段100%匹配；过程中发现并（Jasper手动）修复了S8表头列错位bug。v0.3.0：找到目标APE数据源（服务器mga_platform数据库public.fact_target表，只读），新增tools/fact_target_sync.py同步快照；新增skills/s1_dashboard.py，反推还原S1_总览仪表盘A-H全部8个板块，用真实报表逐项核验全部通过——关键发现：①'流失'口径明确排除'拒保'；②凡按业务类型分组必须用report_enricher的'业务大类'衍生字段（含MGA重分类），否则经代业务会漏算91件；③目标APE的'全业务/永明业务'口径要排除segment_code IN('NGP','TA')（实证得出，原因待确认）；④S1-H节的'牌照'列(JF/UNIWIN/DW Bank/DW-Non-Bank/EG)是报表专属命名映射，不在原始字段里。v0.4.0：新增skills/s2_business_view.py，反推还原S2_业务端视角核心板块（20个子板块中的12个：A/B/C-H/I/J/K/O）。用A/B节的目标金额精确对上了BRK=同行经代、SLBRK=永明经代（解决了v0.3.0留下的映射方向问题），且发现了S2专属的'同行经代=segment_code IN(同行经代,MGA业务)'规则——MGA业务在segment层面折进同行经代，不是永明经代，也不同于S1'业务大类'的MGA→经代业务规则，是独立的第三条分类规则；'流失类'确认=取消投保/退保/搁置受保(不含拒保)，跟S1'流失'口径一致；KEY ACCOUNT按segment拆分时同一账户的MGA业务会拆成'账户名(MGA)'独立成行。v0.5.0：新增skills/s3_execution_view.py，反推还原S3_执行管理端核心6个子板块（A/B/C/D/G/H）。最重要发现：S3的'周'定义=`dt.strftime('%YW%U')`（周日起始的%U惯例周，不是ISO周），用连续3周数字排除了ISO周和简单7天分段两种猜测才精确定位；另发现真实脏数据（policy PI108585批核日早于签单日，TAT=-2天），报表H节时效分档会排除这类负数记录不计入任何分档、但合计行仍是全量口径。S2的S/T板块+S3的E/F/J-O子板块+S4-S7、S9共6张表+PPT生成留待下一批。",
 
   "data_scope": {
     "source": "Jasper 人工放置的业绩数据底表 Excel，放 07_接入记忆_Integrate_Memory/raw_data/",
     "current_file": "业绩数据底表-20260724.xlsx（3595行原始，3593条有效记录，30列，12家issuing_entity）",
-    "reference_files": "业绩分析报表_0724.xlsx（9-sheet专题报表，S8作为report_enricher的独立ground truth）、周业绩汇报PPT_W29_20260724.pptx（12页，暂未涉及生成逻辑）",
-    "storage": "本地缓存清洗后数据 + 生成的HTML看板 + S8衍生字段CSV，07_接入记忆_Integrate_Memory/data/"
+    "reference_files": "业绩分析报表_0724.xlsx（9-sheet专题报表，S8/S1/S2/S3作为独立ground truth）、周业绩汇报PPT_W29_20260724.pptx（12页，暂未涉及生成逻辑）、raw_data/业绩报表PPT/（Jasper提供的报表→PPT流水线代码，仅供参考，架构不复用）",
+    "external_db": "mga_platform（服务器Postgres，只读）public.fact_target表，目标APE数据源，连接参数在skills/db_config_local.py（本地文件不进版本库）",
+    "storage": "本地缓存清洗后数据 + 看板HTML + S8衍生字段CSV + S1/S2/S3各板块CSV + fact_target快照，07_接入记忆_Integrate_Memory/data/"
   },
 
-  "skills": ["data_loader", "cleaner", "aggregator", "dashboard_generator", "report_enricher"],
-  "tools": [],
+  "skills": ["data_loader", "cleaner", "aggregator", "dashboard_generator", "report_enricher", "s1_dashboard", "s2_business_view", "s3_execution_view"],
+  "tools": ["fact_target_sync"],
 
   "known_limitations": [
     "sum_assured/referral_code 两个字段本版本不参与清洗和聚合（当前7维分析框架未用到），透传原样，不代表已处理",
     "首年折扣(标准化)：来源字段已确认=SQ_rate，标准化分档规则待Jasper提供，当前report_enricher原样透传，见S8衍生字段_反推标准_v0.1.md三节",
     "carrier固定汇率假设（美金7.8/人民币1.14/加元5.85/澳元5.0/港币1.0）沿用底表premium字段自带口径，未与业务侧确认是否需要定期更新",
     "阶段二（CRM/保司系统实时同步）、阶段三（知识库问答）不在本版本范围，见需求定义.md 4.2节",
-    "S1-S7/S9共7张专题视角表 + PPT生成逻辑尚未反推，且S1/S2/S4/S5/S7/S9依赖外部'目标APE'数据（服务器数据库只读，暂未接入连接）"
+    "目标APE口径排除segment_code NGP/TA的业务原因仍待Jasper确认，见目标APE数据源_fact_target_核实.md",
+    "S2的D-H板块是C板块同规则参数化推算，未逐月核对；S2的S/T板块（partner_code维度）未实现",
+    "S3的E/F（未批核待签透视表）+J-O（同行/银行周度趋势）未实现",
+    "S4-S7、S9共6张专题视角表 + PPT生成逻辑尚未反推，raw_data/业绩报表PPT/里的代码是报表→PPT阶段，不含raw→报表阶段的生成逻辑"
   ],
 
   "archive_gate": {
