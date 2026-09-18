@@ -244,9 +244,34 @@ class Mirror:
         self.state = State(STATE_DB)
         self.root = Path(args.mirror).expanduser().resolve()
         self.root.mkdir(parents=True, exist_ok=True)
+        self._guard_syncthing()
         self.stats = {"scanned": 0, "downloaded": 0, "skipped": 0,
                       "failed": 0, "deleted": 0, "bytes": 0}
         self.stop = threading.Event()
+
+    def _guard_syncthing(self):
+        """镜像目录若是 Syncthing 的 folder，确保下载中的临时文件不会被同步出去。
+
+        下载用 `xxx.part` 暂存后原子替换。Syncthing 会把 .part 当成正式文件立刻
+        分发给各端，产生一堆半截文件；替换完成后又变成删除+新增，白白放大流量。
+        """
+        if not (self.root / ".stfolder").exists():
+            return
+        ignore = self.root / ".stignore"
+        needed = ["*.part", ".stversions"]
+        try:
+            existing = ignore.read_text(encoding="utf-8").splitlines() if ignore.exists() else []
+            missing = [rule for rule in needed if rule not in existing]
+            if missing:
+                with open(ignore, "a", encoding="utf-8") as fh:
+                    if existing and existing[-1].strip():
+                        fh.write("\n")
+                    fh.write("// 由 wps_mirror.py 添加：排除下载中的临时文件\n")
+                    fh.write("\n".join(missing) + "\n")
+                log(f"检测到 Syncthing folder，已在 .stignore 补充规则：{', '.join(missing)}")
+        except OSError as exc:
+            log(f"[警告] 无法写入 .stignore（{exc}）。请手动添加 *.part，"
+                "否则下载中的半截文件会被同步出去。")
 
     # ---- Phase 1: 扫描 ----
     def scan_drive(self, drive_id: str, drive_name: str) -> list[tuple[dict, str]]:
@@ -333,9 +358,12 @@ class Mirror:
                 except OSError as exc:
                     log(f"  [警告] 删除失败 {rel}: {exc}")
             self.state.drop(row["file_id"])
-        # 清理空目录
+        # 清理空目录。跳过点号开头的目录——Syncthing 用 .stfolder 标记 folder 根，
+        # 被删掉会判定该 folder 失效并停止同步；.stversions 是它的版本库。
         for d in sorted((p for p in self.root.rglob("*") if p.is_dir()),
                         key=lambda p: len(p.parts), reverse=True):
+            if any(part.startswith(".") for part in d.relative_to(self.root).parts):
+                continue
             try:
                 d.rmdir()
             except OSError:
