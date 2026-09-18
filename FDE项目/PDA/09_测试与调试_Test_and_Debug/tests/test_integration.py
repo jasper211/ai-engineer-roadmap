@@ -24,6 +24,8 @@ from skills.report_enricher import ReportEnricher, UnmappedPolicyStageError
 from skills.s1_dashboard import S1DashboardBuilder
 from skills.s2_business_view import S2BusinessViewBuilder
 from skills.s3_execution_view import S3ExecutionViewBuilder
+from skills.s4_product_view import S4ProductViewBuilder
+from skills.s5_finance_view import S5FinanceViewBuilder
 
 RAW_DATA_DIR = AGENT_ROOT / "07_接入记忆_Integrate_Memory" / "raw_data"
 REPORT_FILE = RAW_DATA_DIR / "业绩分析报表_0724.xlsx"
@@ -276,6 +278,70 @@ def main():
         check("S3-H 合计=全量1205件（不是6档相加的1204件）", h["合计"]["件数"] == 1205)
     else:
         check("⚠️ 报表文件不存在，跳过S3独立核验", True)
+
+    # ---- L3-PDA-09：s4_product_view，对照真实"业绩分析报表"S4_产品端视角独立核验 ----
+    if REPORT_FILE.exists():
+        s4b = S4ProductViewBuilder(df)
+
+        a = {r["保险公司"]: r for r in s4b.section_a()}
+        check("S4-A 永明（A节排除4种状态含拒保，跟B-E的3种不同）", a["永明"]["件数"] == 934
+              and abs(a["永明"]["APE"] - 361550464.53) < 0.01)
+        check("S4-A 合计1205件", a["合计"]["件数"] == 1205)
+        check("S4-A 零业务保司也列出(如'周大福')", a.get("周大福", {}).get("件数") == 0)
+
+        c = s4b.section_c()
+        check("S4-C 第1名（万年青·卓金保险计划II/21%）", c[0]["产品名称"] == "万年青·卓金保险计划II"
+              and c[0]["首年折扣"] == "21%" and c[0]["件数"] == 43 and abs(c[0]["APE"] - 26395200) < 0.01)
+
+        b4 = s4b.section_b()
+        check("S4-B 第1/2名（永誉传承储蓄计划按SQ_rate拆成2.5%/3.5%两行，不是合并成1行）",
+              b4[0]["首年折扣"] == "2.5%" and b4[0]["件数"] == 13
+              and b4[1]["首年折扣"] == "3.5%" and b4[1]["件数"] == 8)
+        check("S4-B SQ_rate缺失的记录不出现在TOP20（即便金额很大）",
+              all(r["首年折扣"] is not None for r in b4))
+
+        d = {r["年期分类"]: r for r in s4b.section_d()}
+        check("S4-D 中期(2-5年)1021件", d["中期(2-5年)"]["件数"] == 1021)
+        check("S4-D 合计1206件（不等于4档相加的1199，7条premium_term非数字的记录不落入任何档但计入合计）",
+              d["合计"]["件数"] == 1206)
+
+        e = {r["供款方式"]: r for r in s4b.section_e()}
+        check("S4-E 预缴/年缴/整付/合计", e["预缴"]["件数"] == 430 and e["年缴"]["件数"] == 685
+              and e["整付"]["件数"] == 91 and e["合计"]["件数"] == 1206)
+    else:
+        check("⚠️ 报表文件不存在，跳过S4独立核验", True)
+
+    # ---- L3-PDA-10：s5_finance_view，对照真实"业绩分析报表"S5_财务端视角独立核验 ----
+    if REPORT_FILE.exists():
+        s5b = S5FinanceViewBuilder(df)
+
+        a = {r["牌照(签单供应商)"]: r for r in s5b.section_a()}
+        check("S5-A 怡泰财富管理有限公司", a["怡泰财富管理有限公司"]["件数"] == 240
+              and abs(a["怡泰财富管理有限公司"]["批核APE"] - 238231097.58) < 0.01
+              and abs(a["怡泰财富管理有限公司"]["批核年总保费(HKD)"] - 1900461727.38) < 0.01)
+        check("S5-A 合计1205件（含零业务entity）", a["合计"]["件数"] == 1205 and len(s5b.section_a()) == 13)
+
+        d = {r["保费规模档"]: r for r in s5b.section_d()}
+        check("S5-D 保费分档（复用report_enricher的边界常量）",
+              d["<5万"]["件数"] == 113 and d["100万+"]["件数"] == 182 and d["合计"]["件数"] == 1205)
+
+        f = {r["类型"]: r for r in s5b.section_f()}
+        check("S5-F 常规/融资", f["常规"]["件数"] == 1079 and abs(f["常规"]["APE"] - 397770708.33) < 0.01
+              and f["融资"]["件数"] == 126 and abs(f["融资"]["年总保费(HKD)"] - 1854385600) < 0.01)
+
+        g = s5b.section_g()
+        check("S5-G TOP20金额并列时按sign_date升序排（不是随机/policy_no顺序）",
+              g[0]["保单号"] == 611222899 and g[1]["保单号"] == 611222895 and g[2]["保单号"] == 611222827)
+
+        h = s5b.section_h()
+        check("S5-H 第1名（薪火传承环球终身寿险计划，13,571,999.45）",
+              h[0]["产品"] == "薪火传承环球终身寿险计划" and abs(h[0]["APE"] - 13571999.45) < 0.01
+              and h[0]["牌照"] == "富强天一" and h[0]["保司"] == "中银人寿")
+
+        bp = {r["牌照"]: r for r in s5b.section_b_premium()}
+        check("S5-B_premium 怡泰2026-01", abs(bp["怡泰财富管理有限公司"]["2026-01"] - 74396333.7) < 0.01)
+    else:
+        check("⚠️ 报表文件不存在，跳过S5独立核验", True)
 
     print()
     if failures:

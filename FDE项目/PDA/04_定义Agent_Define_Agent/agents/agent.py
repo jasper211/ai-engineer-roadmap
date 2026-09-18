@@ -10,6 +10,8 @@ PDA 主循环入口。demo 阶段是一次性全量流程，不做常驻监控/�
     python3 agent.py --s1            # 复刻S1_总览仪表盘的A-H八个板块 -> 存CSV
     python3 agent.py --s2            # 复刻S2_业务端视角的核心板块(A/B/C-H/I/J/K/O) -> 存CSV
     python3 agent.py --s3            # 复刻S3_执行管理端的核心板块(A/B/C/D/G/H) -> 存CSV
+    python3 agent.py --s4            # 复刻S4_产品端视角全部板块(A/B/C/D/E) -> 存CSV
+    python3 agent.py --s5            # 复刻S5_财务端视角全部板块(A/B/C/D/E/F/G/H) -> 存CSV
     python3 agent.py --status        # 查看上次运行的记录
 """
 import argparse
@@ -29,11 +31,13 @@ from skills.report_enricher import ReportEnricher
 from skills.s1_dashboard import S1DashboardBuilder
 from skills.s2_business_view import S2BusinessViewBuilder
 from skills.s3_execution_view import S3ExecutionViewBuilder
+from skills.s4_product_view import S4ProductViewBuilder
+from skills.s5_finance_view import S5FinanceViewBuilder
 from memory.workspace import Workspace
 
 RAW_DATA_DIR = AGENT_ROOT / "07_接入记忆_Integrate_Memory" / "raw_data"
 FACT_TARGET_SNAPSHOT = AGENT_ROOT / "07_接入记忆_Integrate_Memory" / "data" / "fact_target_snapshot.csv"
-AGENT_VERSION = "v0.5.0"
+AGENT_VERSION = "v0.7.0"
 
 
 def run():
@@ -200,6 +204,40 @@ def build_s3():
     print(f"输出目录: {out_dir}")
 
 
+def build_s4():
+    load_result = DataLoader(RAW_DATA_DIR).load()
+    df = Cleaner().clean(load_result.df, load_result.export_date)
+    s4 = S4ProductViewBuilder(df).build_all()
+
+    import pandas as pd
+    workspace = Workspace()
+    out_dir = workspace.data_dir / "S4_产品端视角"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    for section, rows in s4.items():
+        pd.DataFrame(rows).to_csv(out_dir / f"{section}.csv", index=False, encoding="utf-8-sig")
+
+    print("✅ S4_产品端视角 全部5个板块(A/B/C/D/E)已生成")
+    print("   全部已用真实『业绩分析报表_0724.xlsx』核验")
+    print(f"输出目录: {out_dir}")
+
+
+def build_s5():
+    load_result = DataLoader(RAW_DATA_DIR).load()
+    df = Cleaner().clean(load_result.df, load_result.export_date)
+    s5 = S5FinanceViewBuilder(df).build_all()
+
+    import pandas as pd
+    workspace = Workspace()
+    out_dir = workspace.data_dir / "S5_财务端视角"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    for section, rows in s5.items():
+        pd.DataFrame(rows).to_csv(out_dir / f"{section}.csv", index=False, encoding="utf-8-sig")
+
+    print("✅ S5_财务端视角 全部8个板块（A/B-保费/B-件数/C-APE/C-件数/D/E/F/G/H）已生成")
+    print("   全部已用真实『业绩分析报表_0724.xlsx』核验")
+    print(f"输出目录: {out_dir}")
+
+
 def show_status():
     workspace = Workspace()
     info = workspace.load_last_run()
@@ -219,6 +257,8 @@ def main():
     ap.add_argument("--s1", action="store_true", help="复刻S1_总览仪表盘A-H八个板块，存CSV")
     ap.add_argument("--s2", action="store_true", help="复刻S2_业务端视角核心板块，存CSV")
     ap.add_argument("--s3", action="store_true", help="复刻S3_执行管理端核心板块，存CSV")
+    ap.add_argument("--s4", action="store_true", help="复刻S4_产品端视角全部板块，存CSV")
+    ap.add_argument("--s5", action="store_true", help="复刻S5_财务端视角全部板块，存CSV")
     ap.add_argument("--status", action="store_true", help="查看上次运行记录")
     args = ap.parse_args()
 
@@ -234,6 +274,10 @@ def main():
         build_s2()
     elif args.s3:
         build_s3()
+    elif args.s4:
+        build_s4()
+    elif args.s5:
+        build_s5()
     elif args.status:
         show_status()
     else:
