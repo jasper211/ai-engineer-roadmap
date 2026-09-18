@@ -19,16 +19,22 @@ PDA/
 ├── 03_规划项目结构_Plan_Project_Structure/  流程设计.md
 ├── 04_定义Agent_Define_Agent/
 │   └── agents/agent.py + agent.yaml       主入口 + Agent身份声明
-├── 05_集成工具_Integrate_Tools/            （本版本暂不需要）
+├── 05_集成工具_Integrate_Tools/
+│   └── tools/fact_target_sync.py          只读同步服务器fact_target目标APE数据
 ├── 06_开发技能_Develop_Skills/
 │   └── skills/data_loader.py              底表读取+完整性校验
 │   └── skills/cleaner.py                  清洗标准化（含日期类型修正）
 │   └── skills/aggregator.py               围绕issuing_entity的多维聚合
 │   └── skills/dashboard_generator.py      HTML看板生成
+│   └── skills/report_enricher.py          S8明细底表13个衍生字段
+│   └── skills/s1_dashboard.py             S1总览仪表盘A-H八个板块
+│   └── skills/s2_business_view.py         S2业务端视角核心12个子板块
+│   └── skills/s3_execution_view.py        S3执行管理端核心6个子板块
+│   └── skills/db_config_local.py          数据库连接参数（本地文件，不进版本库）
 ├── 07_接入记忆_Integrate_Memory/
-│   └── raw_data/                          Jasper放置的原始底表Excel
+│   └── raw_data/                          Jasper放置的原始底表Excel+业绩分析报表+PPT流水线参考代码
 │   └── memory/workspace.py                本地缓存+PDA专属工作区隔离
-│   └── data/                              清洗后数据缓存 + 生成的看板HTML
+│   └── data/                              清洗后数据缓存 + 看板HTML + S8/S1衍生数据CSV + fact_target快照
 ├── 08_设计提示词_Design_Prompts/           （本版本无LLM调用，留空）
 ├── 09_测试与调试_Test_and_Debug/
 │   └── tests/test_integration.py          真实数据集成测试
@@ -41,15 +47,23 @@ PDA/
 ```bash
 python3 04_定义Agent_Define_Agent/agents/agent.py --run
 python3 04_定义Agent_Define_Agent/agents/agent.py --enrich
+python3 04_定义Agent_Define_Agent/agents/agent.py --sync-targets
+python3 04_定义Agent_Define_Agent/agents/agent.py --s1
+python3 04_定义Agent_Define_Agent/agents/agent.py --s2
+python3 04_定义Agent_Define_Agent/agents/agent.py --s3
 python3 04_定义Agent_Define_Agent/agents/agent.py --status
 python3 09_测试与调试_Test_and_Debug/tests/test_integration.py
 ```
 
-`--run` 读取 `raw_data/` 下的底表 Excel，清洗、聚合，在 `07_接入记忆_Integrate_Memory/data/` 生成 HTML 看板；`--enrich` 清洗后加上 S8 明细底表的13个衍生字段，存成CSV（为复刻9-sheet专题报表打基础）；`--status` 查看上次运行的记录数/future_dated数等摘要。
+`--run` 读取 `raw_data/` 下的底表 Excel，清洗、聚合，在 `07_接入记忆_Integrate_Memory/data/` 生成 HTML 看板；`--enrich` 清洗后加上 S8 明细底表的13个衍生字段，存成CSV；`--sync-targets` 只读同步服务器 fact_target 目标APE数据（需要 `skills/db_config_local.py`，本地文件不进版本库）；`--s1` 复刻S1_总览仪表盘A-H八个板块，存成CSV；`--s2` 复刻S2_业务端视角核心12个子板块，存成CSV；`--s3` 复刻S3_执行管理端核心6个子板块（周度趋势+签批时效分析），存成CSV；`--status` 查看上次运行的记录数/future_dated数等摘要。
 
 ## 关联文档
 
 - [需求定义.md](01_初始化项目_Initialize_Project/需求定义.md) — 含真实底表核实发现（日期类型bug、future_dated真实计数）
 - [S8衍生字段_反推标准_v0.1.md](01_初始化项目_Initialize_Project/S8衍生字段_反推标准_v0.1.md) — 从《业绩分析报表》反推还原S8明细底表13个衍生字段规则，12个已100%核验
-- [流程设计.md](03_规划项目结构_Plan_Project_Structure/流程设计.md) — L3-PDA-01~05 端到端流程 + 清洗/衍生字段规则明细表
+- [S1_总览仪表盘_反推标准_v0.1.md](01_初始化项目_Initialize_Project/S1_总览仪表盘_反推标准_v0.1.md) — 反推还原S1_总览仪表盘A-H全部8个板块，全部100%核验
+- [S2_业务端视角_反推标准_v0.1.md](01_初始化项目_Initialize_Project/S2_业务端视角_反推标准_v0.1.md) — 反推还原S2_业务端视角核心12个子板块
+- [S3_执行管理端_反推标准_v0.1.md](01_初始化项目_Initialize_Project/S3_执行管理端_反推标准_v0.1.md) — 反推还原S3_执行管理端核心6个子板块，含"周"定义的破解过程
+- [目标APE数据源_fact_target_核实.md](01_初始化项目_Initialize_Project/目标APE数据源_fact_target_核实.md) — 服务器fact_target表结构+编码映射核实记录
+- [流程设计.md](03_规划项目结构_Plan_Project_Structure/流程设计.md) — L3-PDA-01~08 端到端流程 + 清洗/衍生字段规则明细表
 - [执行记录.md](执行记录.md) — 端到端运行结果 + 踩坑记录
