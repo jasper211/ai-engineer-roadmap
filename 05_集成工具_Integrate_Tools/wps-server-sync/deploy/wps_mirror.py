@@ -96,10 +96,20 @@ class Cli:
             raise RuntimeError(f"code={payload.get('code')} msg={payload.get('msg')}")
         return payload.get("data", payload)
 
-    def token(self) -> str:
-        """token 缓存 1 小时；CLI 内部会在过期时用 refresh_token 自动续。"""
+    def invalidate_token(self) -> None:
+        """丢弃缓存的 token，下次调用重新向 CLI 索取。403 时调用。"""
         with self._lock:
-            if self._token and time.time() - self._token_at < 3600:
+            self._token = None
+
+    def token(self) -> str:
+        """只缓存 5 分钟。
+
+        不能缓存太久：CLI 内部也缓存 access_token，程序隔 1 小时去问它，
+        拿回来的往往还是同一个（CLI 认为它没到期）。程序若再缓存 1 小时，
+        正好用到该 token 彻底失效，导致每 2 小时集中出现一批 403。
+        """
+        with self._lock:
+            if self._token and time.time() - self._token_at < 300:
                 return self._token
             proc = subprocess.run([self.path, "auth", "token"], capture_output=True,
                                   text=True, encoding="utf-8", errors="replace", timeout=60)
@@ -333,7 +343,13 @@ class Mirror:
                 return "ok"
             except Exception as exc:
                 msg = str(exc)
-                if "429" in msg or "limit" in msg.lower() or "频" in msg:
+                if "403" in msg or "401" in msg or "userNotLogin" in msg:
+                    # 多半是 access_token 到期。丢弃缓存后重试会拿到新 token，
+                    # 否则三次重试都拿着同一个死 token，必然全败。
+                    self.cli.invalidate_token()
+                    log(f"  [凭证过期] 重新获取令牌后重试：{rel}")
+                    time.sleep(2)
+                elif "429" in msg or "limit" in msg.lower() or "频" in msg:
                     log(f"  [限流] {rel} —— 暂停后重试")
                     time.sleep(30 * (attempt + 1))
                 elif attempt < 2:
