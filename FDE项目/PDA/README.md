@@ -29,7 +29,7 @@ PDA/
 │   └── skills/report_enricher.py          S8明细底表13个衍生字段
 │   └── skills/s1_dashboard.py             S1总览仪表盘A-H八个板块
 │   └── skills/s2_business_view.py         S2业务端视角全部20个子板块
-│   └── skills/s3_execution_view.py        S3执行管理端核心6个子板块
+│   └── skills/s3_execution_view.py        S3执行管理端全部20个子板块
 │   └── skills/s4_product_view.py          S4产品端视角全部5个板块
 │   └── skills/s5_finance_view.py          S5财务端视角全部8个板块
 │   └── skills/s6_market_cross_view.py     S6市场与交叉视角全部12张子表
@@ -65,7 +65,7 @@ python3 04_定义Agent_Define_Agent/agents/agent.py --status
 python3 09_测试与调试_Test_and_Debug/tests/test_integration.py
 ```
 
-`--run` 读取 `raw_data/` 下的底表 Excel，清洗、聚合，在 `07_接入记忆_Integrate_Memory/data/` 生成 HTML 看板；`--enrich` 清洗后加上 S8 明细底表的13个衍生字段，存成CSV；`--sync-targets` 只读同步服务器 fact_target 目标APE数据（需要 `skills/db_config_local.py`，本地文件不进版本库）；`--s1` 复刻S1_总览仪表盘A-H八个板块，存成CSV；`--s2` 复刻S2_业务端视角全部20个子板块（含S/T的partner_code维度），存成CSV；`--s3` 复刻S3_执行管理端核心6个子板块（周度趋势+签批时效分析），存成CSV；`--s4` 复刻S4_产品端视角全部5个板块，存成CSV；`--s5` 复刻S5_财务端视角全部8个板块（规模分档+大额保单TOP20），存成CSV；`--s6` 复刻S6_市场与交叉视角全部12张子表，存成CSV；`--s7` 复刻S7_合规端视角全部6个板块（牌照合规概览+牌照×业务细分+签批时效预警+TR人效），存成CSV；`--s9` 复刻S9_代理人与KA业务全部10个顶层板块（业务细分汇总+KA业绩分析+月度/周度明细），存成CSV；`--status` 查看上次运行的记录数/future_dated数等摘要。
+`--run` 读取 `raw_data/` 下的底表 Excel，清洗、聚合，在 `07_接入记忆_Integrate_Memory/data/` 生成 HTML 看板；`--enrich` 清洗后加上 S8 明细底表的13个衍生字段，存成CSV；`--sync-targets` 只读同步服务器 fact_target 目标APE数据（需要 `skills/db_config_local.py`，本地文件不进版本库）；`--s1` 复刻S1_总览仪表盘A-H八个板块，存成CSV；`--s2` 复刻S2_业务端视角全部20个子板块（含S/T的partner_code维度），存成CSV；`--s3` 复刻S3_执行管理端全部20个子板块（周度趋势+签批时效分析+未批核待签分布+同行/银行周度趋势），存成CSV；`--s4` 复刻S4_产品端视角全部5个板块，存成CSV；`--s5` 复刻S5_财务端视角全部8个板块（规模分档+大额保单TOP20），存成CSV；`--s6` 复刻S6_市场与交叉视角全部12张子表，存成CSV；`--s7` 复刻S7_合规端视角全部6个板块（牌照合规概览+牌照×业务细分+签批时效预警+TR人效），存成CSV；`--s9` 复刻S9_代理人与KA业务全部10个顶层板块（业务细分汇总+KA业绩分析+月度/周度明细），存成CSV；`--status` 查看上次运行的记录数/future_dated数等摘要。
 
 ## 关联文档
 
@@ -73,7 +73,7 @@ python3 09_测试与调试_Test_and_Debug/tests/test_integration.py
 - [S8衍生字段_反推标准_v0.1.md](01_初始化项目_Initialize_Project/S8衍生字段_反推标准_v0.1.md) — 从《业绩分析报表》反推还原S8明细底表13个衍生字段规则，12个已100%核验
 - [S1_总览仪表盘_反推标准_v0.1.md](01_初始化项目_Initialize_Project/S1_总览仪表盘_反推标准_v0.1.md) — 反推还原S1_总览仪表盘A-H全部8个板块，全部100%核验
 - [S2_业务端视角_反推标准_v0.1.md](01_初始化项目_Initialize_Project/S2_业务端视角_反推标准_v0.1.md) — 反推还原S2_业务端视角全部20个子板块，含S/T的partner_code维度
-- [S3_执行管理端_反推标准_v0.1.md](01_初始化项目_Initialize_Project/S3_执行管理端_反推标准_v0.1.md) — 反推还原S3_执行管理端核心6个子板块，含"周"定义的破解过程
+- [S3_执行管理端_反推标准_v0.1.md](01_初始化项目_Initialize_Project/S3_执行管理端_反推标准_v0.1.md) — 反推还原S3_执行管理端全部20个子板块，含"周"定义的破解过程
 - [S4_产品端视角_反推标准_v0.1.md](01_初始化项目_Initialize_Project/S4_产品端视角_反推标准_v0.1.md) — 反推还原S4_产品端视角全部5个板块，全部100%核验
 - [S5_财务端视角_反推标准_v0.1.md](01_初始化项目_Initialize_Project/S5_财务端视角_反推标准_v0.1.md) — 反推还原S5_财务端视角全部8个板块
 - [S6_市场与交叉视角_反推标准_v0.1.md](01_初始化项目_Initialize_Project/S6_市场与交叉视角_反推标准_v0.1.md) — 反推还原S6_市场与交叉视角全部12张子表
