@@ -40,6 +40,11 @@ DEFAULT_MIRROR = HERE / "mirror"
 STATE_DB = HERE / "sync_state.db"
 LOG_FILE = HERE / "sync.log"
 
+# 清理阶段的熔断阈值：一轮要删掉库存的这个比例以上就中止，
+# 除非显式 --allow-mass-delete。见 Mirror.cleanup() 里的注释。
+DELETE_RATIO_LIMIT = 0.10
+DELETE_ABS_FLOOR = 50
+
 # 可结构化读取的表格/文档类扩展名，--only-docs 时用
 DOC_EXTS = {"xlsx", "xls", "et", "csv", "docx", "doc", "pptx", "ppt",
             "pdf", "txt", "md", "ksheet", "dbt", "otl"}
@@ -256,7 +261,8 @@ class Mirror:
         self.root.mkdir(parents=True, exist_ok=True)
         self._guard_syncthing()
         self.stats = {"scanned": 0, "downloaded": 0, "skipped": 0,
-                      "failed": 0, "deleted": 0, "bytes": 0}
+                      "failed": 0, "deleted": 0, "bytes": 0,
+                      "cleanup_skipped": 0}
         self.stop = threading.Event()
 
     def _guard_syncthing(self):
@@ -363,6 +369,35 @@ class Mirror:
     # ---- Phase 3: 清理云端已删 ----
     def cleanup(self):
         gone = self.state.vanished()
+
+        # 缩小过扫描范围的那一轮，没有资格判断"云端删了什么"。
+        # --drives 只扫部分库时，其余库的文件全部 seen=0，会被当成云端已删。
+        # 2026-09-21 就是这么把 23,047 个文件（13G）整个清空的。
+        if self.args.drives and not self.args.allow_mass_delete:
+            self.stats["cleanup_skipped"] = len(gone)
+            log(f"  [跳过] 本轮用 --drives 限定了范围，不做全局清理"
+                f"（{len(gone)} 条记录本轮未扫到，原样保留）。")
+            log("         只有全量扫描才能判断云端删除；确要按此范围清理请加 --allow-mass-delete。")
+            return
+
+        # 比例熔断：一次删掉库存一大截，绝大多数情况是扫描侧出了问题
+        # （范围变了、某个库权限丢了、接口返回空），而不是云端真删了那么多。
+        # 熔断时状态库一并不动，下次全量跑仍能正确对比。
+        total = self.state.count()
+        if (len(gone) > DELETE_ABS_FLOOR and total
+                and len(gone) / total > DELETE_RATIO_LIMIT
+                and not self.args.allow_mass_delete):
+            self.stats["cleanup_skipped"] = len(gone)
+            log(f"  [熔断] 本轮将删除 {len(gone)}/{total} 个文件"
+                f"（{len(gone)/total*100:.1f}%，超过 {DELETE_RATIO_LIMIT*100:.0f}% 上限），已中止清理。")
+            log("         镜像内容与状态库均原样保留，没有删除任何东西。")
+            log("         先查清扫描是不是漏了：范围参数、账号授权、某个库是否还能列目录。")
+            log("         确认云端真的删了这么多，加 --allow-mass-delete 重跑。")
+            return
+
+        if self.args.allow_mass_delete and len(gone) > DELETE_ABS_FLOOR:
+            log(f"  [警告] --allow-mass-delete 已指定，将删除 {len(gone)} 个文件")
+
         for row in gone:
             rel = row.get("rel_path") or ""
             path = self.root / rel if rel else None
@@ -517,6 +552,8 @@ class Mirror:
         log(f"未变跳过   {self.stats['skipped']}")
         log(f"下载失败   {self.stats['failed']}")
         log(f"本地删除   {self.stats['deleted']}")
+        if self.stats["cleanup_skipped"]:
+            log(f"清理已中止  {self.stats['cleanup_skipped']} 条未扫到的记录被保留（未删除）")
         log(f"状态库记录 {self.state.count()}")
         log(f"总耗时     {time.time()-t0:.0f} 秒")
         log("=" * 62)
@@ -541,6 +578,9 @@ def main() -> int:
     ap.add_argument("--download-timeout", type=int, default=600)
     ap.add_argument("--rsync-timeout", type=int, default=7200)
     ap.add_argument("--dry-run", action="store_true", help="只统计不下载")
+    ap.add_argument("--allow-mass-delete", action="store_true",
+                    help="放行清理熔断：允许一轮删除超过 %d%% 的镜像文件，或在 --drives 限定范围下清理。"
+                         "只有确认云端真的删了这么多才用。" % int(DELETE_RATIO_LIMIT * 100))
     args = ap.parse_args()
     try:
         return Mirror(args).run()
