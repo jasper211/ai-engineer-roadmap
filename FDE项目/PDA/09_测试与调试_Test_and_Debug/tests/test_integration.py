@@ -293,6 +293,24 @@ def main():
         check("S3-H ≤7天分档排除TAT<0异常值(126件不是127件)", h["≤7天"]["件数"] == 126
               and abs(h["≤7天"]["APE"] - 35843324.08) < 1)
         check("S3-H 合计=全量1205件（不是6档相加的1204件）", h["合计"]["件数"] == 1205)
+
+        e_ape = {r["KEY ACCOUNT"]: r for r in s3b.section_e_ape()}
+        check("S3-E_ape 天誉国际(MGA)（status IN未批核4态+排期，is_pf=0）",
+              abs(e_ape["天誉国际(MGA)"]["2026-07"] - 33446632.64) < 0.01
+              and abs(e_ape["天誉国际(MGA)"]["合计"] - 45378884.84) < 0.01)
+
+        f_ape = {r["KEY ACCOUNT"]: r for r in s3b.section_f_ape()}
+        check("S3-F_ape 平安银行（is_pf=1融资）", abs(f_ape["平安银行"]["合计"] - 7020000) < 0.01)
+
+        j_ape = {r["KEY ACCOUNT"]: r for r in s3b.section_j_ape()}
+        check("S3-J_ape 天誉国际/天誉国际(MGA)周度合计（同行，res_yw排除流失类）",
+              abs(j_ape["天誉国际(MGA)"]["合计"] - 67419410.58) < 0.01
+              and abs(j_ape["天誉国际"]["合计"] - 58320317.86) < 0.01)
+
+        m_ape = {r["KEY ACCOUNT"]: r for r in s3b.section_m_ape()}
+        check("S3-M_ape 民生银行W01-W03（银行，res_yw）",
+              abs(m_ape["民生银行"]["2026W01"] - 1560000) < 0.01
+              and abs(m_ape["民生银行"]["2026W03"] - 3120000) < 0.01)
     else:
         check("⚠️ 报表文件不存在，跳过S3独立核验", True)
 
