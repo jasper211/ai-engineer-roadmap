@@ -21,7 +21,9 @@ fi
 /home/WPSIN/wps-sync/rotate_log.sh
 
 START=$(date "+%F %T")
-/usr/bin/python3 "$DIR/wps_mirror.py" --mirror "/mnt/newdisk/wps-mirror" >> "$LOG" 2>&1
+# 程序的 log() 本身就在写 $LOG，stdout 再重定向过去会把每行写两遍。
+# stderr 必须留着——Python 崩溃的 traceback 只走 stderr。
+/usr/bin/python3 "$DIR/wps_mirror.py" --mirror "/mnt/newdisk/wps-mirror" >/dev/null 2>>"$LOG"
 RC=$?
 END=$(date "+%F %T")
 
@@ -45,8 +47,16 @@ except Exception: print(\"授权状态      ：查询失败，请运维检查\")
 
 FILES=$(find /mnt/newdisk/wps-mirror -type f ! -path "*/.stfolder/*" 2>/dev/null | wc -l)
 SIZE=$(du -sh /mnt/newdisk/wps-mirror 2>/dev/null | cut -f1)
-# 从本轮日志尾部取程序自己的统计口径
-TAILSTAT=$(tail -40 "$LOG" | grep -E "^[0-9-]+ [0-9:]+ (云端文件|下载失败|本地删除|清理已中止)" | sed "s/^[0-9-]* [0-9:]* //")
+# 从本轮日志尾部取程序自己的统计口径。
+# 取「最后一次」出现的值：日志是累积的，同名字段历史上出现过很多次。
+pick() { tail -60 "$LOG" | grep -E "^[0-9-]+ [0-9:]+ $1" | tail -1 | sed -E "s/^[0-9-]+ [0-9:]+ $1[[:space:]]*//"; }
+CLOUD=$(pick "云端文件")
+DL=$(pick "本次下载")
+FAIL=$(pick "下载失败")
+DEL=$(pick "本地删除")
+ABORT=$(pick "清理已中止")
+TAILSTAT="云端文件 ${CLOUD:-?} / 本次下载 ${DL:-?} / 失败 ${FAIL:-?} / 删除 ${DEL:-?}"
+[ -n "$ABORT" ] && TAILSTAT="$TAILSTAT / !! 清理已中止：$ABORT"
 
 {
   echo "上次运行 : $START → $END"
@@ -65,9 +75,17 @@ TAILSTAT=$(tail -40 "$LOG" | grep -E "^[0-9-]+ [0-9:]+ (云端文件|下载失�
   echo "最后一次同步完成：$END"
   echo "本次结果        ：$([ $RC -eq 0 ] && echo "正常" || echo "失败 —— 请联系运维查看服务器 /home/WPSIN/wps-sync/sync.log")"
   echo "文件夹内容      ：$FILES 个文件 / $SIZE"
+  echo "本次新增或更新  ：${DL:-0} 个文件"
+  if [ -n "$FAIL" ] && [ "$FAIL" != "0" ]; then
+    echo "本次未取回      ：$FAIL 个（下次同步会自动重试，通常无需处理）"
+  fi
+  if [ -n "$DEL" ] && [ "$DEL" != "0" ]; then
+    echo "本次移除        ：$DEL 个（这些文件已在 WPS 上删除）"
+  fi
+  if [ -n "$ABORT" ]; then
+    echo "!! 请联系运维    ：本次有 $ABORT 个文件在 WPS 上查不到，为防误删已暂停清理"
+  fi
   echo "$AUTH_LINE"
-  echo
-  echo "$TAILSTAT"
   echo
   echo "说明：本文件夹是 WPS 云盘的只读副本，每天凌晨 2 点自动核对更新。"
   echo "      内容的增删改一律在 WPS 上进行，这里的改动不会回传，也会在下次同步时被覆盖。"
