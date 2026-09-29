@@ -590,15 +590,117 @@ def main():
         check("前端S1视角 状态明细行数=F板块非合计行数",
               len(v1["status_detail"]) == sum(1 for _, r in s1_mv["F"].iterrows() if r["保单状态"] != "合计"))
 
+    else:
+        check("⚠️ S1数据不存在，跳过前端S1视角核验", True)
+
+    # ---- 前端：S2/S3/S4/同行/银行/代理人/KA 共7个新增视角，对照真实CSV独立核验 ----
+    from skills.multiview_dashboard import (
+        build_s2_view, build_s3_view, build_s4_view,
+        build_peer_view, build_bank_view, build_agent_view, build_ka_view,
+    )
+
+    s2_dir_mv = AGENT_ROOT / "07_接入记忆_Integrate_Memory" / "data" / "S2_业务端视角"
+    s3_dir_mv = AGENT_ROOT / "07_接入记忆_Integrate_Memory" / "data" / "S3_执行管理端"
+    s4_dir_mv = AGENT_ROOT / "07_接入记忆_Integrate_Memory" / "data" / "S4_产品端视角"
+    s9_dir_mv = AGENT_ROOT / "07_接入记忆_Integrate_Memory" / "data" / "S9_代理人与KA业务"
+
+    if s2_dir_mv.exists() and s3_dir_mv.exists() and s4_dir_mv.exists() and s9_dir_mv.exists():
+        s2_mv = _mv_load_sheet(s2_dir_mv)
+        s3_mv = _mv_load_sheet(s3_dir_mv)
+        s4_mv = _mv_load_sheet(s4_dir_mv)
+        s9_mv = _mv_load_sheet(s9_dir_mv)
+
+        # --- S2业务端 ---
+        v2 = build_s2_view(s2_mv)
+        a2_noTotal = s2_mv["A"][s2_mv["A"]["业务细分"] != "合计"]
+        check("前端S2视角 target_total=A板块非合计行目标APE独立求和",
+              abs(v2["target_total"] - a2_noTotal["目标APE"].apply(ppt_num).sum()) < 1)
+        check("前端S2视角 overall_rate=issued_total/target_total",
+              abs(v2["overall_rate"] - v2["issued_total"] / v2["target_total"]) < 1e-9)
+        i2_noTotal = s2_mv["I"][s2_mv["I"]["KEY ACCOUNT"] != "合计"]
+        check("前端S2视角 ka_rank行数=I板块非合计行数（I板块本身无预排序，独立降序验证）",
+              len(v2["ka_rank"]) == len(i2_noTotal))
+        check("前端S2视角 ka_rank按批核APE降序排列",
+              all(v2["ka_rank"][i]["issued"] >= v2["ka_rank"][i + 1]["issued"] for i in range(len(v2["ka_rank"]) - 1)))
+        check("前端S2视角 8个业务细分渠道月度趋势小图数据齐全", len(v2["segments"]) == len(v2["monthly_by_segment"]))
+
+        # --- S3执行管理端 ---
+        v3 = build_s3_view(s3_mv)
+        a3 = s3_mv["A"]
+        weeks3 = [c[:-4] for c in a3.columns if c.endswith("_APE")]
+        submit_row = a3[a3["阶段"] == "递交"].iloc[0]
+        submit_ape_expect = sum(ppt_num(submit_row[f"{w}_APE"]) for w in weeks3)
+        check("前端S3视角 递交阶段合计APE=A板块独立核算（真实非零，W37/W38口径证据）",
+              abs(v3["stage_totals"]["递交"]["ape"] - submit_ape_expect) < 1 and v3["stage_totals"]["递交"]["ape"] > 0)
+        check("前端S3视角 周度趋势含预约/签单/递交/批核4条完整线",
+              set(["预约", "签单", "递交", "批核"]) <= set(v3["weekly_trend"].keys()))
+        check("前端S3视角 签批时效表行数=G板块行数（含合计行）", len(v3["timeliness"]) == len(s3_mv["G"]))
+        check("前端S3视角 未批核/待签分布(常规)行数=E_ape非合计行数",
+              len(v3["unbat_pending_regular"]["rows"]) == sum(1 for _, r in s3_mv["E_ape"].iterrows() if str(r["KEY ACCOUNT"]).strip() != "合计"))
+
+        # --- S4产品端 ---
+        v4 = build_s4_view(s4_mv)
+        check("前端S4视角 产品TOP榜行数=C板块行数（已自带排名列）", len(v4["product_rank"]) == len(s4_mv["C"]))
+        check("前端S4视角 保司分布行数=A板块行数", len(v4["carrier_dist"]) == len(s4_mv["A"]))
+        check("前端S4视角 产品TOP榜按排名升序排列",
+              [p["排名"] for p in v4["product_rank"]] == sorted(p["排名"] for p in v4["product_rank"]))
+
+        # --- 同行业绩 ---
+        vp = build_peer_view(s2_mv, s3_mv)
+        k2_total = s2_mv["K"][s2_mv["K"]["KEY ACCOUNT"] == "合计"].iloc[0]
+        check("前端同行视角 issued_ape=K板块合计行独立核对",
+              abs(vp["issued_ape"] - ppt_num(k2_total["2026批核APE"])) < 1)
+        j_ape_tot = s3_mv["J_ape"][s3_mv["J_ape"]["KEY ACCOUNT"] == "合计"].iloc[0]
+        monthly_appt_sum = sum(r["预约APE"] for r in vp["monthly_rows"])
+        check("前端同行视角 月度分桶预约APE合计=J_ape合计列独立核对（周→月聚合不丢单）",
+              abs(monthly_appt_sum - ppt_num(j_ape_tot["合计"])) < 1)
+        check("前端同行视角 ka_rank按批核APE降序排列",
+              all(vp["ka_rank"][i]["issued"] >= vp["ka_rank"][i + 1]["issued"] for i in range(len(vp["ka_rank"]) - 1)))
+
+        # --- 银行业绩 ---
+        vb = build_bank_view(s2_mv, s3_mv)
+        a2_bk = s2_mv["A"][s2_mv["A"]["业务细分"] == "BK业务"].iloc[0]
+        check("前端银行视角 target=S2-A BK业务行独立核对",
+              abs(vb["target"] - ppt_num(a2_bk["目标APE"])) < 1)
+        o2_total = s2_mv["O"][s2_mv["O"]["KEY ACCOUNT"] == "合计"].iloc[0]
+        check("前端银行视角 issued_ape(S2-O全量口径)=O板块合计行独立核对",
+              abs(vb["issued_ape"] - ppt_num(o2_total["2026批核APE"])) < 1)
+        check("前端银行视角 S2-O与S3-O_ape总量存在真实口径差异(非0，已在页面文案标注，非bug)",
+              vb["o_diff"] != 0)
+
+        # --- 代理人业务（天领业务+成事家办） ---
+        va = build_agent_view(s9_mv)
+        a9 = s9_mv["A"]
+        agent_target_expect = a9[a9["业务细分"].isin(["天领业务", "成事家办"])]["目标APE"].apply(ppt_num).sum()
+        check("前端代理人视角 target_total=S9-A天领+成事家办独立求和",
+              abs(va["target_total"] - agent_target_expect) < 1)
+        b9_noTotal = s9_mv["B"][s9_mv["B"]["KEY ACCOUNT"] != "合计"]
+        c9_noTotal = s9_mv["C"][s9_mv["C"]["KEY ACCOUNT"] != "合计"]
+        check("前端代理人视角 ka_rank行数=S9-B+S9-C非合计行数之和",
+              len(va["ka_rank"]) == len(b9_noTotal) + len(c9_noTotal))
+        check("前端代理人视角 月度趋势含8个月(2026-01至08)",
+              len(va["monthly_trend"]["labels"]) == 8)
+
+        # --- KA业务（ICLUB+合伙转介+IFA） ---
+        vk = build_ka_view(s9_mv)
+        ka_target_expect = a9[a9["业务细分"].isin(["ICLUB业务", "合伙转介业务", "IFA业务"])]["目标APE"].apply(ppt_num).sum()
+        check("前端KA业务视角 target_total=S9-A ICLUB+合伙转介+IFA独立求和",
+              abs(vk["target_total"] - ka_target_expect) < 1)
+        check("前端KA业务视角 note_ifa_empty=True（IFA业务当前批核APE确为0，S9-A独立核实）",
+              vk["note_ifa_empty"] and ppt_num(a9[a9["业务细分"] == "IFA业务"].iloc[0]["2026批核APE"]) == 0)
+        g9_row = s9_mv["G"][s9_mv["G"]["指标"] == "批核 APE"].iloc[0]
+        check("前端KA业务视角 月度趋势批核[2](2026-03)=S9-G板块独立核对（G本身即ICLUB+合伙转介+IFA合计口径）",
+              abs(vk["monthly_trend"]["批核"][2] - ppt_num(g9_row["2026-03"])) < 1)
+
         try:
             from skills.multiview_dashboard import render as _mv_render
             html_out = _mv_render(s1_dir_mv.parent, agent_version="test", source_name="test")
-            check("前端render()端到端跑通且S1视角被标记为available",
-                  '"available": true' in html_out)
+            check("前端render()端到端跑通且全部8个视角被标记为available",
+                  html_out.count('"available": true') == 8)
         except Exception as e:
             check("前端render()端到端跑通", False, str(e))
     else:
-        check("⚠️ S1数据不存在，跳过前端S1视角核验", True)
+        check("⚠️ S2/S3/S4/S9数据不存在，跳过前端新增7视角核验", True)
 
     print()
     if failures:

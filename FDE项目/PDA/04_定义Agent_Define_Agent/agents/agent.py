@@ -16,7 +16,7 @@ PDA 主循环入口。demo 阶段是一次性全量流程，不做常驻监控/�
     python3 agent.py --s7            # 复刻S7_合规端视角全部6个板块(A/B-D×APE/件数/E/F) -> 存CSV
     python3 agent.py --s9            # 复刻S9_代理人与KA业务全部10个顶层板块(A-J) -> 存CSV
     python3 agent.py --ppt           # 从template.pptx+S1-S9 CSV生成周业绩PPT（第1/8/9/10/11页，已停止投入，见执行记录v0.15.0）
-    python3 agent.py --frontend      # 从S1-S9 CSV生成多视角前端HTML（代替PPT，目前只有S1总览）
+    python3 agent.py --frontend      # 从S1-S9 CSV生成多视角前端HTML（代替PPT，S1/S2/S3/S4/同行/银行/代理人/KA共8个视角全部完成）
     python3 agent.py --status        # 查看上次运行的记录
 """
 import argparse
@@ -45,7 +45,7 @@ from memory.workspace import Workspace
 
 RAW_DATA_DIR = AGENT_ROOT / "07_接入记忆_Integrate_Memory" / "raw_data"
 FACT_TARGET_SNAPSHOT = AGENT_ROOT / "07_接入记忆_Integrate_Memory" / "data" / "fact_target_snapshot.csv"
-AGENT_VERSION = "v0.15.0"
+AGENT_VERSION = "v0.16.0"
 
 
 def run():
@@ -343,7 +343,7 @@ def build_frontend():
     out_path = data_dir / "业绩数据分析前端.html"
     out_path.write_text(html, encoding="utf-8")
 
-    print("✅ 多视角前端已生成（目前只有S1总览视角，S2/S3/S4/同行/银行/代理人/KA共7个视角待续）")
+    print("✅ 多视角前端已生成（S1总览/S2业务端/S3执行管理端/S4产品端/同行业绩/银行业绩/代理人业务/KA业务共8个视角全部完成）")
     print(f"输出: {out_path}（双击用浏览器打开）")
 
 
@@ -372,7 +372,7 @@ def main():
     ap.add_argument("--s7", action="store_true", help="复刻S7_合规端视角全部6个板块，存CSV")
     ap.add_argument("--s9", action="store_true", help="复刻S9_代理人与KA业务全部10个顶层板块，存CSV")
     ap.add_argument("--ppt", action="store_true", help="从template.pptx+S1-S9生成周业绩PPT（第1/8/9/10/11页，已停止投入）")
-    ap.add_argument("--frontend", action="store_true", help="从S1-S9生成多视角前端HTML（代替PPT，目前只有S1总览）")
+    ap.add_argument("--frontend", action="store_true", help="从S1-S9生成多视角前端HTML（代替PPT，8个视角全部完成）")
     ap.add_argument("--status", action="store_true", help="查看上次运行记录")
     args = ap.parse_args()
 
