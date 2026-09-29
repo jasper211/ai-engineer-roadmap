@@ -21,11 +21,13 @@ ppt_generator.py — 从 template.pptx + S1-S9新版CSV 生成周业绩汇报PPT
 两张图表、月度明细网格动态扩展到当前数据的全部月份）。build_slide2..11
 待续，是下一阶段的工作范围。
 """
+import re
 from pathlib import Path
 
 from pptx import Presentation
 
 from skills.ppt_data_loader import num
+from skills.ppt_monthly_bucket import derive_monthly_buckets
 import skills.ppt_helpers as H
 import skills.ppt_chart_patch as CP
 
@@ -338,6 +340,426 @@ def build_slide8(prs: Presentation, s2: dict) -> dict:
     }
 
 
+def _week_cols(df):
+    return [c for c in df.columns if re.match(r"2026W\d+$", c)]
+
+
+def _total_row(df, key_col="KEY ACCOUNT"):
+    return df[df[key_col] == "合计"].iloc[0]
+
+
+def _safe_val(row, col):
+    """某些S3周度CSV的周列并不连续（该周全渠道0活动时,_weekly_by_ka产出的DataFrame
+    干脆不含那一列，不是补0）——M/N/O_ape/_count各自缺的周不一定相同（比如O_ape
+    缺W28但M_ape有），跨表按同一份周列表取值必须用这个安全访问，缺列按0处理，
+    不能直接row[col]（会KeyError）。"""
+    if col not in row.index:
+        return 0.0
+    return num(row[col])
+
+
+def build_slide9(prs: Presentation, s3: dict) -> dict:
+    """同行业绩 第2部分。s3 = ppt_data_loader.load_sheet(S3_执行管理端/)，需要
+    J_ape/J_count（同行预约）、K_ape/K_count（同行签单）、L_ape/L_count（同行批核）。
+    旧版第9页"W同行月度分析"表读的是S2的月度L-APE/M-APE/N-APE块（按KA的月度
+    预约/签单/批核），新版S2没有这几个板块（映射报告第3节缺口#1），改用
+    ppt_monthly_bucket把S3周度"合计"行按%U周三规则聚合成月，只能拿到"同行整体
+    月度合计"，拿不到按KA拆分的月度明细——这是本函数相对旧版的口径降级，
+    已记录在案（如需要按KA的月度明细，需要Jasper确认是否要重新反推一个新
+    S板块）。"""
+    slide = prs.slides[8]
+    J_ape, J_cnt = s3["J_ape"], s3["J_count"]
+    K_ape, K_cnt = s3["K_ape"], s3["K_count"]
+    L_ape, L_cnt = s3["L_ape"], s3["L_count"]
+
+    weeks = _week_cols(J_ape)
+    current_week = max(weeks, key=lambda w: int(w.replace("2026W", "")))
+    week_short = current_week.replace("2026", "")
+
+    j_tot, k_tot, l_tot = _total_row(J_ape), _total_row(K_ape), _total_row(L_ape)
+    j_cnt_tot, k_cnt_tot, l_cnt_tot = _total_row(J_cnt), _total_row(K_cnt), _total_row(L_cnt)
+
+    w_app_m, w_sgn_m, w_apr_m = num(j_tot[current_week]) / 1e6, num(k_tot[current_week]) / 1e6, num(l_tot[current_week]) / 1e6
+    w_app_cnt, w_sgn_cnt, w_apr_cnt = int(num(j_cnt_tot[current_week])), int(num(k_cnt_tot[current_week])), int(num(l_cnt_tot[current_week]))
+
+    buckets = derive_monthly_buckets(weeks)
+    monthly_rows = []
+    for month_label, weeks_in_month in buckets:
+        v1 = sum(num(j_tot[w]) for w in weeks_in_month)
+        v2 = sum(num(j_cnt_tot[w]) for w in weeks_in_month)
+        v3 = sum(num(k_tot[w]) for w in weeks_in_month)
+        v4 = sum(num(k_cnt_tot[w]) for w in weeks_in_month)
+        v5 = sum(num(l_tot[w]) for w in weeks_in_month)
+        v6 = sum(num(l_cnt_tot[w]) for w in weeks_in_month)
+        monthly_rows.append((month_label, v1, v2, v3, v4, v5, v6))
+
+    cur_month = monthly_rows[-1]
+    app_m_month, app_cnt_month = cur_month[1] / 1e6, int(cur_month[2])
+    sgn_m_month, sgn_cnt_month = cur_month[3] / 1e6, int(cur_month[4])
+    apr_m_month, apr_cnt_month = cur_month[5] / 1e6, int(cur_month[6])
+
+    def avg_w(ape_m, cnt):
+        return round(ape_m * 1e6 / cnt / 10_000, 1) if cnt else 0.0
+
+    subs = [
+        ("Y  W13 本周快报  |  同行", f"Y  {week_short} 本周快报  |  同行"),
+        ("X  W01–W12 同行 预约/签单/批核 趋势（M）", f"X  W01–{week_short} 同行 预约/签单/批核 趋势（M）"),
+        ("同行W13预约", f"同行{week_short}预约"),
+        ("同行W13签单", f"同行{week_short}签单"),
+        ("同行W13批核", f"同行{week_short}批核"),
+        ("3.6M", f"{w_app_m:.2f}M"),
+        ("7.5M", f"{w_sgn_m:.2f}M"),
+        ("10.0M", f"{w_apr_m:.2f}M"),
+        ("0.11M", f"{app_m_month:.2f}M"),
+        ("0.86M", f"{sgn_m_month:.2f}M"),
+        ("3.51M", f"{apr_m_month:.2f}M"),
+        ("2件 | 件均5.7W", f"{app_cnt_month}件 | 件均{avg_w(app_m_month, app_cnt_month):.1f}W"),
+        ("3件 | 件均28.6W", f"{sgn_cnt_month}件 | 件均{avg_w(sgn_m_month, sgn_cnt_month):.1f}W"),
+        ("8件 | 件均43.8W", f"{apr_cnt_month}件 | 件均{avg_w(apr_m_month, apr_cnt_month):.1f}W"),
+        ("12件| 件均29.8W", f"{w_app_cnt}件| 件均{avg_w(w_app_m, w_app_cnt):.1f}W"),
+        ("21件| 件均35.94W", f"{w_sgn_cnt}件| 件均{avg_w(w_sgn_m, w_sgn_cnt):.1f}W"),
+        ("32件| 件均31.39W", f"{w_apr_cnt}件| 件均{avg_w(w_apr_m, w_apr_cnt):.1f}W"),
+    ]
+    hits, misses = H.apply_substitutions(slide, subs, tag="Slide9")
+
+    # --- Chart 0：X 同行周度预约/签单/批核趋势(M)，grouping=none，必须走XML直接patch ---
+    cats0 = [w.replace("2026", "") for w in weeks]
+    chart0_series = [
+        [round(num(j_tot[w]) / 1e6, 2) for w in weeks],
+        [round(num(k_tot[w]) / 1e6, 2) for w in weeks],
+        [round(num(l_tot[w]) / 1e6, 2) for w in weeks],
+    ]
+    chart0_shape = next(sh for sh in slide.shapes if sh.has_chart)
+    CP.patch_chart(chart0_shape.chart.part, chart0_series, categories=cats0)
+
+    # --- Y 本周快报表：union(J/K/L当周>0的KA)，按当周(预约+签单+批核)合计降序，
+    # 固定10行(模板原生行数)，合计=全部符合条件KA之和(不止显示的10个)，跟旧版
+    # apply_w14_patches.py::patch_weekly_deck 的Y表逻辑一致 ---
+    def week_col_map(df, cnt=False):
+        return {str(r["KEY ACCOUNT"]).strip(): num(r[current_week]) for _, r in df.iterrows() if str(r["KEY ACCOUNT"]).strip() != "合计"}
+
+    j_w, k_w, l_w = week_col_map(J_ape), week_col_map(K_ape), week_col_map(L_ape)
+    kas = {k for d in (j_w, k_w, l_w) for k, v in d.items() if v > 0}
+    ordered = sorted(kas, key=lambda k: j_w.get(k, 0) + k_w.get(k, 0) + l_w.get(k, 0), reverse=True)
+
+    y_table = H.find_table_exact_cols(slide, "KEY ACCOUNT", 4)
+    body = len(y_table.rows) - 2
+    for i in range(body):
+        row = y_table.rows[i + 1]
+        if i < len(ordered):
+            k = ordered[i]
+            H.set_cell(row.cells[0], k)
+            H.set_cell(row.cells[1], H.fmt_m(j_w.get(k, 0), 2))
+            H.set_cell(row.cells[2], H.fmt_m(k_w.get(k, 0), 2))
+            H.set_cell(row.cells[3], H.fmt_m(l_w.get(k, 0), 2))
+        else:
+            for c in range(4):
+                H.set_cell(row.cells[c], "")
+    tj, tk, tl = (sum(d.get(k, 0) for k in ordered) for d in (j_w, k_w, l_w))
+    last = len(y_table.rows) - 1
+    H.set_cell(y_table.rows[last].cells[0], "合计")
+    H.set_cell(y_table.rows[last].cells[1], H.fmt_m(tj, 2))
+    H.set_cell(y_table.rows[last].cells[2], H.fmt_m(tk, 2))
+    H.set_cell(y_table.rows[last].cells[3], H.fmt_m(tl, 2))
+
+    # --- W 同行月度分析表：动态行数=月份桶数量 ---
+    w_table = H.find_table_by_header(slide, "月份", min_cols=7)
+    data_rows = H.set_table_row_count(w_table, len(monthly_rows), header_rows=1, protect_tail_rows=1, template_row_idx=1)
+    totals6 = [0.0] * 6
+    for row_obj, (month_label, v1, v2, v3, v4, v5, v6) in zip(data_rows, monthly_rows):
+        cells = row_obj.cells
+        H.set_cell(cells[0], _month_label_en(month_label))
+        H.set_cell(cells[1], f"{v1 / 1e6:.2f}")
+        H.set_cell(cells[2], str(int(v2)))
+        H.set_cell(cells[3], f"{v3 / 1e6:.2f}")
+        H.set_cell(cells[4], str(int(v4)))
+        H.set_cell(cells[5], f"{v5 / 1e6:.2f}")
+        H.set_cell(cells[6], str(int(v6)))
+        for i, v in enumerate([v1, v2, v3, v4, v5, v6]):
+            totals6[i] += v
+    total_row = list(w_table.rows)[-1]
+    H.set_cell(total_row.cells[0], "合计")
+    H.set_cell(total_row.cells[1], f"{totals6[0] / 1e6:.2f}")
+    H.set_cell(total_row.cells[2], str(int(totals6[1])))
+    H.set_cell(total_row.cells[3], f"{totals6[2] / 1e6:.2f}")
+    H.set_cell(total_row.cells[4], str(int(totals6[3])))
+    H.set_cell(total_row.cells[5], f"{totals6[4] / 1e6:.2f}")
+    H.set_cell(total_row.cells[6], str(int(totals6[5])))
+
+    return {
+        "current_week": current_week, "week_short": week_short,
+        "w_app_m": w_app_m, "w_sgn_m": w_sgn_m, "w_apr_m": w_apr_m,
+        "monthly_rows": monthly_rows, "y_table_kas": ordered,
+        "subs_hits": hits, "subs_misses": sorted(misses),
+    }
+
+
+def build_slide10(prs: Presentation, s2: dict, s3: dict) -> dict:
+    """BK业务 第1部分。s2=load_sheet(S2_业务端视角/)需要A、O；s3=load_sheet(
+    S3_执行管理端/)需要M_ape/M_count(银行预约)、N_ape/N_count(银行签单)、
+    O_ape/O_count(银行批核)。
+    银行月度走势×3(预约/签单/批核，按银行堆叠)用ppt_monthly_bucket对S3周度数据
+    分银行聚合补齐（跟build_slide9同样的口径降级：新S2没有P/Q/R月度板块）。
+    ⚠️已发现的数据口径差异：S2-O(按issue事件全量口径)合计批核APE=231.14M，
+    S3-O_ape(按周聚合、周定义%U)合计=228.02M，两者相差约3.1M——推测是S3周度
+    聚合口径下某些跨周边界的批核事件跟S2直接统计口径有细微差异（例如批核日期
+    落在年初%U week=0会被S3的_weekly_by_ka过滤掉，S2口径不受影响）。本函数
+    KPI卡片/目标对比/KA图统一用S2-O（跟旧版口径一致，S2是"准确的全量聚合"），
+    月度趋势图/本周快报类走势数据用S3（唯一有时间序列的来源），这是新架构
+    固有的双源设计，不是bug，但两个数字不会100%对平，已记录在案供Jasper知悉。"""
+    slide = prs.slides[9]
+    A, O = s2["A"], s2["O"]
+    M_ape, M_cnt = s3["M_ape"], s3["M_count"]
+    N_ape, N_cnt = s3["N_ape"], s3["N_count"]
+    O_ape, O_cnt = s3["O_ape"], s3["O_count"]
+
+    bk_row = A[A["业务细分"] == "BK业务"].iloc[0]
+    target = num(bk_row["目标APE"])
+    rate = num(bk_row["达成率"])
+    o_tot = _total_row(O)
+    issued_ape, issued_cnt = num(o_tot["2026批核APE"]), int(num(o_tot["批核件数"]))
+    unbat_ape, unbat_cnt = num(o_tot["未批核APE"]), int(num(o_tot["未批核件数"]))
+    pend_ape, pend_cnt = num(o_tot["待签APE"]), int(num(o_tot["待签件数"]))
+
+    def month_current(df_ape, df_cnt):
+        weeks = _week_cols(df_ape)
+        tot_ape, tot_cnt = _total_row(df_ape), _total_row(df_cnt)
+        buckets = derive_monthly_buckets(weeks)
+        month_label, weeks_in_month = buckets[-1]
+        ape = sum(num(tot_ape[w]) for w in weeks_in_month)
+        cnt = sum(num(tot_cnt[w]) for w in weeks_in_month)
+        return ape, int(cnt)
+
+    app_m_ape, app_m_cnt = month_current(M_ape, M_cnt)
+    sgn_m_ape, sgn_m_cnt = month_current(N_ape, N_cnt)
+    apr_m_ape, apr_m_cnt = month_current(O_ape, O_cnt)
+
+    def avg_w(ape_yuan, cnt):
+        return round(ape_yuan / cnt / 10_000, 1) if cnt else 0.0
+
+    # ⚠️ 顶部6张KPI卡片里有两张(BK本月预约/BK本月批核)当前恰好都显示"0.0M"，
+    # 用apply_substitutions这种"旧文本→新文本"字典映射会撞key（两条规则都命中
+    # 同一段落文本，后一条覆盖前一条，写错卡片）——改用旧版apply_w14_patches.py
+    # 处理这一整页时就用过的"按标签文字找其正下方值框"几何定位法
+    # (find_shapes_below)，按标签逐张卡片精确定位，不走文本字典匹配。
+    card_specs = [
+        ("BK批核", f"{issued_ape / 1e6:.1f}M", f"{issued_cnt}件 | 达成率{rate * 100:.1f}%"),
+        ("BK未批核", f"{unbat_ape / 1e6:.1f}M", f"{unbat_cnt}件 |件均{avg_w(unbat_ape, unbat_cnt):.1f}W"),
+        ("BK待签", f"{pend_ape / 1e6:.2f}M", f"{pend_cnt}件 | 件均{avg_w(pend_ape, pend_cnt):.1f}W"),
+        ("BK 本月预约", f"{app_m_ape / 1e6:.1f}M", f"{app_m_cnt}件| 件均{avg_w(app_m_ape, app_m_cnt):.1f}W"),
+        ("BK 本月签单", f"{sgn_m_ape / 1e6:.2f}M", f"{sgn_m_cnt}件| 件均{avg_w(sgn_m_ape, sgn_m_cnt):.1f}W"),
+        ("BK 本月批核", f"{apr_m_ape / 1e6:.1f}M", f"{apr_m_cnt}件 | 件均{avg_w(apr_m_ape, apr_m_cnt):.1f}W"),
+    ]
+    hits = 0
+    misses = []
+    for label_text, value_text, detail_text in card_specs:
+        label_sh = next((sh for sh in slide.shapes if sh.has_text_frame and sh.text_frame.text.strip() == label_text), None)
+        if label_sh is None:
+            misses.append(f"label:{label_text}")
+            continue
+        below = H.find_shapes_below(slide, label_sh, max_count=2)
+        if len(below) >= 1:
+            H.set_tf(below[0].text_frame, value_text)
+            hits += 1
+        if len(below) >= 2:
+            H.set_tf(below[1].text_frame, detail_text)
+            hits += 1
+
+    # --- 月度走势×3（按银行堆叠，各自用该df自己实际存在的周列分桶） ---
+    def monthly_by_bank(df_ape, shape_id):
+        weeks = _week_cols(df_ape)
+        buckets = derive_monthly_buckets(weeks)
+        cats = [f"{int(m.split('-')[1])}月" for m, _ in buckets]
+        banks = [str(n).strip() for n in df_ape["KEY ACCOUNT"] if str(n).strip() not in ("", "合计")]
+        series, names = [], []
+        for bank in banks:
+            row = df_ape[df_ape["KEY ACCOUNT"] == bank].iloc[0]
+            vals = [round(sum(num(row[w]) for w in ws) / 1e6, 2) for _, ws in buckets]
+            series.append(vals)
+            names.append(bank)
+        sh = next(s for s in slide.shapes if s.has_chart and s.shape_id == shape_id)
+        CP.patch_chart(sh.chart.part, series, categories=cats, series_names=names)
+        return cats, names
+
+    cats_app, banks_app = monthly_by_bank(M_ape, 99)
+    monthly_by_bank(N_ape, 105)
+    monthly_by_bank(O_ape, 114)
+
+    # --- Chart 1：AA 银行KEY ACCOUNT分析（M单位，非万——跟chart_updates.py对
+    # 照template实测确认，本页跟page8的"万"单位不同） ---
+    o_rows = O[O["KEY ACCOUNT"] != "合计"].copy()
+    o_rows["_sort"] = o_rows["2026批核APE"].apply(num)
+    o_rows = o_rows.sort_values("_sort", ascending=False)
+    cats1 = o_rows["KEY ACCOUNT"].tolist()
+    chart1_series = [
+        [round(num(v) / 1e6, 4) for v in o_rows["2026批核APE"]],
+        [round(num(v) / 1e6, 4) for v in o_rows["未批核APE"]],
+        [round(num(v) / 1e6, 4) for v in o_rows["待签APE"]],
+    ]
+    chart1_shape = next(sh for sh in slide.shapes if sh.has_chart and sh.shape_id == 53)
+    CP.patch_chart(chart1_shape.chart.part, chart1_series, categories=cats1)
+
+    # --- Chart 0：AB 目标达成分析（甜甜圈，已批核/目标剩余。BK若已超额完成
+    # 目标(本数据集达成率115.6%>100%)，"目标剩余"不能为负——甜甜圈裁剪到0，
+    # 已批核裁剪到不超过target，避免出现负数扇区这种无意义的图形） ---
+    achv_m = min(issued_ape, target) / 1e6
+    remain_m = max(target - issued_ape, 0) / 1e6
+    donut_shape = next(sh for sh in slide.shapes if sh.has_chart and sh.shape_id == 95)
+    CP.patch_chart(donut_shape.chart.part, [[round(achv_m, 1), round(remain_m, 1)]])
+
+    # --- 民生/平安已批核 卡片 + 目标/达成率/目标缺口 卡片 ---
+    def bank_row(name):
+        sub = O[O["KEY ACCOUNT"] == name]
+        return sub.iloc[0] if not sub.empty else None
+
+    minsheng = bank_row("民生银行")
+    pingan = bank_row("平安银行")
+    subs2 = []
+    if minsheng is not None:
+        subs2 += [("142.1M", f"{num(minsheng['2026批核APE']) / 1e6:.1f}M"),
+                   ("121件  ", f"{int(num(minsheng['批核件数']))}件  ")]
+    if pingan is not None:
+        subs2 += [("28.8M", f"{num(pingan['2026批核APE']) / 1e6:.1f}M"),
+                   ("13件  ", f"{int(num(pingan['批核件数']))}件  ")]
+    gap = target - issued_ape
+    subs2 += [
+        ("200M", f"{target / 1e6:.0f}M"),
+        ("达成率 85.4%", f"达成率 {rate * 100:.1f}%"),
+        ("29.1M", f"{gap / 1e6:.1f}M" if gap >= 0 else f"-{abs(gap) / 1e6:.1f}M"),
+    ]
+    hits2, misses2 = H.apply_substitutions(slide, subs2, tag="Slide10b")
+
+    return {
+        "issued_ape": issued_ape, "issued_cnt": issued_cnt, "target": target, "rate": rate,
+        "unbat_ape": unbat_ape, "pend_ape": pend_ape,
+        "month_app": (app_m_ape, app_m_cnt), "month_sgn": (sgn_m_ape, sgn_m_cnt), "month_apr": (apr_m_ape, apr_m_cnt),
+        "monthly_cats": cats_app, "banks": banks_app,
+        "o_total_s2": num(o_tot["2026批核APE"]), "o_total_s3": num(_total_row(O_ape)["合计"]),
+        "subs_hits": hits + hits2, "subs_misses": sorted(set(misses) | set(misses2)),
+    }
+
+
+def build_slide11(prs: Presentation, s2: dict, s3: dict) -> dict:
+    """BK业务 第2部分。s2=load_sheet(S2_业务端视角/)需要S(批核业绩—银行各分行APE，
+    含月度+合计列，直接可用，不需要走ppt_monthly_bucket)；s3=load_sheet(
+    S3_执行管理端/)需要M_ape/M_count/N_ape/N_count/O_ape/O_count(银行周度)。"""
+    slide = prs.slides[10]
+    S = s2["S"]
+    M_ape, M_cnt = s3["M_ape"], s3["M_count"]
+    N_ape, N_cnt = s3["N_ape"], s3["N_count"]
+    O_ape, O_cnt = s3["O_ape"], s3["O_count"]
+
+    # M/N/O_ape各自的周列不连续、也互不相同（某周全渠道0活动时那一周整列都不
+    # 存在，不是补0——见s3_execution_view.py::_weekly_by_ka），这里取三者的
+    # 并集作为图表横轴/当前周判定依据，缺列的表用_safe_val按0处理。
+    weeks = sorted(set(_week_cols(M_ape)) | set(_week_cols(N_ape)) | set(_week_cols(O_ape)),
+                   key=lambda w: int(w.replace("2026W", "")))
+    current_week = weeks[-1]
+    week_short = current_week.replace("2026", "")
+
+    m_tot, n_tot, o_tot = _total_row(M_ape), _total_row(N_ape), _total_row(O_ape)
+    m_cnt_tot, n_cnt_tot, o_cnt_tot = _total_row(M_cnt), _total_row(N_cnt), _total_row(O_cnt)
+    w_app_m, w_sgn_m, w_apr_m = _safe_val(m_tot, current_week) / 1e6, _safe_val(n_tot, current_week) / 1e6, _safe_val(o_tot, current_week) / 1e6
+    w_app_cnt, w_sgn_cnt, w_apr_cnt = int(_safe_val(m_cnt_tot, current_week)), int(_safe_val(n_cnt_tot, current_week)), int(_safe_val(o_cnt_tot, current_week))
+
+    def avg_w(ape_m, cnt):
+        return round(ape_m * 1e6 / cnt / 10_000, 1) if cnt else 0.0
+
+    card_specs = [
+        (" BK W13预约", f" BK {week_short}预约", f"{w_app_m:.2f}M", f"{w_app_cnt}件| 件均{avg_w(w_app_m, w_app_cnt):.1f}W"),
+        ("BK W13签单", f"BK {week_short}签单", f"{w_sgn_m:.2f}M", f"{w_sgn_cnt}件| 件均{avg_w(w_sgn_m, w_sgn_cnt):.1f}W"),
+        ("BK W13批核", f"BK {week_short}批核", f"{w_apr_m:.2f}M", f"{w_apr_cnt}件 | 件均{avg_w(w_apr_m, w_apr_cnt):.1f}W"),
+    ]
+    hits, misses = 0, []
+    for label_old, label_new, value_text, detail_text in card_specs:
+        label_sh = next((sh for sh in slide.shapes if sh.has_text_frame and sh.text_frame.text.strip() == label_old.strip()), None)
+        if label_sh is None:
+            misses.append(f"label:{label_old}")
+            continue
+        H.set_tf(label_sh.text_frame, label_new)
+        below = H.find_shapes_below(slide, label_sh, max_count=2)
+        if len(below) >= 1:
+            H.set_tf(below[0].text_frame, value_text)
+            hits += 1
+        if len(below) >= 2:
+            H.set_tf(below[1].text_frame, detail_text)
+            hits += 1
+
+    # --- Chart 1：AB 银行周度预约/签单/批核趋势(M)，grouping=none ---
+    subs_title = [("AB  W01–W13 银行 预约/签单/批核  APE趋势（M）", f"AB  W01–{week_short} 银行 预约/签单/批核  APE趋势（M）")]
+    hits_t, misses_t = H.apply_substitutions(slide, subs_title, tag="Slide11-title")
+    hits += hits_t
+    misses += sorted(misses_t)
+
+    cats1 = [w.replace("2026", "") for w in weeks]
+    chart1_series = [
+        [round(_safe_val(m_tot, w) / 1e6, 2) for w in weeks],
+        [round(_safe_val(n_tot, w) / 1e6, 2) for w in weeks],
+        [round(_safe_val(o_tot, w) / 1e6, 2) for w in weeks],
+    ]
+    chart1_shape = next(sh for sh in slide.shapes if sh.has_chart and sh.shape_id == 41)
+    CP.patch_chart(chart1_shape.chart.part, chart1_series, categories=cats1)
+
+    # --- Table 1：AC 银行KA本周业绩详情(M)，固定2家银行+合计，不需要动态扩行 ---
+    table = H.find_table_exact_cols(slide, "KEY ACCOUNT", 7)
+
+    def week_val(df, name):
+        sub = df[df["KEY ACCOUNT"] == name]
+        return _safe_val(sub.iloc[0], current_week) if not sub.empty else 0.0
+
+    banks = ["民生银行", "平安银行"]
+    totals7 = [0.0] * 6
+    for row_idx, bank in enumerate(banks, start=1):
+        vals = [
+            week_val(M_ape, bank), week_val(M_cnt, bank),
+            week_val(N_ape, bank), week_val(N_cnt, bank),
+            week_val(O_ape, bank), week_val(O_cnt, bank),
+        ]
+        row = table.rows[row_idx]
+        H.set_cell(row.cells[0], bank)
+        H.set_cell(row.cells[1], f"{vals[0] / 1e6:.2f}M")
+        H.set_cell(row.cells[2], str(int(vals[1])))
+        H.set_cell(row.cells[3], f"{vals[2] / 1e6:.2f}M")
+        H.set_cell(row.cells[4], str(int(vals[3])))
+        H.set_cell(row.cells[5], f"{vals[4] / 1e6:.2f}M")
+        H.set_cell(row.cells[6], str(int(vals[5])))
+        for i, v in enumerate(vals):
+            totals7[i] += v
+    last = list(table.rows)[-1]
+    H.set_cell(last.cells[0], "银行合计")
+    H.set_cell(last.cells[1], f"{totals7[0] / 1e6:.2f}M")
+    H.set_cell(last.cells[2], str(int(totals7[1])))
+    H.set_cell(last.cells[3], f"{totals7[2] / 1e6:.2f}M")
+    H.set_cell(last.cells[4], str(int(totals7[3])))
+    H.set_cell(last.cells[5], f"{totals7[4] / 1e6:.2f}M")
+    H.set_cell(last.cells[6], str(int(totals7[5])))
+
+    # --- Chart 0：AD 各分行2026年批核APE业绩排名(M)。直接用S2-S(批核业绩—银行
+    # 各分行APE，已含月度+合计列)的"合计"列，过滤>0、降序——旧版
+    # apply_w14_patches.py同样直接读S-APE块的合计列、不做任何分行名归并/聚合，
+    # 新版S.csv的分行粒度比旧模板存档数据更细(平安香港拆到具体银行经理)，
+    # 是数据本身的自然演变，不是需要修的口径问题。 ---
+    s_rows = S[S["合作伙伴(分行)"] != "合计"].copy()
+    s_rows["_tot"] = s_rows["合计"].apply(num)
+    s_rows = s_rows[s_rows["_tot"] > 0].sort_values("_tot", ascending=False)
+    cats0 = s_rows["合作伙伴(分行)"].tolist()
+    chart0_series = [[round(v / 1e6, 2) for v in s_rows["_tot"]]]
+    chart0_shape = next(sh for sh in slide.shapes if sh.has_chart and sh.shape_id == 8)
+    CP.patch_chart(chart0_shape.chart.part, chart0_series, categories=cats0)
+
+    return {
+        "current_week": current_week, "week_short": week_short,
+        "w_app_m": w_app_m, "w_sgn_m": w_sgn_m, "w_apr_m": w_apr_m,
+        "n_branches": len(cats0), "top_branch": cats0[0] if cats0 else None,
+        "subs_hits": hits, "subs_misses": sorted(set(misses)),
+    }
+
+
+def _month_label_en(ym: str) -> str:
+    yr, mm = ym.split("-")
+    return f"{MONTHS_EN[int(mm) - 1]}-{yr[-2:]}"
+
+
 def generate(template_path, data_root, out_path, sheets: list = None) -> dict:
     """从template_path + data_root(07_接入记忆_Integrate_Memory/data/)生成PPT，
     存到out_path。返回{slide_name: stats}供上层打印摘要/后续So What生成使用。
@@ -351,6 +773,13 @@ def generate(template_path, data_root, out_path, sheets: list = None) -> dict:
     all_stats = {}
     if "S1_总览仪表盘" in data:
         all_stats["slide1"] = build_slide1(prs, data["S1_总览仪表盘"])
+    if "S2_业务端视角" in data:
+        all_stats["slide8"] = build_slide8(prs, data["S2_业务端视角"])
+    if "S3_执行管理端" in data:
+        all_stats["slide9"] = build_slide9(prs, data["S3_执行管理端"])
+    if "S2_业务端视角" in data and "S3_执行管理端" in data:
+        all_stats["slide10"] = build_slide10(prs, data["S2_业务端视角"], data["S3_执行管理端"])
+        all_stats["slide11"] = build_slide11(prs, data["S2_业务端视角"], data["S3_执行管理端"])
 
     prs.save(str(out_path))
     return all_stats

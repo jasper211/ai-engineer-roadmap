@@ -15,7 +15,8 @@ PDA 主循环入口。demo 阶段是一次性全量流程，不做常驻监控/�
     python3 agent.py --s6            # 复刻S6_市场与交叉视角全部12张子表(A-F×APE/件数) -> 存CSV
     python3 agent.py --s7            # 复刻S7_合规端视角全部6个板块(A/B-D×APE/件数/E/F) -> 存CSV
     python3 agent.py --s9            # 复刻S9_代理人与KA业务全部10个顶层板块(A-J) -> 存CSV
-    python3 agent.py --ppt           # 从template.pptx+S1-S9 CSV生成周业绩PPT（目前只有第1页）
+    python3 agent.py --ppt           # 从template.pptx+S1-S9 CSV生成周业绩PPT（第1/8/9/10/11页，已停止投入，见执行记录v0.15.0）
+    python3 agent.py --frontend      # 从S1-S9 CSV生成多视角前端HTML（代替PPT，目前只有S1总览）
     python3 agent.py --status        # 查看上次运行的记录
 """
 import argparse
@@ -44,7 +45,7 @@ from memory.workspace import Workspace
 
 RAW_DATA_DIR = AGENT_ROOT / "07_接入记忆_Integrate_Memory" / "raw_data"
 FACT_TARGET_SNAPSHOT = AGENT_ROOT / "07_接入记忆_Integrate_Memory" / "data" / "fact_target_snapshot.csv"
-AGENT_VERSION = "v0.12.0"
+AGENT_VERSION = "v0.15.0"
 
 
 def run():
@@ -314,14 +315,36 @@ def build_ppt():
         return
 
     out_path = data_dir / "周业绩汇报PPT_生成.pptx"
-    stats = ppt_generator.generate(template, data_dir, out_path, sheets=["S1_总览仪表盘"])
+    stats = ppt_generator.generate(
+        template, data_dir, out_path,
+        sheets=["S1_总览仪表盘", "S2_业务端视角", "S3_执行管理端"],
+    )
 
-    print("✅ PPT已生成（当前只实现第1页，第2-11页待续，见执行记录.md）")
-    if "slide1" in stats:
-        s1 = stats["slide1"]
-        print(f"   第1页：{s1['subs_hits']} 处文本替换命中，0 处未命中")
-        print(f"   月度明细网格已扩展到 {s1['months_2026']}")
+    print("✅ PPT已生成（当前实现第1/8/9/10/11页，第2-7页待续，见执行记录.md）")
+    for name, label in [("slide1", "第1页"), ("slide8", "第8页"), ("slide9", "第9页"),
+                         ("slide10", "第10页"), ("slide11", "第11页")]:
+        if name in stats:
+            s = stats[name]
+            print(f"   {label}：{s['subs_hits']} 处文本替换命中，{len(s['subs_misses'])} 处未命中"
+                  + (f" {s['subs_misses']}" if s["subs_misses"] else ""))
     print(f"输出: {out_path}")
+
+
+def build_frontend():
+    import skills.multiview_dashboard as multiview_dashboard
+
+    data_dir = AGENT_ROOT / "07_接入记忆_Integrate_Memory" / "data"
+    if not (data_dir / "S1_总览仪表盘").exists():
+        print("❌ 找不到 S1_总览仪表盘 数据，先跑 --s1")
+        return
+
+    html = multiview_dashboard.render(data_dir, agent_version=AGENT_VERSION,
+                                       source_name="业绩数据底表-20260724.xlsx")
+    out_path = data_dir / "业绩数据分析前端.html"
+    out_path.write_text(html, encoding="utf-8")
+
+    print("✅ 多视角前端已生成（目前只有S1总览视角，S2/S3/S4/同行/银行/代理人/KA共7个视角待续）")
+    print(f"输出: {out_path}（双击用浏览器打开）")
 
 
 def show_status():
@@ -348,7 +371,8 @@ def main():
     ap.add_argument("--s6", action="store_true", help="复刻S6_市场与交叉视角全部子表，存CSV")
     ap.add_argument("--s7", action="store_true", help="复刻S7_合规端视角全部6个板块，存CSV")
     ap.add_argument("--s9", action="store_true", help="复刻S9_代理人与KA业务全部10个顶层板块，存CSV")
-    ap.add_argument("--ppt", action="store_true", help="从template.pptx+S1-S9生成周业绩PPT（目前只有第1页）")
+    ap.add_argument("--ppt", action="store_true", help="从template.pptx+S1-S9生成周业绩PPT（第1/8/9/10/11页，已停止投入）")
+    ap.add_argument("--frontend", action="store_true", help="从S1-S9生成多视角前端HTML（代替PPT，目前只有S1总览）")
     ap.add_argument("--status", action="store_true", help="查看上次运行记录")
     args = ap.parse_args()
 
@@ -376,6 +400,8 @@ def main():
         build_s9()
     elif args.ppt:
         build_ppt()
+    elif args.frontend:
+        build_frontend()
     elif args.status:
         show_status()
     else:

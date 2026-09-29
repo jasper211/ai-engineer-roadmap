@@ -489,6 +489,117 @@ def main():
     else:
         check("⚠️ S1数据或template.pptx不存在，跳过PPT Slide1核验", True)
 
+    # ---- PPT生成：build_slide8/9/10/11，对照真实S2/S3 CSV+template.pptx核验 ----
+    from skills.ppt_generator import build_slide8, build_slide9, build_slide10, build_slide11
+    from skills.ppt_data_loader import num as ppt_num
+
+    s2_dir = AGENT_ROOT / "07_接入记忆_Integrate_Memory" / "data" / "S2_业务端视角"
+    s3_dir = AGENT_ROOT / "07_接入记忆_Integrate_Memory" / "data" / "S3_执行管理端"
+    if s2_dir.exists() and s3_dir.exists() and template_path.exists():
+        # --- Slide8：同行业绩 第1部分 ---
+        prs8 = Presentation(str(template_path))
+        s2_data = load_sheet(s2_dir)
+        s3_data = load_sheet(s3_dir)
+        stats8 = build_slide8(prs8, s2_data)
+
+        check("Slide8 文本替换全部命中", stats8["subs_hits"] == 6 and not stats8["subs_misses"],
+              f"hits={stats8['subs_hits']} misses={stats8['subs_misses']}")
+        k_df = s2_data["K"]
+        k_nonzero = k_df[k_df["KEY ACCOUNT"] != "合计"]
+        check("Slide8 KA行数=K.csv非合计行数（残差补齐算法在新pipeline下已废弃，K.csv本身就是完整口径）",
+              stats8["n_ka_rows"] == len(k_nonzero))
+        k_total_row = k_df[k_df["KEY ACCOUNT"] == "合计"].iloc[0]
+        check("Slide8 同行2026批核APE=K.csv合计行独立核对",
+              abs(stats8["issued_ape"] - ppt_num(k_total_row["2026批核APE"])) < 0.01)
+        top10_expect = k_nonzero.assign(_s=k_nonzero["2026批核APE"].apply(ppt_num)).sort_values("_s", ascending=False).head(10)["KEY ACCOUNT"].tolist()
+        check("Slide8 Chart1 TOP10排序=K.csv按2026批核APE独立降序排序", stats8["top10_ka"] == top10_expect)
+        tbl8 = next(sh for sh in prs8.slides[7].shapes if sh.has_table).table
+        check("Slide8 表格行数=表头1+KA行数+合计1", len(tbl8.rows) == 1 + stats8["n_ka_rows"] + 1)
+
+        # --- Slide9：同行业绩 第2部分 ---
+        prs9 = Presentation(str(template_path))
+        stats9 = build_slide9(prs9, s3_data)
+        check("Slide9 文本替换全部命中", stats9["subs_hits"] == 19 and not stats9["subs_misses"],
+              f"hits={stats9['subs_hits']} misses={stats9['subs_misses']}")
+        j_ape_df = s3_data["J_ape"]
+        weeks_j = [c for c in j_ape_df.columns if c.startswith("2026W")]
+        current_week_expect = max(weeks_j, key=lambda w: int(w.replace("2026W", "")))
+        check("Slide9 当前周=J_ape.csv周列独立算出的最大周号", stats9["current_week"] == current_week_expect)
+        j_total_row = j_ape_df[j_ape_df["KEY ACCOUNT"] == "合计"].iloc[0]
+        monthly_appt_sum = sum(r[1] for r in stats9["monthly_rows"])
+        check("Slide9 月度分桶预约APE总和=J_ape.csv合计列独立核对（周→月聚合不丢单）",
+              abs(monthly_appt_sum - ppt_num(j_total_row["合计"])) < 0.01)
+        check("Slide9 Y表KA数>0（union(J/K/L当周>0的KA)非空）", len(stats9["y_table_kas"]) > 0)
+
+        # --- Slide10：BK业务 第1部分 ---
+        prs10 = Presentation(str(template_path))
+        stats10 = build_slide10(prs10, s2_data, s3_data)
+        check("Slide10 文本替换全部命中", stats10["subs_hits"] == 19 and not stats10["subs_misses"],
+              f"hits={stats10['subs_hits']} misses={stats10['subs_misses']}")
+        a_bk_row = s2_data["A"][s2_data["A"]["业务细分"] == "BK业务"].iloc[0]
+        check("Slide10 BK目标/达成率=S2-A.csv独立核对",
+              abs(stats10["target"] - ppt_num(a_bk_row["目标APE"])) < 0.01
+              and abs(stats10["rate"] - ppt_num(a_bk_row["达成率"])) < 1e-9)
+        check("Slide10 S2-O合计跟S3-O_ape合计存在真实口径差异(非0，已记录在案，非代码bug)",
+              stats10["o_total_s2"] != stats10["o_total_s3"])
+        donut_shape10 = next(sh for sh in prs10.slides[9].shapes if sh.has_chart and sh.shape_id == 95)
+        donut_vals = [ppt_num(v) for v in list(donut_shape10.chart.series)[0].values]
+        check("Slide10 甜甜圈两扇区非负且已批核扇区不超过target(达成率>100%时裁剪，避免负数扇区)",
+              donut_vals[0] >= 0 and donut_vals[1] >= 0 and donut_vals[0] <= stats10["target"] / 1e6 + 0.05)
+
+        # --- Slide11：BK业务 第2部分 ---
+        prs11 = Presentation(str(template_path))
+        stats11 = build_slide11(prs11, s2_data, s3_data)
+        check("Slide11 文本替换全部命中", stats11["subs_hits"] == 7 and not stats11["subs_misses"],
+              f"hits={stats11['subs_hits']} misses={stats11['subs_misses']}")
+        s_df = s2_data["S"]
+        s_nonzero = s_df[(s_df["合作伙伴(分行)"] != "合计") & (s_df["合计"].apply(ppt_num) > 0)]
+        check("Slide11 分行数=S.csv合计列>0的分行数独立核对", stats11["n_branches"] == len(s_nonzero))
+        top_branch_expect = s_nonzero.assign(_s=s_nonzero["合计"].apply(ppt_num)).sort_values("_s", ascending=False).iloc[0]["合作伙伴(分行)"]
+        check("Slide11 分行榜首=S.csv按合计列独立降序排序", stats11["top_branch"] == top_branch_expect)
+        y_table11 = next(sh for sh in prs11.slides[10].shapes if sh.has_table).table
+        rows11 = list(y_table11.rows)
+        last_row_cells = [c.text for c in rows11[-1].cells]
+        m_ape_df = s3_data["M_ape"]
+        m_total_row = m_ape_df[m_ape_df["KEY ACCOUNT"] == "合计"].iloc[0]
+        cur_week_col = stats11["current_week"]
+        expect_appt_total_m = (ppt_num(m_total_row[cur_week_col]) if cur_week_col in m_total_row.index else 0.0) / 1e6
+        check("Slide11 表格银行合计行=本周预约(M)列=M_ape.csv合计行当周值独立核对",
+              last_row_cells[0] == "银行合计"
+              and abs(float(last_row_cells[1].rstrip("M")) - expect_appt_total_m) < 0.01)
+    else:
+        check("⚠️ S2/S3数据或template.pptx不存在，跳过PPT Slide8/9/10/11核验", True)
+
+    # ---- 前端：multiview_dashboard，对照真实S1 CSV独立核验（代替PPT的新方向） ----
+    from skills.multiview_dashboard import build_s1_view
+    from skills.ppt_data_loader import load_sheet as _mv_load_sheet
+
+    s1_dir_mv = AGENT_ROOT / "07_接入记忆_Integrate_Memory" / "data" / "S1_总览仪表盘"
+    if s1_dir_mv.exists():
+        s1_mv = _mv_load_sheet(s1_dir_mv)
+        v1 = build_s1_view(s1_mv)
+
+        check("前端S1视角 全业务达成率跟ppt_generator.py::build_slide1同一份S1-A算法一致",
+              abs(v1["full_rate"] - v1["full_achv"] / v1["full_target"]) < 1e-9)
+        check("前端S1视角 管道分母=批核+未批核+待签+流失（跟PPT Slide1口径一致）",
+              abs(v1["pipe_total"] - (v1["issued_ape"] + v1["unbat_ape"] + v1["pend_ape"] + v1["lost_ape"])) < 0.01)
+        check("前端S1视角 业务类型3类之和=G板块合计批核APE",
+              abs(sum(b["batch"] for b in v1["business_type"].values())
+                  - float(s1_mv["G"][s1_mv["G"]["业务类型"] == "合计"].iloc[0]["2026批核APE"].replace(",", ""))) < 1.0)
+        check("前端S1视角 月度趋势月份数=S1-C的月份数", len(v1["monthly_trend"]["labels"]) == len(s1_mv["C"]))
+        check("前端S1视角 状态明细行数=F板块非合计行数",
+              len(v1["status_detail"]) == sum(1 for _, r in s1_mv["F"].iterrows() if r["保单状态"] != "合计"))
+
+        try:
+            from skills.multiview_dashboard import render as _mv_render
+            html_out = _mv_render(s1_dir_mv.parent, agent_version="test", source_name="test")
+            check("前端render()端到端跑通且S1视角被标记为available",
+                  '"available": true' in html_out)
+        except Exception as e:
+            check("前端render()端到端跑通", False, str(e))
+    else:
+        check("⚠️ S1数据不存在，跳过前端S1视角核验", True)
+
     print()
     if failures:
         print(f"❌ {len(failures)} 项失败: {failures}")
