@@ -1,6 +1,6 @@
 # PDA · 业绩数据多维分析 Agent（围绕牌照端 issuing_entity）
 
-> 状态：测试中。SOP 第4步（开发）+第5步（集成测试）已完成——真实底表跑通，24项集成测试全过，修复2个真实bug（日期类型解析、future_dated计数），待 Jasper 确认归档（SOP第6步）。S1-S9九张专题视角表已全部反推完成。**PPT生成路线已于v0.15.0停止投入**（已实现第1/8/9/10/11页并用真实数据核验，代码保留但不再继续第2-7页）——起因是Jasper拿到业务真实在发的W37/W38周报后，发现①真实生产模板已演化到12页（我们复刻的是过时的11页模板）；②真实报表里"全流程转化漏斗"的"递交"阶段一周之内从563.2M骤降为0，证实当前生产脚本（非本Agent产出）本身有真实bug。据此判断"死磕复刻PPT"性价比低，改走**前端直接展示**替代PPT：新增`multiview_dashboard.py`，多视角tab切换单页应用，S1总览视角已实现并用真实数据核验，S2/S3/S4/同行/银行/代理人/KA共7个视角待续。
+> 状态：测试中。SOP 第4步（开发）+第5步（集成测试）已完成——真实底表跑通，174项集成测试全过，修复2个真实bug（日期类型解析、future_dated计数），待 Jasper 确认归档（SOP第6步）。S1-S9九张专题视角表已全部反推完成。**PPT生成路线已于v0.15.0停止投入**（已实现第1/8/9/10/11页并用真实数据核验，代码保留但不再继续第2-7页）——起因是Jasper拿到业务真实在发的W37/W38周报后，发现①真实生产模板已演化到12页（我们复刻的是过时的11页模板）；②真实报表里"全流程转化漏斗"的"递交"阶段一周之内从563.2M骤降为0，证实当前生产脚本（非本Agent产出）本身有真实bug。据此判断"死磕复刻PPT"性价比低，改走**前端直接展示**替代PPT：新增`multiview_dashboard.py`，多视角tab切换单页应用。**v0.16.0：S2业务端/S3执行管理端/S4产品端/同行业绩/银行业绩/代理人业务/KA业务共7个新增视角全部实现**（加上此前的S1总览，8个视角全部完成、全部用真实数据独立核验+built-in browser截图确认渲染正确），代理人业务/KA业务视角核实S9数据结构后确认="天领业务+成事家办" / "ICLUB+合伙转介+IFA"三条业务线，跟任务前的推断一致。
 
 ## 这是什么
 
@@ -42,7 +42,7 @@ PDA/
 │   └── skills/ppt_monthly_bucket.py       PPT生成阶段：S3周度数据按%U周三规则聚合成月度
 │   └── skills/ppt_config.py               PPT生成阶段：集中配置（8项业务细分顺序等口径常量）
 │   └── skills/ppt_generator.py            PPT生成阶段（已停止投入）：build_slide1/8/9/10/11()已实现，slide2-7不再继续
-│   └── skills/multiview_dashboard.py      前端阶段（PPT的替代方向）：多视角tab切换，build_s1_view()已实现，S2/S3/S4/同行/银行/代理人/KA待续
+│   └── skills/multiview_dashboard.py      前端阶段（PPT的替代方向）：多视角tab切换，S1总览/S2业务端/S3执行管理端/S4产品端/同行业绩/银行业绩/代理人业务/KA业务共8个视角全部实现
 ├── 07_接入记忆_Integrate_Memory/
 │   └── raw_data/                          Jasper放置的原始底表Excel+业绩分析报表+PPT流水线参考代码
 │   └── memory/workspace.py                本地缓存+PDA专属工作区隔离
@@ -74,7 +74,7 @@ python3 04_定义Agent_Define_Agent/agents/agent.py --status
 python3 09_测试与调试_Test_and_Debug/tests/test_integration.py
 ```
 
-`--run` 读取 `raw_data/` 下的底表 Excel，清洗、聚合，在 `07_接入记忆_Integrate_Memory/data/` 生成 HTML 看板；`--enrich` 清洗后加上 S8 明细底表的13个衍生字段，存成CSV；`--sync-targets` 只读同步服务器 fact_target 目标APE数据（需要 `skills/db_config_local.py`，本地文件不进版本库）；`--s1` 复刻S1_总览仪表盘A-H八个板块，存成CSV；`--s2` 复刻S2_业务端视角全部20个子板块（含S/T的partner_code维度），存成CSV；`--s3` 复刻S3_执行管理端全部20个子板块（周度趋势+签批时效分析+未批核待签分布+同行/银行周度趋势），存成CSV；`--s4` 复刻S4_产品端视角全部5个板块，存成CSV；`--s5` 复刻S5_财务端视角全部8个板块（规模分档+大额保单TOP20），存成CSV；`--s6` 复刻S6_市场与交叉视角全部12张子表，存成CSV；`--s7` 复刻S7_合规端视角全部6个板块（牌照合规概览+牌照×业务细分+签批时效预警+TR人效），存成CSV；`--s9` 复刻S9_代理人与KA业务全部10个顶层板块（业务细分汇总+KA业绩分析+月度/周度明细），存成CSV；`--ppt` 从`raw_data/业绩报表PPT/template.pptx`+S1-S9 CSV生成周业绩PPT（已停止投入，实现到第1/8/9/10/11页为止，见 [PPT生成_旧流水线映射与新架构设计_v0.1.md](03_规划项目结构_Plan_Project_Structure/PPT生成_旧流水线映射与新架构设计_v0.1.md)）；`--frontend` 从S1-S9 CSV生成多视角前端HTML（代替PPT的新方向，目前只有S1总览视角，双击`业绩数据分析前端.html`即可打开）；`--status` 查看上次运行的记录数/future_dated数等摘要。
+`--run` 读取 `raw_data/` 下的底表 Excel，清洗、聚合，在 `07_接入记忆_Integrate_Memory/data/` 生成 HTML 看板；`--enrich` 清洗后加上 S8 明细底表的13个衍生字段，存成CSV；`--sync-targets` 只读同步服务器 fact_target 目标APE数据（需要 `skills/db_config_local.py`，本地文件不进版本库）；`--s1` 复刻S1_总览仪表盘A-H八个板块，存成CSV；`--s2` 复刻S2_业务端视角全部20个子板块（含S/T的partner_code维度），存成CSV；`--s3` 复刻S3_执行管理端全部20个子板块（周度趋势+签批时效分析+未批核待签分布+同行/银行周度趋势），存成CSV；`--s4` 复刻S4_产品端视角全部5个板块，存成CSV；`--s5` 复刻S5_财务端视角全部8个板块（规模分档+大额保单TOP20），存成CSV；`--s6` 复刻S6_市场与交叉视角全部12张子表，存成CSV；`--s7` 复刻S7_合规端视角全部6个板块（牌照合规概览+牌照×业务细分+签批时效预警+TR人效），存成CSV；`--s9` 复刻S9_代理人与KA业务全部10个顶层板块（业务细分汇总+KA业绩分析+月度/周度明细），存成CSV；`--ppt` 从`raw_data/业绩报表PPT/template.pptx`+S1-S9 CSV生成周业绩PPT（已停止投入，实现到第1/8/9/10/11页为止，见 [PPT生成_旧流水线映射与新架构设计_v0.1.md](03_规划项目结构_Plan_Project_Structure/PPT生成_旧流水线映射与新架构设计_v0.1.md)）；`--frontend` 从S1-S9 CSV生成多视角前端HTML（代替PPT的新方向，S1总览/S2业务端/S3执行管理端/S4产品端/同行业绩/银行业绩/代理人业务/KA业务共8个视角全部实现，双击`业绩数据分析前端.html`即可打开）；`--status` 查看上次运行的记录数/future_dated数等摘要。
 
 ## 关联文档
 
