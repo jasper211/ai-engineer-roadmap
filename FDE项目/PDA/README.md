@@ -1,6 +1,6 @@
 # PDA · 业绩数据多维分析 Agent（围绕牌照端 issuing_entity）
 
-> 状态：测试中。SOP 第4步（开发）+第5步（集成测试）已完成——真实底表跑通，24项集成测试全过，修复2个真实bug（日期类型解析、future_dated计数），待 Jasper 确认归档（SOP第6步）。
+> 状态：测试中。SOP 第4步（开发）+第5步（集成测试）已完成——真实底表跑通，24项集成测试全过，修复2个真实bug（日期类型解析、future_dated计数），待 Jasper 确认归档（SOP第6步）。S1-S9九张专题视角表已全部反推完成，PPT生成阶段已启动，第1页（全维度业绩分析仪表盘）已实现并用真实数据核验，第2-11页待续。
 
 ## 这是什么
 
@@ -36,6 +36,12 @@ PDA/
 │   └── skills/s7_compliance_view.py       S7合规端视角全部6个板块
 │   └── skills/s9_agent_ka_view.py         S9代理人与KA业务全部10个顶层板块
 │   └── skills/db_config_local.py          数据库连接参数（本地文件，不进版本库）
+│   └── skills/ppt_data_loader.py          PPT生成阶段：新版S1-S9 CSV加载（一板块一文件）
+│   └── skills/ppt_chart_patch.py          PPT生成阶段：chart XML直接patch（绕开python-pptx限制）
+│   └── skills/ppt_helpers.py              PPT生成阶段：结构化定位（按标题/表头/类别找元素）+ 段落级替换 + 列克隆
+│   └── skills/ppt_monthly_bucket.py       PPT生成阶段：S3周度数据按%U周三规则聚合成月度
+│   └── skills/ppt_config.py               PPT生成阶段：集中配置（8项业务细分顺序等口径常量）
+│   └── skills/ppt_generator.py            PPT生成阶段：build_slide1()已实现，slide2-11待续
 ├── 07_接入记忆_Integrate_Memory/
 │   └── raw_data/                          Jasper放置的原始底表Excel+业绩分析报表+PPT流水线参考代码
 │   └── memory/workspace.py                本地缓存+PDA专属工作区隔离
@@ -61,11 +67,12 @@ python3 04_定义Agent_Define_Agent/agents/agent.py --s5
 python3 04_定义Agent_Define_Agent/agents/agent.py --s6
 python3 04_定义Agent_Define_Agent/agents/agent.py --s7
 python3 04_定义Agent_Define_Agent/agents/agent.py --s9
+python3 04_定义Agent_Define_Agent/agents/agent.py --ppt
 python3 04_定义Agent_Define_Agent/agents/agent.py --status
 python3 09_测试与调试_Test_and_Debug/tests/test_integration.py
 ```
 
-`--run` 读取 `raw_data/` 下的底表 Excel，清洗、聚合，在 `07_接入记忆_Integrate_Memory/data/` 生成 HTML 看板；`--enrich` 清洗后加上 S8 明细底表的13个衍生字段，存成CSV；`--sync-targets` 只读同步服务器 fact_target 目标APE数据（需要 `skills/db_config_local.py`，本地文件不进版本库）；`--s1` 复刻S1_总览仪表盘A-H八个板块，存成CSV；`--s2` 复刻S2_业务端视角全部20个子板块（含S/T的partner_code维度），存成CSV；`--s3` 复刻S3_执行管理端全部20个子板块（周度趋势+签批时效分析+未批核待签分布+同行/银行周度趋势），存成CSV；`--s4` 复刻S4_产品端视角全部5个板块，存成CSV；`--s5` 复刻S5_财务端视角全部8个板块（规模分档+大额保单TOP20），存成CSV；`--s6` 复刻S6_市场与交叉视角全部12张子表，存成CSV；`--s7` 复刻S7_合规端视角全部6个板块（牌照合规概览+牌照×业务细分+签批时效预警+TR人效），存成CSV；`--s9` 复刻S9_代理人与KA业务全部10个顶层板块（业务细分汇总+KA业绩分析+月度/周度明细），存成CSV；`--status` 查看上次运行的记录数/future_dated数等摘要。
+`--run` 读取 `raw_data/` 下的底表 Excel，清洗、聚合，在 `07_接入记忆_Integrate_Memory/data/` 生成 HTML 看板；`--enrich` 清洗后加上 S8 明细底表的13个衍生字段，存成CSV；`--sync-targets` 只读同步服务器 fact_target 目标APE数据（需要 `skills/db_config_local.py`，本地文件不进版本库）；`--s1` 复刻S1_总览仪表盘A-H八个板块，存成CSV；`--s2` 复刻S2_业务端视角全部20个子板块（含S/T的partner_code维度），存成CSV；`--s3` 复刻S3_执行管理端全部20个子板块（周度趋势+签批时效分析+未批核待签分布+同行/银行周度趋势），存成CSV；`--s4` 复刻S4_产品端视角全部5个板块，存成CSV；`--s5` 复刻S5_财务端视角全部8个板块（规模分档+大额保单TOP20），存成CSV；`--s6` 复刻S6_市场与交叉视角全部12张子表，存成CSV；`--s7` 复刻S7_合规端视角全部6个板块（牌照合规概览+牌照×业务细分+签批时效预警+TR人效），存成CSV；`--s9` 复刻S9_代理人与KA业务全部10个顶层板块（业务细分汇总+KA业绩分析+月度/周度明细），存成CSV；`--ppt` 从`raw_data/业绩报表PPT/template.pptx`+S1-S9 CSV生成周业绩PPT（目前只实现第1页，见 [PPT生成_旧流水线映射与新架构设计_v0.1.md](03_规划项目结构_Plan_Project_Structure/PPT生成_旧流水线映射与新架构设计_v0.1.md)）；`--status` 查看上次运行的记录数/future_dated数等摘要。
 
 ## 关联文档
 

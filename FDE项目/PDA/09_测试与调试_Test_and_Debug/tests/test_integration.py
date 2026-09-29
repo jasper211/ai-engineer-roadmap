@@ -460,6 +460,35 @@ def main():
     else:
         check("⚠️ 报表文件或fact_target快照不存在，跳过S9独立核验", True)
 
+    # ---- PPT生成：build_slide1，对照真实S1 CSV+template.pptx核验 ----
+    from skills.ppt_generator import build_slide1
+    from skills.ppt_data_loader import load_sheet
+    from pptx import Presentation
+
+    s1_dir = AGENT_ROOT / "07_接入记忆_Integrate_Memory" / "data" / "S1_总览仪表盘"
+    template_path = RAW_DATA_DIR / "业绩报表PPT" / "template.pptx"
+    if s1_dir.exists() and template_path.exists():
+        prs_test = Presentation(str(template_path))
+        s1_data = load_sheet(s1_dir)
+        stats1 = build_slide1(prs_test, s1_data)
+
+        check("Slide1 文本替换全部命中", stats1["subs_hits"] == 19 and not stats1["subs_misses"],
+              f"hits={stats1['subs_hits']} misses={stats1['subs_misses']}")
+        check("Slide1 全业务达成率=已达成/目标（跟S1-A算法一致）",
+              abs(stats1["full_rate"] - stats1["full_achv"] / stats1["full_target"]) < 1e-9)
+        check("Slide1 管道分母=批核+未批核+待签+流失（含流失，跟B模块口径一致）",
+              abs(stats1["pipe_total"] - (stats1["issued_ape"] + stats1["unbat_ape"]
+                  + stats1["pend_ape"] + stats1["lost_ape"])) < 0.01)
+        check("Slide1 月度网格月份数跟S1-C的2026月份数一致",
+              len(stats1["months_2026"]) == sum(1 for m in s1_data["C"]["年月"] if m.startswith("2026-")))
+
+        chart0_shape = next(sh for sh in prs_test.slides[0].shapes if sh.has_chart and sh.shape_id == 81)
+        cats0 = list(chart0_shape.chart.plots[0].categories)
+        check("Slide1 Chart0类别顺序=经代/代理人/KA（跟patch时假设的cat_order一致）",
+              cats0 == ["经代业务", "代理人业务", "KA 业务"])
+    else:
+        check("⚠️ S1数据或template.pptx不存在，跳过PPT Slide1核验", True)
+
     print()
     if failures:
         print(f"❌ {len(failures)} 项失败: {failures}")
