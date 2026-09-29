@@ -15,6 +15,7 @@ PDA 主循环入口。demo 阶段是一次性全量流程，不做常驻监控/�
     python3 agent.py --s6            # 复刻S6_市场与交叉视角全部12张子表(A-F×APE/件数) -> 存CSV
     python3 agent.py --s7            # 复刻S7_合规端视角全部6个板块(A/B-D×APE/件数/E/F) -> 存CSV
     python3 agent.py --s9            # 复刻S9_代理人与KA业务全部10个顶层板块(A-J) -> 存CSV
+    python3 agent.py --ppt           # 从template.pptx+S1-S9 CSV生成周业绩PPT（目前只有第1页）
     python3 agent.py --status        # 查看上次运行的记录
 """
 import argparse
@@ -300,6 +301,29 @@ def build_s9():
     print(f"输出目录: {out_dir}")
 
 
+def build_ppt():
+    import skills.ppt_generator as ppt_generator
+
+    data_dir = AGENT_ROOT / "07_接入记忆_Integrate_Memory" / "data"
+    template = RAW_DATA_DIR / "业绩报表PPT" / "template.pptx"
+    if not template.exists():
+        print(f"❌ 找不到模板 {template}")
+        return
+    if not (data_dir / "S1_总览仪表盘").exists():
+        print("❌ 找不到 S1_总览仪表盘 数据，先跑 --s1")
+        return
+
+    out_path = data_dir / "周业绩汇报PPT_生成.pptx"
+    stats = ppt_generator.generate(template, data_dir, out_path, sheets=["S1_总览仪表盘"])
+
+    print("✅ PPT已生成（当前只实现第1页，第2-11页待续，见执行记录.md）")
+    if "slide1" in stats:
+        s1 = stats["slide1"]
+        print(f"   第1页：{s1['subs_hits']} 处文本替换命中，0 处未命中")
+        print(f"   月度明细网格已扩展到 {s1['months_2026']}")
+    print(f"输出: {out_path}")
+
+
 def show_status():
     workspace = Workspace()
     info = workspace.load_last_run()
@@ -324,6 +348,7 @@ def main():
     ap.add_argument("--s6", action="store_true", help="复刻S6_市场与交叉视角全部子表，存CSV")
     ap.add_argument("--s7", action="store_true", help="复刻S7_合规端视角全部6个板块，存CSV")
     ap.add_argument("--s9", action="store_true", help="复刻S9_代理人与KA业务全部10个顶层板块，存CSV")
+    ap.add_argument("--ppt", action="store_true", help="从template.pptx+S1-S9生成周业绩PPT（目前只有第1页）")
     ap.add_argument("--status", action="store_true", help="查看上次运行记录")
     args = ap.parse_args()
 
@@ -349,6 +374,8 @@ def main():
         build_s7()
     elif args.s9:
         build_s9()
+    elif args.ppt:
+        build_ppt()
     elif args.status:
         show_status()
     else:
