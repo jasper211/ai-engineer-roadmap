@@ -794,11 +794,113 @@ def main():
               and all(any(abs(p["APE"] - ppt_num(r["APE"])) < 1 and p["产品名称"] == r["产品名称"] for _, r in c4_sl.iterrows())
                       for p in vs["product_top10"]))
 
+        # ==================== v0.18.0新增：P4-P9六项缺口补齐 ====================
+        from skills.multiview_dashboard import SUNLIFE_FORECAST_SOURCE
+
+        # --- P4：银行月度走势×3 + 达成甜甜圈 ---
+        m_ape3, n_ape3, o_ape3 = s3_mv["M_ape"], s3_mv["N_ape"], s3_mv["O_ape"]
+        weeks_o3 = [c for c in o_ape3.columns if c.startswith("2026W")]
+        for bank in ["民生银行", "平安银行"]:
+            row_o = o_ape3[o_ape3["KEY ACCOUNT"] == bank].iloc[0]
+            weekly_sum = sum(ppt_num(row_o[w]) for w in weeks_o3 if w in row_o.index)
+            monthly_sum = sum(vb["monthly_by_bank"]["批核"]["series"].get(bank, []))
+            check(f"前端银行视角 月度走势×3(批核)-{bank}月度分桶合计=周度独立求和（ppt_monthly_bucket周→月不丢单）",
+                  abs(weekly_sum - monthly_sum) < 1)
+        target_expect = ppt_num(a2_bk["目标APE"])
+        issued_expect = ppt_num(o2_total["2026批核APE"])
+        check("前端银行视角 达成甜甜圈已批核=min(issued,target)、目标剩余=max(target-issued,0)（BK达成率>100%时不出现负数扇区）",
+              abs(vb["donut_achv"] - min(issued_expect, target_expect)) < 1
+              and abs(vb["donut_remain"] - max(target_expect - issued_expect, 0)) < 1)
+        check("前端银行视角 达成甜甜圈已批核不超过目标（裁剪生效）",
+              vb["donut_achv"] <= vb["target"] + 1e-6)
+
+        # --- P5：同行/银行/代理人/KA 本周快报明细表（按实体拆分） ---
+        check("前端同行视角 本周快报明细表行汇总=weekly_snapshot整体值独立核对（按KA拆分不丢单）",
+              all(abs(sum(r["vals"][m] for r in vp["weekly_detail"]["rows"]) - vp["weekly_snapshot"][m]["ape"]) < 1
+                  for m in ["预约", "签单", "批核"]))
+        check("前端同行视角 本周快报明细表total字段=各行独立求和",
+              all(abs(vp["weekly_detail"]["total"][m] - sum(r["vals"][m] for r in vp["weekly_detail"]["rows"])) < 1e-6
+                  for m in ["预约", "签单", "批核"]))
+        check("前端银行视角 本周快报明细表行汇总=weekly_snapshot整体值独立核对",
+              all(abs(sum(r["vals"][m] for r in vb["weekly_detail"]["rows"]) - vb["weekly_snapshot"][m]["ape"]) < 1
+                  for m in ["预约", "签单", "批核"]))
+        check("前端代理人视角 本周快报明细表行汇总=weekly_snapshot整体值独立核对（天领H+成事家办I逐KA拆分不丢单）",
+              all(abs(sum(r["vals"][m] for r in va["weekly_detail"]["rows"]) - va["weekly_snapshot"][m]["ape"]) < 1
+                  for m in ["预约", "签单", "批核"]))
+        check("前端KA业务视角 本周快报明细表行汇总=weekly_snapshot整体值独立核对",
+              all(abs(sum(r["vals"][m] for r in vk["weekly_detail"]["rows"]) - vk["weekly_snapshot"][m]["ape"]) < 1
+                  for m in ["预约", "签单", "批核"]))
+
+        # --- P6：S3 业务线×全部周完整表格 ---
+        b3_full = s3_mv["B"]
+        b3_noTotal = b3_full[b3_full["业务细分"] != "合计"]
+        week_cols_full = [c for c in b3_full.columns if c.endswith("_APE")]
+        weeks_full = [c[:-4] for c in week_cols_full]
+        appt_total_expect = [round(b3_noTotal[f"{w}_APE"].apply(ppt_num).sum(), 0) for w in weeks_full]
+        check("前端S3视角 业务线×全部周完整表格(预约)合计行=8个业务细分独立求和（容差1元浮点舍入）",
+              all(abs(a - b) <= 1.0 for a, b in zip(appt_total_expect, v3["full_week_table"]["预约"]["total"])))
+        check("前端S3视角 业务线×全部周完整表格覆盖全部周次（跟weekly_trend/weeks_count同一份A/B/C/D周范围）",
+              len(v3["full_week_table"]["预约"]["weeks"]) == v3["weeks_count"]
+              and len(v3["full_week_table"]["签单"]["weeks"]) == v3["weeks_count"]
+              and len(v3["full_week_table"]["批核"]["weeks"]) == v3["weeks_count"])
+        check("前端S3视角 业务线×全部周完整表格行数=SEGMENT_ORDER长度（8项业务细分，含目前0贡献的IFA业务行）",
+              len(v3["full_week_table"]["预约"]["rows"]) == len(SEGMENT_ORDER))
+
+        # --- P7：永明牌照×月批核明细表 ---
+        h1 = s1_mv["H"]
+        license_month_cols_expect = [c for c in h1.columns if c not in ("牌照", "未批核", "本月已递交")]
+        check("前端永明视角 牌照明细表行数=S1-H板块行数（JF/UNIWIN/DW-Non-Bank/EG/Sub Total/DW Bank）",
+              len(vs["license_table"]["rows"]) == len(h1))
+        check("前端永明视角 牌照明细表月份数=S1-H板块月份列数（排除未批核/本月已递交两个快照列）",
+              len(vs["license_table"]["months"]) == len(license_month_cols_expect))
+        jf_row_expect = h1[h1["牌照"] == "JF"].iloc[0]
+        jf_row_got = next(r for r in vs["license_table"]["rows"] if r["牌照"] == "JF")
+        check("前端永明视角 JF牌照2026-01批核APE/未批核/本月已递交=S1-H原始行独立核对（三个字段都要对，不只挑一个）",
+              abs(jf_row_got["monthly"][license_month_cols_expect.index("2026-01")] - ppt_num(jf_row_expect["2026-01"])) < 1
+              and abs(jf_row_got["未批核"] - ppt_num(jf_row_expect["未批核"])) < 1
+              and abs(jf_row_got["本月已递交"] - ppt_num(jf_row_expect["本月已递交"])) < 1)
+
+        # --- P8：S1 月度明细表格 ---
+        c1, d1, e1 = s1_mv["C"], s1_mv["D"], s1_mv["E"]
+        check("前端S1视角 月度明细表格行数=C板块月份数（跟monthly_trend.labels同一份months列表）",
+              len(v1["monthly_table"]) == len(c1) == len(v1["monthly_trend"]["labels"]))
+        appr_ape_sum_expect = e1["APE"].apply(ppt_num).sum()
+        appr_ape_sum_got = sum(r["批核APE"] for r in v1["monthly_table"])
+        check("前端S1视角 月度明细表格批核APE合计=E板块APE列独立求和",
+              abs(appr_ape_sum_got - appr_ape_sum_expect) < 1)
+        first_month = sorted(c1["年月"].tolist())[0]
+        c1_first = c1[c1["年月"] == first_month].iloc[0]
+        check("前端S1视角 月度明细表格首月预约APE/件数=C板块独立核对",
+              abs(v1["monthly_table"][0]["预约APE"] - ppt_num(c1_first["APE"])) < 1
+              and v1["monthly_table"][0]["预约件数"] == int(ppt_num(c1_first["件数"])))
+
+        # --- P9：达标节奏线 + 批核APE月度走势预测（重点：数据来源诚实披露） ---
+        a1_full = s1_mv["A"][s1_mv["A"]["指标"] == "2026全业务目标"].iloc[0]
+        full_gap_expect = ppt_num(a1_full["目标APE"]) - ppt_num(a1_full["已达成APE"])
+        months_2026_expect = sorted(m for m in c1["年月"].tolist() if m.startswith("2026-"))
+        cur_month_num_expect = int(months_2026_expect[-1].split("-")[1])
+        remaining_expect = 12 - cur_month_num_expect
+        check("前端S1视角 达标节奏线剩余月份=12-当前月（当前月=数据实际覆盖到的最后一个2026年月份，不是日历今天）",
+              v1["forecast_pace"]["remaining_months"] == remaining_expect)
+        check("前端S1视角 达标节奏线=剩余缺口÷剩余月份独立核算",
+              abs(v1["forecast_pace"]["pace_per_month"] - full_gap_expect / remaining_expect) < 1)
+        check("前端S1视角 预测数字(最低月底线69.5M/10-12月预测100-100-96M)跟SUNLIFE_FORECAST_SOURCE配置值完全一致（未被代码二次加工）",
+              v1["forecast_pace"]["min_monthly_line"] == SUNLIFE_FORECAST_SOURCE["min_monthly_line"] == 69.5e6
+              and v1["forecast_chart"]["forecast"][9] == 100.0e6  # 2026-10
+              and v1["forecast_chart"]["forecast"][10] == 100.0e6  # 2026-11
+              and v1["forecast_chart"]["forecast"][11] == 96.0e6)  # 2026-12
+        check("前端S1视角 批核APE月度走势历史月份(实际)不使用预测值填充（10-12月forecast之外的actual用真实E板块数据或None，不混用）",
+              all(v1["forecast_chart"]["actual"][i] is None or isinstance(v1["forecast_chart"]["actual"][i], (int, float))
+                  for i in range(12))
+              and v1["forecast_chart"]["forecast"][:9] == [None] * 9)
+
         try:
             from skills.multiview_dashboard import render as _mv_render
             html_out = _mv_render(s1_dir_mv.parent, agent_version="test", source_name="test")
             check("前端render()端到端跑通且全部9个视角被标记为available（v0.17.0新增永明业绩视角）",
                   html_out.count('"available": true') == 9)
+            check("前端render()输出的HTML页面里确实包含P9预测数值来源披露文字（不能只在数据字典里有、页面不显示）",
+                  "2026-09-25期" in html_out and "业务侧人工设定" in html_out and "未独立验证/反推" in html_out)
         except Exception as e:
             check("前端render()端到端跑通", False, str(e))
     else:
