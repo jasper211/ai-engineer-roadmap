@@ -16,8 +16,19 @@ PDA 主循环入口。demo 阶段是一次性全量流程，不做常驻监控/�
     python3 agent.py --s7            # 复刻S7_合规端视角全部6个板块(A/B-D×APE/件数/E/F) -> 存CSV
     python3 agent.py --s9            # 复刻S9_代理人与KA业务全部10个顶层板块(A-J) -> 存CSV
     python3 agent.py --ppt           # 从template.pptx+S1-S9 CSV生成周业绩PPT（第1/8/9/10/11页，已停止投入，见执行记录v0.15.0）
-    python3 agent.py --frontend      # 从S1-S9 CSV生成多视角前端HTML（代替PPT，S1/S2/S3/S4/同行/银行/代理人/KA/永明业绩共9个视角全部完成）
+    python3 agent.py --frontend      # 从S1-S9 CSV生成多视角前端HTML（代替PPT，S1/S2/S3/S4/同行/银行/代理人/KA/永明业绩共9个视角，v0.18.0已跟真实12页周报数据+结构颗粒度基本对齐）
+    python3 agent.py --refresh-frontend  # 一条命令跑完前端需要的全部步骤：sync-targets+s1+s2+s3+s4+s9+frontend
     python3 agent.py --status        # 查看上次运行的记录
+
+换新底表更新前端报表的流程：
+    1. 把新的业绩数据底表 Excel 放进 07_接入记忆_Integrate_Memory/raw_data/（替换旧文件或新增，
+       DataLoader按文件名匹配规则取用，具体规则见 skills/data_loader.py）
+    2. python3 agent.py --refresh-frontend
+    3. 打开 07_接入记忆_Integrate_Memory/data/业绩数据分析前端.html
+
+⚠️ --refresh-frontend 不会更新"最低月底线"/"10-12月预测"这两个数字（v0.18.0起硬编码在
+   skills/multiview_dashboard.py::SUNLIFE_FORECAST_SOURCE，是从周报PDF人工抄录的业务侧输入，
+   不是从底表反推的，业务侧预测目标变了需要单独更新这个常量）。
 """
 import argparse
 import sys
@@ -45,7 +56,7 @@ from memory.workspace import Workspace
 
 RAW_DATA_DIR = AGENT_ROOT / "07_接入记忆_Integrate_Memory" / "raw_data"
 FACT_TARGET_SNAPSHOT = AGENT_ROOT / "07_接入记忆_Integrate_Memory" / "data" / "fact_target_snapshot.csv"
-AGENT_VERSION = "v0.17.0"
+AGENT_VERSION = "v0.18.0"
 
 
 def run():
@@ -347,6 +358,44 @@ def build_frontend():
     print(f"输出: {out_path}（双击用浏览器打开）")
 
 
+def refresh_frontend():
+    """换新底表后一条命令跑完前端需要的全部步骤。9个前端视角只用到S1/S2/S3/S4/S9，
+    不需要S5/S6/S7，所以只跑这5个板块，不是--run全量。sync_targets失败（比如
+    db_config_local.py缺失或数据库连不上）不会中断整个流程——继续用上一次的
+    fact_target_snapshot.csv跑，只是提示一下目标值可能不是最新的。"""
+    steps = [
+        ("sync-targets", sync_targets),
+        ("s1", build_s1),
+        ("s2", build_s2),
+        ("s3", build_s3),
+        ("s4", build_s4),
+        ("s9", build_s9),
+        ("frontend", build_frontend),
+    ]
+    print("=" * 60)
+    print("开始刷新前端报表（sync-targets → s1/s2/s3/s4/s9 → frontend）")
+    print("=" * 60)
+    failed = []
+    for name, fn in steps:
+        print(f"\n▶ {name}")
+        try:
+            fn()
+        except Exception as e:
+            print(f"❌ {name} 步骤出错：{e}")
+            failed.append(name)
+            if name == "sync-targets":
+                print("   （继续用上一次的fact_target_snapshot.csv跑后续步骤，目标值可能不是最新的）")
+                continue
+            print(f"   {name}失败，中止后续步骤")
+            break
+    print("\n" + "=" * 60)
+    if failed:
+        print(f"⚠️ 刷新完成，但以下步骤有问题：{failed}")
+    else:
+        print("✅ 前端报表已用最新底表刷新完成")
+    print("=" * 60)
+
+
 def show_status():
     workspace = Workspace()
     info = workspace.load_last_run()
@@ -373,6 +422,7 @@ def main():
     ap.add_argument("--s9", action="store_true", help="复刻S9_代理人与KA业务全部10个顶层板块，存CSV")
     ap.add_argument("--ppt", action="store_true", help="从template.pptx+S1-S9生成周业绩PPT（第1/8/9/10/11页，已停止投入）")
     ap.add_argument("--frontend", action="store_true", help="从S1-S9生成多视角前端HTML（代替PPT，9个视角全部完成）")
+    ap.add_argument("--refresh-frontend", action="store_true", dest="refresh_frontend", help="换新底表后一条命令跑完sync-targets+s1/s2/s3/s4/s9+frontend")
     ap.add_argument("--status", action="store_true", help="查看上次运行记录")
     args = ap.parse_args()
 
@@ -402,6 +452,8 @@ def main():
         build_ppt()
     elif args.frontend:
         build_frontend()
+    elif args.refresh_frontend:
+        refresh_frontend()
     elif args.status:
         show_status()
     else:
