@@ -597,6 +597,7 @@ def main():
     from skills.multiview_dashboard import (
         build_s2_view, build_s3_view, build_s4_view,
         build_peer_view, build_bank_view, build_agent_view, build_ka_view,
+        build_sunlife_view,
     )
 
     s2_dir_mv = AGENT_ROOT / "07_接入记忆_Integrate_Memory" / "data" / "S2_业务端视角"
@@ -638,6 +639,24 @@ def main():
         check("前端S3视角 未批核/待签分布(常规)行数=E_ape非合计行数",
               len(v3["unbat_pending_regular"]["rows"]) == sum(1 for _, r in s3_mv["E_ape"].iterrows() if str(r["KEY ACCOUNT"]).strip() != "合计"))
 
+        # --- P0本周快报 + P1本周各业务线分布（v0.17.0新增） ---
+        cur_w, prev_w = weeks3[-1], weeks3[-2]
+        check("前端S3视角 cur_week=A板块最后一列周号（不用猜，新版CSV列范围即数据实际覆盖范围）",
+              v3["cur_week"] == cur_w.replace("2026W", "W"))
+        appt_row = a3[a3["阶段"] == "预约"].iloc[0]
+        cur_ape_expect = ppt_num(appt_row[f"{cur_w}_APE"])
+        prev_ape_expect = ppt_num(appt_row[f"{prev_w}_APE"])
+        check("前端S3视角 本周快报-预约当周APE=A板块独立核算",
+              abs(v3["weekly_snapshot"]["预约"]["ape"] - cur_ape_expect) < 1)
+        check("前端S3视角 本周快报-预约环比=（当周-上周）/上周独立核算",
+              abs(v3["weekly_snapshot"]["预约"]["wow"] - (cur_ape_expect - prev_ape_expect) / prev_ape_expect) < 1e-9)
+        from skills.ppt_config import SEGMENT_ORDER
+        b3 = s3_mv["B"]
+        biz_week_expect = [ppt_num(b3[b3["业务细分"] == seg].iloc[0][f"{cur_w}_APE"]) if seg in b3["业务细分"].values else 0.0 for seg in SEGMENT_ORDER]
+        check("前端S3视角 本周各业务线分布(预约)=B板块当周列独立核算，且8项业务线顺序跟SEGMENT_ORDER一致",
+              v3["business_line_this_week"]["labels"] == list(SEGMENT_ORDER)
+              and all(abs(a - b) < 1 for a, b in zip(v3["business_line_this_week"]["预约"], biz_week_expect)))
+
         # --- S4产品端 ---
         v4 = build_s4_view(s4_mv)
         check("前端S4视角 产品TOP榜行数=C板块行数（已自带排名列）", len(v4["product_rank"]) == len(s4_mv["C"]))
@@ -657,6 +676,19 @@ def main():
         check("前端同行视角 ka_rank按批核APE降序排列",
               all(vp["ka_rank"][i]["issued"] >= vp["ka_rank"][i + 1]["issued"] for i in range(len(vp["ka_rank"]) - 1)))
 
+        # --- 同行业绩 本周快报（v0.17.0新增，P0） ---
+        weeks_p = [c for c in s3_mv["J_ape"].columns if c.startswith("2026W")]
+        cur_wp, prev_wp = weeks_p[-1], weeks_p[-2]
+        j_ape_tot_row = s3_mv["J_ape"][s3_mv["J_ape"]["KEY ACCOUNT"] == "合计"].iloc[0]
+        j_cnt_tot_row = s3_mv["J_count"][s3_mv["J_count"]["KEY ACCOUNT"] == "合计"].iloc[0]
+        expect_p_cur = ppt_num(j_ape_tot_row[cur_wp])
+        expect_p_prev = ppt_num(j_ape_tot_row[prev_wp])
+        check("前端同行视角 本周快报-预约当周APE/件数=J_ape/J_count合计行独立核算",
+              abs(vp["weekly_snapshot"]["预约"]["ape"] - expect_p_cur) < 1
+              and vp["weekly_snapshot"]["预约"]["cnt"] == int(ppt_num(j_cnt_tot_row[cur_wp])))
+        check("前端同行视角 本周快报-预约环比=（当周-上周）/上周独立核算",
+              abs(vp["weekly_snapshot"]["预约"]["wow"] - (expect_p_cur - expect_p_prev) / expect_p_prev) < 1e-9)
+
         # --- 银行业绩 ---
         vb = build_bank_view(s2_mv, s3_mv)
         a2_bk = s2_mv["A"][s2_mv["A"]["业务细分"] == "BK业务"].iloc[0]
@@ -667,6 +699,23 @@ def main():
               abs(vb["issued_ape"] - ppt_num(o2_total["2026批核APE"])) < 1)
         check("前端银行视角 S2-O与S3-O_ape总量存在真实口径差异(非0，已在页面文案标注，非bug)",
               vb["o_diff"] != 0)
+
+        # --- 银行业绩 本周快报（v0.17.0新增，P0） ---
+        weeks_b = sorted(
+            set(c for c in s3_mv["M_ape"].columns if c.startswith("2026W"))
+            | set(c for c in s3_mv["N_ape"].columns if c.startswith("2026W"))
+            | set(c for c in s3_mv["O_ape"].columns if c.startswith("2026W")),
+            key=lambda w: int(w.replace("2026W", "")),
+        )
+        cur_wb, prev_wb = weeks_b[-1], weeks_b[-2]
+        o_ape_tot_row = s3_mv["O_ape"][s3_mv["O_ape"]["KEY ACCOUNT"] == "合计"].iloc[0]
+        expect_b_cur = ppt_num(o_ape_tot_row[cur_wb]) if cur_wb in o_ape_tot_row.index else 0.0
+        expect_b_prev = ppt_num(o_ape_tot_row[prev_wb]) if prev_wb in o_ape_tot_row.index else 0.0
+        check("前端银行视角 本周快报-批核当周APE=O_ape合计行独立核算（缺列按0处理，跟趋势图safe()同一套机制）",
+              abs(vb["weekly_snapshot"]["批核"]["ape"] - expect_b_cur) < 1)
+        check("前端银行视角 本周快报-批核环比口径正确：O_ape缺上周列则wow=None，否则=（当周-上周）/上周",
+              (vb["weekly_snapshot"]["批核"]["wow"] is None) if prev_wb not in o_ape_tot_row.index
+              else abs(vb["weekly_snapshot"]["批核"]["wow"] - (expect_b_cur - expect_b_prev) / expect_b_prev) < 1e-9)
 
         # --- 代理人业务（天领业务+成事家办） ---
         va = build_agent_view(s9_mv)
@@ -681,6 +730,29 @@ def main():
         check("前端代理人视角 月度趋势含8个月(2026-01至08)",
               len(va["monthly_trend"]["labels"]) == 8)
 
+        # --- 代理人业务 本周快报（v0.17.0新增，P0）：H核实=天领业务周度明细，I核实=成事家办 ---
+        def _s9g(row, col):
+            return ppt_num(row[col]) if col in row.index else 0.0
+
+        weeks_h = sorted(
+            set(c for c in s9_mv["H_预约_APE"].columns if c.startswith("2026W"))
+            | set(c for c in s9_mv["H_签单_APE"].columns if c.startswith("2026W"))
+            | set(c for c in s9_mv["H_批核_APE"].columns if c.startswith("2026W")),
+            key=lambda w: int(w.replace("2026W", "")),
+        )
+        cur_wh, prev_wh = weeks_h[-1], weeks_h[-2]
+        h_appt_tot = s9_mv["H_预约_APE"][s9_mv["H_预约_APE"]["KEY ACCOUNT"] == "合计"].iloc[0]
+        i_appt_tot = s9_mv["I_预约_APE"][s9_mv["I_预约_APE"]["KEY ACCOUNT"] == "合计"].iloc[0]
+        expect_a_cur = _s9g(h_appt_tot, cur_wh) + _s9g(i_appt_tot, cur_wh)
+        expect_a_prev = _s9g(h_appt_tot, prev_wh) + _s9g(i_appt_tot, prev_wh)
+        check("前端代理人视角 本周快报-预约当周APE=H(天领)+I(成事家办)合计行独立求和",
+              abs(va["weekly_snapshot"]["预约"]["ape"] - expect_a_cur) < 1)
+        check("前端代理人视角 本周快报-预约环比=（当周-上周）/上周独立核算",
+              abs(va["weekly_snapshot"]["预约"]["wow"] - (expect_a_cur - expect_a_prev) / expect_a_prev) < 1e-9
+              if expect_a_prev else va["weekly_snapshot"]["预约"]["wow"] is None)
+        check("前端代理人视角 cur_week（H预约/签单/批核并集推出）跟同行/银行视角的当前周一致，全站口径统一",
+              va["cur_week"] == cur_wh.replace("2026W", "W") == vp["cur_week"] == vb["cur_week"])
+
         # --- KA业务（ICLUB+合伙转介+IFA） ---
         vk = build_ka_view(s9_mv)
         ka_target_expect = a9[a9["业务细分"].isin(["ICLUB业务", "合伙转介业务", "IFA业务"])]["目标APE"].apply(ppt_num).sum()
@@ -692,15 +764,45 @@ def main():
         check("前端KA业务视角 月度趋势批核[2](2026-03)=S9-G板块独立核对（G本身即ICLUB+合伙转介+IFA合计口径）",
               abs(vk["monthly_trend"]["批核"][2] - ppt_num(g9_row["2026-03"])) < 1)
 
+        # --- KA业务 本周快报（v0.17.0新增，P0）：J核实=KA业务周度明细(ICLUB+合伙转介+IFA合计口径) ---
+        j2_appt_ape_tot = s9_mv["J_预约_APE"][s9_mv["J_预约_APE"]["KEY ACCOUNT"] == "合计"].iloc[0]
+        j2_appt_cnt_tot = s9_mv["J_预约_件数"][s9_mv["J_预约_件数"]["KEY ACCOUNT"] == "合计"].iloc[0]
+        expect_k_cur = _s9g(j2_appt_ape_tot, cur_wh)
+        check("前端KA业务视角 本周快报-预约当周APE/件数=J_预约_APE/件数合计行独立核算（跟代理人共用canonical当前周）",
+              abs(vk["weekly_snapshot"]["预约"]["ape"] - expect_k_cur) < 1
+              and vk["weekly_snapshot"]["预约"]["cnt"] == int(_s9g(j2_appt_cnt_tot, cur_wh)))
+        check("前端KA业务视角 cur_week跟代理人视角一致（同一份S9-H canonical周范围，不因J自身列缺失而漂移）",
+              vk["cur_week"] == va["cur_week"])
+
+        # --- 永明业绩（P2新增视角） ---
+        vs = build_sunlife_view(s1_mv, s2_mv, s4_mv)
+        a1_sun = s1_mv["A"][s1_mv["A"]["指标"] == "2026永明业务目标"].iloc[0]
+        check("前端永明视角 sun_target/sun_achv=S1-A'2026永明业务目标'行独立核对（跟build_s1_view同一份数据）",
+              abs(vs["sun_target"] - ppt_num(a1_sun["目标APE"])) < 1
+              and abs(vs["sun_achv"] - ppt_num(a1_sun["已达成APE"])) < 1)
+        check("前端永明视角 sun_rate=S1-A'2026永明业务目标'行目标达成率独立核对",
+              abs(vs["sun_rate"] - ppt_num(a1_sun["目标达成率"])) < 1e-9)
+        c2_sl = s2_mv["C"][s2_mv["C"]["业务细分"] == "永明经代"].iloc[0]
+        month_cols_sl = [c for c in s2_mv["C"].columns if c.endswith("_APE") and c.startswith("2026-")]
+        check("前端永明视角 月度趋势预约[0](2026-01)=S2-C'永明经代'行独立核对",
+              abs(vs["monthly_trend"]["预约"][0] - ppt_num(c2_sl[month_cols_sl[0]])) < 1)
+        c4_sl = s4_mv["C"][s4_mv["C"]["保司"] == "永明"].copy()
+        check("前端永明视角 产品TOP10行数=min(10, S4-C保司=永明的行数)独立核对",
+              len(vs["product_top10"]) == min(10, len(c4_sl)))
+        check("前端永明视角 产品TOP10按APE降序排列，且每条APE能在S4-C永明行里找到匹配（未在筛选中改动数值）",
+              all(vs["product_top10"][i]["APE"] >= vs["product_top10"][i + 1]["APE"] for i in range(len(vs["product_top10"]) - 1))
+              and all(any(abs(p["APE"] - ppt_num(r["APE"])) < 1 and p["产品名称"] == r["产品名称"] for _, r in c4_sl.iterrows())
+                      for p in vs["product_top10"]))
+
         try:
             from skills.multiview_dashboard import render as _mv_render
             html_out = _mv_render(s1_dir_mv.parent, agent_version="test", source_name="test")
-            check("前端render()端到端跑通且全部8个视角被标记为available",
-                  html_out.count('"available": true') == 8)
+            check("前端render()端到端跑通且全部9个视角被标记为available（v0.17.0新增永明业绩视角）",
+                  html_out.count('"available": true') == 9)
         except Exception as e:
             check("前端render()端到端跑通", False, str(e))
     else:
-        check("⚠️ S2/S3/S4/S9数据不存在，跳过前端新增7视角核验", True)
+        check("⚠️ S2/S3/S4/S9数据不存在，跳过前端新增视角核验", True)
 
     print()
     if failures:
