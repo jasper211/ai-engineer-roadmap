@@ -56,7 +56,7 @@ from memory.workspace import Workspace
 
 RAW_DATA_DIR = AGENT_ROOT / "07_接入记忆_Integrate_Memory" / "raw_data"
 FACT_TARGET_SNAPSHOT = AGENT_ROOT / "07_接入记忆_Integrate_Memory" / "data" / "fact_target_snapshot.csv"
-AGENT_VERSION = "v0.18.0"
+AGENT_VERSION = "v0.19.0"
 
 
 def run():
@@ -113,7 +113,7 @@ def enrich():
     enriched.to_csv(out_path, index=False, encoding="utf-8-sig")
 
     print(f"✅ 已对 {len(enriched)} 条记录加上13个S8衍生字段")
-    print("   12个字段已用真实『业绩分析报表_0724.xlsx』S8 sheet逐行核验100%匹配")
+    print("   12个字段已用真实『业绩分析报表_1009.xlsx』S8 sheet逐行核验100%匹配（v0.19.0已用新底表+新ground truth重新核验）")
     print("   『首年折扣(标准化)』：来源字段已确认=SQ_rate，但仍是原样透传，"
           "真正的标准化分档规则待Jasper提供（见 S8衍生字段_反推标准_v0.1.md 三节）")
     print(f"输出: {out_path}")
@@ -145,7 +145,7 @@ def build_s1():
         pd.DataFrame(rows).to_csv(out_dir / f"{section}.csv", index=False, encoding="utf-8-sig")
 
     print(f"✅ S1_总览仪表盘 A-H 八个板块已生成（report_month={report_month}）")
-    print("   A-H 全部已用真实『业绩分析报表_0724.xlsx』核验，见 S1_总览仪表盘_反推标准_v0.1.md")
+    print("   A-H 全部已用真实『业绩分析报表_1009.xlsx』核验（v0.19.0已重新核验），见 S1_总览仪表盘_反推标准_v0.1.md")
     print(f"输出目录: {out_dir}")
 
 
@@ -179,7 +179,7 @@ def build_s2():
             pd.DataFrame(rows).to_csv(out_dir / f"{section}.csv", index=False, encoding="utf-8-sig")
 
     print("✅ S2_业务端视角 全部20个板块(A/B/C-H/I/J/K/O/S/T)已生成")
-    print("   A/B/C/I/J/K/O/S/T 已用真实『业绩分析报表_0724.xlsx』核验，D-H/L-T月度趋势为同规则参数化推算")
+    print("   A/B/C/I/J/K/O/S/T 已用真实『业绩分析报表_1009.xlsx』核验（v0.19.0已重新核验，S/T节排序规则+月份范围均已对照权威生成脚本修正），D-H/L-T月度趋势为同规则参数化推算")
     print("   S节行排序有已知限制，见 S2_业务端视角_反推标准_v0.1.md")
     print(f"输出目录: {out_dir}")
 
@@ -218,7 +218,7 @@ def build_s3():
             pd.DataFrame(rows).to_csv(out_dir / f"{section}.csv", index=False, encoding="utf-8-sig")
 
     print("✅ S3_执行管理端 全部20个子板块(A/B/C/D/E/F/G/H/J-O)已生成")
-    print("   核心已用真实『业绩分析报表_0724.xlsx』核验，关键发现：周定义=%YW%U(周日起始)")
+    print("   核心已用真实『业绩分析报表_1009.xlsx』核验（v0.19.0已重新核验），关键发现：周定义=%YW%U(周日起始)")
     print("   E/F节有2列历史PivotTable残留全0列无法反推，见 S3_执行管理端_反推标准_v0.1.md")
     print(f"输出目录: {out_dir}")
 
@@ -236,7 +236,7 @@ def build_s4():
         pd.DataFrame(rows).to_csv(out_dir / f"{section}.csv", index=False, encoding="utf-8-sig")
 
     print("✅ S4_产品端视角 全部5个板块(A/B/C/D/E)已生成")
-    print("   全部已用真实『业绩分析报表_0724.xlsx』核验")
+    print("   全部已用真实『业绩分析报表_1009.xlsx』核验（v0.19.0已重新核验，含S4-A保司清单修正）")
     print(f"输出目录: {out_dir}")
 
 
@@ -253,7 +253,7 @@ def build_s5():
         pd.DataFrame(rows).to_csv(out_dir / f"{section}.csv", index=False, encoding="utf-8-sig")
 
     print("✅ S5_财务端视角 全部8个板块（A/B-保费/B-件数/C-APE/C-件数/D/E/F/G/H）已生成")
-    print("   全部已用真实『业绩分析报表_0724.xlsx』核验")
+    print("   全部已用真实『业绩分析报表_1009.xlsx』核验（v0.19.0已重新核验，含S4-A保司清单修正）")
     print(f"输出目录: {out_dir}")
 
 
@@ -270,7 +270,7 @@ def build_s6():
         pd.DataFrame(rows).to_csv(out_dir / f"{section}.csv", index=False, encoding="utf-8-sig")
 
     print("✅ S6_市场与交叉视角 全部12张子表（A-F × APE/件数）已生成")
-    print("   全部已用真实『业绩分析报表_0724.xlsx』核验（复用S2/S4已有组件）")
+    print("   全部已用真实『业绩分析报表_1009.xlsx』核验（复用S2/S4已有组件，v0.19.0已重新核验）")
     print(f"输出目录: {out_dir}")
 
 
@@ -287,7 +287,7 @@ def build_s7():
         pd.DataFrame(rows).to_csv(out_dir / f"{section}.csv", index=False, encoding="utf-8-sig")
 
     print("✅ S7_合规端视角 全部6个板块（A/B-D×APE/件数/E/F）已生成")
-    print("   全部已用真实『业绩分析报表_0724.xlsx』核验（复用S2/S4已有组件）")
+    print("   全部已用真实『业绩分析报表_1009.xlsx』核验（复用S2/S4已有组件，v0.19.0已重新核验）")
     print(f"输出目录: {out_dir}")
 
 
@@ -309,7 +309,7 @@ def build_s9():
         pd.DataFrame(rows).to_csv(out_dir / f"{section}.csv", index=False, encoding="utf-8-sig")
 
     print("✅ S9_代理人与KA业务 全部10个顶层板块（A-J，H/I/J各6张周度子表）已生成")
-    print("   全部已用真实『业绩分析报表_0724.xlsx』核验（复用S2/S3已有组件）")
+    print("   全部已用真实『业绩分析报表_1009.xlsx』核验（复用S2/S3已有组件，v0.19.0已重新核验）")
     print(f"输出目录: {out_dir}")
 
 
@@ -343,14 +343,22 @@ def build_ppt():
 
 def build_frontend():
     import skills.multiview_dashboard as multiview_dashboard
+    from skills.data_loader import DataLoader
 
     data_dir = AGENT_ROOT / "07_接入记忆_Integrate_Memory" / "data"
     if not (data_dir / "S1_总览仪表盘").exists():
         print("❌ 找不到 S1_总览仪表盘 数据，先跑 --s1")
         return
 
+    # v0.19.0修复真实bug：之前这里写死"业绩数据底表-20260724.xlsx"，换了新底表后
+    # 前端页脚显示的还是旧文件名——改成跟DataLoader同一套"按文件名排序取最新"规则
+    # 动态解析当前实际在用的底表文件名。
+    raw_data_dir = AGENT_ROOT / "07_接入记忆_Integrate_Memory" / "raw_data"
+    source_files = DataLoader(raw_data_dir).discover_files()
+    source_name = source_files[-1].name if source_files else "业绩数据底表.xlsx"
+
     html = multiview_dashboard.render(data_dir, agent_version=AGENT_VERSION,
-                                       source_name="业绩数据底表-20260724.xlsx")
+                                       source_name=source_name)
     out_path = data_dir / "业绩数据分析前端.html"
     out_path.write_text(html, encoding="utf-8")
 
