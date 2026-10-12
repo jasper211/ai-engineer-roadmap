@@ -237,12 +237,21 @@ class S2BusinessViewBuilder:
     # ---- S/T. 批核业绩—银行各分行（partner_code维度，行=BK业务历史出现过的全部partner_code参照列表） ----
     def _bank_partner_frame(self):
         """S/T节：issue_ym+仅生效(同E节口径)，按partner_code分组；行=segment_code=BK业务下
-        历史出现过的全部partner_code(不限2026/不限状态，48个，含全0参照行，同S4-A的'零业务也列出'模式)；
-        月份范围固定2026-01~2026-08(报表自身表头如此，不是全年12个月)。T节行顺序跟随S节(footnote明写)，
-        不是T自己按件数重新排序。"""
+        历史出现过的全部partner_code(不限2026/不限状态，48+个，含全0参照行，同S4-A的'零业务也列出'模式)；
+        月份范围v0.19.0已用权威脚本generate_report.py::get_months_2026核实修正为动态——
+        之前(v0.11.0)判断"固定2026-01~2026-08"是针对0724那批旧数据的表头观测，用1009新数据
+        核对后发现报表表头已经变成2026-01~2026-11(11列)，证实月份范围本来就是跟数据实际覆盖
+        范围动态滚动的(跟C-H等月度板块同一套规则)，不是报表结构本身的硬限制——旧的"固定8列"
+        结论是把"当时的数据恰好只到8月"误判成了"报表设计就是8列"。改为跟官方
+        `get_months_2026(df)`同规则动态算：从res/sign/issue/submit四个日期字段的年月并集里
+        取>=2026-01的部分，排序后作为月份轴。T节行顺序跟随S节(footnote明写)，不是T自己按
+        件数重新排序。"""
         bk_all = self.df[self.df["segment_code"] == "BK业务"]
         pop = bk_all[(bk_all["policy_status"] == "生效") & (bk_all["issue_date"].dt.year == 2026)]
-        months = [f"2026-{m:02d}" for m in range(1, 9)]
+        all_ym = set()
+        for col in ("res_date", "sign_date", "submit_date", "issue_date"):
+            all_ym.update(self.df[col].dt.strftime("%Y-%m").dropna().unique())
+        months = sorted(m for m in all_ym if "2026-01" <= m <= "2099-12")
         month = pop["issue_date"].dt.strftime("%Y-%m")
         partners = bk_all["partner_code"].dropna().unique()
 
