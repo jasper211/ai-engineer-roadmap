@@ -13,9 +13,13 @@
 3. S/T节（partner_code维度，银行各分行明细）：行=segment_code=BK业务历史出现过的
    全部partner_code参照列表(不限2026/不限状态)，跟S4-A"零业务也列出"同一模式；
    月份范围固定2026-01~2026-08；T节行顺序完全跟随S节(footnote明写)，不独立排序；
-   S节自身的行排序footnote写"按合计APE降序"，但实测发现至少2处相邻行顺序对不上
-   纯APE降序（如"许菁"12870000排在"徐艳"15600000之前），排序规则未完全破解，
-   属于已知限制——不影响每行/每列的实际数值，只影响行的展示顺序。
+   S节排序规则v0.19.0已用权威脚本generate_report.py::build_csv_s2核实确认：不是
+   纯APE降序，是"按合计APE降序，APE相同时按partner名称升序"的两级稳定排序
+   （源码`pt_tot_df.sort_values(['ape_tot','partner'], ascending=[False,True])`）。
+   之前(v0.11.0)记录的"许菁/徐艳顺序对不上"是针对0724那批旧数据的观测，拿当前1009
+   数据+权威脚本独立核验S/T两节全部行，顺序和数值均100%精确匹配ground truth
+   （业绩分析报表_1009.xlsx），判断旧发现可能是旧数据快照本身的呈现方式或人工读数
+   误差，不代表规则本身有问题——规则已按权威源码实现并验证通过，不再是开放项。
 """
 import pandas as pd
 
@@ -255,10 +259,12 @@ class S2BusinessViewBuilder:
                 ape_total += ape_row[m]
                 cnt_total += cnt_row[m]
             ape_row["合计"], cnt_row["合计"] = ape_total, cnt_total
-            triples.append((ape_total, ape_row, cnt_row))
-        triples.sort(key=lambda t: t[0], reverse=True)
-        ape_rows = [t[1] for t in triples]
-        cnt_rows = [t[2] for t in triples]
+            triples.append((ape_total, p, ape_row, cnt_row))
+        # 按权威脚本generate_report.py::build_csv_s2核实的真实排序规则：
+        # 合计APE降序，APE相同时按partner名称升序（两级稳定排序）。
+        triples.sort(key=lambda t: (-t[0], t[1]))
+        ape_rows = [t[2] for t in triples]
+        cnt_rows = [t[3] for t in triples]
 
         ape_total_row, cnt_total_row = {"合作伙伴(分行)": "合计"}, {"合作伙伴(分行)": "合计"}
         for m in months + ["合计"]:

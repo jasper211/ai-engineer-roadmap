@@ -10,38 +10,49 @@
 2. B/C节的"联合主键"分组前，SQ_rate要标准化成统一的百分比字符串（0.025和"2.5%"是同一个值，
    不标准化会被错误拆成两行）。这条标准化只用在这里，不影响report_enricher的"首年折扣(标准化)"
    字段本身（那个字段按Jasper指示是原样透传，需求不同）。
+
+v0.19.0用权威脚本generate_report.py核实后修正：之前A节footnote写"全17家保司"但代码里
+CARRIER_SHORT_NAME(15个)+ZERO_CARRIERS(6个)合计写死了21个名字，数字对不上——核实
+generate_report.py::CARRIERS_FULL/CARRIER_SHORT发现官方"固定基础名单"确实正好是17家
+（逐字核对一致），我们之前多出的4个("永明金融有限公司"缺"(新加坡)"后缀、"微蓝保险
+有限公司"、"安达人寿保险有限公司"、"保柏（亚洲）有限公司")本身都不在官方17家名单里，
+是当前数据里真实存在但不属于"基础清单"的保司，官方脚本的处理方式是"基础17家写死+
+数据里出现的新保司自动追加到末尾(短名回退用全名/B-C节回退截断前6字)"，不是把它们也
+硬编码进"基础清单"。另确认ZERO_CARRIERS里"中国太平保险（澳门）有限公司"→"澳门太平"
+这条映射是错的：官方CARRIERS_FULL里字面写的就是"澳门太平"这4个字本身（不是"中国太平
+保险（澳门）有限公司"的简称），而当前1009数据里carrier_code实际出现的是"中国太平保险
+（澳门）有限公司"(有真实业务)——这是两个不同的历史命名/不同实体，"澳门太平"在当前
+数据里确实零业务(验证：carrier_code唯一值列表里完全不存在"澳门太平"这4个字)，"中国
+太平保险（澳门）有限公司"则作为数据里新出现的保司被自动追加，不应该被塞进"澳门太平"
+这个零业务占位。改为直接采用generate_report.py的CARRIERS_FULL(17)+CARRIER_SHORT原样，
+不再手工维护ZERO_CARRIERS/单独的21家名单，零业务保司由"官方17家名单里当前数据没有
+匹配到的"自动识别，数据里出现的新保司自动追加到末尾(与官方脚本`carriers_list=
+CARRIERS_FULL+[c for c in data_carriers if c not in CARRIERS_FULL]`逻辑一致)。
 """
 import pandas as pd
 
 LAPSE_STATUSES = ["取消投保", "退保", "搁置受保"]  # B/C/D/E节"流失类"，不含拒保
 LAPSE_STATUSES_WITH_REJECT = LAPSE_STATUSES + ["拒保"]  # A节排除范围
 
-# carrier_code -> 报表短名（精确核验，见标准文档1.1）
+# 官方固定17家保司名单+短名映射，逐字核对自权威脚本
+# raw_data/generate_report_参考脚本/generate_report.py::CARRIERS_FULL/CARRIER_SHORT
+# （Carrie维护，S1-S4 CSV已验证）。顺序即官方清单顺序，零业务也要保留展示。
+CARRIERS_FULL = [
+    "香港永明金融有限公司", "中国人寿保险（海外）股份有限公司（香港）", "万通保险国际有限公司",
+    "香港安盛保险有限公司", "中国人寿保险（海外）股份有限公司（澳门）", "宏利人寿保险（国际）有限公司",
+    "友邦保险（国际）有限公司", "立桥人寿保险有限公司", "中国太平洋保险（香港）有限公司",
+    "周大福人寿保险有限公司", "保诚保险有限公司", "中银人寿保险有限公司", "澳门太平",
+    "保柏环球有限公司", "富卫人寿保险（百慕大）有限公司", "忠意保险有限公司", "信诺环球保险公司",
+]
 CARRIER_SHORT_NAME = {
-    "香港永明金融有限公司": "永明",
-    "香港安盛保险有限公司": "安盛",
-    "中国人寿保险（海外）股份有限公司（澳门）": "澳门中国人寿",
-    "万通保险国际有限公司": "万通",
-    "立桥人寿保险有限公司": "立桥",
-    "中国太平洋保险（香港）有限公司": "太平洋",
-    "宏利人寿保险（国际）有限公司": "宏利",
-    "中国人寿保险（海外）股份有限公司（香港）": "中国人寿",
-    "中银人寿保险有限公司": "中银人寿",
-    "友邦保险（国际）有限公司": "友邦",
-    "保诚保险有限公司": "保诚",
-    "永明金融有限公司": "永明金融有限公司",
-    "微蓝保险有限公司": "微蓝保险有限公司",
-    "安达人寿保险有限公司": "安达人寿保险有限公司",
-    "保柏（亚洲）有限公司": "保柏（亚洲）有限公司",
-}
-# A节固定列出的零业务保司（写死的参考名单，不是算出来的，见标准文档1.1）
-ZERO_CARRIERS = {
-    "周大福人寿保险有限公司": "周大福",
-    "中国太平保险（澳门）有限公司": "澳门太平",
-    "保柏环球有限公司": "保柏",
-    "富卫人寿保险（百慕大）有限公司": "富卫",
-    "忠意保险有限公司": "忠意",
-    "信诺环球保险公司": "信诺",
+    "香港永明金融有限公司": "永明", "中国人寿保险（海外）股份有限公司（香港）": "中国人寿",
+    "万通保险国际有限公司": "万通", "香港安盛保险有限公司": "安盛",
+    "中国人寿保险（海外）股份有限公司（澳门）": "澳门中国人寿", "宏利人寿保险（国际）有限公司": "宏利",
+    "友邦保险（国际）有限公司": "友邦", "立桥人寿保险有限公司": "立桥",
+    "中国太平洋保险（香港）有限公司": "太平洋", "周大福人寿保险有限公司": "周大福",
+    "保诚保险有限公司": "保诚", "中银人寿保险有限公司": "中银人寿", "澳门太平": "澳门太平",
+    "保柏环球有限公司": "保柏", "富卫人寿保险（百慕大）有限公司": "富卫",
+    "忠意保险有限公司": "忠意", "信诺环球保险公司": "信诺",
 }
 
 TERM_BUCKET_EDGES = [1, 5, 20]
@@ -76,17 +87,20 @@ class S4ProductViewBuilder:
     def section_a(self) -> list:
         df = self.df
         sub = df[(df["sign_date"].dt.year == 2026) & (~df["policy_status"].isin(LAPSE_STATUSES_WITH_REJECT))]
+        # 固定17家基础清单(含零业务) + 数据里出现的新保司自动追加到末尾，
+        # 跟权威脚本generate_report.py::build_csv_s4一致：
+        # `carriers_list=CARRIERS_FULL+[c for c in data_carriers if c not in CARRIERS_FULL]`
+        data_carriers = sub["carrier_code"].dropna().unique().tolist()
+        carriers_list = CARRIERS_FULL + [c for c in data_carriers if c not in CARRIERS_FULL]
         rows = []
-        for raw_name, short_name in CARRIER_SHORT_NAME.items():
+        for raw_name in carriers_list:
+            short_name = CARRIER_SHORT_NAME.get(raw_name, raw_name)
             g = sub[sub["carrier_code"] == raw_name]
             count, ape, premium = len(g), float(g["ape"].sum()), float(g["premium"].sum())
             rows.append({
                 "保险公司": short_name, "件数": count, "APE": ape, "年总保费(HKD)": premium,
                 "APE件均": ape / count if count else 0.0, "年总保费件均": premium / count if count else 0.0,
             })
-        for short_name in ZERO_CARRIERS.values():
-            rows.append({"保险公司": short_name, "件数": 0, "APE": 0.0, "年总保费(HKD)": 0.0,
-                         "APE件均": 0.0, "年总保费件均": 0.0})
         rows.sort(key=lambda r: r["APE"], reverse=True)
 
         total_count = sum(r["件数"] for r in rows)
@@ -107,7 +121,12 @@ class S4ProductViewBuilder:
     def _product_top(self, rank_by: str, top_n: int = 20) -> list:
         df = self.df
         sub = df[(df["sign_date"].dt.year == 2026) & (~df["policy_status"].isin(LAPSE_STATUSES))].copy()
-        sub["_carrier_short"] = sub["carrier_code"].map(CARRIER_SHORT_NAME).fillna(sub["carrier_code"])
+        # 不在CARRIER_SHORT_NAME里的保司，回退规则跟权威脚本B/C节一致：
+        # `CARRIER_SHORT.get(row_p.carrier,str(row_p.carrier)[:6])`——截断前6个字，
+        # 跟A节"回退用全名"是两条不同的规则，不能混用（A节官方回退是`CARRIER_SHORT.get(c,c)`）。
+        sub["_carrier_short"] = sub["carrier_code"].apply(
+            lambda c: CARRIER_SHORT_NAME.get(c, str(c)[:6])
+        )
         sub["_sq"] = sub["SQ_rate"].apply(normalize_sq_rate)
         # 联合主键要求SQ_rate有值——SQ_rate缺失(约80%的记录)的行在这个排名里整体不出现，
         # 不是被归成一个"缺失"分组（真实数据验证：一个产品+年期组合下281条SQ_rate缺失的记录，

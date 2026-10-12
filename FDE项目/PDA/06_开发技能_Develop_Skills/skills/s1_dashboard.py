@@ -83,13 +83,19 @@ class S1DashboardBuilder:
         for label, g in groups.items():
             count = len(g)
             ape = float(g["ape"].sum())
+            pf_ape = float(g[g["Is_Premium_Financing"] == 1]["ape"].sum())
             rows.append({
                 "指标行": label,
                 "件数": count,
                 "APE": ape,
                 "年总保费(HKD)": float(g["premium"].sum()),
                 "件均APE": ape / count if count else 0.0,
-                "融资占比": float((g["Is_Premium_Financing"] == 1).mean()) if count else 0.0,
+                # v0.19.0用权威脚本generate_report.py::build_csv_s1核实修正：融资占比是
+                # APE口径加权（融资单APE之和÷本行总APE），不是按件数算的简单比例——
+                # 两者在"批核(2026)"这行上差异巨大(件数口径8.2% vs APE口径30.2%)，说明
+                # 融资类保单件均APE明显更大，用件数算会严重低估融资业务的实际规模占比。
+                # 源码：`pf=safe_div(sub[sub['is_pf']==1]['ape'].sum(),ape_v) if ape_v>0 else 0`
+                "融资占比": pf_ape / ape if ape else 0.0,
             })
         return rows
 
