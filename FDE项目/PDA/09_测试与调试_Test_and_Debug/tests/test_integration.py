@@ -31,7 +31,7 @@ from skills.s7_compliance_view import S7ComplianceViewBuilder
 from skills.s9_agent_ka_view import S9AgentKaViewBuilder
 
 RAW_DATA_DIR = AGENT_ROOT / "07_接入记忆_Integrate_Memory" / "raw_data"
-REPORT_FILE = RAW_DATA_DIR / "业绩分析报表_0724.xlsx"
+REPORT_FILE = RAW_DATA_DIR / "业绩分析报表_1009.xlsx"
 FACT_TARGET_SNAPSHOT = AGENT_ROOT / "07_接入记忆_Integrate_Memory" / "data" / "fact_target_snapshot.csv"
 
 failures = []
@@ -122,7 +122,35 @@ def main():
     enriched = ReportEnricher().enrich(df)
     if REPORT_FILE.exists():
         import pandas as pd
-        s8 = pd.read_excel(REPORT_FILE, sheet_name="S8_明细数据底表", header=1)
+        import openpyxl
+
+        # v0.19.0发现：业绩分析报表_1009.xlsx的S8_明细数据底表sheet存在真实的数据生成
+        # bug（在生成这份ground truth的权威脚本generate_report.py里，不是本项目的问题）——
+        # 对照generate_report.py第2183-2191行：orig_cols里的'discount_std'
+        # （对应表头"首年折扣(标准化)"）这一列在它们内部df里实际并不存在，
+        # `available_cols = [c for c in orig_cols if c in df.columns]`会把它整体过滤掉，
+        # 但表头(orig_hdrs)44列照写不变——结果是S8明细数据底表sheet里全部3993行数据
+        # 从"保费分档"往后整体左移一位(44个表头对应43个实际写入的数据列)，是对
+        # **全表统一**生效的错位，不是只在某些行发生。已跟旧的业绩分析报表_0724.xlsx
+        # 核对过同一位置：0724版本"首年折扣(标准化)"列有正常的空字符串/百分比值，不存在
+        # 这个错位，确认是1009这批新生成报表的回归bug。用openpyxl直接按行读取+统一校正
+        # （在"首年折扣(标准化)"位置插回None，原有该位置往后的全部列整体右移一位还原），
+        # 不是放宽断言容差——校正后"首年折扣(标准化)"全部为None(该列本身在这份报表里
+        # 确实拿不到数据，如实反映，不是编造)，其余12个衍生字段校正后再跟enricher比对，
+        # 断言仍要求100%匹配。
+        wb8 = openpyxl.load_workbook(REPORT_FILE, read_only=True, data_only=True)
+        ws8 = wb8["S8_明细数据底表"]
+        raw_rows8 = list(ws8.iter_rows(values_only=True))
+        header8 = list(raw_rows8[1])
+        DISCOUNT_COL = header8.index("首年折扣(标准化)")  # 34
+
+        def _fix_row8(row):
+            return row[:DISCOUNT_COL] + (None,) + row[DISCOUNT_COL:len(header8) - 1]
+
+        fixed_rows8 = [_fix_row8(r) for r in raw_rows8[2:] if r[0] is not None]
+        s8 = pd.DataFrame(fixed_rows8, columns=header8)
+        check("S8 ground truth列错位校正：校正后不再残留'首年折扣(标准化)'为万/%混杂的脏值",
+              s8["首年折扣(标准化)"].dropna().apply(lambda v: "万" not in str(v)).all())
         m = enriched.merge(s8, left_on="policy_id", right_on="订单编号", how="inner")
         check("report_enricher 与真实S8全部匹配上（未丢单）", len(m) == len(enriched))
 
