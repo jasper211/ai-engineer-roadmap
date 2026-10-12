@@ -1128,12 +1128,186 @@ def main():
               abs(oct26["预约APE"] / 1e6 - 18.31) < 0.01 and oct26["预约件数"] == 36
               and abs(oct26["批核APE"] / 1e6 - 9.59) < 0.01 and oct26["批核件数"] == 36)
 
+        # --- Phase2新增：第10-18页（v0.22.0），全部独立pandas重算核对 ---
+        from skills.multiview_dashboard import build_bank_view as _bv, build_agent_view as _av, build_ka_view as _kv
+
+        bank_v_t = _bv(s2_mv, s3_mv)
+        agent_v_t = _av(s9_mv)
+        ka_v_t = _kv(s9_mv)
+
+        # 第10页：银行业绩
+        check("第10页 BK批核/未批核/待签=253.00M/27.38M/0.78M（build_bank_view()跟S2-A/O一致，逐项核对自p10.txt）",
+              abs(bank_v_t["issued_ape"] / 1e6 - 253.00) < 0.01 and bank_v_t["issued_cnt"] == 233
+              and abs(bank_v_t["unbat_ape"] / 1e6 - 27.38) < 0.01 and bank_v_t["unbat_cnt"] == 24
+              and abs(bank_v_t["pend_ape"] / 1e6 - 0.78) < 0.01 and bank_v_t["pend_cnt"] == 1)
+        bb_t = bank_v_t["branch_bar"]
+        check("第10页 AD表：分行TOP10合计=212.14M，跟p10.txt列出的10个分行顺序逐一匹配（民生广州/南京/上海/..."
+              "/平安钟丽丽），独立核对branch_bar前10名之和",
+              abs(sum(bb_t["合计"][:10]) / 1e6 - 212.14) < 0.01
+              and bb_t["labels"][:5] == ["民生广州分行", "民生南京分行", "民生上海分行", "民生北京分行", "民生深圳分行"])
+        bk_month_label_t, bk_month_t = msr._segment_calendar_current_month(df, ["BK业务"])
+        check("第10页 BK本月(自然日历月)预约/签单/批核=0.78M/1件、0.00M/0件、0.78M/1件（独立pandas重算，"
+              "跟p10.txt'BK 本月预约/签单/批核'精确匹配）",
+              abs(bk_month_t["预约"]["ape"] / 1e6 - 0.78) < 0.01 and bk_month_t["预约"]["cnt"] == 1
+              and bk_month_t["签单"]["cnt"] == 0
+              and abs(bk_month_t["批核"]["ape"] / 1e6 - 0.78) < 0.01 and bk_month_t["批核"]["cnt"] == 1)
+        bank_cnt_t = msr._bank_weekly_detail_with_count(s3_mv)
+        check("第10页 AC表：W40银行KA本周详情——民生银行预约0.78M/1件、浦发银行批核0.78M/1件、"
+              "平安银行全0，逐格核对自p10.txt",
+              next(r for r in bank_cnt_t["rows"] if r["ka"] == "民生银行")["vals"]["预约"] == {"ape": 780000.0, "cnt": 1}
+              and next(r for r in bank_cnt_t["rows"] if r["ka"] == "浦发银行")["vals"]["批核"] == {"ape": 780000.0, "cnt": 1})
+
+        # 第11页：代理人业务
+        check("第11页 代理人业务批核/未批核/待签=91.77M/7.15M/1.24M（build_agent_view()，逐项核对自p11.txt）",
+              abs(agent_v_t["issued_total"] / 1e6 - 91.77) < 0.01
+              and abs(agent_v_t["unbat_total"] / 1e6 - 7.15) < 0.01
+              and abs(agent_v_t["pend_total"] / 1e6 - 1.24) < 0.01)
+        tl_row_t = s9_mv["B"][s9_mv["B"]["KEY ACCOUNT"] == "天领重庆"].iloc[0]
+        check("第11页 KA明细(天领业务)：天领重庆批核3582万/136件、未批核118万/4件（S9-B原始CSV已排序+自带"
+              "合计行，直接渲染不需要重新排序，逐项核对自p11.txt）",
+              round(ppt_num(tl_row_t["2026批核APE"]) / 1e4) == 3582 and int(ppt_num(tl_row_t["批核件数"])) == 136
+              and round(ppt_num(tl_row_t["未批核APE"]) / 1e4) == 118 and int(ppt_num(tl_row_t["未批核件数"])) == 4)
+        agent_month_label_t, agent_month_t = msr._segment_calendar_current_month(df, ["天领业务", "成事家办"])
+        check("第11页 代理人本月(自然日历月)预约/签单/批核=0.56M/3件、0.00M/0件、2.40M/8件（独立pandas重算，"
+              "跟W40单周口径不同，逐项核对自p11.txt'代理人10月预约/签单/批核'）",
+              abs(agent_month_t["预约"]["ape"] / 1e6 - 0.56) < 0.01 and agent_month_t["预约"]["cnt"] == 3
+              and agent_month_t["签单"]["cnt"] == 0
+              and abs(agent_month_t["批核"]["ape"] / 1e6 - 2.40) < 0.01 and agent_month_t["批核"]["cnt"] == 8)
+
+        # 第12页：KA业务
+        check("第12页 KA业务批核/未批核/待签=27.72M/0.93M/0.00M（build_ka_view()，逐项核对自p12.txt）",
+              abs(ka_v_t["issued_total"] / 1e6 - 27.72) < 0.01
+              and abs(ka_v_t["unbat_total"] / 1e6 - 0.93) < 0.01 and ka_v_t["pend_total"] == 0.0)
+        iclub_row_t = s9_mv["F_ICLUB业务"][s9_mv["F_ICLUB业务"]["KEY ACCOUNT"] == "个人转介"].iloc[0]
+        ifa_row_t = s9_mv["F_IFA业务"][s9_mv["F_IFA业务"]["KEY ACCOUNT"] == "IFA"].iloc[0]
+        check("第12页 KA明细：ICLUB'个人转介'批核2099万/12件；IFA未批核85万/2件（S9-F_xxx原始CSV，"
+              "逐项核对自p12.txt）",
+              round(ppt_num(iclub_row_t["2026批核APE"]) / 1e4) == 2099 and int(ppt_num(iclub_row_t["批核件数"])) == 12
+              and round(ppt_num(ifa_row_t["未批核APE"]) / 1e4) == 85 and int(ppt_num(ifa_row_t["未批核件数"])) == 2)
+
+        # 第13页：永明产品保费+完整年期分布
+        premium13 = msr._sunlife_premium_ranking(df)
+        check("第13页 产品保费TOP1=永誉传承储蓄计划/1年期/2.5%折扣/25件/347.88M保费（按保费降序，不是"
+              "第3页按APE降序，独立重算核对自p13.txt）",
+              premium13["top"][0]["产品名称"] == "永誉传承储蓄计划" and premium13["top"][0]["年期"] == 1
+              and premium13["top"][0]["件数"] == 25 and abs(premium13["top"][0]["保费"] / 1e6 - 347.88) < 0.01)
+        check("第13页 产品保费：TOP10合计937件/870.32M、总体1171件/951.42M（跟第3页总体1171件/444.41M是"
+              "同一组记录的APE/保费两个不同金额口径，不能互换）",
+              sum(r["件数"] for r in premium13["top"]) == 937
+              and abs(sum(r["保费"] for r in premium13["top"]) / 1e6 - 870.32) < 0.01
+              and premium13["total_cnt"] == 1171 and abs(premium13["total_premium"] / 1e6 - 951.42) < 0.01)
+        term13 = msr._sunlife_term_distribution(df)
+        term13_by_label = {r["年期类别"]: r for r in term13}
+        check("第13页 完整年期分布：6档件数=1038/44/61/25/2/1（中期/短期/长期/终身/年期缺失/文本年期），"
+              "年期缺失/文本年期是report_enricher.py既有_term_bucket()本身返回None、未细分的两种情况，"
+              "本页独立拆分成2档，逐项核对自p13.txt",
+              term13_by_label["中期(2-5年)"]["件数"] == 1038 and term13_by_label["短期(≤1年)"]["件数"] == 44
+              and term13_by_label["长期(6-20年)"]["件数"] == 61 and term13_by_label["终身(>20年)"]["件数"] == 25
+              and term13_by_label["年期缺失"]["件数"] == 2 and term13_by_label["文本年期"]["件数"] == 1)
+
+        # 第14页：执行明细、来源说明与管理行动（全新页面，至少5项）
+        event14 = msr._page14_event_table(s3_mv, msr._current_week_full(s3_mv))
+        check("第14页 8线×4事件当周表：合计预约17.61M/33件、签单13.33M/26件、批核7.81M/27件（独立核对自"
+              "p14.txt'2026W40完整八线/四事件'合计行；递交只有总量，不按业务线拆分，见下一项断言）",
+              abs(event14["totals"]["res"]["ape"] / 1e6 - 17.61) < 0.01 and event14["totals"]["res"]["cnt"] == 33
+              and abs(event14["totals"]["sign"]["ape"] / 1e6 - 13.33) < 0.01 and event14["totals"]["sign"]["cnt"] == 26
+              and abs(event14["totals"]["issue"]["ape"] / 1e6 - 7.81) < 0.01 and event14["totals"]["issue"]["cnt"] == 27)
+
+        from skills.data_loader import DataLoader as _DL14
+        from skills.cleaner import Cleaner as _CL14, ENTITY_ALIAS_MAP as _EAM14
+        import pandas as _pd14
+        lr14 = _DL14(AGENT_ROOT / "07_接入记忆_Integrate_Memory" / "raw_data").load()
+        raw14 = lr14.df
+        df14 = _CL14().clean(lr14.df, lr14.export_date)
+        expect_missing_issue = int(((df14["policy_status"] == "生效") & df14["issue_date"].isna()).sum())
+        expect_ape_missing = int(_pd14.to_numeric(raw14["ape"], errors="coerce").isna().sum())
+        expect_premium_missing = int(_pd14.to_numeric(raw14["premium"], errors="coerce").isna().sum())
+        expect_future_dated = int(df14["future_dated"].sum())
+        expect_declined = int((df14["policy_status"] == "拒保").sum())
+        expect_alias_records = int(raw14["issuing_entity"].isin(_EAM14.keys()).sum())
+        expect_alias_pairs = int(sum(1 for k in _EAM14 if (raw14["issuing_entity"] == k).any()))
+        dq_t = msr._data_quality_disclosure(raw14, df14, msr._timeliness_corrected(df14)["excluded_count"])
+        check("第14页 数据与解释边界：缺批核日期2单(生效但issue_date为空)、APE/保费缺失均10单、"
+              "未来签单日21单、拒保2单——全部独立pandas重算得出，不是照抄p14.txt原数字（可能因v0.19/"
+              "v0.21修正而不同，本次恰好一致），逐项核对自p14.txt",
+              dq_t["missing_issue_date"] == expect_missing_issue == 2
+              and dq_t["ape_missing"] == expect_ape_missing == 10
+              and dq_t["premium_missing"] == expect_premium_missing == 10
+              and dq_t["future_dated"] == expect_future_dated == 21
+              and dq_t["declined"] == expect_declined == 2)
+        check("第14页 数据与解释边界：实体别名归一化披露——1669条记录涉及5个实体对子（独立统计raw_df里"
+              "issuing_entity命中ENTITY_ALIAS_MAP键的记录数+实际出现的键数，不是Mark原文数字，p14.txt"
+              "本身没有披露这项，是本项目独立新增的披露内容）",
+              dq_t["entity_alias_records"] == expect_alias_records == 1669
+              and dq_t["entity_alias_pairs"] == expect_alias_pairs == 5)
+        unapp14 = msr._unapproved_channel_top10(df14)
+        check("第14页 在途推进TOP10：平安银行23.48M/20件排第1，总体87.07M/171件（key_account跨全部"
+              "业务线，MGA业务拆分成'XX(MGA)'独立行，逐项核对自p14.txt'未批渠道TOP10'）",
+              unapp14["top"][0]["ka"] == "平安银行" and abs(unapp14["top"][0]["ape"] / 1e6 - 23.48) < 0.01
+              and unapp14["top"][0]["cnt"] == 20
+              and abs(unapp14["total"]["ape"] / 1e6 - 87.07) < 0.01 and unapp14["total"]["cnt"] == 171)
+
+        try:
+            html_mark_14 = msr.render(mark_data_root, agent_version="test", source_name="test.xlsx")
+        except Exception as e:
+            html_mark_14 = ""
+            check("第14页 render()可生成（供下方2项断言复用）", False, str(e))
+        if html_mark_14:
+            check("第14页 '递交×业务线'数据缺口说明文字确实出现在渲染后的HTML里（不新增反推逻辑凑数据，"
+                  "按Jasper指示只标注缺口说明）",
+                  "递交事件当前无业务线拆分数据源" in html_mark_14 and "不新增反推逻辑凑出" in html_mark_14)
+            import re as _re14
+            roles_found = _re14.findall(r"（(业务管理负责人|数据负责人|渠道及运营负责人|业务与数据负责人)）", html_mark_14)
+            check("第14页 管理行动建议文案的角色占位符格式正确——4条建议分别带'（角色）'格式的占位符"
+                  "（业务管理负责人/数据负责人/渠道及运营负责人/业务与数据负责人），不是猜测的真实姓名",
+                  set(roles_found) == {"业务管理负责人", "数据负责人", "渠道及运营负责人", "业务与数据负责人"}
+                  and len(roles_found) == 4)
+
+        # 第15页：同行合作渠道与推荐人·完整总体
+        partner15 = msr._peer_partner_full(df)
+        check("第15页 合作渠道TOP10：紫荆保险39.69M/116件排第1，TOP10合计291.67M/798件（partner_code"
+              "分组，population=PEER_SEGMENTS同第8页V模块，逐项核对自p15.txt）",
+              partner15["top"][0]["partner"] == "紫荆保险" and abs(partner15["top"][0]["batch"] / 1e6 - 39.69) < 0.01
+              and partner15["top"][0]["batch_c"] == 116
+              and abs(sum(r["batch"] for r in partner15["top"]) / 1e6 - 291.67) < 0.01
+              and sum(r["batch_c"] for r in partner15["top"]) == 798)
+        referrer15 = msr._peer_referrer_full(df)
+        other15 = referrer15["other"]
+        check("第15页 推荐人：姜通200.25M批核/664件阶段件数，其他/未提供=73.89M批核/158件（referral_code"
+              "分组，6个具名推荐人之和=总体减'其他/未提供'，独立核对自p15.txt）",
+              referrer15["named"][0]["name"] == "姜通" and abs(referrer15["named"][0]["batch"] / 1e6 - 200.25) < 0.01
+              and referrer15["named"][0]["cnt"] == 664
+              and abs(other15["batch"] / 1e6 - 73.89) < 0.01 and other15["cnt"] == 158)
+
+        # 第16-18页：Q/R/S周度热力矩阵完整表格
+        heat_q_t = msr._heat_table(s3_mv["B"], msr._recent_weeks(s3_mv["B"]))
+        heat_r_t = msr._heat_table(s3_mv["C"], msr._recent_weeks(s3_mv["C"]))
+        heat_s_t = msr._heat_table(s3_mv["D"], msr._recent_weeks(s3_mv["D"]))
+        check("第16页 Q预约热力矩阵：窗口=最近15周(W26-W40)，天领业务W26=0.7M/5件、同行经代W29=18.0M/42件，"
+              "逐格核对自p16.txt（数据源S3-B，跟build_s3_view().full_week_table同一取数方式，独立重写成"
+              "APE+件数同格）",
+              heat_q_t["weeks"] == [f"W{i}" for i in range(26, 41)]
+              and abs(next(r for r in heat_q_t["rows"] if r["segment"] == "天领业务")["vals"][0]["ape"] / 1e6 - 0.7) < 0.05
+              and next(r for r in heat_q_t["rows"] if r["segment"] == "天领业务")["vals"][0]["cnt"] == 5
+              and abs(next(r for r in heat_q_t["rows"] if r["segment"] == "同行经代")["vals"][3]["ape"] / 1e6 - 18.0) < 0.05
+              and next(r for r in heat_q_t["rows"] if r["segment"] == "同行经代")["vals"][3]["cnt"] == 42)
+        check("第17页 R签单热力矩阵：天领业务W28=6.0M/6件、合计W29=26.6M/72件，逐格核对自p17.txt",
+              abs(next(r for r in heat_r_t["rows"] if r["segment"] == "天领业务")["vals"][2]["ape"] / 1e6 - 6.0) < 0.05
+              and next(r for r in heat_r_t["rows"] if r["segment"] == "天领业务")["vals"][2]["cnt"] == 6
+              and abs(heat_r_t["total"][3]["ape"] / 1e6 - 26.6) < 0.05 and heat_r_t["total"][3]["cnt"] == 72)
+        check("第18页 S批核热力矩阵：永明经代W27=9.9M/22件、合计W40=7.8M/27件（=本周快报批核口径，"
+              "跟第6页M模块同一数据源），逐格核对自p18.txt",
+              abs(next(r for r in heat_s_t["rows"] if r["segment"] == "永明经代")["vals"][1]["ape"] / 1e6 - 9.9) < 0.05
+              and next(r for r in heat_s_t["rows"] if r["segment"] == "永明经代")["vals"][1]["cnt"] == 22
+              and abs(heat_s_t["total"][-1]["ape"] / 1e6 - 7.8) < 0.05 and heat_s_t["total"][-1]["cnt"] == 27)
+
         # --- render()端到端 + 边界说明文案披露核验 ---
         try:
             html_mark = msr.render(mark_data_root, agent_version="test", source_name="test.xlsx")
-            check("Mark标准报表render()端到端跑通，含9个data-page section（第1-9页），不含第10页",
-                  html_mark.count('data-page="1"') == 1 and html_mark.count('data-page="9"') == 1
-                  and 'data-page="10"' not in html_mark)
+            check("Mark标准报表render()端到端跑通，含全18页data-page section（第1-18页，Mark18页标准报表"
+                  "Phase1+Phase2全部完成）",
+                  all(html_mark.count(f'data-page="{p}"') == 1 for p in range(1, 19))
+                  and 'data-page="19"' not in html_mark)
             check("Mark标准报表：术语口径跟Mark原文一致（'各环节业务周累计'而非'全流程转化漏斗'、"
                   "'差额'而非'缺口'、页脚统一'文件快照｜数据完整时点未核实｜工作稿'）",
                   "各环节业务周累计" in html_mark and "全流程转化漏斗" not in html_mark

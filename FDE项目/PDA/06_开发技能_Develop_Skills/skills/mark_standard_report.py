@@ -1595,23 +1595,18 @@ def build_page10(ctx: dict, week_full: str) -> str:
     month_label, month_vals = ctx["bk_month"]
     ws = bv["weekly_snapshot"]
 
-    kpi_overall = f"""<div class="kpi-strip3">
+    kpi_row = f"""<div class="kpi-strip9">
       {_kpi3("navy", fmt_m(bv['issued_ape']), "BK批核", _month_kpi_sub({"ape": bv['issued_ape'], "cnt": bv['issued_cnt']}))}
       {_kpi3("red", fmt_m(bv['unbat_ape']), "BK未批核", _month_kpi_sub({"ape": bv['unbat_ape'], "cnt": bv['unbat_cnt']}))}
       {_kpi3("gold", fmt_m(bv['pend_ape']), "BK待签", _month_kpi_sub({"ape": bv['pend_ape'], "cnt": bv['pend_cnt']}))}
-    </div>"""
-    kpi_month = f"""<div class="kpi-strip3">
       {_kpi3("steel", fmt_m(month_vals['预约']['ape']), f"BK {month_label or ''}预约", _month_kpi_sub(month_vals['预约']))}
       {_kpi3("teal", fmt_m(month_vals['签单']['ape']), f"BK {month_label or ''}签单", _month_kpi_sub(month_vals['签单']))}
       {_kpi3("navy", fmt_m(month_vals['批核']['ape']), f"BK {month_label or ''}批核", _month_kpi_sub(month_vals['批核']))}
-    </div>"""
-    kpi_week = f"""<div class="kpi-strip3">
       {_kpi3("steel", fmt_m(ws['预约']['ape']), f"BK {bv['cur_week']}预约", _month_kpi_sub(ws['预约']))}
       {_kpi3("teal", fmt_m(ws['签单']['ape']), f"BK {bv['cur_week']}签单", _month_kpi_sub(ws['签单']))}
       {_kpi3("navy", fmt_m(ws['批核']['ape']), f"BK {bv['cur_week']}批核", _month_kpi_sub(ws['批核']))}
     </div>"""
 
-    mt = ctx["bank_monthly_total"]
     aa_html = f"""
     <div class="card card-aa">
       {_module_title("AA", "银行月度已批核APE（M港元）／件数", "navy")}
@@ -1660,7 +1655,7 @@ def build_page10(ctx: dict, week_full: str) -> str:
     <div class="card card-ad card-full">
       {_module_title("AD", "银行分行年度批核APE（M港元）｜TOP10＋其他", "navy")}
       <div class="ad-body">
-        <div class="chartbox" style="height:190px;"><canvas id="p10_chartAD"></canvas></div>
+        <div class="chartbox" style="height:150px;"><canvas id="p10_chartAD"></canvas></div>
         <div class="tablewrap"><table class="dtable">
           <thead><tr><th>分行</th><th>批核APE M</th></tr></thead>
           <tbody>{ad_rows}
@@ -1676,7 +1671,7 @@ def build_page10(ctx: dict, week_full: str) -> str:
     return f"""
     <section class="page" data-page="10">
       {_page_header(10, "银行业绩分析仪表盘", "Bank View")}
-      {kpi_overall}{kpi_month}{kpi_week}
+      {kpi_row}
       <div class="grid2">{aa_html}{ab_html}</div>
       <div class="grid2">{ac_html}{ad_html}</div>
       {_footer(week_full)}
@@ -1719,17 +1714,13 @@ def build_page11(ctx: dict, week_full: str) -> str:
     ws = av["weekly_snapshot"]
     s9 = ctx["s9"]
 
-    kpi_overall = f"""<div class="kpi-strip3">
+    kpi_row = f"""<div class="kpi-strip9">
       {_kpi3("navy", fmt_m(av['issued_total']), "代理人业务批核", _month_kpi_sub({"ape": av['issued_total'], "cnt": int(_tot_val(s9['B'], '批核件数') + _tot_val(s9['C'], '批核件数'))}))}
       {_kpi3("red", fmt_m(av['unbat_total']), "代理人业务未批核", _month_kpi_sub({"ape": av['unbat_total'], "cnt": int(_tot_val(s9['B'], '未批核件数') + _tot_val(s9['C'], '未批核件数'))}))}
       {_kpi3("gold", fmt_m(av['pend_total']), "代理人业务待签", _month_kpi_sub({"ape": av['pend_total'], "cnt": int(_tot_val(s9['B'], '待签件数') + _tot_val(s9['C'], '待签件数'))}))}
-    </div>"""
-    kpi_month = f"""<div class="kpi-strip3">
       {_kpi3("steel", fmt_m(month_vals['预约']['ape']), f"代理人{month_label or ''}预约", _month_kpi_sub(month_vals['预约']))}
       {_kpi3("teal", fmt_m(month_vals['签单']['ape']), f"代理人{month_label or ''}签单", _month_kpi_sub(month_vals['签单']))}
       {_kpi3("navy", fmt_m(month_vals['批核']['ape']), f"代理人{month_label or ''}批核", _month_kpi_sub(month_vals['批核']))}
-    </div>"""
-    kpi_week = f"""<div class="kpi-strip3">
       {_kpi3("steel", fmt_m(ws['预约']['ape']), f"代理人{av['cur_week']}预约", _month_kpi_sub(ws['预约']))}
       {_kpi3("teal", fmt_m(ws['签单']['ape']), f"代理人{av['cur_week']}签单", _month_kpi_sub(ws['签单']))}
       {_kpi3("navy", fmt_m(ws['批核']['ape']), f"代理人{av['cur_week']}批核", _month_kpi_sub(ws['批核']))}
@@ -1789,7 +1780,7 @@ def build_page11(ctx: dict, week_full: str) -> str:
     return f"""
     <section class="page" data-page="11">
       {_page_header(11, "代理人业务分析仪表盘", "Agent Business View")}
-      {kpi_overall}{kpi_month}{kpi_week}
+      {kpi_row}
       <div class="grid2">{tl_html}{gtd_html}</div>
       <div class="grid2-11">{wk_html}{trend_html}</div>
       {_footer(week_full)}
@@ -2397,6 +2388,41 @@ table.dtable tr.total-row td { font-weight:700; background:#e7ecf4; }
 /* 页面整体滚动区（表格多行时） */
 .card .tablewrap { max-height: 540px; }
 .card-full .tablewrap { max-height: 560px; }
+
+/* 第10-18页（Phase2新增） */
+.kpi-strip9 { display:grid; grid-template-columns: repeat(9,1fr); gap:6px; margin-bottom:8px; flex:0 0 auto; }
+.kpi-strip9 .kpi-cell { padding:5px 6px; }
+.kpi-strip9 .kpi-val { font-size:16px; }
+.kpi-strip9 .kpi-label { font-size:9.5px; }
+.kpi-strip9 .kpi-sub { font-size:8.5px; }
+.grid2-11 { display:grid; grid-template-columns: 1.3fr 1fr; gap:12px; flex:1 1 auto; min-height:0; }
+.grid3-14 { display:grid; grid-template-columns: repeat(3,1fr); gap:12px; flex:0 0 auto; margin: 8px 0; }
+.ad-body { display:flex; gap:12px; flex:1; min-height:0; }
+.ad-body .chartbox { flex: 1.1; }
+.ad-body .tablewrap { flex: 1; }
+.card-ka, .card-wk, .card-trend { min-height:0; }
+.card-ka .tablewrap, .card-wk .tablewrap { max-height: 210px; }
+.card-ad .tablewrap { max-height: 160px; }
+
+/* 热力矩阵完整表格（第16-18页） */
+.heat-wrap { overflow-x:auto; overflow-y:auto; max-height: 700px; flex:1; }
+table.heat { width:100%; border-collapse:collapse; font-size:10.5px; }
+table.heat th { background: var(--mk-navy); color:#fff; padding:4px 6px; text-align:center; white-space:nowrap; position:sticky; top:0; }
+table.heat th:first-child { text-align:left; position:sticky; left:0; z-index:2; }
+table.heat td:first-child { text-align:left; background:#eef1f8; font-weight:700; position:sticky; left:0; white-space:nowrap; }
+table.heat td { padding:3px 5px; text-align:center; border-bottom:1px solid #eef0f3; }
+table.heat tbody tr:nth-child(even) { background:#f7f8fb; }
+table.heat tr.total-row td { font-weight:700; background:#e7ecf4; }
+.hcell b { display:block; font-size:11.5px; line-height:1.2; }
+.hcell span { display:block; font-size:9px; color:var(--mk-muted); line-height:1.2; }
+
+/* 第14页：数据与解释边界 + 管理行动 */
+.dq-grid { display:grid; grid-template-columns: repeat(2,1fr); gap:6px; margin-bottom:6px; }
+.dq-cell { background:#fafbfc; border:1px solid var(--mk-border); border-radius:3px; padding:5px 8px; }
+.dq-cell b { display:block; font-size:14px; color: var(--mk-navy); }
+.dq-cell span { font-size:9.5px; color: var(--mk-muted); }
+.action-list { font-size:11px; line-height:1.55; padding-left:18px; margin:4px 0; }
+.action-list li { margin-bottom:5px; }
 """
 
 _PRINT_CSS = """
@@ -2535,6 +2561,39 @@ document.addEventListener('DOMContentLoaded', function(){
       {label:'同行批核(M)', data:d.p9.weekly_trend['批核'].map(v=>v/1e6)},
     ], [PALETTE.steel, PALETTE.teal, PALETTE.navy], {elements:{point:{radius:1.5}}});
   }
+  // page10（Phase2新增）
+  if(d.p10){
+    const elM=document.getElementById('p10_chartMonthly');
+    if(elM){
+      new Chart(elM, {type:'bar', data:{labels:d.p10.monthly.labels, datasets:[
+        {type:'bar', label:'批核APE(M)', data:d.p10.monthly.ape.map(v=>v/1e6), backgroundColor:PALETTE.navy, yAxisID:'y'},
+        {type:'line', label:'批核件数', data:d.p10.monthly.cnt, borderColor:PALETTE.gold, backgroundColor:PALETTE.gold, yAxisID:'y1', tension:0.2},
+      ]}, options:{responsive:true, maintainAspectRatio:false,
+        scales:{y:{position:'left', title:{display:true,text:'APE(M)'}}, y1:{position:'right', title:{display:true,text:'件数'}, grid:{drawOnChartArea:false}}}}});
+    }
+    lineChart('p10_chartWeekly', d.p10.weekly.labels, [
+      {label:'预约(M)', data:d.p10.weekly['预约'].map(v=>v/1e6)},
+      {label:'签单(M)', data:d.p10.weekly['签单'].map(v=>v/1e6)},
+      {label:'批核(M)', data:d.p10.weekly['批核'].map(v=>v/1e6)},
+    ], [PALETTE.steel, PALETTE.teal, PALETTE.navy], {elements:{point:{radius:1.5}}});
+    barChart('p10_chartAD', d.p10.branch.labels, [{label:'批核APE(M)', data:d.p10.branch.values.map(v=>v/1e6)}], [PALETTE.navy], {indexAxis:'y', plugins:{legend:{display:false}}});
+  }
+  // page11（Phase2新增）
+  if(d.p11){
+    lineChart('p11_chartTrend', d.p11.monthly_trend.labels, [
+      {label:'预约(M)', data:d.p11.monthly_trend['预约'].map(v=>v/1e6)},
+      {label:'签单(M)', data:d.p11.monthly_trend['签单'].map(v=>v/1e6)},
+      {label:'批核(M)', data:d.p11.monthly_trend['批核'].map(v=>v/1e6)},
+    ], [PALETTE.steel, PALETTE.teal, PALETTE.navy]);
+  }
+  // page12（Phase2新增）
+  if(d.p12){
+    lineChart('p12_chartTrend', d.p12.monthly_trend.labels, [
+      {label:'预约(M)', data:d.p12.monthly_trend['预约'].map(v=>v/1e6)},
+      {label:'签单(M)', data:d.p12.monthly_trend['签单'].map(v=>v/1e6)},
+      {label:'批核(M)', data:d.p12.monthly_trend['批核'].map(v=>v/1e6)},
+    ], [PALETTE.steel, PALETTE.teal, PALETTE.navy]);
+  }
 });
 </script>
 """
@@ -2606,6 +2665,16 @@ def _page_chart_data(ctx: dict) -> dict:
             "pend": peerv["referrer_bar"]["待签"],
         },
         "p9": {"weekly_trend": peerv["weekly_trend"]},
+        "p10": {
+            "monthly": ctx["bank_monthly_total"],
+            "weekly": ctx["bank_v"]["weekly_trend"],
+            "branch": {
+                "labels": ctx["bank_v"]["branch_bar"]["labels"][:10],
+                "values": ctx["bank_v"]["branch_bar"]["合计"][:10],
+            },
+        },
+        "p11": {"monthly_trend": ctx["agent_v"]["monthly_trend"]},
+        "p12": {"monthly_trend": ctx["ka_v"]["monthly_trend"]},
     }
 
 
@@ -2617,6 +2686,7 @@ def render(data_root, agent_version: str, source_name: str = "业绩数据底表
     data_root = Path(data_root)
     loaded = _load_views(data_root)
     s1, s2, s3, s4, s9, s6, df = (loaded[k] for k in ("s1", "s2", "s3", "s4", "s9", "s6", "df"))
+    raw_df = loaded["raw_df"]
 
     if s6 is None or "A-APE" not in s6:
         raise RuntimeError(
@@ -2656,6 +2726,30 @@ def render(data_root, agent_version: str, source_name: str = "业绩数据底表
 
     peer_calendar_monthly = _peer_calendar_monthly(df)
 
+    # ---- Phase2新增（第10-18页）----
+    bank_v = build_bank_view(s2, s3)
+    agent_v = build_agent_view(s9)
+    ka_v = build_ka_view(s9)
+    bk_month = _segment_calendar_current_month(df, ["BK业务"])
+    agent_month = _segment_calendar_current_month(df, ["天领业务", "成事家办"])
+    bank_weekly_cnt = _bank_weekly_detail_with_count(s3)
+    bank_monthly_total = _bank_monthly_issue_total(s3)
+
+    sun_premium_top10 = _sunlife_premium_ranking(df)
+    sun_term_dist = _sunlife_term_distribution(df)
+
+    peer_partner_full = _peer_partner_full(df)
+    peer_referrer_full = _peer_referrer_full(df)
+
+    unapproved_top10 = _unapproved_channel_top10(df)
+    dq = _data_quality_disclosure(raw_df, df, timeliness["excluded_count"])
+
+    event_table14 = _page14_event_table(s3, week_full)  # week_full本身就是'2026W40'原始格式
+
+    heat_q = _heat_table(s3["B"], _recent_weeks(s3["B"]))
+    heat_r = _heat_table(s3["C"], _recent_weeks(s3["C"]))
+    heat_s = _heat_table(s3["D"], _recent_weeks(s3["D"]))
+
     ctx = {
         "s1v": s1v, "s2v": s2v, "s3v": s3v, "s4v": s4v, "peerv": peerv, "sunv": sunv,
         "date_str": date_str,
@@ -2666,6 +2760,15 @@ def render(data_root, agent_version: str, source_name: str = "业绩数据底表
         "timeliness": timeliness,
         "ka_rank_p6": ka_rank_p6, "ka_rank_p8": ka_rank_p8,
         "peer_calendar_monthly": peer_calendar_monthly,
+        "s9": s9,
+        "bank_v": bank_v, "agent_v": agent_v, "ka_v": ka_v,
+        "bk_month": bk_month, "agent_month": agent_month,
+        "bank_weekly_cnt": bank_weekly_cnt, "bank_monthly_total": bank_monthly_total,
+        "sun_premium_top10": sun_premium_top10, "sun_term_dist": sun_term_dist,
+        "peer_partner_full": peer_partner_full, "peer_referrer_full": peer_referrer_full,
+        "unapproved_top10": unapproved_top10, "dq": dq,
+        "event_table14": event_table14,
+        "heat_q": heat_q, "heat_r": heat_r, "heat_s": heat_s,
     }
 
     pages_html = "".join([
@@ -2678,6 +2781,15 @@ def render(data_root, agent_version: str, source_name: str = "业绩数据底表
         build_page7(ctx, week_full),
         build_page8(ctx, week_full),
         build_page9(ctx, week_full),
+        build_page10(ctx, week_full),
+        build_page11(ctx, week_full),
+        build_page12(ctx, week_full),
+        build_page13(ctx, week_full),
+        build_page14(ctx, week_full),
+        build_page15(ctx, week_full),
+        build_page16(ctx, week_full),
+        build_page17(ctx, week_full),
+        build_page18(ctx, week_full),
     ])
 
     import json
@@ -2694,7 +2806,7 @@ def render(data_root, agent_version: str, source_name: str = "业绩数据底表
 </head>
 <body class="mk-body">
 <div class="mk-toolbar">
-  <div>Mark标准报表 · 程序化复刻（第1-9页，共18页；第10-18页待续） · PDA Agent {esc(agent_version)} · 数据源：{esc(source_name)}</div>
+  <div>Mark标准报表 · 程序化复刻（全18页） · PDA Agent {esc(agent_version)} · 数据源：{esc(source_name)}</div>
   <button onclick="window.print()">打印/导出PDF</button>
 </div>
 <div class="mk-pages">

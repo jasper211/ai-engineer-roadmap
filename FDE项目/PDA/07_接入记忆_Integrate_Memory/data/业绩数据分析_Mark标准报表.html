@@ -208,6 +208,41 @@ table.dtable tr.total-row td { font-weight:700; background:#e7ecf4; }
 .card .tablewrap { max-height: 540px; }
 .card-full .tablewrap { max-height: 560px; }
 
+/* 第10-18页（Phase2新增） */
+.kpi-strip9 { display:grid; grid-template-columns: repeat(9,1fr); gap:6px; margin-bottom:8px; flex:0 0 auto; }
+.kpi-strip9 .kpi-cell { padding:5px 6px; }
+.kpi-strip9 .kpi-val { font-size:16px; }
+.kpi-strip9 .kpi-label { font-size:9.5px; }
+.kpi-strip9 .kpi-sub { font-size:8.5px; }
+.grid2-11 { display:grid; grid-template-columns: 1.3fr 1fr; gap:12px; flex:1 1 auto; min-height:0; }
+.grid3-14 { display:grid; grid-template-columns: repeat(3,1fr); gap:12px; flex:0 0 auto; margin: 8px 0; }
+.ad-body { display:flex; gap:12px; flex:1; min-height:0; }
+.ad-body .chartbox { flex: 1.1; }
+.ad-body .tablewrap { flex: 1; }
+.card-ka, .card-wk, .card-trend { min-height:0; }
+.card-ka .tablewrap, .card-wk .tablewrap { max-height: 210px; }
+.card-ad .tablewrap { max-height: 160px; }
+
+/* 热力矩阵完整表格（第16-18页） */
+.heat-wrap { overflow-x:auto; overflow-y:auto; max-height: 700px; flex:1; }
+table.heat { width:100%; border-collapse:collapse; font-size:10.5px; }
+table.heat th { background: var(--mk-navy); color:#fff; padding:4px 6px; text-align:center; white-space:nowrap; position:sticky; top:0; }
+table.heat th:first-child { text-align:left; position:sticky; left:0; z-index:2; }
+table.heat td:first-child { text-align:left; background:#eef1f8; font-weight:700; position:sticky; left:0; white-space:nowrap; }
+table.heat td { padding:3px 5px; text-align:center; border-bottom:1px solid #eef0f3; }
+table.heat tbody tr:nth-child(even) { background:#f7f8fb; }
+table.heat tr.total-row td { font-weight:700; background:#e7ecf4; }
+.hcell b { display:block; font-size:11.5px; line-height:1.2; }
+.hcell span { display:block; font-size:9px; color:var(--mk-muted); line-height:1.2; }
+
+/* 第14页：数据与解释边界 + 管理行动 */
+.dq-grid { display:grid; grid-template-columns: repeat(2,1fr); gap:6px; margin-bottom:6px; }
+.dq-cell { background:#fafbfc; border:1px solid var(--mk-border); border-radius:3px; padding:5px 8px; }
+.dq-cell b { display:block; font-size:14px; color: var(--mk-navy); }
+.dq-cell span { font-size:9.5px; color: var(--mk-muted); }
+.action-list { font-size:11px; line-height:1.55; padding-left:18px; margin:4px 0; }
+.action-list li { margin-bottom:5px; }
+
 @media print {
   body.mk-body { background:#fff; }
   .mk-toolbar { display:none; }
@@ -219,7 +254,7 @@ table.dtable tr.total-row td { font-weight:700; background:#e7ecf4; }
 </head>
 <body class="mk-body">
 <div class="mk-toolbar">
-  <div>Mark标准报表 · 程序化复刻（第1-9页，共18页；第10-18页待续） · PDA Agent v0.21.0 · 数据源：业绩数据底表-20261009.xlsx</div>
+  <div>Mark标准报表 · 程序化复刻（全18页） · PDA Agent v0.22.0 · 数据源：业绩数据底表-20261009.xlsx</div>
   <button onclick="window.print()">打印/导出PDF</button>
 </div>
 <div class="mk-pages">
@@ -735,6 +770,401 @@ table.dtable tr.total-row td { font-weight:700; background:#e7ecf4; }
       <div class="pfoot">2026W40文件快照｜数据完整时点未核实｜工作稿</div>
     </section>
     
+    <section class="page" data-page="10">
+      
+    <div class="phead">
+      <div class="phead-title">银行业绩分析仪表盘 <span class="phead-sub">Bank View</span></div>
+      <div class="phead-badge">内部文件 · 仅供使用</div>
+    </div>
+    
+      <div class="kpi-strip9">
+      <div class="kpi-cell kpi-navy"><div class="kpi-val">253.0M</div><div class="kpi-label">BK批核</div><div class="kpi-sub">233件 | 件均108.6万</div></div>
+      <div class="kpi-cell kpi-red"><div class="kpi-val">27.4M</div><div class="kpi-label">BK未批核</div><div class="kpi-sub">24件 | 件均114.1万</div></div>
+      <div class="kpi-cell kpi-gold"><div class="kpi-val">0.8M</div><div class="kpi-label">BK待签</div><div class="kpi-sub">1件 | 件均78.0万</div></div>
+      <div class="kpi-cell kpi-steel"><div class="kpi-val">0.8M</div><div class="kpi-label">BK 26-Oct预约</div><div class="kpi-sub">1件 | 件均78.0万</div></div>
+      <div class="kpi-cell kpi-teal"><div class="kpi-val">0.0M</div><div class="kpi-label">BK 26-Oct签单</div><div class="kpi-sub">0件 | 件均—</div></div>
+      <div class="kpi-cell kpi-navy"><div class="kpi-val">0.8M</div><div class="kpi-label">BK 26-Oct批核</div><div class="kpi-sub">1件 | 件均78.0万</div></div>
+      <div class="kpi-cell kpi-steel"><div class="kpi-val">0.8M</div><div class="kpi-label">BK W40预约</div><div class="kpi-sub">1件 | 件均78.0万</div></div>
+      <div class="kpi-cell kpi-teal"><div class="kpi-val">0.0M</div><div class="kpi-label">BK W40签单</div><div class="kpi-sub">0件 | 件均—</div></div>
+      <div class="kpi-cell kpi-navy"><div class="kpi-val">0.8M</div><div class="kpi-label">BK W40批核</div><div class="kpi-sub">1件 | 件均78.0万</div></div>
+    </div>
+      <div class="grid2">
+    <div class="card card-aa">
+      <div class="mtitle mtitle-navy"><span class="mt-letter">AA</span> 银行月度已批核APE（M港元）／件数</div>
+      <div class="chartbox" style="height:200px;"><canvas id="p10_chartMonthly"></canvas></div>
+      <div class="note">批核件数｜当月进行中，不据此判断全月升降。</div>
+    </div>
+    
+    <div class="card card-ab">
+      <div class="mtitle mtitle-navy"><span class="mt-letter">AB</span> W01–W40 银行周度预约/签单/批核趋势（M）</div>
+      <div class="chartbox" style="height:200px;"><canvas id="p10_chartWeekly"></canvas></div>
+    </div>
+    </div>
+      <div class="grid2">
+    <div class="card card-ac card-full">
+      <div class="mtitle mtitle-purple"><span class="mt-letter">AC</span> W40 银行KA 本周业绩详情（M）</div>
+      <table class="dtable">
+        <thead><tr><th>KEY ACCOUNT</th><th>本周预约(M)</th><th>件数</th><th>本周签单(M)</th><th>件数</th>
+        <th>本周批核(M)</th><th>件数</th></tr></thead>
+        <tbody><tr><td>民生银行</td><td>0.78M</td><td>1</td><td>0.00M</td><td>0</td><td>0.00M</td><td>0</td></tr><tr><td>浦发银行</td><td>0.00M</td><td>0</td><td>0.00M</td><td>0</td><td>0.78M</td><td>1</td></tr><tr><td>平安银行</td><td>0.00M</td><td>0</td><td>0.00M</td><td>0</td><td>0.00M</td><td>0</td></tr>
+        <tr class="total-row"><td>银行合计</td>
+        <td>0.78M</td><td>1</td>
+        <td>0.00M</td><td>0</td>
+        <td>0.78M</td><td>1</td></tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="card card-ad card-full">
+      <div class="mtitle mtitle-navy"><span class="mt-letter">AD</span> 银行分行年度批核APE（M港元）｜TOP10＋其他</div>
+      <div class="ad-body">
+        <div class="chartbox" style="height:150px;"><canvas id="p10_chartAD"></canvas></div>
+        <div class="tablewrap"><table class="dtable">
+          <thead><tr><th>分行</th><th>批核APE M</th></tr></thead>
+          <tbody><tr><td>民生广州分行</td><td>44.48</td></tr><tr><td>民生南京分行</td><td>39.43</td></tr><tr><td>民生上海分行</td><td>30.08</td></tr><tr><td>民生北京分行</td><td>18.94</td></tr><tr><td>民生深圳分行</td><td>18.88</td></tr><tr><td>平安香港分行许菁</td><td>16.65</td></tr><tr><td>平安香港分行徐艳</td><td>15.60</td></tr><tr><td>民生重庆分行</td><td>13.73</td></tr><tr><td>民生杭州分行</td><td>7.41</td></tr><tr><td>平安香港分行钟丽丽</td><td>6.95</td></tr>
+          <tr><td>其他</td><td>40.86</td></tr>
+          <tr class="total-row"><td>完整总体</td><td>253.00</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+      <div class="note">完整总体253.00M；仅展示排名，其他包含全部余项。</div>
+    </div>
+    </div>
+      <div class="pfoot">2026W40文件快照｜数据完整时点未核实｜工作稿</div>
+    </section>
+    
+    <section class="page" data-page="11">
+      
+    <div class="phead">
+      <div class="phead-title">代理人业务分析仪表盘 <span class="phead-sub">Agent Business View</span></div>
+      <div class="phead-badge">内部文件 · 仅供使用</div>
+    </div>
+    
+      <div class="kpi-strip9">
+      <div class="kpi-cell kpi-navy"><div class="kpi-val">91.8M</div><div class="kpi-label">代理人业务批核</div><div class="kpi-sub">292件 | 件均31.4万</div></div>
+      <div class="kpi-cell kpi-red"><div class="kpi-val">7.2M</div><div class="kpi-label">代理人业务未批核</div><div class="kpi-sub">18件 | 件均39.7万</div></div>
+      <div class="kpi-cell kpi-gold"><div class="kpi-val">1.2M</div><div class="kpi-label">代理人业务待签</div><div class="kpi-sub">5件 | 件均24.8万</div></div>
+      <div class="kpi-cell kpi-steel"><div class="kpi-val">0.6M</div><div class="kpi-label">代理人26-Oct预约</div><div class="kpi-sub">3件 | 件均18.8万</div></div>
+      <div class="kpi-cell kpi-teal"><div class="kpi-val">0.0M</div><div class="kpi-label">代理人26-Oct签单</div><div class="kpi-sub">0件 | 件均—</div></div>
+      <div class="kpi-cell kpi-navy"><div class="kpi-val">2.4M</div><div class="kpi-label">代理人26-Oct批核</div><div class="kpi-sub">8件 | 件均30.0万</div></div>
+      <div class="kpi-cell kpi-steel"><div class="kpi-val">0.6M</div><div class="kpi-label">代理人W40预约</div><div class="kpi-sub">3件 | 件均18.8万</div></div>
+      <div class="kpi-cell kpi-teal"><div class="kpi-val">0.0M</div><div class="kpi-label">代理人W40签单</div><div class="kpi-sub">0件 | 件均—</div></div>
+      <div class="kpi-cell kpi-navy"><div class="kpi-val">2.3M</div><div class="kpi-label">代理人W40批核</div><div class="kpi-sub">7件 | 件均33.4万</div></div>
+    </div>
+      <div class="grid2">
+    <div class="card card-ka">
+      <div class="mtitle mtitle-purple"><span class="mt-letter">KA明细</span> 天领业务</div>
+      <div class="tablewrap"><table class="dtable">
+        <thead><tr><th>KEY ACCOUNT</th><th>批核APE(万)</th><th>批核件数</th><th>未批核APE(万)</th><th>未批核件数</th>
+        <th>待签APE(万)</th><th>待签件数</th><th>合计APE(万)</th><th>合计件数</th></tr></thead>
+        <tbody><tr><td>天领重庆</td><td>3582</td><td>136</td><td>118</td><td>4</td><td>85</td><td>4</td><td>3785</td><td>144</td></tr><tr><td>天领深圳</td><td>1773</td><td>12</td><td>78</td><td>1</td><td>0</td><td>0</td><td>1851</td><td>13</td></tr><tr><td>天领成都</td><td>1583</td><td>52</td><td>348</td><td>9</td><td>0</td><td>0</td><td>1931</td><td>61</td></tr><tr><td>宁波贴牌</td><td>394</td><td>9</td><td>0</td><td>0</td><td>39</td><td>1</td><td>433</td><td>10</td></tr><tr><td>武汉贴牌</td><td>349</td><td>11</td><td>0</td><td>0</td><td>0</td><td>0</td><td>349</td><td>11</td></tr><tr><td>广西贴牌</td><td>332</td><td>14</td><td>117</td><td>2</td><td>0</td><td>0</td><td>449</td><td>16</td></tr><tr><td>苏州贴牌</td><td>82</td><td>4</td><td>16</td><td>1</td><td>0</td><td>0</td><td>98</td><td>5</td></tr><tr><td>合肥</td><td>47</td><td>2</td><td>0</td><td>0</td><td>0</td><td>0</td><td>47</td><td>2</td></tr><tr><td>台州贴牌</td><td>39</td><td>3</td><td>0</td><td>0</td><td>0</td><td>0</td><td>39</td><td>3</td></tr><tr><td>厦门贴牌</td><td>35</td><td>6</td><td>0</td><td>0</td><td>0</td><td>0</td><td>35</td><td>6</td></tr><tr><td>长沙贴牌</td><td>4</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>4</td><td>1</td></tr><tr class="total-row"><td>合计</td><td>8220</td><td>250</td><td>676</td><td>17</td><td>124</td><td>5</td><td>9020</td><td>272</td></tr></tbody>
+      </table></div>
+    </div>
+    
+    <div class="card card-ka">
+      <div class="mtitle mtitle-purple"><span class="mt-letter">KA明细</span> 成事家办</div>
+      <div class="tablewrap"><table class="dtable">
+        <thead><tr><th>KEY ACCOUNT</th><th>批核APE(万)</th><th>批核件数</th><th>未批核APE(万)</th><th>未批核件数</th>
+        <th>待签APE(万)</th><th>待签件数</th><th>合计APE(万)</th><th>合计件数</th></tr></thead>
+        <tbody><tr><td>杨璐熙</td><td>330</td><td>14</td><td>39</td><td>1</td><td>0</td><td>0</td><td>369</td><td>15</td></tr><tr><td>刘微</td><td>295</td><td>13</td><td>0</td><td>0</td><td>0</td><td>0</td><td>295</td><td>13</td></tr><tr><td>杨帆</td><td>212</td><td>8</td><td>0</td><td>0</td><td>0</td><td>0</td><td>212</td><td>8</td></tr><tr><td>杨洪美</td><td>80</td><td>5</td><td>0</td><td>0</td><td>0</td><td>0</td><td>80</td><td>5</td></tr><tr><td>丁洁</td><td>41</td><td>2</td><td>0</td><td>0</td><td>0</td><td>0</td><td>41</td><td>2</td></tr><tr class="total-row"><td>合计</td><td>957</td><td>42</td><td>39</td><td>1</td><td>0</td><td>0</td><td>996</td><td>43</td></tr></tbody>
+      </table></div>
+    </div>
+    </div>
+      <div class="grid2-11">
+    <div class="card card-wk card-full">
+      <div class="mtitle mtitle-navy"><span class="mt-letter">快报</span> W40 本周快报｜代理人业务（天领+成事家办）</div>
+      <div class="tablewrap"><table class="dtable">
+        <thead><tr><th>KEY ACCOUNT</th><th>预约(M)</th><th>签单(M)</th><th>批核(M)</th></tr></thead>
+        <tbody><tr><td>天领重庆</td><td>0.17M</td><td>0.00M</td><td>1.17M</td></tr><tr><td>天领深圳</td><td>0.00M</td><td>0.00M</td><td>0.78M</td></tr><tr><td>宁波贴牌</td><td>0.39M</td><td>0.00M</td><td>0.00M</td></tr><tr><td>天领成都</td><td>0.00M</td><td>0.00M</td><td>0.23M</td></tr><tr><td>苏州贴牌</td><td>0.00M</td><td>0.00M</td><td>0.16M</td></tr><tr><td>广西贴牌</td><td>0.00M</td><td>0.00M</td><td>0.00M</td></tr><tr><td>武汉贴牌</td><td>0.00M</td><td>0.00M</td><td>0.00M</td></tr><tr><td>合肥</td><td>0.00M</td><td>0.00M</td><td>0.00M</td></tr><tr><td>台州贴牌</td><td>0.00M</td><td>0.00M</td><td>0.00M</td></tr><tr><td>厦门贴牌</td><td>0.00M</td><td>0.00M</td><td>0.00M</td></tr><tr><td>刘微</td><td>0.00M</td><td>0.00M</td><td>0.00M</td></tr><tr><td>杨璐熙</td><td>0.00M</td><td>0.00M</td><td>0.00M</td></tr><tr><td>杨帆</td><td>0.00M</td><td>0.00M</td><td>0.00M</td></tr><tr><td>杨洪美</td><td>0.00M</td><td>0.00M</td><td>0.00M</td></tr><tr><td>丁洁</td><td>0.00M</td><td>0.00M</td><td>0.00M</td></tr><tr><td>长沙贴牌</td><td>0.00M</td><td>0.00M</td><td>0.00M</td></tr>
+        <tr class="total-row"><td>合计</td><td>0.56M</td><td>0.00M</td><td>2.34M</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+    
+    <div class="card card-trend">
+      <div class="mtitle mtitle-navy"><span class="mt-letter">趋势</span> 代理人业务月度预约/签单/批核APE趋势</div>
+      <div class="chartbox" style="height:170px;"><canvas id="p11_chartTrend"></canvas></div>
+      <div class="note">月度数据来源于S9-H/I周度明细子表并集，覆盖范围不满29周（见README已知限制），缺列=该周真实0贡献，不是数据丢失。</div>
+    </div>
+    </div>
+      <div class="pfoot">2026W40文件快照｜数据完整时点未核实｜工作稿</div>
+    </section>
+    
+    <section class="page" data-page="12">
+      
+    <div class="phead">
+      <div class="phead-title">KA业务分析仪表盘 <span class="phead-sub">ICLUB + 合伙转介 + IFA</span></div>
+      <div class="phead-badge">内部文件 · 仅供使用</div>
+    </div>
+    
+      <div class="kpi-strip3">
+      <div class="kpi-cell kpi-navy"><div class="kpi-val">27.7M</div><div class="kpi-label">KA业务批核APE</div><div class="kpi-sub">50件 | 件均55.4万</div></div>
+      <div class="kpi-cell kpi-red"><div class="kpi-val">0.9M</div><div class="kpi-label">KA业务未批核APE</div><div class="kpi-sub">3件 | 件均30.9万</div></div>
+      <div class="kpi-cell kpi-gold"><div class="kpi-val">0.0M</div><div class="kpi-label">KA业务待签APE</div><div class="kpi-sub">0件 | 件均—</div></div>
+    </div>
+      <div class="grid3">
+        <div class="card card-ka">
+          <div class="mtitle mtitle-purple"><span class="mt-letter">KA明细</span> ICLUB业务</div>
+          <div class="tablewrap"><table class="dtable">
+            <thead><tr><th>KEY ACCOUNT</th><th>批核APE(万)</th><th>批核件数</th><th>未批核APE(万)</th><th>未批核件数</th>
+            <th>待签APE(万)</th><th>待签件数</th><th>合计APE(万)</th><th>合计件数</th></tr></thead>
+            <tbody><tr><td>个人转介</td><td>2099</td><td>12</td><td>0</td><td>0</td><td>0</td><td>0</td><td>2099</td><td>12</td></tr><tr><td>保险师</td><td>180</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>180</td><td>1</td></tr><tr><td>新风</td><td>8</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>8</td><td>1</td></tr><tr class="total-row"><td>合计</td><td>2287</td><td>14</td><td>0</td><td>0</td><td>0</td><td>0</td><td>2287</td><td>14</td></tr></tbody>
+          </table></div>
+        </div>
+        
+        <div class="card card-ka">
+          <div class="mtitle mtitle-purple"><span class="mt-letter">KA明细</span> 合伙转介业务</div>
+          <div class="tablewrap"><table class="dtable">
+            <thead><tr><th>KEY ACCOUNT</th><th>批核APE(万)</th><th>批核件数</th><th>未批核APE(万)</th><th>未批核件数</th>
+            <th>待签APE(万)</th><th>待签件数</th><th>合计APE(万)</th><th>合计件数</th></tr></thead>
+            <tbody><tr><td>懿丰家族</td><td>136</td><td>2</td><td>0</td><td>0</td><td>0</td><td>0</td><td>136</td><td>2</td></tr><tr><td>明德长青</td><td>109</td><td>4</td><td>0</td><td>0</td><td>0</td><td>0</td><td>109</td><td>4</td></tr><tr><td>总部职能</td><td>78</td><td>15</td><td>8</td><td>1</td><td>0</td><td>0</td><td>86</td><td>16</td></tr><tr><td>荻邦咨询</td><td>51</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>51</td><td>1</td></tr><tr><td>德约</td><td>36</td><td>3</td><td>0</td><td>0</td><td>0</td><td>0</td><td>36</td><td>3</td></tr><tr><td>Molly</td><td>23</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>23</td><td>1</td></tr><tr><td>个人转介</td><td>23</td><td>5</td><td>0</td><td>0</td><td>0</td><td>0</td><td>23</td><td>5</td></tr><tr><td>迪岸</td><td>15</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>15</td><td>1</td></tr><tr><td>虹霖贸易</td><td>8</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>8</td><td>1</td></tr><tr><td>励欧移民</td><td>4</td><td>3</td><td>0</td><td>0</td><td>0</td><td>0</td><td>4</td><td>3</td></tr><tr class="total-row"><td>合计</td><td>484</td><td>36</td><td>8</td><td>1</td><td>0</td><td>0</td><td>492</td><td>37</td></tr></tbody>
+          </table></div>
+        </div>
+        
+        <div class="card card-ka">
+          <div class="mtitle mtitle-purple"><span class="mt-letter">KA明细</span> IFA业务</div>
+          <div class="tablewrap"><table class="dtable">
+            <thead><tr><th>KEY ACCOUNT</th><th>批核APE(万)</th><th>批核件数</th><th>未批核APE(万)</th><th>未批核件数</th>
+            <th>待签APE(万)</th><th>待签件数</th><th>合计APE(万)</th><th>合计件数</th></tr></thead>
+            <tbody><tr><td>IFA</td><td>0</td><td>0</td><td>85</td><td>2</td><td>0</td><td>0</td><td>85</td><td>2</td></tr><tr class="total-row"><td>合计</td><td>0</td><td>0</td><td>85</td><td>2</td><td>0</td><td>0</td><td>85</td><td>2</td></tr></tbody>
+          </table></div>
+        </div>
+        </div>
+      <div class="grid2">
+    <div class="card card-wk">
+      <div class="mtitle mtitle-navy"><span class="mt-letter">快报</span> W40 本周快报｜KA业务</div>
+      <div class="tablewrap"><table class="dtable">
+        <thead><tr><th>KEY ACCOUNT</th><th>预约(M)</th><th>签单(M)</th><th>批核(M)</th></tr></thead>
+        <tbody><tr><td>IFA</td><td>0.00M</td><td>0.54M</td><td>0.00M</td></tr><tr><td>明德长青</td><td>0.00M</td><td>0.00M</td><td>0.23M</td></tr><tr><td>总部职能</td><td>0.00M</td><td>0.00M</td><td>0.02M</td></tr><tr><td>个人转介</td><td>0.00M</td><td>0.00M</td><td>0.00M</td></tr><tr><td>保险师</td><td>0.00M</td><td>0.00M</td><td>0.00M</td></tr><tr><td>懿丰家族</td><td>0.00M</td><td>0.00M</td><td>0.00M</td></tr><tr><td>德约</td><td>0.00M</td><td>0.00M</td><td>0.00M</td></tr><tr><td>虹霖贸易</td><td>0.00M</td><td>0.00M</td><td>0.00M</td></tr><tr><td>励欧移民</td><td>0.00M</td><td>0.00M</td><td>0.00M</td></tr><tr><td>荻邦咨询</td><td>0.00M</td><td>0.00M</td><td>0.00M</td></tr><tr><td>Molly</td><td>0.00M</td><td>0.00M</td><td>0.00M</td></tr><tr><td>迪岸</td><td>0.00M</td><td>0.00M</td><td>0.00M</td></tr><tr><td>新风</td><td>0.00M</td><td>0.00M</td><td>0.00M</td></tr>
+        <tr class="total-row"><td>合计</td><td>0.00M</td><td>0.54M</td><td>0.25M</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+    
+    <div class="card card-trend">
+      <div class="mtitle mtitle-navy"><span class="mt-letter">趋势</span> KA业务月度预约/签单/批核APE趋势</div>
+      <div class="chartbox" style="height:150px;"><canvas id="p12_chartTrend"></canvas></div>
+      <div class="note">IFA业务批核/待签全为0（见右侧IFA明细表），已确认是业务线本身当前无实际批核发生，不是数据缺失。</div>
+    </div>
+    </div>
+      <div class="pfoot">2026W40文件快照｜数据完整时点未核实｜工作稿</div>
+    </section>
+    
+    <section class="page" data-page="13">
+      
+    <div class="phead">
+      <div class="phead-title">永明签单产品与年期｜补充明细 </div>
+      <div class="phead-badge">候选稿</div>
+    </div>
+    
+      
+    <div class="card card-full">
+      <div class="mtitle mtitle-navy"><span class="mt-letter">TOP10</span> 永明产品保费TOP10＋其他｜当年签单群体</div>
+      <div class="tablewrap"><table class="dtable">
+        <thead><tr><th>产品（源名）</th><th>年期</th><th>折扣</th><th>件数</th><th>保费M</th></tr></thead>
+        <tbody><tr><td>永誉传承储蓄计划</td><td>1</td><td>2.5%</td><td>25</td><td>347.88</td></tr><tr><td>万年青·星河尊享保险计划II</td><td>2</td><td>未提供</td><td>378</td><td>156.19</td></tr><tr><td>永誉传承储蓄计划</td><td>1</td><td>3.5%</td><td>13</td><td>155.78</td></tr><tr><td>万年青·星河尊享保险计划II</td><td>5</td><td>未提供</td><td>385</td><td>73.13</td></tr><tr><td>万年青·卓金保险计划II</td><td>5</td><td>20%</td><td>69</td><td>38.49</td></tr><tr><td>永尚指数型万用寿险</td><td>1</td><td>未提供</td><td>2</td><td>35.10</td></tr><tr><td>万年青·星河尊享保险计划II</td><td>2</td><td>8%</td><td>18</td><td>18.19</td></tr><tr><td>万年青·星河尊享保险计划II</td><td>2</td><td>6%</td><td>36</td><td>16.70</td></tr><tr><td>永誉传承储蓄计划</td><td>1</td><td>5%</td><td>1</td><td>15.60</td></tr><tr><td>万年青·星河尊享保险计划II</td><td>5</td><td>20%</td><td>10</td><td>13.26</td></tr>
+        <tr class="total-row"><td colspan="3">TOP10合计</td><td>937</td><td>870.32</td></tr>
+        <tr><td colspan="3">其他</td><td>234</td><td>81.10</td></tr>
+        <tr class="total-row"><td colspan="3">总体</td><td>1171</td><td>951.42</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+    
+      
+    <div class="card card-full">
+      <div class="mtitle mtitle-navy"><span class="mt-letter">年期分布</span> 完整年期分布</div>
+      <div class="tablewrap"><table class="dtable">
+        <thead><tr><th>年期类别</th><th>件数</th><th>APE M</th><th>保费M</th></tr></thead>
+        <tbody><tr><td>中期(2-5年)</td><td>1038</td><td>386.05</td><td>386.05</td></tr><tr><td>短期(≤1年)</td><td>44</td><td>56.33</td><td>563.34</td></tr><tr><td>长期(6-20年)</td><td>61</td><td>1.36</td><td>1.36</td></tr><tr><td>终身(&gt;20年)</td><td>25</td><td>0.65</td><td>0.65</td></tr><tr><td>年期缺失</td><td>2</td><td>0.02</td><td>0.02</td></tr><tr><td>文本年期</td><td>1</td><td>0.00</td><td>0.00</td></tr>
+        <tr class="total-row"><td>总体</td><td>1171</td><td>444.41</td><td>951.42</td></tr>
+        </tbody>
+      </table></div>
+      <div class="note">产品按源名称＋年期＋折扣区分；“未提供”不擅自归并。<br>保费与APE分别排序，排名可能不同。<br>本页签单群体与年度批核群体不同，不能直接相减解释阶段迁移。</div>
+    </div>
+    
+      <div class="pfoot">2026W40 文件快照 · 候选稿 · 完整数据截止未核实</div>
+    </section>
+    
+    <section class="page" data-page="14">
+      
+    <div class="phead">
+      <div class="phead-title">执行明细、来源说明与管理行动 </div>
+      <div class="phead-badge">候选稿</div>
+    </div>
+    
+      
+    <div class="card card-full">
+      <div class="mtitle mtitle-navy"><span class="mt-letter">八线四事件</span> 2026W40完整八线／四事件（M港元）</div>
+      <div class="tablewrap"><table class="dtable">
+        <thead><tr><th>业务线</th><th>预约M</th><th>件</th><th>签单M</th><th>件</th>
+        <th>递交M</th><th>件</th><th>批核M</th><th>件</th></tr></thead>
+        <tbody><tr><td>天领业务</td><td>0.56</td><td>3</td><td>0.00</td><td>0</td><td>—</td><td>—</td><td>2.34</td><td>7</td></tr><tr><td>成事家办</td><td>0.00</td><td>0</td><td>0.00</td><td>0</td><td>—</td><td>—</td><td>0.00</td><td>0</td></tr><tr><td>BK业务</td><td>0.78</td><td>1</td><td>0.00</td><td>0</td><td>—</td><td>—</td><td>0.78</td><td>1</td></tr><tr><td>同行经代</td><td>8.74</td><td>18</td><td>6.57</td><td>16</td><td>—</td><td>—</td><td>4.13</td><td>15</td></tr><tr><td>永明经代</td><td>7.53</td><td>11</td><td>6.22</td><td>9</td><td>—</td><td>—</td><td>0.31</td><td>2</td></tr><tr><td>合伙转介业务</td><td>0.00</td><td>0</td><td>0.00</td><td>0</td><td>—</td><td>—</td><td>0.25</td><td>2</td></tr><tr><td>ICLUB业务</td><td>0.00</td><td>0</td><td>0.00</td><td>0</td><td>—</td><td>—</td><td>0.00</td><td>0</td></tr><tr><td>IFA业务</td><td>0.00</td><td>0</td><td>0.54</td><td>1</td><td>—</td><td>—</td><td>0.00</td><td>0</td></tr>
+        <tr class="total-row"><td>合计</td>
+        <td>17.61</td><td>33</td>
+        <td>13.33</td><td>26</td>
+        <td>12.82</td><td>30</td>
+        <td>7.81</td><td>27</td></tr>
+        </tbody>
+      </table></div>
+      <div class="note">递交事件当前无业务线拆分数据源（S3执行管理端目前只有递交总量，没有按业务细分拆分的递交周度板块），本表递交列按业务线留空“—”，仅在合计行展示总量；不新增反推逻辑凑出按业务线拆分的递交数据。</div>
+    </div>
+    
+      <div class="grid3-14">
+    <div class="card">
+      <div class="mtitle mtitle-purple"><span class="mt-letter">时效分布</span> 签批时效分布</div>
+      <table class="dtable">
+        <thead><tr><th>签批用时</th><th>件数</th><th>占有效样本</th></tr></thead>
+        <tbody><tr><td>≤7天</td><td>220</td><td>13.4%</td></tr><tr><td>8-14天</td><td>369</td><td>22.4%</td></tr><tr><td>15-30天</td><td>611</td><td>37.1%</td></tr><tr><td>31-60天</td><td>286</td><td>17.4%</td></tr><tr><td>61-90天</td><td>69</td><td>4.2%</td></tr><tr><td>&gt;90天</td><td>91</td><td>5.5%</td></tr>
+        <tr class="total-row"><td>有效总体</td><td>1646</td><td>100.0%</td></tr>
+        <tr><td>排除样本</td><td>1</td><td>不入分母</td></tr>
+        </tbody>
+      </table>
+      <div class="note">≤60天：1486/1646 = 90.3%。签批日期缺失或为负者不入分母（跟第7页T表同一口径，直接复用，不重新计算）。</div>
+    </div>
+    
+    <div class="card">
+      <div class="mtitle mtitle-navy"><span class="mt-letter">边界说明</span> 数据与解释边界</div>
+      <div class="dq-grid">
+        <div class="dq-cell"><b>3993</b><span>本稿依据已交付文件行数</span></div>
+        <div class="dq-cell"><b>2</b><span>缺批核日期（生效但issue_date为空）</span></div>
+        <div class="dq-cell"><b>10/10</b><span>APE/保费缺失（不归零）</span></div>
+        <div class="dq-cell"><b>21</b><span>未来签单日（sign_date&gt;文件导出日）</span></div>
+        <div class="dq-cell"><b>2</b><span>拒保</span></div>
+        <div class="dq-cell"><b>1</b><span>负时效（已排除，不入签批时效分母）</span></div>
+        <div class="dq-cell"><b>1669条/5对</b><span>实体别名归一化（简繁体同一实体合并）</span></div>
+      </div>
+      <div class="note">2025历史：0404已核版本；与2026本次快照分别管理。旧Alice外部供数退出；中台原有TA/MGA记录保留。同行实际含MGA，与既有目标范围存在差异。预测未形成现行规则；当前未批和待签仅作为存量，不承诺兑现。以上7项均独立用pandas重算自本批数据，不是照抄历史某次快照的具体数字。</div>
+    </div>
+    
+    <div class="card">
+      <div class="mtitle mtitle-gold"><span class="mt-letter">在途推进</span> 在途推进｜按未批APE排序TOP10</div>
+      <table class="dtable">
+        <thead><tr><th>未批渠道</th><th>APE M</th><th>件数</th></tr></thead>
+        <tbody><tr><td>平安银行</td><td>23.48</td><td>20</td></tr><tr><td>天誉国际(MGA)</td><td>15.00</td><td>46</td></tr><tr><td>天誉国际</td><td>13.01</td><td>29</td></tr><tr><td>中天家办</td><td>6.85</td><td>10</td></tr><tr><td>唯思</td><td>5.32</td><td>8</td></tr><tr><td>民生银行</td><td>3.90</td><td>4</td></tr><tr><td>天领成都</td><td>3.48</td><td>9</td></tr><tr><td>万森保险</td><td>2.92</td><td>5</td></tr><tr><td>臻略财富</td><td>2.42</td><td>7</td></tr><tr><td>万城保险</td><td>1.99</td><td>6</td></tr>
+        <tr><td>其他</td><td>8.70</td><td>27</td></tr>
+        <tr class="total-row"><td>总体</td><td>87.07</td><td>171</td></tr>
+        </tbody>
+      </table>
+    </div>
+    </div>
+      
+    <div class="card card-full">
+      <div class="mtitle mtitle-red"><span class="mt-letter">管理行动</span> 管理行动（建议，负责人及时间待分派）</div>
+      <ol class="action-list">
+        <li>按完整八线核对本周差额；“递交”事件当前无业务线拆分数据源（仅展示总量，见上方事件表说明），
+            同行实际/目标范围差异列为管理口径事项。（业务管理负责人）</li>
+        <li>下一次取数固定批次和截止时点，保留两期快照后再解释净增、回退及重分类；本稿依据已交付文件
+            3993行。（数据负责人）</li>
+        <li>按未批核渠道金额核对资料/缴费/批核进度（见右侧“在途推进”TOP10，总体87.07M
+            / 171件）；源表未提供责任人和承诺日期，不猜测预计释放时间。
+            （渠道及运营负责人）</li>
+        <li>确认拒保2单、未来签单日21单、缺批核日期
+            2单、负时效1单及实体别名归一化
+            （1669条记录涉及5个实体对子）
+            的处置口径；改口径前保留原始值与影响评估。（业务与数据负责人）</li>
+      </ol>
+    </div>
+    
+      <div class="pfoot">2026W40 文件快照 · 候选稿 · 完整数据截止未核实</div>
+    </section>
+    
+    <section class="page" data-page="15">
+      
+    <div class="phead">
+      <div class="phead-title">同行合作渠道与推荐人｜完整总体 </div>
+      <div class="phead-badge">候选稿</div>
+    </div>
+    
+      
+    <div class="card card-full">
+      <div class="mtitle mtitle-navy"><span class="mt-letter">合作渠道</span> 合作渠道：按年度批核APE取TOP10＋其他</div>
+      <div class="tablewrap"><table class="dtable">
+        <thead><tr><th>渠道</th><th>批核M</th><th>件</th><th>未批M</th><th>件</th><th>待签M</th><th>件</th>
+        <th>阶段合计M</th><th>件</th></tr></thead>
+        <tbody><tr class=""><td>紫荆保险</td><td>39.69</td><td>116</td><td>0.86</td><td>4</td><td>0.00</td><td>0</td><td>40.55</td><td>120</td></tr><tr class=""><td>宏安证券有限公司</td><td>37.64</td><td>107</td><td>2.29</td><td>4</td><td>0.00</td><td>0</td><td>39.92</td><td>111</td></tr><tr class=""><td>同智顾问</td><td>32.66</td><td>105</td><td>4.61</td><td>4</td><td>0.28</td><td>1</td><td>37.55</td><td>110</td></tr><tr class=""><td>万森保险</td><td>29.82</td><td>96</td><td>2.92</td><td>5</td><td>0.00</td><td>0</td><td>32.74</td><td>101</td></tr><tr class=""><td>堡盛国际</td><td>29.01</td><td>78</td><td>0.28</td><td>1</td><td>0.00</td><td>0</td><td>29.30</td><td>79</td></tr><tr class=""><td>李竞超</td><td>27.14</td><td>2</td><td>0.00</td><td>0</td><td>0.00</td><td>0</td><td>27.14</td><td>2</td></tr><tr class=""><td>盈丰资本财富管理（香港）有限公司</td><td>26.83</td><td>79</td><td>9.91</td><td>25</td><td>0.29</td><td>1</td><td>37.04</td><td>105</td></tr><tr class=""><td>堡盛国际(TY)</td><td>24.01</td><td>67</td><td>1.21</td><td>4</td><td>0.00</td><td>0</td><td>25.22</td><td>71</td></tr><tr class=""><td>百利勤</td><td>22.86</td><td>67</td><td>14.60</td><td>42</td><td>4.80</td><td>7</td><td>42.26</td><td>116</td></tr><tr class=""><td>企鹅保险</td><td>22.01</td><td>81</td><td>1.17</td><td>3</td><td>0.78</td><td>1</td><td>23.96</td><td>85</td></tr>
+        <tr class="total-row"><td>TOP10合计</td><td>291.67</td><td>798</td><td>37.85</td><td>92</td><td>6.16</td><td>10</td><td>335.69</td><td>900</td></tr>
+        <tr class=""><td>其他</td><td>107.96</td><td>274</td><td>13.75</td><td>34</td><td>0.91</td><td>4</td><td>122.61</td><td>312</td></tr>
+        <tr class="total-row"><td>总体</td><td>399.63</td><td>1072</td><td>51.61</td><td>126</td><td>7.07</td><td>14</td><td>458.30</td><td>1212</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+    
+      
+    <div class="card card-full">
+      <div class="mtitle mtitle-navy"><span class="mt-letter">推荐人</span> 推荐人：原图六人＋其他／未提供</div>
+      <table class="dtable">
+        <thead><tr><th>推荐人</th><th>批核M</th><th>未批M</th><th>待签M</th><th>阶段件数</th></tr></thead>
+        <tbody><tr class=""><td>姜通</td><td>200.25</td><td>32.23</td><td>6.08</td><td>664</td></tr><tr class=""><td>战略合作</td><td>54.19</td><td>5.32</td><td>0.28</td><td>173</td></tr><tr class=""><td>高瑶</td><td>30.31</td><td>2.92</td><td>0.00</td><td>105</td></tr><tr class=""><td>白博文</td><td>25.83</td><td>9.28</td><td>0.70</td><td>102</td></tr><tr class=""><td>Mark</td><td>13.28</td><td>0.00</td><td>0.00</td><td>4</td></tr><tr class=""><td>魏子璐</td><td>1.88</td><td>0.00</td><td>0.00</td><td>6</td></tr>
+        <tr class=""><td>其他/未提供</td><td>73.89</td><td>1.86</td><td>0.00</td><td>158</td></tr>
+        <tr class="total-row"><td>总体</td><td>399.63</td><td>51.61</td><td>7.07</td><td>1212</td></tr>
+        </tbody>
+      </table>
+      <div class="note">合作渠道：partner_code<br>推荐人：referral_code<br>原P08渠道账户：key_account<br>三个来源字段分别分组。不能用推荐人图证明合作渠道已完整展示。<br>每个维度均对齐同行三阶段总体；原始名称不擅自合并。<br>主文保留原推荐人图与KA分析；本页补全合作渠道及未显示群体。</div>
+    </div>
+    
+      <div class="pfoot">2026W40 文件快照 · 候选稿 · 完整数据截止未核实</div>
+    </section>
+    
+    <section class="page" data-page="16">
+      
+    <div class="phead">
+      <div class="phead-title">执行管理端分析仪表盘 <span class="phead-sub">Execution Management View</span></div>
+      <div class="phead-badge">内部文件 · 仅供使用</div>
+    </div>
+    
+      
+    <div class="card card-full">
+      <div class="mtitle mtitle-steel"><span class="mt-letter">Q</span> 周度预约业绩热力矩阵（APE in M）</div>
+      <div class="heat-wrap"><table class="heat">
+        <thead><tr><th>业务线</th><th>W26</th><th>W27</th><th>W28</th><th>W29</th><th>W30</th><th>W31</th><th>W32</th><th>W33</th><th>W34</th><th>W35</th><th>W36</th><th>W37</th><th>W38</th><th>W39</th><th>W40</th></tr></thead>
+        <tbody><tr><td>天领业务</td><td><div class="hcell"><b>0.7</b><span>5件</span></div></td><td><div class="hcell"><b>5.5</b><span>6件</span></div></td><td><div class="hcell"><b>0.9</b><span>4件</span></div></td><td><div class="hcell"><b>0.7</b><span>6件</span></div></td><td><div class="hcell"><b>2.2</b><span>6件</span></div></td><td><div class="hcell"><b>1.0</b><span>5件</span></div></td><td><div class="hcell"><b>0.2</b><span>3件</span></div></td><td><div class="hcell"><b>2.2</b><span>8件</span></div></td><td><div class="hcell"><b>0.2</b><span>2件</span></div></td><td><div class="hcell"><b>0.5</b><span>5件</span></div></td><td><div class="hcell"><b>1.8</b><span>5件</span></div></td><td><div class="hcell"><b>2.7</b><span>7件</span></div></td><td><div class="hcell"><b>2.7</b><span>7件</span></div></td><td><div class="hcell"><b>0.4</b><span>1件</span></div></td><td><div class="hcell"><b>0.6</b><span>3件</span></div></td></tr><tr><td>成事家办</td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.2</b><span>1件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>1件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.7</b><span>3件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.3</b><span>2件</span></div></td><td><div class="hcell"><b>1.0</b><span>2件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td></tr><tr><td>BK业务</td><td><div class="hcell"><b>0.4</b><span>1件</span></div></td><td><div class="hcell"><b>5.5</b><span>9件</span></div></td><td><div class="hcell"><b>2.7</b><span>4件</span></div></td><td><div class="hcell"><b>4.7</b><span>7件</span></div></td><td><div class="hcell"><b>6.2</b><span>3件</span></div></td><td><div class="hcell"><b>1.2</b><span>2件</span></div></td><td><div class="hcell"><b>5.1</b><span>4件</span></div></td><td><div class="hcell"><b>2.3</b><span>4件</span></div></td><td><div class="hcell"><b>3.9</b><span>5件</span></div></td><td><div class="hcell"><b>5.3</b><span>3件</span></div></td><td><div class="hcell"><b>0.8</b><span>1件</span></div></td><td><div class="hcell"><b>0.8</b><span>1件</span></div></td><td><div class="hcell"><b>3.2</b><span>3件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.8</b><span>1件</span></div></td></tr><tr><td>同行经代</td><td><div class="hcell"><b>7.2</b><span>20件</span></div></td><td><div class="hcell"><b>7.0</b><span>22件</span></div></td><td><div class="hcell"><b>9.2</b><span>29件</span></div></td><td><div class="hcell"><b>18.0</b><span>42件</span></div></td><td><div class="hcell"><b>12.1</b><span>29件</span></div></td><td><div class="hcell"><b>5.2</b><span>23件</span></div></td><td><div class="hcell"><b>6.2</b><span>21件</span></div></td><td><div class="hcell"><b>8.4</b><span>30件</span></div></td><td><div class="hcell"><b>7.7</b><span>17件</span></div></td><td><div class="hcell"><b>3.6</b><span>9件</span></div></td><td><div class="hcell"><b>4.3</b><span>11件</span></div></td><td><div class="hcell"><b>5.6</b><span>21件</span></div></td><td><div class="hcell"><b>6.6</b><span>17件</span></div></td><td><div class="hcell"><b>4.1</b><span>13件</span></div></td><td><div class="hcell"><b>8.7</b><span>18件</span></div></td></tr><tr><td>永明经代</td><td><div class="hcell"><b>2.3</b><span>9件</span></div></td><td><div class="hcell"><b>3.0</b><span>12件</span></div></td><td><div class="hcell"><b>3.2</b><span>6件</span></div></td><td><div class="hcell"><b>4.5</b><span>15件</span></div></td><td><div class="hcell"><b>1.7</b><span>11件</span></div></td><td><div class="hcell"><b>1.7</b><span>10件</span></div></td><td><div class="hcell"><b>3.2</b><span>7件</span></div></td><td><div class="hcell"><b>3.7</b><span>11件</span></div></td><td><div class="hcell"><b>3.6</b><span>9件</span></div></td><td><div class="hcell"><b>1.5</b><span>11件</span></div></td><td><div class="hcell"><b>2.3</b><span>6件</span></div></td><td><div class="hcell"><b>4.5</b><span>15件</span></div></td><td><div class="hcell"><b>1.6</b><span>7件</span></div></td><td><div class="hcell"><b>1.0</b><span>3件</span></div></td><td><div class="hcell"><b>7.5</b><span>11件</span></div></td></tr><tr><td>合伙转介业务</td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.3</b><span>3件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>1件</span></div></td><td><div class="hcell"><b>0.0</b><span>1件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.3</b><span>3件</span></div></td><td><div class="hcell"><b>0.0</b><span>1件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>1件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td></tr><tr><td>ICLUB业务</td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.5</b><span>2件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>2.0</b><span>1件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td></tr><tr><td>IFA业务</td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.9</b><span>2件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td></tr><tr class="total-row"><td>合计</td><td><div class="hcell"><b>10.6</b><span>35件</span></div></td><td><div class="hcell"><b>21.4</b><span>53件</span></div></td><td><div class="hcell"><b>16.0</b><span>43件</span></div></td><td><div class="hcell"><b>27.9</b><span>72件</span></div></td><td><div class="hcell"><b>22.3</b><span>50件</span></div></td><td><div class="hcell"><b>9.7</b><span>43件</span></div></td><td><div class="hcell"><b>15.1</b><span>37件</span></div></td><td><div class="hcell"><b>17.1</b><span>58件</span></div></td><td><div class="hcell"><b>16.3</b><span>36件</span></div></td><td><div class="hcell"><b>11.0</b><span>28件</span></div></td><td><div class="hcell"><b>11.2</b><span>24件</span></div></td><td><div class="hcell"><b>13.5</b><span>44件</span></div></td><td><div class="hcell"><b>14.2</b><span>35件</span></div></td><td><div class="hcell"><b>6.3</b><span>19件</span></div></td><td><div class="hcell"><b>17.6</b><span>33件</span></div></td></tr></tbody>
+      </table></div>
+      <div class="note">2026W40预约33件／17.61M；APE与件数逐格列示，合计包含八线。最近15个业务周窗口，随当前周滚动。</div>
+    </div>
+    
+      <div class="pfoot">2026W40文件快照｜数据完整时点未核实｜工作稿</div>
+    </section>
+    
+    <section class="page" data-page="17">
+      
+    <div class="phead">
+      <div class="phead-title">执行管理端分析仪表盘 <span class="phead-sub">Execution Management View</span></div>
+      <div class="phead-badge">内部文件 · 仅供使用</div>
+    </div>
+    
+      
+    <div class="card card-full">
+      <div class="mtitle mtitle-teal"><span class="mt-letter">R</span> 周度签单业绩热力矩阵（APE in M）</div>
+      <div class="heat-wrap"><table class="heat">
+        <thead><tr><th>业务线</th><th>W26</th><th>W27</th><th>W28</th><th>W29</th><th>W30</th><th>W31</th><th>W32</th><th>W33</th><th>W34</th><th>W35</th><th>W36</th><th>W37</th><th>W38</th><th>W39</th><th>W40</th></tr></thead>
+        <tbody><tr><td>天领业务</td><td><div class="hcell"><b>1.5</b><span>9件</span></div></td><td><div class="hcell"><b>0.6</b><span>2件</span></div></td><td><div class="hcell"><b>6.0</b><span>6件</span></div></td><td><div class="hcell"><b>0.5</b><span>6件</span></div></td><td><div class="hcell"><b>1.5</b><span>4件</span></div></td><td><div class="hcell"><b>1.4</b><span>6件</span></div></td><td><div class="hcell"><b>0.3</b><span>3件</span></div></td><td><div class="hcell"><b>2.3</b><span>8件</span></div></td><td><div class="hcell"><b>0.5</b><span>4件</span></div></td><td><div class="hcell"><b>0.0</b><span>3件</span></div></td><td><div class="hcell"><b>1.2</b><span>2件</span></div></td><td><div class="hcell"><b>3.8</b><span>14件</span></div></td><td><div class="hcell"><b>0.2</b><span>1件</span></div></td><td><div class="hcell"><b>2.5</b><span>6件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td></tr><tr><td>成事家办</td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.2</b><span>1件</span></div></td><td><div class="hcell"><b>0.0</b><span>1件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.1</b><span>1件</span></div></td><td><div class="hcell"><b>0.2</b><span>1件</span></div></td><td><div class="hcell"><b>0.6</b><span>3件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>1.0</b><span>2件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td></tr><tr><td>BK业务</td><td><div class="hcell"><b>2.7</b><span>6件</span></div></td><td><div class="hcell"><b>2.3</b><span>3件</span></div></td><td><div class="hcell"><b>4.3</b><span>7件</span></div></td><td><div class="hcell"><b>4.7</b><span>7件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>7.0</b><span>4件</span></div></td><td><div class="hcell"><b>4.3</b><span>2件</span></div></td><td><div class="hcell"><b>3.1</b><span>6件</span></div></td><td><div class="hcell"><b>3.5</b><span>5件</span></div></td><td><div class="hcell"><b>4.6</b><span>3件</span></div></td><td><div class="hcell"><b>2.3</b><span>2件</span></div></td><td><div class="hcell"><b>0.8</b><span>1件</span></div></td><td><div class="hcell"><b>1.6</b><span>2件</span></div></td><td><div class="hcell"><b>1.6</b><span>1件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td></tr><tr><td>同行经代</td><td><div class="hcell"><b>5.4</b><span>20件</span></div></td><td><div class="hcell"><b>4.1</b><span>15件</span></div></td><td><div class="hcell"><b>7.2</b><span>21件</span></div></td><td><div class="hcell"><b>19.1</b><span>48件</span></div></td><td><div class="hcell"><b>18.7</b><span>43件</span></div></td><td><div class="hcell"><b>5.2</b><span>22件</span></div></td><td><div class="hcell"><b>6.6</b><span>23件</span></div></td><td><div class="hcell"><b>6.8</b><span>24件</span></div></td><td><div class="hcell"><b>10.1</b><span>24件</span></div></td><td><div class="hcell"><b>1.9</b><span>9件</span></div></td><td><div class="hcell"><b>3.1</b><span>9件</span></div></td><td><div class="hcell"><b>7.5</b><span>20件</span></div></td><td><div class="hcell"><b>4.2</b><span>13件</span></div></td><td><div class="hcell"><b>4.6</b><span>16件</span></div></td><td><div class="hcell"><b>6.6</b><span>16件</span></div></td></tr><tr><td>永明经代</td><td><div class="hcell"><b>1.9</b><span>10件</span></div></td><td><div class="hcell"><b>2.2</b><span>9件</span></div></td><td><div class="hcell"><b>3.8</b><span>9件</span></div></td><td><div class="hcell"><b>2.4</b><span>9件</span></div></td><td><div class="hcell"><b>4.1</b><span>14件</span></div></td><td><div class="hcell"><b>1.2</b><span>11件</span></div></td><td><div class="hcell"><b>4.4</b><span>11件</span></div></td><td><div class="hcell"><b>4.0</b><span>11件</span></div></td><td><div class="hcell"><b>3.1</b><span>6件</span></div></td><td><div class="hcell"><b>1.3</b><span>8件</span></div></td><td><div class="hcell"><b>1.4</b><span>7件</span></div></td><td><div class="hcell"><b>4.5</b><span>14件</span></div></td><td><div class="hcell"><b>2.8</b><span>10件</span></div></td><td><div class="hcell"><b>1.5</b><span>5件</span></div></td><td><div class="hcell"><b>6.2</b><span>9件</span></div></td></tr><tr><td>合伙转介业务</td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.3</b><span>3件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>1件</span></div></td><td><div class="hcell"><b>0.0</b><span>1件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.1</b><span>2件</span></div></td><td><div class="hcell"><b>0.0</b><span>1件</span></div></td><td><div class="hcell"><b>0.2</b><span>1件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>1件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td></tr><tr><td>ICLUB业务</td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.5</b><span>2件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>2.0</b><span>1件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td></tr><tr><td>IFA业务</td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.3</b><span>1件</span></div></td><td><div class="hcell"><b>0.5</b><span>1件</span></div></td></tr><tr class="total-row"><td>合计</td><td><div class="hcell"><b>11.6</b><span>45件</span></div></td><td><div class="hcell"><b>9.6</b><span>32件</span></div></td><td><div class="hcell"><b>21.4</b><span>44件</span></div></td><td><div class="hcell"><b>26.6</b><span>72件</span></div></td><td><div class="hcell"><b>24.3</b><span>62件</span></div></td><td><div class="hcell"><b>14.9</b><span>44件</span></div></td><td><div class="hcell"><b>16.2</b><span>42件</span></div></td><td><div class="hcell"><b>17.0</b><span>54件</span></div></td><td><div class="hcell"><b>17.2</b><span>40件</span></div></td><td><div class="hcell"><b>9.0</b><span>26件</span></div></td><td><div class="hcell"><b>10.0</b><span>21件</span></div></td><td><div class="hcell"><b>16.6</b><span>49件</span></div></td><td><div class="hcell"><b>8.8</b><span>27件</span></div></td><td><div class="hcell"><b>10.4</b><span>29件</span></div></td><td><div class="hcell"><b>13.3</b><span>26件</span></div></td></tr></tbody>
+      </table></div>
+      <div class="note">2026W40签单26件／13.33M；APE与件数逐格列示，合计包含八线。最近15个业务周窗口，随当前周滚动。</div>
+    </div>
+    
+      <div class="pfoot">2026W40文件快照｜数据完整时点未核实｜工作稿</div>
+    </section>
+    
+    <section class="page" data-page="18">
+      
+    <div class="phead">
+      <div class="phead-title">执行管理端分析仪表盘 <span class="phead-sub">Execution Management View</span></div>
+      <div class="phead-badge">内部文件 · 仅供使用</div>
+    </div>
+    
+      
+    <div class="card card-full">
+      <div class="mtitle mtitle-navy"><span class="mt-letter">S</span> 周度批核业绩热力矩阵（APE in M）</div>
+      <div class="heat-wrap"><table class="heat">
+        <thead><tr><th>业务线</th><th>W26</th><th>W27</th><th>W28</th><th>W29</th><th>W30</th><th>W31</th><th>W32</th><th>W33</th><th>W34</th><th>W35</th><th>W36</th><th>W37</th><th>W38</th><th>W39</th><th>W40</th></tr></thead>
+        <tbody><tr><td>天领业务</td><td><div class="hcell"><b>0.6</b><span>5件</span></div></td><td><div class="hcell"><b>0.3</b><span>4件</span></div></td><td><div class="hcell"><b>0.8</b><span>5件</span></div></td><td><div class="hcell"><b>2.9</b><span>7件</span></div></td><td><div class="hcell"><b>2.4</b><span>6件</span></div></td><td><div class="hcell"><b>2.5</b><span>3件</span></div></td><td><div class="hcell"><b>3.8</b><span>9件</span></div></td><td><div class="hcell"><b>0.8</b><span>4件</span></div></td><td><div class="hcell"><b>0.4</b><span>3件</span></div></td><td><div class="hcell"><b>1.0</b><span>5件</span></div></td><td><div class="hcell"><b>0.2</b><span>3件</span></div></td><td><div class="hcell"><b>0.0</b><span>1件</span></div></td><td><div class="hcell"><b>0.9</b><span>7件</span></div></td><td><div class="hcell"><b>0.3</b><span>2件</span></div></td><td><div class="hcell"><b>2.3</b><span>7件</span></div></td></tr><tr><td>成事家办</td><td><div class="hcell"><b>0.3</b><span>2件</span></div></td><td><div class="hcell"><b>0.5</b><span>2件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.2</b><span>1件</span></div></td><td><div class="hcell"><b>0.0</b><span>1件</span></div></td><td><div class="hcell"><b>0.1</b><span>1件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.5</b><span>3件</span></div></td><td><div class="hcell"><b>0.8</b><span>1件</span></div></td><td><div class="hcell"><b>0.2</b><span>1件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td></tr><tr><td>BK业务</td><td><div class="hcell"><b>0.3</b><span>2件</span></div></td><td><div class="hcell"><b>1.6</b><span>3件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>3.5</b><span>5件</span></div></td><td><div class="hcell"><b>2.2</b><span>4件</span></div></td><td><div class="hcell"><b>2.0</b><span>3件</span></div></td><td><div class="hcell"><b>1.8</b><span>4件</span></div></td><td><div class="hcell"><b>4.3</b><span>6件</span></div></td><td><div class="hcell"><b>1.6</b><span>3件</span></div></td><td><div class="hcell"><b>1.2</b><span>3件</span></div></td><td><div class="hcell"><b>4.2</b><span>3件</span></div></td><td><div class="hcell"><b>2.7</b><span>3件</span></div></td><td><div class="hcell"><b>0.8</b><span>1件</span></div></td><td><div class="hcell"><b>0.4</b><span>1件</span></div></td><td><div class="hcell"><b>0.8</b><span>1件</span></div></td></tr><tr><td>同行经代</td><td><div class="hcell"><b>4.2</b><span>15件</span></div></td><td><div class="hcell"><b>6.1</b><span>19件</span></div></td><td><div class="hcell"><b>2.7</b><span>18件</span></div></td><td><div class="hcell"><b>4.8</b><span>17件</span></div></td><td><div class="hcell"><b>12.2</b><span>29件</span></div></td><td><div class="hcell"><b>13.2</b><span>32件</span></div></td><td><div class="hcell"><b>6.6</b><span>17件</span></div></td><td><div class="hcell"><b>7.3</b><span>25件</span></div></td><td><div class="hcell"><b>10.2</b><span>24件</span></div></td><td><div class="hcell"><b>8.3</b><span>22件</span></div></td><td><div class="hcell"><b>5.1</b><span>20件</span></div></td><td><div class="hcell"><b>7.0</b><span>19件</span></div></td><td><div class="hcell"><b>3.6</b><span>15件</span></div></td><td><div class="hcell"><b>2.9</b><span>13件</span></div></td><td><div class="hcell"><b>4.1</b><span>15件</span></div></td></tr><tr><td>永明经代</td><td><div class="hcell"><b>5.7</b><span>16件</span></div></td><td><div class="hcell"><b>9.9</b><span>22件</span></div></td><td><div class="hcell"><b>4.0</b><span>11件</span></div></td><td><div class="hcell"><b>2.8</b><span>12件</span></div></td><td><div class="hcell"><b>2.5</b><span>9件</span></div></td><td><div class="hcell"><b>4.6</b><span>17件</span></div></td><td><div class="hcell"><b>3.9</b><span>13件</span></div></td><td><div class="hcell"><b>3.8</b><span>14件</span></div></td><td><div class="hcell"><b>1.4</b><span>9件</span></div></td><td><div class="hcell"><b>3.4</b><span>8件</span></div></td><td><div class="hcell"><b>2.9</b><span>6件</span></div></td><td><div class="hcell"><b>1.7</b><span>9件</span></div></td><td><div class="hcell"><b>4.1</b><span>15件</span></div></td><td><div class="hcell"><b>1.3</b><span>5件</span></div></td><td><div class="hcell"><b>0.3</b><span>2件</span></div></td></tr><tr><td>合伙转介业务</td><td><div class="hcell"><b>0.1</b><span>1件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.3</b><span>7件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>1件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>1件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>1件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>1件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.3</b><span>2件</span></div></td></tr><tr><td>ICLUB业务</td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.2</b><span>1件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.2</b><span>1件</span></div></td><td><div class="hcell"><b>2.0</b><span>1件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td></tr><tr><td>IFA业务</td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td><td><div class="hcell"><b>0.0</b><span>0件</span></div></td></tr><tr class="total-row"><td>合计</td><td><div class="hcell"><b>11.2</b><span>41件</span></div></td><td><div class="hcell"><b>18.4</b><span>50件</span></div></td><td><div class="hcell"><b>7.7</b><span>41件</span></div></td><td><div class="hcell"><b>14.0</b><span>41件</span></div></td><td><div class="hcell"><b>19.5</b><span>50件</span></div></td><td><div class="hcell"><b>22.4</b><span>56件</span></div></td><td><div class="hcell"><b>16.2</b><span>45件</span></div></td><td><div class="hcell"><b>16.2</b><span>49件</span></div></td><td><div class="hcell"><b>13.8</b><span>41件</span></div></td><td><div class="hcell"><b>13.8</b><span>38件</span></div></td><td><div class="hcell"><b>13.1</b><span>36件</span></div></td><td><div class="hcell"><b>14.2</b><span>35件</span></div></td><td><div class="hcell"><b>9.7</b><span>39件</span></div></td><td><div class="hcell"><b>4.8</b><span>21件</span></div></td><td><div class="hcell"><b>7.8</b><span>27件</span></div></td></tr></tbody>
+      </table></div>
+      <div class="note">2026W40批核27件／7.81M；APE与件数逐格列示，合计包含八线。最近15个业务周窗口，随当前周滚动。</div>
+    </div>
+    
+      <div class="pfoot">2026W40文件快照｜数据完整时点未核实｜工作稿</div>
+    </section>
+    
 </div>
 
 <script>/*!
@@ -753,7 +1183,7 @@ table.dtable tr.total-row td { font-weight:700; background:#e7ecf4; }
 //# sourceMappingURL=chart.umd.min.js.map
 </script>
 <script>
-const PDATA = {"p1": {"business_type": {"经代业务": {"batch": 652633421.1099999, "unbat": 78984404.24, "pend": 7845000.0}, "代理人业务": {"batch": 91774895.16, "unbat": 7153125.05, "pend": 1237797.6}, "KA业务": {"batch": 27717571.85, "unbat": 928200.0, "pend": 0.0}}, "monthly_trend": {"labels": ["25-Jan", "25-Feb", "25-Mar", "25-Apr", "25-May", "25-Jun", "25-Jul", "25-Aug", "25-Sep", "25-Oct", "25-Nov", "25-Dec", "26-Jan", "26-Feb", "26-Mar", "26-Apr", "26-May", "26-Jun", "26-Jul", "26-Aug", "26-Sep", "26-Oct"], "预约": [22560613.0, 38907760.0, 34295208.0, 29108646.0, 45504949.0, 178786707.0, 41339770.0, 61380033.0, 144649083.0, 77582700.0, 181578033.0, 141333661.0, 53902782.0, 56367834.0, 81478673.0, 67372321.0, 80958331.0, 84130875.0, 106836494.0, 64910041.0, 51711810.0, 18306663.0], "签单": [25095613.0, 37816349.0, 36049619.0, 21145859.0, 39550539.0, 188679104.0, 34340170.0, 66634250.0, 145046039.0, 77814089.0, 172329160.0, 147015562.0, 47898592.0, 61126234.0, 82149259.0, 62096461.0, 85228491.0, 85484011.0, 101352433.0, 71764461.0, 50311888.0, 14945207.0], "批核": [41402628.0, 21652059.0, 35513884.0, 27540230.0, 28622463.0, 77238089.0, 102660084.0, 44929512.0, 61434790.0, 93420117.0, 38745746.0, 43681497.0, 116781479.0, 143730290.0, 85756139.0, 91151383.0, 72813178.0, 61896544.0, 67915743.0, 75136310.0, 47358313.0, 9586509.0]}}, "p2": {"labels": ["26-Jan", "26-Feb", "26-Mar", "26-Apr", "26-May", "26-Jun", "26-Jul", "26-Aug", "26-Sep", "26-Oct"], "values": [116781478.92000002, 143730289.68, 85756138.71000001, 91151383.36, 72813178.43, 61896543.58, 67915743.00999999, 75136310.37, 47358313.06, 9586509.0]}, "p3": {"monthly_trend": {"labels": ["26-Jan", "26-Feb", "26-Mar", "26-Apr", "26-May", "26-Jun", "26-Jul", "26-Aug", "26-Sep", "26-Oct", "26-Nov", "26-Dec"], "预约": [17009555.0, 16059670.0, 23888220.0, 15677534.0, 16563931.0, 22253021.0, 13736225.0, 12033950.0, 10886857.0, 7532137.0, 0.0, 0.0], "签单": [13744355.0, 15183070.0, 26732520.0, 14796900.0, 17206965.0, 23175521.0, 12965525.0, 13175450.0, 10556972.0, 6767322.0, 0.0, 0.0], "批核": [45962575.0, 20312451.0, 13530550.0, 28835640.0, 10849140.0, 12472926.0, 24384221.0, 14949217.0, 11015436.0, 1552500.0, 0.0, 0.0]}}, "p4": {"bubbles": [{"x": 193.0, "y": 42.59209689119171, "r": 19.94646072565256, "label": "天领业务"}, {"x": 70.0, "y": 13.67449737142857, "r": 6.806555450034915, "label": "成事家办"}, {"x": 200.0, "y": 126.50130752999999, "r": 34.993323032978736, "label": "BK业务"}, {"x": 160.0, "y": 134.8538437125, "r": 32.3157572355902, "label": "同行经代"}, {"x": 340.0, "y": 54.07784003235294, "r": 29.831274454377578, "label": "永明经代"}, {"x": 73.0, "y": 6.6366572191780815, "r": 6, "label": "合伙转介业务"}, {"x": 52.0, "y": 43.98617707692307, "r": 10.521616342900934, "label": "ICLUB业务"}, {"x": 25.0, "y": 0.0, "r": 6, "label": "IFA业务"}], "waterfall": [{"label": "年度目标", "value": 1113000000.0, "kind": "base"}, {"label": "BK业务批核", "value": -253002615.06, "kind": "seg"}, {"label": "同行经代批核", "value": -215766149.94, "kind": "seg"}, {"label": "永明经代批核", "value": -183864656.11, "kind": "seg"}, {"label": "天领业务批核", "value": -82202747.0, "kind": "seg"}, {"label": "ICLUB业务批核", "value": -22872812.08, "kind": "seg"}, {"label": "成事家办批核", "value": -9572148.16, "kind": "seg"}, {"label": "合伙转介业务批核", "value": -4844759.77, "kind": "seg"}, {"label": "未批核", "value": -87065729.29, "kind": "seg"}, {"label": "待签", "value": -9082797.6, "kind": "seg"}, {"label": "扣在途后差额", "value": 244725584.98999986, "kind": "final"}], "segments": ["天领业务", "成事家办", "BK业务", "同行经代", "永明经代", "合伙转介业务", "ICLUB业务", "IFA业务"], "monthly_by_segment": {"天领业务": {"labels": ["26-Jan", "26-Feb", "26-Mar", "26-Apr", "26-May", "26-Jun", "26-Jul", "26-Aug", "26-Sep", "26-Oct", "26-Nov", "26-Dec"], "预约": [6673951.0, 9730508.0, 11283825.0, 8657125.0, 19773305.0, 5716171.0, 9167415.0, 3503425.0, 8126331.0, 564026.0, 0.0, 0.0], "签单": [4957951.0, 11212508.0, 10297125.0, 9698425.0, 19264761.0, 5780116.0, 8582415.0, 4470900.0, 7694085.0, 0.0, 0.0, 0.0], "批核": [6761793.0, 10518448.0, 6294167.0, 16601975.0, 6022561.0, 17112775.0, 6641257.0, 7951612.0, 1895760.0, 2402400.0, 0.0, 0.0]}, "成事家办": {"labels": ["26-Jan", "26-Feb", "26-Mar", "26-Apr", "26-May", "26-Jun", "26-Jul", "26-Aug", "26-Sep", "26-Oct", "26-Nov", "26-Dec"], "预约": [1023000.0, 390000.0, 312000.0, 2631479.0, 1533000.0, 819000.0, 268460.0, 1973400.0, 0.0, 0.0, 0.0, 0.0], "签单": [1023000.0, 390000.0, 312000.0, 1893479.0, 2271000.0, 819000.0, 268460.0, 1973400.0, 0.0, 0.0, 0.0, 0.0], "批核": [1344688.0, 390000.0, 468000.0, 1692600.0, 2607000.0, 477000.0, 975000.0, 112460.0, 1505400.0, 0.0, 0.0, 0.0]}, "BK业务": {"labels": ["26-Jan", "26-Feb", "26-Mar", "26-Apr", "26-May", "26-Jun", "26-Jul", "26-Aug", "26-Sep", "26-Oct", "26-Nov", "26-Dec"], "预约": [13862160.0, 5803200.0, 14040000.0, 7332000.0, 6864000.0, 8884200.0, 19500000.0, 16259295.0, 6318000.0, 780000.0, 0.0, 0.0], "签单": [17138160.0, 6817200.0, 12480000.0, 8502000.0, 6864000.0, 10054200.0, 13260000.0, 19500000.0, 9317295.0, 0.0, 0.0, 0.0], "批核": [18259800.0, 93940080.0, 58699680.0, 27222000.0, 21703560.0, 6240000.0, 7228260.0, 10469940.0, 8459295.0, 780000.0, 0.0, 0.0]}, "同行经代": {"labels": ["26-Jan", "26-Feb", "26-Mar", "26-Apr", "26-May", "26-Jun", "26-Jul", "26-Aug", "26-Sep", "26-Oct", "26-Nov", "26-Dec"], "预约": [6176316.0, 4921200.0, 15230198.0, 22496397.0, 20840697.0, 32903378.0, 50373504.0, 27515872.0, 23971122.0, 8892300.0, 0.0, 0.0], "签单": [2588316.0, 7495200.0, 15620198.0, 21779057.0, 20212237.0, 32470484.0, 50736858.0, 29254612.0, 20412037.0, 7327685.0, 0.0, 0.0], "批核": [41794438.0, 5672311.0, 5928995.0, 15044168.0, 25229007.0, 25593843.0, 28288550.0, 41394063.0, 22222666.0, 4598109.0, 0.0, 0.0]}, "永明经代": {"labels": ["26-Jan", "26-Feb", "26-Mar", "26-Apr", "26-May", "26-Jun", "26-Jul", "26-Aug", "26-Sep", "26-Oct", "26-Nov", "26-Dec"], "预约": [17009555.0, 16059670.0, 23888220.0, 15677534.0, 16563931.0, 22253021.0, 13736225.0, 12033950.0, 10886857.0, 7532137.0, 0.0, 0.0], "签单": [13744355.0, 15183070.0, 26732520.0, 14796900.0, 17206965.0, 23175521.0, 12965525.0, 13175450.0, 10556972.0, 6767322.0, 0.0, 0.0], "批核": [45962575.0, 20312451.0, 13530550.0, 28835640.0, 10849140.0, 12472926.0, 24384221.0, 14949217.0, 11015436.0, 1552500.0, 0.0, 0.0]}, "合伙转介业务": {"labels": ["26-Jan", "26-Feb", "26-Mar", "26-Apr", "26-May", "26-Jun", "26-Jul", "26-Aug", "26-Sep", "26-Oct", "26-Nov", "26-Dec"], "预约": [436800.0, 79800.0, 1963947.0, 420092.0, 44749.0, 97720.0, 263603.0, 355157.0, 19500.0, 0.0, 0.0, 0.0], "签单": [89809.0, 436800.0, 2043747.0, 420092.0, 44749.0, 97720.0, 263603.0, 121157.0, 253500.0, 0.0, 0.0, 0.0], "批核": [580186.0, 897000.0, 335547.0, 1755000.0, 574298.0, 0.0, 398456.0, 25018.0, 25756.0, 253500.0, 0.0, 0.0]}, "ICLUB业务": {"labels": ["26-Jan", "26-Feb", "26-Mar", "26-Apr", "26-May", "26-Jun", "26-Jul", "26-Aug", "26-Sep", "26-Oct", "26-Nov", "26-Dec"], "预约": [2390000.0, 12109200.0, 1818814.0, 4000000.0, 8798.0, 0.0, 0.0, 468000.0, 2000000.0, 0.0, 0.0, 0.0], "签单": [2390000.0, 12109200.0, 1800000.0, 18814.0, 4008798.0, 0.0, 0.0, 468000.0, 2000000.0, 0.0, 0.0, 0.0], "批核": [2078000.0, 12000000.0, 499200.0, 0.0, 5827612.0, 0.0, 0.0, 234000.0, 2234000.0, 0.0, 0.0, 0.0]}, "IFA业务": {"labels": ["26-Jan", "26-Feb", "26-Mar", "26-Apr", "26-May", "26-Jun", "26-Jul", "26-Aug", "26-Sep", "26-Oct", "26-Nov", "26-Dec"], "预约": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 312000.0, 538200.0, 0.0, 0.0], "签单": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 850200.0, 0.0, 0.0], "批核": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]}}}, "p5": {"issued": 772125888.1200001, "unbat": 87065729.28999999, "pend": 9082797.6, "labels": ["IFA业务", "ICLUB业务", "成事家办", "合伙转介业务", "同行经代", "天领业务", "BK业务", "永明经代"], "issued_arr": [0.0, 22872812.08, 9572148.16, 4844759.77, 215766149.94, 82202747.0, 253002615.06, 183864656.11], "unbat_arr": [850200.0, 0.0, 390000.0, 78000.0, 33924972.74, 6763125.05, 27378000.0, 17681431.5], "pend_arr": [0.0, 0.0, 0.0, 0.0, 5580300.0, 1237797.6, 780000.0, 1484700.0], "gap_arr": [24149800.0, 29127187.92, 60037851.84, 68077240.23, 0, 102796330.35000001, 0, 136969212.39]}, "p6": {"weekly_trend": {"labels": ["W01", "W02", "W03", "W04", "W05", "W06", "W07", "W08", "W09", "W10", "W11", "W12", "W13", "W14", "W15", "W16", "W17", "W18", "W19", "W20", "W21", "W22", "W23", "W24", "W25", "W26", "W27", "W28", "W29", "W30", "W31", "W32", "W33", "W34", "W35", "W36", "W37", "W38", "W39", "W40"], "预约": [6517000.0, 13642352.0, 17187320.0, 9874111.0, 26635568.0, 12644400.0, 2730000.0, 7083610.0, 5879577.0, 17118844.0, 17197740.0, 24995689.0, 4356154.0, 12627356.0, 12387718.0, 26751274.0, 9685279.0, 7383486.0, 19616643.0, 20753187.0, 16549165.0, 9556368.0, 18327135.0, 16792926.0, 21149607.0, 10614216.0, 21436173.0, 16039807.0, 27879220.0, 22265246.0, 9664972.0, 15107400.0, 17145888.0, 16333545.0, 11029950.0, 11152550.0, 13512264.0, 14163057.0, 6327485.0, 17612463.0], "签单": [2633809.0, 10231935.0, 12697036.0, 11540611.0, 31284368.0, 11209600.0, 3772800.0, 7377210.0, 3839790.0, 11377470.0, 16645001.0, 25257018.0, 14818311.0, 6519206.0, 13358448.0, 18134684.0, 16858369.0, 10686500.0, 18656390.0, 11645938.0, 28469743.0, 10734812.0, 10497135.0, 18961326.0, 25474107.0, 11559516.0, 9550055.0, 21419218.0, 26646112.0, 24255622.0, 14903512.0, 16216200.0, 17002162.0, 17219445.0, 9008080.0, 10026545.0, 16561284.0, 8838180.0, 10409600.0, 13333607.0], "递交": [9956700.0, 7797200.0, 10945152.0, 16190229.0, 31581271.0, 12723508.0, 0.0, 4014000.0, 10897800.0, 9828330.0, 11166924.0, 13160231.0, 33144438.0, 4078677.0, 11267147.0, 15454891.0, 22932928.0, 4624440.0, 5497617.0, 16312788.0, 22659119.0, 29819056.0, 9740438.0, 9865800.0, 22350946.0, 18464885.0, 11999196.0, 18629166.0, 22089107.0, 32261191.0, 10990530.0, 18379238.0, 14834508.0, 16673365.0, 15226163.0, 9050205.0, 13901307.0, 11405957.0, 10233800.0, 12821923.0], "批核": [18039303.0, 46349777.0, 29206727.0, 20065672.0, 29969720.0, 39454447.0, 7259039.0, 67047083.0, 15836380.0, 11115610.0, 41560280.0, 7943345.0, 15722324.0, 12380400.0, 24322911.0, 24574708.0, 23490565.0, 8410256.0, 15889971.0, 20388164.0, 28085788.0, 12469870.0, 12000490.0, 15444022.0, 19123536.0, 11189625.0, 18403831.0, 7717718.0, 13988406.0, 19474788.0, 22350567.0, 16220419.0, 16221665.0, 13834725.0, 13826535.0, 13056798.0, 14240746.0, 9675673.0, 4840496.0, 7813509.0]}}, "p7": {"labels": ["≤7天", "8-14天", "15-30天", "31-60天", "61-90天", ">90天"], "counts": [220, 369, 611, 286, 69, 91]}, "p8": {"labels": ["姜通", "战略合作", "高瑶", "白博文", "Mark", "魏子璐"], "batch": [200248265.86, 54189446.06, 30314116.2, 25829788.47, 13278000.0, 1880455.2], "unbat": [32229969.14, 5315190.0, 2922000.0, 9278137.2, 0.0, 0.0], "pend": [6075300.0, 285000.0, 0.0, 704700.0, 0.0, 0.0]}, "p9": {"weekly_trend": {"labels": ["W01", "W02", "W03", "W04", "W05", "W06", "W07", "W08", "W09", "W10", "W11", "W12", "W13", "W14", "W15", "W16", "W17", "W18", "W19", "W20", "W21", "W22", "W23", "W24", "W25", "W26", "W27", "W28", "W29", "W30", "W31", "W32", "W33", "W34", "W35", "W36", "W37", "W38", "W39", "W40"], "预约": [3154000.0, 6388260.0, 8301300.0, 5342311.0, 6189060.0, 5760000.0, 2106000.0, 6925810.0, 3409590.0, 9705730.0, 11347740.0, 12705717.0, 2336640.0, 6776664.0, 7594714.0, 19866874.0, 3626679.0, 5535758.0, 10362696.0, 10876094.0, 10474080.0, 7459950.0, 14583135.0, 15271926.0, 13721790.0, 9496359.0, 10006174.0, 12451807.0, 22505356.0, 13847630.0, 6828172.0, 9351000.0, 12046507.0, 11246143.0, 5173095.0, 6578550.0, 10041264.0, 8211785.0, 5087285.0, 16268437.0], "签单": [1170000.0, 3679855.0, 5343005.0, 5991611.0, 11376060.0, 4211400.0, 2649600.0, 4441210.0, 2121990.0, 8136540.0, 8793830.0, 18832017.0, 5326340.0, 4889700.0, 6937258.0, 9403771.0, 14745169.0, 3663100.0, 10704398.0, 7491255.0, 15302509.0, 8301450.0, 7767135.0, 15490326.0, 19629690.0, 7337259.0, 6332056.0, 10945218.0, 21438263.0, 22730990.0, 6401512.0, 10927800.0, 10879207.0, 13173343.0, 3159300.0, 4516545.0, 11982684.0, 6946680.0, 6087600.0, 12795407.0], "批核": [13656843.0, 40402199.0, 17310115.0, 16387855.0, 8469720.0, 5191967.0, 5299500.0, 7023575.0, 3170700.0, 4407610.0, 3401550.0, 2093345.0, 11677140.0, 4789400.0, 15536535.0, 7991277.0, 10271796.0, 5115450.0, 10888306.0, 10478985.0, 9595406.0, 5683870.0, 8622213.0, 5979744.0, 15571058.0, 9916884.0, 16014343.0, 6634850.0, 7616038.0, 14700540.0, 17786707.0, 10532366.0, 11102650.0, 11594323.0, 11669834.0, 8011143.0, 8681591.0, 7759273.0, 4154096.0, 4440009.0]}}};
+const PDATA = {"p1": {"business_type": {"经代业务": {"batch": 652633421.1099999, "unbat": 78984404.24, "pend": 7845000.0}, "代理人业务": {"batch": 91774895.16, "unbat": 7153125.05, "pend": 1237797.6}, "KA业务": {"batch": 27717571.85, "unbat": 928200.0, "pend": 0.0}}, "monthly_trend": {"labels": ["25-Jan", "25-Feb", "25-Mar", "25-Apr", "25-May", "25-Jun", "25-Jul", "25-Aug", "25-Sep", "25-Oct", "25-Nov", "25-Dec", "26-Jan", "26-Feb", "26-Mar", "26-Apr", "26-May", "26-Jun", "26-Jul", "26-Aug", "26-Sep", "26-Oct"], "预约": [22560613.0, 38907760.0, 34295208.0, 29108646.0, 45504949.0, 178786707.0, 41339770.0, 61380033.0, 144649083.0, 77582700.0, 181578033.0, 141333661.0, 53902782.0, 56367834.0, 81478673.0, 67372321.0, 80958331.0, 84130875.0, 106836494.0, 64910041.0, 51711810.0, 18306663.0], "签单": [25095613.0, 37816349.0, 36049619.0, 21145859.0, 39550539.0, 188679104.0, 34340170.0, 66634250.0, 145046039.0, 77814089.0, 172329160.0, 147015562.0, 47898592.0, 61126234.0, 82149259.0, 62096461.0, 85228491.0, 85484011.0, 101352433.0, 71764461.0, 50311888.0, 14945207.0], "批核": [41402628.0, 21652059.0, 35513884.0, 27540230.0, 28622463.0, 77238089.0, 102660084.0, 44929512.0, 61434790.0, 93420117.0, 38745746.0, 43681497.0, 116781479.0, 143730290.0, 85756139.0, 91151383.0, 72813178.0, 61896544.0, 67915743.0, 75136310.0, 47358313.0, 9586509.0]}}, "p2": {"labels": ["26-Jan", "26-Feb", "26-Mar", "26-Apr", "26-May", "26-Jun", "26-Jul", "26-Aug", "26-Sep", "26-Oct"], "values": [116781478.92000002, 143730289.68, 85756138.71000001, 91151383.36, 72813178.43, 61896543.58, 67915743.00999999, 75136310.37, 47358313.06, 9586509.0]}, "p3": {"monthly_trend": {"labels": ["26-Jan", "26-Feb", "26-Mar", "26-Apr", "26-May", "26-Jun", "26-Jul", "26-Aug", "26-Sep", "26-Oct", "26-Nov", "26-Dec"], "预约": [17009555.0, 16059670.0, 23888220.0, 15677534.0, 16563931.0, 22253021.0, 13736225.0, 12033950.0, 10886857.0, 7532137.0, 0.0, 0.0], "签单": [13744355.0, 15183070.0, 26732520.0, 14796900.0, 17206965.0, 23175521.0, 12965525.0, 13175450.0, 10556972.0, 6767322.0, 0.0, 0.0], "批核": [45962575.0, 20312451.0, 13530550.0, 28835640.0, 10849140.0, 12472926.0, 24384221.0, 14949217.0, 11015436.0, 1552500.0, 0.0, 0.0]}}, "p4": {"bubbles": [{"x": 193.0, "y": 42.59209689119171, "r": 19.94646072565256, "label": "天领业务"}, {"x": 70.0, "y": 13.67449737142857, "r": 6.806555450034915, "label": "成事家办"}, {"x": 200.0, "y": 126.50130752999999, "r": 34.993323032978736, "label": "BK业务"}, {"x": 160.0, "y": 134.8538437125, "r": 32.3157572355902, "label": "同行经代"}, {"x": 340.0, "y": 54.07784003235294, "r": 29.831274454377578, "label": "永明经代"}, {"x": 73.0, "y": 6.6366572191780815, "r": 6, "label": "合伙转介业务"}, {"x": 52.0, "y": 43.98617707692307, "r": 10.521616342900934, "label": "ICLUB业务"}, {"x": 25.0, "y": 0.0, "r": 6, "label": "IFA业务"}], "waterfall": [{"label": "年度目标", "value": 1113000000.0, "kind": "base"}, {"label": "BK业务批核", "value": -253002615.06, "kind": "seg"}, {"label": "同行经代批核", "value": -215766149.94, "kind": "seg"}, {"label": "永明经代批核", "value": -183864656.11, "kind": "seg"}, {"label": "天领业务批核", "value": -82202747.0, "kind": "seg"}, {"label": "ICLUB业务批核", "value": -22872812.08, "kind": "seg"}, {"label": "成事家办批核", "value": -9572148.16, "kind": "seg"}, {"label": "合伙转介业务批核", "value": -4844759.77, "kind": "seg"}, {"label": "未批核", "value": -87065729.29, "kind": "seg"}, {"label": "待签", "value": -9082797.6, "kind": "seg"}, {"label": "扣在途后差额", "value": 244725584.98999986, "kind": "final"}], "segments": ["天领业务", "成事家办", "BK业务", "同行经代", "永明经代", "合伙转介业务", "ICLUB业务", "IFA业务"], "monthly_by_segment": {"天领业务": {"labels": ["26-Jan", "26-Feb", "26-Mar", "26-Apr", "26-May", "26-Jun", "26-Jul", "26-Aug", "26-Sep", "26-Oct", "26-Nov", "26-Dec"], "预约": [6673951.0, 9730508.0, 11283825.0, 8657125.0, 19773305.0, 5716171.0, 9167415.0, 3503425.0, 8126331.0, 564026.0, 0.0, 0.0], "签单": [4957951.0, 11212508.0, 10297125.0, 9698425.0, 19264761.0, 5780116.0, 8582415.0, 4470900.0, 7694085.0, 0.0, 0.0, 0.0], "批核": [6761793.0, 10518448.0, 6294167.0, 16601975.0, 6022561.0, 17112775.0, 6641257.0, 7951612.0, 1895760.0, 2402400.0, 0.0, 0.0]}, "成事家办": {"labels": ["26-Jan", "26-Feb", "26-Mar", "26-Apr", "26-May", "26-Jun", "26-Jul", "26-Aug", "26-Sep", "26-Oct", "26-Nov", "26-Dec"], "预约": [1023000.0, 390000.0, 312000.0, 2631479.0, 1533000.0, 819000.0, 268460.0, 1973400.0, 0.0, 0.0, 0.0, 0.0], "签单": [1023000.0, 390000.0, 312000.0, 1893479.0, 2271000.0, 819000.0, 268460.0, 1973400.0, 0.0, 0.0, 0.0, 0.0], "批核": [1344688.0, 390000.0, 468000.0, 1692600.0, 2607000.0, 477000.0, 975000.0, 112460.0, 1505400.0, 0.0, 0.0, 0.0]}, "BK业务": {"labels": ["26-Jan", "26-Feb", "26-Mar", "26-Apr", "26-May", "26-Jun", "26-Jul", "26-Aug", "26-Sep", "26-Oct", "26-Nov", "26-Dec"], "预约": [13862160.0, 5803200.0, 14040000.0, 7332000.0, 6864000.0, 8884200.0, 19500000.0, 16259295.0, 6318000.0, 780000.0, 0.0, 0.0], "签单": [17138160.0, 6817200.0, 12480000.0, 8502000.0, 6864000.0, 10054200.0, 13260000.0, 19500000.0, 9317295.0, 0.0, 0.0, 0.0], "批核": [18259800.0, 93940080.0, 58699680.0, 27222000.0, 21703560.0, 6240000.0, 7228260.0, 10469940.0, 8459295.0, 780000.0, 0.0, 0.0]}, "同行经代": {"labels": ["26-Jan", "26-Feb", "26-Mar", "26-Apr", "26-May", "26-Jun", "26-Jul", "26-Aug", "26-Sep", "26-Oct", "26-Nov", "26-Dec"], "预约": [6176316.0, 4921200.0, 15230198.0, 22496397.0, 20840697.0, 32903378.0, 50373504.0, 27515872.0, 23971122.0, 8892300.0, 0.0, 0.0], "签单": [2588316.0, 7495200.0, 15620198.0, 21779057.0, 20212237.0, 32470484.0, 50736858.0, 29254612.0, 20412037.0, 7327685.0, 0.0, 0.0], "批核": [41794438.0, 5672311.0, 5928995.0, 15044168.0, 25229007.0, 25593843.0, 28288550.0, 41394063.0, 22222666.0, 4598109.0, 0.0, 0.0]}, "永明经代": {"labels": ["26-Jan", "26-Feb", "26-Mar", "26-Apr", "26-May", "26-Jun", "26-Jul", "26-Aug", "26-Sep", "26-Oct", "26-Nov", "26-Dec"], "预约": [17009555.0, 16059670.0, 23888220.0, 15677534.0, 16563931.0, 22253021.0, 13736225.0, 12033950.0, 10886857.0, 7532137.0, 0.0, 0.0], "签单": [13744355.0, 15183070.0, 26732520.0, 14796900.0, 17206965.0, 23175521.0, 12965525.0, 13175450.0, 10556972.0, 6767322.0, 0.0, 0.0], "批核": [45962575.0, 20312451.0, 13530550.0, 28835640.0, 10849140.0, 12472926.0, 24384221.0, 14949217.0, 11015436.0, 1552500.0, 0.0, 0.0]}, "合伙转介业务": {"labels": ["26-Jan", "26-Feb", "26-Mar", "26-Apr", "26-May", "26-Jun", "26-Jul", "26-Aug", "26-Sep", "26-Oct", "26-Nov", "26-Dec"], "预约": [436800.0, 79800.0, 1963947.0, 420092.0, 44749.0, 97720.0, 263603.0, 355157.0, 19500.0, 0.0, 0.0, 0.0], "签单": [89809.0, 436800.0, 2043747.0, 420092.0, 44749.0, 97720.0, 263603.0, 121157.0, 253500.0, 0.0, 0.0, 0.0], "批核": [580186.0, 897000.0, 335547.0, 1755000.0, 574298.0, 0.0, 398456.0, 25018.0, 25756.0, 253500.0, 0.0, 0.0]}, "ICLUB业务": {"labels": ["26-Jan", "26-Feb", "26-Mar", "26-Apr", "26-May", "26-Jun", "26-Jul", "26-Aug", "26-Sep", "26-Oct", "26-Nov", "26-Dec"], "预约": [2390000.0, 12109200.0, 1818814.0, 4000000.0, 8798.0, 0.0, 0.0, 468000.0, 2000000.0, 0.0, 0.0, 0.0], "签单": [2390000.0, 12109200.0, 1800000.0, 18814.0, 4008798.0, 0.0, 0.0, 468000.0, 2000000.0, 0.0, 0.0, 0.0], "批核": [2078000.0, 12000000.0, 499200.0, 0.0, 5827612.0, 0.0, 0.0, 234000.0, 2234000.0, 0.0, 0.0, 0.0]}, "IFA业务": {"labels": ["26-Jan", "26-Feb", "26-Mar", "26-Apr", "26-May", "26-Jun", "26-Jul", "26-Aug", "26-Sep", "26-Oct", "26-Nov", "26-Dec"], "预约": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 312000.0, 538200.0, 0.0, 0.0], "签单": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 850200.0, 0.0, 0.0], "批核": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]}}}, "p5": {"issued": 772125888.1200001, "unbat": 87065729.28999999, "pend": 9082797.6, "labels": ["IFA业务", "ICLUB业务", "成事家办", "合伙转介业务", "同行经代", "天领业务", "BK业务", "永明经代"], "issued_arr": [0.0, 22872812.08, 9572148.16, 4844759.77, 215766149.94, 82202747.0, 253002615.06, 183864656.11], "unbat_arr": [850200.0, 0.0, 390000.0, 78000.0, 33924972.74, 6763125.05, 27378000.0, 17681431.5], "pend_arr": [0.0, 0.0, 0.0, 0.0, 5580300.0, 1237797.6, 780000.0, 1484700.0], "gap_arr": [24149800.0, 29127187.92, 60037851.84, 68077240.23, 0, 102796330.35000001, 0, 136969212.39]}, "p6": {"weekly_trend": {"labels": ["W01", "W02", "W03", "W04", "W05", "W06", "W07", "W08", "W09", "W10", "W11", "W12", "W13", "W14", "W15", "W16", "W17", "W18", "W19", "W20", "W21", "W22", "W23", "W24", "W25", "W26", "W27", "W28", "W29", "W30", "W31", "W32", "W33", "W34", "W35", "W36", "W37", "W38", "W39", "W40"], "预约": [6517000.0, 13642352.0, 17187320.0, 9874111.0, 26635568.0, 12644400.0, 2730000.0, 7083610.0, 5879577.0, 17118844.0, 17197740.0, 24995689.0, 4356154.0, 12627356.0, 12387718.0, 26751274.0, 9685279.0, 7383486.0, 19616643.0, 20753187.0, 16549165.0, 9556368.0, 18327135.0, 16792926.0, 21149607.0, 10614216.0, 21436173.0, 16039807.0, 27879220.0, 22265246.0, 9664972.0, 15107400.0, 17145888.0, 16333545.0, 11029950.0, 11152550.0, 13512264.0, 14163057.0, 6327485.0, 17612463.0], "签单": [2633809.0, 10231935.0, 12697036.0, 11540611.0, 31284368.0, 11209600.0, 3772800.0, 7377210.0, 3839790.0, 11377470.0, 16645001.0, 25257018.0, 14818311.0, 6519206.0, 13358448.0, 18134684.0, 16858369.0, 10686500.0, 18656390.0, 11645938.0, 28469743.0, 10734812.0, 10497135.0, 18961326.0, 25474107.0, 11559516.0, 9550055.0, 21419218.0, 26646112.0, 24255622.0, 14903512.0, 16216200.0, 17002162.0, 17219445.0, 9008080.0, 10026545.0, 16561284.0, 8838180.0, 10409600.0, 13333607.0], "递交": [9956700.0, 7797200.0, 10945152.0, 16190229.0, 31581271.0, 12723508.0, 0.0, 4014000.0, 10897800.0, 9828330.0, 11166924.0, 13160231.0, 33144438.0, 4078677.0, 11267147.0, 15454891.0, 22932928.0, 4624440.0, 5497617.0, 16312788.0, 22659119.0, 29819056.0, 9740438.0, 9865800.0, 22350946.0, 18464885.0, 11999196.0, 18629166.0, 22089107.0, 32261191.0, 10990530.0, 18379238.0, 14834508.0, 16673365.0, 15226163.0, 9050205.0, 13901307.0, 11405957.0, 10233800.0, 12821923.0], "批核": [18039303.0, 46349777.0, 29206727.0, 20065672.0, 29969720.0, 39454447.0, 7259039.0, 67047083.0, 15836380.0, 11115610.0, 41560280.0, 7943345.0, 15722324.0, 12380400.0, 24322911.0, 24574708.0, 23490565.0, 8410256.0, 15889971.0, 20388164.0, 28085788.0, 12469870.0, 12000490.0, 15444022.0, 19123536.0, 11189625.0, 18403831.0, 7717718.0, 13988406.0, 19474788.0, 22350567.0, 16220419.0, 16221665.0, 13834725.0, 13826535.0, 13056798.0, 14240746.0, 9675673.0, 4840496.0, 7813509.0]}}, "p7": {"labels": ["≤7天", "8-14天", "15-30天", "31-60天", "61-90天", ">90天"], "counts": [220, 369, 611, 286, 69, 91]}, "p8": {"labels": ["姜通", "战略合作", "高瑶", "白博文", "Mark", "魏子璐"], "batch": [200248265.86, 54189446.06, 30314116.2, 25829788.47, 13278000.0, 1880455.2], "unbat": [32229969.14, 5315190.0, 2922000.0, 9278137.2, 0.0, 0.0], "pend": [6075300.0, 285000.0, 0.0, 704700.0, 0.0, 0.0]}, "p9": {"weekly_trend": {"labels": ["W01", "W02", "W03", "W04", "W05", "W06", "W07", "W08", "W09", "W10", "W11", "W12", "W13", "W14", "W15", "W16", "W17", "W18", "W19", "W20", "W21", "W22", "W23", "W24", "W25", "W26", "W27", "W28", "W29", "W30", "W31", "W32", "W33", "W34", "W35", "W36", "W37", "W38", "W39", "W40"], "预约": [3154000.0, 6388260.0, 8301300.0, 5342311.0, 6189060.0, 5760000.0, 2106000.0, 6925810.0, 3409590.0, 9705730.0, 11347740.0, 12705717.0, 2336640.0, 6776664.0, 7594714.0, 19866874.0, 3626679.0, 5535758.0, 10362696.0, 10876094.0, 10474080.0, 7459950.0, 14583135.0, 15271926.0, 13721790.0, 9496359.0, 10006174.0, 12451807.0, 22505356.0, 13847630.0, 6828172.0, 9351000.0, 12046507.0, 11246143.0, 5173095.0, 6578550.0, 10041264.0, 8211785.0, 5087285.0, 16268437.0], "签单": [1170000.0, 3679855.0, 5343005.0, 5991611.0, 11376060.0, 4211400.0, 2649600.0, 4441210.0, 2121990.0, 8136540.0, 8793830.0, 18832017.0, 5326340.0, 4889700.0, 6937258.0, 9403771.0, 14745169.0, 3663100.0, 10704398.0, 7491255.0, 15302509.0, 8301450.0, 7767135.0, 15490326.0, 19629690.0, 7337259.0, 6332056.0, 10945218.0, 21438263.0, 22730990.0, 6401512.0, 10927800.0, 10879207.0, 13173343.0, 3159300.0, 4516545.0, 11982684.0, 6946680.0, 6087600.0, 12795407.0], "批核": [13656843.0, 40402199.0, 17310115.0, 16387855.0, 8469720.0, 5191967.0, 5299500.0, 7023575.0, 3170700.0, 4407610.0, 3401550.0, 2093345.0, 11677140.0, 4789400.0, 15536535.0, 7991277.0, 10271796.0, 5115450.0, 10888306.0, 10478985.0, 9595406.0, 5683870.0, 8622213.0, 5979744.0, 15571058.0, 9916884.0, 16014343.0, 6634850.0, 7616038.0, 14700540.0, 17786707.0, 10532366.0, 11102650.0, 11594323.0, 11669834.0, 8011143.0, 8681591.0, 7759273.0, 4154096.0, 4440009.0]}}, "p10": {"monthly": {"labels": ["2026-01", "2026-02", "2026-03", "2026-04", "2026-05", "2026-06", "2026-07", "2026-08", "2026-09", "2026-10"], "ape": [15139800.0, 93940080.0, 56905680.0, 29016000.0, 21703560.06, 5928000.0, 7540260.0, 9689940.0, 9239295.0, 780000.0], "cnt": [24.0, 67.0, 39.0, 33.0, 16.0, 11.0, 14.0, 16.0, 11.0, 1.0]}, "weekly": {"labels": ["W01", "W02", "W03", "W04", "W05", "W06", "W07", "W08", "W09", "W10", "W11", "W12", "W13", "W14", "W15", "W16", "W17", "W18", "W19", "W20", "W21", "W22", "W23", "W24", "W25", "W26", "W27", "W28", "W29", "W30", "W31", "W32", "W33", "W34", "W35", "W36", "W37", "W38", "W39", "W40"], "预约": [2340000.0, 3694080.0, 6034080.0, 1794000.0, 2730000.0, 3073200.0, 0.0, 0.0, 2340000.0, 5460000.0, 3510000.0, 2730000.0, 0.0, 5226000.0, 390000.0, 1716000.0, 1170000.0, 390000.0, 1014000.0, 780000.0, 3510000.0, 1170000.0, 2964000.0, 780000.0, 3970200.0, 390000.0, 5460000.0, 2730000.0, 4680000.0, 6240000.0, 1170000.0, 5070000.0, 2340000.0, 3900000.0, 5339295.0, 780000.0, 780000.0, 3198000.0, 0.0, 780000.0], "签单": [780000.0, 3694080.0, 5254080.0, 2730000.0, 2184000.0, 4243200.0, 390000.0, 0.0, 1560000.0, 2340000.0, 4680000.0, 1950000.0, 3510000.0, 156000.0, 4290000.0, 1950000.0, 546000.0, 2340000.0, 1170000.0, 1014000.0, 2340000.0, 1170000.0, 2574000.0, 2340000.0, 3190200.0, 2730000.0, 2340000.0, 4290000.0, 4680000.0, 0.0, 7020000.0, 4290000.0, 3120000.0, 3510000.0, 4559295.0, 2340000.0, 780000.0, 1638000.0, 1560000.0, 0.0], "批核": [1950000.0, 3361800.0, 8034000.0, 1794000.0, 17160000.0, 27952080.0, 1950000.0, 46878000.0, 10417680.0, 4680000.0, 35958000.0, 5850000.0, 2184000.0, 4290000.0, 7644000.0, 11778000.0, 3120000.0, 1950000.0, 3295560.0, 2340000.0, 14118000.0, 1560000.0, 780000.0, 780000.0, 2808000.0, 312000.0, 1560000.0, 0.0, 3510000.0, 2158260.0, 2028000.0, 1811940.0, 4290000.0, 1560000.0, 1170000.0, 4169295.0, 2730000.0, 780000.0, 390000.0, 780000.0]}, "branch": {"labels": ["民生广州分行", "民生南京分行", "民生上海分行", "民生北京分行", "民生深圳分行", "平安香港分行许菁", "平安香港分行徐艳", "民生重庆分行", "民生杭州分行", "平安香港分行钟丽丽"], "values": [44479560.06, 39429000.0, 30076800.0, 18938400.0, 18876000.0, 16649295.0, 15600000.0, 13728000.0, 7410000.0, 6951360.0]}}, "p11": {"monthly_trend": {"labels": ["26-Jan", "26-Feb", "26-Mar", "26-Apr", "26-May", "26-Jun", "26-Jul", "26-Aug"], "预约": [7696951.0, 10120508.0, 11595825.0, 11288604.0, 21306305.0, 6535171.0, 9435875.0, 5476825.0], "签单": [5980951.0, 11602508.0, 10609125.0, 11591904.0, 21535761.0, 6599116.0, 8850875.0, 6444300.0], "批核": [8106481.0, 10908448.0, 6762167.0, 18294575.0, 8629561.0, 17589775.0, 7616257.0, 8064072.0]}}, "p12": {"monthly_trend": {"labels": ["26-Jan", "26-Feb", "26-Mar", "26-Apr", "26-May", "26-Jun", "26-Jul", "26-Aug"], "预约": [2826800.0, 12189000.0, 3782761.0, 4420092.0, 53547.0, 97720.0, 263603.0, 823157.0], "签单": [2479809.0, 12546000.0, 3843747.0, 438905.0, 4053547.0, 97720.0, 263603.0, 589157.0], "批核": [2658186.0, 12897000.0, 834747.0, 1755000.0, 6401910.0, 0.0, 398456.0, 259018.0]}}};
 const PALETTE = {navy:'#16213f', teal:'#1a7a6e', red:'#a83a3a', gold:'#b4861f', blue:'#2b6cb0', steel:'#4a6fa5', purple:'#5b3a7a', gray:'#9aa3b2'};
 function fmtM(v){ return (v/1e6).toFixed(1)+'M'; }
 Chart.defaults.font.family = "'PingFang SC','Microsoft YaHei',sans-serif";
@@ -875,6 +1305,39 @@ document.addEventListener('DOMContentLoaded', function(){
       {label:'同行签单(M)', data:d.p9.weekly_trend['签单'].map(v=>v/1e6)},
       {label:'同行批核(M)', data:d.p9.weekly_trend['批核'].map(v=>v/1e6)},
     ], [PALETTE.steel, PALETTE.teal, PALETTE.navy], {elements:{point:{radius:1.5}}});
+  }
+  // page10（Phase2新增）
+  if(d.p10){
+    const elM=document.getElementById('p10_chartMonthly');
+    if(elM){
+      new Chart(elM, {type:'bar', data:{labels:d.p10.monthly.labels, datasets:[
+        {type:'bar', label:'批核APE(M)', data:d.p10.monthly.ape.map(v=>v/1e6), backgroundColor:PALETTE.navy, yAxisID:'y'},
+        {type:'line', label:'批核件数', data:d.p10.monthly.cnt, borderColor:PALETTE.gold, backgroundColor:PALETTE.gold, yAxisID:'y1', tension:0.2},
+      ]}, options:{responsive:true, maintainAspectRatio:false,
+        scales:{y:{position:'left', title:{display:true,text:'APE(M)'}}, y1:{position:'right', title:{display:true,text:'件数'}, grid:{drawOnChartArea:false}}}}});
+    }
+    lineChart('p10_chartWeekly', d.p10.weekly.labels, [
+      {label:'预约(M)', data:d.p10.weekly['预约'].map(v=>v/1e6)},
+      {label:'签单(M)', data:d.p10.weekly['签单'].map(v=>v/1e6)},
+      {label:'批核(M)', data:d.p10.weekly['批核'].map(v=>v/1e6)},
+    ], [PALETTE.steel, PALETTE.teal, PALETTE.navy], {elements:{point:{radius:1.5}}});
+    barChart('p10_chartAD', d.p10.branch.labels, [{label:'批核APE(M)', data:d.p10.branch.values.map(v=>v/1e6)}], [PALETTE.navy], {indexAxis:'y', plugins:{legend:{display:false}}});
+  }
+  // page11（Phase2新增）
+  if(d.p11){
+    lineChart('p11_chartTrend', d.p11.monthly_trend.labels, [
+      {label:'预约(M)', data:d.p11.monthly_trend['预约'].map(v=>v/1e6)},
+      {label:'签单(M)', data:d.p11.monthly_trend['签单'].map(v=>v/1e6)},
+      {label:'批核(M)', data:d.p11.monthly_trend['批核'].map(v=>v/1e6)},
+    ], [PALETTE.steel, PALETTE.teal, PALETTE.navy]);
+  }
+  // page12（Phase2新增）
+  if(d.p12){
+    lineChart('p12_chartTrend', d.p12.monthly_trend.labels, [
+      {label:'预约(M)', data:d.p12.monthly_trend['预约'].map(v=>v/1e6)},
+      {label:'签单(M)', data:d.p12.monthly_trend['签单'].map(v=>v/1e6)},
+      {label:'批核(M)', data:d.p12.monthly_trend['批核'].map(v=>v/1e6)},
+    ], [PALETTE.steel, PALETTE.teal, PALETTE.navy]);
   }
 });
 </script>
