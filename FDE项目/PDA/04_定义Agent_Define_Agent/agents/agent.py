@@ -18,6 +18,7 @@ PDA 主循环入口。demo 阶段是一次性全量流程，不做常驻监控/�
     python3 agent.py --ppt           # 从template.pptx+S1-S9 CSV生成周业绩PPT（第1/8/9/10/11页，已停止投入，见执行记录v0.15.0）
     python3 agent.py --frontend      # 从S1-S9 CSV生成多视角前端HTML（代替PPT，S1/S2/S3/S4/同行/银行/代理人/KA/永明业绩共9个视角，v0.18.0已跟真实12页周报数据+结构颗粒度基本对齐）
     python3 agent.py --refresh-frontend  # 一条命令跑完前端需要的全部步骤：sync-targets+s1+s2+s3+s4+s9+frontend
+    python3 agent.py --mark-report    # 生成Mark标准报表（18页打印页面，本轮第1-9页，v0.20.0新增，需要先跑--s1/--s2/--s3/--s4/--s6）
     python3 agent.py --status        # 查看上次运行的记录
 
 换新底表更新前端报表的流程：
@@ -56,7 +57,7 @@ from memory.workspace import Workspace
 
 RAW_DATA_DIR = AGENT_ROOT / "07_接入记忆_Integrate_Memory" / "raw_data"
 FACT_TARGET_SNAPSHOT = AGENT_ROOT / "07_接入记忆_Integrate_Memory" / "data" / "fact_target_snapshot.csv"
-AGENT_VERSION = "v0.19.0"
+AGENT_VERSION = "v0.21.0"
 
 
 def run():
@@ -366,6 +367,35 @@ def build_frontend():
     print(f"输出: {out_path}（双击用浏览器打开）")
 
 
+def build_mark_report():
+    """Mark标准报表（18页打印页面，v0.20.0新增），本轮只实现第1-9页，第10-18页待续。
+    需要S1/S2/S3/S4/S6数据（S6用于第6/8页KA全量排名，跟前端9视角不同，--refresh-frontend
+    不会自动刷新S6，换新底表后要单独跑一遍--s6）。"""
+    import skills.mark_standard_report as mark_standard_report
+    from skills.data_loader import DataLoader
+
+    data_dir = AGENT_ROOT / "07_接入记忆_Integrate_Memory" / "data"
+    for required in ("S1_总览仪表盘", "S2_业务端视角", "S3_执行管理端", "S4_产品端视角"):
+        if not (data_dir / required).exists():
+            print(f"❌ 找不到 {required} 数据，先跑对应的 --s1/--s2/--s3/--s4")
+            return
+    if not (data_dir / "S6_市场与交叉视角").exists():
+        print("❌ 找不到 S6_市场与交叉视角 数据（第6/8页KA排名需要），先跑 --s6")
+        return
+
+    raw_data_dir = AGENT_ROOT / "07_接入记忆_Integrate_Memory" / "raw_data"
+    source_files = DataLoader(raw_data_dir).discover_files()
+    source_name = source_files[-1].name if source_files else "业绩数据底表.xlsx"
+
+    html = mark_standard_report.render(data_dir, agent_version=AGENT_VERSION, source_name=source_name)
+    out_path = data_dir / "业绩数据分析_Mark标准报表.html"
+    out_path.write_text(html, encoding="utf-8")
+
+    print("✅ Mark标准报表已生成（第1-9页，共18页；第10-18页待续，见执行记录.md v0.20.0）")
+    print("   用浏览器打开后点右上角「打印/导出PDF」即可导出真实多页PDF")
+    print(f"输出: {out_path}")
+
+
 def refresh_frontend():
     """换新底表后一条命令跑完前端需要的全部步骤。9个前端视角只用到S1/S2/S3/S4/S9，
     不需要S5/S6/S7，所以只跑这5个板块，不是--run全量。sync_targets失败（比如
@@ -431,6 +461,7 @@ def main():
     ap.add_argument("--ppt", action="store_true", help="从template.pptx+S1-S9生成周业绩PPT（第1/8/9/10/11页，已停止投入）")
     ap.add_argument("--frontend", action="store_true", help="从S1-S9生成多视角前端HTML（代替PPT，9个视角全部完成）")
     ap.add_argument("--refresh-frontend", action="store_true", dest="refresh_frontend", help="换新底表后一条命令跑完sync-targets+s1/s2/s3/s4/s9+frontend")
+    ap.add_argument("--mark-report", action="store_true", dest="mark_report", help="生成Mark标准报表（18页打印页面，本轮第1-9页，需要S1/S2/S3/S4/S6数据）")
     ap.add_argument("--status", action="store_true", help="查看上次运行记录")
     args = ap.parse_args()
 
@@ -462,6 +493,8 @@ def main():
         build_frontend()
     elif args.refresh_frontend:
         refresh_frontend()
+    elif args.mark_report:
+        build_mark_report()
     elif args.status:
         show_status()
     else:
