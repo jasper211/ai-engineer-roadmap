@@ -142,6 +142,9 @@ class S3ExecutionViewBuilder:
         return self._pending_distribution(1)[1]
 
     # ---- G. 签批时效分析-2026批核 ----
+    # v0.21.0：排除TAT<0异常值（批核日早于签单日的真实脏数据），跟section_h()同一套排除
+    # 规则——之前两个函数口径不一致（section_h排除、section_g不排除），是Mark标准报表
+    # Phase 1核对出来的真实偏离（同行经代件数553 vs 排除后552），Jasper指示两边口径同步。
     def section_g(self) -> list:
         df = self.df
         rows = []
@@ -152,6 +155,12 @@ class S3ExecutionViewBuilder:
                               "中位时效(天)": None, "P90时效(天)": None, "最大时效(天)": None, "SLA达标率≤60": None})
                 continue
             tat = (g["issue_date"] - g["sign_date"]).dt.days
+            g = g[tat >= 0]
+            tat = tat[tat >= 0]
+            if len(g) == 0:
+                rows.append({"业务细分": label, "件数": 0, "件均APE": None, "平均时效(天)": None,
+                              "中位时效(天)": None, "P90时效(天)": None, "最大时效(天)": None, "SLA达标率≤60": None})
+                continue
             rows.append({
                 "业务细分": label, "件数": int(len(g)), "件均APE": float(g["ape"].mean()),
                 "平均时效(天)": round(float(tat.mean()), 1), "中位时效(天)": float(tat.median()),
@@ -160,6 +169,8 @@ class S3ExecutionViewBuilder:
             })
         all_b26 = df[(df["policy_status"] == "生效") & (df["issue_date"].dt.year == 2026)]
         tat_all = (all_b26["issue_date"] - all_b26["sign_date"]).dt.days
+        all_b26 = all_b26[tat_all >= 0]
+        tat_all = tat_all[tat_all >= 0]
         rows.append({
             "业务细分": "合计", "件数": int(len(all_b26)), "件均APE": float(all_b26["ape"].mean()),
             "平均时效(天)": round(float(tat_all.mean()), 1), "中位时效(天)": float(tat_all.median()),
@@ -190,7 +201,11 @@ class S3ExecutionViewBuilder:
             return ">90天"
 
         df["_bucket"] = df["_tat"].apply(bucket)
-        total_count, total_ape = len(df), float(df["ape"].sum())
+        # v0.21.0修复：合计行之前用排除前的len(df)（含TAT<0那1条），
+        # 分母比6档之和多1，不自洽——改成排除后的有效样本，Mark标准报表
+        # Phase1核验用的就是"6档之和=有效样本"这个口径（1646，不是1647）。
+        valid = df[df["_bucket"].notna()]
+        total_count, total_ape = len(valid), float(valid["ape"].sum())
 
         rows = []
         for label in ["≤7天", "8-14天", "15-30天", "31-60天", "61-90天", ">90天"]:

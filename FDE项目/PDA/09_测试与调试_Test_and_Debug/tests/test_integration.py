@@ -365,7 +365,10 @@ def main():
         h = {r["时效分档"]: r for r in s3b.section_h()}
         check("S3-H ≤7天分档排除TAT<0异常值", h["≤7天"]["件数"] == 220
               and abs(h["≤7天"]["APE"] - 65324249.10) < 1)
-        check("S3-H 合计=全量1647件", h["合计"]["件数"] == 1647)
+        check("S3-H 合计=排除TAT<0后的有效样本1646件（v0.21.0修复：合计行之前用排除前的1647，"
+              "6档之和对不上合计，Jasper指示section_g/section_h口径同步后一并修正）",
+              h["合计"]["件数"] == 1646
+              and sum(h[k]["件数"] for k in ["≤7天", "8-14天", "15-30天", "31-60天", "61-90天", ">90天"]) == 1646)
 
         e_ape = {r["KEY ACCOUNT"]: r for r in s3b.section_e_ape()}
         check("S3-E_ape 天誉国际(MGA)（status IN未批核4态+排期，is_pf=0）",
@@ -752,6 +755,9 @@ def main():
         check("前端S3视角 周度趋势含预约/签单/递交/批核4条完整线",
               set(["预约", "签单", "递交", "批核"]) <= set(v3["weekly_trend"].keys()))
         check("前端S3视角 签批时效表行数=G板块行数（含合计行）", len(v3["timeliness"]) == len(s3_mv["G"]))
+        _tl_row = {r["业务细分"]: r for r in v3["timeliness"]}
+        check("前端S3视角 签批时效已跟Mark标准报表同步排除TAT<0异常值（同行经代552件，不是未排除的553）",
+              _tl_row["同行经代"]["件数"] == 552 and _tl_row["合计"]["件数"] == 1646)
         check("前端S3视角 未批核/待签分布(常规)行数=E_ape非合计行数",
               len(v3["unbat_pending_regular"]["rows"]) == sum(1 for _, r in s3_mv["E_ape"].iterrows() if str(r["KEY ACCOUNT"]).strip() != "合计"))
 
@@ -1021,6 +1027,136 @@ def main():
             check("前端render()端到端跑通", False, str(e))
     else:
         check("⚠️ S2/S3/S4/S9数据不存在，跳过前端新增视角核验", True)
+
+    # ---- Mark标准报表（mark_standard_report.py，第1-9页，v0.20.0新增） ----
+    # 口径说明见mark_standard_report.py模块docstring：第7页T表+分档分布、第6/8页KA
+    # 排名、第3页I产品排名、第9页W月度分析，均跟现有multiview_dashboard.py的
+    # build_*_view()口径有真实差异，本节断言是独立pandas重算，不是对着被测代码的
+    # 自我复述。
+    s6_dir_mv = AGENT_ROOT / "07_接入记忆_Integrate_Memory" / "data" / "S6_市场与交叉视角"
+    mark_data_root = AGENT_ROOT / "07_接入记忆_Integrate_Memory" / "data"
+    if s1_dir_mv.exists() and s2_dir_mv.exists() and s3_dir_mv.exists() and s4_dir_mv.exists() and s6_dir_mv.exists():
+        import skills.mark_standard_report as msr
+
+        # --- 第7页：签批时效表+分档分布（排除TAT<0异常值，分母=1646不是1647） ---
+        base7 = df[(df["policy_status"] == "生效") & (df["issue_date"].dt.year == 2026)].copy()
+        base7["_tat"] = (base7["issue_date"] - base7["sign_date"]).dt.days
+        expect_excluded = int((base7["_tat"] < 0).sum())
+        expect_valid = int((base7["_tat"] >= 0).sum())
+        te = msr._timeliness_corrected(df)
+        check("第7页 签批时效：排除TAT<0异常值后有效样本=1646（独立pandas重算，排除数=1）",
+              te["total_valid"] == expect_valid == 1646 and te["excluded_count"] == expect_excluded == 1)
+        bucket_sum = sum(r["件数"] for r in te["bucket_rows"])
+        check("第7页 分档分布：6档件数之和=有效样本总数（不多不少，TAT<0的1条不落入任何档）",
+              bucket_sum == te["total_valid"])
+        expect_buckets = {"≤7天": 220, "8-14天": 369, "15-30天": 611, "31-60天": 286, "61-90天": 69, ">90天": 91}
+        got_buckets = {r["分档"]: r["件数"] for r in te["bucket_rows"]}
+        check("第7页 分档分布：各档件数=独立核对自Mark原文p14.txt（220/369/611/286/69/91）",
+              got_buckets == expect_buckets, f"实际 {got_buckets}")
+        check("第7页 SLA≤60天达标率=（≤7+8-14+15-30+31-60四档之和）/有效样本=1486/1646≈90.3%",
+              te["sla60_count"] == 1486 and abs(te["sla60_rate"] - 1486 / 1646) < 1e-9)
+        seg_552 = next(r for r in te["segment_rows"] if r["业务细分"] == "同行经代")
+        check("第7页 T表：排除异常值后'同行经代'件数=552（不是build_s3_view().timeliness未排除时的553，"
+              "跟Mark PDF渲染截图肉眼核对一致）",
+              seg_552["件数"] == 552)
+
+        # --- 第3页：永明未批核/待签KPI + 产品排名(SQ_rate缺失计入'未提供') ---
+        pipe3 = msr._sunlife_pipeline_kpi(df)
+        sl = df[df["carrier_code"] == msr.SUNLIFE_CARRIER]
+        from skills.s2_business_view import UNAPPROVED_STATUSES as _UNAPP
+        expect_unbat = sl[sl["policy_status"].isin(_UNAPP)]
+        expect_pend = sl[sl["policy_status"] == "排期"]
+        check("第3页 永明未批核APE/件数独立核对（carrier=香港永明金融有限公司,status IN未批核4态）",
+              abs(pipe3["unbat_ape"] - float(expect_unbat["ape"].sum())) < 1
+              and pipe3["unbat_cnt"] == len(expect_unbat) == 123)
+        check("第3页 永明待签APE/件数独立核对（status=排期）",
+              abs(pipe3["pend_ape"] - float(expect_pend["ape"].sum())) < 1
+              and pipe3["pend_cnt"] == len(expect_pend) == 11)
+
+        product3 = msr._sunlife_product_ranking(df)
+        top1 = product3["top10"][0]
+        check("第3页 产品排名：TOP1=SQ_rate缺失('未提供')档，378件/156.19M——跟S4-B/C'缺失整体排除'"
+              "口径不同，必须独立计算，不能直接复用S4的_product_top()",
+              top1["首年折扣"] == "未提供" and top1["件数"] == 378 and abs(top1["APE"] / 1e6 - 156.19) < 0.01)
+        top10_cnt = sum(r["件数"] for r in product3["top10"])
+        top10_ape = sum(r["APE"] for r in product3["top10"])
+        check("第3页 产品排名：TOP10合计987件/388.61M、总体1171件/444.41M（逐项核对自p04.txt原文）",
+              top10_cnt == 987 and abs(top10_ape / 1e6 - 388.61) < 0.01
+              and product3["total_cnt"] == 1171 and abs(product3["total_ape"] / 1e6 - 444.41) < 0.01)
+
+        # --- 第6/8页：KA排名（S6全量口径，不是S2-I/K的TOP20截断） ---
+        s6_mv = _mv_load_sheet(s6_dir_mv)
+        ka6 = msr._ka_rank_from_s6(s6_mv, ("A-APE", "B-APE", "C-APE"), ("A-件数", "B-件数", "C-件数"), top_n=10)
+        top10_batch = sum(r["batch"] for r in ka6["top"])
+        check("第6页 P表 KA TOP10批核APE合计=602.65M（独立核对S6-A-APE'合计'列，全量三阶段口径）",
+              abs(top10_batch / 1e6 - 602.65) < 0.01)
+        check("第6页 P表 其他+TOP10+=总体（总体批核APE=772.13M，等于S1-B批核(2026)总量）",
+              abs((ka6["rest"]["batch"] + top10_batch) / 1e6 - 772.13) < 0.01
+              and abs(ka6["total"]["batch"] / 1e6 - 772.13) < 0.01)
+
+        ka8 = msr._ka_rank_from_s2(s2_mv["K"], top_n=10)
+        check("第8页 V表 同行KA TOP10批核APE合计=365.49M（S2-K全量口径，独立核对自p08.txt）",
+              abs(sum(r["batch"] for r in ka8["top"]) / 1e6 - 365.49) < 0.01)
+        check("第8页 V表 总体批核/未批核/待签=399.63M/51.61M/7.07M（跟build_peer_view()的issued_ape等一致）",
+              abs(ka8["total"]["batch"] / 1e6 - 399.63) < 0.01
+              and abs(ka8["total"]["unbat"] / 1e6 - 51.61) < 0.01)
+
+        # --- 第9页：同行月度分析（自然日历月，不是derive_monthly_buckets的周→月桶算法） ---
+        from skills.s2_business_view import PEER_SEGMENTS as _PEERSEG, LAPSE_STATUSES as _LAPSE
+        pop9 = df[df["segment_code"].isin(_PEERSEG)]
+        sign9 = pop9[~pop9["policy_status"].isin(_LAPSE + ["排期"])]
+        jan_sign = sign9[(sign9["sign_date"].dt.year == 2026) & (sign9["sign_date"].dt.month == 1)]
+        cal_monthly = msr._peer_calendar_monthly(df)
+        jan_row = next(r for r in cal_monthly if r["month"] == "26-Jan")
+        check("第9页 W表 同行月度分析：按自然日历月统计（不是周→月分桶算法），"
+              "26-Jan签单=16.33M/56件（跟derive_monthly_buckets桶算法算出的16.18M/55件不同，"
+              "已核对自然月口径才是跟p09.txt原文匹配的）",
+              abs(jan_row["签单APE"] - float(jan_sign["ape"].sum())) < 1
+              and jan_row["签单件数"] == len(jan_sign) == 56)
+        oct_row = cal_monthly[-1]
+        check("第9页 W表 26-Oct（本月）预约/签单/批核=16.42M/31件、14.10M/33件、6.15M/25件（跟同行W40"
+              "本周快报是两个不同口径——本月是Oct全月自然日历，本周只是W40单周）",
+              abs(oct_row["预约APE"] / 1e6 - 16.42) < 0.01 and oct_row["预约件数"] == 31
+              and abs(oct_row["签单APE"] / 1e6 - 14.10) < 0.01 and oct_row["签单件数"] == 33
+              and abs(oct_row["批核APE"] / 1e6 - 6.15) < 0.01 and oct_row["批核件数"] == 25)
+
+        # --- 第1/2页：当月未完结判断 + 月度明细表格复用build_s1_view()，独立核对关键行 ---
+        monthly_table1 = v1["monthly_table"]
+        oct26 = next(r for r in monthly_table1 if r["month"] == "26-Oct")
+        check("第1页 月度明细表格：26-Oct行=18.31M/36件/14.95M/35件/9.59M/36件（独立核对自p01.txt原文，"
+              "直接复用build_s1_view()的monthly_table，未重新计算）",
+              abs(oct26["预约APE"] / 1e6 - 18.31) < 0.01 and oct26["预约件数"] == 36
+              and abs(oct26["批核APE"] / 1e6 - 9.59) < 0.01 and oct26["批核件数"] == 36)
+
+        # --- render()端到端 + 边界说明文案披露核验 ---
+        try:
+            html_mark = msr.render(mark_data_root, agent_version="test", source_name="test.xlsx")
+            check("Mark标准报表render()端到端跑通，含9个data-page section（第1-9页），不含第10页",
+                  html_mark.count('data-page="1"') == 1 and html_mark.count('data-page="9"') == 1
+                  and 'data-page="10"' not in html_mark)
+            check("Mark标准报表：术语口径跟Mark原文一致（'各环节业务周累计'而非'全流程转化漏斗'、"
+                  "'差额'而非'缺口'、页脚统一'文件快照｜数据完整时点未核实｜工作稿'）",
+                  "各环节业务周累计" in html_mark and "全流程转化漏斗" not in html_mark
+                  and "差额340.87M" in html_mark
+                  and "文件快照｜数据完整时点未核实｜工作稿" in html_mark)
+            check("Mark标准报表：第7页'排除1件'异常值披露文字 + 分档分布边界说明均已渲染进HTML",
+                  "排除1件" in html_mark and "不入分母" in html_mark)
+            check("Mark标准报表：第3页永明牌照明细的issuing_entity归一化披露文字已渲染（原始名称不逐字"
+                  "保留的说明，不能让人误以为是照抄Mark原文的展示方式）",
+                  "本项目cleaner.py已把简繁体写法的同一实体合并" in html_mark)
+            check("Mark标准报表：边界说明原文照抄到位（'各环节不是同一批保单，不能据此计算转化率'、"
+                  "'当月未完结，不作全月结论'、'原始名称不擅自合并'类表述未被省略或改写）",
+                  "各环节不是同一批保单，不能据此计算转化率" in html_mark
+                  and "当月未完结，不作全月结论" in html_mark)
+            s3_mv_fresh = _mv_load_sheet(s3_dir_mv)
+            expect_week_full = msr._current_week_full(s3_mv_fresh)
+            check("Mark标准报表：页脚周数独立核对自build_s3_view()同一套current_week_from_labels()"
+                  "逻辑算出（不是写死占位符），本次数据=2026W40",
+                  expect_week_full == "2026W40" and f"{expect_week_full}文件快照" in html_mark)
+        except Exception as e:
+            check("Mark标准报表render()端到端跑通", False, str(e))
+    else:
+        check("⚠️ S1/S2/S3/S4/S6数据不存在，跳过Mark标准报表核验（需要先跑一遍agent.py --s6）", True)
 
     print()
     if failures:
