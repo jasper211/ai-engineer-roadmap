@@ -68,15 +68,15 @@ def save_analysis(p):
     required=['material_id','title','category','source_url','revision','skill_path','kind','summary','purpose','inputs_outputs','workflow','examples','dependencies','limitations','compatibility','license','evidence']
     if any(k not in p for k in required): raise ValueError('缺少分析字段：'+', '.join(k for k in required if k not in p))
     if p['category'] not in CATEGORIES: raise ValueError('分类无效')
-    if p['kind'] not in ['skill','reference']: raise ValueError('类型须为 skill 或 reference')
+    if p['kind'] not in ['skill','reference','tool','unverified']: raise ValueError('类型须为 skill/reference/tool/unverified')
     github_url(p['source_url'])
     sid=p.get('id') or uuid.uuid4().hex
     with db() as c:
         if not c.execute('SELECT 1 FROM materials WHERE id=?',(p['material_id'],)).fetchone(): raise ValueError('素材不存在')
         old=c.execute('SELECT * FROM skills WHERE id=?',(sid,)).fetchone()
         if old and old['status']=='已接入': raise ValueError('已接入版本保留，请另建版本记录')
-        c.execute('INSERT OR REPLACE INTO skills VALUES(?,?,?,?,?,?,?)',(sid,p['material_id'],p['title'],p['category'],'备选' if p['kind']=='skill' else '参考资料',json.dumps(p,ensure_ascii=False),now()))
-        c.execute('UPDATE materials SET status=? WHERE id=?',('已分析',p['material_id']))
+        c.execute('INSERT OR REPLACE INTO skills VALUES(?,?,?,?,?,?,?)',(sid,p['material_id'],p['title'],p['category'],{'skill':'备选','reference':'参考资料','tool':'工具备选','unverified':'来源待核实'}[p['kind']],json.dumps(p,ensure_ascii=False),now()))
+        c.execute('UPDATE materials SET status=? WHERE id=?',('来源待核实' if p['kind']=='unverified' else '已分析',p['material_id']))
         c.execute('INSERT INTO events(skill_id,action,body,created) VALUES(?,?,?,?)',(sid,'分析录入',json.dumps(p,ensure_ascii=False),now()))
     return sid
 
