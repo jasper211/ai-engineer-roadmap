@@ -24,7 +24,7 @@ python3 app.py analyze --file /绝对路径/分析.json
 
 素材格式：`{"links":"https://github.com/owner/repo", "note":"用户用途"}`。图片通过网页上传，或以 `images:[{data:base64}]` 摄入。图片路径：`data/uploads/<source>`。
 
-分析字段：material_id、title、category、source_url、revision、skill_path、kind、summary、purpose、inputs_outputs、workflow、examples、dependencies、limitations、compatibility、license、evidence。可选 tags、install_ready、id（更新现有条目）。kind 只能是 skill/reference；分类取 API categories 值。
+分析字段：material_id、title、category、source_url、revision、skill_path、kind、summary、purpose、inputs_outputs、workflow、examples、dependencies、limitations、compatibility、license、evidence。可选 tags、install_ready、id（更新现有条目）。kind 支持 skill/reference/tool/unverified；分类取 API categories 值。
 
 只有核实了真实 Skill 文件、完整来源版本、依赖、权限与兼容性之后，才写入 install_ready=true。依据填写原始文件 URL 与核验内容；未知信息明确写待确认。普通文章使用 reference。仓库含多个 Skill 时分别录入并关联同一 material_id。
 
@@ -41,3 +41,11 @@ python3 app.py analyze --file /绝对路径/分析.json
 ## 验证
 
 `python3 -m unittest test_app.py -v` 使用独立临时数据目录验证去重、持久化读取、分析写回、确认与撤回、适配门禁和非法输入；不污染实际收藏库。
+
+## 分类与核验信息
+
+保留原七类用途分类；资源类型、用途标签和接入状态各自独立。新增可选字段 maintenance、permission_risk、classification_reason、verified_at、validation_scope，在详情中单独展示。资料核验不代表安装或运行验证。
+
+官方候选默认 install_ready=false；浮动 main 不是固定安装版本。接入前仍需固定提交、检查完整文件与许可证、确认依赖和权限。当前控制台为原生 JavaScript；React 专用指导仅作为未来项目候选。
+
+已接入记录的历史证据保留。修正过期标签时追加独立治理事件，不改写既有安装结果和旧事件。本次备份保存在 backups 下，数据库使用 SQLite backup API 一致性备份。恢复前停止服务，并保留恢复时的新数据；不要直接用旧备份覆盖后续收藏。
