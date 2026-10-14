@@ -1,0 +1,17 @@
+<!doctype html><html lang="zh"><meta charset="utf-8"><title>Firecrawl U071验证回执</title><style>body{max-width:900px;margin:50px auto;padding:24px;font:17px/1.8 system-ui;color:#203047}pre{white-space:pre-wrap}a{color:#176ad6}</style><h1>Firecrawl × U071 验证回执</h1><pre>Firecrawl × U071 小范围验证：部分完成，Firecrawl待凭据
+
+本轮未安装Firecrawl，未修改U071运行逻辑。U071目录验证前后文件哈希一致。
+
+对照结果
+1. 历史失败的同一PDF URL：普通HTTPS下载返回403，5708字节HTML，不是PDF。
+2. 新增2024年通函栏目候选URL：普通HTTPS下载返回403，5772字节HTML；历史回执只记载PDF，不能称作历史同页重放，也不能确认此栏目URL有效。
+3. 原有source_adapter.py直接调用的结果见existing-adapter-result.json；未修改源码，输出放在本证据目录。
+4. Firecrawl：没有可用的Firecrawl凭据或连接，未发出API请求。用户提供的凭据类型不匹配，未使用、未保存。
+
+结论：普通下载阻断仍存在；无法判断Firecrawl能否解决。不是Firecrawl失败，也不是验证通过。未产出可用官方原件，不能进入条文与六件套验收。
+
+后续限定：安全配置Firecrawl凭据后，对上述两个URL各发起一次scrape请求，保留原始JSON、目标站状态、提取正文、页码及费用信息；若仅取得解析文本而无PDF原件，则只能记内容可读，不能记原件取证完成。API返回200也须排除验证页与错误页。
+
+证据：comparison.json、各目标headers.txt/response.bin/curl-metadata.json、existing-adapter-result.json、firecrawl-receipt.json、u071-before.json/u071-after.json、probe.py。
+官方接口说明：https://docs.firecrawl.dev/api-reference/endpoint/scrape
+</pre><a href="comparison.json">查看机器回执</a></html>
