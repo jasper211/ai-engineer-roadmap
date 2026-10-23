@@ -1,0 +1,27 @@
+<!doctype html><meta charset="utf-8"><title>Jev验证与Skill方案</title><style>body{max-width:980px;margin:40px auto;font:17px/1.8 system-ui}pre{white-space:pre-wrap}</style><h1>Jev验证与Skill封装方案</h1><pre>Jev 收录与 Codex Skill 封装方案（审阅，不安装）
+验证：GET /v1/models HTTP200；POST /v1/systemone HTTP200。使用现有环境变量凭据，未输出或复制密钥。虚构单样本同时验证 Noul、Choice、Score，实际模型 jev-1.14.0，415输入/87输出token；非准确率、费用或生产稳定性验收。
+结果：正式生效概率0.03，文件分类为征求意见稿（confidence 1.0）；优先级score 0.56、confidence 0.34，应保留待评审。Score是档位值，不是概率。
+旧备忘差异：2026-09-21记录jev-1.13.0，当前别名解析变化。其价格和“不消耗额度”未复核，不作为当前承诺；.zshenv并非唯一配置方式，现有环境可用不代表所有启动方式均可用。0.7仅示例，不作为统一阈值。
+
+一、封装分层
+官方 typesafe-ai Skill负责接口类型和调用方法；拟建 jev-evidence-triage 负责项目业务分流。当前仅设计，不创建安装目录。官方来源 https://docs.typesafe.ai/agent-skill 与 https://github.com/typesafe-ai/skills 。后续安装前固定提交SHA与依赖版本。
+目录方案：SKILL.md（触发条件与边界）、scripts/evaluate.py（安全调用/校验/回执）、references/u20.md、references/u071.md、references/schema.json。只在用户要求批量分类、相关性筛选、模糊条目分流时触发；不用于正文生成、法律判断、客户适当性结论。
+
+二、U20场景
+先选新闻主题和研究资料相关性初筛；保持现有来源等级、去重ID、截止时间及冻结研究不变。输入仅文档ID、脱敏文本、主题定义和证据引用；输出候选类别及需复核标记。不自动删除低分资料、不改既有研究结论。
+客户话术工作台后续可用匿名需求标签匹配已有研究主题；不传姓名、联系方式、账户、健康或财务明细，不把匹配分数当KYC/适当性结论，不生成或发布客户话术。
+
+三、U071场景
+按文件原文初分正式规则/指引/通函/征求意见/新闻/处罚，初筛司法辖区和适用主体；边界不清一律待人工确认。Jev只能提出标签，不能确定法律效力、替代条款引用或直接触发六件套。保留主文/附件的document_id、原件哈希、页码及版本关系；正式触发仍走既有规则与审校。已有U071交付目录，不以旧P0状态代表当前项目进展。
+
+四、共同输入输出契约
+输入：item_id、project、source_ref、source_hash、text、question_set_version。输出：model_requested、model_resolved、answers及各题型原始值、probabilities、confidence（若存在）、review_status、request_hash、usage、timestamp。每条结果仅引用已有source_ref，模型不生成证据原文。保留失败回执，不把超时/401/429/缺字段当否定答案。有限重试，避免重复收费；缓存键包括输入哈希、问题版本与实际模型版本，模型别名变化需重新评估。
+
+五、离线验证与接入顺序
+1. 审阅问题和标签表；分别准备U20与U071人工标注样本，每类包含正例、反例、模糊例。
+2. 先做独立影子评测，结果落单独目录，对比现有处理结果，不回写项目。
+3. 关注U20漏筛率、U071误触发率、人工复核占比与失败率；不以一个样本或高置信度证明准确性。阈值由验证集确定，并用独立留出集复验。
+4. 用户确认后才创建并安装Skill；项目集成另外确认。上线前验证版本固定、凭据加载、响应校验及失败处理。
+
+本轮只新增工作台资料与证据；未安装Skill，未修改U20/U071代码、标准或运行逻辑。
+</pre>
