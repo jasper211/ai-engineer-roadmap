@@ -1,0 +1,137 @@
+# Jev（TypeSafe System One）配置与调用备忘
+
+> 实测验证日期：2026-09-21
+> 本文所有格式均为实机跑通后记录，非文档转述。
+
+---
+
+## 一、本机当前状态（已配好，无需重做）
+
+| 项目 | 状态 |
+|---|---|
+| Claude Code 插件 | `typesafe@typesafe-ai` v0.5.7，user 级，已启用 |
+| API Key | 写在 `~/.zshenv` 的 `TYPESAFE_API_KEY` |
+| 网络 | 可直连 `api.typesafe.ai`，**无需代理** |
+| 可用模型 | `jev-latest`（实际解析为 `jev-1.13.0`）、`jev-preview` |
+
+### Key 为什么必须放 `~/.zshenv`
+
+zsh 的加载规则：`~/.zshrc` **只对交互式 shell 生效**。Claude Code 跑工具命令用的是非交互 shell，且在 VSCode 里启动时继承的是 GUI 环境，两者都不读 `.zshrc`。
+放 `~/.zshenv` 才能被所有场景读到。改完必须**完全退出 VSCode 重开**，reload 窗口不够。
+
+验证命令（不暴露 key 本身）：
+
+```bash
+[credential configuration line omitted]
+```
+
+---
+
+## 二、连通性自检
+
+```bash
+curl -s https://api.typesafe.ai/v1/models \
+  -H "Authorization: Bearer $TYPESAFE_API_KEY"
+```
+
+返回 200 + 模型列表即为正常。这条不消耗额度，排查问题时先跑它。
+
+---
+
+## 三、可用的 curl 模板
+
+```bash
+curl -s https://api.typesafe.ai/v1/systemone \
+-H "Authorization: Bearer $TYPESAFE_API_KEY" \
+-H "Content-Type: application/json" \
+-d '{
+  "model":"jev-latest",
+  "state":{"document":"用户申请订单退款，商品已拆封，购买于30天前"},
+  "questions":{
+    "is_refund":{"type":"noul","instructions":"这是一个退款请求吗？"},
+    "decision":{"type":"choice","instructions":"应该如何处理这个退款申请？",
+                "criteria":{"同意退款":null,"拒绝退款":null,"转人工":null}}
+  }
+}'
+```
+
+`state` 可以是字符串、JSON 对象或文本数组。用对象并给语义化的键名（如 `document`）效果更稳。
+
+---
+
+## 四、三种题型的正确格式
+
+**每一种都必须有 `instructions`**——这是问题本身，缺了模型不知道你在问什么。
+
+```jsonc
+// Noul：是否判断，返回 0~1 概率
+"key": {"type":"noul", "instructions":"这条是否属于跨部门协作活动？"}
+
+// Choice：多选归类，criteria 是对象（值写 null，或写该选项的说明文字）
+"key": {"type":"choice", "instructions":"这条活动归到哪一层？",
+        "criteria":{"L3":null,"L4":null,"L5":null}}
+
+// Score：分档打分，criteria 是有序数组，返回 0..n-1 的连续值
+"key": {"type":"score", "instructions":"这个事项有多紧急？",
+        "criteria":["可以等","本周内","今天"]}
+```
+
+---
+
+## 五、返回值怎么读（重要）
+
+实测返回：
+
+```json
+{
+  "model": "jev-1.13.0",
+  "answers": {
+    "is_refund": {"type":"noul","noul":0.98},
+    "decision": {"type":"choice","choice":"转人工","confidence":0.27,
+                 "probabilities":{"转人工":0.52,"拒绝退款":0.46,"同意退款":0.02}}
+  },
+  "usage": {"input_tokens":354,"output_tokens":66}
+}
+```
+
+**不要只看 `choice` 字段就执行。** 上例里 confidence 只有 0.27，转人工 0.52 对拒绝退款 0.46 几乎五五开——模型是在诚实地说"这条我拿不准"。
+
+正确用法：设业务阈值（如 0.7），高于阈值自动走，低于阈值落人工复核。
+`probabilities` 摊开了所有选项的分布，**用它来筛出模糊条目**，比看单一结论有用得多。
+
+---
+
+## 六、成本
+
+输入 $0.042 / 百万 token，**输出不计费**（返回的是类型值，不是文本流）。
+上面那次调用 354 input tokens ≈ 0.0001 元人民币。批量跑几千条也基本可忽略。
+
+---
+
+## 七、网上流传的那份中文教程有哪些坑
+
+如果以后再看到类似教程，注意这几处是错的：
+
+| 错误写法 | 正确写法 |
+|---|---|
+| `client.systemone(...)` | Python 是 `client.system_one(...)`，JS 是 `client.systemOne(...)` |
+| `{"type":"choice","options":[...]}` | 字段名是 `criteria` 且为对象；**且必须带 `instructions`** |
+| "Score 输出 0~1 概率" | 反了。Score 按 criteria 档位返回 0..n-1；**Noul 才返回概率** |
+| "Key 是 `sk-` 开头" | 实际是 `api` 开头 |
+| `base_url="https://xxx/v1/systemone"` | base_url 一般只到 `/v1`，写全会导致路径重复（本机不需要代理，用不上） |
+
+Python SDK 的正确导入（本机未装，留备）：
+
+```python
+from typesafe_sdk import TypeSafeClient, Choice, Noul, Score
+client = TypeSafeClient()   # 自动读 TYPESAFE_API_KEY，无需手动传
+```
+
+---
+
+## 八、官方参考
+
+- 文档首页：https://docs.typesafe.ai/
+- 题型概念：https://docs.typesafe.ai/concepts/system-one
+- Python SDK：https://docs.typesafe.ai/sdk/python
+- Agent 技能：https://docs.typesafe.ai/agent-skill
