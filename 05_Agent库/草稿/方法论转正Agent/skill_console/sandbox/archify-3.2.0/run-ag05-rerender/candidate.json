@@ -1,0 +1,382 @@
+{
+ "schema_version": 2,
+ "diagram_type": "workflow",
+ "meta": {
+  "title": "AG05 需求澄清与交接流程｜设计审阅 v1.0",
+  "locale": "zh-CN",
+  "quality_profile": "showcase",
+  "legend": {
+   "entries": {
+    "backend": {
+     "label": "业务处理"
+    },
+    "external": {
+     "label": "关联Agent"
+    },
+    "security": {
+     "label": "人工与接收门槛"
+    },
+    "database": {
+     "label": "业务记录"
+    }
+   }
+  },
+  "output": "ag05_v3.2.0.html"
+ },
+ "lanes": [
+  {
+   "id": "inputs",
+   "label": "上游与专业输入"
+  },
+  {
+   "id": "main",
+   "label": "本次咨询主线"
+  },
+  {
+   "id": "exceptions",
+   "label": "补充与后续方案",
+   "variant": "exception"
+  },
+  {
+   "id": "feedback",
+   "label": "反馈改进设计 · 通道与实测待确认"
+  }
+ ],
+ "nodes": [
+  {
+   "id": "ag04",
+   "lane": "inputs",
+   "col": 0,
+   "type": "external",
+   "label": "AG04 提供线索",
+   "sublabel": "获准画像、来源、用途",
+   "width": 145,
+   "height": 76
+  },
+  {
+   "id": "ag02",
+   "lane": "inputs",
+   "col": 1,
+   "type": "external",
+   "label": "AG02 专业解释",
+   "sublabel": "按需提供来源与适用边界",
+   "width": 145,
+   "height": 76
+  },
+  {
+   "id": "intake",
+   "lane": "main",
+   "col": 0,
+   "type": "backend",
+   "label": "AG05 接案核对",
+   "sublabel": "授权、对象、版本、接收人",
+   "width": 145,
+   "height": 76
+  },
+  {
+   "id": "clarify",
+   "lane": "main",
+   "col": 1,
+   "type": "backend",
+   "label": "AG05 澄清需求",
+   "sublabel": "事实、目标、预算及缺项",
+   "width": 145,
+   "height": 76
+  },
+  {
+   "id": "human",
+   "lane": "main",
+   "col": 2,
+   "type": "security",
+   "label": "客户与顾问确认",
+   "sublabel": "未确认：回补问或暂停",
+   "width": 145,
+   "height": 90,
+   "tag": "确认事实、优先级及专业边界"
+  },
+  {
+   "id": "outputs",
+   "lane": "main",
+   "col": 3,
+   "type": "backend",
+   "label": "AG05 形成三种视图",
+   "sublabel": "顾问版、客户版、转办版",
+   "width": 145,
+   "height": 76
+  },
+  {
+   "id": "gate",
+   "lane": "main",
+   "col": 4,
+   "type": "security",
+   "label": "AG26 判断接收条件",
+   "sublabel": "正式接收／限制接收／退回",
+   "width": 145,
+   "height": 76
+  },
+  {
+   "id": "repair",
+   "lane": "exceptions",
+   "col": 1,
+   "type": "security",
+   "label": "补充、更正或暂停",
+   "sublabel": "关键更改重新交人工确认",
+   "width": 145,
+   "height": 76
+  },
+  {
+   "id": "plan",
+   "lane": "exceptions",
+   "col": 4,
+   "type": "external",
+   "label": "AG26 构建备选方案",
+   "sublabel": "仅做接收范围内的工作",
+   "width": 145,
+   "height": 76
+  },
+  {
+   "id": "record",
+   "lane": "feedback",
+   "col": 4,
+   "type": "database",
+   "label": "记录业务结果",
+   "sublabel": "接收退回、耗时及投入",
+   "width": 145,
+   "height": 76
+  },
+  {
+   "id": "review",
+   "lane": "feedback",
+   "col": 3,
+   "type": "backend",
+   "label": "AG15 复盘建议",
+   "sublabel": "业务与成本先核验",
+   "width": 145,
+   "height": 76,
+   "tag": "通道待确认"
+  },
+  {
+   "id": "approve",
+   "lane": "feedback",
+   "col": 2,
+   "type": "security",
+   "label": "有权负责人批准",
+   "sublabel": "明确改什么、由谁执行",
+   "width": 145,
+   "height": 76
+  },
+  {
+   "id": "update",
+   "lane": "feedback",
+   "col": 1,
+   "type": "backend",
+   "label": "原责任方更新版本",
+   "sublabel": "下一轮同口径复测",
+   "width": 145,
+   "height": 76,
+   "tag": "不覆盖客户既有事实"
+  }
+ ],
+ "edges": [
+  {
+   "id": "ag04-intake",
+   "to": "intake",
+   "variant": "default",
+   "from": "ag04",
+   "label": "授权线索",
+   "fromSide": "bottom",
+   "toSide": "top"
+  },
+  {
+   "id": "intake-clarify",
+   "to": "clarify",
+   "variant": "default",
+   "from": "intake",
+   "label": "核对可继续",
+   "fromSide": "right",
+   "toSide": "left"
+  },
+  {
+   "id": "clarify-human",
+   "to": "human",
+   "variant": "default",
+   "from": "clarify",
+   "label": "需求草稿",
+   "fromSide": "right",
+   "toSide": "left"
+  },
+  {
+   "id": "human-outputs",
+   "to": "outputs",
+   "variant": "default",
+   "from": "human",
+   "label": "确认可转办",
+   "fromSide": "right",
+   "toSide": "left"
+  },
+  {
+   "id": "outputs-gate",
+   "to": "gate",
+   "variant": "default",
+   "from": "outputs",
+   "label": "同一事实版本",
+   "fromSide": "right",
+   "toSide": "left"
+  },
+  {
+   "id": "gate-plan",
+   "to": "plan",
+   "variant": "default",
+   "from": "gate",
+   "fromSide": "bottom",
+   "toSide": "top",
+   "route": "straight"
+  },
+  {
+   "id": "gate-repair",
+   "to": "repair",
+   "variant": "security",
+   "role": "error",
+   "from": "gate",
+   "label": "退回",
+   "fromSide": "left",
+   "toSide": "right"
+  },
+  {
+   "id": "intake-repair",
+   "to": "repair",
+   "variant": "security",
+   "role": "error",
+   "from": "intake",
+   "label": "授权等不符",
+   "fromSide": "bottom",
+   "toSide": "left"
+  },
+  {
+   "id": "repair-clarify",
+   "to": "clarify",
+   "variant": "dashed",
+   "role": "return",
+   "from": "repair",
+   "label": "补齐重问",
+   "fromSide": "top",
+   "toSide": "bottom"
+  },
+  {
+   "id": "ag02-clarify",
+   "to": "clarify",
+   "variant": "dashed",
+   "from": "ag02",
+   "label": "专业解释",
+   "fromSide": "bottom",
+   "toSide": "top"
+  },
+  {
+   "id": "plan-record",
+   "to": "record",
+   "variant": "default",
+   "from": "plan",
+   "label": "后续结果",
+   "fromSide": "bottom",
+   "toSide": "top"
+  },
+  {
+   "id": "gate-record",
+   "to": "record",
+   "variant": "dashed",
+   "route": "outside-right",
+   "fromSide": "right",
+   "toSide": "right",
+   "from": "gate",
+   "label": "接收状态"
+  },
+  {
+   "id": "record-review",
+   "to": "review",
+   "variant": "dashed",
+   "from": "record",
+   "label": "核验后汇总"
+  },
+  {
+   "id": "review-approve",
+   "to": "approve",
+   "variant": "dashed",
+   "from": "review",
+   "label": "改进建议"
+  },
+  {
+   "id": "approve-update",
+   "to": "update",
+   "variant": "dashed",
+   "from": "approve",
+   "label": "获准后执行"
+  },
+  {
+   "id": "update-intake",
+   "to": "intake",
+   "variant": "dashed",
+   "role": "return",
+   "route": "return-left",
+   "fromSide": "left",
+   "toSide": "left",
+   "from": "update",
+   "label": "下一轮",
+   "channelX": 20
+  }
+ ],
+ "cards": [
+  {
+   "dot": "cyan",
+   "title": "怎样读这张图",
+   "items": [
+    "主线：接线索 → 问清需求 → 人工确认 → 三种输出 → AG26接收。AG05不推荐产品、不计算配置比例或融资收益。",
+    "这是现有审阅稿的流程化表达，不是已部署或已验收流程；26项划分及矩阵不变。"
+   ]
+  },
+  {
+   "dot": "emerald",
+   "title": "三种输出，使用同一事实版本",
+   "items": [
+    "顾问版：事实来源、目标、优先级、预算和约束、冲突及专业待办。",
+    "客户版：通俗需求摘要、已确认事项、未确认问题及下一步。",
+    "转办版：按权限和接收用途裁剪的事实、约束、缺项、确认范围与版本；不是三次独立访谈。"
+   ]
+  },
+  {
+   "dot": "rose",
+   "title": "人工确认与三种接收门槛",
+   "items": [
+    "客户确认事实和目标；有权顾问确认专业适用及转办条件；具体人员待指定。未确认的受影响事项先补问或暂停。",
+    "正式接收：当前任务关键字段、授权和必要确认已齐。限制接收：接收方同意，只做不受缺项影响的部分。",
+    "退回：授权无效、对象错误、关键冲突或阻断性缺项。记录原因与补充负责人，补齐后重新确认。不得把缺值填零。"
+   ]
+  },
+  {
+   "dot": "violet",
+   "title": "底座全程支撑，不替业务批准",
+   "items": [
+    "CAP01：T01–T07提供模型、工具运行、知识引用、数据治理、权限、日志和评测版本；AG02负责场景解释，T03负责知识检索。",
+    "CAP02：B01档案、B03工单与接收退回、B05文档版本、B06工作台。引用同一记录，不另建重复客户档案。",
+    "AG05提出最少必要的专业问题给AG02；事实更正回AG04或客户核清，AG05回传接收退回和咨询状态。具体接口仍待确认。"
+   ]
+  },
+  {
+   "dot": "amber",
+   "title": "反馈设计：能画出回路，不等于已经闭环",
+   "items": [
+    "B03/B05留存状态、原因、时间和版本。业务核对结果，技术提供投入，财务确认适用成本；成功、失败、退出及未结分开。",
+    "AG15提出建议 → 有权负责人批准 → 原内容/能力/技术责任方执行 → 下一轮按相同质量底线比较准确性、首次接收、耗时和全投入。",
+    "AG05到AG15的数据提取、接口、权限、样本、周期及阈值待确认；不新增B08为既定依赖，也不据图认定80%改善。"
+   ]
+  },
+  {
+   "dot": "slate",
+   "title": "来源、分支与阅读范围",
+   "items": [
+    "直接依据：AG05_能力细化与交接_审阅稿_v1.1_20261116.html，第02–05主题；共同输入为Terresa归档的整体矩阵与Mark会议汇报。",
+    "主图聚焦AG26方案转办。按事项还可涉及AG03产品事实、AG17材料复核、AG13投保案件、AG20家庭服务；不能把所有咨询都直接转成投保案件。",
+    "按需专业求助、事实回写和底座调用在说明卡保留；主图不代表全部技术接口。匿名合成样稿不是实际客户产物。"
+   ]
+  }
+ ]
+}
