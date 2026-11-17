@@ -19,6 +19,13 @@ class Workflow(unittest.TestCase):
   with self.assertRaises(ValueError):app.record_result(result)
   result['revision']='a'*40
   self.assertEqual(app.record_result(result),'已接入')
+  q=dict(p,id='newer',revision='c'*40);q.pop('install_ready');q['install_ready']=True;app.save_analysis(q)
+  with self.assertRaises(ValueError):app.supersede({'id':sid,'replaced_by':'newer','reason':'r'})
+  app.action({'id':'newer','action':'approve'});app.record_result(dict(result,id='newer',revision='c'*40))
+  with self.assertRaises(ValueError):app.supersede({'id':sid,'replaced_by':'newer'})
+  self.assertEqual(app.supersede({'id':sid,'replaced_by':'newer','reason':'r'}),'已取代')
+  with self.assertRaises(ValueError):app.save_analysis(dict(p,id=sid))
+  with self.assertRaises(ValueError):app.supersede({'id':sid,'replaced_by':'newer','reason':'r'})
  def test_reject_sources_and_images(self):
   for url in ['http://github.com/a/b','https://github.com.evil.test/a/b','https://github.com','https://user@github.com/a/b']:
    with self.assertRaises(ValueError):app.github_url(url)

@@ -74,7 +74,7 @@ def save_analysis(p):
     with db() as c:
         if not c.execute('SELECT 1 FROM materials WHERE id=?',(p['material_id'],)).fetchone(): raise ValueError('素材不存在')
         old=c.execute('SELECT * FROM skills WHERE id=?',(sid,)).fetchone()
-        if old and old['status']=='已接入': raise ValueError('已接入版本保留，请另建版本记录')
+        if old and old['status'] in ('已接入','已取代'): raise ValueError(old['status']+'版本保留，请另建版本记录')
         c.execute('INSERT OR REPLACE INTO skills VALUES(?,?,?,?,?,?,?)',(sid,p['material_id'],p['title'],p['category'],{'skill':'备选','reference':'参考资料','tool':'工具备选','unverified':'来源待核实'}[p['kind']],json.dumps(p,ensure_ascii=False),now()))
         c.execute('UPDATE materials SET status=? WHERE id=?',('来源待核实' if p['kind']=='unverified' else '已分析',p['material_id']))
         c.execute('INSERT INTO events(skill_id,action,body,created) VALUES(?,?,?,?)',(sid,'分析录入',json.dumps(p,ensure_ascii=False),now()))
@@ -147,11 +147,25 @@ class Handler(BaseHTTPRequestHandler):
             self.send(200,{'result':result})
         except (ValueError,KeyError,TypeError) as e:self.send(400,{'error':str(e)})
 
+def supersede(p):
+    sid=p['id']; new=p['replaced_by']
+    if not p.get('reason'): raise ValueError('必须说明取代原因')
+    if sid==new: raise ValueError('不能被自身取代')
+    with db() as c:
+        old=c.execute('SELECT * FROM skills WHERE id=?',(sid,)).fetchone()
+        rep=c.execute('SELECT * FROM skills WHERE id=?',(new,)).fetchone()
+        if not old or old['status']!='已接入': raise ValueError('只有已接入的条目可以标为已取代')
+        if not rep or rep['status']!='已接入': raise ValueError('取代它的新版本必须已接入')
+        b=json.loads(old['body']); b['superseded']=dict(replaced_by=new,replaced_by_title=rep['title'],reason=p['reason'],backup=p.get('backup'),date=now())
+        c.execute('UPDATE skills SET status=?,body=?,updated=? WHERE id=?',('已取代',json.dumps(b,ensure_ascii=False),now(),sid))
+        c.execute('INSERT INTO events(skill_id,action,body,created) VALUES(?,?,?,?)',(sid,'已取代',json.dumps(p,ensure_ascii=False),now()))
+    return '已取代'
+
 def main():
-    parser=argparse.ArgumentParser();parser.add_argument('command',choices=['serve','list','intake','analyze','result']);parser.add_argument('--file');parser.add_argument('--port',type=int,default=8769);args=parser.parse_args()
+    parser=argparse.ArgumentParser();parser.add_argument('command',choices=['serve','list','intake','analyze','result','supersede']);parser.add_argument('--file');parser.add_argument('--port',type=int,default=8769);args=parser.parse_args()
     if args.command=='serve':
         db().close(); server=ThreadingHTTPServer(('127.0.0.1',args.port),Handler);print(f'http://127.0.0.1:{args.port}',flush=True);server.serve_forever()
     elif args.command=='list':print(json.dumps(snapshot(),ensure_ascii=False,indent=2))
     else:
-        p=json.loads(Path(args.file).read_text()); result={'intake':intake,'analyze':save_analysis,'result':record_result}[args.command](p);print(json.dumps(result,ensure_ascii=False))
+        p=json.loads(Path(args.file).read_text()); result={'intake':intake,'analyze':save_analysis,'result':record_result,'supersede':supersede}[args.command](p);print(json.dumps(result,ensure_ascii=False))
 if __name__=='__main__':main()
