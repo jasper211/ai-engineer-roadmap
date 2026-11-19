@@ -15,10 +15,12 @@ PTA-DISCOVER 本身也改为 import 这个模块（不再内联同一套逻辑�
 """
 
 import json
+import os
 import ssl
 import time
 import urllib.error
 import urllib.request
+from datetime import UTC, datetime
 from pathlib import Path
 
 DEEPSEEK_API_URL = "https://api.deepseek.com/chat/completions"
@@ -49,6 +51,25 @@ def build_ssl_context() -> ssl.SSLContext:
 
 
 _SSL_CONTEXT = build_ssl_context()
+
+# --- 用量台账：每一次付费调用都留一行，便于事后归因 ---------------------
+_PROJECT_ROOT = Path(__file__).resolve().parents[2]
+
+_USAGE_LOG = Path(
+    os.environ.get("PTA_LLM_USAGE_LOG", str(_PROJECT_ROOT / "_runtime" / "llm_usage.jsonl"))
+)
+
+
+def _log_usage(record: dict) -> None:
+    """追加一行 JSON。任何失败都吞掉：记账不能弄坏一次真实运行。"""
+    try:
+        _USAGE_LOG.parent.mkdir(parents=True, exist_ok=True)
+        record["at"] = datetime.now(UTC).isoformat()
+        with _USAGE_LOG.open("a", encoding="utf-8") as fh:
+            fh.write(json.dumps(record, ensure_ascii=False) + "\n")
+    except Exception:
+        pass
+
 
 
 def call_deepseek(system_prompt: str, user_content: str, api_key: str,
@@ -89,11 +110,22 @@ def call_deepseek(system_prompt: str, user_content: str, api_key: str,
             # 推理模型）后真实跑EA项目6天累积diff时超时了——推理模型响应本来
             # 就比非推理的chat模型慢，尤其是大上下文，180秒是留了余量而不是
             # 精确计算出来的，之后如果还不够可能要考虑分批而不是继续加大超时。
+            _started_at = time.monotonic()
             with urllib.request.urlopen(req, timeout=180, context=_SSL_CONTEXT) as resp:
                 data = json.loads(resp.read().decode("utf-8"))
+                _usage = data.get("usage") or {}
+                _log_usage({
+                    "status": 200, "model": model, "attempt": attempt,
+                    "request_id": resp.headers.get("x-request-id"),
+                    "prompt_tokens": _usage.get("prompt_tokens"),
+                    "completion_tokens": _usage.get("completion_tokens"),
+                    "total_tokens": _usage.get("total_tokens"),
+                    "duration_ms": int((time.monotonic() - _started_at) * 1000),
+                })
                 return data["choices"][0]["message"]["content"]
         except urllib.error.HTTPError as e:
             detail = e.read().decode("utf-8", errors="replace")
+            _log_usage({"status": e.code, "model": model, "attempt": attempt, "detail": detail[:300]})
             if e.code == 429 and attempt < max_retries:
                 wait = 2 ** (attempt + 1)
                 print(f"  [限流] 429，{wait}s 后重试...")
@@ -102,5 +134,6 @@ def call_deepseek(system_prompt: str, user_content: str, api_key: str,
                 continue
             raise RuntimeError(f"DeepSeek API 请求失败 HTTP {e.code}: {detail}") from e
         except urllib.error.URLError as e:
+            _log_usage({"status": 0, "model": model, "attempt": attempt, "detail": str(e)[:300]})
             raise RuntimeError(f"DeepSeek API 网络错误: {e}") from e
     raise RuntimeError(f"DeepSeek API 请求失败（已重试 {max_retries} 次）: {last_err}")
